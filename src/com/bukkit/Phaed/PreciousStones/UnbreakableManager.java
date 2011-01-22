@@ -1,7 +1,6 @@
 package com.bukkit.Phaed.PreciousStones;
 
 import java.util.HashMap;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 /**
@@ -44,7 +43,7 @@ public class UnbreakableManager implements java.io.Serializable
     /**
      * Looks for the block in our stone collection
      */
-    public boolean isStone(Block block)
+    public boolean isPStone(Block block)
     {
 	HashMap<Vector, String> c = chunkLists.get(new Vector(block.getChunk()));
 	
@@ -59,11 +58,11 @@ public class UnbreakableManager implements java.io.Serializable
     /**
      * Check if a block is one of the unbreakable types
      */
-    public boolean isType(Material type)
+    public boolean isType(Block block)
     {
-	for (Integer t : plugin.unbreakableBlocks)
+	for (Integer t : plugin.psettings.unbreakableBlocks)
 	{
-	    if (type.getId() == t)
+	    if (block.getTypeId() == t)
 		return true;
 	}
 	

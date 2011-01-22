@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.block.Block;
+import com.bukkit.Phaed.PreciousStones.PSettings.PStone;
 
 /**
  * PreciousStones
@@ -34,12 +36,12 @@ public class PSPlayerListener extends PlayerListener
 	
 	// check if its one of the stones
 	
-	if (plugin.pm.isType(block.getType()))
+	if (plugin.pm.isPStoneType(block))
 	{
-	    if (plugin.pm.isStone(block))
+	    if (plugin.pm.isPStone(block))
 		player.sendMessage(ChatColor.AQUA + "Owner: " + plugin.pm.getOwner(block));
 	    
-	    if (plugin.publicAllowedList || plugin.pm.getOwner(block).equals(player.getName()))
+	    if (plugin.psettings.publicAllowedList || plugin.pm.getOwner(block).equals(player.getName()))
 	    {
 		ArrayList<String> allowed = plugin.pm.getAllowedList(block);
 		
@@ -60,9 +62,9 @@ public class PSPlayerListener extends PlayerListener
 		player.sendMessage(ChatColor.AQUA + "Allowed: " + out.substring(2));
 	    }
 	}
-	else if (plugin.um.isType(block.getType()))
+	else if (plugin.um.isType(block))
 	{
-	    if (plugin.um.isStone(block))
+	    if (plugin.um.isPStone(block))
 		player.sendMessage(ChatColor.YELLOW + "Owner: " + plugin.um.getOwner(block));
 	}
 	else
@@ -71,6 +73,88 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    if (plugin.pm.isProtected(block, null))
 		player.sendMessage(ChatColor.AQUA + "Protected");
+	}
+    }
+    
+    public void onPlayerMove(PlayerMoveEvent event)
+    {
+	Location from = event.getFrom();
+	Location to = event.getTo();
+	
+	if ((new Vector(from).equals(new Vector(to))))
+	    return;
+	
+	Player player = event.getPlayer();	
+	Location loc = player.getLocation();
+	Block block = plugin.getServer().getWorlds()[0].getBlockAt(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+	Block source = plugin.pm.getProtectedAreaSource(block, player.getName());
+	PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
+	
+	if (psettings != null && psettings.preventEntry)
+	{
+	    int sx = 0;
+	    int sz = 0;
+	    int x = 0;
+	    int z = 0;
+    
+	    if (to.getBlockX() > source.getX())
+		sx = -1;
+	    else if (to.getBlockX() < source.getX())
+		sx = 1;
+	    else if (to.getBlockZ() > source.getZ())
+		sz = -1;
+	    else
+		sz = 1;
+	    
+	    if (to.getBlockX() > from.getBlockX())
+		x = -1;
+	    else if (to.getBlockX() < from.getBlockX())
+		x = 1;
+	    else if (to.getBlockZ() > from.getBlockZ())
+		z = -1;
+	    else
+		z = 1;
+
+	    // dont teleport if running away from force field source
+	    
+	    if(sx != 0 && sx == x)
+		return;
+	    
+	    if(sz != 0 && sz == z)
+		return;
+	    
+	    block = plugin.getServer().getWorlds()[0].getBlockAt(from.getBlockX(), from.getBlockY(), from.getBlockZ());
+	    
+	    int count = 0;
+	    
+	    while (plugin.pm.isProtectedAreaForEntry(block, player.getName()))
+	    {
+		block = plugin.getServer().getWorlds()[0].getBlockAt(block.getX() + x, block.getY() + (count > 30 ? 2 : 0), block.getZ() + z);
+		
+		// failsafe
+		
+		if (count > 150)
+		{
+		    block = plugin.getServer().getWorlds()[0].getBlockAt(0, 70, 0);
+		    break;
+		}
+		count++;
+	    }
+	    
+	    if(count == 0)
+		return;
+	    
+	    loc = block.getLocation();
+	    loc.setX(loc.getBlockX() + .5);
+	    loc.setZ(loc.getBlockZ() + .5);
+	    loc.setPitch(player.getLocation().getPitch());
+	    loc.setYaw(player.getLocation().getYaw());
+	    
+	    player.teleportTo(loc);
+	    PreciousStones.log.info("F[" + from.getBlockX() + " " + from.getBlockY() + " " + from.getBlockZ() + "] TO[" + to.getBlockX() + " " + to.getBlockY() + " " + to.getBlockZ() + "]  T[" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]");
+	    
+	    if (plugin.psettings.warnEntry)
+		player.sendMessage(ChatColor.AQUA + "Cannot enter protected area");
 	}
     }
     
@@ -97,9 +181,9 @@ public class PSPlayerListener extends PlayerListener
 		    {
 			for (ArrayList<String> allowed : c.values())
 			{
-			    if(!allowed.contains(playerName))
+			    if (!allowed.contains(playerName))
 			    {
-				allowed.add(playerName);			    
+				allowed.add(playerName);
 				areaCount++;
 			    }
 			}
@@ -165,8 +249,9 @@ public class PSPlayerListener extends PlayerListener
 		}
 	    }
 	    
-	    player.sendMessage(ChatColor.AQUA + "/stone allow [player] - Add player to the allowed list");
-	    player.sendMessage(ChatColor.AQUA + "/stone remove [player] - Remove player from the allowed list");
+	    player.sendMessage(ChatColor.AQUA + "/pstone allow [player] - Add player to the allowed list");
+	    player.sendMessage(ChatColor.AQUA + "/pstone remove [player] - Remove player from the allowed list");
+	    player.sendMessage(ChatColor.AQUA + "/pstone allowall [player] - Add player to the allowed lists of all your protection stones");
 	}
     }
 }

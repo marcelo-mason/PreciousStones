@@ -25,29 +25,8 @@ import java.util.logging.Logger;
  */
 public class PreciousStones extends JavaPlugin
 {
-    // configuration
-    public boolean publicAllowedList;
-    public boolean logPlacement;
-    public boolean logRemoval;
-    public boolean logBypassRemoval;
-    public boolean notifyPlacement;
-    public boolean notifyRemoval;
-    public boolean notifyBypassRemoval;
-    public boolean warnPlaceOnProtected;
-    public boolean warnBreakOnProtected;
-    public boolean warnBreakAnothersStone;
-    
-    public List<Integer> unbreakableBlocks;
-    public List<Integer> protectionBlocks;
-    public List<Integer> protectionRadius;
-    public List<Integer> protectionExtraHeight;
-    public List<Boolean> protectionCanBuild;
-    
-    public List<String> bypassList;
-    public List<Integer> unprotectableBlocks;
-    
-    public int chunksInLargestProtectionArea;
-    
+    public PSettings psettings;       
+   
     public ProtectionManager pm = new ProtectionManager(this);
     public UnbreakableManager um = new UnbreakableManager(this);
     
@@ -78,85 +57,31 @@ public class PreciousStones extends JavaPlugin
     
     public void onEnable()
     {
+	log.info("[" + desc.getName() + "] version [" + desc.getVersion() + "] loaded");
+
 	// read settings
 	
 	loadConfiguration();
-	
-	// Register our events
-	
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Monitor, this);
-	
-	PluginDescriptionFile desc = this.getDescription();
-	log.info("[" + desc.getName() + "] version [" + desc.getVersion() + "] loaded");
-	
+
 	// load saved stones
 	
 	loadStones();
+	
+	// Register our events
+	
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_RIGHTCLICKED, blockListener, Priority.Normal, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
+	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
+	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
+	//getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Monitor, this);
     }
     
     public void onDisable()
     {
 	
-    }
-    
-    /**
-     * Load the configuration
-     */
-    public void loadConfiguration()
-    {
-	Configuration config = getConfiguration();
-	config.load();
-	
-	List<Integer> ublocks = new ArrayList<Integer>();
-	ublocks.add(41); // gold
-	
-	List<Integer> pblocks = new ArrayList<Integer>();
-	pblocks.add(57); // diamond
-	
-	List<Integer> pradius = new ArrayList<Integer>();
-	pradius.add(3); // diamond radius 3
-	
-	List<Integer> pextra = new ArrayList<Integer>();
-	pextra.add(3); // diamond extra height of 3
-	
-	List<Boolean> pcb = new ArrayList<Boolean>();
-	pcb.add(false); // disable building
-	
-	List<Integer> unprotectable = new ArrayList<Integer>();
-	List<String> bypass = new ArrayList<String>();
-	
-	unbreakableBlocks = config.getIntList("unbreakable.blocks", ublocks);
-	protectionBlocks = config.getIntList("protection.blocks", pblocks);
-	protectionRadius = config.getIntList("protection.radius", pradius);
-	protectionExtraHeight = config.getIntList("protected.extra-height", pextra);
-	protectionCanBuild = config.getBooleanList("protection.can-build", pcb);
-	logPlacement = config.getBoolean("log.placement", false);
-	logRemoval = config.getBoolean("log.removal", false);
-	logBypassRemoval = config.getBoolean("log.bypass-removal", true);
-	notifyPlacement = config.getBoolean("notify.placement", true);
-	notifyRemoval = config.getBoolean("notify.removal", true);
-	notifyBypassRemoval = config.getBoolean("notify.bypass-removal", true);
-	warnPlaceOnProtected = config.getBoolean("warn.place-on-protected-area", true);
-	warnBreakOnProtected = config.getBoolean("warn.break-on-protected-area", true);
-	warnBreakAnothersStone = config.getBoolean("warn.on-break-anothers-stone", true);
-	bypassList = config.getStringList("bypass-list", bypass);
-	unprotectableBlocks = config.getIntList("unprotectable-blocks", unprotectable);
-	publicAllowedList = config.getBoolean("public-allowed-list", false);
-	
-	// calculate the number of chunks that encompass the
-	// largest protection area offered
-	
-	int largestProtection = 0;
-	
-	for (int num : protectionRadius)
-	    if (num > largestProtection)
-		largestProtection = num;
-	
-	chunksInLargestProtectionArea = (int) Math.ceil(largestProtection / 16);
     }
     
     /**
@@ -215,6 +140,45 @@ public class PreciousStones extends JavaPlugin
 		    log.info("[" + desc.getName() + "] error: " + e.getMessage());
 	    }
 	}
+    }
+    
+    /**
+     * Load the configuration
+     */
+    @SuppressWarnings("unchecked")
+    public void loadConfiguration()
+    {
+	Configuration config = getConfiguration();
+	config.load();
+	
+	List<Integer> ublocks = new ArrayList<Integer>();
+	ublocks.add(41); // gold
+
+	List<Boolean> pcb = new ArrayList<Boolean>();
+	pcb.add(false); // disable building
+	
+	List<Integer> bypassb = new ArrayList<Integer>();
+	List<String> bypass = new ArrayList<String>();
+	
+	
+	psettings = new PSettings();
+	psettings.addProtectionStones((ArrayList)config.getProperty("protection"));
+
+	psettings.unbreakableBlocks = config.getIntList("unbreakable-blocks", ublocks);
+	psettings.logPlace = config.getBoolean("log.place", false);
+	psettings.logDestroy = config.getBoolean("log.destroy", false);
+	psettings.logBypassDestroy = config.getBoolean("log.bypass-removal", true);
+	psettings.notifyPlace = config.getBoolean("notify.place", true);
+	psettings.notifyDestroy = config.getBoolean("notify.destroy", true);
+	psettings.notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", true);
+	psettings.warnFire = config.getBoolean("warn.fire", true);
+	psettings.warnEntry = config.getBoolean("warn.entry", true);
+	psettings.warnPlace = config.getBoolean("warn.place", true);
+	psettings.warnDestroy = config.getBoolean("warn.destroy", true);
+	psettings.warnDestroyPStone = config.getBoolean("warn.destroy-pstone", true);
+	psettings.bypassPlayers = config.getStringList("bypass-players", bypass);
+	psettings.bypassBlocks = config.getIntList("bypass-blocks", bypassb);
+	psettings.publicAllowedList = config.getBoolean("public-allowed-list", false);
     }
     
     /**

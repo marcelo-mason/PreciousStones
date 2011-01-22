@@ -3,8 +3,8 @@ package com.bukkit.Phaed.PreciousStones;
 import java.util.HashMap;
 import java.util.ArrayList;
 import org.bukkit.Chunk;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
+import com.bukkit.Phaed.PreciousStones.PSettings.PStone;
 
 /**
  * Holds all protected stones
@@ -30,6 +30,22 @@ public class ProtectionManager implements java.io.Serializable
     }
     
     /**
+     * Returns the settings for a specific pstone block type
+     */
+    public PStone getPStoneSettings(Block block)
+    {
+	return plugin.psettings.getPStoneSettings(block);
+    }
+    
+    /**
+     * Check if a block is one of the proteciton types
+     */
+    public boolean isPStoneType(Block block)
+    {
+	return plugin.psettings.isPStoneType(block);
+    }
+    
+    /**
      * Total number of protection stones
      */
     public int count()
@@ -47,27 +63,13 @@ public class ProtectionManager implements java.io.Serializable
     /**
      * Looks for the block in our stone collection
      */
-    public boolean isStone(Block block)
+    public boolean isPStone(Block block)
     {
 	HashMap<Vector, ArrayList<String>> c = chunkLists.get(new Vector(block.getChunk()));
 	
 	if (c != null)
 	{
 	    return c.containsKey(new Vector(block));
-	}
-	
-	return false;
-    }
-    
-    /**
-     * Check if a block is one of the proteciton types
-     */
-    public boolean isType(Material type)
-    {
-	for (Integer t : plugin.protectionBlocks)
-	{
-	    if (type.getId() == t)
-		return true;
 	}
 	
 	return false;
@@ -83,7 +85,7 @@ public class ProtectionManager implements java.io.Serializable
 	
 	// if its unprotectable then return not protected
 	
-	for (int ub : plugin.unprotectableBlocks)
+	for (int ub : plugin.psettings.bypassBlocks)
 	{
 	    if (block.getTypeId() == ub)
 		return false;
@@ -91,7 +93,7 @@ public class ProtectionManager implements java.io.Serializable
 	
 	// look to see if the block is in a protected zone we are not allowed in
 	
-	HashMap<Vector, ArrayList<String>> c = getStonesInArea(block);
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
 	
 	if (c != null)
 	{
@@ -102,15 +104,13 @@ public class ProtectionManager implements java.io.Serializable
 		    // the player is in a protected area that he is not allowed
 		    // lets see if the area lets strangers build
 		    
-		    if (plugin.protectionBlocks.contains(block.getTypeId()))
+		    if (isPStoneType(block))
 		    {
-			int index = plugin.protectionBlocks.indexOf(block.getTypeId());
-			boolean canBuild = plugin.protectionCanBuild.get(index);
+			Block source = plugin.getServer().getWorlds()[0].getBlockAt(vec.x, vec.y, vec.z);
+			PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 			
-			return !canBuild;
+			return psettings != null && psettings.preventPlace;
 		    }
-		    
-		    return true;
 		}
 	    }
 	}
@@ -128,7 +128,7 @@ public class ProtectionManager implements java.io.Serializable
 	
 	// if its unprotectable then return not protected
 	
-	for (int ub : plugin.unprotectableBlocks)
+	for (int ub : plugin.psettings.bypassBlocks)
 	{
 	    if (block.getTypeId() == ub)
 		return false;
@@ -136,18 +136,124 @@ public class ProtectionManager implements java.io.Serializable
 	
 	// look to see if the block is in a protected zone we are not allowed in
 	
-	HashMap<Vector, ArrayList<String>> c = getStonesInArea(block);
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
 	
 	if (c != null)
 	{
 	    for (Vector vec : c.keySet())
 	    {
 		if (vec.isNear(block) && (playerName == null || !c.get(vec).contains(playerName)))
+		{
+		    // if in protected area get the settings for the source block and see if it
+		    // prevents destroy
+		    
+		    Block source = plugin.getServer().getWorlds()[0].getBlockAt(vec.x, vec.y, vec.z);
+		    PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
+		    
+		    return psettings != null && psettings.preventDestroy;
+		}
+	    }
+	}
+	
+	return false;
+    }
+    
+    /**
+     * Whether the block is in a break protected area belonging to somebody else (not playerName)
+     */
+    public boolean isProtectedAreaForFire(Block block, String playerName)
+    {
+	if (block == null)
+	    return false;
+	
+	// if its unprotectable then return not protected
+	
+	for (int ub : plugin.psettings.bypassBlocks)
+	{
+	    if (block.getTypeId() == ub)
+		return false;
+	}
+	
+	// look to see if the block is in a protected zone we are not allowed in
+	
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
+	
+	if (c != null)
+	{
+	    for (Vector vec : c.keySet())
+	    {
+		if (vec.isNear(block) && (playerName == null || !c.get(vec).contains(playerName)))
+		{
+		    // if in protected area get the settings for the source block and see if it
+		    // prevents destroy
+		    
+		    Block source = plugin.getServer().getWorlds()[0].getBlockAt(vec.x, vec.y, vec.z);
+		    PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
+		    
+		    return psettings != null && psettings.preventFire;
+		}
+	    }
+	}
+	
+	return false;
+    }
+    
+    /**
+     * Whether the block is in a break protected area belonging to somebody else (not playerName) Expands the protected area by one
+     */
+    public boolean isProtectedAreaForEntry(Block block, String playerName)
+    {
+	if (block == null)
+	    return false;
+	
+	// if its unprotectable then return not protected
+	
+	for (int ub : plugin.psettings.bypassBlocks)
+	{
+	    if (block.getTypeId() == ub)
+		return false;
+	}
+	
+	// look to see if the block is in a protected zone we are not allowed in
+	
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
+	
+	if (c != null)
+	{
+	    for (Vector vec : c.keySet())
+	    {
+		if (vec.isNearPlusOne(block) && (playerName == null || !c.get(vec).contains(playerName)))
 		    return true;
 	    }
 	}
 	
 	return false;
+    }
+    
+    /**
+     * Returns the block that is originating the pprotective field the player is standing up
+     */
+    public Block getProtectedAreaSource(Block block, String playerName)
+    {
+	if (block == null)
+	    return null;
+	
+	// look to see if the block is in a protected zone we are not allowed in
+	
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
+	
+	if (c != null)
+	{
+	    for (Vector vec : c.keySet())
+	    {
+		if (vec.isNear(block) && (playerName == null || !c.get(vec).contains(playerName)))
+		{
+		    return plugin.getServer().getWorlds()[0].getBlockAt(vec.getX(), vec.getY(), vec.getZ());
+		}
+	    }
+	}
+	
+	return null;
     }
     
     /**
@@ -158,7 +264,7 @@ public class ProtectionManager implements java.io.Serializable
 	if (block == null)
 	    return false;
 	
-	HashMap<Vector, ArrayList<String>> c = getStonesInArea(block);
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
 	
 	if (c != null)
 	{
@@ -177,7 +283,7 @@ public class ProtectionManager implements java.io.Serializable
      */
     public boolean addAllowed(Block block, String allowedName)
     {
-	HashMap<Vector, ArrayList<String>> c = getStonesInArea(block);
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
 	
 	if (c != null)
 	{
@@ -202,7 +308,7 @@ public class ProtectionManager implements java.io.Serializable
      */
     public boolean removeAllowed(Block block, String allowedName)
     {
-	HashMap<Vector, ArrayList<String>> c = getStonesInArea(block);
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
 	
 	if (c != null)
 	{
@@ -227,7 +333,7 @@ public class ProtectionManager implements java.io.Serializable
      */
     public ArrayList<String> getAllowedList(Block block)
     {
-	HashMap<Vector, ArrayList<String>> c = getStonesInArea(block);
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
 	
 	if (c != null)
 	{
@@ -251,17 +357,15 @@ public class ProtectionManager implements java.io.Serializable
 	if (block == null)
 	    return false;
 	
-	HashMap<Vector, ArrayList<String>> c = getStonesInArea(block);
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
 	
 	if (c != null)
 	{
-	    if (plugin.pm.isType(block.getType()))
+	    if (isPStoneType(block))
 	    {
-		int pindex = plugin.protectionBlocks.indexOf(block.getTypeId());
-		int radius = plugin.protectionRadius.get(pindex);
-		int extra = plugin.protectionExtraHeight.get(pindex);
+		PStone psettings = getPStoneSettings(block);
 		
-		Vector newStonevec = new Vector(block, radius, extra);
+		Vector newStonevec = new Vector(block, psettings.radius, psettings.extraHeight);
 		
 		for (Vector pstone : c.keySet())
 		{
@@ -345,9 +449,7 @@ public class ProtectionManager implements java.io.Serializable
     {
 	try
 	{
-	    int index = plugin.protectionBlocks.indexOf(block.getTypeId());
-	    int radius = plugin.protectionRadius.get(index);
-	    int extra = plugin.protectionExtraHeight.get(index);
+	    PStone psettings = getPStoneSettings(block);
 	    
 	    Vector cvec = new Vector(block.getChunk());
 	    HashMap<Vector, ArrayList<String>> c = chunkLists.get(cvec);
@@ -357,7 +459,7 @@ public class ProtectionManager implements java.io.Serializable
 		ArrayList<String> allowed = new ArrayList<String>();
 		allowed.add(owner);
 		
-		c.put(new Vector(block, radius, extra), allowed);
+		c.put(new Vector(block, psettings.radius, psettings.extraHeight), allowed);
 	    }
 	    else
 	    {
@@ -365,7 +467,7 @@ public class ProtectionManager implements java.io.Serializable
 		allowed.add(owner);
 		
 		HashMap<Vector, ArrayList<String>> newc = new HashMap<Vector, ArrayList<String>>();
-		newc.put(new Vector(block, radius, extra), allowed);
+		newc.put(new Vector(block, psettings.radius, psettings.extraHeight), allowed);
 		
 		chunkLists.put(cvec, newc);
 	    }
@@ -392,15 +494,15 @@ public class ProtectionManager implements java.io.Serializable
     /**
      * Returns the stones in the chunk and adjacent chunks
      */
-    private HashMap<Vector, ArrayList<String>> getStonesInArea(Block block)
+    private HashMap<Vector, ArrayList<String>> getPStonesInArea(Block block)
     {
 	HashMap<Vector, ArrayList<String>> out = new HashMap<Vector, ArrayList<String>>();
 	Chunk chunk = block.getChunk();
 	
-	int xlow = chunk.getX() - plugin.chunksInLargestProtectionArea;
-	int xhigh = chunk.getX() + plugin.chunksInLargestProtectionArea;
-	int zlow = chunk.getZ() - plugin.chunksInLargestProtectionArea;
-	int zhigh = chunk.getZ() + plugin.chunksInLargestProtectionArea;
+	int xlow = chunk.getX() - plugin.psettings.chunksInLargestProtectionArea;
+	int xhigh = chunk.getX() + plugin.psettings.chunksInLargestProtectionArea;
+	int zlow = chunk.getZ() - plugin.psettings.chunksInLargestProtectionArea;
+	int zhigh = chunk.getZ() + plugin.psettings.chunksInLargestProtectionArea;
 	
 	for (int x = xlow; x <= xhigh; x++)
 	{

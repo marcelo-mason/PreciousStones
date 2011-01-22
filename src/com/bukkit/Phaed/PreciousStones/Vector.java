@@ -2,6 +2,8 @@ package com.bukkit.Phaed.PreciousStones;
 
 import org.bukkit.block.Block;
 import org.bukkit.Chunk;
+import org.bukkit.entity.Player;
+import org.bukkit.Location;
 
 public class Vector implements java.io.Serializable
 {
@@ -53,7 +55,6 @@ public class Vector implements java.io.Serializable
 	this.maxx = x;
 	this.maxy = y;
 	this.maxz = z;
-
     }
     
     public Vector(Block block)
@@ -74,6 +75,19 @@ public class Vector implements java.io.Serializable
 	this.x = chunk.getX();
 	this.y = 0;
 	this.z = chunk.getZ();
+	this.minx = x;
+	this.miny = y;
+	this.minz = z;
+	this.maxx = x;
+	this.maxy = y;
+	this.maxz = z;
+    }
+    
+    public Vector(Location loc)
+    {
+	this.x = loc.getBlockX();
+	this.y = loc.getBlockY();
+	this.z = loc.getBlockZ();
 	this.minx = x;
 	this.miny = y;
 	this.minz = z;
@@ -104,9 +118,32 @@ public class Vector implements java.io.Serializable
 	int pz = block.getZ();
 	
 	if ( px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
-	{
 	    return true;
-	}
+	
+	return false;
+    }
+    
+    public boolean isNearPlusOne(Block block)
+    {	
+	int px = block.getX();
+	int py = block.getY();
+	int pz = block.getZ();
+	
+	if ( px >= minx -1 && px <= maxx + 1&& py >= miny - 1&& py <= maxy + 1&& pz >= minz - 1&& pz <= maxz + 1)
+	    return true;
+	
+	return false;
+    }
+    
+    
+    public boolean isNear(Player player)
+    {	
+	int px = player.getLocation().getBlockX();
+	int py = player.getLocation().getBlockY();
+	int pz = player.getLocation().getBlockZ();
+	
+	if ( px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
+	    return true;
 	
 	return false;
     }
@@ -118,10 +155,8 @@ public class Vector implements java.io.Serializable
 	int pz = vec.getZ();
 	
 	if ( px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
-	{
 	    return true;
-	}
-	
+
 	return false;
     }
     
