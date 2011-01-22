@@ -175,7 +175,7 @@ public class PreciousStones extends JavaPlugin
 	psettings.warnEntry = config.getBoolean("warn.entry", true);
 	psettings.warnPlace = config.getBoolean("warn.place", true);
 	psettings.warnDestroy = config.getBoolean("warn.destroy", true);
-	psettings.warnDestroyPStone = config.getBoolean("warn.destroy-pstone", true);
+	psettings.warnDestroyArea = config.getBoolean("warn.destroy-area", true);
 	psettings.bypassPlayers = config.getStringList("bypass-players", bypass);
 	psettings.bypassBlocks = config.getIntList("bypass-blocks", bypassb);
 	psettings.publicAllowedList = config.getBoolean("public-allowed-list", false);

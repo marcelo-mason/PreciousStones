@@ -174,6 +174,12 @@ public class PSPlayerListener extends PlayerListener
 		if (split[1].equals("allowall"))
 		{
 		    String playerName = split[2];
+		 
+		    if(playerName.equals(player.getName()))
+		    {
+			player.sendMessage(ChatColor.AQUA + "Cannot add yourself to your own lists");
+			return;
+		    }
 		    
 		    int areaCount = 0;
 		    
@@ -181,7 +187,7 @@ public class PSPlayerListener extends PlayerListener
 		    {
 			for (ArrayList<String> allowed : c.values())
 			{
-			    if (!allowed.contains(playerName))
+			    if (allowed.size() > 0 && allowed.get(0).equals(player.getName()) && !allowed.contains(playerName))
 			    {
 				allowed.add(playerName);
 				areaCount++;

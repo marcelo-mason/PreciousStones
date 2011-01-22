@@ -1,0 +1,24 @@
+    public-allowed-list - allow the allowed list (when you right click a protection block) to be visible to everyone, not just the owner
+    bypass-players - a list of players who will be able to bypass all protections
+    bypass-blocks - a list blocks types that anyone will be able to break or place inside force fields i.e. toches, etc..
+    unbreakable blocks - list of block types that you want to be unbreakable
+    protection blocks - list of blocks that you want to radiate protection
+    protection radius - a list of radiuses of protection for each of the block types above
+    protection extra-height - extra veritcal height for the protection fields
+    protection prevent fire - prevent players from starting fires in the protection zone
+    protection prevent entry - prevent players from entering the protection zone
+    protection prevent place - prevent players from placing blocks in a protection zone
+    protection prevent destroy - prevent players from destroying blocks in the protection zone
+    protection prevent explosions - prevent tnt and creeper explosions in the protection zone
+    log place - log all pstone block placements
+    log destroy - log all pstone block destructions
+    log bypass-destroy - log all bypass players pstone destruction
+    notify place - notify the player when he places a pstone
+    notify destroy - notify the player when he destroys a pstone
+    notify bypass - notify the bypass player when he destroys a pstone
+    warn fire - warn the player when he tries to start a fire on a fire restricted protected area
+    warn entry - warn the player when he tries to enter an entry restricted protected area
+    warn place - warn the player when he tries to pace a block on a place restricted protected area
+    warn destroy - warn the player when he tries to destroy a block in a destroy restricted rotected area
+    warn destroy-area - warn the player when he tries to place on a protected area
+

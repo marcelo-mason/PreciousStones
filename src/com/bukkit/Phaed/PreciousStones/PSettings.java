@@ -18,7 +18,7 @@ public class PSettings
     public boolean notifyBypassDestroy;
     public boolean warnPlace;
     public boolean warnDestroy;
-    public boolean warnDestroyPStone;
+    public boolean warnDestroyArea;
     public boolean warnEntry;
     public boolean warnFire;
     public List<Integer> unbreakableBlocks;

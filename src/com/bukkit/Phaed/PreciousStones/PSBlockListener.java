@@ -139,7 +139,7 @@ public class PSBlockListener extends BlockListener
 			
 			event.setCancelled(true);
 			
-			if (plugin.psettings.warnDestroyPStone)
+			if (plugin.psettings.warnDestroy)
 			    player.sendMessage(ChatColor.YELLOW + "Only the owner can remove this block");
 		    }
 		}
@@ -184,7 +184,7 @@ public class PSBlockListener extends BlockListener
 			
 			event.setCancelled(true);
 			
-			if (plugin.psettings.warnDestroyPStone)
+			if (plugin.psettings.warnDestroy)
 			    player.sendMessage(ChatColor.AQUA + "Only the owner can remove this block");
 		    }
 		}
@@ -197,7 +197,7 @@ public class PSBlockListener extends BlockListener
 		{
 		    event.setCancelled(true);
 		    
-		    if (plugin.psettings.warnDestroy)
+		    if (plugin.psettings.warnDestroyArea)
 			player.sendMessage(ChatColor.AQUA + "This area is protected");
 		}
 	    }
