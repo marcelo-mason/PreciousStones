@@ -365,26 +365,29 @@ public class ProtectionManager implements java.io.Serializable
 	    {
 		PStone psettings = getPStoneSettings(block);
 		
-		Vector newStonevec = new Vector(block, psettings.radius, psettings.extraHeight);
-		
-		for (Vector pstone : c.keySet())
+		if (psettings != null)
 		{
-		    // skip owned stones
+		    Vector newStonevec = new Vector(block, psettings.radius, psettings.extraHeight);
 		    
-		    if (c.get(pstone).contains(owner))
-			continue;
-		    
-		    // check to see if any of our stones live whithin the newly placed
-		    // protective block's area
-		    
-		    if (newStonevec.isNear(pstone))
-			return true;
-		    
-		    // check to see if were placing this stone whithin the area
-		    // of an already placed stone
-		    
-		    if (pstone.isNear(newStonevec))
-			return true;
+		    for (Vector pstone : c.keySet())
+		    {
+			// skip owned stones
+			
+			if (c.get(pstone).contains(owner))
+			    continue;
+			
+			// check to see if any of our stones live whithin the newly placed
+			// protective block's area
+			
+			if (newStonevec.isNear(pstone))
+			    return true;
+			
+			// check to see if were placing this stone whithin the area
+			// of an already placed stone
+			
+			if (pstone.isNear(newStonevec))
+			    return true;
+		    }
 		}
 	    }
 	    else
