@@ -1,24 +1,59 @@
-    public-allowed-list - allow the allowed list (when you right click a protection block) to be visible to everyone, not just the owner
-    bypass-players - a list of players who will be able to bypass all protections
-    bypass-blocks - a list blocks types that anyone will be able to break or place inside force fields i.e. toches, etc..
-    unbreakable blocks - list of block types that you want to be unbreakable
-    protection blocks - list of blocks that you want to radiate protection
-    protection radius - a list of radiuses of protection for each of the block types above
-    protection extra-height - extra veritcal height for the protection fields
-    protection prevent fire - prevent players from starting fires in the protection zone
-    protection prevent entry - prevent players from entering the protection zone
-    protection prevent place - prevent players from placing blocks in a protection zone
-    protection prevent destroy - prevent players from destroying blocks in the protection zone
-    protection prevent explosions - prevent tnt and creeper explosions in the protection zone
-    log place - log all pstone block placements
-    log destroy - log all pstone block destructions
-    log bypass-destroy - log all bypass players pstone destruction
-    notify place - notify the player when he places a pstone
-    notify destroy - notify the player when he destroys a pstone
-    notify bypass - notify the bypass player when he destroys a pstone
-    warn fire - warn the player when he tries to start a fire on a fire restricted protected area
-    warn entry - warn the player when he tries to enter an entry restricted protected area
-    warn place - warn the player when he tries to pace a block on a place restricted protected area
-    warn destroy - warn the player when he tries to destroy a block in a destroy restricted rotected area
-    warn destroy-area - warn the player when he tries to place on a protected area
+
+Configuration help:
+
+public-allowed-list - allow the allowed list (when you right click a protection block) to be visible to everyone, not just the owner
+bypass-players - a list of players who will be able to bypass all protections
+bypass-blocks - a list blocks types that anyone will be able to break or place inside force fields i.e. toches, etc..
+unbreakable blocks - list of block types that you want to be unbreakable
+protection:
+    blocks - list of blocks that you want to radiate protection
+    radius - a list of radiuses of protection for each of the block types above
+    extra-height - extra veritcal height for the protection fields
+    prevent fire - prevent players from starting fires in the protection zone
+    prevent entry - prevent players from entering the protection zone
+    prevent place - prevent players from placing blocks in a protection zone
+    prevent destroy - prevent players from destroying blocks in the protection zone
+    prevent explosions - prevent tnt and creeper explosions in the protection zone
+log:
+    place - log all pstone block placements
+    destroy - log all pstone block destructions
+    bypass-destroy - log all bypass players pstone destruction
+notify:
+    place - notify the player when he places a pstone
+    destroy - notify the player when he destroys a pstone
+    bypass - notify the bypass player when he destroys a pstone
+warn:
+    fire - warn the player when he tries to start a fire on a fire-restricted protected area
+    entry - warn the player when he tries to enter an entry-restricted protected area
+    place - warn the player when he tries to pace a block on a place-restricted protected area
+    destroy - warn a player when he tries to destroy a pstone that does not belong to him
+    destroy-area - warn the player when he tries to destroy a block inside a protected area
+    
+    
+TODO
+Protection radius decay, drops one block from radius every x days
+Enforced time between pickups
+Add option to protected areas to prevent entry by unallowed players
+
+Chest protection prevention:
+-Prevent pstone placement on top of chests (configurable)
+-Prevent placement of pstone if a chest would be protected by it (configurable)
+-Prevent chest placements inside pstone protected areas (configurable)
+
+
+Change Log
+1.3
++ No longer need to be holding an item to get the right-click notifications
++ Reorganized the configuration file to aleviate confusion
++ Added new configurable permissions for protected areas (explosion, place, block, fire, entry)
++ Added warnings for the new permissions
++ Fixed security hole where /allowall would allow on everyones blocks
+
+1.2
++ Allows any block types. Now instead of diamonds and gold we have, protection stones and + unbreakable stones
++ Optimized. lookups are now done at the chunk level
++ Prevents the placement of protective stone near unbreakable stones of different ownerPrevents the placement of unbreakable stone near protective stones of different owner
++ Right click on blocks tell you if they are protected
++ configurable logging options
++ configurable warn options
 
