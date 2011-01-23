@@ -69,14 +69,14 @@ public class PreciousStones extends JavaPlugin
 	
 	// Register our events
 	
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_RIGHTCLICKED, blockListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
-	//getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Highest, this);
     }
     
     public void onDisable()
@@ -174,11 +174,12 @@ public class PreciousStones extends JavaPlugin
 	psettings.warnFire = config.getBoolean("warn.fire", true);
 	psettings.warnEntry = config.getBoolean("warn.entry", true);
 	psettings.warnPlace = config.getBoolean("warn.place", true);
+	psettings.warnPvP = config.getBoolean("warn.pvp", true);
 	psettings.warnDestroy = config.getBoolean("warn.destroy", true);
 	psettings.warnDestroyArea = config.getBoolean("warn.destroy-area", true);
 	psettings.bypassPlayers = config.getStringList("bypass-players", bypass);
 	psettings.bypassBlocks = config.getIntList("bypass-blocks", bypassb);
-	psettings.publicAllowedList = config.getBoolean("public-allowed-list", false);
+	psettings.publicBlockDetails = config.getBoolean("public-block-details", false);
     }
     
     /**
@@ -188,6 +189,8 @@ public class PreciousStones extends JavaPlugin
     {
 	PluginDescriptionFile desc = this.getDescription();
 	ObjectOutputStream out;
+	
+	pm.flush();
 	
 	File unbreakableFile = new File(folder.getPath() + File.separator + "protection.bin");
 	
@@ -217,6 +220,8 @@ public class PreciousStones extends JavaPlugin
     {
 	PluginDescriptionFile desc = this.getDescription();
 	ObjectOutputStream out;
+	
+	um.flush();
 	
 	File protectionFile = new File(folder.getPath() + File.separator + "unbreakable.bin");
 	

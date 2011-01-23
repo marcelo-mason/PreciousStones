@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class PSettings
 {
-    public boolean publicAllowedList;
+    public boolean publicBlockDetails;
     public boolean logPlace;
     public boolean logDestroy;
     public boolean logBypassDestroy;
@@ -20,6 +21,7 @@ public class PSettings
     public boolean warnDestroy;
     public boolean warnDestroyArea;
     public boolean warnEntry;
+    public boolean warnPvP;
     public boolean warnFire;
     public List<Integer> unbreakableBlocks;
     public List<String> bypassPlayers;
@@ -60,6 +62,15 @@ public class PSettings
 	chunksInLargestProtectionArea = (int) Math.max(Math.ceil(((largestProtection * 2.0) + 1.0) / 16.0), 1);
     }
     
+
+    /**
+     * Whetehr the player is a bypass player
+     */
+    public boolean isBypass(Player player)
+    {
+	return bypassPlayers.contains(player.getName());
+    }
+    
     /**
      * Returns the settings for a specific pstone block type
      */
@@ -93,6 +104,7 @@ public class PSettings
 	public boolean preventPlace = false;
 	public boolean preventDestroy = false;
 	public boolean preventExplosions = false;
+	public boolean preventPvP = false;
 	public boolean preventEntry = false;
 
 	@SuppressWarnings("unchecked")
@@ -123,6 +135,9 @@ public class PSettings
 
 	    if (map.containsKey("prevent-explosions") && Helper.isBoolean(map.get("prevent-explosions")))
 		preventExplosions = (Boolean) map.get("prevent-explosions");    
+
+	    if (map.containsKey("prevent-pvp") && Helper.isBoolean(map.get("prevent-pvp")))
+		preventPvP = (Boolean) map.get("prevent-pvp");    
 
 	    if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
 		preventEntry = (Boolean) map.get("prevent-entry");    

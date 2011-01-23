@@ -2,8 +2,13 @@ package com.bukkit.Phaed.PreciousStones;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.LinkedList;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
 import com.bukkit.Phaed.PreciousStones.PSettings.PStone;
 
 /**
@@ -14,19 +19,21 @@ import com.bukkit.Phaed.PreciousStones.PSettings.PStone;
 public class ProtectionManager implements java.io.Serializable
 {
     static final long serialVersionUID = -1L;
-    
+
     protected final HashMap<Vector, HashMap<Vector, ArrayList<String>>> chunkLists = new HashMap<Vector, HashMap<Vector, ArrayList<String>>>();
     
+    private Queue<Vector> deletionQueue;
     private transient PreciousStones plugin;
     
     public ProtectionManager(PreciousStones plugin)
     {
-	this.plugin = plugin;
+	initiate(plugin);
     }
     
     public void initiate(PreciousStones plugin)
     {
 	this.plugin = plugin;
+	this.deletionQueue =  new LinkedList<Vector>();
     }
     
     /**
@@ -46,6 +53,20 @@ public class ProtectionManager implements java.io.Serializable
     }
     
     /**
+     * Process pending deletions
+     */
+    public void flush()
+    {
+	while(deletionQueue.size() > 0)
+	{
+	    Vector vec = deletionQueue.poll();
+	    
+	    for (HashMap<Vector, ArrayList<String>> c : chunkLists.values())
+		c.remove(vec);	    
+	}
+   }
+    
+    /**
      * Total number of protection stones
      */
     public int count()
@@ -53,9 +74,7 @@ public class ProtectionManager implements java.io.Serializable
 	int size = 0;
 	
 	for (HashMap<Vector, ArrayList<String>> c : chunkLists.values())
-	{
 	    size += c.size();
-	}
 	
 	return size;
     }
@@ -68,10 +87,8 @@ public class ProtectionManager implements java.io.Serializable
 	HashMap<Vector, ArrayList<String>> c = chunkLists.get(new Vector(block.getChunk()));
 	
 	if (c != null)
-	{
 	    return c.containsKey(new Vector(block));
-	}
-	
+
 	return false;
     }
     
@@ -231,7 +248,7 @@ public class ProtectionManager implements java.io.Serializable
     }
     
     /**
-     * Returns the block that is originating the pprotective field the player is standing up
+     * Returns the block that is originating the protective field the block is in
      */
     public Block getProtectedAreaSource(Block block, String playerName)
     {
@@ -247,13 +264,50 @@ public class ProtectionManager implements java.io.Serializable
 	    for (Vector vec : c.keySet())
 	    {
 		if (vec.isNear(block) && (playerName == null || !c.get(vec).contains(playerName)))
-		{
 		    return plugin.getServer().getWorlds()[0].getBlockAt(vec.getX(), vec.getY(), vec.getZ());
-		}
 	    }
 	}
 	
 	return null;
+    }
+    
+    /**
+     * Returns the vector that is originating the protective field the block is in
+     */
+    public Vector getProtectedAreaVec(Block block, String playerName)
+    {
+	if (block == null)
+	    return null;
+	
+	// look to see if the block is in a protected zone we are not allowed in
+	
+	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
+	
+	if (c != null)
+	{
+	    for (Vector vec : c.keySet())
+	    {
+		if (vec.isNear(block) && (playerName == null || !c.get(vec).contains(playerName)))
+		    return vec;
+	    }
+	}
+	
+	return null;
+    }
+    
+    
+    /**
+     * Get PStone Settings of area the player is in, null if player not in area
+     */
+    public PStone getPlayerAreaSettings(Player player)
+    {
+	if (player == null)
+	    return null;
+	
+	Location loc = player.getLocation();
+	Block block = plugin.getServer().getWorlds()[0].getBlockAt(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+	Block source = plugin.pm.getProtectedAreaSource(block, player.getName());
+	return source != null ? plugin.pm.getPStoneSettings(source) : null;
     }
     
     /**
@@ -486,12 +540,7 @@ public class ProtectionManager implements java.io.Serializable
      */
     public void releaseStone(Block block)
     {
-	HashMap<Vector, ArrayList<String>> c = chunkLists.get(new Vector(block.getChunk()));
-	
-	if (c != null)
-	{
-	    c.remove(new Vector(block));
-	}
+	deletionQueue.add(new Vector(block));
     }
     
     /**

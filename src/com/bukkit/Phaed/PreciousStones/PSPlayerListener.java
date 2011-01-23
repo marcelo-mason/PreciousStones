@@ -41,7 +41,9 @@ public class PSPlayerListener extends PlayerListener
 	    if (plugin.pm.isPStone(block))
 		player.sendMessage(ChatColor.AQUA + "Owner: " + plugin.pm.getOwner(block));
 	    
-	    if (plugin.psettings.publicAllowedList || plugin.pm.getOwner(block).equals(player.getName()))
+	    boolean isOwner = plugin.pm.getOwner(block).equals(player.getName());
+	    
+	    if (plugin.psettings.publicBlockDetails || isOwner)
 	    {
 		ArrayList<String> allowed = plugin.pm.getAllowedList(block);
 		
@@ -60,6 +62,38 @@ public class PSPlayerListener extends PlayerListener
 		}
 		
 		player.sendMessage(ChatColor.AQUA + "Allowed: " + out.substring(2));
+		
+		if (isOwner)
+		{
+		    PStone psettings = plugin.psettings.getPStoneSettings(block);
+		    
+		    if (psettings.radius > 0)
+			player.sendMessage(ChatColor.AQUA + "Dimensions: " + psettings.radius + "x" + (psettings.radius + psettings.extraHeight) + "x" + psettings.radius);
+		    
+		    String protection = "";
+		    
+		    if (psettings.preventDestroy)
+			protection += ", destroy";
+		    
+		    if (psettings.preventPlace)
+			protection += ", place";
+		    
+		    if (psettings.preventEntry)
+			protection += ", entry";
+		    
+		    if (psettings.preventExplosions)
+			protection += ", explosions";
+		    
+		    if (psettings.preventFire)
+			protection += ", fire";
+		    
+		    if (psettings.preventPvP)
+			protection += ", pvp";
+		    
+		    protection = protection.length() > 0 ? protection.substring(2) : "none";
+		    
+		    player.sendMessage(ChatColor.AQUA + "Protection: " + protection);
+		}
 	    }
 	}
 	else if (plugin.um.isType(block))
@@ -84,7 +118,7 @@ public class PSPlayerListener extends PlayerListener
 	if ((new Vector(from).equals(new Vector(to))))
 	    return;
 	
-	Player player = event.getPlayer();	
+	Player player = event.getPlayer();
 	Location loc = player.getLocation();
 	Block block = plugin.getServer().getWorlds()[0].getBlockAt(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 	Block source = plugin.pm.getProtectedAreaSource(block, player.getName());
@@ -96,7 +130,7 @@ public class PSPlayerListener extends PlayerListener
 	    int sz = 0;
 	    int x = 0;
 	    int z = 0;
-    
+	    
 	    if (to.getBlockX() > source.getX())
 		sx = -1;
 	    else if (to.getBlockX() < source.getX())
@@ -114,13 +148,13 @@ public class PSPlayerListener extends PlayerListener
 		z = -1;
 	    else
 		z = 1;
-
+	    
 	    // dont teleport if running away from force field source
 	    
-	    if(sx != 0 && sx == x)
+	    if (sx != 0 && sx == x)
 		return;
 	    
-	    if(sz != 0 && sz == z)
+	    if (sz != 0 && sz == z)
 		return;
 	    
 	    block = plugin.getServer().getWorlds()[0].getBlockAt(from.getBlockX(), from.getBlockY(), from.getBlockZ());
@@ -141,7 +175,7 @@ public class PSPlayerListener extends PlayerListener
 		count++;
 	    }
 	    
-	    if(count == 0)
+	    if (count == 0)
 		return;
 	    
 	    loc = block.getLocation();
@@ -174,8 +208,8 @@ public class PSPlayerListener extends PlayerListener
 		if (split[1].equals("allowall"))
 		{
 		    String playerName = split[2];
-		 
-		    if(playerName.equals(player.getName()))
+		    
+		    if (playerName.equals(player.getName()))
 		    {
 			player.sendMessage(ChatColor.AQUA + "Cannot add yourself to your own lists");
 			return;
@@ -195,61 +229,104 @@ public class PSPlayerListener extends PlayerListener
 			}
 		    }
 		    
-		    if (areaCount > 0)
+		    if (areaCount == 0)
+			player.sendMessage(ChatColor.AQUA + "No protection areas found");
+		    
+		    player.sendMessage(ChatColor.AQUA + playerName + " added to " + areaCount + " allowed lists");
+		    plugin.writeProtection();
+		    
+		    return;
+		}
+		else if (split[1].equals("allow"))
+		{
+		    if (!plugin.pm.isOwnVector(block, player.getName()))
+			player.sendMessage(ChatColor.AQUA + "You must be standing in a protected area you own");
+		    
+		    String playerName = split[2];
+		    
+		    if (plugin.pm.addAllowed(block, playerName))
 		    {
-			player.sendMessage(ChatColor.AQUA + playerName + " added to " + areaCount + " allowed lists");
+			player.sendMessage(ChatColor.AQUA + playerName + " added to allowed list");
 			plugin.writeProtection();
 		    }
 		    else
 		    {
-			player.sendMessage(ChatColor.AQUA + "No protection areas found");
-		    }
-		    
-		    return;
-		}
-		if (split[1].equals("allow"))
-		{
-		    if (plugin.pm.isOwnVector(block, player.getName()))
-		    {
-			String playerName = split[2];
-			
-			if (plugin.pm.addAllowed(block, playerName))
-			{
-			    player.sendMessage(ChatColor.AQUA + playerName + " added to allowed list");
-			    plugin.writeProtection();
-			}
-			else
-			{
-			    player.sendMessage(ChatColor.AQUA + playerName + " is already on the list");
-			}
-		    }
-		    else
-		    {
-			player.sendMessage(ChatColor.AQUA + "You must be standing in a protected area you own");
+			player.sendMessage(ChatColor.AQUA + playerName + " is already on the list");
 		    }
 		    
 		    return;
 		}
 		else if (split[1].equals("remove"))
 		{
-		    if (plugin.pm.isOwnVector(block, player.getName()))
+		    if (!plugin.pm.isOwnVector(block, player.getName()))
+			player.sendMessage(ChatColor.AQUA + "You must be standing in a protected area you own");
+		    
+		    String playerName = split[2];
+		    
+		    if (plugin.pm.removeAllowed(block, playerName))
 		    {
-			String playerName = split[2];
-			
-			if (plugin.pm.removeAllowed(block, playerName))
-			{
-			    player.sendMessage(ChatColor.AQUA + playerName + " was removed from the allowed list");
-			    plugin.writeProtection();
-			}
-			else
-			{
-			    player.sendMessage(ChatColor.RED + playerName + " not found or is the last player on the list");
-			}
+			player.sendMessage(ChatColor.AQUA + playerName + " was removed from the allowed list");
+			plugin.writeProtection();
 		    }
 		    else
 		    {
-			player.sendMessage(ChatColor.AQUA + "You must be standing in a protected area you own");
+			player.sendMessage(ChatColor.RED + playerName + " not found or is the last player on the list");
 		    }
+		    
+		    return;
+		}
+	    }
+	    else if (split.length == 2)
+	    {
+		if (split[1].equals("clean"))
+		{
+		    int pcount = 0;
+		    int ucount = 0;
+		    
+		    for (HashMap<Vector, ArrayList<String>> c : plugin.pm.chunkLists.values())
+		    {
+			for (Vector vec : c.keySet())
+			{
+			    Block pstone = plugin.getServer().getWorlds()[0].getBlockAt(vec.getX(), vec.getY(), vec.getZ());
+			    
+			    PSettings ps = new PSettings();
+			    
+			    if(pstone != null && !ps.isPStoneType(pstone))
+			    {
+				plugin.pm.releaseStone(pstone);
+				pcount++;
+			    }
+			}
+		    }
+		    
+		    for (HashMap<Vector, String> c : plugin.um.chunkLists.values())
+		    {
+			for (Vector vec : c.keySet())
+			{
+			    Block pstone = plugin.getServer().getWorlds()[0].getBlockAt(vec.getX(), vec.getY(), vec.getZ());
+			    
+			    if(pstone != null && !plugin.um.isType(pstone))
+			    {
+				plugin.um.releaseStone(pstone);
+				ucount++;
+			    }
+			}
+		    }
+		    
+		    if(ucount > 0)
+		    {
+			plugin.writeUnbreakable();
+			player.sendMessage(ChatColor.AQUA + "" + ucount + " unbreakable stones cleaned");
+		    }
+		    
+		    if(pcount > 0)
+		    {
+			plugin.writeProtection();
+			player.sendMessage(ChatColor.AQUA + "" + pcount + " protection stones cleaned");		    
+		    }
+		    
+		    if(ucount == 0 && pcount == 0)
+			player.sendMessage(ChatColor.AQUA + "Nothing to clean");		    
 		    
 		    return;
 		}
@@ -257,7 +334,12 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    player.sendMessage(ChatColor.AQUA + "/pstone allow [player] - Add player to the allowed list");
 	    player.sendMessage(ChatColor.AQUA + "/pstone remove [player] - Remove player from the allowed list");
-	    player.sendMessage(ChatColor.AQUA + "/pstone allowall [player] - Add player to the allowed lists of all your protection stones");
+	    player.sendMessage(ChatColor.AQUA + "/pstone allowall [player] - All player to all your pstones");
+	    
+	    if (plugin.psettings.isBypass(player))
+	    {
+		player.sendMessage(ChatColor.RED + "/pstone clean - Delete force-fields without sources");
+	    }
 	}
     }
 }

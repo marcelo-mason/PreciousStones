@@ -1,6 +1,9 @@
 package com.bukkit.Phaed.PreciousStones;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.bukkit.block.Block;
 
 /**
@@ -11,19 +14,36 @@ import org.bukkit.block.Block;
 public class UnbreakableManager implements java.io.Serializable
 {
     static final long serialVersionUID = -1L;
+    
     protected final HashMap<Vector, HashMap<Vector, String>> chunkLists = new HashMap<Vector, HashMap<Vector, String>>();
     
+    private Queue<Vector> deletionQueue;
     private transient PreciousStones plugin;
     
     public UnbreakableManager(PreciousStones plugin)
     {
-	this.plugin = plugin;
+	initiate(plugin);
     }
     
     public void initiate(PreciousStones plugin)
     {
 	this.plugin = plugin;
+	this.deletionQueue =  new LinkedList<Vector>();
     }
+    
+    /**
+     * Process pending deletions
+     */
+    public void flush()
+    {
+	while(deletionQueue.size() > 0)
+	{
+	    Vector vec = deletionQueue.poll();
+	    
+	    for (HashMap<Vector, String> c : chunkLists.values())
+		c.remove(vec);	    
+	}
+   }
     
     /**
      * Total number of unbreakable stones
@@ -33,10 +53,8 @@ public class UnbreakableManager implements java.io.Serializable
 	int size = 0;
 	
 	for (HashMap<Vector, String> c : chunkLists.values())
-	{
 	    size += c.size();
-	}
-	
+
 	return size;
     }
     
@@ -48,9 +66,7 @@ public class UnbreakableManager implements java.io.Serializable
 	HashMap<Vector, String> c = chunkLists.get(new Vector(block.getChunk()));
 	
 	if (c != null)
-	{
 	    return c.containsKey(new Vector(block));
-	}
 	
 	return false;
     }
@@ -77,9 +93,7 @@ public class UnbreakableManager implements java.io.Serializable
 	HashMap<Vector, String> c = chunkLists.get(new Vector(block.getChunk()));
 	
 	if (c != null)
-	{
 	    return name.equals(c.get(new Vector(block)));
-	}
 	
 	return false;
     }
@@ -92,9 +106,7 @@ public class UnbreakableManager implements java.io.Serializable
 	HashMap<Vector, String> c = chunkLists.get(new Vector(block.getChunk()));
 	
 	if (c != null)
-	{
 	    return c.get(new Vector(block));
-	}
 	
 	return "";
     }
@@ -125,11 +137,6 @@ public class UnbreakableManager implements java.io.Serializable
      */
     public void releaseStone(Block block)
     {
-	HashMap<Vector, String> c = chunkLists.get(new Vector(block.getChunk()));
-	
-	if (c != null)
-	{
-	    c.remove(new Vector(block));
-	}
+	deletionQueue.add(new Vector(block));
     }    
 }

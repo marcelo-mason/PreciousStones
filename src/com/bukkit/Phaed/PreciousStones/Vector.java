@@ -10,12 +10,13 @@ public class Vector implements java.io.Serializable
     static final long serialVersionUID = -4L;
     
     protected final int x, y, z;
-    protected final int minx;
-    protected final int miny;
-    protected final int minz;
-    protected final int maxx;
-    protected final int maxy;
-    protected final int maxz;
+    protected int minx;
+    protected int miny;
+    protected int minz;
+    protected int maxx;
+    protected int maxy;
+    protected int maxz;
+    protected int extraHeight;
     protected int radius;
     
     public Vector(int x, int y, int z, int radius, int extraHeight)
@@ -29,6 +30,7 @@ public class Vector implements java.io.Serializable
 	this.maxx = x + radius;
 	this.maxy = y + radius + extraHeight;
 	this.maxz = z + radius;
+	this.extraHeight = extraHeight;
     }
     
     public Vector(Block block, int radius, int extraHeight)
@@ -42,6 +44,7 @@ public class Vector implements java.io.Serializable
 	this.maxx = x + radius;
 	this.maxy = y + radius + extraHeight;
 	this.maxz = z + radius;
+	this.extraHeight = extraHeight;
     }
     
     public Vector(int x, int y, int z)
@@ -109,6 +112,17 @@ public class Vector implements java.io.Serializable
     public int getZ()
     {
 	return this.z;
+    }
+    
+    public void setRadius(int newRadius)
+    {
+	this.radius = newRadius;	
+	this.minx = x - radius;
+	this.miny = y - radius;
+	this.minz = z - radius;
+	this.maxx = x + radius;
+	this.maxy = y + radius + this.extraHeight;
+	this.maxz = z + radius;
     }
     
     public boolean isNear(Block block)
