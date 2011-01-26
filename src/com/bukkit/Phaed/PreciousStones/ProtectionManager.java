@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.LinkedList;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 import com.bukkit.Phaed.PreciousStones.PSettings.PStone;
@@ -202,8 +203,7 @@ public class ProtectionManager implements java.io.Serializable
     }
     
     /**
-     * Whether the block is in a entry protected area belonging to somebody else (not playerName) 
-     * Expands the protected area by one to more acurately predict block entry
+     * Whether the block is in a entry protected area belonging to somebody else (not playerName) Expands the protected area by one to more acurately predict block entry
      */
     public boolean isEntryProtected(Block block, String playerName)
     {
@@ -234,12 +234,12 @@ public class ProtectionManager implements java.io.Serializable
     /**
      * Returns the block that is originating the protective field the block is in
      */
-    public HashMap<Vector,Block> getSourcePStone(Block block, String playerName)
+    public HashMap<Vector, Block> getSourcePStone(Block block, String playerName)
     {
 	if (block == null)
 	    return null;
 	
-	HashMap<Vector,Block> blocks = new HashMap<Vector, Block>();
+	HashMap<Vector, Block> blocks = new HashMap<Vector, Block>();
 	
 	// look to see if the block is in a protected zone we are not allowed in
 	
@@ -254,6 +254,31 @@ public class ProtectionManager implements java.io.Serializable
 	    }
 	}
 	
+	return blocks;
+    }
+    
+    /**
+     * Returns all pstones of the type
+     */
+    public HashMap<Vector, Block> getPStonesOfType(int typeid, World world)
+    {
+	HashMap<Vector, Block> blocks = new HashMap<Vector, Block>();
+	
+	// look to see if the block is in a protected zone we are not allowed in
+	
+	for (HashMap<Vector, ArrayList<String>> c : chunkLists.values())
+	{
+	    if (c != null)
+	    {
+		for (Vector vec : c.keySet())
+		{	
+		    Block block = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
+		    
+		    if (block.getTypeId() == typeid)
+			blocks.put(vec, block);
+		}
+	    }
+	}
 	return blocks;
     }
     

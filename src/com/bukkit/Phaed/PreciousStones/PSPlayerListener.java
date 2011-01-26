@@ -43,69 +43,13 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    if (plugin.pm.isPStone(block))
 	    {
-		player.sendMessage(ChatColor.AQUA + "Owner: " + plugin.pm.getOwner(block));
+		player.sendMessage(ChatColor.AQUA + "Owned by " + plugin.pm.getOwner(block));
 		
 		// show details if owner or details are public
 		
 		if (plugin.pm.isOwner(block, player.getName()) || plugin.psettings.publicBlockDetails)
 		{
-		    ArrayList<String> allowed = plugin.pm.getAllowedList(block);
-		    
-		    String out = "";
-		    
-		    if (allowed.size() > 1)
-		    {
-			for (int i = 1; i < allowed.size(); i++)
-			{
-			    out += ", " + allowed.get(i);
-			}
-		    }
-		    else
-		    {
-			out = "  none";
-		    }
-		    
-		    player.sendMessage(ChatColor.AQUA + "Allowed: " + out.substring(2));
-		    
-		    PStone psettings = plugin.psettings.getPStoneSettings(block);
-		    
-		    if (psettings.radius > 0)
-			player.sendMessage(ChatColor.AQUA + "Dimensions: " + psettings.radius + "x" + (psettings.radius + psettings.extraHeight) + "x" + psettings.radius);
-		    
-		    String protection = "";
-		    
-		    if (psettings.preventDestroy)
-			protection += ", destroy";
-		    
-		    if (psettings.preventPlace)
-			protection += ", place";
-		    
-		    if (psettings.preventEntry)
-			protection += ", entry";
-		    
-		    if (psettings.preventExplosions)
-			protection += ", explosions";
-		    
-		    if (psettings.preventFire)
-			protection += ", fire";
-		    
-		    if (psettings.preventPvP)
-			protection += ", pvp";
-		    
-		    if (protection.length() > 0)
-		    {
-			player.sendMessage(ChatColor.AQUA + "Protection: " + protection.substring(2));
-		    }
-		    
-		    String properties = "";
-		    
-		    if (psettings.instantHeal)
-			properties += ", heal";
-		    
-		    if (properties.length() > 0)
-		    {
-			player.sendMessage(ChatColor.AQUA + "Properties: " + properties.substring(2));
-		    }
+		    displayDetails(block, player);
 		}
 	    }
 	}
@@ -114,14 +58,80 @@ public class PSPlayerListener extends PlayerListener
 	    // if its an indestructable block say it
 	    
 	    if (plugin.um.isPStone(block))
-		player.sendMessage(ChatColor.YELLOW + "Owner: " + plugin.um.getOwner(block));
+		player.sendMessage(ChatColor.YELLOW + "Ownned by " + plugin.um.getOwner(block));
 	}
 	else
 	{
 	    // if protected area show message
 	    
 	    if (plugin.pm.isDestroyProtected(block, null))
-		player.sendMessage(ChatColor.AQUA + "Protected");
+	    {
+		if (plugin.psettings.publicBlockDetails)
+		    displayDetails(block, player);
+		else
+		    player.sendMessage(ChatColor.AQUA + "Protected");
+	    }
+	}
+    }
+    
+    private void displayDetails(Block block, Player player)
+    {
+	ArrayList<String> allowed = plugin.pm.getAllowedList(block);
+	
+	String out = "";
+	
+	if (allowed.size() > 1)
+	{
+	    for (int i = 1; i < allowed.size(); i++)
+	    {
+		out += ", " + allowed.get(i);
+	    }
+	}
+	else
+	{
+	    out = "  none";
+	}
+	
+	player.sendMessage(ChatColor.AQUA + "Allowed: " + out.substring(2));
+	
+	PStone psettings = plugin.psettings.getPStoneSettings(block);
+	
+	if (psettings.radius > 0)
+	    player.sendMessage(ChatColor.AQUA + "Dimensions: " + psettings.radius + "x" + (psettings.radius + psettings.extraHeight) + "x" + psettings.radius);
+	
+	String protection = "";
+	
+	if (psettings.preventDestroy)
+	    protection += ", destroy";
+	
+	if (psettings.preventPlace)
+	    protection += ", place";
+	
+	if (psettings.preventEntry)
+	    protection += ", entry";
+	
+	if (psettings.preventExplosions)
+	    protection += ", explosions";
+	
+	if (psettings.preventFire)
+	    protection += ", fire";
+	
+	if (psettings.preventPvP)
+	    protection += ", pvp";
+	
+	if (protection.length() > 0)
+	{
+	    player.sendMessage(ChatColor.AQUA + "Protection: " + protection.substring(2));
+	}
+	
+	String properties = "";
+	
+	if (psettings.instantHeal)
+	    properties += ", heal";
+	
+	if (properties.length() > 0)
+	{
+	    player.sendMessage(ChatColor.AQUA + "Properties: " + properties.substring(2));
 	}
     }
     
@@ -190,7 +200,7 @@ public class PSPlayerListener extends PlayerListener
 	    PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 	    
 	    // check if hes in a slow damage area
-
+	    
 	    if (psettings != null && !hasSlowDamaged && psettings.slowDamage)
 	    {
 		player.setHealth(player.getHealth() - 1);
@@ -364,6 +374,33 @@ public class PSPlayerListener extends PlayerListener
 		    
 		    return;
 		}
+		else if (split[1].equals("delete") && plugin.psettings.isBypass(player))
+		{
+		    if (Helper.isInteger(split[2]))
+		    {
+			HashMap<Vector, Block> sources = plugin.pm.getPStonesOfType(Integer.parseInt(split[2]), player.getWorld());
+			
+			int count = 0;
+			
+			for (Vector vec : sources.keySet())
+			{
+			    if (vec != null)
+			    {
+				plugin.pm.releaseStone(vec);
+				count++;
+			    }
+			}
+			
+			plugin.writeProtection();
+			
+			player.sendMessage(ChatColor.AQUA + "" + count + " protective fields removed from pstones of type " + split[2]);
+			
+			if (plugin.psettings.logBypassDelete)
+			    PreciousStones.log.info("PreciousStones: " + count + " protective field removed from pstones of type " + split[2] + " by " + player.getName());
+			
+			return;
+		    }
+		}
 	    }
 	    else if (split.length == 2)
 	    {
@@ -469,6 +506,7 @@ public class PSPlayerListener extends PlayerListener
 	    {
 		player.sendMessage(ChatColor.RED + "/pstone info - Get info for the field youre standing on");
 		player.sendMessage(ChatColor.RED + "/pstone delete - Delete the protective field(s) you're standing on");
+		player.sendMessage(ChatColor.RED + "/pstone delete [blockid] - Delete the protective field(s) from this type");
 	    }
 	}
     }
