@@ -26,6 +26,7 @@ public class PSPlayerListener extends PlayerListener
 	this.plugin = plugin;
     }
     
+    @Override
     public void onPlayerItem(PlayerItemEvent event)
     {
 	Player player = event.getPlayer();
@@ -34,37 +35,38 @@ public class PSPlayerListener extends PlayerListener
 	if (block == null || player == null)
 	    return;
 	
-	// check if its one of the stones
+	// check if its one of the stones types
 	
 	if (plugin.pm.isPStoneType(block))
 	{
+	    // look to see if its one of the psones in our collection
+	    
 	    if (plugin.pm.isPStone(block))
-		player.sendMessage(ChatColor.AQUA + "Owner: " + plugin.pm.getOwner(block));
-	    
-	    boolean isOwner = plugin.pm.getOwner(block).equals(player.getName());
-	    
-	    if (plugin.psettings.publicBlockDetails || isOwner)
 	    {
-		ArrayList<String> allowed = plugin.pm.getAllowedList(block);
+		player.sendMessage(ChatColor.AQUA + "Owner: " + plugin.pm.getOwner(block));
 		
-		String out = "";
+		// show details if owner or details are public
 		
-		if (allowed.size() > 1)
+		if (plugin.pm.isOwner(block, player.getName()) || plugin.psettings.publicBlockDetails)
 		{
-		    for (int i = 1; i < allowed.size(); i++)
+		    ArrayList<String> allowed = plugin.pm.getAllowedList(block);
+		    
+		    String out = "";
+		    
+		    if (allowed.size() > 1)
 		    {
-			out += ", " + allowed.get(i);
+			for (int i = 1; i < allowed.size(); i++)
+			{
+			    out += ", " + allowed.get(i);
+			}
 		    }
-		}
-		else
-		{
-		    out = "  none";
-		}
-		
-		player.sendMessage(ChatColor.AQUA + "Allowed: " + out.substring(2));
-		
-		if (isOwner)
-		{
+		    else
+		    {
+			out = "  none";
+		    }
+		    
+		    player.sendMessage(ChatColor.AQUA + "Allowed: " + out.substring(2));
+		    
 		    PStone psettings = plugin.psettings.getPStoneSettings(block);
 		    
 		    if (psettings.radius > 0)
@@ -90,14 +92,27 @@ public class PSPlayerListener extends PlayerListener
 		    if (psettings.preventPvP)
 			protection += ", pvp";
 		    
-		    protection = protection.length() > 0 ? protection.substring(2) : "none";
+		    if (protection.length() > 0)
+		    {
+			player.sendMessage(ChatColor.AQUA + "Protection: " + protection.substring(2));
+		    }
 		    
-		    player.sendMessage(ChatColor.AQUA + "Protection: " + protection);
+		    String properties = "";
+		    
+		    if (psettings.instantHeal)
+			properties += ", heal";
+		    
+		    if (properties.length() > 0)
+		    {
+			player.sendMessage(ChatColor.AQUA + "Properties: " + properties.substring(2));
+		    }
 		}
 	    }
 	}
 	else if (plugin.um.isType(block))
 	{
+	    // if its an indestructable block say it
+	    
 	    if (plugin.um.isPStone(block))
 		player.sendMessage(ChatColor.YELLOW + "Owner: " + plugin.um.getOwner(block));
 	}
@@ -105,11 +120,12 @@ public class PSPlayerListener extends PlayerListener
 	{
 	    // if protected area show message
 	    
-	    if (plugin.pm.isProtected(block, null))
+	    if (plugin.pm.isDestroyProtected(block, null))
 		player.sendMessage(ChatColor.AQUA + "Protected");
 	}
     }
     
+    @Override
     public void onPlayerMove(PlayerMoveEvent event)
     {
 	Location from = event.getFrom();
@@ -121,77 +137,144 @@ public class PSPlayerListener extends PlayerListener
 	Player player = event.getPlayer();
 	Location loc = player.getLocation();
 	Block block = plugin.getServer().getWorlds()[0].getBlockAt(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-	Block source = plugin.pm.getProtectedAreaSource(block, player.getName());
-	PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 	
-	if (psettings != null && psettings.preventEntry)
+	// all fields including ones owned by player
+	
+	HashMap<Vector, Block> sources = plugin.pm.getSourcePStone(block, null);
+	
+	boolean hasInstantHealed = false;
+	boolean hasSlowHealed = false;
+	
+	for (Block source : sources.values())
 	{
-	    int sx = 0;
-	    int sz = 0;
-	    int x = 0;
-	    int z = 0;
+	    PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 	    
-	    if (to.getBlockX() > source.getX())
-		sx = -1;
-	    else if (to.getBlockX() < source.getX())
-		sx = 1;
-	    else if (to.getBlockZ() > source.getZ())
-		sz = -1;
-	    else
-		sz = 1;
+	    // check if hes in a instant heal area
 	    
-	    if (to.getBlockX() > from.getBlockX())
-		x = -1;
-	    else if (to.getBlockX() < from.getBlockX())
-		x = 1;
-	    else if (to.getBlockZ() > from.getBlockZ())
-		z = -1;
-	    else
-		z = 1;
-	    
-	    // dont teleport if running away from force field source
-	    
-	    if (sx != 0 && sx == x)
-		return;
-	    
-	    if (sz != 0 && sz == z)
-		return;
-	    
-	    block = plugin.getServer().getWorlds()[0].getBlockAt(from.getBlockX(), from.getBlockY(), from.getBlockZ());
-	    
-	    int count = 0;
-	    
-	    while (plugin.pm.isProtectedAreaForEntry(block, player.getName()))
+	    if (psettings != null && !hasInstantHealed && psettings.instantHeal)
 	    {
-		block = plugin.getServer().getWorlds()[0].getBlockAt(block.getX() + x, block.getY() + (count > 30 ? 2 : 0), block.getZ() + z);
-		
-		// failsafe
-		
-		if (count > 150)
+		if (player.getHealth() < 20)
 		{
-		    block = plugin.getServer().getWorlds()[0].getBlockAt(0, 70, 0);
-		    break;
+		    player.setHealth(20);
+		    
+		    if (plugin.psettings.warnInstantHeal)
+			player.sendMessage(ChatColor.AQUA + "You have been healed.");
 		}
-		count++;
+		hasInstantHealed = true;
 	    }
 	    
-	    if (count == 0)
-		return;
+	    // check if hes in a slow heal area
 	    
-	    loc = block.getLocation();
-	    loc.setX(loc.getBlockX() + .5);
-	    loc.setZ(loc.getBlockZ() + .5);
-	    loc.setPitch(player.getLocation().getPitch());
-	    loc.setYaw(player.getLocation().getYaw());
+	    if (psettings != null && !hasSlowHealed && psettings.slowHeal)
+	    {
+		if (player.getHealth() < 20)
+		{
+		    player.setHealth(player.getHealth() + 1);
+		    
+		    if (plugin.psettings.warnSlowHeal)
+			player.sendMessage(ChatColor.AQUA + "Health +1");
+		}
+		hasSlowHealed = true;
+	    }
+	}
+	
+	// only fields not owned by player
+	
+	sources = plugin.pm.getSourcePStone(block, player.getName());
+	
+	boolean hasSlowDamaged = false;
+	boolean hasBlockedEntry = false;
+	
+	for (Block source : sources.values())
+	{
+	    PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 	    
-	    player.teleportTo(loc);
-	    PreciousStones.log.info("F[" + from.getBlockX() + " " + from.getBlockY() + " " + from.getBlockZ() + "] TO[" + to.getBlockX() + " " + to.getBlockY() + " " + to.getBlockZ() + "]  T[" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]");
+	    // check if hes in a slow damage area
+
+	    if (psettings != null && !hasSlowDamaged && psettings.slowDamage)
+	    {
+		player.setHealth(player.getHealth() - 1);
+		
+		if (plugin.psettings.warnSlowDamage)
+		    player.sendMessage(ChatColor.RED + "Health -1");
+		
+		hasSlowDamaged = true;
+	    }
 	    
-	    if (plugin.psettings.warnEntry)
-		player.sendMessage(ChatColor.AQUA + "Cannot enter protected area");
+	    // check if hes in a block entry area
+	    
+	    if (psettings != null && !hasBlockedEntry && psettings.preventEntry)
+	    {
+		int sx = 0;
+		int sz = 0;
+		int x = 0;
+		int z = 0;
+		
+		if (to.getBlockX() > source.getX())
+		    sx = -1;
+		else if (to.getBlockX() < source.getX())
+		    sx = 1;
+		else if (to.getBlockZ() > source.getZ())
+		    sz = -1;
+		else
+		    sz = 1;
+		
+		if (to.getBlockX() > from.getBlockX())
+		    x = -1;
+		else if (to.getBlockX() < from.getBlockX())
+		    x = 1;
+		else if (to.getBlockZ() > from.getBlockZ())
+		    z = -1;
+		else
+		    z = 1;
+		
+		// dont teleport if running away from force field source
+		
+		if (sx != 0 && sx == x)
+		    continue;
+		
+		if (sz != 0 && sz == z)
+		    continue;
+		
+		block = plugin.getServer().getWorlds()[0].getBlockAt(from.getBlockX(), from.getBlockY(), from.getBlockZ());
+		
+		int count = 0;
+		
+		while (plugin.pm.isEntryProtected(block, player.getName()))
+		{
+		    block = plugin.getServer().getWorlds()[0].getBlockAt(block.getX() + x, block.getY() + (count > 30 ? 2 : 0), block.getZ() + z);
+		    
+		    // failsafe
+		    
+		    if (count > 150)
+		    {
+			block = plugin.getServer().getWorlds()[0].getBlockAt(0, 70, 0);
+			break;
+		    }
+		    count++;
+		}
+		
+		if (count == 0)
+		    continue;
+		
+		loc = block.getLocation();
+		loc.setX(loc.getBlockX() + .5);
+		loc.setZ(loc.getBlockZ() + .5);
+		loc.setPitch(player.getLocation().getPitch());
+		loc.setYaw(player.getLocation().getYaw());
+		
+		player.teleportTo(loc);
+		PreciousStones.log.info("F[" + from.getBlockX() + " " + from.getBlockY() + " " + from.getBlockZ() + "] TO[" + to.getBlockX() + " " + to.getBlockY() + " " + to.getBlockZ() + "]  T[" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "]");
+		
+		if (plugin.psettings.warnEntry)
+		    player.sendMessage(ChatColor.AQUA + "Cannot enter protected area");
+		
+		hasBlockedEntry = true;
+	    }
 	}
     }
     
+    @Override
     public void onPlayerCommand(PlayerChatEvent event)
     {
 	String[] split = event.getMessage().split(" ");
@@ -239,8 +322,11 @@ public class PSPlayerListener extends PlayerListener
 		}
 		else if (split[1].equals("allow"))
 		{
-		    if (!plugin.pm.isOwnVector(block, player.getName()))
+		    if (!plugin.pm.isInVector(block, player.getName()))
+		    {
 			player.sendMessage(ChatColor.AQUA + "You must be standing in a protected area you own");
+			return;
+		    }
 		    
 		    String playerName = split[2];
 		    
@@ -258,8 +344,11 @@ public class PSPlayerListener extends PlayerListener
 		}
 		else if (split[1].equals("remove"))
 		{
-		    if (!plugin.pm.isOwnVector(block, player.getName()))
+		    if (!plugin.pm.isInVector(block, player.getName()))
+		    {
 			player.sendMessage(ChatColor.AQUA + "You must be standing in a protected area you own");
+			return;
+		    }
 		    
 		    String playerName = split[2];
 		    
@@ -278,55 +367,95 @@ public class PSPlayerListener extends PlayerListener
 	    }
 	    else if (split.length == 2)
 	    {
-		if (split[1].equals("clean"))
+		if (split[1].equals("delete") && plugin.psettings.isBypass(player))
 		{
-		    int pcount = 0;
-		    int ucount = 0;
+		    HashMap<Vector, Block> sources = plugin.pm.getSourcePStone(block, null);
 		    
-		    for (HashMap<Vector, ArrayList<String>> c : plugin.pm.chunkLists.values())
+		    for (Vector vec : sources.keySet())
 		    {
-			for (Vector vec : c.keySet())
+			if (vec != null)
 			{
-			    Block pstone = plugin.getServer().getWorlds()[0].getBlockAt(vec.getX(), vec.getY(), vec.getZ());
+			    plugin.pm.releaseStone(vec);
+			    plugin.writeProtection();
 			    
-			    PSettings ps = new PSettings();
+			    player.sendMessage(ChatColor.AQUA + "Protective field removed from pstone at " + vec.toString());
 			    
-			    if(pstone != null && !ps.isPStoneType(pstone))
-			    {
-				plugin.pm.releaseStone(pstone);
-				pcount++;
-			    }
+			    if (plugin.psettings.logBypassDelete)
+				PreciousStones.log.info("PreciousStones: Protective field removed from pstone by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
+			}
+			else
+			{
+			    player.sendMessage(ChatColor.AQUA + "You must be standing in a protected area");
 			}
 		    }
+		    return;
+		}
+		else if (split[1].equals("info") && plugin.psettings.isBypass(player))
+		{
+		    HashMap<Vector, Block> sources = plugin.pm.getSourcePStone(block, null);
 		    
-		    for (HashMap<Vector, String> c : plugin.um.chunkLists.values())
+		    for (Vector vec : sources.keySet())
 		    {
-			for (Vector vec : c.keySet())
+			if (vec != null)
 			{
-			    Block pstone = plugin.getServer().getWorlds()[0].getBlockAt(vec.getX(), vec.getY(), vec.getZ());
+			    Block vecblock = plugin.getServer().getWorlds()[0].getBlockAt(vec.x, vec.y, vec.z);
 			    
-			    if(pstone != null && !plugin.um.isType(pstone))
+			    player.sendMessage(ChatColor.AQUA + "Owner: " + plugin.pm.getOwner(vecblock));
+			    
+			    // show details if owner or details are public
+			    
+			    ArrayList<String> allowed = plugin.pm.getAllowedList(vecblock);
+			    
+			    String out = "";
+			    
+			    if (allowed.size() > 1)
 			    {
-				plugin.um.releaseStone(pstone);
-				ucount++;
+				for (int i = 1; i < allowed.size(); i++)
+				{
+				    out += ", " + allowed.get(i);
+				}
 			    }
+			    else
+			    {
+				out = "  none";
+			    }
+			    
+			    player.sendMessage(ChatColor.AQUA + "Allowed: " + out.substring(2));
+			    
+			    PStone psettings = plugin.psettings.getPStoneSettings(vecblock);
+			    
+			    if (psettings.radius > 0)
+				player.sendMessage(ChatColor.AQUA + "Dimensions: " + psettings.radius + "x" + (psettings.radius + psettings.extraHeight) + "x" + psettings.radius);
+			    
+			    player.sendMessage(ChatColor.AQUA + "Location: " + vec.toString());
+			    
+			    String protection = "";
+			    
+			    if (psettings.preventDestroy)
+				protection += ", destroy";
+			    
+			    if (psettings.preventPlace)
+				protection += ", place";
+			    
+			    if (psettings.preventEntry)
+				protection += ", entry";
+			    
+			    if (psettings.preventExplosions)
+				protection += ", explosions";
+			    
+			    if (psettings.preventFire)
+				protection += ", fire";
+			    
+			    if (psettings.preventPvP)
+				protection += ", pvp";
+			    
+			    protection = protection.length() > 0 ? protection.substring(2) : "none";
+			    
+			    player.sendMessage(ChatColor.AQUA + "Protection: " + protection);
 			}
+			
+			continue;
 		    }
-		    
-		    if(ucount > 0)
-		    {
-			plugin.writeUnbreakable();
-			player.sendMessage(ChatColor.AQUA + "" + ucount + " unbreakable stones cleaned");
-		    }
-		    
-		    if(pcount > 0)
-		    {
-			plugin.writeProtection();
-			player.sendMessage(ChatColor.AQUA + "" + pcount + " protection stones cleaned");		    
-		    }
-		    
-		    if(ucount == 0 && pcount == 0)
-			player.sendMessage(ChatColor.AQUA + "Nothing to clean");		    
 		    
 		    return;
 		}
@@ -338,7 +467,8 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    if (plugin.psettings.isBypass(player))
 	    {
-		player.sendMessage(ChatColor.RED + "/pstone clean - Delete force-fields without sources");
+		player.sendMessage(ChatColor.RED + "/pstone info - Get info for the field youre standing on");
+		player.sendMessage(ChatColor.RED + "/pstone delete - Delete the protective field(s) you're standing on");
 	    }
 	}
     }

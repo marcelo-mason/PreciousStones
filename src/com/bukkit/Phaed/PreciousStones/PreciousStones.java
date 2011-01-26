@@ -15,7 +15,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
-
 import java.util.logging.Logger;
 
 /**
@@ -25,8 +24,8 @@ import java.util.logging.Logger;
  */
 public class PreciousStones extends JavaPlugin
 {
-    public PSettings psettings;       
-   
+    public PSettings psettings;
+    
     public ProtectionManager pm = new ProtectionManager(this);
     public UnbreakableManager um = new UnbreakableManager(this);
     
@@ -58,11 +57,11 @@ public class PreciousStones extends JavaPlugin
     public void onEnable()
     {
 	log.info("[" + desc.getName() + "] version [" + desc.getVersion() + "] loaded");
-
+	
 	// read settings
 	
 	loadConfiguration();
-
+	
 	// load saved stones
 	
 	loadStones();
@@ -70,11 +69,11 @@ public class PreciousStones extends JavaPlugin
 	// Register our events
 	
 	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
+	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Highest, this);
     }
@@ -153,24 +152,27 @@ public class PreciousStones extends JavaPlugin
 	
 	List<Integer> ublocks = new ArrayList<Integer>();
 	ublocks.add(41); // gold
-
+	
 	List<Boolean> pcb = new ArrayList<Boolean>();
 	pcb.add(false); // disable building
 	
 	List<Integer> bypassb = new ArrayList<Integer>();
 	List<String> bypass = new ArrayList<String>();
 	
-	
 	psettings = new PSettings();
-	psettings.addProtectionStones((ArrayList)config.getProperty("protection"));
-
+	psettings.addProtectionStones((ArrayList) config.getProperty("protection"));
+	
 	psettings.unbreakableBlocks = config.getIntList("unbreakable-blocks", ublocks);
 	psettings.logPlace = config.getBoolean("log.place", false);
 	psettings.logDestroy = config.getBoolean("log.destroy", false);
-	psettings.logBypassDestroy = config.getBoolean("log.bypass-removal", true);
+	psettings.logBypassDelete = config.getBoolean("log.bypass-delete", true);
+	psettings.logBypassDestroy = config.getBoolean("log.bypass-destroy", true);
 	psettings.notifyPlace = config.getBoolean("notify.place", true);
 	psettings.notifyDestroy = config.getBoolean("notify.destroy", true);
 	psettings.notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", true);
+	psettings.warnInstantHeal = config.getBoolean("warn.instant-heal", true);
+	psettings.warnSlowHeal = config.getBoolean("warn.slow-heal", true);
+	psettings.warnSlowDamage = config.getBoolean("warn.slow-damage", true);
 	psettings.warnFire = config.getBoolean("warn.fire", true);
 	psettings.warnEntry = config.getBoolean("warn.entry", true);
 	psettings.warnPlace = config.getBoolean("warn.place", true);

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.LinkedList;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import com.bukkit.Phaed.PreciousStones.PSettings.PStone;
 
@@ -19,7 +17,7 @@ import com.bukkit.Phaed.PreciousStones.PSettings.PStone;
 public class ProtectionManager implements java.io.Serializable
 {
     static final long serialVersionUID = -1L;
-
+    
     protected final HashMap<Vector, HashMap<Vector, ArrayList<String>>> chunkLists = new HashMap<Vector, HashMap<Vector, ArrayList<String>>>();
     
     private Queue<Vector> deletionQueue;
@@ -33,7 +31,7 @@ public class ProtectionManager implements java.io.Serializable
     public void initiate(PreciousStones plugin)
     {
 	this.plugin = plugin;
-	this.deletionQueue =  new LinkedList<Vector>();
+	this.deletionQueue = new LinkedList<Vector>();
     }
     
     /**
@@ -57,14 +55,14 @@ public class ProtectionManager implements java.io.Serializable
      */
     public void flush()
     {
-	while(deletionQueue.size() > 0)
+	while (deletionQueue.size() > 0)
 	{
 	    Vector vec = deletionQueue.poll();
 	    
 	    for (HashMap<Vector, ArrayList<String>> c : chunkLists.values())
-		c.remove(vec);	    
+		c.remove(vec);
 	}
-   }
+    }
     
     /**
      * Total number of protection stones
@@ -88,25 +86,22 @@ public class ProtectionManager implements java.io.Serializable
 	
 	if (c != null)
 	    return c.containsKey(new Vector(block));
-
+	
 	return false;
     }
     
     /**
      * Whether the block is in a build proteced area owned by someone else
      */
-    public boolean isBuildProtected(Block block, String playerName)
+    public boolean isPlaceProtected(Block block, String playerName)
     {
 	if (block == null)
 	    return false;
 	
 	// if its unprotectable then return not protected
 	
-	for (int ub : plugin.psettings.bypassBlocks)
-	{
-	    if (block.getTypeId() == ub)
-		return false;
-	}
+	if (plugin.psettings.isBypass(block))
+	    return false;
 	
 	// look to see if the block is in a protected zone we are not allowed in
 	
@@ -121,13 +116,10 @@ public class ProtectionManager implements java.io.Serializable
 		    // the player is in a protected area that he is not allowed
 		    // lets see if the area lets strangers build
 		    
-		    if (isPStoneType(block))
-		    {
-			Block source = plugin.getServer().getWorlds()[0].getBlockAt(vec.x, vec.y, vec.z);
-			PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
-			
-			return psettings != null && psettings.preventPlace;
-		    }
+		    Block source = block.getWorld().getBlockAt(vec.x, vec.y, vec.z);
+		    PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
+		    
+		    return psettings != null && psettings.preventPlace;
 		}
 	    }
 	}
@@ -138,18 +130,15 @@ public class ProtectionManager implements java.io.Serializable
     /**
      * Whether the block is in a break protected area belonging to somebody else (not playerName)
      */
-    public boolean isProtected(Block block, String playerName)
+    public boolean isDestroyProtected(Block block, String playerName)
     {
 	if (block == null)
 	    return false;
 	
 	// if its unprotectable then return not protected
 	
-	for (int ub : plugin.psettings.bypassBlocks)
-	{
-	    if (block.getTypeId() == ub)
-		return false;
-	}
+	if (plugin.psettings.isBypass(block))
+	    return false;
 	
 	// look to see if the block is in a protected zone we are not allowed in
 	
@@ -164,7 +153,7 @@ public class ProtectionManager implements java.io.Serializable
 		    // if in protected area get the settings for the source block and see if it
 		    // prevents destroy
 		    
-		    Block source = plugin.getServer().getWorlds()[0].getBlockAt(vec.x, vec.y, vec.z);
+		    Block source = block.getWorld().getBlockAt(vec.x, vec.y, vec.z);
 		    PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 		    
 		    return psettings != null && psettings.preventDestroy;
@@ -176,20 +165,17 @@ public class ProtectionManager implements java.io.Serializable
     }
     
     /**
-     * Whether the block is in a break protected area belonging to somebody else (not playerName)
+     * Whether the block is in a fire protected area belonging to somebody else (not playerName)
      */
-    public boolean isProtectedAreaForFire(Block block, String playerName)
+    public boolean isFireProtected(Block block, String playerName)
     {
 	if (block == null)
 	    return false;
 	
 	// if its unprotectable then return not protected
 	
-	for (int ub : plugin.psettings.bypassBlocks)
-	{
-	    if (block.getTypeId() == ub)
-		return false;
-	}
+	if (plugin.psettings.isBypass(block))
+	    return false;
 	
 	// look to see if the block is in a protected zone we are not allowed in
 	
@@ -202,9 +188,9 @@ public class ProtectionManager implements java.io.Serializable
 		if (vec.isNear(block) && (playerName == null || !c.get(vec).contains(playerName)))
 		{
 		    // if in protected area get the settings for the source block and see if it
-		    // prevents destroy
+		    // prevents fire
 		    
-		    Block source = plugin.getServer().getWorlds()[0].getBlockAt(vec.x, vec.y, vec.z);
+		    Block source = block.getWorld().getBlockAt(vec.x, vec.y, vec.z);
 		    PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 		    
 		    return psettings != null && psettings.preventFire;
@@ -216,20 +202,18 @@ public class ProtectionManager implements java.io.Serializable
     }
     
     /**
-     * Whether the block is in a break protected area belonging to somebody else (not playerName) Expands the protected area by one
+     * Whether the block is in a entry protected area belonging to somebody else (not playerName) 
+     * Expands the protected area by one to more acurately predict block entry
      */
-    public boolean isProtectedAreaForEntry(Block block, String playerName)
+    public boolean isEntryProtected(Block block, String playerName)
     {
 	if (block == null)
 	    return false;
 	
 	// if its unprotectable then return not protected
 	
-	for (int ub : plugin.psettings.bypassBlocks)
-	{
-	    if (block.getTypeId() == ub)
-		return false;
-	}
+	if (plugin.psettings.isBypass(block))
+	    return false;
 	
 	// look to see if the block is in a protected zone we are not allowed in
 	
@@ -250,10 +234,12 @@ public class ProtectionManager implements java.io.Serializable
     /**
      * Returns the block that is originating the protective field the block is in
      */
-    public Block getProtectedAreaSource(Block block, String playerName)
+    public HashMap<Vector,Block> getSourcePStone(Block block, String playerName)
     {
 	if (block == null)
 	    return null;
+	
+	HashMap<Vector,Block> blocks = new HashMap<Vector, Block>();
 	
 	// look to see if the block is in a protected zone we are not allowed in
 	
@@ -264,56 +250,17 @@ public class ProtectionManager implements java.io.Serializable
 	    for (Vector vec : c.keySet())
 	    {
 		if (vec.isNear(block) && (playerName == null || !c.get(vec).contains(playerName)))
-		    return plugin.getServer().getWorlds()[0].getBlockAt(vec.getX(), vec.getY(), vec.getZ());
+		    blocks.put(vec, block.getWorld().getBlockAt(vec.getX(), vec.getY(), vec.getZ()));
 	    }
 	}
 	
-	return null;
-    }
-    
-    /**
-     * Returns the vector that is originating the protective field the block is in
-     */
-    public Vector getProtectedAreaVec(Block block, String playerName)
-    {
-	if (block == null)
-	    return null;
-	
-	// look to see if the block is in a protected zone we are not allowed in
-	
-	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
-	
-	if (c != null)
-	{
-	    for (Vector vec : c.keySet())
-	    {
-		if (vec.isNear(block) && (playerName == null || !c.get(vec).contains(playerName)))
-		    return vec;
-	    }
-	}
-	
-	return null;
-    }
-    
-    
-    /**
-     * Get PStone Settings of area the player is in, null if player not in area
-     */
-    public PStone getPlayerAreaSettings(Player player)
-    {
-	if (player == null)
-	    return null;
-	
-	Location loc = player.getLocation();
-	Block block = plugin.getServer().getWorlds()[0].getBlockAt(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-	Block source = plugin.pm.getProtectedAreaSource(block, player.getName());
-	return source != null ? plugin.pm.getPStoneSettings(source) : null;
+	return blocks;
     }
     
     /**
      * Whether the player is standing in a protected area of his
      */
-    public boolean isOwnVector(Block block, String playerName)
+    public boolean isInVector(Block block, String playerName)
     {
 	if (block == null)
 	    return false;
@@ -394,9 +341,7 @@ public class ProtectionManager implements java.io.Serializable
 	    for (Vector vec : c.keySet())
 	    {
 		if (vec.isNear(block))
-		{
 		    return c.get(vec);
-		}
 	    }
 	}
 	
@@ -476,7 +421,9 @@ public class ProtectionManager implements java.io.Serializable
 	
 	if (c != null)
 	{
-	    if (c.get(new Vector(block)).size() > 0)
+	    Vector vec = new Vector(block);
+	    
+	    if (c.get(vec) != null && c.get(vec).size() > 0)
 		return name.equals(c.get(new Vector(block)).get(0));
 	}
 	
@@ -492,7 +439,9 @@ public class ProtectionManager implements java.io.Serializable
 	
 	if (c != null)
 	{
-	    if (c.get(new Vector(block)).size() > 0)
+	    Vector vec = new Vector(block);
+	    
+	    if (c.get(vec) != null && c.get(vec).size() > 0)
 		return c.get(new Vector(block)).get(0);
 	}
 	
@@ -544,6 +493,14 @@ public class ProtectionManager implements java.io.Serializable
     }
     
     /**
+     * Remove stones from the collection
+     */
+    public void releaseStone(Vector vec)
+    {
+	deletionQueue.add(vec);
+    }
+    
+    /**
      * Returns the stones in the chunk and adjacent chunks
      */
     private HashMap<Vector, ArrayList<String>> getPStonesInArea(Block block)
@@ -560,7 +517,7 @@ public class ProtectionManager implements java.io.Serializable
 	{
 	    for (int z = zlow; z <= zhigh; z++)
 	    {
-		Chunk chnk = plugin.getServer().getWorlds()[0].getChunkAt(x, z);
+		Chunk chnk = block.getWorld().getChunkAt(x, z);
 		if (chunk != null)
 		{
 		    HashMap<Vector, ArrayList<String>> c = chunkLists.get(new Vector(chnk));

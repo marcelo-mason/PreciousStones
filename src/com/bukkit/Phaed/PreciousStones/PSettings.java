@@ -13,10 +13,14 @@ public class PSettings
     public boolean publicBlockDetails;
     public boolean logPlace;
     public boolean logDestroy;
+    public boolean logBypassDelete;
     public boolean logBypassDestroy;
     public boolean notifyPlace;
     public boolean notifyDestroy;
     public boolean notifyBypassDestroy;
+    public boolean warnInstantHeal;
+    public boolean warnSlowHeal;
+    public boolean warnSlowDamage;
     public boolean warnPlace;
     public boolean warnDestroy;
     public boolean warnDestroyArea;
@@ -60,8 +64,7 @@ public class PSettings
 	}
 	
 	chunksInLargestProtectionArea = (int) Math.max(Math.ceil(((largestProtection * 2.0) + 1.0) / 16.0), 1);
-    }
-    
+    }    
 
     /**
      * Whetehr the player is a bypass player
@@ -69,6 +72,14 @@ public class PSettings
     public boolean isBypass(Player player)
     {
 	return bypassPlayers.contains(player.getName());
+    }
+    
+    /**
+     * Whetehr the block is a bypass type
+     */
+    public boolean isBypass(Block block)
+    {
+	return bypassPlayers.contains(block.getTypeId());
     }
     
     /**
@@ -106,6 +117,9 @@ public class PSettings
 	public boolean preventExplosions = false;
 	public boolean preventPvP = false;
 	public boolean preventEntry = false;
+	public boolean instantHeal = false;
+	public boolean slowHeal = false;
+	public boolean slowDamage = false;
 
 	@SuppressWarnings("unchecked")
 	public PStone(LinkedHashMap map)
@@ -141,6 +155,15 @@ public class PSettings
 
 	    if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
 		preventEntry = (Boolean) map.get("prevent-entry");    
+
+	    if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
+		instantHeal = (Boolean) map.get("instant-heal");    
+
+	    if (map.containsKey("slow-heal") && Helper.isBoolean(map.get("slow-heal")))
+		slowHeal = (Boolean) map.get("slow-heal");    
+
+	    if (map.containsKey("slow-damage") && Helper.isBoolean(map.get("slow-damage")))
+		slowDamage = (Boolean) map.get("slow-damage");
 	}
     }
 }

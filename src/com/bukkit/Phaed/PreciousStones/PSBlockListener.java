@@ -23,15 +23,16 @@ public class PSBlockListener extends BlockListener
 	this.plugin = plugin;
     }
     
+    @Override
     public void onBlockIgnite(BlockIgniteEvent event)
     {
 	Block block = event.getBlock();
 	Player player = event.getPlayer();
 	
-	if(block == null || player == null)
+	if (block == null || player == null)
 	    return;
 	
-	if (plugin.pm.isProtectedAreaForFire(block, player.getName()))
+	if (plugin.pm.isFireProtected(block, player.getName()))
 	{
 	    event.setCancelled(true);
 	    
@@ -40,10 +41,14 @@ public class PSBlockListener extends BlockListener
 	}
     }
     
+    @Override
     public void onBlockDamage(BlockDamageEvent event)
     {
 	Block block = event.getBlock();
 	Player player = event.getPlayer();
+	
+	if (block == null || player == null)
+	    return;
 	
 	if (event.getDamageLevel() == BlockDamageLevel.BROKEN)
 	{
@@ -51,15 +56,27 @@ public class PSBlockListener extends BlockListener
 	    
 	    if (plugin.um.isType(block))
 	    {
-		// check if we have the block type registered as a pstone
+		// look for the block in our pstone collection
 		
 		if (plugin.um.isPStone(block))
 		{
 		    // if owner or bypass permission
 		    
-		    boolean isOwner = plugin.um.isOwner(block, player.getName());
-		    
-		    if (isOwner || plugin.psettings.isBypass(player))
+		    if (plugin.um.isOwner(block, player.getName()))
+		    {
+			// remove the block from stones list
+			
+			plugin.um.releaseStone(block);
+			plugin.writeUnbreakable();
+			
+			if (plugin.psettings.notifyDestroy)
+			    player.sendMessage(ChatColor.YELLOW + "Unbreakable block removed");
+			
+			if (plugin.psettings.logDestroy)
+			    PreciousStones.log.info("PreciousStones: Unbreakable block [" + block.getType() + "] removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
+			
+		    }
+		    else if (plugin.psettings.isBypass(player))
 		    {
 			String owner = plugin.um.getOwner(block);
 			
@@ -68,22 +85,11 @@ public class PSBlockListener extends BlockListener
 			plugin.um.releaseStone(block);
 			plugin.writeUnbreakable();
 			
-			if (isOwner)
-			{
-			    if (plugin.psettings.notifyDestroy)
-				player.sendMessage(ChatColor.YELLOW + "Unbreakable block removed");
-			    
-			    if (plugin.psettings.logDestroy)
-				PreciousStones.log.info("PreciousStones: Unbreakable block [" + block.getType() + "] removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
-			}
-			else
-			{
-			    if (plugin.psettings.notifyBypassDestroy)
-				player.sendMessage(ChatColor.YELLOW + owner + "'s unbreakable block removed");
-			    
-			    if (plugin.psettings.logBypassDestroy)
-				PreciousStones.log.info("PreciousStones: Unbreakable block [" + block.getType() + "] bypass-removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
-			}
+			if (plugin.psettings.notifyBypassDestroy)
+			    player.sendMessage(ChatColor.YELLOW + owner + "'s unbreakable block removed");
+			
+			if (plugin.psettings.logBypassDestroy)
+			    PreciousStones.log.info("PreciousStones: Unbreakable block [" + block.getType() + "] bypass-removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
 		    }
 		    else
 		    {
@@ -98,15 +104,26 @@ public class PSBlockListener extends BlockListener
 	    }
 	    else if (plugin.pm.isPStoneType(block))
 	    {
-		// check if we have the block type registered as a stone
+		// look for the block in our pstone collection
 		
 		if (plugin.pm.isPStone(block))
 		{
 		    // if owner or bypass permission
 		    
-		    boolean isOwner = plugin.pm.isOwner(block, player.getName());
-		    
-		    if (isOwner || plugin.psettings.isBypass(player))
+		    if (plugin.pm.isOwner(block, player.getName()))
+		    {
+			// remove the block from stones list
+			
+			plugin.pm.releaseStone(block);
+			plugin.writeProtection();
+			
+			if (plugin.psettings.notifyDestroy)
+			    player.sendMessage(ChatColor.AQUA + "Protection block removed");
+			
+			if (plugin.psettings.logDestroy)
+			    PreciousStones.log.info("PreciousStones: Protection block [" + block.getType() + "] removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");			
+		    }
+		    else if (plugin.psettings.isBypass(player))
 		    {
 			String owner = plugin.pm.getOwner(block);
 			
@@ -115,22 +132,11 @@ public class PSBlockListener extends BlockListener
 			plugin.pm.releaseStone(block);
 			plugin.writeProtection();
 			
-			if (isOwner)
-			{
-			    if (plugin.psettings.notifyDestroy)
-				player.sendMessage(ChatColor.AQUA + "Protection block removed");
-			    
-			    if (plugin.psettings.logDestroy)
-				PreciousStones.log.info("PreciousStones: Protection block [" + block.getType() + "] removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
-			}
-			else
-			{
-			    if (plugin.psettings.notifyBypassDestroy)
-				player.sendMessage(ChatColor.AQUA + owner + "'s protection block removed");
-			    
-			    if (plugin.psettings.logBypassDestroy)
-				PreciousStones.log.info("PreciousStones: Protection block [" + block.getType() + "] bypass-removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
-			}
+			if (plugin.psettings.notifyBypassDestroy)
+			    player.sendMessage(ChatColor.AQUA + owner + "'s protection block removed");
+			
+			if (plugin.psettings.logBypassDestroy)
+			    PreciousStones.log.info("PreciousStones: Protection block [" + block.getType() + "] bypass-removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");			
 		    }
 		    else
 		    {
@@ -147,7 +153,7 @@ public class PSBlockListener extends BlockListener
 	    {
 		// if protected area prevent breaking
 		
-		if (plugin.pm.isProtected(block, player.getName()))
+		if (plugin.pm.isDestroyProtected(block, player.getName()))
 		{
 		    event.setCancelled(true);
 		    
@@ -158,14 +164,18 @@ public class PSBlockListener extends BlockListener
 	}
     }
     
+    @Override
     public void onBlockPlace(BlockPlaceEvent event)
     {
 	Block block = event.getBlock();
 	Player player = event.getPlayer();
 	
+	if (block == null || player == null)
+	    return;
+	
 	// prevent placement in build protected area by non owners
 	
-	if (plugin.pm.isBuildProtected(block, player.getName()))
+	if (plugin.pm.isPlaceProtected(block, player.getName()))
 	{
 	    event.setCancelled(true);
 	    
