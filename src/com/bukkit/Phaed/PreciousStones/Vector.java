@@ -16,35 +16,37 @@ public class Vector implements java.io.Serializable
     protected int maxx;
     protected int maxy;
     protected int maxz;
-    protected int extraHeight;
+    protected int height;
+    protected int extraHeight; // DEPRECATED
     protected int radius;
     
-    public Vector(int x, int y, int z, int radius, int extraHeight)
+    public Vector(int x, int y, int z, int radius, int height)
     {
 	this.x = x;
 	this.y = y;
 	this.z = z;
 	this.minx = x - radius;
-	this.miny = y - radius;
+	this.miny = y - (int) Math.floor(((double) height) / 2);
 	this.minz = z - radius;
 	this.maxx = x + radius;
-	this.maxy = y + radius + extraHeight;
+	this.maxy = y + (int) Math.ceil(((double) height) / 2);
 	this.maxz = z + radius;
-	this.extraHeight = extraHeight;
+	this.height = height;
     }
     
-    public Vector(Block block, int radius, int extraHeight)
+    public Vector(Block block, int radius, int height)
     {
+	
 	this.x = block.getX();
 	this.y = block.getY();
 	this.z = block.getZ();
 	this.minx = x - radius;
-	this.miny = y - radius;
+	this.miny = y - (int) Math.floor(((double) height) / 2);
 	this.minz = z - radius;
 	this.maxx = x + radius;
-	this.maxy = y + radius + extraHeight;
+	this.maxy = y + (int) Math.ceil(((double) height) / 2);
 	this.maxz = z + radius;
-	this.extraHeight = extraHeight;
+	this.height = height;
     }
     
     public Vector(int x, int y, int z)
@@ -116,61 +118,60 @@ public class Vector implements java.io.Serializable
     
     public void setRadius(int newRadius)
     {
-	this.radius = newRadius;	
+	this.radius = newRadius;
 	this.minx = x - radius;
-	this.miny = y - radius;
+	this.miny = y - (int) Math.floor(((double) height) / 2);
 	this.minz = z - radius;
 	this.maxx = x + radius;
-	this.maxy = y + radius + this.extraHeight;
+	this.maxy = y + (int) Math.ceil(((double) height) / 2);
 	this.maxz = z + radius;
     }
     
     public boolean isNear(Block block)
-    {	
+    {
 	int px = block.getX();
 	int py = block.getY();
 	int pz = block.getZ();
 	
-	if ( px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
+	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
 	    return true;
 	
 	return false;
     }
     
     public boolean isNearPlusOne(Block block)
-    {	
+    {
 	int px = block.getX();
 	int py = block.getY();
 	int pz = block.getZ();
 	
-	if ( px >= minx -1 && px <= maxx + 1&& py >= miny - 1&& py <= maxy + 1&& pz >= minz - 1&& pz <= maxz + 1)
+	if (px >= minx - 1 && px <= maxx + 1 && py >= miny - 1 && py <= maxy + 1 && pz >= minz - 1 && pz <= maxz + 1)
 	    return true;
 	
 	return false;
     }
     
-    
     public boolean isNear(Player player)
-    {	
+    {
 	int px = player.getLocation().getBlockX();
 	int py = player.getLocation().getBlockY();
 	int pz = player.getLocation().getBlockZ();
 	
-	if ( px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
+	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
 	    return true;
 	
 	return false;
     }
     
     public boolean isNear(Vector vec)
-    {	
+    {
 	int px = vec.getX();
 	int py = vec.getY();
 	int pz = vec.getZ();
 	
-	if ( px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
+	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
 	    return true;
-
+	
 	return false;
     }
     

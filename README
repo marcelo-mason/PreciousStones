@@ -1,23 +1,23 @@
 Configuration file reference:
 
+If ommited all configurations options default to false or 0
 
 public-block-details - show the block details to anyone (when right clicking on a pstone block), not just the owner
-bypass-players - a list of players who will be able to bypass all protections
 bypass-blocks - a list blocks types that anyone will be able to break or place inside force fields i.e. toches, etc..
 unbreakable-blocks - list of block types that you want to be unbreakable
 protection:
 blocks - a block type that you want to radiate protection
 radius - the radius of protection (radius of 2 would make a 5x5x5 field)
-extra-height - extra veritcal height for the protected area
-prevent fire - prevent players from starting fires in the protected area
-prevent entry - prevent players from entering the protected area
-prevent place - prevent players from placing blocks in a protected area
-prevent destroy - prevent players from destroying blocks in the protected area
-prevent explosions - prevent tnt and creeper explosions in the protected area
-prevent pvp - prevent player damage inside the protected area
-instant heal - heals any player that enters the protected area instantly
-slow heal - heals any player in the protected area as they walk
-slow damage - damages a player in the protected area as they walk
+custom-height - overrides the radius's vertical value and lets you set a custom numerical height, optionally "full" sets the height bedrock to bedrock
+prevent-fire - prevent players from starting fires in the protected area
+prevent-entry - prevent players from entering the protected area
+prevent-place - prevent players from placing blocks in a protected area
+prevent-destroy - prevent players from destroying blocks in the protected area
+prevent-explosions - prevent tnt and creeper explosions in the protected area
+prevent-pvp - prevent player damage inside the protected area
+instant-heal - heals any player that enters the protected area instantly
+slow-heal - heals any player in the protected area as they walk
+slow-damage - damages a player in the protected area as they walk
 log:
 place - log all pstone block placements
 destroy - log all pstone block destructions
@@ -38,21 +38,49 @@ pvp - warn a player when he hits another that there is not pvp in the proteted a
 destroy - warn a player when he tries to destroy a pstone that does not belong to him
 destroy-area - warn the player when he tries to destroy a block inside a protected area
 
-    
-TODO
-Protection radius decay, drops one block from radius every x days
-Enforced time between pickups
-Add option to protected areas to prevent entry by unallowed players
-
-Chest protection prevention:
--Prevent pstone placement on top of chests (configurable)
--Prevent placement of pstone if a chest would be protected by it (configurable)
--Prevent chest placements inside pstone protected areas (configurable)
 
 
+Permissions
+
+Add these to your groups:
+
+            - 'preciousstones.whitelist.*'
+            - 'preciousstones.admin.*'
+            - 'preciousstones.bypass.*'
+            - 'preciousstones.benefit.*'
+
+Or these if you want more fined grained control:
+
+            - 'preciousstones.whitelist.allow'
+            - 'preciousstones.whitelist.allowall'
+            - 'preciousstones.whitelist.remove'
+            - 'preciousstones.admin.delete'
+            - 'preciousstones.admin.info'
+            - 'preciousstones.bypass.destroy'
+            - 'preciousstones.bypass.place'
+            - 'preciousstones.bypass.entry'
+            - 'preciousstones.bypass.stones.protection'
+            - 'preciousstones.bypass.stones.unbreakable'
+            - 'preciousstones.bypass.pvp'
+            - 'preciousstones.bypass.damage'
+            - 'preciousstones.benefit.create.unbreakable'
+            - 'preciousstones.benefit.create.protection'
+            - 'preciousstones.benefit.heal'
 
 
 Change Log
+
+1.4
++ Integrated permissions plugin!
++ Now force field height can be explicitly set with custom-height attribute
++ Deprecated old extra-height attribute
++ Fixed problems with people permissions
+
++ Added command alias /ps
+1.3.3
++ Configuration now all defaults to false or 0, now you can omit settings to set them false
++ Added command alias /ps
+
 1.3.2
 + Added command for bypass players to be able to delete force fields
 + Added ability to log all field deletions

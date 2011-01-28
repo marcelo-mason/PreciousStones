@@ -73,7 +73,7 @@ public class PSEntityListener extends EntityListener
 	    {
 		PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 		
-		if (psettings != null && psettings.preventPvP)
+		if (psettings != null && psettings.preventPvP && !PreciousStones.Permissions.has(player, "preciousstones.bypass.pvp"))
 		{
 		    event.setCancelled(true);
 		    

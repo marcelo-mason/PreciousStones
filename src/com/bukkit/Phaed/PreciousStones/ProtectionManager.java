@@ -99,11 +99,6 @@ public class ProtectionManager implements java.io.Serializable
 	if (block == null)
 	    return false;
 	
-	// if its unprotectable then return not protected
-	
-	if (plugin.psettings.isBypass(block))
-	    return false;
-	
 	// look to see if the block is in a protected zone we are not allowed in
 	
 	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
@@ -134,11 +129,6 @@ public class ProtectionManager implements java.io.Serializable
     public boolean isDestroyProtected(Block block, String playerName)
     {
 	if (block == null)
-	    return false;
-	
-	// if its unprotectable then return not protected
-	
-	if (plugin.psettings.isBypass(block))
 	    return false;
 	
 	// look to see if the block is in a protected zone we are not allowed in
@@ -173,11 +163,6 @@ public class ProtectionManager implements java.io.Serializable
 	if (block == null)
 	    return false;
 	
-	// if its unprotectable then return not protected
-	
-	if (plugin.psettings.isBypass(block))
-	    return false;
-	
 	// look to see if the block is in a protected zone we are not allowed in
 	
 	HashMap<Vector, ArrayList<String>> c = getPStonesInArea(block);
@@ -208,11 +193,6 @@ public class ProtectionManager implements java.io.Serializable
     public boolean isEntryProtected(Block block, String playerName)
     {
 	if (block == null)
-	    return false;
-	
-	// if its unprotectable then return not protected
-	
-	if (plugin.psettings.isBypass(block))
 	    return false;
 	
 	// look to see if the block is in a protected zone we are not allowed in
@@ -271,7 +251,7 @@ public class ProtectionManager implements java.io.Serializable
 	    if (c != null)
 	    {
 		for (Vector vec : c.keySet())
-		{	
+		{
 		    Block block = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
 		    
 		    if (block.getTypeId() == typeid)
@@ -391,7 +371,7 @@ public class ProtectionManager implements java.io.Serializable
 		
 		if (psettings != null)
 		{
-		    Vector newStonevec = new Vector(block, psettings.radius, psettings.extraHeight);
+		    Vector newStonevec = new Vector(block, psettings.radius, psettings.getHeight());
 		    
 		    for (Vector pstone : c.keySet())
 		    {
@@ -490,7 +470,7 @@ public class ProtectionManager implements java.io.Serializable
 		ArrayList<String> allowed = new ArrayList<String>();
 		allowed.add(owner);
 		
-		c.put(new Vector(block, psettings.radius, psettings.extraHeight), allowed);
+		c.put(new Vector(block, psettings.radius, psettings.getHeight()), allowed);
 	    }
 	    else
 	    {
@@ -498,7 +478,7 @@ public class ProtectionManager implements java.io.Serializable
 		allowed.add(owner);
 		
 		HashMap<Vector, ArrayList<String>> newc = new HashMap<Vector, ArrayList<String>>();
-		newc.put(new Vector(block, psettings.radius, psettings.extraHeight), allowed);
+		newc.put(new Vector(block, psettings.radius, psettings.getHeight()), allowed);
 		
 		chunkLists.put(cvec, newc);
 	    }

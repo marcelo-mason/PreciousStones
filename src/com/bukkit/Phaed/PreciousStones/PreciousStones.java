@@ -16,6 +16,9 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import java.util.logging.Logger;
+import com.nijikokun.bukkit.Permissions.Permissions;
+import com.nijiko.permissions.PermissionHandler;
+import org.bukkit.plugin.Plugin;
 
 /**
  * PreciousStones for Bukkit
@@ -25,6 +28,7 @@ import java.util.logging.Logger;
 public class PreciousStones extends JavaPlugin
 {
     public PSettings psettings;
+    public static PermissionHandler Permissions = null;
     
     public ProtectionManager pm = new ProtectionManager(this);
     public UnbreakableManager um = new UnbreakableManager(this);
@@ -54,6 +58,30 @@ public class PreciousStones extends JavaPlugin
 	}
     }
     
+    @SuppressWarnings("static-access")
+    public void setupPermissions()
+    {
+	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
+	
+	if (this.Permissions == null)
+	{
+	    if (test != null)
+	    {
+		this.Permissions = ((Permissions) test).getHandler();
+	    }
+	    else
+	    {
+		log.info("[" + desc.getName() + "] Permission system not enabled. Disabling plugin.");
+		this.getServer().getPluginManager().disablePlugin(this);
+	    }
+	}
+    }
+    
+    public PluginDescriptionFile getDesc()
+    {
+	return desc;
+    }
+    
     public void onEnable()
     {
 	log.info("[" + desc.getName() + "] version [" + desc.getVersion() + "] loaded");
@@ -65,6 +93,10 @@ public class PreciousStones extends JavaPlugin
 	// load saved stones
 	
 	loadStones();
+	
+	// initiate permissions plugin
+	
+	setupPermissions();
 	
 	// Register our events
 	
@@ -151,13 +183,7 @@ public class PreciousStones extends JavaPlugin
 	config.load();
 	
 	List<Integer> ublocks = new ArrayList<Integer>();
-	ublocks.add(41); // gold
-	
-	List<Boolean> pcb = new ArrayList<Boolean>();
-	pcb.add(false); // disable building
-	
 	List<Integer> bypassb = new ArrayList<Integer>();
-	List<String> bypass = new ArrayList<String>();
 	
 	psettings = new PSettings();
 	psettings.addProtectionStones((ArrayList) config.getProperty("protection"));
@@ -165,21 +191,20 @@ public class PreciousStones extends JavaPlugin
 	psettings.unbreakableBlocks = config.getIntList("unbreakable-blocks", ublocks);
 	psettings.logPlace = config.getBoolean("log.place", false);
 	psettings.logDestroy = config.getBoolean("log.destroy", false);
-	psettings.logBypassDelete = config.getBoolean("log.bypass-delete", true);
-	psettings.logBypassDestroy = config.getBoolean("log.bypass-destroy", true);
-	psettings.notifyPlace = config.getBoolean("notify.place", true);
-	psettings.notifyDestroy = config.getBoolean("notify.destroy", true);
-	psettings.notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", true);
-	psettings.warnInstantHeal = config.getBoolean("warn.instant-heal", true);
-	psettings.warnSlowHeal = config.getBoolean("warn.slow-heal", true);
-	psettings.warnSlowDamage = config.getBoolean("warn.slow-damage", true);
-	psettings.warnFire = config.getBoolean("warn.fire", true);
-	psettings.warnEntry = config.getBoolean("warn.entry", true);
-	psettings.warnPlace = config.getBoolean("warn.place", true);
-	psettings.warnPvP = config.getBoolean("warn.pvp", true);
-	psettings.warnDestroy = config.getBoolean("warn.destroy", true);
-	psettings.warnDestroyArea = config.getBoolean("warn.destroy-area", true);
-	psettings.bypassPlayers = config.getStringList("bypass-players", bypass);
+	psettings.logBypassDelete = config.getBoolean("log.bypass-delete", false);
+	psettings.logBypassDestroy = config.getBoolean("log.bypass-destroy", false);
+	psettings.notifyPlace = config.getBoolean("notify.place", false);
+	psettings.notifyDestroy = config.getBoolean("notify.destroy", false);
+	psettings.notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", false);
+	psettings.warnInstantHeal = config.getBoolean("warn.instant-heal", false);
+	psettings.warnSlowHeal = config.getBoolean("warn.slow-heal", false);
+	psettings.warnSlowDamage = config.getBoolean("warn.slow-damage", false);
+	psettings.warnFire = config.getBoolean("warn.fire", false);
+	psettings.warnEntry = config.getBoolean("warn.entry", false);
+	psettings.warnPlace = config.getBoolean("warn.place", false);
+	psettings.warnPvP = config.getBoolean("warn.pvp", false);
+	psettings.warnDestroy = config.getBoolean("warn.destroy", false);
+	psettings.warnDestroyArea = config.getBoolean("warn.destroy-area", false);
 	psettings.bypassBlocks = config.getIntList("bypass-blocks", bypassb);
 	psettings.publicBlockDetails = config.getBoolean("public-block-details", false);
     }
