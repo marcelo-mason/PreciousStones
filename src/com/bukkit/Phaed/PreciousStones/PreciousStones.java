@@ -199,6 +199,7 @@ public class PreciousStones extends JavaPlugin
 	psettings.warnInstantHeal = config.getBoolean("warn.instant-heal", false);
 	psettings.warnSlowHeal = config.getBoolean("warn.slow-heal", false);
 	psettings.warnSlowDamage = config.getBoolean("warn.slow-damage", false);
+	psettings.warnFastDamage = config.getBoolean("warn.fast-damage", false);
 	psettings.warnFire = config.getBoolean("warn.fire", false);
 	psettings.warnEntry = config.getBoolean("warn.entry", false);
 	psettings.warnPlace = config.getBoolean("warn.place", false);

@@ -19,6 +19,7 @@ public class PSettings
     public boolean warnInstantHeal;
     public boolean warnSlowHeal;
     public boolean warnSlowDamage;
+    public boolean warnFastDamage;
     public boolean warnPlace;
     public boolean warnDestroy;
     public boolean warnDestroyArea;
@@ -40,6 +41,9 @@ public class PSettings
     @SuppressWarnings("unchecked")
     public void addProtectionStones(ArrayList<LinkedHashMap> maps)
     {
+	if(maps == null)
+	    return;
+	
 	double largestProtection = 0;
 	
 	for (LinkedHashMap map : maps)
@@ -62,15 +66,7 @@ public class PSettings
 	
 	chunksInLargestProtectionArea = (int) Math.max(Math.ceil(((largestProtection * 2.0) + 1.0) / 16.0), 1);
     }
-    
-    /**
-     * Whetehr the player is a bypass player
-     */
-    /*public boolean isBypass(Player player)
-    {
-	return bypassPlayers.contains(player.getName());
-    }*/
-    
+
     /**
      * Whetehr the block is a bypass type
      */
@@ -117,6 +113,8 @@ public class PSettings
 	public boolean instantHeal = false;
 	public boolean slowHeal = false;
 	public boolean slowDamage = false;
+	public boolean fastDamage = false;
+	public boolean breakable = false;
 	
 	public int getHeight()
 	{
@@ -183,6 +181,12 @@ public class PSettings
 	    
 	    if (map.containsKey("slow-damage") && Helper.isBoolean(map.get("slow-damage")))
 		slowDamage = (Boolean) map.get("slow-damage");
-	}
+
+	    if (map.containsKey("fast-damage") && Helper.isBoolean(map.get("fast-damage")))
+		fastDamage = (Boolean) map.get("fast-damage");
+
+	    if (map.containsKey("breakable") && Helper.isBoolean(map.get("breakable")))
+		breakable = (Boolean) map.get("breakable");
+}
     }
 }

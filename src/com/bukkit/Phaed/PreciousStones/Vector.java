@@ -2,7 +2,6 @@ package com.bukkit.Phaed.PreciousStones;
 
 import org.bukkit.block.Block;
 import org.bukkit.Chunk;
-import org.bukkit.entity.Player;
 import org.bukkit.Location;
 
 public class Vector implements java.io.Serializable
@@ -115,18 +114,7 @@ public class Vector implements java.io.Serializable
     {
 	return this.z;
     }
-    
-    public void setRadius(int newRadius)
-    {
-	this.radius = newRadius;
-	this.minx = x - radius;
-	this.miny = y - (int) Math.floor(((double) height) / 2);
-	this.minz = z - radius;
-	this.maxx = x + radius;
-	this.maxy = y + (int) Math.ceil(((double) height) / 2);
-	this.maxz = z + radius;
-    }
-    
+        
     public boolean isNear(Block block)
     {
 	int px = block.getX();
@@ -146,18 +134,6 @@ public class Vector implements java.io.Serializable
 	int pz = block.getZ();
 	
 	if (px >= minx - 1 && px <= maxx + 1 && py >= miny - 1 && py <= maxy + 1 && pz >= minz - 1 && pz <= maxz + 1)
-	    return true;
-	
-	return false;
-    }
-    
-    public boolean isNear(Player player)
-    {
-	int px = player.getLocation().getBlockX();
-	int py = player.getLocation().getBlockY();
-	int pz = player.getLocation().getBlockZ();
-	
-	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
 	    return true;
 	
 	return false;

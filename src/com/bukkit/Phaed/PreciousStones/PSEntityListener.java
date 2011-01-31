@@ -73,9 +73,12 @@ public class PSEntityListener extends EntityListener
 	    {
 		PStone psettings = source != null ? plugin.pm.getPStoneSettings(source) : null;
 		
-		if (psettings != null && psettings.preventPvP && !PreciousStones.Permissions.Security.permission(player, "preciousstones.bypass.pvp"))
+		//PVP bug fix?
+		//if (psettings != null && psettings.preventPvP && !PreciousStones.Permissions.Security.permission(player, "preciousstones.bypass.pvp"))
+		if (psettings != null && psettings.preventPvP)
 		{
-		    event.setCancelled(true);
+		    if(!PreciousStones.Permissions.Security.permission((Player)event.getDamager(), "preciousstones.bypass.pvp"))
+			event.setCancelled(true);
 		    
 		    if (plugin.psettings.warnPvP)
 			((Player) event.getDamager()).sendMessage(ChatColor.AQUA + "PvP disabled in this area");
