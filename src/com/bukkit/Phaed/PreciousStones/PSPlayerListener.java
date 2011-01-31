@@ -100,7 +100,7 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    // check if hes in a instant heal area
 	    
-	    if (psettings != null && !hasInstantHealed && psettings.instantHeal && PreciousStones.Permissions.has(player, "preciousstones.benefit.heal"))
+	    if (psettings != null && !hasInstantHealed && psettings.instantHeal && PreciousStones.Permissions.Security.permission(player, "preciousstones.benefit.heal"))
 	    {
 		if (player.getHealth() < 20)
 		{
@@ -114,7 +114,7 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    // check if hes in a slow heal area
 	    
-	    if (psettings != null && !hasSlowHealed && psettings.slowHeal && PreciousStones.Permissions.has(player, "preciousstones.benefit.heal"))
+	    if (psettings != null && !hasSlowHealed && psettings.slowHeal && PreciousStones.Permissions.Security.permission(player, "preciousstones.benefit.heal"))
 	    {
 		if (player.getHealth() < 20)
 		{
@@ -140,7 +140,7 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    // check if hes in a slow damage area
 	    
-	    if (psettings != null && !hasSlowDamaged && psettings.slowDamage && !PreciousStones.Permissions.has(player, "preciousstones.bypass.damage"))
+	    if (psettings != null && !hasSlowDamaged && psettings.slowDamage && !PreciousStones.Permissions.Security.permission(player, "preciousstones.bypass.damage"))
 	    {
 		player.setHealth(player.getHealth() - 1);
 		
@@ -152,7 +152,7 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    // check if hes in a block entry area
 	    
-	    if (psettings != null && !hasBlockedEntry && psettings.preventEntry && !PreciousStones.Permissions.has(player, "preciousstones.bypass.entry"))
+	    if (psettings != null && !hasBlockedEntry && psettings.preventEntry && !PreciousStones.Permissions.Security.permission(player, "preciousstones.bypass.entry"))
 	    {
 		int sx = 0;
 		int sz = 0;
@@ -237,7 +237,7 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    if (split.length == 3)
 	    {
-		if (split[1].equals("allowall") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.allowall"))
+		if (split[1].equals("allowall") && PreciousStones.Permissions.Security.permission(player, "preciousstones.whitelist.allowall"))
 		{
 		    String playerName = split[2];
 		    
@@ -269,7 +269,7 @@ public class PSPlayerListener extends PlayerListener
 		    
 		    return;
 		}
-		else if (split[1].equals("allow") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.allow"))
+		else if (split[1].equals("allow") && PreciousStones.Permissions.Security.permission(player, "preciousstones.whitelist.allow"))
 		{
 		    if (!plugin.pm.isInVector(block, player.getName()))
 		    {
@@ -291,7 +291,7 @@ public class PSPlayerListener extends PlayerListener
 		    
 		    return;
 		}
-		else if (split[1].equals("remove") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.remove"))
+		else if (split[1].equals("remove") && PreciousStones.Permissions.Security.permission(player, "preciousstones.whitelist.remove"))
 		{
 		    if (!plugin.pm.isInVector(block, player.getName()))
 		    {
@@ -313,7 +313,7 @@ public class PSPlayerListener extends PlayerListener
 		    
 		    return;
 		}
-		else if (split[1].equals("delete") && PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
+		else if (split[1].equals("delete") && PreciousStones.Permissions.Security.permission(player, "preciousstones.admin.delete"))
 		{
 		    if (Helper.isInteger(split[2]))
 		    {
@@ -343,7 +343,7 @@ public class PSPlayerListener extends PlayerListener
 	    }
 	    else if (split.length == 2)
 	    {
-		if (split[1].equals("delete") && PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
+		if (split[1].equals("delete") && PreciousStones.Permissions.Security.permission(player, "preciousstones.admin.delete"))
 		{
 		    HashMap<Vector, Block> sources = plugin.pm.getSourcePStone(block, null);
 		    
@@ -366,7 +366,7 @@ public class PSPlayerListener extends PlayerListener
 		    }
 		    return;
 		}
-		else if (split[1].equals("info") && PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
+		else if (split[1].equals("info") && PreciousStones.Permissions.Security.permission(player, "preciousstones.admin.info"))
 		{
 		    HashMap<Vector, Block> sources = plugin.pm.getSourcePStone(block, null);
 		    
@@ -394,12 +394,12 @@ public class PSPlayerListener extends PlayerListener
 	    player.sendMessage(ChatColor.AQUA + "/ps remove [player] - Remove player from the allowed list");
 	    player.sendMessage(ChatColor.AQUA + "/ps allowall [player] - All player to all your pstones");
 	    
-	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
+	    if (PreciousStones.Permissions.Security.permission(player, "preciousstones.admin.info"))
 	    {
 		player.sendMessage(ChatColor.AQUA + "/ps info - Get info for the field youre standing on");
 	    }
 	    
-	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
+	    if (PreciousStones.Permissions.Security.permission(player, "preciousstones.admin.delete"))
 	    {
 		player.sendMessage(ChatColor.AQUA + "/ps delete - Delete the field(s) you're standing on");
 		player.sendMessage(ChatColor.AQUA + "/ps delete [blockid] - Delete the field(s) from this type");

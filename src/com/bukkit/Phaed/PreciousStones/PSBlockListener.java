@@ -76,7 +76,7 @@ public class PSBlockListener extends BlockListener
 			    PreciousStones.log.info("PreciousStones: Unbreakable block [" + block.getType() + "] removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
 			
 		    }
-		    else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.stones.unbreakable"))
+		    else if (PreciousStones.Permissions.Security.permission(player, "preciousstones.bypass.stones.unbreakable"))
 		    {
 			String owner = plugin.um.getOwner(block);
 			
@@ -123,7 +123,7 @@ public class PSBlockListener extends BlockListener
 			if (plugin.psettings.logDestroy)
 			    PreciousStones.log.info("PreciousStones: Protection block [" + block.getType() + "] removed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");			
 		    }
-		    else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.stones.protection"))
+		    else if (PreciousStones.Permissions.Security.permission(player, "preciousstones.bypass.stones.protection"))
 		    {
 			String owner = plugin.pm.getOwner(block);
 			
@@ -155,7 +155,7 @@ public class PSBlockListener extends BlockListener
 		
 		if (plugin.pm.isDestroyProtected(block, player.getName()) && !plugin.psettings.isBypassBlock(block))
 		{
-		    if (!PreciousStones.Permissions.has(player, "preciousstones.bypass.destroy"))
+		    if (!PreciousStones.Permissions.Security.permission(player, "preciousstones.bypass.destroy"))
 		    	event.setCancelled(true);
 		    
 		    if (plugin.psettings.warnDestroyArea)
@@ -178,7 +178,7 @@ public class PSBlockListener extends BlockListener
 	
 	if (plugin.pm.isPlaceProtected(block, player.getName()) && !plugin.psettings.isBypassBlock(block))
 	{
-	    if (!PreciousStones.Permissions.has(player, "preciousstones.bypass.place"))
+	    if (!PreciousStones.Permissions.Security.permission(player, "preciousstones.bypass.place"))
 		event.setCancelled(true);
 	    
 	    if (plugin.psettings.warnPlace)
@@ -189,7 +189,7 @@ public class PSBlockListener extends BlockListener
 	
 	// add the stones if they are one of the types
 	
-	if (plugin.pm.isPStoneType(block) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.protection"))
+	if (plugin.pm.isPStoneType(block) && PreciousStones.Permissions.Security.permission(player, "preciousstones.benefit.create.protection"))
 	{
 	    // prevent placement of protection stone near unbreakable or
 	    // protection stone of different owner
@@ -210,7 +210,7 @@ public class PSBlockListener extends BlockListener
 	    if (plugin.psettings.logPlace)
 		PreciousStones.log.info("PreciousStones: Protection block [" + block.getType() + "] placed by " + player.getName() + " [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
 	}
-	else if (plugin.um.isType(block) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.unbreakable"))
+	else if (plugin.um.isType(block) && PreciousStones.Permissions.Security.permission(player, "preciousstones.benefit.create.unbreakable"))
 	{
 	    // prevent placement of unbreakable stone near
 	    // protection stone of different owner

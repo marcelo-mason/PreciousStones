@@ -28,7 +28,7 @@ import org.bukkit.plugin.Plugin;
 public class PreciousStones extends JavaPlugin
 {
     public PSettings psettings;
-    public static PermissionHandler Permissions = null;
+    public static Permissions Permissions = null;
     
     public ProtectionManager pm = new ProtectionManager(this);
     public UnbreakableManager um = new UnbreakableManager(this);
@@ -67,7 +67,7 @@ public class PreciousStones extends JavaPlugin
 	{
 	    if (test != null)
 	    {
-		this.Permissions = ((Permissions) test).getHandler();
+		this.Permissions = (Permissions) test;
 	    }
 	    else
 	    {
