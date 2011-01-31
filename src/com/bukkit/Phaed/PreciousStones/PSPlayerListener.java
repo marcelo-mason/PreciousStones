@@ -132,6 +132,7 @@ public class PSPlayerListener extends PlayerListener
 	sources = plugin.pm.getSourcePStone(block, player.getName());
 	
 	boolean hasSlowDamaged = false;
+	boolean hasFastDamaged = false;
 	boolean hasBlockedEntry = false;
 	
 	for (Block source : sources.values())
@@ -149,6 +150,19 @@ public class PSPlayerListener extends PlayerListener
 		
 		hasSlowDamaged = true;
 	    }
+	    
+	    // check if hes in a slow damage area
+	    
+	    if (psettings != null && !hasFastDamaged && psettings.fastDamage && !PreciousStones.Permissions.has(player, "preciousstones.bypass.damage"))
+	    {
+		player.setHealth(player.getHealth() - 5);
+		
+		if (plugin.psettings.warnFastDamage)
+		    player.sendMessage(ChatColor.RED + "Health -5");
+		
+		hasFastDamaged = true;
+	    }
+	    
 	    
 	    // check if hes in a block entry area
 	    
@@ -269,6 +283,38 @@ public class PSPlayerListener extends PlayerListener
 		    
 		    return;
 		}
+		else if (split[1].equals("removeall") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.removeall"))
+		{
+		    String playerName = split[2];
+		    
+		    if (playerName.equals(player.getName()))
+		    {
+			player.sendMessage(ChatColor.AQUA + "Cannot remove yourself to your own lists");
+			return;
+		    }
+		    
+		    int areaCount = 0;
+		    
+		    for (HashMap<Vector, ArrayList<String>> c : plugin.pm.chunkLists.values())
+		    {
+			for (ArrayList<String> allowed : c.values())
+			{
+			    if (allowed.size() > 0 && allowed.get(0).equals(player.getName()) && !allowed.contains(playerName))
+			    {
+				allowed.remove(playerName);
+				areaCount++;
+			    }
+			}
+		    }
+		    
+		    if (areaCount == 0)
+			player.sendMessage(ChatColor.AQUA + "No protection areas found");
+		    
+		    player.sendMessage(ChatColor.AQUA + playerName + " removed from " + areaCount + " allowed lists");
+		    plugin.writeProtection();
+		    
+		    return;
+		}
 		else if (split[1].equals("allow") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.allow"))
 		{
 		    if (!plugin.pm.isInVector(block, player.getName()))
@@ -378,7 +424,7 @@ public class PSPlayerListener extends PlayerListener
 			    
 			    player.sendMessage(ChatColor.AQUA + "Owner: " + plugin.pm.getOwner(vecblock));
 			    
-			    displayDetails(block, player);
+			    displayDetails(vecblock, player);
 			}
 			
 			continue;
@@ -392,6 +438,7 @@ public class PSPlayerListener extends PlayerListener
 	    player.sendMessage(ChatColor.YELLOW +  plugin.getDesc().getName() + " " + plugin.getDesc().getVersion());
 	    player.sendMessage(ChatColor.AQUA + "/ps allow [player] - Add player to the allowed list");
 	    player.sendMessage(ChatColor.AQUA + "/ps remove [player] - Remove player from the allowed list");
+	    player.sendMessage(ChatColor.AQUA + "/ps removeall [player] - Remove player from all your pstones");
 	    player.sendMessage(ChatColor.AQUA + "/ps allowall [player] - All player to all your pstones");
 	    
 	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
@@ -430,10 +477,14 @@ public class PSPlayerListener extends PlayerListener
 	
 	player.sendMessage(ChatColor.AQUA + "Allowed: " + out.substring(2));
 	
+	player.sendMessage(ChatColor.AQUA + "Type: " + block.getType());
+
 	PStone psettings = plugin.psettings.getPStoneSettings(block);
 	
 	if (psettings.radius > 0)
 	    player.sendMessage(ChatColor.AQUA + "Dimensions: " + ((psettings.radius * 2) + 1) + "x" + psettings.getHeight() + "x" + ((psettings.radius * 2) + 1));
+	
+	player.sendMessage(ChatColor.AQUA + "Location: [" + block.getX() + " " + block.getY() + " " + block.getZ() + "]");
 	
 	String protection = "";
 	

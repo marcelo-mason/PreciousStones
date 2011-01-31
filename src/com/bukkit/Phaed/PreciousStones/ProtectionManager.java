@@ -52,6 +52,15 @@ public class ProtectionManager implements java.io.Serializable
     }
     
     /**
+     * If its unbreakable or not
+     */
+    public boolean isBreakable(Block block)
+    {
+	PStone psettings = plugin.psettings.getPStoneSettings(block);
+	return psettings == null ? false : psettings.breakable;
+    }
+    
+    /**
      * Process pending deletions
      */
     public void flush()
