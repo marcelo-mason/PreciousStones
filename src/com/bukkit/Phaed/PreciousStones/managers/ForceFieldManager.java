@@ -471,8 +471,6 @@ public class ForceFieldManager
      */
     public Field isPlaceProtected(Block blockInArea, Player player)
     {
-	// look to see if the block is in a protected zone we are not allowed in
-	
 	for (Field field : getFieldsInArea(blockInArea))
 	{
 	    if (field.getVector().isNear(blockInArea) && !field.isAllowed(player.getName()))
@@ -499,8 +497,7 @@ public class ForceFieldManager
      * Whether the block is in a break protected area belonging to somebody else (not playerName)
      */
     public Field isDestroyProtected(Block blockInArea, Player player)
-    {
-	
+    {	
 	for (Field field : getFieldsInArea(blockInArea))
 	{
 	    if (field.getVector().isNear(blockInArea) && (player == null || !field.isAllowed(player.getName())))
@@ -528,8 +525,6 @@ public class ForceFieldManager
      */
     public Field isFireProtected(Block blockInArea, Player player)
     {
-	// look to see if the block is in a protected zone we are not allowed in
-	
 	for (Field field : getFieldsInArea(blockInArea))
 	{
 	    if (field.getVector().isNear(blockInArea) && (player == null || !field.isAllowed(player.getName())))
@@ -557,8 +552,6 @@ public class ForceFieldManager
      */
     public Field isEntryProtected(Block blockInArea, Player player)
     {
-	// look to see if the block is in a protected zone we are not allowed in
-	
 	for (Field field : getFieldsInArea(blockInArea))
 	{
 	    if (field.getVector().isNearPlusOne(blockInArea) && (player == null || !field.isAllowed(player.getName())))
@@ -587,8 +580,6 @@ public class ForceFieldManager
     {
 	if (isFieldType(block))
 	{
-	    // if the block were placing is a field do field collision calculations
-	    
 	    FieldSettings fieldsettings = getFieldSettings(block);
 	    
 	    Vector placedBlockVec = new Vector(block.getLocation(), fieldsettings.radius, fieldsettings.getHeight());
@@ -615,8 +606,6 @@ public class ForceFieldManager
 	}
 	else
 	{
-	    // the block were placing is a non-field block
-	    
 	    Vector placedBlockVec = new Vector(block.getLocation());
 	    
 	    for (Field field : getFieldsInArea(block))

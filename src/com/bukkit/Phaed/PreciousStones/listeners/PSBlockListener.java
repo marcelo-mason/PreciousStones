@@ -33,9 +33,7 @@ public class PSBlockListener extends BlockListener
 	
 	if (block == null || player == null)
 	    return;
-	
-	// if fire protected cancel ignite
-	
+
 	Field field = plugin.ffm.isFireProtected(block, player);
 	
 	if (field != null)
@@ -56,13 +54,9 @@ public class PSBlockListener extends BlockListener
 	
 	if (event.getDamageLevel() == BlockDamageLevel.BROKEN)
 	{
-	    // do nothing for bypass blocks
-	    
 	    if (plugin.settings.isBypassBlock(damagedblock))
 		return;
-	    
-	    // handle pstones and regular blocks
-	    
+
 	    if (plugin.um.isUnbreakableType(damagedblock) && plugin.um.isUnbreakable(damagedblock))
 	    {
 		if (plugin.um.isOwner(damagedblock, player.getName()))
@@ -83,8 +77,6 @@ public class PSBlockListener extends BlockListener
 	    }
 	    else if (plugin.ffm.isFieldType(damagedblock) && plugin.ffm.isField(damagedblock))
 	    {
-		// look for the block in our pstone collection
-		
 		if (plugin.ffm.isBreakable(damagedblock))
 		{
 		    plugin.cm.notifyDestroyBreakableFF(player, damagedblock);
@@ -134,13 +126,9 @@ public class PSBlockListener extends BlockListener
 	
 	if (placedblock == null || player == null)
 	    return;
-	
-	// do nothing for bypass block placements
-	
+
 	if (plugin.settings.isBypassBlock(placedblock))
 	    return;
-	
-	// add the stones if they are one of the types
 	
 	if (plugin.um.isUnbreakableType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.unbreakable"))
 	{
@@ -200,8 +188,6 @@ public class PSBlockListener extends BlockListener
 	
 	if (field != null)
 	{
-	    // if bypass player then let him place
-	    
 	    if (PreciousStones.Permissions.has(player, "preciousstones.bypass.place"))
 	    {
 		plugin.cm.notifyBypassPlace(player, field);
