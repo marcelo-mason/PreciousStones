@@ -16,7 +16,6 @@ public class Vector implements java.io.Serializable
     protected int maxy;
     protected int maxz;
     protected int height;
-    protected int extraHeight; // DEPRECATED
     protected int radius;
     
     public Vector(int x, int y, int z, int radius, int height)
@@ -31,14 +30,14 @@ public class Vector implements java.io.Serializable
 	this.maxy = y + (int) Math.ceil(((double) height) / 2);
 	this.maxz = z + radius;
 	this.height = height;
+	this.radius = radius;
     }
     
-    public Vector(Block block, int radius, int height)
+    public Vector(Location loc, int radius, int height)
     {
-	
-	this.x = block.getX();
-	this.y = block.getY();
-	this.z = block.getZ();
+	this.x = loc.getBlockX();
+	this.y = loc.getBlockY();
+	this.z = loc.getBlockZ();
 	this.minx = x - radius;
 	this.miny = y - (int) Math.floor(((double) height) / 2);
 	this.minz = z - radius;
@@ -46,6 +45,7 @@ public class Vector implements java.io.Serializable
 	this.maxy = y + (int) Math.ceil(((double) height) / 2);
 	this.maxz = z + radius;
 	this.height = height;
+	this.radius = radius;
     }
     
     public Vector(int x, int y, int z)
@@ -53,32 +53,6 @@ public class Vector implements java.io.Serializable
 	this.x = x;
 	this.y = y;
 	this.z = z;
-	this.minx = x;
-	this.miny = y;
-	this.minz = z;
-	this.maxx = x;
-	this.maxy = y;
-	this.maxz = z;
-    }
-    
-    public Vector(Block block)
-    {
-	this.x = block.getX();
-	this.y = block.getY();
-	this.z = block.getZ();
-	this.minx = x;
-	this.miny = y;
-	this.minz = z;
-	this.maxx = x;
-	this.maxy = y;
-	this.maxz = z;
-    }
-    
-    public Vector(Chunk chunk)
-    {
-	this.x = chunk.getX();
-	this.y = 0;
-	this.z = chunk.getZ();
 	this.minx = x;
 	this.miny = y;
 	this.minz = z;
@@ -100,6 +74,29 @@ public class Vector implements java.io.Serializable
 	this.maxz = z;
     }
     
+    public Vector(Chunk chunk)
+    {
+	this.x = chunk.getX();
+	this.y = 0;
+	this.z = chunk.getZ();
+	this.minx = x;
+	this.miny = y;
+	this.minz = z;
+	this.maxx = x;
+	this.maxy = y;
+	this.maxz = z;
+    }
+
+    public int getRadius()
+    {
+	return this.radius;
+    }
+    
+    public int getHeight()
+    {
+	return this.height;
+    }
+    
     public int getX()
     {
 	return this.x;
@@ -114,7 +111,7 @@ public class Vector implements java.io.Serializable
     {
 	return this.z;
     }
-        
+    
     public boolean isNear(Block block)
     {
 	int px = block.getX();

@@ -2,23 +2,31 @@ package com.bukkit.Phaed.PreciousStones;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.logging.Logger;
+import java.io.*;
+
 import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
-import java.util.logging.Logger;
+
+import com.bukkit.Phaed.PreciousStones.listeners.PSBlockListener;
+import com.bukkit.Phaed.PreciousStones.listeners.PSEntityListener;
+import com.bukkit.Phaed.PreciousStones.listeners.PSPlayerListener;
+import com.bukkit.Phaed.PreciousStones.listeners.PSWorldListener;
+import com.bukkit.Phaed.PreciousStones.managers.ForceFieldManager;
+import com.bukkit.Phaed.PreciousStones.managers.SettingsManager;
+import com.bukkit.Phaed.PreciousStones.managers.StorageManager;
+import com.bukkit.Phaed.PreciousStones.managers.UnbreakableManager;
+import com.bukkit.Phaed.PreciousStones.managers.CommunicatonManager;
+
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.nijiko.permissions.PermissionHandler;
-import org.bukkit.plugin.Plugin;
+
 
 /**
  * PreciousStones for Bukkit
@@ -27,27 +35,28 @@ import org.bukkit.plugin.Plugin;
  */
 public class PreciousStones extends JavaPlugin
 {
-    public PSettings psettings;
     public static PermissionHandler Permissions = null;
     
-    public ProtectionManager pm = new ProtectionManager(this);
+    public SettingsManager settings;
+    public ForceFieldManager ffm = new ForceFieldManager(this);
     public UnbreakableManager um = new UnbreakableManager(this);
+    public StorageManager sm = new StorageManager(this);
+    public CommunicatonManager cm = new CommunicatonManager(this);
     
-    protected static final Logger log = Logger.getLogger("Minecraft");
+    public static final Logger log = Logger.getLogger("Minecraft");
     
     private final PSPlayerListener playerListener = new PSPlayerListener(this);
     private final PSBlockListener blockListener = new PSBlockListener(this);
     private final PSEntityListener entityListener = new PSEntityListener(this);
+    private final PSWorldListener worldListener = new PSWorldListener(this);
     
     private PluginDescriptionFile desc;
-    private File folder;
     
     public PreciousStones(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader)
     {
 	super(pluginLoader, instance, desc, folder, plugin, cLoader);
 	
 	this.desc = desc;
-	this.folder = folder;
 	
 	if (!folder.exists())
 	{
@@ -68,6 +77,7 @@ public class PreciousStones extends JavaPlugin
 	    if (test != null)
 	    {
 		this.Permissions = ((Permissions) test).getHandler();
+		log.info("[" + desc.getName() + "] Permission plugin found.");
 	    }
 	    else
 	    {
@@ -82,6 +92,7 @@ public class PreciousStones extends JavaPlugin
 	return desc;
     }
     
+    @Override
     public void onEnable()
     {
 	log.info("[" + desc.getName() + "] version [" + desc.getVersion() + "] loaded");
@@ -90,9 +101,9 @@ public class PreciousStones extends JavaPlugin
 	
 	loadConfiguration();
 	
-	// load saved stones
+	// load pstones from file
 	
-	loadStones();
+	sm.load();
 	
 	// initiate permissions plugin
 	
@@ -100,6 +111,7 @@ public class PreciousStones extends JavaPlugin
 	
 	// Register our events
 	
+	getServer().getPluginManager().registerEvent(Event.Type.WORLD_SAVED, worldListener, Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Highest, this);
@@ -107,70 +119,13 @@ public class PreciousStones extends JavaPlugin
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Lowest, this);
     }
-    
+
+    @Override
     public void onDisable()
     {
-	
-    }
-    
-    /**
-     * Load stones from disk
-     */
-    public void loadStones()
-    {
-	File unbreakableFile = new File(folder.getPath() + File.separator + "unbreakable.bin");
-	
-	if (unbreakableFile.exists())
-	{
-	    try
-	    {
-		FileInputStream fi = new FileInputStream(unbreakableFile);
-		ObjectInputStream oi = new ObjectInputStream(fi);
-		
-		um = (UnbreakableManager) oi.readObject();
-		um.initiate(this);
-		
-		oi.close();
-		fi.close();
-		
-		log.info("[" + desc.getName() + "] loaded " + um.count() + " unbreakable stones");
-	    }
-	    catch (Exception e)
-	    {
-		log.info("[" + desc.getName() + "] loading failed with error. unbreakable.bin");
-		
-		if (e.getMessage() != null)
-		    log.info("[" + desc.getName() + "] error: " + e.getMessage());
-	    }
-	}
-	
-	File protectionFile = new File(folder.getPath() + File.separator + "protection.bin");
-	
-	if (protectionFile.exists())
-	{
-	    try
-	    {
-		FileInputStream fi = new FileInputStream(protectionFile);
-		ObjectInputStream oi = new ObjectInputStream(fi);
-		
-		pm = (ProtectionManager) oi.readObject();
-		pm.initiate(this);
-		
-		oi.close();
-		fi.close();
-		
-		log.info("[" + desc.getName() + "] loaded " + pm.count() + " protection stones");
-	    }
-	    catch (Exception e)
-	    {
-		log.info("[" + desc.getName() + "] loading failed with error. protection.bin");
-		
-		if (e.getMessage() != null)
-		    log.info("[" + desc.getName() + "] error: " + e.getMessage());
-	    }
-	}
+
     }
     
     /**
@@ -185,90 +140,40 @@ public class PreciousStones extends JavaPlugin
 	List<Integer> ublocks = new ArrayList<Integer>();
 	List<Integer> bypassb = new ArrayList<Integer>();
 	
-	psettings = new PSettings();
-	psettings.addProtectionStones((ArrayList) config.getProperty("protection"));
+	settings = new SettingsManager();
+	settings.addForceFieldStones((ArrayList) config.getProperty("force-field-blocks"));
 	
-	psettings.unbreakableBlocks = config.getIntList("unbreakable-blocks", ublocks);
-	psettings.logPlace = config.getBoolean("log.place", false);
-	psettings.logDestroy = config.getBoolean("log.destroy", false);
-	psettings.logBypassDelete = config.getBoolean("log.bypass-delete", false);
-	psettings.logBypassDestroy = config.getBoolean("log.bypass-destroy", false);
-	psettings.notifyPlace = config.getBoolean("notify.place", false);
-	psettings.notifyDestroy = config.getBoolean("notify.destroy", false);
-	psettings.notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", false);
-	psettings.warnInstantHeal = config.getBoolean("warn.instant-heal", false);
-	psettings.warnSlowHeal = config.getBoolean("warn.slow-heal", false);
-	psettings.warnSlowDamage = config.getBoolean("warn.slow-damage", false);
-	psettings.warnFastDamage = config.getBoolean("warn.fast-damage", false);
-	psettings.warnFire = config.getBoolean("warn.fire", false);
-	psettings.warnEntry = config.getBoolean("warn.entry", false);
-	psettings.warnPlace = config.getBoolean("warn.place", false);
-	psettings.warnPvP = config.getBoolean("warn.pvp", false);
-	psettings.warnDestroy = config.getBoolean("warn.destroy", false);
-	psettings.warnDestroyArea = config.getBoolean("warn.destroy-area", false);
-	psettings.bypassBlocks = config.getIntList("bypass-blocks", bypassb);
-	psettings.publicBlockDetails = config.getBoolean("public-block-details", false);
-    }
-    
-    /**
-     * Write stones to disk
-     */
-    public void writeProtection()
-    {
-	PluginDescriptionFile desc = this.getDescription();
-	ObjectOutputStream out;
-	
-	pm.flush();
-	
-	File unbreakableFile = new File(folder.getPath() + File.separator + "protection.bin");
-	
-	try
-	{
-	    out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(unbreakableFile)));
-	    out.writeObject(pm);
-	    out.close();
-	}
-	catch (Exception e)
-	{
-	    log.info("[" + desc.getName() + "] save file write failed: protection.bin");
-	    
-	    if (e.getMessage() != null)
-		log.info("[" + desc.getName() + "] error: " + e.getMessage());
-	}
-	finally
-	{
-	    out = null;
-	}
-    }
-    
-    /**
-     * Write diamond stones to disk
-     */
-    public void writeUnbreakable()
-    {
-	PluginDescriptionFile desc = this.getDescription();
-	ObjectOutputStream out;
-	
-	um.flush();
-	
-	File protectionFile = new File(folder.getPath() + File.separator + "unbreakable.bin");
-	
-	try
-	{
-	    out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(protectionFile)));
-	    out.writeObject(um);
-	    out.close();
-	}
-	catch (Exception e)
-	{
-	    log.info("[" + desc.getName() + "] save file write failed: unbreakable.bin");
-	    
-	    if (e.getMessage() != null)
-		log.info("[" + desc.getName() + "] error: " + e.getMessage());
-	}
-	finally
-	{
-	    out = null;
-	}
-    }
+	settings.unbreakableBlocks = config.getIntList("unbreakable-blocks", ublocks);
+	settings.logFire = config.getBoolean("log.fire", false);
+	settings.logEntry = config.getBoolean("log.entry", false);
+	settings.logPlace = config.getBoolean("log.place", false);
+	settings.logPvp = config.getBoolean("log.pvp", false);
+	settings.logDestroy = config.getBoolean("log.destroy", false);
+	settings.logDestroyArea = config.getBoolean("log.destroy-area", false);
+	settings.logBypassPvp = config.getBoolean("log.bypass-pvp", false);
+	settings.logBypassDelete = config.getBoolean("log.bypass-delete", false);
+	settings.logBypassPlace = config.getBoolean("log.bypass-place", false);
+	settings.logBypassDestroy = config.getBoolean("log.bypass-destroy", false);
+	settings.logConflictPlace = config.getBoolean("log.conflict-place", false);
+	settings.notifyPlace = config.getBoolean("notify.place", false);
+	settings.notifyDestroy = config.getBoolean("notify.destroy", false);
+	settings.notifyBypassPvp = config.getBoolean("notify.bypass-pvp", false);
+	settings.notifyBypassPlace = config.getBoolean("notify.bypass-place", false);
+	settings.notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", false);
+	settings.notifyGuardDog = config.getBoolean("notify.guard-dog", false);
+	settings.warnInstantHeal = config.getBoolean("warn.instant-heal", false);
+	settings.warnSlowHeal = config.getBoolean("warn.slow-heal", false);
+	settings.warnSlowDamage = config.getBoolean("warn.slow-damage", false);
+	settings.warnFastDamage = config.getBoolean("warn.fast-damage", false);
+	settings.warnFire = config.getBoolean("warn.fire", false);
+	settings.warnEntry = config.getBoolean("warn.entry", false);
+	settings.warnPlace = config.getBoolean("warn.place", false);
+	settings.warnPvp = config.getBoolean("warn.pvp", false);
+	settings.warnDestroy = config.getBoolean("warn.destroy", false);
+	settings.warnDestroyArea = config.getBoolean("warn.destroy-area", false);
+	settings.bypassBlocks = config.getIntList("bypass-blocks", bypassb);
+	settings.publicBlockDetails = config.getBoolean("settings.public-block-details", false);
+	settings.chestNoTouch = config.getBoolean("settings.chest-no-touch", false);
+	settings.sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
+    }   
 }

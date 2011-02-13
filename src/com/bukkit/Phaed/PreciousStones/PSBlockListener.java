@@ -165,8 +165,7 @@ public class PSBlockListener extends BlockListener
 		if (plugin.pm.isDestroyProtected(block, player.getName()) && !plugin.psettings.isBypassBlock(block))
 		{
 		    if (!PreciousStones.Permissions.has(player, "preciousstones.bypass.destroy"))
-			event.setCancelled(true);
-		    
+		    	event.setCancelled(true);
 		    if (plugin.psettings.warnDestroyArea)
 			player.sendMessage(ChatColor.AQUA + "This area is protected");
 		}
