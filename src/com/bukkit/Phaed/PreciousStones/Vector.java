@@ -4,6 +4,11 @@ import org.bukkit.block.Block;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
+/**
+ * DEPRECATED - here for deserialization purposes
+ * 
+ * @author Phaed
+ */
 public class Vector implements java.io.Serializable
 {
     static final long serialVersionUID = -4L;
@@ -114,37 +119,16 @@ public class Vector implements java.io.Serializable
     
     public boolean isNear(Block block)
     {
-	int px = block.getX();
-	int py = block.getY();
-	int pz = block.getZ();
-	
-	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
-	    return true;
-	
 	return false;
     }
     
     public boolean isNearPlusOne(Block block)
     {
-	int px = block.getX();
-	int py = block.getY();
-	int pz = block.getZ();
-	
-	if (px >= minx - 1 && px <= maxx + 1 && py >= miny - 1 && py <= maxy + 1 && pz >= minz - 1 && pz <= maxz + 1)
-	    return true;
-	
 	return false;
     }
     
     public boolean isNear(Vector vec)
     {
-	int px = vec.getX();
-	int py = vec.getY();
-	int pz = vec.getZ();
-	
-	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
-	    return true;
-	
 	return false;
     }
     

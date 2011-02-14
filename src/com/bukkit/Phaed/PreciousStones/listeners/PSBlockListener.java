@@ -33,7 +33,7 @@ public class PSBlockListener extends BlockListener
 	
 	if (block == null || player == null)
 	    return;
-
+	
 	Field field = plugin.ffm.isFireProtected(block, player);
 	
 	if (field != null)
@@ -56,8 +56,8 @@ public class PSBlockListener extends BlockListener
 	{
 	    if (plugin.settings.isBypassBlock(damagedblock))
 		return;
-
-	    if (plugin.um.isUnbreakableType(damagedblock) && plugin.um.isUnbreakable(damagedblock))
+	    
+	    if (plugin.settings.isUnbreakableType(damagedblock) && plugin.um.isUnbreakable(damagedblock))
 	    {
 		if (plugin.um.isOwner(damagedblock, player.getName()))
 		{
@@ -75,7 +75,7 @@ public class PSBlockListener extends BlockListener
 		    plugin.cm.warnDestroyU(player, damagedblock);
 		}
 	    }
-	    else if (plugin.ffm.isFieldType(damagedblock) && plugin.ffm.isField(damagedblock))
+	    else if (plugin.settings.isFieldType(damagedblock) && plugin.ffm.isField(damagedblock))
 	    {
 		if (plugin.ffm.isBreakable(damagedblock))
 		{
@@ -126,11 +126,11 @@ public class PSBlockListener extends BlockListener
 	
 	if (placedblock == null || player == null)
 	    return;
-
+	
 	if (plugin.settings.isBypassBlock(placedblock))
 	    return;
 	
-	if (plugin.um.isUnbreakableType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.unbreakable"))
+	if (plugin.settings.isUnbreakableType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.unbreakable"))
 	{
 	    Field field = plugin.ffm.isInConflict(placedblock, player.getName());
 	    
@@ -149,7 +149,7 @@ public class PSBlockListener extends BlockListener
 	    }
 	    else
 	    {
-		if (plugin.settings.chestNoTouch && plugin.ffm.touchingChest(placedblock))
+		if (plugin.settings.isNoPlaceType(placedblock) && plugin.settings.touchingNoPlaceBlock(placedblock) && !PreciousStones.Permissions.has(player, "preciousstones.bypass.noplace"))
 		{
 		    event.setCancelled(true);
 		    plugin.cm.warnPlace(player, plugin.ffm.getField(placedblock));
@@ -162,7 +162,7 @@ public class PSBlockListener extends BlockListener
 	    }
 	    return;
 	}
-	else if (plugin.ffm.isFieldType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.forcefield"))
+	else if (plugin.settings.isFieldType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.forcefield"))
 	{
 	    Field field = plugin.ffm.isInConflict(placedblock, player.getName());
 	    
@@ -173,15 +173,35 @@ public class PSBlockListener extends BlockListener
 	    }
 	    else
 	    {
-		plugin.ffm.add(placedblock, player.getName());
-		
-		if (plugin.ffm.isBreakable(placedblock))
-		    plugin.cm.notifyPlaceBreakableFF(player, placedblock);
+		if (plugin.settings.isNoPlaceType(placedblock) && plugin.settings.touchingNoPlaceBlock(placedblock) && !PreciousStones.Permissions.has(player, "preciousstones.bypass.noplace"))
+		{
+		    event.setCancelled(true);
+		    plugin.cm.warnPlace(player, plugin.ffm.getField(placedblock));
+		}
 		else
-		    plugin.cm.notifyPlaceFF(player, placedblock);
+		{
+		    plugin.ffm.add(placedblock, player.getName());
+		    
+		    if (plugin.ffm.isBreakable(placedblock))
+			plugin.cm.notifyPlaceBreakableFF(player, placedblock);
+		    else
+			plugin.cm.notifyPlaceFF(player, placedblock);
+		}
 	    }
 	    
 	    return;
+	}
+	else
+	{
+	    if (plugin.settings.isNoPlaceType(placedblock) && !PreciousStones.Permissions.has(player, "preciousstones.bypass.noplace"))
+	    {
+		if (plugin.um.touchingUnbrakableBlock(placedblock) || plugin.ffm.touchingFieldBlock(placedblock))
+		{
+		    event.setCancelled(true);
+		    plugin.cm.warnPlace(player, plugin.ffm.getField(placedblock));
+		    return;
+		}
+	    }
 	}
 	
 	Field field = plugin.ffm.isPlaceProtected(placedblock, player);

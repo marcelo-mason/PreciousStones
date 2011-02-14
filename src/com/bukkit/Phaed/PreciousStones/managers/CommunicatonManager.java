@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.bukkit.Phaed.PreciousStones.PreciousStones;
 import com.bukkit.Phaed.PreciousStones.Field;
+import com.bukkit.Phaed.PreciousStones.Unbreakable;
 import com.bukkit.Phaed.PreciousStones.Vector;
 import com.bukkit.Phaed.PreciousStones.Helper;
 import com.bukkit.Phaed.PreciousStones.ChatBlock;
@@ -28,7 +29,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyPlace)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Unbreakable block placed");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logPlace)
@@ -49,7 +50,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyPlace)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Force-field placed");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logPlace)
@@ -70,7 +71,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyPlace)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Breakable force-field placed");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logPlace)
@@ -91,7 +92,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyDestroy)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Unbreakable block destroyed");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logDestroy)
@@ -112,7 +113,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyDestroy)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Force-field destroyed");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logDestroy)
@@ -135,7 +136,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyDestroy)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + owner + "'s breakable force-field destroyed");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logDestroy)
@@ -156,7 +157,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyBypassPlace)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Block bypass-placed inside " + field.getOwner() + "'s force-field");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logBypassPlace)
@@ -177,7 +178,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyBypassPlace)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Unbreakable block bypass-placed inside " + field.getOwner() + "'s force-field");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logBypassPlace)
@@ -198,7 +199,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyBypassDestroy)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Block bypass-destroyed in " + field.getOwner() + "'s force-field");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logBypassDestroy)
@@ -221,7 +222,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyBypassDestroy)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + owner + "'s unbreakable block bypass-destroyed");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logBypassDestroy)
@@ -244,7 +245,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyBypassDestroy)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + owner + "'s force-field bypass-destroyed");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass-destroy"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log-destroy"))
 	    return;
 	
 	if (plugin.settings.logBypassDestroy)
@@ -265,7 +266,7 @@ public class CommunicatonManager
 	if (plugin.settings.warnEntry)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot enter protected area");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logEntry)
@@ -276,7 +277,7 @@ public class CommunicatonManager
 	    if (pl.equals(player))
 		continue;
 	    
-	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	    if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 		continue;
 	    
 	    if (PreciousStones.Permissions.has(pl, "preciousstones.alert.warn.entry"))
@@ -289,7 +290,7 @@ public class CommunicatonManager
 	if (plugin.settings.warnFire)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place fires here");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logFire)
@@ -310,7 +311,7 @@ public class CommunicatonManager
 	if (plugin.settings.warnPlace)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place here");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logPlace)
@@ -333,7 +334,7 @@ public class CommunicatonManager
 	if (plugin.settings.warnDestroy)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Only the owner can remove this block");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logDestroy)
@@ -356,7 +357,7 @@ public class CommunicatonManager
 	if (plugin.settings.warnDestroy)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Only the owner can remove this block");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logDestroy)
@@ -377,7 +378,7 @@ public class CommunicatonManager
 	if (plugin.settings.warnDestroyArea)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot destroy here");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logDestroyArea)
@@ -397,7 +398,7 @@ public class CommunicatonManager
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place unbreakable block here");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logConflictPlace)
@@ -417,7 +418,7 @@ public class CommunicatonManager
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place force-field here");
 	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(player, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logConflictPlace)
@@ -438,7 +439,7 @@ public class CommunicatonManager
 	if (plugin.settings.warnPvp)
 	    attacker.sendMessage(ChatColor.AQUA + "PvP disabled in this area");
 	
-	if (PreciousStones.Permissions.has(attacker, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(attacker, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logPvp)
@@ -459,7 +460,7 @@ public class CommunicatonManager
 	if (plugin.settings.notifyBypassPvp)
 	    attacker.sendMessage(ChatColor.AQUA + "PvP bypass");
 	
-	if (PreciousStones.Permissions.has(attacker, "preciousstones.admin.bypass"))
+	if (PreciousStones.Permissions.has(attacker, "preciousstones.bypass.log"))
 	    return;
 	
 	if (plugin.settings.logBypassPvp)
@@ -499,20 +500,35 @@ public class CommunicatonManager
     {
 	ChatBlock.sendBlank(player);
 	ChatBlock.sendMessage(player, ChatColor.YELLOW + plugin.getDesc().getName() + " " + plugin.getDesc().getVersion());
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allow [player] - Add player to the allowed list");
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps remove [player] - Remove player from the allowed list");
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps removeall [player] - Remove player from all your pstones");
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allowall [player] - All player to all your pstones");
-	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
-	{
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps info - Get info for the field youre standing on");
-	}
+	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allow [player] " + ChatColor.DARK_GRAY + "- Add player to the allowed list");
+	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps remove [player] " + ChatColor.DARK_GRAY + "- Remove player from the allowed list");
+	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps removeall [player] " + ChatColor.DARK_GRAY + "- Remove player from all your pstones");
+	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allowall [player] " + ChatColor.DARK_GRAY + "- All player to all your pstones");
 	
 	if (PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
 	{
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps delete - Delete the field(s) you're standing on");
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps delete [blockid] - Delete the field(s) from this type");
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps delete " + ChatColor.DARK_GRAY + "- Delete the field(s) you're standing on");
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps delete [blockid] " + ChatColor.DARK_GRAY + "- Delete the field(s) from this type");
+	}
+	
+	if (PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
+	{
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps info " + ChatColor.DARK_GRAY + "- Get info for the field youre standing on");
+	}
+
+	if (PreciousStones.Permissions.has(player, "preciousstones.admin.list"))
+	{
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps list [chunks-in-radius]" + ChatColor.DARK_GRAY + "- Lists all pstones in area");
+	}
+
+	if (PreciousStones.Permissions.has(player, "preciousstones.admin.setowner"))
+	{
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps setowner [player] " + ChatColor.DARK_GRAY + "- Of the psone you're pointing at");
+	}
+	
+	if (PreciousStones.Permissions.has(player, "preciousstones.admin.reload"))
+	{
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps reload" + ChatColor.DARK_GRAY + "- Reload configuraton and save files");
 	}
     }
     
@@ -545,7 +561,12 @@ public class CommunicatonManager
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Health +1");
     }
     
-    public void showOwner(Player player, Block block)
+    public void showUnbreakableOwner(Player player, Block block)
+    {
+	ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + plugin.um.getOwner(block));
+    }
+    
+    public void showFieldOwner(Player player, Block block)
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + plugin.ffm.getOwner(block));
     }
@@ -560,6 +581,17 @@ public class CommunicatonManager
 	ChatBlock.sendBlank(player);
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Protected");
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Source: [" + field.getVector().getX() + " " + field.getVector().getY() + " " + field.getVector().getZ() + "]");
+    }
+    
+    public void showUnbreakableDetails(Unbreakable unbreakable, Player player)
+    {
+	Vector unbreakablevec = unbreakable.getVector();
+	
+	Block unbreakableblock = player.getWorld().getBlockAt(unbreakablevec.getX(), unbreakablevec.getY(), unbreakablevec.getZ());
+	
+	ChatBlock.sendBlank(player);
+	ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + plugin.um.getOwner(unbreakableblock));
+	ChatBlock.sendMessage(player, ChatColor.AQUA + "Location: [" + unbreakableblock.getX() + " " + unbreakableblock.getY() + " " + unbreakableblock.getZ() + "]");
     }
     
     public void showFieldDetails(Field field, Player player)

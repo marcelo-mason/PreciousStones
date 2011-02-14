@@ -2,13 +2,17 @@ package com.bukkit.Phaed.PreciousStones.managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.bukkit.Chunk;
+import org.bukkit.util.Vector;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.Vector;
+import com.bukkit.Phaed.PreciousStones.PSVec;
 import com.bukkit.Phaed.PreciousStones.Unbreakable;
 
 /**
@@ -18,7 +22,7 @@ import com.bukkit.Phaed.PreciousStones.Unbreakable;
  */
 public class UnbreakableManager
 {
-    protected final HashMap<Vector, ArrayList<Unbreakable>> chunkLists = new HashMap<Vector, ArrayList<Unbreakable>>();
+    protected final HashMap<Vector, HashSet<Unbreakable>> chunkLists = new HashMap<Vector, HashSet<Unbreakable>>();
     
     @SuppressWarnings("unused")
     private Queue<Unbreakable> deletionQueue;
@@ -38,7 +42,7 @@ public class UnbreakableManager
     /**
      * Exposes the chunklist
      */
-    public HashMap<Vector, ArrayList<Unbreakable>> getChunkLists()
+    public HashMap<Vector, HashSet<Unbreakable>> getChunkLists()
     {
 	return chunkLists;
     }
@@ -52,7 +56,7 @@ public class UnbreakableManager
 	{
 	    Unbreakable delstone = deletionQueue.poll();
 	    
-	    for (ArrayList<Unbreakable> c : chunkLists.values())
+	    for (HashSet<Unbreakable> c : chunkLists.values())
 	    {
 		for (Unbreakable unbreakable : c)
 		{
@@ -106,21 +110,7 @@ public class UnbreakableManager
     {
 	return getUnbreakable(unbreakableblock) != null;
     }
-    
-    /**
-     * Check if a block is one of the unbreakable types
-     */
-    public boolean isUnbreakableType(Block unbreakableblock)
-    {
-	for (Integer t : plugin.settings.unbreakableBlocks)
-	{
-	    if (unbreakableblock.getTypeId() == t)
-		return true;
-	}
-	
-	return false;
-    }
-    
+  
     /**
      * Determine whether a player is the owner of the stone
      */
@@ -145,6 +135,52 @@ public class UnbreakableManager
 	    return unbreakable.getOwner();
 	
 	return "";
+    }
+    
+    /**
+     * Returns the unbreakable blocks in the chunk and adjacent chunks
+     */
+    public ArrayList<Unbreakable> getUnbreakablesInArea(Block blockInArea, int chunkradius)
+    {
+	ArrayList<Unbreakable> out = new ArrayList<Unbreakable>();
+	Chunk chunk = blockInArea.getChunk();
+	
+	int xlow = chunk.getX() - chunkradius;
+	int xhigh = chunk.getX() + chunkradius;
+	int zlow = chunk.getZ() - chunkradius;
+	int zhigh = chunk.getZ() + chunkradius;
+	
+	for (int x = xlow; x <= xhigh; x++)
+	{
+	    for (int z = zlow; z <= zhigh; z++)
+	    {
+		Chunk chnk = blockInArea.getWorld().getChunkAt(x, z);
+		if (chunk != null)
+		{
+		    ArrayList<Unbreakable> c = chunkLists.get(new Vector(chnk));
+		    
+		    if (c != null)
+		    {
+			for (Unbreakable unbreakable : c)
+			{
+			    if (unbreakable.getWorldId() == blockInArea.getWorld().getId())
+				out.add(unbreakable);
+			}
+		    }
+		}
+	    }
+	}
+	
+	return out;
+    }
+    
+    /**
+     * Returns the unbreakable blocks in the chunk and adjacent chunks
+     */
+    public ArrayList<Unbreakable> getUnbreakablesInArea(Player player, int chunkradius)
+    {
+	Block blockInArea = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+	return getUnbreakablesInArea(blockInArea, chunkradius);
     }
     
     /**
@@ -192,4 +228,32 @@ public class UnbreakableManager
     {
 	deletionQueue.add(new Unbreakable(new Vector(unbreakableblock.getLocation()), null, unbreakableblock.getWorld().getId()));
     }
+    
+    /**
+     * If the block is touching a pstone block
+     */
+    public boolean touchingUnbrakableBlock(Block block)
+    {
+	if (block == null)
+	    return false;
+	
+	for (int x = -1; x <= 1; x++)
+	{
+	    for (int z = -1; z <= 1; z++)
+	    {
+		for (int y = -1; y <= 1; y++)
+		{
+		    if (x == 0 && y == 0 && z == 0)
+			continue;
+		    
+		    Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
+		    
+		    if (plugin.settings.isUnbreakableType(surroundingblock))
+			return true;
+		}
+	    }
+	}
+	
+	return false;
+    }    
 }

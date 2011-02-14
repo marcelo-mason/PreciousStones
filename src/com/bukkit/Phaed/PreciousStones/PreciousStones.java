@@ -1,7 +1,6 @@
 package com.bukkit.Phaed.PreciousStones;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 import java.io.*;
 
@@ -137,13 +136,11 @@ public class PreciousStones extends JavaPlugin
 	Configuration config = getConfiguration();
 	config.load();
 	
-	List<Integer> ublocks = new ArrayList<Integer>();
-	List<Integer> bypassb = new ArrayList<Integer>();
-	
 	settings = new SettingsManager();
-	settings.addForceFieldStones((ArrayList) config.getProperty("force-field-blocks"));
-	
-	settings.unbreakableBlocks = config.getIntList("unbreakable-blocks", ublocks);
+	settings.addForceFieldStones((ArrayList) config.getProperty("force-field-blocks"));		
+	settings.unbreakableBlocks = config.getIntList("unbreakable-blocks", new ArrayList<Integer>());
+	settings.bypassBlocks = config.getIntList("bypass-blocks", new ArrayList<Integer>());
+	settings.noPlaceBlocks = config.getIntList("no-place-blocks", new ArrayList<Integer>());
 	settings.logFire = config.getBoolean("log.fire", false);
 	settings.logEntry = config.getBoolean("log.entry", false);
 	settings.logPlace = config.getBoolean("log.place", false);
@@ -171,9 +168,7 @@ public class PreciousStones extends JavaPlugin
 	settings.warnPvp = config.getBoolean("warn.pvp", false);
 	settings.warnDestroy = config.getBoolean("warn.destroy", false);
 	settings.warnDestroyArea = config.getBoolean("warn.destroy-area", false);
-	settings.bypassBlocks = config.getIntList("bypass-blocks", bypassb);
 	settings.publicBlockDetails = config.getBoolean("settings.public-block-details", false);
-	settings.chestNoTouch = config.getBoolean("settings.chest-no-touch", false);
 	settings.sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
     }   
 }

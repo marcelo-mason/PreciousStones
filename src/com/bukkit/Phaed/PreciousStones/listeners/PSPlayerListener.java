@@ -13,8 +13,10 @@ import org.bukkit.block.Block;
 
 import com.bukkit.Phaed.PreciousStones.PreciousStones;
 import com.bukkit.Phaed.PreciousStones.Helper;
+import com.bukkit.Phaed.PreciousStones.TargetBlock;
 import com.bukkit.Phaed.PreciousStones.ChatBlock;
 import com.bukkit.Phaed.PreciousStones.Vector;
+import com.bukkit.Phaed.PreciousStones.Unbreakable;
 import com.bukkit.Phaed.PreciousStones.Field;
 import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 
@@ -48,16 +50,19 @@ public class PSPlayerListener extends PlayerListener
 	
 	// check if its one of the stones types
 	
-	if (plugin.ffm.isFieldType(block) && plugin.ffm.isField(block))
+	if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
 	{
-	    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails)
+	    if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || PreciousStones.Permissions.has(player, "preciousstones.admin.details"))
+		plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
+	    else
+		plugin.cm.showUnbreakableOwner(player, block);
+	}
+	else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
+	{
+	    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || PreciousStones.Permissions.has(player, "preciousstones.admin.details"))
 		plugin.cm.showFieldDetails(plugin.ffm.getField(block), player);
 	    else
-		plugin.cm.showOwner(player, block);
-	}
-	else if (plugin.um.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
-	{
-	    plugin.cm.showOwner(player, block);
+		plugin.cm.showFieldOwner(player, block);
 	}
 	else
 	{
@@ -136,7 +141,7 @@ public class PSPlayerListener extends PlayerListener
 	    {
 		if (!PreciousStones.Permissions.has(player, "preciousstones.bypass.damage"))
 		{
-		    if(plugin.settings.sneakingBypassesDamage && player.isSneaking())
+		    if (plugin.settings.sneakingBypassesDamage && player.isSneaking())
 			continue;
 		    
 		    if (fieldsettings.slowDamage)
@@ -344,6 +349,68 @@ public class PSPlayerListener extends PlayerListener
 			return;
 		    }
 		}
+		else if (split[1].equals("setowner") && PreciousStones.Permissions.has(player, "preciousstones.admin.setowner"))
+		{
+		    String owner = split[2];
+		    
+		    ArrayList<String> ignore = new ArrayList<String>();
+		    ignore.add("0");
+		    ignore.add("8");
+		    ignore.add("9");
+		    
+		    TargetBlock tb = new TargetBlock(player, 100, 0.2, ignore);
+		    
+		    if (tb != null)
+		    {
+			Block targetblock = tb.getTargetBlock();
+			
+			if (targetblock != null)
+			{
+			    if (plugin.settings.isUnbreakableType(targetblock))
+			    {
+				Unbreakable unbreakable = plugin.um.getUnbreakable(targetblock);
+				if (unbreakable != null)
+				{
+				    unbreakable.setOwner(owner);
+				    ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner set to " + owner);
+				    return;
+				}
+			    }
+			    
+			    if (plugin.settings.isFieldType(targetblock))
+			    {
+				Field field = plugin.ffm.getField(targetblock);
+				if (field != null)
+				{
+				    field.setOwner(owner);
+				    ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner set to " + owner);
+				    return;
+				}
+			    }
+			}
+		    }
+		    
+		    ChatBlock.sendMessage(player, ChatColor.AQUA + "You are not pointing at a force-field or unbreakable block");
+		    return;
+		}
+		else if (split[1].equals("list") && PreciousStones.Permissions.has(player, "preciousstones.admin.list"))
+		{
+		    if (Helper.isInteger(split[2]))
+		    {
+			ArrayList<Unbreakable> unbreakables = plugin.um.getUnbreakablesInArea(player, Integer.parseInt(split[2]));
+			ArrayList<Field> fields = plugin.ffm.getFieldsInArea(player, Integer.parseInt(split[2]));
+			
+			for(Unbreakable u : unbreakables)
+			    ChatBlock.sendMessage(player, ChatColor.AQUA + "[" + u.getOwner() + "] " + u.getVector());
+			
+			for(Field f : fields)
+			    ChatBlock.sendMessage(player, ChatColor.AQUA + "[" + f.getOwner() + "] " + f.getVector());
+			
+			if(unbreakables.size() == 0 && fields.size() == 0)
+			    ChatBlock.sendMessage(player, ChatColor.AQUA + "No force-field or unbreakable blocks found");
+			return;
+		    }
+		}
 	    }
 	    else if (split.length == 2)
 	    {
@@ -392,5 +459,4 @@ public class PSPlayerListener extends PlayerListener
 	    plugin.cm.showMenu(player);
 	}
     }
-    
 }

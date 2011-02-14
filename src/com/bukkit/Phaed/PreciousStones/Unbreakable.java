@@ -4,9 +4,9 @@ import org.bukkit.block.Block;
 
 public class Unbreakable
 {
-    private Vector vec;
+    private final Vector vec;
+    private final long world;
     private String owner;
-    private long world;
     
     public Unbreakable(Block block, String owner)
     {
@@ -32,6 +32,11 @@ public class Unbreakable
 	return owner;
     }
     
+    public void setOwner(String owner)
+    {
+	this.owner = owner;
+    }
+    
     public long getWorldId()
     {
 	return world;
@@ -40,6 +45,23 @@ public class Unbreakable
     public boolean isOwner(String playerName)
     {
 	return playerName.equals(owner);
+    }
+    
+    @Override
+    public int hashCode()
+    {
+	return ((new Integer(vec.x)).hashCode() >> 13) ^ ((new Integer(vec.y)).hashCode() >> 7) ^ ((new Integer(vec.z)).hashCode()) ^ ((new Long(world)).hashCode());
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+	if (!(obj instanceof Vector))
+	{
+	    return false;
+	}
+	Vector other = (Vector) obj;
+	return other.x == this.vec.x && other.y == this.vec.y && other.z == this.vec.z;
     }
     
     @Override

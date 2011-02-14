@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class Field
 {
     private final Vector vec;
-    private final String owner;
     private final long world;
+    private String owner;
     private ArrayList<String> allowed = new ArrayList<String>();
     
     public Field(Vector vec, String owner, ArrayList<String> allowed, long world)
@@ -25,6 +25,11 @@ public class Field
     public String getOwner()
     {
 	return owner;
+    }
+    
+    public void setOwner(String owner)
+    {
+	this.owner = owner;
     }
 
     public ArrayList<String> getAllowed()
@@ -72,7 +77,24 @@ public class Field
 	allowed.remove(playerName);
 	return true;
     }
-
+    
+    @Override
+    public int hashCode()
+    {
+	return ((new Integer(vec.x)).hashCode() >> 13) ^ ((new Integer(vec.y)).hashCode() >> 7) ^ ((new Integer(vec.z)).hashCode()) ^ ((new Long(world)).hashCode());
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+	if (!(obj instanceof Vector))
+	{
+	    return false;
+	}
+	Vector other = (Vector) obj;
+	return other.x == this.vec.x && other.y == this.vec.y && other.z == this.vec.z;
+    }
+        
     @Override
     public String toString()
     {

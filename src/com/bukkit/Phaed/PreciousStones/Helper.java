@@ -76,10 +76,10 @@ public class Helper
     
     /**
      * Capitalize first word of sentence
-     */    
+     */
     public static String capitalize(String content)
     {
-	if(content.length() < 2)
+	if (content.length() < 2)
 	    return content;
 	
 	String first = content.substring(0, 1).toUpperCase();

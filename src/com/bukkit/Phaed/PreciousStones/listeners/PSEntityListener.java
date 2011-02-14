@@ -33,10 +33,10 @@ public class PSEntityListener extends EntityListener
 	{
 	    // prevent explosions near pstones
 	    
-	    if (plugin.um.isUnbreakableType(block))
+	    if (plugin.settings.isUnbreakableType(block))
 		event.setCancelled(true);
 	    
-	    if (plugin.ffm.isFieldType(block))
+	    if (plugin.settings.isFieldType(block))
 		event.setCancelled(true);
 	    
 	    // prevent explosions in protected force-fields

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.bukkit.entity.Player;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import com.bukkit.Phaed.PreciousStones.PreciousStones;
@@ -101,17 +100,6 @@ public class ForceFieldManager
     }
     
     /**
-     * Check if a block is one of the forcefeld types
-     */
-    public boolean isFieldType(Block block)
-    {
-	if (block == null)
-	    return false;
-	
-	return plugin.settings.ffBlocks.contains(block.getTypeId());
-    }
-    
-    /**
      * If its unbreakable or not
      */
     public boolean isBreakable(Block block)
@@ -171,17 +159,17 @@ public class ForceFieldManager
     }
     
     /**
-     * Returns the stones in the chunk and adjacent chunks
+     * Returns the fields in the chunk and adjacent chunks
      */
-    private ArrayList<Field> getFieldsInArea(Block blockInArea)
+    public ArrayList<Field> getFieldsInArea(Block blockInArea, int chunkradius)
     {
 	ArrayList<Field> out = new ArrayList<Field>();
 	Chunk chunk = blockInArea.getChunk();
 	
-	int xlow = chunk.getX() - plugin.settings.chunksInLargestForceFieldArea;
-	int xhigh = chunk.getX() + plugin.settings.chunksInLargestForceFieldArea;
-	int zlow = chunk.getZ() - plugin.settings.chunksInLargestForceFieldArea;
-	int zhigh = chunk.getZ() + plugin.settings.chunksInLargestForceFieldArea;
+	int xlow = chunk.getX() - chunkradius;
+	int xhigh = chunk.getX() + chunkradius;
+	int zlow = chunk.getZ() - chunkradius;
+	int zhigh = chunk.getZ() + chunkradius;
 	
 	for (int x = xlow; x <= xhigh; x++)
 	{
@@ -205,6 +193,23 @@ public class ForceFieldManager
 	}
 	
 	return out;
+    }
+    
+    /**
+     * Returns the fields in the chunk and adjacent chunks
+     */
+    public ArrayList<Field> getFieldsInArea(Player player, int chunkradius)
+    {
+	Block blockInArea = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+	return getFieldsInArea(blockInArea, chunkradius);
+    }
+    
+    /**
+     * Returns the fields in the chunk and adjacent chunks
+     */
+    public ArrayList<Field> getFieldsInArea(Block blockInArea)
+    {
+	return getFieldsInArea(blockInArea, plugin.settings.chunksInLargestForceFieldArea);
     }
     
     /**
@@ -250,7 +255,7 @@ public class ForceFieldManager
 		
 		// if the forcefield's source is not a proper source type then delete the field
 		
-		if (!isFieldType(source))
+		if (!plugin.settings.isFieldType(source))
 		    queueRelease(source);
 		else
 		    fields.add(field);
@@ -439,9 +444,9 @@ public class ForceFieldManager
     }
     
     /**
-     * If the block is touching a chest
+     * If the block is touching a pstone block
      */
-    public boolean touchingChest(Block block)
+    public boolean touchingFieldBlock(Block block)
     {
 	if (block == null)
 	    return false;
@@ -455,9 +460,9 @@ public class ForceFieldManager
 		    if (x == 0 && y == 0 && z == 0)
 			continue;
 		    
-		    Material mat = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z).getType();
+		    Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 		    
-		    if (mat.equals(Material.CHEST))
+		    if (plugin.settings.isFieldType(surroundingblock))
 			return true;
 		}
 	    }
@@ -578,7 +583,7 @@ public class ForceFieldManager
      */
     public Field isInConflict(Block block, String placer)
     {
-	if (isFieldType(block))
+	if (plugin.settings.isFieldType(block))
 	{
 	    FieldSettings fieldsettings = getFieldSettings(block);
 	    

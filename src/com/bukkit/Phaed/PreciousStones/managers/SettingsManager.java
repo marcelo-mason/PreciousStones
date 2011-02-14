@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import com.bukkit.Phaed.PreciousStones.Helper;
@@ -13,6 +14,7 @@ public class SettingsManager
 {
     public List<Integer> unbreakableBlocks;
     public List<Integer> bypassBlocks;
+    public List<Integer> noPlaceBlocks;
     public boolean logFire;
     public boolean logEntry;
     public boolean logPlace;
@@ -41,9 +43,8 @@ public class SettingsManager
     public boolean warnPvp;
     public boolean warnFire;
     public boolean publicBlockDetails;
-    public boolean chestNoTouch;
     public boolean sneakingBypassesDamage;
-
+    
     public int chunksInLargestForceFieldArea;
     public List<Integer> ffBlocks = new ArrayList<Integer>();
     
@@ -52,6 +53,95 @@ public class SettingsManager
     public SettingsManager()
     {
 	
+    }
+    
+    /**
+     * Check if a block is one of the noplace types
+     */
+    public boolean isNoPlaceType(Block placedblock)
+    {
+	for (Integer t : unbreakableBlocks)
+	{
+	    if (placedblock.getTypeId() == t)
+		return true;
+	}
+	
+	return false;
+    }
+        
+    /**
+     * If the block is touching a no place block
+     */
+    public boolean touchingNoPlaceBlock(Block block)
+    {
+	if (block == null)
+	    return false;
+	
+	for (int x = -1; x <= 1; x++)
+	{
+	    for (int z = -1; z <= 1; z++)
+	    {
+		for (int y = -1; y <= 1; y++)
+		{
+		    if (x == 0 && y == 0 && z == 0)
+			continue;
+		    
+		    Material mat = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z).getType();
+		    
+		    if (mat.equals(Material.CHEST) || mat.equals(Material.FURNACE))
+			return true;
+		}
+	    }
+	}
+	
+	return false;
+    }
+    
+    /**
+     * Check if a block is one of the unbreakable types
+     */
+    public boolean isUnbreakableType(Block unbreakableblock)
+    {
+	for (Integer t : unbreakableBlocks)
+	{
+	    if (unbreakableblock.getTypeId() == t)
+		return true;
+	}
+	
+	return false;
+    }
+    
+    /**
+     * Check if a block is one of the unbreakable types
+     */
+    public boolean isUnbreakableType(Material material)
+    {
+	for (Integer t : unbreakableBlocks)
+	{
+	    if (material.getId() == t)
+		return true;
+	}
+	
+	return false;
+    }
+    
+    /**
+     * Check if a block is one of the forcefeld types
+     */
+    public boolean isFieldType(Block block)
+    {
+	if (block == null)
+	    return false;
+	
+	return ffBlocks.contains(block.getTypeId());
+    }
+    
+    /**
+     * Check if a block is one of the forcefeld types
+     */
+    public boolean isFieldType(Material material)
+    {
+	return ffBlocks.contains(material.getId());
     }
     
     @SuppressWarnings("unchecked")
