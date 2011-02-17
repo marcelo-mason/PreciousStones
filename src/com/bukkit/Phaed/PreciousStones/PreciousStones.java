@@ -17,11 +17,13 @@ import com.bukkit.Phaed.PreciousStones.listeners.PSBlockListener;
 import com.bukkit.Phaed.PreciousStones.listeners.PSEntityListener;
 import com.bukkit.Phaed.PreciousStones.listeners.PSPlayerListener;
 import com.bukkit.Phaed.PreciousStones.listeners.PSWorldListener;
-import com.bukkit.Phaed.PreciousStones.managers.ForceFieldManager;
 import com.bukkit.Phaed.PreciousStones.managers.SettingsManager;
-import com.bukkit.Phaed.PreciousStones.managers.StorageManager;
+import com.bukkit.Phaed.PreciousStones.managers.ForceFieldManager;
 import com.bukkit.Phaed.PreciousStones.managers.UnbreakableManager;
+import com.bukkit.Phaed.PreciousStones.managers.UnprotectableManager;
+import com.bukkit.Phaed.PreciousStones.managers.StorageManager;
 import com.bukkit.Phaed.PreciousStones.managers.CommunicatonManager;
+import com.bukkit.Phaed.PreciousStones.managers.EntryManager;
 
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.nijiko.permissions.PermissionHandler;
@@ -39,8 +41,10 @@ public class PreciousStones extends JavaPlugin
     public SettingsManager settings;
     public ForceFieldManager ffm = new ForceFieldManager(this);
     public UnbreakableManager um = new UnbreakableManager(this);
+    public UnprotectableManager upm = new UnprotectableManager(this);
     public StorageManager sm = new StorageManager(this);
     public CommunicatonManager cm = new CommunicatonManager(this);
+    public EntryManager em = new EntryManager(this);
     
     public static final Logger log = Logger.getLogger("Minecraft");
     
@@ -76,7 +80,6 @@ public class PreciousStones extends JavaPlugin
 	    if (test != null)
 	    {
 		this.Permissions = ((Permissions) test).getHandler();
-		log.info("[" + desc.getName() + "] Permission plugin found.");
 	    }
 	    else
 	    {
@@ -100,9 +103,13 @@ public class PreciousStones extends JavaPlugin
 	
 	loadConfiguration();
 	
-	// load pstones from file
+	// load force-field and unbreakable blocks from file
 	
 	sm.load();
+	
+	// start scheduler
+	
+	em.startScheduler();
 	
 	// initiate permissions plugin
 	
@@ -140,13 +147,14 @@ public class PreciousStones extends JavaPlugin
 	settings.addForceFieldStones((ArrayList) config.getProperty("force-field-blocks"));		
 	settings.unbreakableBlocks = config.getIntList("unbreakable-blocks", new ArrayList<Integer>());
 	settings.bypassBlocks = config.getIntList("bypass-blocks", new ArrayList<Integer>());
-	settings.noPlaceBlocks = config.getIntList("no-place-blocks", new ArrayList<Integer>());
+	settings.unprotectableBlocks = config.getIntList("unprotectable-blocks", new ArrayList<Integer>());
 	settings.logFire = config.getBoolean("log.fire", false);
 	settings.logEntry = config.getBoolean("log.entry", false);
 	settings.logPlace = config.getBoolean("log.place", false);
 	settings.logPvp = config.getBoolean("log.pvp", false);
 	settings.logDestroy = config.getBoolean("log.destroy", false);
 	settings.logDestroyArea = config.getBoolean("log.destroy-area", false);
+	settings.logUnprotectable = config.getBoolean("log.unprotectable", false);
 	settings.logBypassPvp = config.getBoolean("log.bypass-pvp", false);
 	settings.logBypassDelete = config.getBoolean("log.bypass-delete", false);
 	settings.logBypassPlace = config.getBoolean("log.bypass-place", false);
@@ -154,6 +162,7 @@ public class PreciousStones extends JavaPlugin
 	settings.logConflictPlace = config.getBoolean("log.conflict-place", false);
 	settings.notifyPlace = config.getBoolean("notify.place", false);
 	settings.notifyDestroy = config.getBoolean("notify.destroy", false);
+	settings.notifyBypassUnprotectable = config.getBoolean("notify.bypass-unprotectable", false);
 	settings.notifyBypassPvp = config.getBoolean("notify.bypass-pvp", false);
 	settings.notifyBypassPlace = config.getBoolean("notify.bypass-place", false);
 	settings.notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", false);
@@ -168,6 +177,7 @@ public class PreciousStones extends JavaPlugin
 	settings.warnPvp = config.getBoolean("warn.pvp", false);
 	settings.warnDestroy = config.getBoolean("warn.destroy", false);
 	settings.warnDestroyArea = config.getBoolean("warn.destroy-area", false);
+	settings.warnUnprotectable = config.getBoolean("warn.unprotectable", false);
 	settings.publicBlockDetails = config.getBoolean("settings.public-block-details", false);
 	settings.sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
     }   

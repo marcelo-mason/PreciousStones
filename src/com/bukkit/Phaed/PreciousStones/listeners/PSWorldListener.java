@@ -21,8 +21,6 @@ public class PSWorldListener extends WorldListener
     @Override
     public void onWorldSaved(WorldEvent event)
     {
-	// write stones to disk when the world is written
-	
 	plugin.sm.save();
     }
 }

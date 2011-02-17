@@ -9,7 +9,8 @@ import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.entity.Player;
 
 import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.Field;
+import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import com.bukkit.Phaed.PreciousStones.vectors.*;
 
 /**
  * PreciousStones block listener
@@ -64,7 +65,7 @@ public class PSBlockListener extends BlockListener
 		    plugin.cm.notifyDestroyU(player, damagedblock);
 		    plugin.um.release(damagedblock);
 		}
-		else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.stones.unbreakable"))
+		else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unbreakable"))
 		{
 		    plugin.cm.notifyBypassDestroyU(player, damagedblock);
 		    plugin.um.release(damagedblock);
@@ -87,7 +88,7 @@ public class PSBlockListener extends BlockListener
 		    plugin.cm.notifyDestroyFF(player, damagedblock);
 		    plugin.ffm.release(damagedblock);
 		}
-		else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.stones.forcefield"))
+		else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.forcefield"))
 		{
 		    plugin.cm.notifyBypassDestroyFF(player, damagedblock);
 		    plugin.ffm.release(damagedblock);
@@ -132,27 +133,35 @@ public class PSBlockListener extends BlockListener
 	
 	if (plugin.settings.isUnbreakableType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.unbreakable"))
 	{
-	    Field field = plugin.ffm.isInConflict(placedblock, player.getName());
+	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player.getName());
 	    
-	    if (field != null)
+	    if (conflictfield != null)
 	    {
 		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.place"))
 		{
 		    plugin.um.add(placedblock, player.getName());
-		    plugin.cm.notifyBypassPlaceU(player, field);
+		    plugin.cm.notifyBypassPlaceU(player, conflictfield);
 		}
 		else
 		{
 		    event.setCancelled(true);
-		    plugin.cm.warnConflictU(player, field);
+		    plugin.cm.warnConflictU(player, conflictfield);
 		}
 	    }
 	    else
 	    {
-		if (plugin.settings.isNoPlaceType(placedblock) && plugin.settings.touchingNoPlaceBlock(placedblock) && !PreciousStones.Permissions.has(player, "preciousstones.bypass.noplace"))
+		if (plugin.upm.touchingUnprotectableBlock(placedblock))
 		{
-		    event.setCancelled(true);
-		    plugin.cm.warnPlace(player, plugin.ffm.getField(placedblock));
+		    if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+		    {
+			plugin.um.add(placedblock, player.getName());
+			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
+		    }
+		    else
+		    {
+			event.setCancelled(true);
+			plugin.cm.warnPlaceUnprotectableTouching(player, placedblock);
+		    }
 		}
 		else
 		{
@@ -164,42 +173,102 @@ public class PSBlockListener extends BlockListener
 	}
 	else if (plugin.settings.isFieldType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.forcefield"))
 	{
-	    Field field = plugin.ffm.isInConflict(placedblock, player.getName());
+	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player.getName());
 	    
-	    if (field != null)
+	    if (conflictfield != null)
 	    {
 		event.setCancelled(true);
-		plugin.cm.warnConflictFF(player, field);
+		plugin.cm.warnConflictFF(player, conflictfield);
 	    }
 	    else
 	    {
-		if (plugin.settings.isNoPlaceType(placedblock) && plugin.settings.touchingNoPlaceBlock(placedblock) && !PreciousStones.Permissions.has(player, "preciousstones.bypass.noplace"))
+		if (plugin.upm.touchingUnprotectableBlock(placedblock))
 		{
-		    event.setCancelled(true);
-		    plugin.cm.warnPlace(player, plugin.ffm.getField(placedblock));
+		    if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+		    {
+			plugin.ffm.add(placedblock, player.getName());
+			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
+		    }
+		    else
+		    {
+			event.setCancelled(true);
+			plugin.cm.warnPlaceUnprotectableTouching(player, placedblock);
+		    }
+		    return;
+		}
+		
+		FieldSettings fieldsettings = plugin.settings.getFieldSettings(placedblock.getTypeId());
+		
+		if (fieldsettings.preventUnprotectable)
+		{
+		    Block foundblock = plugin.upm.existsUnprotectableBlock(placedblock);
+		    
+		    if (foundblock != null)
+		    {
+			if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+			{
+			    plugin.ffm.add(placedblock, player.getName());
+			    plugin.cm.notifyBypassFieldInUnprotectable(player, foundblock, placedblock);
+			}
+			else
+			{
+			    event.setCancelled(true);
+			    plugin.cm.warnPlaceFieldInUnprotectable(player, foundblock, placedblock);
+			}
+			return;
+		    }
+		}
+		
+		plugin.ffm.add(placedblock, player.getName());
+		
+		if (plugin.ffm.isBreakable(placedblock))
+		{
+		    plugin.cm.notifyPlaceBreakableFF(player, placedblock);
 		}
 		else
 		{
-		    plugin.ffm.add(placedblock, player.getName());
-		    
-		    if (plugin.ffm.isBreakable(placedblock))
-			plugin.cm.notifyPlaceBreakableFF(player, placedblock);
-		    else
-			plugin.cm.notifyPlaceFF(player, placedblock);
+		    plugin.cm.notifyPlaceFF(player, placedblock);
+		}
+	    }
+	    return;
+	}
+	else if (plugin.settings.isUnprotectableType(placedblock))
+	{
+	    plugin.cm.debug("1****************");
+	    if (plugin.um.touchingUnbrakableBlock(placedblock) || plugin.ffm.touchingFieldBlock(placedblock))
+	    {
+		plugin.cm.debug("2");
+		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+		{
+		    plugin.cm.debug("3");
+		    plugin.um.add(placedblock, player.getName());
+		    plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
+		}
+		else
+		{
+		    plugin.cm.debug("4");
+		    event.setCancelled(true);
+		    plugin.cm.warnPlaceUnprotectableTouching(player, placedblock);
+		    return;
 		}
 	    }
 	    
-	    return;
-	}
-	else
-	{
-	    if (plugin.settings.isNoPlaceType(placedblock) && !PreciousStones.Permissions.has(player, "preciousstones.bypass.noplace"))
+	    Field field = plugin.ffm.isUprotectableBlockField(placedblock);
+	    
+	    plugin.cm.debug("5");
+	    if (field != null)
 	    {
-		if (plugin.um.touchingUnbrakableBlock(placedblock) || plugin.ffm.touchingFieldBlock(placedblock))
+		plugin.cm.debug("6");
+		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
 		{
+		    plugin.cm.debug("7");
+		    plugin.cm.notifyBypassPlaceUnprotectableInField(player, placedblock, field);
+		}
+		else
+		{
+		    plugin.cm.debug("8");
 		    event.setCancelled(true);
-		    plugin.cm.warnPlace(player, plugin.ffm.getField(placedblock));
-		    return;
+		    plugin.cm.warnPlaceUnprotectableInField(player, placedblock, field);
 		}
 	    }
 	}

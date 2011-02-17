@@ -3,11 +3,14 @@ package com.bukkit.Phaed.PreciousStones.managers;
 import java.io.*;
 import java.util.*;
 
+import org.bukkit.block.Block;
+import org.bukkit.Material;
+
 import com.bukkit.Phaed.PreciousStones.Helper;
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
 import com.bukkit.Phaed.PreciousStones.Vector;
-import com.bukkit.Phaed.PreciousStones.Field;
-import com.bukkit.Phaed.PreciousStones.Unbreakable;
+import com.bukkit.Phaed.PreciousStones.PreciousStones;
+import com.bukkit.Phaed.PreciousStones.vectors.*;
+import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 
 public class StorageManager
 {
@@ -49,7 +52,9 @@ public class StorageManager
     public void load()
     {
 	if (loadOldStones())
+	{
 	    return;
+	}
 	
 	plugin.um.chunkLists.clear();
 	int linecount = 0;
@@ -68,53 +73,81 @@ public class StorageManager
 		if (!line.contains("["))
 		    continue;
 		
-		line = Helper.removeChar(line, '[');
-		line = Helper.removeChar(line, ']');
 		String[] u = line.split("\\|");
 		
-		if (u.length < 4)
+		String sectype = u[0];
+		String secowner = u[1];
+		String secworld = u[2];
+		String secchunk = u[3];
+		String secvec = u[4];
+		
+		sectype = Helper.removeChar(sectype, '[');
+		secvec = Helper.removeChar(secvec, ']');
+		
+		if (u.length < 5)
 		{
-		    PreciousStones.log.warning("[" + plugin.getDesc().getName() + "] Corrupt unbreakable block: err1 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: seccount" + u.length + " line " + linecount);
 		    continue;
 		}
 		
-		String owner = u[0];
-		
-		if (!Helper.isLong(u[1]))
+		if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !plugin.settings.isUnbreakableType(sectype))
 		{
-		    PreciousStones.log.warning("[" + plugin.getDesc().getName() + "] Corrupt forcefield block: err2 line " + linecount);
+		    PreciousStones.log.warning(" Corrupt unbreakable: sec1 line " + linecount);
 		    continue;
 		}
 		
-		long world = Long.parseLong(u[1]);
+		String type = sectype;
 		
-		String[] chunk = u[2].split(",");
+		if (secowner.trim().length() == 0)
+		{
+		    PreciousStones.log.warning("Corrupt unbreakable: sec2 line " + linecount);
+		    continue;
+		}
+		
+		String owner = secowner;
+		
+		if (secworld.trim().length() == 0)
+		{
+		    PreciousStones.log.warning("Corrupt unbreakable: sec3 line " + linecount);
+		    continue;
+		}
+		
+		String world = secworld;
+		
+		String[] chunk = secchunk.split(",");
 		
 		if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
 		{
-		    PreciousStones.log.warning("[" + plugin.getDesc().getName() + "] Corrupt unbreakable block: err3 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: sec4 line " + linecount);
 		    continue;
 		}
 		
-		String[] vec = u[3].split(",");
+		String[] vec = secvec.split(",");
 		
 		if (vec.length < 3 || !Helper.isInteger(vec[0]) || !Helper.isInteger(vec[1]) || !Helper.isInteger(vec[2]))
 		{
-		    PreciousStones.log.warning("[" + plugin.getDesc().getName() + "] Corrupt unbreakable block: err4 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
 		    continue;
 		}
 		
-		Vector chunkvec = new Vector(Integer.parseInt(chunk[0]), 0, Integer.parseInt(chunk[1]));
-		ArrayList<Unbreakable> c;
+		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
+		LinkedList<Unbreakable> c;
 		
 		if (plugin.um.chunkLists.containsKey(chunkvec))
 		    c = plugin.um.chunkLists.get(chunkvec);
 		else
-		    c = new ArrayList<Unbreakable>();
+		    c = new LinkedList<Unbreakable>();
 		
-		Vector stonevec = new Vector(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
+		Unbreakable unbreakable = new Unbreakable(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), chunkvec, world, Material.getMaterial(type).getId(), owner);
 		
-		c.add(new Unbreakable(stonevec, owner, world));
+		if (!c.contains(unbreakable))
+		{
+		    c.add(unbreakable);
+		}
+		else
+		{
+		    PreciousStones.log.warning("Rejecting duplicate unbreakable: line " + linecount);
+		}
 		
 		plugin.um.chunkLists.put(chunkvec, c);
 	    }
@@ -142,63 +175,94 @@ public class StorageManager
 		if (!line.contains("["))
 		    continue;
 		
-		line = Helper.removeChar(line, '[');
-		line = Helper.removeChar(line, ']');
 		String[] u = line.split("\\|");
 		
-		if (u.length < 5)
+		String sectype = u[0];
+		String secowner = u[1];
+		String secallowed = u[2];
+		String secworld = u[3];
+		String secchunk = u[4];
+		String secvec = u[5];
+		String secname = u[6];
+		
+		sectype = Helper.removeChar(sectype, '[');
+		secname = Helper.removeChar(secname, ']');		
+		
+		if (u.length < 7)
 		{
-		    PreciousStones.log.warning("[" + plugin.getDesc().getName() + "] Corrupt forcefield block: err1 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: seccount" + u.length + " line " + linecount);
 		    continue;
 		}
 		
-		String owner = u[0];
+		if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !plugin.settings.isFieldType(sectype))
+		{
+		    PreciousStones.log.warning("Corrupt forcefield : sec1 line " + linecount);
+		    continue;
+		}
 		
-		List<String> temp = Arrays.asList(u[1].split(","));
+		String type = sectype;
+		
+		if (secowner.trim().length() == 0)
+		{
+		    PreciousStones.log.warning("Corrupt forcefield: sec2 line " + linecount);
+		    continue;
+		}
+		
+		String owner = secowner;
+		
+		List<String> temp = Arrays.asList(secallowed.split(","));
 		ArrayList<String> allowed = new ArrayList<String>();
 		
-		for(String t : temp)
+		for (String t : temp)
 		{
-		    if(t.trim().length() > 0)
+		    if (t.trim().length() > 0)
 			allowed.add(t);
 		}
 		
-		if (!Helper.isLong(u[2]))
+		if (secworld.trim().length() == 0)
 		{
-		    PreciousStones.log.warning("[" + plugin.getDesc().getName() + "] Corrupt forcefield block: err2 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield : sec4 line " + linecount);
 		    continue;
 		}
 		
-		long world = Long.parseLong(u[2]);
+		String world = secworld;
 		
-		String[] chunk = u[3].split(",");
+		String[] chunk = secchunk.split(",");
 		
 		if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
 		{
-		    PreciousStones.log.warning("[" + plugin.getDesc().getName() + "] Corrupt forcefield block: err3 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: sec5 line " + linecount);
 		    continue;
 		}
 		
-		String[] vec = u[4].split(",");
+		String[] vec = secvec.split(",");
 		
 		if (vec.length < 5 || !Helper.isInteger(vec[0]) || !Helper.isInteger(vec[1]) || !Helper.isInteger(vec[2]) || !Helper.isInteger(vec[3]) || !Helper.isInteger(vec[4]))
 		{
-		    PreciousStones.log.warning("[" + plugin.getDesc().getName() + "] Corrupt forcefield block: err4 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: sec6 line " + linecount);
 		    continue;
 		}
 		
-		Vector chunkvec = new Vector(Integer.parseInt(chunk[0]), 0, Integer.parseInt(chunk[1]));
-		ArrayList<Field> c;
+		String name = secname;
+		
+		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
+		LinkedList<Field> c;
 		
 		if (plugin.ffm.chunkLists.containsKey(chunkvec))
 		    c = plugin.ffm.chunkLists.get(chunkvec);
 		else
-		    c = new ArrayList<Field>();
+		    c = new LinkedList<Field>();
 		
-		Vector fieldvec = new Vector(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]));
+		Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), chunkvec, world, Material.getMaterial(type).getId(), owner, allowed, name);
 		
-		c.add(new Field(fieldvec, owner, allowed, world));
-		
+		if (!c.contains(field))
+		{
+		    c.add(field);
+		}
+		else
+		{
+		    PreciousStones.log.warning("Rejecting duplicate forcefield: line " + linecount);
+		}
 		plugin.ffm.chunkLists.put(chunkvec, c);
 	    }
 	    
@@ -215,6 +279,22 @@ public class StorageManager
      */
     public void save()
     {
+	if (plugin.um.isDirty())
+	{
+	    saveUnbreakables();
+	}
+	
+	if (plugin.ffm.isDirty())
+	{
+	    saveFields();
+	}
+    }
+    
+    /**
+     * Save pstones to disk
+     */
+    public void saveUnbreakables()
+    {
 	PreciousStones.log.info("[" + plugin.getDesc().getName() + "] saving " + unbreakable.getName());
 	
 	BufferedWriter bwriter = null;
@@ -227,27 +307,29 @@ public class StorageManager
 	    fwriter = new FileWriter(unbreakable);
 	    bwriter = new BufferedWriter(fwriter);
 	    
-	    for (Vector chunkvec : plugin.um.chunkLists.keySet())
+	    for (ChunkVec chunkvec : plugin.um.chunkLists.keySet())
 	    {
-		ArrayList<Unbreakable> c = plugin.um.chunkLists.get(chunkvec);
+		LinkedList<Unbreakable> c = plugin.um.chunkLists.get(chunkvec);
 		
 		for (Unbreakable unbreakable : c)
 		{
 		    StringBuilder builder = new StringBuilder();
 		    builder.append("[");
+		    builder.append(unbreakable.getType());
+		    builder.append("|");
 		    builder.append(unbreakable.getOwner());
 		    builder.append("|");
-		    builder.append(unbreakable.getWorldId());
+		    builder.append(unbreakable.getWorld());
 		    builder.append("|");
-		    builder.append(chunkvec.getX());
+		    builder.append(unbreakable.getChunkVec().getX());
 		    builder.append(",");
-		    builder.append(chunkvec.getZ());
+		    builder.append(unbreakable.getChunkVec().getZ());
 		    builder.append("|");
-		    builder.append(unbreakable.getVector().getX());
+		    builder.append(unbreakable.getX());
 		    builder.append(",");
-		    builder.append(unbreakable.getVector().getY());
+		    builder.append(unbreakable.getY());
 		    builder.append(",");
-		    builder.append(unbreakable.getVector().getZ());
+		    builder.append(unbreakable.getZ());
 		    builder.append("]");
 		    bwriter.write(builder.toString());
 		    bwriter.newLine();
@@ -280,8 +362,18 @@ public class StorageManager
 	    }
 	}
 	
+	plugin.um.resetDirty();
+    }
+    
+    /**
+     * Save fields to disk
+     */
+    public void saveFields()
+    {
 	PreciousStones.log.info("[" + plugin.getDesc().getName() + "] saving " + forcefield.getName());
 	
+	BufferedWriter bwriter = null;
+	FileWriter fwriter = null;
 	try
 	{
 	    if (!forcefield.exists())
@@ -290,9 +382,9 @@ public class StorageManager
 	    fwriter = new FileWriter(forcefield);
 	    bwriter = new BufferedWriter(fwriter);
 	    
-	    for (Vector chunkvec : plugin.ffm.chunkLists.keySet())
+	    for (ChunkVec chunkvec : plugin.ffm.chunkLists.keySet())
 	    {
-		ArrayList<Field> c = plugin.ffm.chunkLists.get(chunkvec);
+		LinkedList<Field> c = plugin.ffm.chunkLists.get(chunkvec);
 		
 		for (Field field : c)
 		{
@@ -301,6 +393,8 @@ public class StorageManager
 		    
 		    StringBuilder builder = new StringBuilder();
 		    builder.append("[");
+		    builder.append(field.getType());
+		    builder.append("|");
 		    builder.append(field.getOwner());
 		    builder.append("|");
 		    for (int i = 0; i < allowed.size(); i++)
@@ -311,21 +405,23 @@ public class StorageManager
 			    builder.append(",");
 		    }
 		    builder.append("|");
-		    builder.append(field.getWorldId());
+		    builder.append(field.getWorld());
 		    builder.append("|");
-		    builder.append(chunkvec.getX());
+		    builder.append(field.getChunkVec().getX());
 		    builder.append(",");
-		    builder.append(chunkvec.getZ());
+		    builder.append(field.getChunkVec().getZ());
 		    builder.append("|");
-		    builder.append(field.getVector().getX());
+		    builder.append(field.getX());
 		    builder.append(",");
-		    builder.append(field.getVector().getY());
+		    builder.append(field.getY());
 		    builder.append(",");
-		    builder.append(field.getVector().getZ());
+		    builder.append(field.getZ());
 		    builder.append(",");
-		    builder.append(field.getVector().getRadius());
+		    builder.append(field.getRadius());
 		    builder.append(",");
-		    builder.append(field.getVector().getHeight());
+		    builder.append(field.getHeight());
+		    builder.append("|");
+		    builder.append(field.getStoredName());
 		    builder.append("]");
 		    bwriter.write(builder.toString());
 		    bwriter.newLine();
@@ -336,7 +432,7 @@ public class StorageManager
 	}
 	catch (IOException e)
 	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] IO Exception with file " + unbreakable.getName());
+	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] IO Exception with file " + forcefield.getName());
 	}
 	finally
 	{
@@ -354,11 +450,33 @@ public class StorageManager
 	    }
 	    catch (IOException e)
 	    {
-		PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] IO Exception with file " + unbreakable.getName() + " (on close)");
+		PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] IO Exception with file " + forcefield.getName() + " (on close)");
 	    }
 	}
 	
-	deleteOld();
+	plugin.ffm.resetDirty();
+    }
+    
+    /**
+     * Check for old save fles
+     */
+    public boolean foundOld()
+    {
+	File unbreakableFile = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakable.bin");
+	
+	if (unbreakableFile.exists())
+	{
+	    return true;
+	}
+	
+	File protectionFile = new File(plugin.getDataFolder().getPath() + File.separator + "protection.bin");
+	
+	if (protectionFile.exists())
+	{
+	    return true;
+	}
+	
+	return false;
     }
     
     /**
@@ -382,19 +500,44 @@ public class StorageManager
 		    com.bukkit.Phaed.PreciousStones.UnbreakableManager um = (com.bukkit.Phaed.PreciousStones.UnbreakableManager) oi.readObject();
 		    um.initiate(plugin);
 		    
-		    for (Vector vec : um.getChunkLists().keySet())
+		    String world = plugin.getServer().getWorlds().get(0).getName();
+		    
+		    for (Vector chunkvec : um.getChunkLists().keySet())
 		    {
-			ArrayList<Unbreakable> newlist = new ArrayList<Unbreakable>();
-			HashMap<Vector, String> oldlist = um.getChunkLists().get(vec);
+			LinkedList<Unbreakable> newlist = new LinkedList<Unbreakable>();
+			HashMap<Vector, String> oldlist = um.getChunkLists().get(chunkvec);
 			
 			for (Vector oldvec : oldlist.keySet())
 			{
-			    String oldowner = oldlist.get(oldvec);
-			    
-			    newlist.add(new Unbreakable(oldvec, oldowner, plugin.getServer().getWorlds().get(0).getId()));
+			    try
+			    {
+				Block block = plugin.getServer().getWorlds().get(0).getBlockAt(oldvec.getX(), oldvec.getY(), oldvec.getZ());
+				
+				if (!plugin.settings.isUnbreakableType(block))
+				{
+				    PreciousStones.log.warning("orphan unbrakable - skipping " + (new Vec(block)).toString());
+				    continue;
+				}
+				
+				String owner = oldlist.get(oldvec);
+				
+				Unbreakable unbreakable = new Unbreakable(block, owner);
+				
+				if (newlist.contains(unbreakable))
+				{
+				    PreciousStones.log.warning("duplicate field - skipping " + (new Vec(block)).toString());
+				    continue;
+				}
+				
+				newlist.add(unbreakable);
+			    }
+			    catch (Exception e)
+			    {
+				PreciousStones.log.warning("bad unbrakable - skipping conversion");
+			    }
 			}
 			
-			plugin.um.chunkLists.put(vec, newlist);
+			plugin.um.chunkLists.put(new ChunkVec(chunkvec.getX(), chunkvec.getZ(), world), newlist);
 		    }
 		    
 		    oi.close();
@@ -411,6 +554,17 @@ public class StorageManager
 		}
 		
 		loaded = true;
+		plugin.um.setDirty();
+		saveUnbreakables();
+		
+		try
+		{
+		    unbreakableFile.delete();
+		}
+		catch (Exception e)
+		{
+		    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Could not delete old unbreakable.bin file");
+		}
 	    }
 	}
 	catch (Exception e)
@@ -432,37 +586,79 @@ public class StorageManager
 		    com.bukkit.Phaed.PreciousStones.ProtectionManager pm = (com.bukkit.Phaed.PreciousStones.ProtectionManager) oi.readObject();
 		    pm.initiate(plugin);
 		    
-		    for (Vector vec : pm.getChunkLists().keySet())
+		    for (Vector chunkvec : pm.getChunkLists().keySet())
 		    {
-			ArrayList<Field> newlist = new ArrayList<Field>();
-			HashMap<Vector, ArrayList<String>> oldlist = pm.getChunkLists().get(vec);
+			LinkedList<Field> newlist = new LinkedList<Field>();
+			HashMap<Vector, ArrayList<String>> oldlist = pm.getChunkLists().get(chunkvec);
+			
+			String world = plugin.getServer().getWorlds().get(0).getName();
 			
 			for (Vector oldvec : oldlist.keySet())
 			{
-			    ArrayList<String> oldallowed = oldlist.get(oldvec);
-			    String oldowner = oldallowed.get(0);
-			    oldallowed.remove(0);
-			    
-			    newlist.add(new Field(oldvec, oldowner, oldallowed, plugin.getServer().getWorlds().get(0).getId()));
+			    try
+			    {
+				Block block = plugin.getServer().getWorlds().get(0).getBlockAt(oldvec.getX(), oldvec.getY(), oldvec.getZ());
+				
+				if (!plugin.settings.isFieldType(block))
+				{
+				    PreciousStones.log.warning("orphan field - skipping " + (new Vec(block)).toString());
+				    continue;
+				}
+				
+				FieldSettings fieldsettings = plugin.settings.getFieldSettings(block.getTypeId());
+				
+				ArrayList<String> oldallowed = oldlist.get(oldvec);
+				if (oldallowed == null)
+				{
+				    continue;
+				}
+				String oldowner = oldallowed.get(0);
+				oldallowed.remove(0);
+				
+				Field field = new Field(block, fieldsettings.radius, fieldsettings.getHeight(), oldowner, oldallowed, "");
+				
+				if (newlist.contains(field))
+				{
+				    PreciousStones.log.warning("duplicate field - skipping " + (new Vec(block)).toString());
+				    continue;
+				}
+				
+				newlist.add(field);
+			    }
+			    catch (Exception e)
+			    {
+				PreciousStones.log.warning("bad field - skipping conversion");
+			    }
 			}
 			
-			plugin.ffm.chunkLists.put(vec, newlist);
+			plugin.ffm.chunkLists.put(new ChunkVec(chunkvec.getX(), chunkvec.getZ(), world), newlist);
 		    }
 		    
 		    oi.close();
 		    fi.close();
 		    
-		    PreciousStones.log.info("[" + plugin.getDesc().getName() + "] loaded " + plugin.ffm.count() + " protection stones");
+		    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] loaded " + plugin.ffm.count() + " protection stones");
 		}
 		catch (Exception e)
 		{
-		    PreciousStones.log.info("[" + plugin.getDesc().getName() + "] loading failed with error. protection.bin");
+		    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] loading failed with error. protection.bin");
 		    
 		    if (e.getMessage() != null)
-			PreciousStones.log.info("[" + plugin.getDesc().getName() + "] error: " + e.getMessage());
+			PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] error: " + e.getMessage());
 		}
 		
 		loaded = true;
+		plugin.ffm.setDirty();
+		saveFields();
+		
+		try
+		{
+		    protectionFile.delete();
+		}
+		catch (Exception e)
+		{
+		    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Could not delete old protection.bin file");
+		}
 	    }
 	}
 	catch (Exception e)
@@ -471,26 +667,5 @@ public class StorageManager
 	}
 	
 	return loaded;
-    }
-    
-    /**
-     * Delete old save files
-     */
-    public void deleteOld()
-    {
-	try
-	{
-	    File unbreakableFile = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakable.bin");
-	    if (unbreakableFile.exists())
-		unbreakableFile.delete();
-	    
-	    File protectionFile = new File(plugin.getDataFolder().getPath() + File.separator + "protection.bin");
-	    if (protectionFile.exists())
-		protectionFile.delete();
-	}
-	catch (Exception e)
-	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Could not delete old .bin files");
-	}
     }
 }

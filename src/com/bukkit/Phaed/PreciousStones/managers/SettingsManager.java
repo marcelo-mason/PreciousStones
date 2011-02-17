@@ -9,28 +9,32 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import com.bukkit.Phaed.PreciousStones.Helper;
+import com.bukkit.Phaed.PreciousStones.vectors.*;
 
 public class SettingsManager
 {
     public List<Integer> unbreakableBlocks;
     public List<Integer> bypassBlocks;
-    public List<Integer> noPlaceBlocks;
+    public List<Integer> unprotectableBlocks;
     public boolean logFire;
     public boolean logEntry;
     public boolean logPlace;
     public boolean logDestroy;
     public boolean logDestroyArea;
+    public boolean logUnprotectable;
     public boolean logPvp;
     public boolean logBypassPvp;
     public boolean logBypassDelete;
     public boolean logBypassPlace;
     public boolean logBypassDestroy;
+    public boolean logBypassUnprotectable;
     public boolean logConflictPlace;
     public boolean notifyPlace;
     public boolean notifyDestroy;
     public boolean notifyBypassPvp;
     public boolean notifyBypassPlace;
     public boolean notifyBypassDestroy;
+    public boolean notifyBypassUnprotectable;
     public boolean notifyGuardDog;
     public boolean warnInstantHeal;
     public boolean warnSlowHeal;
@@ -39,6 +43,7 @@ public class SettingsManager
     public boolean warnPlace;
     public boolean warnDestroy;
     public boolean warnDestroyArea;
+    public boolean warnUnprotectable;
     public boolean warnEntry;
     public boolean warnPvp;
     public boolean warnFire;
@@ -56,11 +61,11 @@ public class SettingsManager
     }
     
     /**
-     * Check if a block is one of the noplace types
+     * Check if a block is one of the unprotectable types
      */
-    public boolean isNoPlaceType(Block placedblock)
+    public boolean isUnprotectableType(Block placedblock)
     {
-	for (Integer t : unbreakableBlocks)
+	for (Integer t : unprotectableBlocks)
 	{
 	    if (placedblock.getTypeId() == t)
 		return true;
@@ -70,59 +75,27 @@ public class SettingsManager
     }
         
     /**
-     * If the block is touching a no place block
-     */
-    public boolean touchingNoPlaceBlock(Block block)
-    {
-	if (block == null)
-	    return false;
-	
-	for (int x = -1; x <= 1; x++)
-	{
-	    for (int z = -1; z <= 1; z++)
-	    {
-		for (int y = -1; y <= 1; y++)
-		{
-		    if (x == 0 && y == 0 && z == 0)
-			continue;
-		    
-		    Material mat = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z).getType();
-		    
-		    if (mat.equals(Material.CHEST) || mat.equals(Material.FURNACE))
-			return true;
-		}
-	    }
-	}
-	
-	return false;
-    }
-    
-    /**
      * Check if a block is one of the unbreakable types
      */
     public boolean isUnbreakableType(Block unbreakableblock)
     {
-	for (Integer t : unbreakableBlocks)
-	{
-	    if (unbreakableblock.getTypeId() == t)
-		return true;
-	}
-	
-	return false;
+	return unbreakableBlocks.contains(unbreakableblock.getTypeId());
+    }
+
+    /**
+     * Check if a type is one of the unbreakable types
+     */
+    public boolean isUnbreakableType(int typeId)
+    {
+	return unbreakableBlocks.contains(typeId);
     }
     
     /**
-     * Check if a block is one of the unbreakable types
+     * Check if a type is one of the unbreakable types
      */
-    public boolean isUnbreakableType(Material material)
+    public boolean isUnbreakableType(String type)
     {
-	for (Integer t : unbreakableBlocks)
-	{
-	    if (material.getId() == t)
-		return true;
-	}
-	
-	return false;
+	return unbreakableBlocks.contains(Material.getMaterial(type).getId());
     }
     
     /**
@@ -130,19 +103,25 @@ public class SettingsManager
      */
     public boolean isFieldType(Block block)
     {
-	if (block == null)
-	    return false;
-	
 	return ffBlocks.contains(block.getTypeId());
     }
     
     /**
-     * Check if a block is one of the forcefeld types
+     * Check if a type is one of the forcefeld types
      */
-    public boolean isFieldType(Material material)
+    public boolean isFieldType(String type)
     {
-	return ffBlocks.contains(material.getId());
+	return ffBlocks.contains(Material.getMaterial(type).getId());
     }
+    
+    /**
+     * Check if a type is one of the forcefeld types
+     */
+    public boolean isFieldType(int typeId)
+    {
+	return ffBlocks.contains(typeId);
+    }
+    
     
     @SuppressWarnings("unchecked")
     public void addForceFieldStones(ArrayList<LinkedHashMap> maps)
@@ -182,14 +161,19 @@ public class SettingsManager
     }
     
     /**
-     * Returns the settings for a specific pstone block type
+     * Returns the settings for a specific field type
      */
-    public FieldSettings getFieldSettings(Block block)
+    public FieldSettings getFieldSettings(Field field)
     {
-	if (block == null)
-	    return null;
-	
-	return fieldsettings.get(block.getTypeId());
+	return fieldsettings.get(field.getTypeId());
+    }
+    
+    /**
+     * Returns the settings for a specific block type
+     */
+    public FieldSettings getFieldSettings(int typeId)
+    {
+	return fieldsettings.get(typeId);
     }
     
     public class FieldSettings
@@ -199,18 +183,43 @@ public class SettingsManager
 	public int blockId;
 	public int radius = 0;
 	public int height = 0;
+	public String title;
+	public boolean nameable = false;
 	public boolean preventFire = false;
 	public boolean preventPlace = false;
 	public boolean preventDestroy = false;
 	public boolean preventExplosions = false;
 	public boolean preventPvP = false;
 	public boolean preventEntry = false;
+	public boolean preventUnprotectable = false;
+	public boolean guarddogMode = false;
 	public boolean instantHeal = false;
 	public boolean slowHeal = false;
 	public boolean slowDamage = false;
 	public boolean fastDamage = false;
 	public boolean breakable = false;
-	public boolean guarddogMode = false;
+	public boolean welcomeMessage = false;
+	public boolean farewellMessage = false;
+	
+	public String getTitle()
+	{
+	    if(title == null)
+	    {
+		return "";
+	    }
+	    
+	    return title;
+	}
+	
+	public String getTitleCap()
+	{
+	    if(title == null)
+	    {
+		return "";
+	    }
+	    
+	    return Helper.capitalize(title);
+	}
 	
 	public int getHeight()
 	{
@@ -229,7 +238,8 @@ public class SettingsManager
 	    
 	    blockDefined = true;
 	    
-	    blockId = (Integer) map.get("block");
+	    blockId = (Integer) map.get("block");	    
+	    title = (String) map.get("title");
 	    
 	    if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
 		radius = (Integer) map.get("radius");
@@ -241,15 +251,12 @@ public class SettingsManager
 		    height = (Integer) map.get("custom-height");
 		    
 		}
-		else if (Helper.isString(map.get("custom-height")))
-		{
-		    if (((String) map.get("custom-height")).equals("full"))
-			height = 500;
-		}
-		
 		if (height == 0)
 		    height = radius;
 	    }
+	    
+	    if (map.containsKey("nameable") && Helper.isBoolean(map.get("nameable")))
+		nameable = (Boolean) map.get("nameable");
 	    
 	    if (map.containsKey("prevent-fire") && Helper.isBoolean(map.get("prevent-fire")))
 		preventFire = (Boolean) map.get("prevent-fire");
@@ -268,6 +275,12 @@ public class SettingsManager
 	    
 	    if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
 		preventEntry = (Boolean) map.get("prevent-entry");
+
+	    if (map.containsKey("prevent-unprotectable") && Helper.isBoolean(map.get("prevent-unprotectable")))
+		preventUnprotectable = (Boolean) map.get("prevent-unprotectable");
+
+	    if (map.containsKey("guard-dog-mode") && Helper.isBoolean(map.get("guard-dog-mode")))
+		guarddogMode = (Boolean) map.get("guard-dog-mode");
 	    
 	    if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
 		instantHeal = (Boolean) map.get("instant-heal");
@@ -284,8 +297,11 @@ public class SettingsManager
 	    if (map.containsKey("breakable") && Helper.isBoolean(map.get("breakable")))
 		breakable = (Boolean) map.get("breakable");
 	    
-	    if (map.containsKey("guard-dog-mode") && Helper.isBoolean(map.get("guard-dog-mode")))
-		guarddogMode = (Boolean) map.get("guard-dog-mode");
+	    if (map.containsKey("welcome-message") && Helper.isBoolean(map.get("welcome-message")))
+		welcomeMessage = (Boolean) map.get("welcome-message");
+
+	    if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
+		farewellMessage = (Boolean) map.get("farewell-message");
 	}
     }
 }
