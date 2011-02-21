@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones.managers;
+package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.List;
 import java.util.HashMap;
@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.bukkit.Phaed.PreciousStones.Helper;
-import com.bukkit.Phaed.PreciousStones.vectors.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 public class SettingsManager
 {

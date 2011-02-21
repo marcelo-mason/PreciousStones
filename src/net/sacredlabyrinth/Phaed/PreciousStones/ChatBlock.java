@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
@@ -9,7 +9,9 @@ import java.util.regex.*;
 public class ChatBlock
 {
     private final int colspacing = 12;
-    static private final int lineLength = 320;
+    private static final int lineLength = 320;
+    private static final String[] Number1 = { "", " Hundrad" };
+    private static final String[] Number2 = { "", "One", "Two", "Three", "Four", "Five", " Six", " Seven", "Eight", " Nine", "Ten" };
     private ArrayList<Double> columnSizes = new ArrayList<Double>();
     private ArrayList<Integer> columnSpaces = new ArrayList<Integer>();
     private ArrayList<String> columnAlignments = new ArrayList<String>();
@@ -21,6 +23,51 @@ public class ChatBlock
     
     public ChatBlock()
     {
+    }
+    
+    /**
+     * Convert number to words
+     */
+    public static String numberToWord(int number)
+    {
+	if (number == 0)
+	{
+	    return "zero";
+	}
+	String pre = "";
+	String str1 = "";
+	int i = 0;
+	do
+	{
+	    int n = number % 100;
+	    if (n != 0)
+	    {
+		String s = number(n);
+		str1 = s + Number1[i] + str1;
+	    }
+	    i++;
+	    number /= 100;
+	}
+	while (number > 0);
+	return (pre + str1).trim();
+    }    
+    
+    private static String number(int number)
+    {
+	String str;
+	if (number % 100 < 10)
+	{
+	    str = Number2[number % 100];
+	    number /= 100;
+	}
+	else
+	{
+	    str = Number2[number % 5];
+	    number /= 5;
+	}
+	if (number == 0)
+	    return str;
+	return Number2[number] + "hundred" + str;
     }
     
     public void setAlignment(String[] columnAlignment)

@@ -1,13 +1,13 @@
-package com.bukkit.Phaed.PreciousStones.managers;
+package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 
-import com.bukkit.Phaed.PreciousStones.Helper;
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
-import com.bukkit.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
  * Handles what happens inside fields
@@ -108,13 +108,11 @@ public class EntryManager
     
     public void enter(Player player, Field field)
     {
-	plugin.cm.debug("entered " + player.getName());
 	entries.put(player.getName(), field);
     }
     
     public void leave(Player player)
     {
-	plugin.cm.debug("left " + player.getName());
 	entries.remove(player.getName());
     }
     

@@ -1,9 +1,9 @@
-package com.bukkit.Phaed.PreciousStones.managers;
+package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import org.bukkit.block.Block;
 
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 
 /**
  * Handles unprotectable blocks

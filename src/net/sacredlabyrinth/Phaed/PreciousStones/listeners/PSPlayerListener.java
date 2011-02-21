@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones.listeners;
+package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,12 +13,12 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.block.Block;
 
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.Helper;
-import com.bukkit.Phaed.PreciousStones.TargetBlock;
-import com.bukkit.Phaed.PreciousStones.ChatBlock;
-import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
-import com.bukkit.Phaed.PreciousStones.vectors.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 /**
  * PreciousStones player listener
@@ -182,71 +182,21 @@ public class PSPlayerListener extends PlayerListener
 	    
 	    if (split.length > 1)
 	    {
-		if (split[1].equals("allowall") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.allowall"))
+		if (split[1].equals("allow") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.allow"))
 		{
 		    if (split.length == 3)
 		    {
-			String playerName = split[2];
+			Field field = plugin.ffm.inAllowedVector(block, player.getName());
 			
-			if (playerName.equals(player.getName()))
-			{
-			    int count = plugin.ffm.addAllowedAll(player.getName(), playerName);
-			    
-			    if (count == 0)
-			    {
-				plugin.cm.showNotFound(player);
-			    }
-			    else
-			    {
-				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " added to " + count + " allowed lists");
-			    }
-			}
-			else
-			{
-			    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot add yourself to your own lists");
-			}
-			
-			return;
-		    }
-		}
-		else if (split[1].equals("removeall") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.removeall"))
-		{
-		    if (split.length == 3)
-		    {
-			String playerName = split[2];
-			
-			if (playerName.equals(player.getName()))
-			{
-			    int count = plugin.ffm.removeAllowedAll(player.getName(), playerName);
-			    
-			    if (count == 0)
-			    {
-				plugin.cm.showNotFound(player);
-			    }
-			    else
-			    {
-				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " removed from " + count + " allowed lists");
-			    }
-			}
-			else
-			{
-			    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot remove yourself to your own lists");
-			}
-			
-			return;
-		    }
-		}
-		else if (split[1].equals("allow") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.allow"))
-		{
-		    if (split.length == 3)
-		    {
-			if (plugin.ffm.inOwnVector(block, player.getName()))
+			if (field != null)
 			{
 			    String playerName = split[2];
 			    
-			    if (plugin.ffm.addAllowed(block, player.getName(), playerName))
+			    int count = plugin.ffm.addAllowed(player, field, playerName);
+			    
+			    if (count > 0)
 			    {
-				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " added to allowed list");
+				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was added to the allowed list of " + ChatBlock.numberToWord(count) + " force-fields");
 			    }
 			    else
 			    {
@@ -265,13 +215,17 @@ public class PSPlayerListener extends PlayerListener
 		{
 		    if (split.length == 3)
 		    {
-			if (!plugin.ffm.inOwnVector(block, player.getName()))
+			Field field = plugin.ffm.inAllowedVector(block, player.getName());
+			
+			if (field != null)
 			{
 			    String playerName = split[2];
 			    
-			    if (plugin.ffm.removeAllowed(block, player.getName(), playerName))
+			    int count = plugin.ffm.removeAllowed(player, field, playerName);
+			    
+			    if (count > 0)
 			    {
-				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was removed from the allowed list");
+				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was removed from the allowed list of " + ChatBlock.numberToWord(count) + " force-fields");
 			    }
 			    else
 			    {
@@ -284,6 +238,44 @@ public class PSPlayerListener extends PlayerListener
 			}
 			
 			return;
+		    }
+		}
+		else if (split[1].equals("setname") && PreciousStones.Permissions.has(player, "preciousstones.benefit.setname"))
+		{
+		    if (split.length >= 2)
+		    {
+			String playerName = "";
+			
+			for (int i = 2; i < split.length; i++)
+			{
+			    playerName += split[i] + " ";
+			}
+			playerName = playerName.trim();
+			
+			if (playerName.length() > 0)
+			{
+			    Field field = plugin.ffm.inAllowedVector(block, player.getName());
+			    
+			    if (field != null)
+			    {
+				int count = plugin.ffm.setNameFields(player, field, playerName);
+				
+				if (count > 0)
+				{
+				    ChatBlock.sendMessage(player, ChatColor.AQUA + "" + ChatBlock.numberToWord(count) + " fields renamed to " + playerName);
+				}
+				else
+				{
+				    plugin.cm.showNotFound(player);
+				}
+				return;
+			    }
+			    else
+			    {
+				plugin.cm.showNotFound(player);
+			    }
+			    return;
+			}
 		    }
 		}
 		else if (split[1].equals("delete") && PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
@@ -431,53 +423,44 @@ public class PSPlayerListener extends PlayerListener
 		    if (split.length == 2)
 		    {
 			plugin.loadConfiguration();
-			plugin.sm.load();
 			
 			ChatBlock.sendMessage(player, ChatColor.AQUA + "Configuration and pstone files reloaded");
 			return;
 		    }
 		}
-		else if (split[1].equals("setname") && PreciousStones.Permissions.has(player, "preciousstones.benefit.setname"))
-		{
-		    if (split.length >= 2)
-		    {
-			String name = "";
-			
-			for (int i = 2; i < split.length; i++)
-			{
-			    name += split[i] + " ";
-			}
-			name = name.trim();
-			
-			if (name.length() > 0)
-			{
-			    LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
-			    
-			    for (Field t : fields)
-			    {
-				if (!t.isAllowed(player.getName()))
-				{
-				    ChatBlock.sendMessage(player, ChatColor.AQUA + "You are standing on a field that does not belong to you");
-				    return;
-				}
-			    }
-			    
-			    int count = plugin.ffm.setNameFields(player, fields.get(0), name);
-			    
-			    if (count == 0)
-			    {
-				plugin.cm.showNotFound(player);
-				return;
-			    }
-			    
-			    ChatBlock.sendMessage(player, ChatColor.AQUA + "" + Helper.numberToWord(count) + " fields renamed to " + name);
-			    return;
-			}
-		    }
-		}
 	    }
 	    
-	    plugin.cm.showMenu(player);
+	    ChatBlock.sendBlank(player);
+	    ChatBlock.sendMessage(player, ChatColor.YELLOW + plugin.getDesc().getName() + " " + plugin.getDesc().getVersion());
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allow [player] " + ChatColor.DARK_GRAY + "- Add player to the allowed lists");
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps remove [player] " + ChatColor.DARK_GRAY + "- Remove player from the allowed lists");
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps setname [name] " + ChatColor.DARK_GRAY + "- Set the name of force-fields");
+	    
+	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete " + ChatColor.DARK_GRAY + "- Delete the field(s) you're standing on");
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete [blockid] " + ChatColor.DARK_GRAY + "- Delete the field(s) from this type");
+	    }
+	    
+	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps info " + ChatColor.DARK_GRAY + "- Get info for the field youre standing on");
+	    }
+	    
+	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.list"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps list [chunks-in-radius]" + ChatColor.DARK_GRAY + "- Lists all pstones in area");
+	    }
+	    
+	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.setowner"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps setowner [player] " + ChatColor.DARK_GRAY + "- Of the block you're pointing at");
+	    }
+	    
+	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.reload"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps reload" + ChatColor.DARK_GRAY + "- Reload configuraton and save files");
+	    }
 	}
     }
 }

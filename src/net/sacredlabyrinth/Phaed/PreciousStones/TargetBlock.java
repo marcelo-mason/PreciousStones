@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.util.ArrayList;
 

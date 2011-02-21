@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones.vectors;
+package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import org.bukkit.block.Block;
 

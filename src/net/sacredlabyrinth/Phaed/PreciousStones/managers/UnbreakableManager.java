@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones.managers;
+package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,8 +8,8 @@ import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.vectors.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 /**
  * Handles unbreakable blocks

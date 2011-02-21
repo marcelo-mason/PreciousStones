@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones.listeners;
+package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import java.util.LinkedList;
 
@@ -8,9 +8,9 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
-import com.bukkit.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
  * PreciousStones entity listener

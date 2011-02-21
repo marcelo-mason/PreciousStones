@@ -1,13 +1,13 @@
-package com.bukkit.Phaed.PreciousStones.managers;
+package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.LinkedList;
 
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.Helper;
-import com.bukkit.Phaed.PreciousStones.ChatBlock;
-import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
-import com.bukkit.Phaed.PreciousStones.vectors.Field;
-import com.bukkit.Phaed.PreciousStones.vectors.Unbreakable;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -668,44 +668,7 @@ public class CommunicatonManager
 	    }
 	}
     }
-    
-    public void showMenu(Player player)
-    {
-	ChatBlock.sendBlank(player);
-	ChatBlock.sendMessage(player, ChatColor.YELLOW + plugin.getDesc().getName() + " " + plugin.getDesc().getVersion());
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allow [player] " + ChatColor.DARK_GRAY + "- Add player to the allowed list");
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps remove [player] " + ChatColor.DARK_GRAY + "- Remove player from the allowed list");
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps removeall [player] " + ChatColor.DARK_GRAY + "- Remove player from all your pstones");
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allowall [player] " + ChatColor.DARK_GRAY + "- All player to all your pstones");
-	ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps setname [name] " + ChatColor.DARK_GRAY + "- Set the name of force-fields you're on");
-	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
-	{
-	    ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete " + ChatColor.DARK_GRAY + "- Delete the field(s) you're standing on");
-	    ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete [blockid] " + ChatColor.DARK_GRAY + "- Delete the field(s) from this type");
-	}
-	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
-	{
-	    ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps info " + ChatColor.DARK_GRAY + "- Get info for the field youre standing on");
-	}
-	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.list"))
-	{
-	    ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps list [chunks-in-radius]" + ChatColor.DARK_GRAY + "- Lists all pstones in area");
-	}
-	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.setowner"))
-	{
-	    ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps setowner [player] " + ChatColor.DARK_GRAY + "- Of the pstone you're pointing at");
-	}
-	
-	if (PreciousStones.Permissions.has(player, "preciousstones.admin.reload"))
-	{
-	    ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps reload" + ChatColor.DARK_GRAY + "- Reload configuraton and save files");
-	}
-    }
-    
+  
     public void showWelcomeMessage(Player player, String name)
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + name);
@@ -791,7 +754,9 @@ public class CommunicatonManager
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + field.getOwner());
 	
 	if(field.getAllowedList() != null)
+	{
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Allowed: " + field.getAllowedList());
+	}
 	
 	if (fieldsettings.radius > 0)
 	{

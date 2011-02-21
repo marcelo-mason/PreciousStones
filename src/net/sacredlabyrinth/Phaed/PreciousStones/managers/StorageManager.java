@@ -1,16 +1,13 @@
-package com.bukkit.Phaed.PreciousStones.managers;
+package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.io.*;
 import java.util.*;
 
-import org.bukkit.block.Block;
 import org.bukkit.Material;
 
-import com.bukkit.Phaed.PreciousStones.Helper;
-import com.bukkit.Phaed.PreciousStones.Vector;
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.vectors.*;
-import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 public class StorageManager
 {
@@ -51,11 +48,6 @@ public class StorageManager
      */
     public void load()
     {
-	if (loadOldStones())
-	{
-	    return;
-	}
-	
 	plugin.um.chunkLists.clear();
 	int linecount = 0;
 	
@@ -477,195 +469,5 @@ public class StorageManager
 	}
 	
 	return false;
-    }
-    
-    /**
-     * Load old stone files into new ones
-     */
-    public boolean loadOldStones()
-    {
-	boolean loaded = false;
-	
-	try
-	{
-	    File unbreakableFile = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakable.bin");
-	    
-	    if (unbreakableFile.exists())
-	    {
-		try
-		{
-		    FileInputStream fi = new FileInputStream(unbreakableFile);
-		    ObjectInputStream oi = new ObjectInputStream(fi);
-		    
-		    com.bukkit.Phaed.PreciousStones.UnbreakableManager um = (com.bukkit.Phaed.PreciousStones.UnbreakableManager) oi.readObject();
-		    um.initiate(plugin);
-		    
-		    String world = plugin.getServer().getWorlds().get(0).getName();
-		    
-		    for (Vector chunkvec : um.getChunkLists().keySet())
-		    {
-			LinkedList<Unbreakable> newlist = new LinkedList<Unbreakable>();
-			HashMap<Vector, String> oldlist = um.getChunkLists().get(chunkvec);
-			
-			for (Vector oldvec : oldlist.keySet())
-			{
-			    try
-			    {
-				Block block = plugin.getServer().getWorlds().get(0).getBlockAt(oldvec.getX(), oldvec.getY(), oldvec.getZ());
-				
-				if (!plugin.settings.isUnbreakableType(block))
-				{
-				    PreciousStones.log.warning("orphan unbrakable - skipping " + (new Vec(block)).toString());
-				    continue;
-				}
-				
-				String owner = oldlist.get(oldvec);
-				
-				Unbreakable unbreakable = new Unbreakable(block, owner);
-				
-				if (newlist.contains(unbreakable))
-				{
-				    PreciousStones.log.warning("duplicate field - skipping " + (new Vec(block)).toString());
-				    continue;
-				}
-				
-				newlist.add(unbreakable);
-			    }
-			    catch (Exception e)
-			    {
-				PreciousStones.log.warning("bad unbrakable - skipping conversion");
-			    }
-			}
-			
-			plugin.um.chunkLists.put(new ChunkVec(chunkvec.getX(), chunkvec.getZ(), world), newlist);
-		    }
-		    
-		    oi.close();
-		    fi.close();
-		    
-		    PreciousStones.log.info("[" + plugin.getDesc().getName() + "] loaded " + plugin.um.count() + " unbreakable stones");
-		}
-		catch (Exception e)
-		{
-		    PreciousStones.log.info("[" + plugin.getDesc().getName() + "] loading failed with error. unbreakable.bin");
-		    
-		    if (e.getMessage() != null)
-			PreciousStones.log.info("[" + plugin.getDesc().getName() + "] error: " + e.getMessage());
-		}
-		
-		loaded = true;
-		plugin.um.setDirty();
-		saveUnbreakables();
-		
-		try
-		{
-		    unbreakableFile.delete();
-		}
-		catch (Exception e)
-		{
-		    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Could not delete old unbreakable.bin file");
-		}
-	    }
-	}
-	catch (Exception e)
-	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Could not load old format unbreakable.bin file");
-	}
-	
-	try
-	{
-	    File protectionFile = new File(plugin.getDataFolder().getPath() + File.separator + "protection.bin");
-	    
-	    if (protectionFile.exists())
-	    {
-		try
-		{
-		    FileInputStream fi = new FileInputStream(protectionFile);
-		    ObjectInputStream oi = new ObjectInputStream(fi);
-		    
-		    com.bukkit.Phaed.PreciousStones.ProtectionManager pm = (com.bukkit.Phaed.PreciousStones.ProtectionManager) oi.readObject();
-		    pm.initiate(plugin);
-		    
-		    for (Vector chunkvec : pm.getChunkLists().keySet())
-		    {
-			LinkedList<Field> newlist = new LinkedList<Field>();
-			HashMap<Vector, ArrayList<String>> oldlist = pm.getChunkLists().get(chunkvec);
-			
-			String world = plugin.getServer().getWorlds().get(0).getName();
-			
-			for (Vector oldvec : oldlist.keySet())
-			{
-			    try
-			    {
-				Block block = plugin.getServer().getWorlds().get(0).getBlockAt(oldvec.getX(), oldvec.getY(), oldvec.getZ());
-				
-				if (!plugin.settings.isFieldType(block))
-				{
-				    PreciousStones.log.warning("orphan field - skipping " + (new Vec(block)).toString());
-				    continue;
-				}
-				
-				FieldSettings fieldsettings = plugin.settings.getFieldSettings(block.getTypeId());
-				
-				ArrayList<String> oldallowed = oldlist.get(oldvec);
-				if (oldallowed == null)
-				{
-				    continue;
-				}
-				String oldowner = oldallowed.get(0);
-				oldallowed.remove(0);
-				
-				Field field = new Field(block, fieldsettings.radius, fieldsettings.getHeight(), oldowner, oldallowed, "");
-				
-				if (newlist.contains(field))
-				{
-				    PreciousStones.log.warning("duplicate field - skipping " + (new Vec(block)).toString());
-				    continue;
-				}
-				
-				newlist.add(field);
-			    }
-			    catch (Exception e)
-			    {
-				PreciousStones.log.warning("bad field - skipping conversion");
-			    }
-			}
-			
-			plugin.ffm.chunkLists.put(new ChunkVec(chunkvec.getX(), chunkvec.getZ(), world), newlist);
-		    }
-		    
-		    oi.close();
-		    fi.close();
-		    
-		    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] loaded " + plugin.ffm.count() + " protection stones");
-		}
-		catch (Exception e)
-		{
-		    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] loading failed with error. protection.bin");
-		    
-		    if (e.getMessage() != null)
-			PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] error: " + e.getMessage());
-		}
-		
-		loaded = true;
-		plugin.ffm.setDirty();
-		saveFields();
-		
-		try
-		{
-		    protectionFile.delete();
-		}
-		catch (Exception e)
-		{
-		    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Could not delete old protection.bin file");
-		}
-	    }
-	}
-	catch (Exception e)
-	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Could not load old format protection.bin file");
-	}
-	
-	return loaded;
     }
 }

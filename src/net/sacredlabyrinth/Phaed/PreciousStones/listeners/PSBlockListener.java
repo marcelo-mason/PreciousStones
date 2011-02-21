@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones.listeners;
+package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -8,9 +8,9 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.entity.Player;
 
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
-import com.bukkit.Phaed.PreciousStones.vectors.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 /**
  * PreciousStones block listener
@@ -234,19 +234,15 @@ public class PSBlockListener extends BlockListener
 	}
 	else if (plugin.settings.isUnprotectableType(placedblock))
 	{
-	    plugin.cm.debug("1****************");
 	    if (plugin.um.touchingUnbrakableBlock(placedblock) || plugin.ffm.touchingFieldBlock(placedblock))
 	    {
-		plugin.cm.debug("2");
 		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
 		{
-		    plugin.cm.debug("3");
 		    plugin.um.add(placedblock, player.getName());
 		    plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
 		}
 		else
 		{
-		    plugin.cm.debug("4");
 		    event.setCancelled(true);
 		    plugin.cm.warnPlaceUnprotectableTouching(player, placedblock);
 		    return;
@@ -255,18 +251,14 @@ public class PSBlockListener extends BlockListener
 	    
 	    Field field = plugin.ffm.isUprotectableBlockField(placedblock);
 	    
-	    plugin.cm.debug("5");
 	    if (field != null)
 	    {
-		plugin.cm.debug("6");
 		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
 		{
-		    plugin.cm.debug("7");
 		    plugin.cm.notifyBypassPlaceUnprotectableInField(player, placedblock, field);
 		}
 		else
 		{
-		    plugin.cm.debug("8");
 		    event.setCancelled(true);
 		    plugin.cm.warnPlaceUnprotectableInField(player, placedblock, field);
 		}

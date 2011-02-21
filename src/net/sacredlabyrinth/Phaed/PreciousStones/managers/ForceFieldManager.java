@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones.managers;
+package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,10 +11,10 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
-import com.bukkit.Phaed.PreciousStones.Helper;
-import com.bukkit.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
-import com.bukkit.Phaed.PreciousStones.vectors.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 /**
  * Handles force-fields
@@ -228,7 +228,7 @@ public class ForceFieldManager
 	
 	for (Field field : getFieldsInArea(blockInArea))
 	{
-	    if (field.envelops(blockInArea) && (playerName == null || !field.isAllowed(playerName)))
+	    if (field.envelops(blockInArea) && (playerName == null || !field.isAllAllowed(playerName)))
 	    {
 		if (!plugin.settings.isFieldType(field.getTypeId()))
 		{
@@ -274,19 +274,51 @@ public class ForceFieldManager
     }
     
     /**
-     * Whether one of the fields the player is standing in is his
+     * Whether he is allowed on the field hes standing on
      */
-    public boolean inOwnVector(Block blockInArea, String playerName)
+    public Field inAllowedVector(Block blockInArea, String playerName)
     {
 	for (Field field : getFieldsInArea(blockInArea))
 	{
-	    if (field.envelops(blockInArea) && field.isOwner(playerName))
+	    if (field.envelops(blockInArea) && field.isAllAllowed(playerName))
 	    {
-		return true;
+		return field;
 	    }
 	}
 	
-	return false;
+	return null;
+    }
+    
+    /**
+     * Gets all fields intersecting to the passed fields
+     */
+    public HashSet<Field> getIntersecting(HashSet<Field> fields, Player player, HashSet<Field> total)
+    {
+	HashSet<Field> touching = new HashSet<Field>();
+	
+	for (LinkedList<Field> c : chunkLists.values())
+	{
+	    for (Field otherfield : c)
+	    {
+		for (Field foundfield : fields)
+		{
+		    if (foundfield.intersects(otherfield))
+		    {
+			if (!otherfield.isAllAllowed(player.getName()))
+			{
+			    continue;
+			}
+			if (total.contains(otherfield))
+			{
+			    continue;
+			}
+			touching.add(otherfield);
+		    }
+		}
+	    }
+	}
+	
+	return touching;
     }
     
     /**
@@ -323,131 +355,69 @@ public class ForceFieldManager
     }
     
     /**
-     * Gets all fields intersecting to the passed fields
-     */
-    public HashSet<Field> getIntersecting(HashSet<Field> fields, Player player, HashSet<Field> total)
-    {
-	HashSet<Field> touching = new HashSet<Field>();
-	
-	for (LinkedList<Field> c : chunkLists.values())
-	{
-	    for (Field otherfield : c)
-	    {
-		for (Field foundfield : fields)
-		{
-		    if (foundfield.intersects(otherfield))
-		    {
-			if (!otherfield.isAllowed(player.getName()))
-			{
-			    continue;
-			}
-			if (total.contains(otherfield))
-			{
-			    continue;
-			}
-			touching.add(otherfield);
-		    }
-		}
-	    }
-	}
-	
-	return touching;
-    }
-    
-    /**
      * Add allowed player to protected area
      */
-    public boolean addAllowed(Block blockInArea, String owner, String allowedName)
+    public int addAllowed(Player player, Field field, String allowedName)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	HashSet<Field> total = new HashSet<Field>();
+	total.add(field);
+	
+	HashSet<Field> start = new HashSet<Field>();
+	start.add(field);
+	
+	while (start.size() > 0)
 	{
-	    if (field.envelops(blockInArea))
+	    start = getIntersecting(start, player, total);
+	    
+	    if (start.size() == 0)
 	    {
-		if (!field.isOwner(owner))
+		for (Field f : total)
 		{
-		    continue;
+		    f.addAllowed(allowedName);
 		}
 		setDirty();
-		return field.addAllowed(allowedName);
+		return total.size();
 	    }
-	}
-	
-	return false;
-    }
-    
-    /**
-     * Add allowed player to protected area
-     */
-    public int addAllowedAll(String owner, String allowedName)
-    {
-	int count = 0;
-	
-	for (LinkedList<Field> c : chunkLists.values())
-	{
-	    for (Field field : c)
+	    else
 	    {
-		if (!field.isOwner(owner))
-		{
-		    continue;
-		}
-		
-		if (field.addAllowed(allowedName))
-		{
-		    setDirty();
-		    count++;
-		}
+		total.addAll(start);
 	    }
 	}
 	
-	return count;
+	return 0;
     }
     
     /**
      * Remove allowed player from protected area
      */
-    public boolean removeAllowed(Block blockInArea, String owner, String allowedName)
+    public int removeAllowed(Player player, Field field, String allowedName)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	HashSet<Field> total = new HashSet<Field>();
+	total.add(field);
+	
+	HashSet<Field> start = new HashSet<Field>();
+	start.add(field);
+	
+	while (start.size() > 0)
 	{
-	    if (field.envelops(blockInArea))
+	    start = getIntersecting(start, player, total);
+	    
+	    if (start.size() == 0)
 	    {
-		if (!field.isOwner(owner))
+		for (Field f : total)
 		{
-		    continue;
+		    f.removeAllowed(allowedName);
 		}
 		setDirty();
-		return field.removeAllowed(allowedName);
+		return total.size();
 	    }
-	}
-	
-	return false;
-    }
-    
-    /**
-     * Add allowed player to protected area
-     */
-    public int removeAllowedAll(String owner, String allowedName)
-    {
-	int count = 0;
-	
-	for (LinkedList<Field> c : chunkLists.values())
-	{
-	    for (Field field : c)
+	    else
 	    {
-		if (!field.isOwner(owner))
-		{
-		    continue;
-		}
-		
-		if (field.removeAllowed(allowedName))
-		{
-		    setDirty();
-		    count++;
-		}
+		total.addAll(start);
 	    }
 	}
 	
-	return count;
+	return 0;
     }
     
     /**
@@ -459,7 +429,7 @@ public class ForceFieldManager
 	
 	if (field != null)
 	{
-	    return field.isAllowed(playerName);
+	    return field.isAllAllowed(playerName);
 	}
 	return false;
     }
@@ -538,7 +508,7 @@ public class ForceFieldManager
 	}
 	
 	return false;
-    }    
+    }
     
     /**
      * Whether the block is in a unprotectable prevention area
@@ -568,7 +538,7 @@ public class ForceFieldManager
     {
 	for (Field field : getFieldsInArea(blockInArea))
 	{
-	    if (field.envelops(blockInArea) && !field.isAllowed(player.getName()))
+	    if (field.envelops(blockInArea) && !field.isAllAllowed(player.getName()))
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 		
@@ -597,7 +567,7 @@ public class ForceFieldManager
     {
 	for (Field field : getFieldsInArea(blockInArea))
 	{
-	    if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
+	    if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 		
@@ -626,7 +596,7 @@ public class ForceFieldManager
     {
 	for (Field field : getFieldsInArea(blockInArea))
 	{
-	    if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
+	    if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 		
@@ -655,7 +625,7 @@ public class ForceFieldManager
     {
 	for (Field field : getFieldsInArea(blockInArea))
 	{
-	    if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
+	    if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 		
@@ -686,7 +656,7 @@ public class ForceFieldManager
 	    
 	    for (Field field : getFieldsInArea(placedBlock))
 	    {
-		if (field.isAllowed(placer))
+		if (field.isAllAllowed(placer))
 		{
 		    continue;
 		}
@@ -701,7 +671,7 @@ public class ForceFieldManager
 	{
 	    for (Field field : getFieldsInArea(placedBlock))
 	    {
-		if (field.isAllowed(placer))
+		if (field.isAllAllowed(placer))
 		{
 		    continue;
 		}

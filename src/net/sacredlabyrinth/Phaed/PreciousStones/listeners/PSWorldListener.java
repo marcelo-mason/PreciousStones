@@ -1,8 +1,8 @@
-package com.bukkit.Phaed.PreciousStones.listeners;
+package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import org.bukkit.event.world.*;
 
-import com.bukkit.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 /**
  * PreciousStones world listener

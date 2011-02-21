@@ -1,4 +1,4 @@
-package com.bukkit.Phaed.PreciousStones.vectors;
+package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import java.util.ArrayList;
 
@@ -128,10 +128,10 @@ public class Field extends AbstractVec
     public String getAllowedList()
     {
 	String out = "";
-	
-	if (allowed.size() > 1)
+
+	if (allowed.size() > 0)
 	{
-	    for (int i = 1; i < allowed.size(); i++)
+	    for (int i = 0; i < allowed.size(); i++)
 	    {
 		out += ", " + allowed.get(i);
 	    }
@@ -149,7 +149,7 @@ public class Field extends AbstractVec
 	return playerName.equals(owner);
     }
     
-    public boolean isAllowed(String playerName)
+    public boolean isAllAllowed(String playerName)
     {
 	return playerName.equals(owner) || allowed.contains(playerName);
     }
