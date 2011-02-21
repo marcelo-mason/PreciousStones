@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -59,42 +60,40 @@ public class PSEntityListener extends EntityListener
 	}
     }
     
-    @Override
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
-    {
-	// prevent pvp
-	
-	if (event.getEntity() instanceof Player && event.getDamager() instanceof Player)
-	{
-	    Player attacker = (Player) event.getDamager();
-	    Player victim = (Player) event.getEntity();
-	    
-	    LinkedList<Field> fields = plugin.ffm.getSourceFields(victim);
-	    
-	    for (Field field : fields)
-	    {
-		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-		
-		if (fieldsettings.preventPvP)
-		{
-		    if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
-		    {
-			plugin.cm.notifyGuardDog(attacker, field, "pvp");
-			continue;
-		    }
-		    
-		    if (PreciousStones.Permissions.has(attacker, "preciousstones.bypass.pvp"))
-		    {
-			plugin.cm.warnBypassPvP(attacker, victim, field);
-		    }
-		    else
-		    {
-			event.setCancelled(true);
-			plugin.cm.warnPvP(attacker, victim, field);
-		    }
-		    break;
+	@Override
+	public void onEntityDamage(EntityDamageEvent event) {
+		if (event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+			// prevent PVP
+			if (sub.getEntity() instanceof Player
+					&& sub.getDamager() instanceof Player) {
+				Player attacker = (Player) sub.getDamager();
+				Player victim = (Player) sub.getEntity();
+
+				LinkedList<Field> fields = plugin.ffm.getSourceFields(victim);
+
+				for (Field field : fields) {
+					FieldSettings fieldsettings = plugin.settings
+							.getFieldSettings(field);
+
+					if (fieldsettings.preventPvP) {
+						if (fieldsettings.guarddogMode
+								&& plugin.ffm.allowedAreOnline(field)) {
+							plugin.cm.notifyGuardDog(attacker, field, "pvp");
+							continue;
+						}
+
+						if (PreciousStones.Permissions.has(attacker,
+								"preciousstones.bypass.pvp")) {
+							plugin.cm.warnBypassPvP(attacker, victim, field);
+						} else {
+							sub.setCancelled(true);
+							plugin.cm.warnPvP(attacker, victim, field);
+						}
+						break;
+					}
+				}
+			}
 		}
-	    }
 	}
-    }
 }
