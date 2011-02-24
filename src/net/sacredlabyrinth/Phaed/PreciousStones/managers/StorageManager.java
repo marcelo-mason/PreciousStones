@@ -29,7 +29,7 @@ public class StorageManager
 	}
 	catch (IOException e)
 	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Cannot create file " + unbreakable.getName());
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + unbreakable.getName());
 	}
 	
 	try
@@ -39,7 +39,7 @@ public class StorageManager
 	}
 	catch (IOException e)
 	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Cannot create file " + forcefield.getName());
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + forcefield.getName());
 	}
     }
     
@@ -144,11 +144,11 @@ public class StorageManager
 		plugin.um.chunkLists.put(chunkvec, c);
 	    }
 	    
-	    PreciousStones.log.info("[" + plugin.getDesc().getName() + "] loaded " + plugin.um.count() + " unbreakable blocks");
+	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + plugin.um.count() + " unbreakable blocks");
 	}
 	catch (FileNotFoundException e)
 	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Cannot read file " + unbreakable.getName());
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot read file " + unbreakable.getName());
 	}
 	
 	plugin.ffm.chunkLists.clear();
@@ -258,11 +258,11 @@ public class StorageManager
 		plugin.ffm.chunkLists.put(chunkvec, c);
 	    }
 	    
-	    PreciousStones.log.info("[" + plugin.getDesc().getName() + "] loaded " + plugin.ffm.count() + " forcefield blocks");
+	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + plugin.ffm.count() + " forcefield blocks");
 	}
 	catch (FileNotFoundException e)
 	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] Cannot read file " + forcefield.getName());
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot read file " + forcefield.getName());
 	}
     }
     
@@ -287,7 +287,7 @@ public class StorageManager
      */
     public void saveUnbreakables()
     {
-	PreciousStones.log.info("[" + plugin.getDesc().getName() + "] saving " + unbreakable.getName());
+	PreciousStones.log.info("[" + plugin.getDescription().getName() + "] saving " + unbreakable.getName());
 	
 	BufferedWriter bwriter = null;
 	FileWriter fwriter = null;
@@ -332,7 +332,7 @@ public class StorageManager
 	}
 	catch (IOException e)
 	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] IO Exception with file " + unbreakable.getName());
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] IO Exception with file " + unbreakable.getName());
 	}
 	finally
 	{
@@ -350,7 +350,7 @@ public class StorageManager
 	    }
 	    catch (IOException e)
 	    {
-		PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] IO Exception with file " + unbreakable.getName() + " (on close)");
+		PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] IO Exception with file " + unbreakable.getName() + " (on close)");
 	    }
 	}
 	
@@ -362,7 +362,7 @@ public class StorageManager
      */
     public void saveFields()
     {
-	PreciousStones.log.info("[" + plugin.getDesc().getName() + "] saving " + forcefield.getName());
+	PreciousStones.log.info("[" + plugin.getDescription().getName() + "] saving " + forcefield.getName());
 	
 	BufferedWriter bwriter = null;
 	FileWriter fwriter = null;
@@ -424,7 +424,7 @@ public class StorageManager
 	}
 	catch (IOException e)
 	{
-	    PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] IO Exception with file " + forcefield.getName());
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] IO Exception with file " + forcefield.getName());
 	}
 	finally
 	{
@@ -442,7 +442,7 @@ public class StorageManager
 	    }
 	    catch (IOException e)
 	    {
-		PreciousStones.log.severe("[" + plugin.getDesc().getName() + "] IO Exception with file " + forcefield.getName() + " (on close)");
+		PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] IO Exception with file " + forcefield.getName() + " (on close)");
 	    }
 	}
 	

@@ -7,8 +7,10 @@ import java.util.LinkedHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.util.config.Configuration;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 public class SettingsManager
@@ -49,15 +51,98 @@ public class SettingsManager
     public boolean warnFire;
     public boolean publicBlockDetails;
     public boolean sneakingBypassesDamage;
+    public boolean dropOnDelete;
+    public boolean disableAlertsForAdmins;
+    public boolean disableBypassAlertsForAdmins;
     
     public int chunksInLargestForceFieldArea;
     public List<Integer> ffBlocks = new ArrayList<Integer>();
     
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
+    private transient PreciousStones plugin;
     
-    public SettingsManager()
+    public SettingsManager(PreciousStones plugin)
     {
+	this.plugin = plugin;
+    }
+    
+    /**
+     * Load the configuration
+     */
+    @SuppressWarnings("unchecked")
+    public void loadConfiguration()
+    {
+	Configuration config = plugin.getConfiguration();
+	config.load();
 	
+	addForceFieldStones((ArrayList) config.getProperty("force-field-blocks"));
+	unbreakableBlocks = config.getIntList("unbreakable-blocks", new ArrayList<Integer>());
+	bypassBlocks = config.getIntList("bypass-blocks", new ArrayList<Integer>());
+	unprotectableBlocks = config.getIntList("unprotectable-blocks", new ArrayList<Integer>());
+	logFire = config.getBoolean("log.fire", false);
+	logEntry = config.getBoolean("log.entry", false);
+	logPlace = config.getBoolean("log.place", false);
+	logPvp = config.getBoolean("log.pvp", false);
+	logDestroy = config.getBoolean("log.destroy", false);
+	logDestroyArea = config.getBoolean("log.destroy-area", false);
+	logUnprotectable = config.getBoolean("log.unprotectable", false);
+	logBypassPvp = config.getBoolean("log.bypass-pvp", false);
+	logBypassDelete = config.getBoolean("log.bypass-delete", false);
+	logBypassPlace = config.getBoolean("log.bypass-place", false);
+	logBypassDestroy = config.getBoolean("log.bypass-destroy", false);
+	logConflictPlace = config.getBoolean("log.conflict-place", false);
+	notifyPlace = config.getBoolean("notify.place", false);
+	notifyDestroy = config.getBoolean("notify.destroy", false);
+	notifyBypassUnprotectable = config.getBoolean("notify.bypass-unprotectable", false);
+	notifyBypassPvp = config.getBoolean("notify.bypass-pvp", false);
+	notifyBypassPlace = config.getBoolean("notify.bypass-place", false);
+	notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", false);
+	notifyGuardDog = config.getBoolean("notify.guard-dog", false);
+	warnInstantHeal = config.getBoolean("warn.instant-heal", false);
+	warnSlowHeal = config.getBoolean("warn.slow-heal", false);
+	warnSlowDamage = config.getBoolean("warn.slow-damage", false);
+	warnFastDamage = config.getBoolean("warn.fast-damage", false);
+	warnFire = config.getBoolean("warn.fire", false);
+	warnEntry = config.getBoolean("warn.entry", false);
+	warnPlace = config.getBoolean("warn.place", false);
+	warnPvp = config.getBoolean("warn.pvp", false);
+	warnDestroy = config.getBoolean("warn.destroy", false);
+	warnDestroyArea = config.getBoolean("warn.destroy-area", false);
+	warnUnprotectable = config.getBoolean("warn.unprotectable", false);
+	publicBlockDetails = config.getBoolean("settings.public-block-details", false);
+	sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
+	dropOnDelete = config.getBoolean("settings.drop-on-delete", false);
+	disableAlertsForAdmins = config.getBoolean("disable-alerts-for-admins", false);
+	disableBypassAlertsForAdmins = config.getBoolean("disable-bypass-alerts-for-admins", false);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void addForceFieldStones(ArrayList<LinkedHashMap> maps)
+    {
+	if (maps == null)
+	    return;
+	
+	double largestForceField = 0;
+	
+	for (LinkedHashMap map : maps)
+	{
+	    FieldSettings pstone = new FieldSettings(map);
+	    
+	    if (pstone.blockDefined)
+	    {
+		// add stone to our collection
+		fieldsettings.put(pstone.blockId, pstone);
+		
+		// add the values to our reference lists
+		ffBlocks.add(pstone.blockId);
+		
+		// see if the radius is the largest
+		if (pstone.radius > largestForceField)
+		    largestForceField = pstone.radius;
+	    }
+	}
+	
+	chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(((largestForceField * 2.0) + 1.0) / 16.0), 1);
     }
     
     /**
@@ -73,7 +158,7 @@ public class SettingsManager
 	
 	return false;
     }
-        
+    
     /**
      * Check if a block is one of the unbreakable types
      */
@@ -81,7 +166,7 @@ public class SettingsManager
     {
 	return unbreakableBlocks.contains(unbreakableblock.getTypeId());
     }
-
+    
     /**
      * Check if a type is one of the unbreakable types
      */
@@ -120,36 +205,6 @@ public class SettingsManager
     public boolean isFieldType(int typeId)
     {
 	return ffBlocks.contains(typeId);
-    }
-    
-    
-    @SuppressWarnings("unchecked")
-    public void addForceFieldStones(ArrayList<LinkedHashMap> maps)
-    {
-	if (maps == null)
-	    return;
-	
-	double largestForceField = 0;
-	
-	for (LinkedHashMap map : maps)
-	{
-	    FieldSettings pstone = new FieldSettings(map);
-	    
-	    if (pstone.blockDefined)
-	    {
-		// add stone to our collection
-		fieldsettings.put(pstone.blockId, pstone);
-		
-		// add the values to our reference lists
-		ffBlocks.add(pstone.blockId);
-		
-		// see if the radius is the largest
-		if (pstone.radius > largestForceField)
-		    largestForceField = pstone.radius;
-	    }
-	}
-	
-	chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(((largestForceField * 2.0) + 1.0) / 16.0), 1);
     }
     
     /**
@@ -203,7 +258,7 @@ public class SettingsManager
 	
 	public String getTitle()
 	{
-	    if(title == null)
+	    if (title == null)
 	    {
 		return "";
 	    }
@@ -213,7 +268,7 @@ public class SettingsManager
 	
 	public String getTitleCap()
 	{
-	    if(title == null)
+	    if (title == null)
 	    {
 		return "";
 	    }
@@ -238,7 +293,7 @@ public class SettingsManager
 	    
 	    blockDefined = true;
 	    
-	    blockId = (Integer) map.get("block");	    
+	    blockId = (Integer) map.get("block");
 	    title = (String) map.get("title");
 	    
 	    if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
@@ -275,10 +330,10 @@ public class SettingsManager
 	    
 	    if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
 		preventEntry = (Boolean) map.get("prevent-entry");
-
+	    
 	    if (map.containsKey("prevent-unprotectable") && Helper.isBoolean(map.get("prevent-unprotectable")))
 		preventUnprotectable = (Boolean) map.get("prevent-unprotectable");
-
+	    
 	    if (map.containsKey("guard-dog-mode") && Helper.isBoolean(map.get("guard-dog-mode")))
 		guarddogMode = (Boolean) map.get("guard-dog-mode");
 	    
@@ -299,7 +354,7 @@ public class SettingsManager
 	    
 	    if (map.containsKey("welcome-message") && Helper.isBoolean(map.get("welcome-message")))
 		welcomeMessage = (Boolean) map.get("welcome-message");
-
+	    
 	    if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
 		farewellMessage = (Boolean) map.get("farewell-message");
 	}

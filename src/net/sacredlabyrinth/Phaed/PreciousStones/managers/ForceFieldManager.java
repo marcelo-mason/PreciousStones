@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import org.bukkit.entity.Player;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Block;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -72,6 +74,11 @@ public class ForceFieldManager
 	    if (chunkfields != null)
 	    {
 		chunkfields.remove(pending);
+		
+		if (plugin.settings.dropOnDelete)
+		{
+		    dropBlock(pending);
+		}
 	    }
 	    setDirty();
 	}
@@ -248,7 +255,7 @@ public class ForceFieldManager
     }
     
     /**
-     * Returns the blocks that is originating the protective field the block is in
+     * Returns the blocks that are originating the protective fields the block is in
      */
     public LinkedList<Field> getSourceFields(Block blockInArea)
     {
@@ -256,7 +263,7 @@ public class ForceFieldManager
     }
     
     /**
-     * Returns the blocks that is originating the protective field the player is standing in
+     * Returns the blocks that are originating the protective fields the player is standing in
      */
     public LinkedList<Field> getSourceFields(Player player)
     {
@@ -265,7 +272,7 @@ public class ForceFieldManager
     }
     
     /**
-     * Returns the blocks that is originating the protective field the player is standing in. That the player is not allowed in
+     * Returns the blocks that are originating the protective fields the player is standing in. That the player is not allowed in
      */
     public LinkedList<Field> getSourceFields(Player player, String playerName)
     {
@@ -274,13 +281,13 @@ public class ForceFieldManager
     }
     
     /**
-     * Whether he is allowed on the field hes standing on
+     * Returns the field if hes standing in at least one allowed field
      */
-    public Field inAllowedVector(Block blockInArea, String playerName)
+    public Field inOneAllowedVector(Block blockInArea, Player player)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	for (Field field : getSourceFields(blockInArea))
 	{
-	    if (field.envelops(blockInArea) && field.isAllAllowed(playerName))
+	    if (field.isAllAllowed(player.getName()))
 	    {
 		return field;
 	    }
@@ -332,6 +339,8 @@ public class ForceFieldManager
 	HashSet<Field> start = new HashSet<Field>();
 	start.add(field);
 	
+	int renamedCount = 0;
+	
 	while (start.size() > 0)
 	{
 	    start = getIntersecting(start, player, total);
@@ -340,10 +349,58 @@ public class ForceFieldManager
 	    {
 		for (Field f : total)
 		{
-		    f.setName(name);
+		    if (!f.getName().equals(name))
+		    {
+			f.setName(name);
+			renamedCount++;
+		    }
 		}
-		setDirty();
-		return total.size();
+		
+		if (renamedCount > 0)
+		{
+		    setDirty();
+		}
+		return renamedCount;
+	    }
+	    else
+	    {
+		total.addAll(start);
+	    }
+	}
+	
+	return 0;
+    }
+    
+    /**
+     * Delete fields
+     */
+    public int deleteFields(Player player, Field field)
+    {
+	HashSet<Field> total = new HashSet<Field>();
+	total.add(field);
+	
+	HashSet<Field> start = new HashSet<Field>();
+	start.add(field);
+	
+	int deletedCount = 0;
+	
+	while (start.size() > 0)
+	{
+	    start = getIntersecting(start, player, total);
+	    
+	    if (start.size() == 0)
+	    {
+		for (Field f : total)
+		{
+		    plugin.ffm.release(f);
+		    deletedCount++;
+		}
+		
+		if (deletedCount > 0)
+		{
+		    setDirty();
+		}
+		return deletedCount;
 	    }
 	    else
 	    {
@@ -365,6 +422,8 @@ public class ForceFieldManager
 	HashSet<Field> start = new HashSet<Field>();
 	start.add(field);
 	
+	int allowedCount = 0;
+	
 	while (start.size() > 0)
 	{
 	    start = getIntersecting(start, player, total);
@@ -373,10 +432,18 @@ public class ForceFieldManager
 	    {
 		for (Field f : total)
 		{
-		    f.addAllowed(allowedName);
+		    if (!f.isAllAllowed(allowedName))
+		    {
+			f.addAllowed(allowedName);
+			allowedCount++;
+		    }
 		}
-		setDirty();
-		return total.size();
+		
+		if (allowedCount > 0)
+		{
+		    setDirty();
+		}
+		return allowedCount;
 	    }
 	    else
 	    {
@@ -398,6 +465,8 @@ public class ForceFieldManager
 	HashSet<Field> start = new HashSet<Field>();
 	start.add(field);
 	
+	int removedCount = 0;
+	
 	while (start.size() > 0)
 	{
 	    start = getIntersecting(start, player, total);
@@ -406,10 +475,18 @@ public class ForceFieldManager
 	    {
 		for (Field f : total)
 		{
-		    f.removeAllowed(allowedName);
+		    if (f.isAllAllowed(allowedName))
+		    {
+			f.removeAllowed(allowedName);
+			removedCount++;
+		    }
 		}
-		setDirty();
-		return total.size();
+		
+		if (removedCount > 0)
+		{
+		    setDirty();
+		}
+		return removedCount;
 	    }
 	    else
 	    {
@@ -574,9 +651,7 @@ public class ForceFieldManager
 		if (fieldsettings.guarddogMode && allowedAreOnline(field))
 		{
 		    plugin.cm.notifyGuardDog(player, field, "block destruction");
-		    {
-			continue;
-		    }
+		    continue;
 		}
 		
 		if (fieldsettings.preventDestroy)
@@ -603,9 +678,7 @@ public class ForceFieldManager
 		if (fieldsettings.guarddogMode && allowedAreOnline(field))
 		{
 		    plugin.cm.notifyGuardDog(player, field, "fire placement");
-		    {
-			continue;
-		    }
+		    continue;
 		}
 		
 		if (fieldsettings.preventFire)
@@ -632,9 +705,7 @@ public class ForceFieldManager
 		if (fieldsettings.guarddogMode && allowedAreOnline(field))
 		{
 		    plugin.cm.notifyGuardDog(player, field, "fire");
-		    {
-			continue;
-		    }
+		    continue;
 		}
 		return field;
 	    }
@@ -722,17 +793,12 @@ public class ForceFieldManager
 	LinkedList<Field> c = chunkLists.get(new ChunkVec(fieldblock.getChunk()));
 	
 	c.remove(new Vec(fieldblock));
-	setDirty();
-    }
-    
-    /**
-     * Remove stones from the collection
-     */
-    public void release(Vec vec)
-    {
-	LinkedList<Field> c = chunkLists.get(vec.getChunkVec());
 	
-	c.remove(vec);
+	if (plugin.settings.dropOnDelete)
+	{
+	    dropBlock(fieldblock);
+	}
+	
 	setDirty();
     }
     
@@ -744,6 +810,12 @@ public class ForceFieldManager
 	LinkedList<Field> c = chunkLists.get(field.getChunkVec());
 	
 	c.remove(field);
+	
+	if (plugin.settings.dropOnDelete)
+	{
+	    dropBlock(field);
+	}
+	
 	setDirty();
     }
     
@@ -761,5 +833,30 @@ public class ForceFieldManager
     public void queueRelease(Field field)
     {
 	deletionQueue.add(field);
+    }
+    
+    /**
+     * Drop block
+     */
+    public void dropBlock(Field field)
+    {
+	World world = plugin.getServer().getWorld(field.getWorld());
+	Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
+	ItemStack is = new ItemStack(block.getTypeId(), 1);
+	
+	block.setType(Material.AIR);
+	world.dropItemNaturally(block.getLocation(), is);
+    }
+    
+    /**
+     * Drop block
+     */
+    public void dropBlock(Block block)
+    {
+	World world = block.getWorld();
+	ItemStack is = new ItemStack(block.getTypeId(), 1);
+	
+	block.setType(Material.AIR);
+	world.dropItemNaturally(block.getLocation(), is);
     }
 }

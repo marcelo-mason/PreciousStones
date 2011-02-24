@@ -176,7 +176,7 @@ public class PSPlayerListener extends PlayerListener
 	Player player = event.getPlayer();
 	Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
 	
-	if (split[0].equalsIgnoreCase("/ps"))
+	if (split[0].equalsIgnoreCase("/ps") && PreciousStones.Permissions.has(player, "preciousstones.benefit.ps"))
 	{
 	    event.setCancelled(true);
 	    
@@ -186,7 +186,7 @@ public class PSPlayerListener extends PlayerListener
 		{
 		    if (split.length == 3)
 		    {
-			Field field = plugin.ffm.inAllowedVector(block, player.getName());
+			Field field = plugin.ffm.inOneAllowedVector(block, player);
 			
 			if (field != null)
 			{
@@ -196,7 +196,7 @@ public class PSPlayerListener extends PlayerListener
 			    
 			    if (count > 0)
 			    {
-				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was added to the allowed list of " + ChatBlock.numberToWord(count) + " force-fields");
+				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was added to the allowed list of " + count + " force-fields");
 			    }
 			    else
 			    {
@@ -215,7 +215,7 @@ public class PSPlayerListener extends PlayerListener
 		{
 		    if (split.length == 3)
 		    {
-			Field field = plugin.ffm.inAllowedVector(block, player.getName());
+			Field field = plugin.ffm.inOneAllowedVector(block, player);
 			
 			if (field != null)
 			{
@@ -225,7 +225,7 @@ public class PSPlayerListener extends PlayerListener
 			    
 			    if (count > 0)
 			    {
-				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was removed from the allowed list of " + ChatBlock.numberToWord(count) + " force-fields");
+				ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was removed from the allowed list of " + count + " force-fields");
 			    }
 			    else
 			    {
@@ -242,7 +242,7 @@ public class PSPlayerListener extends PlayerListener
 		}
 		else if (split[1].equals("setname") && PreciousStones.Permissions.has(player, "preciousstones.benefit.setname"))
 		{
-		    if (split.length >= 2)
+		    if (split.length >= 3)
 		    {
 			String playerName = "";
 			
@@ -254,7 +254,7 @@ public class PSPlayerListener extends PlayerListener
 			
 			if (playerName.length() > 0)
 			{
-			    Field field = plugin.ffm.inAllowedVector(block, player.getName());
+			    Field field = plugin.ffm.inOneAllowedVector(block, player);
 			    
 			    if (field != null)
 			    {
@@ -262,7 +262,7 @@ public class PSPlayerListener extends PlayerListener
 				
 				if (count > 0)
 				{
-				    ChatBlock.sendMessage(player, ChatColor.AQUA + "" + ChatBlock.numberToWord(count) + " fields renamed to " + playerName);
+				    ChatBlock.sendMessage(player, ChatColor.AQUA + "Renamed " + count + " force-fields to " + playerName);
 				}
 				else
 				{
@@ -280,7 +280,36 @@ public class PSPlayerListener extends PlayerListener
 		}
 		else if (split[1].equals("delete") && PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
 		{
-		    if (split.length == 3)
+		    if (split.length == 2)
+		    {
+			Field field = plugin.ffm.inOneAllowedVector(block, player);
+			
+			if (field != null)
+			{
+			    int count = plugin.ffm.deleteFields(player, field);
+			    
+			    if (count > 0)
+			    {
+				ChatBlock.sendMessage(player, ChatColor.AQUA + "Protective field removed from " + count + " force-fields");
+				
+				if (plugin.settings.logBypassDelete)
+				{
+				    PreciousStones.log.info("[ps] Protective field removed from " + count + " force-fields by " + player.getName() + " near " + field.toString());
+				}
+			    }
+			    else
+			    {
+				plugin.cm.showNotFound(player);
+			    }
+			}
+			else
+			{
+			    plugin.cm.showNotFound(player);
+			}
+			
+			return;
+		    }
+		    else if (split.length == 3)
 		    {
 			if (Helper.isInteger(split[2]))
 			{
@@ -291,13 +320,19 @@ public class PSPlayerListener extends PlayerListener
 				plugin.ffm.release(field);
 			    }
 			    
-			    ChatBlock.sendMessage(player, ChatColor.AQUA + "" + fields.size() + " protective fields removed from pstones of type " + split[2]);
-			    
-			    if (plugin.settings.logBypassDelete)
+			    if (fields.size() > 0)
 			    {
-				PreciousStones.log.info("PreciousStones: " + fields.size() + " protective field removed from pstones of type " + split[2] + " by " + player.getName());
+				ChatBlock.sendMessage(player, ChatColor.AQUA + "Protective field removed from " + fields.size() + " force-fields of type " + split[2]);
+				
+				if (plugin.settings.logBypassDelete)
+				{
+				    PreciousStones.log.info("[ps] Protective field removed from " + fields.size() + " force-fields of type " + split[2] + " by " + player.getName() + " near " + fields.get(0).toString());
+				}
 			    }
-			    
+			    else
+			    {
+				plugin.cm.showNotFound(player);
+			    }
 			    return;
 			}
 		    }
@@ -375,31 +410,6 @@ public class PSPlayerListener extends PlayerListener
 			}
 		    }
 		}
-		else if (split[1].equals("delete") && PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
-		{
-		    if (split.length == 2)
-		    {
-			LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
-			
-			for (Field field : fields)
-			{
-			    plugin.ffm.release(field);
-			    
-			    ChatBlock.sendMessage(player, ChatColor.AQUA + "Protective field removed from: " + field.toString());
-			    
-			    if (plugin.settings.logBypassDelete)
-			    {
-				PreciousStones.log.info("PreciousStones: Protective field removed from " + field.toString() + " by " + player.getName());
-			    }
-			}
-			
-			if (fields.size() == 0)
-			{
-			    plugin.cm.showNotFound(player);
-			}
-			return;
-		    }
-		}
 		else if (split[1].equals("info") && PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
 		{
 		    if (split.length == 2)
@@ -422,16 +432,16 @@ public class PSPlayerListener extends PlayerListener
 		{
 		    if (split.length == 2)
 		    {
-			plugin.loadConfiguration();
+			plugin.settings.loadConfiguration();
 			
-			ChatBlock.sendMessage(player, ChatColor.AQUA + "Configuration and pstone files reloaded");
+			ChatBlock.sendMessage(player, ChatColor.AQUA + "Configuration reloaded");
 			return;
 		    }
 		}
 	    }
 	    
 	    ChatBlock.sendBlank(player);
-	    ChatBlock.sendMessage(player, ChatColor.YELLOW + plugin.getDesc().getName() + " " + plugin.getDesc().getVersion());
+	    ChatBlock.sendMessage(player, ChatColor.YELLOW + plugin.getDescription().getName() + " " + plugin.getDescription().getVersion());
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allow [player] " + ChatColor.DARK_GRAY + "- Add player to the allowed lists");
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps remove [player] " + ChatColor.DARK_GRAY + "- Remove player from the allowed lists");
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps setname [name] " + ChatColor.DARK_GRAY + "- Set the name of force-fields");

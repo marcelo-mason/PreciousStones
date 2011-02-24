@@ -1,11 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import org.bukkit.block.Block;
-import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockListener;
-import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -45,7 +44,7 @@ public class PSBlockListener extends BlockListener
     }
     
     @Override
-    public void onBlockDamage(BlockDamageEvent event)
+    public void onBlockBreak(BlockBreakEvent event)
     {
 	Block damagedblock = event.getBlock();
 	Player player = event.getPlayer();
@@ -53,67 +52,64 @@ public class PSBlockListener extends BlockListener
 	if (damagedblock == null || player == null)
 	    return;
 	
-	if (event.getDamageLevel() == BlockDamageLevel.BROKEN)
+	if (plugin.settings.isBypassBlock(damagedblock))
+	    return;
+	
+	if (plugin.settings.isUnbreakableType(damagedblock) && plugin.um.isUnbreakable(damagedblock))
 	{
-	    if (plugin.settings.isBypassBlock(damagedblock))
-		return;
-	    
-	    if (plugin.settings.isUnbreakableType(damagedblock) && plugin.um.isUnbreakable(damagedblock))
+	    if (plugin.um.isOwner(damagedblock, player.getName()))
 	    {
-		if (plugin.um.isOwner(damagedblock, player.getName()))
-		{
-		    plugin.cm.notifyDestroyU(player, damagedblock);
-		    plugin.um.release(damagedblock);
-		}
-		else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unbreakable"))
-		{
-		    plugin.cm.notifyBypassDestroyU(player, damagedblock);
-		    plugin.um.release(damagedblock);
-		}
-		else
-		{
-		    event.setCancelled(true);
-		    plugin.cm.warnDestroyU(player, damagedblock);
-		}
+		plugin.cm.notifyDestroyU(player, damagedblock);
+		plugin.um.release(damagedblock);
 	    }
-	    else if (plugin.settings.isFieldType(damagedblock) && plugin.ffm.isField(damagedblock))
+	    else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unbreakable"))
 	    {
-		if (plugin.ffm.isBreakable(damagedblock))
-		{
-		    plugin.cm.notifyDestroyBreakableFF(player, damagedblock);
-		    plugin.ffm.release(damagedblock);
-		}
-		else if (plugin.ffm.isOwner(damagedblock, player.getName()))
-		{
-		    plugin.cm.notifyDestroyFF(player, damagedblock);
-		    plugin.ffm.release(damagedblock);
-		}
-		else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.forcefield"))
-		{
-		    plugin.cm.notifyBypassDestroyFF(player, damagedblock);
-		    plugin.ffm.release(damagedblock);
-		}
-		else
-		{
-		    event.setCancelled(true);
-		    plugin.cm.warnDestroyFF(player, damagedblock);
-		}
+		plugin.cm.notifyBypassDestroyU(player, damagedblock);
+		plugin.um.release(damagedblock);
 	    }
 	    else
 	    {
-		Field field = plugin.ffm.isDestroyProtected(damagedblock, player);
-		
-		if (field != null)
+		event.setCancelled(true);
+		plugin.cm.warnDestroyU(player, damagedblock);
+	    }
+	}
+	else if (plugin.settings.isFieldType(damagedblock) && plugin.ffm.isField(damagedblock))
+	{
+	    if (plugin.ffm.isBreakable(damagedblock))
+	    {
+		plugin.cm.notifyDestroyBreakableFF(player, damagedblock);
+		plugin.ffm.release(damagedblock);
+	    }
+	    else if (plugin.ffm.isOwner(damagedblock, player.getName()))
+	    {
+		plugin.cm.notifyDestroyFF(player, damagedblock);
+		plugin.ffm.release(damagedblock);
+	    }
+	    else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.forcefield"))
+	    {
+		plugin.cm.notifyBypassDestroyFF(player, damagedblock);
+		plugin.ffm.release(damagedblock);
+	    }
+	    else
+	    {
+		event.setCancelled(true);
+		plugin.cm.warnDestroyFF(player, damagedblock);
+	    }
+	}
+	else
+	{
+	    Field field = plugin.ffm.isDestroyProtected(damagedblock, player);
+	    
+	    if (field != null)
+	    {
+		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.destroy"))
 		{
-		    if (PreciousStones.Permissions.has(player, "preciousstones.bypass.destroy"))
-		    {
-			plugin.cm.notifyBypassDestroy(player, field);
-		    }
-		    else
-		    {
-			event.setCancelled(true);
-			plugin.cm.warnDestroyArea(player, field);
-		    }
+		    plugin.cm.notifyBypassDestroy(player, damagedblock, field);
+		}
+		else
+		{
+		    event.setCancelled(true);
+		    plugin.cm.warnDestroyArea(player, damagedblock, field);
 		}
 	    }
 	}
@@ -145,7 +141,7 @@ public class PSBlockListener extends BlockListener
 		else
 		{
 		    event.setCancelled(true);
-		    plugin.cm.warnConflictU(player, conflictfield);
+		    plugin.cm.warnConflictU(player, placedblock, conflictfield);
 		}
 	    }
 	    else
@@ -178,7 +174,7 @@ public class PSBlockListener extends BlockListener
 	    if (conflictfield != null)
 	    {
 		event.setCancelled(true);
-		plugin.cm.warnConflictFF(player, conflictfield);
+		plugin.cm.warnConflictFF(player, placedblock, conflictfield);
 	    }
 	    else
 	    {
@@ -276,7 +272,7 @@ public class PSBlockListener extends BlockListener
 	    else
 	    {
 		event.setCancelled(true);
-		plugin.cm.warnPlace(player, field);
+		plugin.cm.warnPlace(player, placedblock, field);
 	    }
 	}
     }

@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="D:/Downloads/Plugins/Permissions.jar"/>
-	<classpathentry kind="lib" path="D:/Downloads/Plugins/protobuf-java-2.4.0a.jar"/>
 	<classpathentry kind="lib" path="D:/Downloads/Plugins/bukkit-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

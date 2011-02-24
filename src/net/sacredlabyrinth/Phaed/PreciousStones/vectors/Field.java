@@ -266,6 +266,6 @@ public class Field extends AbstractVec
     @Override
     public String toString()
     {
-	return super.toString() + " [owner:" + owner + "]";
+	return super.toString() + " [" + owner + "]";
     }
 }

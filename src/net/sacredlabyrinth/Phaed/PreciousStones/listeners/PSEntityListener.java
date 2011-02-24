@@ -60,42 +60,47 @@ public class PSEntityListener extends EntityListener
 	}
     }
     
-	@Override
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
-
-			// prevent pvp
-
-			if (sub.getEntity() instanceof Player
-					&& sub.getDamager() instanceof Player) {
-				Player attacker = (Player) sub.getDamager();
-				Player victim = (Player) sub.getEntity();
-
-				LinkedList<Field> fields = plugin.ffm.getSourceFields(victim);
-
-				for (Field field : fields) {
-					FieldSettings fieldsettings = plugin.settings
-							.getFieldSettings(field);
-
-					if (fieldsettings.preventPvP) {
-						if (fieldsettings.guarddogMode
-								&& plugin.ffm.allowedAreOnline(field)) {
-							plugin.cm.notifyGuardDog(attacker, field, "pvp");
-							continue;
-						}
-
-						if (PreciousStones.Permissions.has(attacker,
-								"preciousstones.bypass.pvp")) {
-							plugin.cm.warnBypassPvP(attacker, victim, field);
-						} else {
-							sub.setCancelled(true);
-							plugin.cm.warnPvP(attacker, victim, field);
-						}
-						break;
-					}
-				}
+    @Override
+    public void onEntityDamage(EntityDamageEvent event)
+    {
+	if (event instanceof EntityDamageByEntityEvent)
+	{
+	    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+	    
+	    // prevent pvp
+	    
+	    if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Player)
+	    {
+		Player attacker = (Player) sub.getDamager();
+		Player victim = (Player) sub.getEntity();
+		
+		LinkedList<Field> fields = plugin.ffm.getSourceFields(victim);
+		
+		for (Field field : fields)
+		{
+		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+		    
+		    if (fieldsettings.preventPvP)
+		    {
+			if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
+			{
+			    plugin.cm.notifyGuardDog(attacker, field, "pvp");
+			    continue;
 			}
+			
+			if (PreciousStones.Permissions.has(attacker, "preciousstones.bypass.pvp"))
+			{
+			    plugin.cm.warnBypassPvP(attacker, victim, field);
+			}
+			else
+			{
+			    sub.setCancelled(true);
+			    plugin.cm.warnPvP(attacker, victim, field);
+			}
+			break;
+		    }
 		}
+	    }
 	}
+    }
 }
