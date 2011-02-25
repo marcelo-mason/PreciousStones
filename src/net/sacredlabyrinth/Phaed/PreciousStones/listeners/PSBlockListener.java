@@ -62,7 +62,7 @@ public class PSBlockListener extends BlockListener
 		plugin.cm.notifyDestroyU(player, damagedblock);
 		plugin.um.release(damagedblock);
 	    }
-	    else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unbreakable"))
+	    else if (plugin.pm.hasPermission(player, "preciousstones.bypass.unbreakable"))
 	    {
 		plugin.cm.notifyBypassDestroyU(player, damagedblock);
 		plugin.um.release(damagedblock);
@@ -85,7 +85,7 @@ public class PSBlockListener extends BlockListener
 		plugin.cm.notifyDestroyFF(player, damagedblock);
 		plugin.ffm.release(damagedblock);
 	    }
-	    else if (PreciousStones.Permissions.has(player, "preciousstones.bypass.forcefield"))
+	    else if (plugin.pm.hasPermission(player, "preciousstones.bypass.forcefield"))
 	    {
 		plugin.cm.notifyBypassDestroyFF(player, damagedblock);
 		plugin.ffm.release(damagedblock);
@@ -102,7 +102,7 @@ public class PSBlockListener extends BlockListener
 	    
 	    if (field != null)
 	    {
-		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.destroy"))
+		if (plugin.pm.hasPermission(player, "preciousstones.bypass.destroy"))
 		{
 		    plugin.cm.notifyBypassDestroy(player, damagedblock, field);
 		}
@@ -127,13 +127,13 @@ public class PSBlockListener extends BlockListener
 	if (plugin.settings.isBypassBlock(placedblock))
 	    return;
 	
-	if (plugin.settings.isUnbreakableType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.unbreakable"))
+	if (plugin.settings.isUnbreakableType(placedblock) && plugin.pm.hasPermission(player, "preciousstones.benefit.create.unbreakable"))
 	{
 	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player.getName());
 	    
 	    if (conflictfield != null)
 	    {
-		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.place"))
+		if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
 		{
 		    plugin.um.add(placedblock, player.getName());
 		    plugin.cm.notifyBypassPlaceU(player, conflictfield);
@@ -148,7 +148,7 @@ public class PSBlockListener extends BlockListener
 	    {
 		if (plugin.upm.touchingUnprotectableBlock(placedblock))
 		{
-		    if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+		    if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
 		    {
 			plugin.um.add(placedblock, player.getName());
 			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
@@ -167,7 +167,7 @@ public class PSBlockListener extends BlockListener
 	    }
 	    return;
 	}
-	else if (plugin.settings.isFieldType(placedblock) && PreciousStones.Permissions.has(player, "preciousstones.benefit.create.forcefield"))
+	else if (plugin.settings.isFieldType(placedblock) && plugin.pm.hasPermission(player, "preciousstones.benefit.create.forcefield"))
 	{
 	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player.getName());
 	    
@@ -180,7 +180,7 @@ public class PSBlockListener extends BlockListener
 	    {
 		if (plugin.upm.touchingUnprotectableBlock(placedblock))
 		{
-		    if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+		    if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
 		    {
 			plugin.ffm.add(placedblock, player.getName());
 			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
@@ -201,7 +201,7 @@ public class PSBlockListener extends BlockListener
 		    
 		    if (foundblock != null)
 		    {
-			if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+			if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
 			{
 			    plugin.ffm.add(placedblock, player.getName());
 			    plugin.cm.notifyBypassFieldInUnprotectable(player, foundblock, placedblock);
@@ -232,7 +232,7 @@ public class PSBlockListener extends BlockListener
 	{
 	    if (plugin.um.touchingUnbrakableBlock(placedblock) || plugin.ffm.touchingFieldBlock(placedblock))
 	    {
-		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+		if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
 		{
 		    plugin.um.add(placedblock, player.getName());
 		    plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
@@ -249,7 +249,7 @@ public class PSBlockListener extends BlockListener
 	    
 	    if (field != null)
 	    {
-		if (PreciousStones.Permissions.has(player, "preciousstones.bypass.unprotectable"))
+		if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
 		{
 		    plugin.cm.notifyBypassPlaceUnprotectableInField(player, placedblock, field);
 		}
@@ -265,7 +265,7 @@ public class PSBlockListener extends BlockListener
 	
 	if (field != null)
 	{
-	    if (PreciousStones.Permissions.has(player, "preciousstones.bypass.place"))
+	    if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
 	    {
 		plugin.cm.notifyBypassPlace(player, field);
 	    }

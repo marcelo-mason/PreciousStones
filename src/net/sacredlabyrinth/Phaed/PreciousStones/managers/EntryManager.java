@@ -23,6 +23,8 @@ public class EntryManager
     public EntryManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
+	
+	startScheduler();
     }
     
     public void startScheduler()
@@ -42,7 +44,7 @@ public class EntryManager
 			continue;
 		    }
 		    
-		    if (PreciousStones.Permissions.has(player, "preciousstones.benefit.heal"))
+		    if (plugin.pm.hasPermission(player, "preciousstones.benefit.heal"))
 		    {
 			if (fieldsettings.instantHeal)
 			{
@@ -66,17 +68,17 @@ public class EntryManager
 			}
 		    }
 		    
-		    if (!PreciousStones.Permissions.has(player, "preciousstones.bypass.damage"))
+		    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.damage"))
 		    {
 			if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
 			{
-			    if (!playername.equals(field.getOwner()))
+			    if (!field.isAllAllowed(playername))
 			    {
 				if (fieldsettings.slowDamage)
 				{
 				    if (player.getHealth() > 0)
 				    {
-					player.setHealth(player.getHealth() - 1);
+					player.setHealth(Math.min(player.getHealth() - 1, 0));
 					plugin.cm.showSlowDamage(player);
 					continue;
 				    }
@@ -88,7 +90,7 @@ public class EntryManager
 				    {
 					if (player.getHealth() >= 2)
 					{
-					    player.setHealth(player.getHealth() - 2);
+					    player.setHealth(Math.min(player.getHealth() - 2, 0));
 					}
 					else
 					{

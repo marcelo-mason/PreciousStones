@@ -41,6 +41,10 @@ public class StorageManager
 	{
 	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + forcefield.getName());
 	}
+	
+	// load up data
+	
+	load();
     }
     
     /**

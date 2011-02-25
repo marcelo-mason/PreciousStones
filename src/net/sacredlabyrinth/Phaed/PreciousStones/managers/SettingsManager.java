@@ -64,6 +64,8 @@ public class SettingsManager
     public SettingsManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
+	
+	loadConfiguration();
     }
     
     /**
@@ -112,8 +114,8 @@ public class SettingsManager
 	publicBlockDetails = config.getBoolean("settings.public-block-details", false);
 	sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
 	dropOnDelete = config.getBoolean("settings.drop-on-delete", false);
-	disableAlertsForAdmins = config.getBoolean("disable-alerts-for-admins", false);
-	disableBypassAlertsForAdmins = config.getBoolean("disable-bypass-alerts-for-admins", false);
+	disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins", false);
+	disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
     }
     
     @SuppressWarnings("unchecked")

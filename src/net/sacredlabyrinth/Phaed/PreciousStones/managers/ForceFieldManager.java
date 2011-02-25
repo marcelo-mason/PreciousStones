@@ -167,16 +167,11 @@ public class ForceFieldManager
 	{
 	    for (int z = zlow; z <= zhigh; z++)
 	    {
-		Chunk chnk = blockInArea.getWorld().getChunkAt(x, z);
+		LinkedList<Field> c = chunkLists.get(new ChunkVec(x, z, blockInArea.getWorld().getName()));
 		
-		if (chunk != null)
+		if (c != null)
 		{
-		    LinkedList<Field> c = chunkLists.get(new ChunkVec(chnk));
-		    
-		    if (c != null)
-		    {
-			out.addAll(c);
-		    }
+		    out.addAll(c);
 		}
 	    }
 	}

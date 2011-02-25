@@ -88,7 +88,7 @@ public class PSEntityListener extends EntityListener
 			    continue;
 			}
 			
-			if (PreciousStones.Permissions.has(attacker, "preciousstones.bypass.pvp"))
+			if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
 			{
 			    plugin.cm.warnBypassPvP(attacker, victim, field);
 			}

@@ -52,7 +52,7 @@ public class PSPlayerListener extends PlayerListener
 	
 	if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
 	{
-	    if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || PreciousStones.Permissions.has(player, "preciousstones.admin.details"))
+	    if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
 	    {
 		plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
 	    }
@@ -63,7 +63,7 @@ public class PSPlayerListener extends PlayerListener
 	}
 	else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
 	{
-	    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || PreciousStones.Permissions.has(player, "preciousstones.admin.details"))
+	    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
 	    {
 		plugin.cm.showFieldDetails(plugin.ffm.getField(block), player);
 	    }
@@ -156,7 +156,7 @@ public class PSPlayerListener extends PlayerListener
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 	    
-	    if (!PreciousStones.Permissions.has(player, "preciousstones.bypass.entry"))
+	    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
 	    {
 		if (fieldsettings.preventEntry)
 		{
@@ -176,13 +176,13 @@ public class PSPlayerListener extends PlayerListener
 	Player player = event.getPlayer();
 	Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
 	
-	if (split[0].equalsIgnoreCase("/ps") && PreciousStones.Permissions.has(player, "preciousstones.benefit.ps"))
+	if (split[0].equalsIgnoreCase("/ps") && plugin.pm.hasPermission(player, "preciousstones.benefit.ps"))
 	{
 	    event.setCancelled(true);
 	    
 	    if (split.length > 1)
 	    {
-		if (split[1].equals("allow") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.allow"))
+		if (split[1].equals("allow") && plugin.pm.hasPermission(player, "preciousstones.whitelist.allow"))
 		{
 		    if (split.length == 3)
 		    {
@@ -211,7 +211,7 @@ public class PSPlayerListener extends PlayerListener
 			return;
 		    }
 		}
-		else if (split[1].equals("remove") && PreciousStones.Permissions.has(player, "preciousstones.whitelist.remove"))
+		else if (split[1].equals("remove") && plugin.pm.hasPermission(player, "preciousstones.whitelist.remove"))
 		{
 		    if (split.length == 3)
 		    {
@@ -240,7 +240,7 @@ public class PSPlayerListener extends PlayerListener
 			return;
 		    }
 		}
-		else if (split[1].equals("setname") && PreciousStones.Permissions.has(player, "preciousstones.benefit.setname"))
+		else if (split[1].equals("setname") && plugin.pm.hasPermission(player, "preciousstones.benefit.setname"))
 		{
 		    if (split.length >= 3)
 		    {
@@ -278,7 +278,7 @@ public class PSPlayerListener extends PlayerListener
 			}
 		    }
 		}
-		else if (split[1].equals("delete") && PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
+		else if (split[1].equals("delete") && plugin.pm.hasPermission(player, "preciousstones.admin.delete"))
 		{
 		    if (split.length == 2)
 		    {
@@ -337,7 +337,7 @@ public class PSPlayerListener extends PlayerListener
 			}
 		    }
 		}
-		else if (split[1].equals("setowner") && PreciousStones.Permissions.has(player, "preciousstones.admin.setowner"))
+		else if (split[1].equals("setowner") && plugin.pm.hasPermission(player, "preciousstones.admin.setowner"))
 		{
 		    if (split.length == 3)
 		    {
@@ -383,7 +383,7 @@ public class PSPlayerListener extends PlayerListener
 			return;
 		    }
 		}
-		else if (split[1].equals("list") && PreciousStones.Permissions.has(player, "preciousstones.admin.list"))
+		else if (split[1].equals("list") && plugin.pm.hasPermission(player, "preciousstones.admin.list"))
 		{
 		    if (split.length == 3)
 		    {
@@ -410,7 +410,7 @@ public class PSPlayerListener extends PlayerListener
 			}
 		    }
 		}
-		else if (split[1].equals("info") && PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
+		else if (split[1].equals("info") && plugin.pm.hasPermission(player, "preciousstones.admin.info"))
 		{
 		    if (split.length == 2)
 		    {
@@ -428,7 +428,7 @@ public class PSPlayerListener extends PlayerListener
 			return;
 		    }
 		}
-		else if (split[1].equals("reload") && PreciousStones.Permissions.has(player, "preciousstones.admin.reload"))
+		else if (split[1].equals("reload") && plugin.pm.hasPermission(player, "preciousstones.admin.reload"))
 		{
 		    if (split.length == 2)
 		    {
@@ -446,30 +446,30 @@ public class PSPlayerListener extends PlayerListener
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps remove [player] " + ChatColor.DARK_GRAY + "- Remove player from the allowed lists");
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps setname [name] " + ChatColor.DARK_GRAY + "- Set the name of force-fields");
 	    
-	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.delete"))
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.delete"))
 	    {
 		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete " + ChatColor.DARK_GRAY + "- Delete the field(s) you're standing on");
 		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete [blockid] " + ChatColor.DARK_GRAY + "- Delete the field(s) from this type");
 	    }
 	    
-	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.info"))
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.info"))
 	    {
 		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps info " + ChatColor.DARK_GRAY + "- Get info for the field youre standing on");
 	    }
 	    
-	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.list"))
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.list"))
 	    {
 		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps list [chunks-in-radius]" + ChatColor.DARK_GRAY + "- Lists all pstones in area");
 	    }
 	    
-	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.setowner"))
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.setowner"))
 	    {
 		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps setowner [player] " + ChatColor.DARK_GRAY + "- Of the block you're pointing at");
 	    }
 	    
-	    if (PreciousStones.Permissions.has(player, "preciousstones.admin.reload"))
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.reload"))
 	    {
-		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps reload" + ChatColor.DARK_GRAY + "- Reload configuraton and save files");
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps reload " + ChatColor.DARK_GRAY + "- Reload configuraton and save files");
 	    }
 	}
     }
