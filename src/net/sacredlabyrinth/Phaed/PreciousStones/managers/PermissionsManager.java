@@ -30,7 +30,7 @@ public class PermissionsManager
     
     public boolean hasPermission(Player player, String permission)
     {
-	return Security.has(player, permission) || Permissions.has(player, permission);
+	return (Security != null && Security.has(player, permission)) || (Permissions != null && Permissions.has(player, permission));
     }
     
     public boolean startGroupManager()
