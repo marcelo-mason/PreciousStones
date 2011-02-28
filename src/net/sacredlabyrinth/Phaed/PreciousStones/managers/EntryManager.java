@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.bukkit.entity.Player;
 
@@ -16,7 +17,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
  */
 public class EntryManager
 {
-    private transient PreciousStones plugin;
+    private PreciousStones plugin;
     
     private final HashMap<String, Field> entries = new HashMap<String, Field>();
     
@@ -60,7 +61,7 @@ public class EntryManager
 			{
 			    if (player.getHealth() < 20)
 			    {
-				player.setHealth(player.getHealth() + 1);
+				player.setHealth(Math.max(player.getHealth() + 1, 20));
 				plugin.cm.showSlowHeal(player);
 				continue;
 			    }
@@ -126,5 +127,22 @@ public class EntryManager
     public Field getEnvelopingField(Player player)
     {
 	return entries.get(player.getName());
+    }
+    
+    public HashSet<String> getInhabitants(Field field)
+    {
+	HashSet<String> inhabitants = new HashSet<String>();
+	
+	for (String playername : entries.keySet())
+	{
+	   Field testField = entries.get(playername);
+	   
+	   if(field.equals(testField))
+	   {
+	       inhabitants.add(playername);
+	   }
+	}
+	
+	return inhabitants;
     }
 }

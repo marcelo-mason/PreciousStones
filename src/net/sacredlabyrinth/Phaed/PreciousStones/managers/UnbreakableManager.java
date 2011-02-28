@@ -18,7 +18,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public class UnbreakableManager
 {
-    protected final HashMap<ChunkVec, LinkedList<Unbreakable>> chunkLists = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
+    private final HashMap<ChunkVec, LinkedList<Unbreakable>> chunkLists = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
     
     private Queue<Unbreakable> deletionQueue = new LinkedList<Unbreakable>();
     private PreciousStones plugin;
@@ -27,6 +27,24 @@ public class UnbreakableManager
     public UnbreakableManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
+    }
+    
+    /**
+     * Retrieve a copy of the chunk list
+     */
+    public HashMap<ChunkVec, LinkedList<Unbreakable>> getChunks()
+    {
+	HashMap<ChunkVec, LinkedList<Unbreakable>> out = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
+	out.putAll(chunkLists);
+	return out;
+    }
+    
+    /**
+     * Import chunks to the chunklist
+     */
+    public void importChunks(HashMap<ChunkVec, LinkedList<Unbreakable>> chunks)
+    {
+	chunkLists.putAll(chunks);
     }
     
     /**
@@ -51,14 +69,6 @@ public class UnbreakableManager
     public void resetDirty()
     {
 	dirty = false;
-    }
-    
-    /**
-     * Exposes the chunklist
-     */
-    public HashMap<ChunkVec, LinkedList<Unbreakable>> getChunkLists()
-    {
-	return chunkLists;
     }
     
     /**
@@ -148,7 +158,7 @@ public class UnbreakableManager
 	}
 	return "";
     }
-    
+        
     /**
      * Returns the unbreakable blocks in the chunk and adjacent chunks
      */
@@ -227,10 +237,15 @@ public class UnbreakableManager
     /**
      * Add stone to the collection
      */
-    public void add(Block unbreakableblock, String owner)
+    public boolean add(Block unbreakableblock, Player owner)
     {
+	if(plugin.plm.isDisabled(owner))
+	{
+	    return false;
+	}
+	
 	ChunkVec chunkvec = new ChunkVec(unbreakableblock.getChunk());
-	Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner);
+	Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
 	
 	LinkedList<Unbreakable> c = chunkLists.get(chunkvec);
 	
@@ -247,7 +262,8 @@ public class UnbreakableManager
 	    newc.add(unbreakable);
 	    chunkLists.put(chunkvec, newc);
 	}
-	setDirty();
+	setDirty();	
+	return true;
     }
     
     /**

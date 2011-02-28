@@ -51,6 +51,7 @@ public class SettingsManager
     public boolean warnFire;
     public boolean publicBlockDetails;
     public boolean sneakingBypassesDamage;
+    public boolean allowedCanBreakPstones;    
     public boolean dropOnDelete;
     public boolean disableAlertsForAdmins;
     public boolean disableBypassAlertsForAdmins;
@@ -59,7 +60,7 @@ public class SettingsManager
     public List<Integer> ffBlocks = new ArrayList<Integer>();
     
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
-    private transient PreciousStones plugin;
+    private PreciousStones plugin;
     
     public SettingsManager(PreciousStones plugin)
     {
@@ -113,6 +114,7 @@ public class SettingsManager
 	warnUnprotectable = config.getBoolean("warn.unprotectable", false);
 	publicBlockDetails = config.getBoolean("settings.public-block-details", false);
 	sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
+	allowedCanBreakPstones = config.getBoolean("settings.allowed-can-break-pstones", false);
 	dropOnDelete = config.getBoolean("settings.drop-on-delete", false);
 	disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins", false);
 	disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
@@ -145,6 +147,22 @@ public class SettingsManager
 	}
 	
 	chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(((largestForceField * 2.0) + 1.0) / 16.0), 1);
+    }
+    
+    /**
+     * Whether any nameable pstones have been defined
+     */
+    public boolean haveNameable()
+    {
+	for (FieldSettings setting : fieldsettings.values())
+	{
+	    if(setting.nameable)
+	    {
+		return true;
+	    }
+	}
+	
+	return false;
     }
     
     /**

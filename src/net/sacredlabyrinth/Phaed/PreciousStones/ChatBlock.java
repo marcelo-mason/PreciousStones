@@ -18,7 +18,7 @@ public class ChatBlock
     private String color = "";
     
     public static Logger log = Logger.getLogger("Minecraft");
-
+    
     public void setAlignment(String[] columnAlignment)
     {
 	for (String align : columnAlignment)
@@ -290,7 +290,7 @@ public class ChatBlock
 	String replacementStr = "";
 	
 	Pattern pattern = Pattern.compile(patternStr);
-	Matcher matcher = pattern.matcher(str);	
+	Matcher matcher = pattern.matcher(str);
 	String out = matcher.replaceAll(replacementStr);
 	
 	return out;
@@ -471,13 +471,23 @@ public class ChatBlock
     
     public static String[] colorize(String[] message)
     {
+	return colorizeBase(message, 167);
+    }
+    
+    public static String colorize(String message)
+    {
+	return colorizeBase((new String[] { message }), 167)[0];
+    }
+    
+    public static String[] colorizeBase(String[] message, int charcode)
+    {
 	if (message != null && message[0] != null && !message[0].isEmpty())
 	{
 	    // Go through each line
 	    
 	    String prevColor = "";
 	    String lastColor = "";
-
+	    
 	    int counter = 0;
 	    for (String msg : message)
 	    {
@@ -486,11 +496,11 @@ public class ChatBlock
 		for (int x = 0; x < msg.length(); x++)
 		{
 		    // If the char is color code
-		    if (msg.codePointAt(x) == 167)
+		    if (msg.codePointAt(x) == charcode)
 		    {
 			// advance x to the next character
 			x = x + 1;
-		
+			
 			lastColor = ChatColor.getByCode(Integer.parseInt(msg.charAt(x) + "", 16)) + "";
 		    }
 		}

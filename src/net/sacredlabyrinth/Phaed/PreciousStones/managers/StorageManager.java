@@ -9,40 +9,30 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
+import java.sql.Timestamp;
+
 public class StorageManager
 {
+    private File old;
     private File unbreakable;
     private File forcefield;
-    private transient PreciousStones plugin;
+    private File temp_forcefield;
+    private File temp_unbreakable;
+    private PreciousStones plugin;
     
     public StorageManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
 	
+	old = new File(plugin.getDataFolder().getPath() + File.separator + "old");
 	unbreakable = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakables.txt");
 	forcefield = new File(plugin.getDataFolder().getPath() + File.separator + "forcefields.txt");
+	temp_forcefield = new File(plugin.getDataFolder().getPath() + File.separator + "fields.tmp");
+	temp_unbreakable = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakables.tmp");
 	
-	try
-	{
-	    if (!unbreakable.exists())
-		unbreakable.createNewFile();
-	}
-	catch (IOException e)
-	{
-	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + unbreakable.getName());
-	}
-	
-	try
-	{
-	    if (!forcefield.exists())
-		forcefield.createNewFile();
-	}
-	catch (IOException e)
-	{
-	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + forcefield.getName());
-	}
-	
-	// load up data
+	createForceFieldFile();
+	createUnbreakableFile();
+	createOldDirectory();
 	
 	load();
     }
@@ -52,7 +42,21 @@ public class StorageManager
      */
     public void load()
     {
-	plugin.um.chunkLists.clear();
+	loadUnbreakables();
+	loadFields();
+    }
+    
+    /**
+     * Load unbreakables from disk
+     */
+    public void loadUnbreakables()
+    {
+	if (temp_unbreakable.exists())
+	{
+	    backupUnbreakable();
+	}	
+
+	HashMap<ChunkVec, LinkedList<Unbreakable>> loadedUnbreakables = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
 	int linecount = 0;
 	
 	Scanner scan;
@@ -125,12 +129,12 @@ public class StorageManager
 		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
 		    continue;
 		}
-		
+
 		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
 		LinkedList<Unbreakable> c;
 		
-		if (plugin.um.chunkLists.containsKey(chunkvec))
-		    c = plugin.um.chunkLists.get(chunkvec);
+		if (loadedUnbreakables.containsKey(chunkvec))
+		    c = loadedUnbreakables.get(chunkvec);
 		else
 		    c = new LinkedList<Unbreakable>();
 		
@@ -145,19 +149,33 @@ public class StorageManager
 		    PreciousStones.log.warning("Rejecting duplicate unbreakable: line " + linecount);
 		}
 		
-		plugin.um.chunkLists.put(chunkvec, c);
+		loadedUnbreakables.put(chunkvec, c);
 	    }
 	    
-	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + plugin.um.count() + " unbreakable blocks");
+	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + loadedUnbreakables.size() + " unbreakable blocks");
 	}
 	catch (FileNotFoundException e)
 	{
 	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot read file " + unbreakable.getName());
 	}
 	
-	plugin.ffm.chunkLists.clear();
-	linecount = 0;
+	plugin.um.importChunks(loadedUnbreakables);
+    }
+    
+    /**
+     * Load fields from disk
+     */
+    public void loadFields()
+    {
+	if (temp_forcefield.exists())
+	{
+	    backupForceFields();
+	}
 	
+	HashMap<ChunkVec, LinkedList<Field>> loadedFields = new HashMap<ChunkVec, LinkedList<Field>>();
+	int linecount = 0;
+	
+	Scanner scan;
 	try
 	{
 	    scan = new Scanner(forcefield);
@@ -182,7 +200,7 @@ public class StorageManager
 		String secname = u[6];
 		
 		sectype = Helper.removeChar(sectype, '[');
-		secname = Helper.removeChar(secname, ']');		
+		secname = Helper.removeChar(secname, ']');
 		
 		if (u.length < 7)
 		{
@@ -244,8 +262,8 @@ public class StorageManager
 		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
 		LinkedList<Field> c;
 		
-		if (plugin.ffm.chunkLists.containsKey(chunkvec))
-		    c = plugin.ffm.chunkLists.get(chunkvec);
+		if (loadedFields.containsKey(chunkvec))
+		    c = loadedFields.get(chunkvec);
 		else
 		    c = new LinkedList<Field>();
 		
@@ -259,15 +277,17 @@ public class StorageManager
 		{
 		    PreciousStones.log.warning("Rejecting duplicate forcefield: line " + linecount);
 		}
-		plugin.ffm.chunkLists.put(chunkvec, c);
+		loadedFields.put(chunkvec, c);
 	    }
 	    
-	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + plugin.ffm.count() + " forcefield blocks");
+	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + loadedFields.size() + " forcefield blocks");
 	}
 	catch (FileNotFoundException e)
 	{
 	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot read file " + forcefield.getName());
 	}
+	
+	plugin.ffm.importChunks(loadedFields);
     }
     
     /**
@@ -279,10 +299,18 @@ public class StorageManager
 	{
 	    saveUnbreakables();
 	}
+	else
+	{
+	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] no unbreakables to save ");
+	}
 	
 	if (plugin.ffm.isDirty())
 	{
 	    saveFields();
+	}
+	else
+	{
+	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] no force-fields to save");
 	}
     }
     
@@ -297,15 +325,18 @@ public class StorageManager
 	FileWriter fwriter = null;
 	try
 	{
-	    if (!unbreakable.exists())
-		unbreakable.createNewFile();
+	    if (!temp_unbreakable.exists())
+		temp_unbreakable.createNewFile();
 	    
-	    fwriter = new FileWriter(unbreakable);
+	    fwriter = new FileWriter(temp_unbreakable);
 	    bwriter = new BufferedWriter(fwriter);
 	    
-	    for (ChunkVec chunkvec : plugin.um.chunkLists.keySet())
+	    HashMap<ChunkVec, LinkedList<Unbreakable>> umList = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
+	    umList.putAll(plugin.um.getChunks());
+	    
+	    for (ChunkVec chunkvec : umList.keySet())
 	    {
-		LinkedList<Unbreakable> c = plugin.um.chunkLists.get(chunkvec);
+		LinkedList<Unbreakable> c = umList.get(chunkvec);
 		
 		for (Unbreakable unbreakable : c)
 		{
@@ -356,9 +387,10 @@ public class StorageManager
 	    {
 		PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] IO Exception with file " + unbreakable.getName() + " (on close)");
 	    }
+	    
+	    backupUnbreakable();
+	    plugin.um.resetDirty();
 	}
-	
-	plugin.um.resetDirty();
     }
     
     /**
@@ -372,15 +404,18 @@ public class StorageManager
 	FileWriter fwriter = null;
 	try
 	{
-	    if (!forcefield.exists())
-		forcefield.createNewFile();
+	    if (!temp_forcefield.exists())
+		temp_forcefield.createNewFile();
 	    
-	    fwriter = new FileWriter(forcefield);
+	    fwriter = new FileWriter(temp_forcefield);
 	    bwriter = new BufferedWriter(fwriter);
 	    
-	    for (ChunkVec chunkvec : plugin.ffm.chunkLists.keySet())
+	    HashMap<ChunkVec, LinkedList<Field>> ffmList = new HashMap<ChunkVec, LinkedList<Field>>();
+	    ffmList.putAll(plugin.ffm.getChunks());
+	    
+	    for (ChunkVec chunkvec : ffmList.keySet())
 	    {
-		LinkedList<Field> c = plugin.ffm.chunkLists.get(chunkvec);
+		LinkedList<Field> c = ffmList.get(chunkvec);
 		
 		for (Field field : c)
 		{
@@ -448,30 +483,90 @@ public class StorageManager
 	    {
 		PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] IO Exception with file " + forcefield.getName() + " (on close)");
 	    }
+	    
+	    backupForceFields();
+	    plugin.ffm.resetDirty();
 	}
-	
-	plugin.ffm.resetDirty();
     }
     
-    /**
-     * Check for old save fles
-     */
-    public boolean foundOld()
+    private void createForceFieldFile()
     {
-	File unbreakableFile = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakable.bin");
-	
-	if (unbreakableFile.exists())
+	try
 	{
-	    return true;
+	    if (!forcefield.exists())
+		forcefield.createNewFile();
+	}
+	catch (IOException e)
+	{
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + forcefield.getName());
+	}
+    }
+    
+    private void createOldDirectory()
+    {
+	if(old.exists())
+	{
+	    return;
 	}
 	
-	File protectionFile = new File(plugin.getDataFolder().getPath() + File.separator + "protection.bin");
+	boolean success = old.mkdir();
 	
-	if (protectionFile.exists())
+	if (!success)
 	{
-	    return true;
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create old directory");
+	}	
+    }
+    
+    private void createUnbreakableFile()
+    {
+	try
+	{
+	    if (!unbreakable.exists())
+		unbreakable.createNewFile();
+	}
+	catch (IOException e)
+	{
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + unbreakable.getName());
+	}
+    }
+    
+    private void backupUnbreakable()
+    {
+	createOldDirectory();
+	
+	boolean success = unbreakable.renameTo(new File(old, unbreakable.getName() + "." + (new Timestamp((new java.util.Date()).getTime()))));
+	
+	if (!success)
+	{
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could not backup the current " + unbreakable.getName());
+	    return;
 	}
 	
-	return false;
+	success = temp_unbreakable.renameTo(new File(plugin.getDataFolder(), unbreakable.getName()));
+	
+	if (!success)
+	{
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could not rename tmp file to  final " + unbreakable.getName());
+	}
+    }
+    
+    private void backupForceFields()
+    {
+	createOldDirectory();
+	
+	boolean success = forcefield.renameTo(new File(old, forcefield.getName() + "." + (new Timestamp((new java.util.Date()).getTime()))));
+	
+	if (!success)
+	{
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could not backup the current " + forcefield.getName());
+	    return;
+	}
+	
+	success = temp_forcefield.renameTo(new File(plugin.getDataFolder(), forcefield.getName()));
+	
+	if (!success)
+	{
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could not rename tmp file to  final " + forcefield.getName());
+	}
     }
 }

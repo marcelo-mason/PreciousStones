@@ -149,26 +149,31 @@ public class Field extends AbstractVec
 	return playerName.equals(owner);
     }
     
-    public boolean isAllAllowed(String playerName)
+    public boolean isAllowed(String allowedName)
     {
-	return playerName.equals(owner) || allowed.contains(playerName);
+	return allowed.contains(allowedName);
     }
     
-    public boolean addAllowed(String playerName)
+    public boolean isAllAllowed(String allowedName)
     {
-	if (allowed.contains(playerName))
+	return allowedName.equals(owner) || allowed.contains(allowedName);
+    }
+    
+    public boolean addAllowed(String allowedName)
+    {
+	if (allowed.contains(allowedName))
 	    return false;
 	
-	allowed.add(playerName);
+	allowed.add(allowedName);
 	return true;
     }
     
-    public boolean removeAllowed(String playerName)
+    public boolean removeAllowed(String allowedName)
     {
-	if (allowed.contains(playerName))
+	if (!allowed.contains(allowedName))
 	    return false;
 	
-	allowed.remove(playerName);
+	allowed.remove(allowedName);
 	return true;
     }
     

@@ -25,7 +25,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public class ForceFieldManager
 {
-    protected final HashMap<ChunkVec, LinkedList<Field>> chunkLists = new HashMap<ChunkVec, LinkedList<Field>>();
+    private final HashMap<ChunkVec, LinkedList<Field>> chunkLists = new HashMap<ChunkVec, LinkedList<Field>>();
     
     private Queue<Field> deletionQueue = new LinkedList<Field>();
     private PreciousStones plugin;
@@ -34,6 +34,24 @@ public class ForceFieldManager
     public ForceFieldManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
+    }
+    
+    /**
+     * Retrieve a copy of the chunk list
+     */
+    public HashMap<ChunkVec, LinkedList<Field>> getChunks()
+    {
+	HashMap<ChunkVec, LinkedList<Field>> out = new HashMap<ChunkVec, LinkedList<Field>>();
+	out.putAll(chunkLists);
+	return out;
+    }
+    
+    /**
+     * Import chunks to the chunklist
+     */
+    public void importChunks(HashMap<ChunkVec, LinkedList<Field>> chunks)
+    {
+	chunkLists.putAll(chunks);
     }
     
     /**
@@ -324,9 +342,9 @@ public class ForceFieldManager
     }
     
     /**
-     * Sets the name of the field and all interseting fields
+     * Renurns all overlapped force-fiels
      */
-    public int setNameFields(Player player, Field field, String name)
+    public HashSet<Field> getOverlappedFields(Player player, Field field)
     {
 	HashSet<Field> total = new HashSet<Field>();
 	total.add(field);
@@ -334,28 +352,13 @@ public class ForceFieldManager
 	HashSet<Field> start = new HashSet<Field>();
 	start.add(field);
 	
-	int renamedCount = 0;
-	
 	while (start.size() > 0)
 	{
 	    start = getIntersecting(start, player, total);
 	    
 	    if (start.size() == 0)
 	    {
-		for (Field f : total)
-		{
-		    if (!f.getName().equals(name))
-		    {
-			f.setName(name);
-			renamedCount++;
-		    }
-		}
-		
-		if (renamedCount > 0)
-		{
-		    setDirty();
-		}
-		return renamedCount;
+		return total;
 	    }
 	    else
 	    {
@@ -363,7 +366,34 @@ public class ForceFieldManager
 	    }
 	}
 	
-	return 0;
+	return null;
+    }
+    
+    /**
+     * Sets the name of the field and all interseting fields
+     */
+    public int setNameFields(Player player, Field field, String name)
+    {
+	HashSet<Field> total = getOverlappedFields(player, field);
+	
+	int renamedCount = 0;
+	
+	for (Field f : total)
+	{
+	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(f);
+	    
+	    if (fieldsettings.nameable && !f.getName().equals(name))
+	    {
+		f.setName(name);
+		renamedCount++;
+	    }
+	}
+	
+	if (renamedCount > 0)
+	{
+	    setDirty();
+	}
+	return renamedCount;
     }
     
     /**
@@ -371,125 +401,166 @@ public class ForceFieldManager
      */
     public int deleteFields(Player player, Field field)
     {
-	HashSet<Field> total = new HashSet<Field>();
-	total.add(field);
-	
-	HashSet<Field> start = new HashSet<Field>();
-	start.add(field);
+	HashSet<Field> total = getOverlappedFields(player, field);
 	
 	int deletedCount = 0;
 	
-	while (start.size() > 0)
+	for (Field f : total)
 	{
-	    start = getIntersecting(start, player, total);
-	    
-	    if (start.size() == 0)
-	    {
-		for (Field f : total)
-		{
-		    plugin.ffm.release(f);
-		    deletedCount++;
-		}
-		
-		if (deletedCount > 0)
-		{
-		    setDirty();
-		}
-		return deletedCount;
-	    }
-	    else
-	    {
-		total.addAll(start);
-	    }
+	    plugin.ffm.release(f);
+	    deletedCount++;
 	}
 	
-	return 0;
+	if (deletedCount > 0)
+	{
+	    setDirty();
+	}
+	return deletedCount;
     }
     
     /**
-     * Add allowed player to protected area
+     * Returns a list of players who are inside he overlapped fields
+     */
+    public HashSet<String> getWho(Player player, Field field)
+    {
+	HashSet<Field> total = getOverlappedFields(player, field);
+	HashSet<String> inhabitants = new HashSet<String>();
+	
+	for (Field f : total)
+	{
+	    HashSet<String> someInhabitants = plugin.em.getInhabitants(f);
+	    inhabitants.addAll(someInhabitants);
+	}
+	
+	return inhabitants;
+    }
+    
+    /**
+     * Get allowed players on the overlapped force-fields
+     */
+    public HashSet<String> getAllAllowed(Player player, Field field)
+    {
+	HashSet<String> allowed = new HashSet<String>();
+	HashSet<Field> total = getOverlappedFields(player, field);
+	
+	for (Field f : total)
+	{
+	    allowed.addAll(f.getAllAllowed());
+	}
+
+	return allowed;
+    }
+    
+    /**
+     * Add allowed player to overlapped force-fields
      */
     public int addAllowed(Player player, Field field, String allowedName)
     {
-	HashSet<Field> total = new HashSet<Field>();
-	total.add(field);
-	
-	HashSet<Field> start = new HashSet<Field>();
-	start.add(field);
+	HashSet<Field> total = getOverlappedFields(player, field);
 	
 	int allowedCount = 0;
 	
-	while (start.size() > 0)
+	for (Field f : total)
 	{
-	    start = getIntersecting(start, player, total);
-	    
-	    if (start.size() == 0)
+	    if (!f.isAllAllowed(allowedName))
 	    {
-		for (Field f : total)
-		{
-		    if (!f.isAllAllowed(allowedName))
-		    {
-			f.addAllowed(allowedName);
-			allowedCount++;
-		    }
-		}
-		
-		if (allowedCount > 0)
-		{
-		    setDirty();
-		}
-		return allowedCount;
-	    }
-	    else
-	    {
-		total.addAll(start);
+		f.addAllowed(allowedName);
+		allowedCount++;
 	    }
 	}
 	
-	return 0;
+	if (allowedCount > 0)
+	{
+	    setDirty();
+	}
+	return allowedCount;
     }
     
     /**
-     * Remove allowed player from protected area
+     * Remove allowed player from overlapped force-fields
      */
     public int removeAllowed(Player player, Field field, String allowedName)
     {
-	HashSet<Field> total = new HashSet<Field>();
-	total.add(field);
-	
-	HashSet<Field> start = new HashSet<Field>();
-	start.add(field);
-	
+	HashSet<Field> total = getOverlappedFields(player, field);
 	int removedCount = 0;
 	
-	while (start.size() > 0)
+	for (Field f : total)
 	{
-	    start = getIntersecting(start, player, total);
-	    
-	    if (start.size() == 0)
+	    if (f.isAllAllowed(allowedName))
 	    {
-		for (Field f : total)
-		{
-		    if (f.isAllAllowed(allowedName))
-		    {
-			f.removeAllowed(allowedName);
-			removedCount++;
-		    }
-		}
-		
-		if (removedCount > 0)
-		{
-		    setDirty();
-		}
-		return removedCount;
-	    }
-	    else
-	    {
-		total.addAll(start);
+		f.removeAllowed(allowedName);
+		removedCount++;
 	    }
 	}
 	
-	return 0;
+	if (removedCount > 0)
+	{
+	    setDirty();
+	}
+	return removedCount;
+    }
+    
+    /**
+     * Get all the fields belonging to player
+     */
+    public LinkedList<Field> getOwnersFields(Player player)
+    {
+	LinkedList<Field> out = new LinkedList<Field>();
+	
+	for (LinkedList<Field> fields : plugin.ffm.chunkLists.values())
+	{
+	    for (Field field : fields)
+	    {
+		if (field.isOwner(player.getName()))
+		{
+		    out.add(field);
+		}
+	    }
+	}
+	
+	return out;
+    }
+    
+    /**
+     * Add allowed player to all your force fields
+     */
+    public int allowAll(Player player, String allowedName)
+    {
+	LinkedList<Field> fields = getOwnersFields(player);
+	
+	int allowedCount = 0;
+	
+	for (Field field : fields)
+	{
+	    if (!field.isAllowed(allowedName))
+	    {
+		field.addAllowed(allowedName);
+		allowedCount++;
+	    }
+	}
+	
+	return allowedCount;
+    }
+    
+    /**
+     * Remove allowed player to all your force fields
+     */
+    public int removeAll(Player player, String allowedName)
+    {
+	LinkedList<Field> fields = getOwnersFields(player);
+	
+	int removedCount = 0;
+	
+	for (Field field : fields)
+	{
+	    if (field.isAllowed(allowedName))
+	    {
+		field.removeAllowed(allowedName);
+		removedCount++;
+	    }
+	}
+	
+	return removedCount;
     }
     
     /**
@@ -755,11 +826,16 @@ public class ForceFieldManager
     /**
      * Add stone to the collection
      */
-    public void add(Block fieldblock, String owner)
+    public boolean add(Block fieldblock, Player owner)
     {
+	if(plugin.plm.isDisabled(owner))
+	{
+	    return false;
+	}
+	
 	ChunkVec chunkvec = new ChunkVec(fieldblock.getChunk());
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
-	Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner, new ArrayList<String>(), "");
+	Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), new ArrayList<String>(), "");
 	
 	LinkedList<Field> c = chunkLists.get(new ChunkVec(fieldblock.getChunk()));
 	
@@ -778,6 +854,7 @@ public class ForceFieldManager
 	}
 	
 	setDirty();
+	return true;
     }
     
     /**

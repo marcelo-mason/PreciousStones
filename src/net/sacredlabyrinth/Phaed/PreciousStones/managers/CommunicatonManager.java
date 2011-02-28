@@ -14,7 +14,7 @@ import org.bukkit.block.Block;
 
 public class CommunicatonManager
 {
-    private transient PreciousStones plugin;
+    private PreciousStones plugin;
     
     public CommunicatonManager(PreciousStones plugin)
     {
@@ -154,6 +154,31 @@ public class CommunicatonManager
 	    
 	    if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.destroy") && canAlert(pl))
 		ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destroyed his " + fieldsettings.getTitle() + " force-field");
+	}
+    }
+    
+    
+    public void notifyDestroyOthersFF(Player player, Block fieldblock)
+    {
+	Field field = plugin.ffm.getField(fieldblock);
+	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+	
+	if (plugin.settings.notifyDestroy && canNotify(player))
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitleCap() + " force-field destroyed");
+	
+	if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+	    return;
+	
+	if (plugin.settings.logDestroy)
+	    PreciousStones.log.info("[ps] " + player.getName() + " destroyed " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+	
+	for (Player pl : plugin.getServer().getOnlinePlayers())
+	{
+	    if (pl.equals(player))
+		continue;
+	    
+	    if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.destroy") && canAlert(pl))
+		ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destroyed " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
 	}
     }
     

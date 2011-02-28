@@ -15,7 +15,7 @@ public class PermissionsManager
     public static PermissionHandler Permissions = null;
     public static PermissionHandler Security = null;
     public GroupManager gm;
-    private transient PreciousStones plugin;
+    private PreciousStones plugin;
     
     public PermissionsManager(PreciousStones plugin)
     {
@@ -30,6 +30,9 @@ public class PermissionsManager
     
     public boolean hasPermission(Player player, String permission)
     {
+	if(player == null)
+	    return false;
+			
 	return (Security != null && Security.has(player, permission)) || (Permissions != null && Permissions.has(player, permission));
     }
     
@@ -41,11 +44,11 @@ public class PermissionsManager
 	    if (!p.isEnabled())
 	    {
 		plugin.getServer().getPluginManager().enablePlugin(p);
-		return true;
 	    }
 	    GroupManager _gm = (GroupManager) p;
 	    gm = _gm;
 	    Security = _gm.getPermissionHandler();
+	    return true;
 	}
 	
 	return false;

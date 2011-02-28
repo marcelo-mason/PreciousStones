@@ -18,6 +18,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.UnprotectableManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.StorageManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommunicatonManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 
 /**
  * PreciousStones for Bukkit
@@ -34,6 +35,7 @@ public class PreciousStones extends JavaPlugin
     public StorageManager sm;
     public CommunicatonManager cm;
     public EntryManager em;
+    public PlayerManager plm;
         
     public static final Logger log = Logger.getLogger("Minecraft");
     
@@ -53,6 +55,7 @@ public class PreciousStones extends JavaPlugin
 	sm = new StorageManager(this);
 	cm = new CommunicatonManager(this);
 	em = new EntryManager(this);
+	plm = new PlayerManager(this);
 	
 	playerListener = new PSPlayerListener(this);
 	blockListener = new PSBlockListener(this);
@@ -77,7 +80,6 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onDisable()
     {
-	
+	sm.save();
     }
-
 }

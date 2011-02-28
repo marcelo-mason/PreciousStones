@@ -1,8 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.bukkit.ChatColor;
@@ -343,9 +341,7 @@ public class PSPlayerListener extends PlayerListener
 		    {
 			String owner = split[2];
 			
-			List<String> ignore = Arrays.asList(new String[] { "0", "6", "8", "9", "37", "38", "39", "40", "50", "51", "55", "59", "63", "68", "69", "70", "72", "75", "76", "83", "85" });
-			
-			TargetBlock tb = new TargetBlock(player, 100, 0.2, (ArrayList<String>) ignore);
+			TargetBlock tb = new TargetBlock(player, 100, 0.2, new int[] { 0, 6, 8, 9, 37, 38, 39, 40, 50, 51, 55, 59, 63, 68, 69, 70, 72, 75, 76, 83, 85 });
 			
 			if (tb != null)
 			{
@@ -438,38 +434,226 @@ public class PSPlayerListener extends PlayerListener
 			return;
 		    }
 		}
+		else if (split[1].equals("save") && plugin.pm.hasPermission(player, "preciousstones.admin.save"))
+		{
+		    if (split.length == 2)
+		    {
+			plugin.sm.save();
+			
+			ChatBlock.sendMessage(player, ChatColor.AQUA + "PStones saved to files");
+			return;
+		    }
+		}
+		else if (split[1].equals("allowall") && plugin.pm.hasPermission(player, "preciousstones.whitelist.allowall"))
+		{
+		    if (split.length == 3)
+		    {
+			String playerName = split[2];
+			
+			int count = plugin.ffm.allowAll(player, playerName);
+			
+			if (count > 0)
+			{
+			    ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was added to the allowed list of " + count + " force-fields");
+			}
+			else
+			{
+			    ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " is already on all your lists");
+			}
+			
+			return;
+		    }
+		}
+		else if (split[1].equals("removeall") && plugin.pm.hasPermission(player, "preciousstones.whitelist.removeall"))
+		{
+		    if (split.length == 3)
+		    {
+			String playerName = split[2];
+			
+			int count = plugin.ffm.removeAll(player, playerName);
+			
+			if (count > 0)
+			{
+			    ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was removed from the allowed list of " + count + " force-fields");
+			}
+			else
+			{
+			    ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " is not in any of your lists");
+			}
+			
+			return;
+		    }
+		}
+		else if (split[1].equals("allowed") && plugin.pm.hasPermission(player, "preciousstones.whitelist.allowed"))
+		{
+		    if (split.length == 2)
+		    {
+			Field field = plugin.ffm.inOneAllowedVector(block, player);
+			
+			if (field != null)
+			{
+			    HashSet<String> allallowed = plugin.ffm.getAllAllowed(player, field);
+			    
+			    if (allallowed.size() > 0)
+			    {
+				String out = "";
+				
+				for (String i : allallowed)
+				{
+				    out += ", " + i;
+				}
+				
+				ChatBlock.sendMessage(player, ChatColor.AQUA + "Allowed: " + out.substring(2));
+			    }
+			    else
+			    {
+				ChatBlock.sendMessage(player, ChatColor.RED + "No players allowed in this force-field");
+			    }
+			}
+			else
+			{
+			    plugin.cm.showNotFound(player);
+			}
+			
+			return;
+		    }
+		}
+		else if (split[1].equals("who") && plugin.pm.hasPermission(player, "preciousstones.benefit.who"))
+		{
+		    if (split.length == 2)
+		    {
+			Field field = plugin.ffm.inOneAllowedVector(block, player);
+			
+			if (field != null)
+			{
+			    HashSet<String> inhabitants = plugin.ffm.getWho(player, field);
+			    
+			    if (inhabitants.size() > 0)
+			    {
+				String out = "";
+				
+				for (String i : inhabitants)
+				{
+				    out += ", " + i;
+				}
+				
+				ChatBlock.sendMessage(player, ChatColor.AQUA + "Inhabitants: " + out.substring(2));
+			    }
+			    else
+			    {
+				ChatBlock.sendMessage(player, ChatColor.RED + "No players found in these overlapped force-fields");
+			    }
+			}
+			else
+			{
+			    plugin.cm.showNotFound(player);
+			}
+			
+			return;
+		    }
+		}
+		else if (split[1].equals("on") && plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
+		{
+		    if(plugin.plm.isDisabled(player))
+		    {
+			plugin.plm.setDisabled(player, false);
+			ChatBlock.sendMessage(player, ChatColor.AQUA + "Enabled the placing of pstones");
+		    }
+		    else
+		    {
+			ChatBlock.sendMessage(player, ChatColor.RED + "Pstone placement is already enabled");
+		    }
+		    
+		    return;
+		}
+		else if (split[1].equals("off") && plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
+		{
+		    if(!plugin.plm.isDisabled(player))
+		    {
+			plugin.plm.setDisabled(player, true);
+			ChatBlock.sendMessage(player, ChatColor.AQUA + "Disabled the placing of pstones");
+		    }
+		    else
+		    {
+			ChatBlock.sendMessage(player, ChatColor.RED + "Pstone placement is already disabled");
+		    }
+		    
+		    return;
+		}
 	    }
 	    
 	    ChatBlock.sendBlank(player);
 	    ChatBlock.sendMessage(player, ChatColor.YELLOW + plugin.getDescription().getName() + " " + plugin.getDescription().getVersion());
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allow [player] " + ChatColor.DARK_GRAY + "- Add player to the allowed lists");
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps remove [player] " + ChatColor.DARK_GRAY + "- Remove player from the allowed lists");
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps setname [name] " + ChatColor.DARK_GRAY + "- Set the name of force-fields");
+	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allow"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allow [player] " + ChatColor.GRAY + "- Add player to overlapping fields");
+	    }
+	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allowall"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allowall [player] " + ChatColor.GRAY + "- Add player to all your fields");
+	    }
+	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allowed"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps allowed " + ChatColor.GRAY + "- List all allowed players in overlapping fields");
+	    }
+	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.whitelist.remove"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps remove [player] " + ChatColor.GRAY + "- Remove player from overlapping fields");
+	    }
+	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.whitelist.removeall"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps removeall [player] " + ChatColor.GRAY + "- Remove player from all your fields");
+	    }
+	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.benefit.who"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps who " + ChatColor.GRAY + "- List all inhabitants inside the overlapping fields");
+	    }
+	    
+	    if (plugin.settings.haveNameable() && plugin.pm.hasPermission(player, "preciousstones.benefit.setname"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps setname [name] " + ChatColor.GRAY + "- Set the name of force-fields");
+	    }
+	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "/ps [on|off] " + ChatColor.GRAY + "- Disable or re-eable placing of pstones");
+	    }
 	    
 	    if (plugin.pm.hasPermission(player, "preciousstones.admin.delete"))
 	    {
-		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete " + ChatColor.DARK_GRAY + "- Delete the field(s) you're standing on");
-		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete [blockid] " + ChatColor.DARK_GRAY + "- Delete the field(s) from this type");
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete " + ChatColor.GRAY + "- Delete the field(s) you're standing on");
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete [blockid] " + ChatColor.GRAY + "- Delete the field(s) from this type");
 	    }
 	    
 	    if (plugin.pm.hasPermission(player, "preciousstones.admin.info"))
 	    {
-		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps info " + ChatColor.DARK_GRAY + "- Get info for the field youre standing on");
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps info " + ChatColor.GRAY + "- Get info for the field youre standing on");
 	    }
 	    
 	    if (plugin.pm.hasPermission(player, "preciousstones.admin.list"))
 	    {
-		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps list [chunks-in-radius]" + ChatColor.DARK_GRAY + "- Lists all pstones in area");
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps list [chunks-in-radius]" + ChatColor.GRAY + "- Lists all pstones in area");
 	    }
 	    
 	    if (plugin.pm.hasPermission(player, "preciousstones.admin.setowner"))
 	    {
-		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps setowner [player] " + ChatColor.DARK_GRAY + "- Of the block you're pointing at");
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps setowner [player] " + ChatColor.GRAY + "- Of the block you're pointing at");
 	    }
 	    
 	    if (plugin.pm.hasPermission(player, "preciousstones.admin.reload"))
 	    {
-		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps reload " + ChatColor.DARK_GRAY + "- Reload configuraton and save files");
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps reload " + ChatColor.GRAY + "- Reload configuraton file");
+	    }
+
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.save"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps save " + ChatColor.GRAY + "- Save force field files");
 	    }
 	}
     }
