@@ -9,8 +9,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
-import java.sql.Timestamp;
-
 public class StorageManager
 {
     private File old;
@@ -54,8 +52,8 @@ public class StorageManager
 	if (temp_unbreakable.exists())
 	{
 	    backupUnbreakable();
-	}	
-
+	}
+	
 	HashMap<ChunkVec, LinkedList<Unbreakable>> loadedUnbreakables = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
 	int linecount = 0;
 	
@@ -129,7 +127,7 @@ public class StorageManager
 		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
 		    continue;
 		}
-
+		
 		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
 		LinkedList<Unbreakable> c;
 		
@@ -299,18 +297,10 @@ public class StorageManager
 	{
 	    saveUnbreakables();
 	}
-	else
-	{
-	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] no unbreakables to save ");
-	}
 	
 	if (plugin.ffm.isDirty())
 	{
 	    saveFields();
-	}
-	else
-	{
-	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] no force-fields to save");
 	}
     }
     
@@ -489,34 +479,6 @@ public class StorageManager
 	}
     }
     
-    private void createForceFieldFile()
-    {
-	try
-	{
-	    if (!forcefield.exists())
-		forcefield.createNewFile();
-	}
-	catch (IOException e)
-	{
-	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + forcefield.getName());
-	}
-    }
-    
-    private void createOldDirectory()
-    {
-	if(old.exists())
-	{
-	    return;
-	}
-	
-	boolean success = old.mkdir();
-	
-	if (!success)
-	{
-	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create old directory");
-	}	
-    }
-    
     private void createUnbreakableFile()
     {
 	try
@@ -527,6 +489,36 @@ public class StorageManager
 	catch (IOException e)
 	{
 	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + unbreakable.getName());
+	    e.printStackTrace();
+	}
+    }
+    
+    private void createForceFieldFile()
+    {
+	try
+	{
+	    if (!forcefield.exists())
+		forcefield.createNewFile();
+	}
+	catch (IOException e)
+	{
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Cannot create file " + forcefield.getName());
+	    e.printStackTrace();
+	}
+    }
+    
+    private void createOldDirectory()
+    {
+	if (old.exists())
+	{
+	    return;
+	}
+	
+	boolean success = old.mkdir();
+	
+	if (!success)
+	{
+	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could create plugins/PreciousStones/old directory");
 	}
     }
     
@@ -534,19 +526,30 @@ public class StorageManager
     {
 	createOldDirectory();
 	
-	boolean success = unbreakable.renameTo(new File(old, unbreakable.getName() + "." + (new Timestamp((new java.util.Date()).getTime()))));
-	
-	if (!success)
+	try
+	{
+	    copy(unbreakable, new File(old, unbreakable.getName() + "." + System.currentTimeMillis()));
+	}
+	catch (Exception ex)
 	{
 	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could not backup the current " + unbreakable.getName());
-	    return;
+	}
+	finally
+	{
+	    unbreakable.delete();
 	}
 	
-	success = temp_unbreakable.renameTo(new File(plugin.getDataFolder(), unbreakable.getName()));
-	
-	if (!success)
+	try
+	{
+	    copy(temp_unbreakable, new File(plugin.getDataFolder(), unbreakable.getName()));
+	}
+	catch (Exception ex)
 	{
 	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could not rename tmp file to  final " + unbreakable.getName());
+	}
+	finally
+	{
+	    temp_unbreakable.delete();
 	}
     }
     
@@ -554,19 +557,51 @@ public class StorageManager
     {
 	createOldDirectory();
 	
-	boolean success = forcefield.renameTo(new File(old, forcefield.getName() + "." + (new Timestamp((new java.util.Date()).getTime()))));
-	
-	if (!success)
+	try
+	{
+	    copy(forcefield, new File(old, forcefield.getName() + "." + System.currentTimeMillis()));
+	}
+	catch (Exception ex)
 	{
 	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could not backup the current " + forcefield.getName());
-	    return;
+	}
+	finally
+	{
+	    forcefield.delete();
 	}
 	
-	success = temp_forcefield.renameTo(new File(plugin.getDataFolder(), forcefield.getName()));
-	
-	if (!success)
+	try
+	{
+	    copy(temp_forcefield, new File(plugin.getDataFolder(), forcefield.getName()));
+	}
+	catch (Exception ex)
 	{
 	    PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] Could not rename tmp file to  final " + forcefield.getName());
 	}
+	finally
+	{
+	    temp_forcefield.delete();
+	}
+    }
+    
+    private void copy(InputStream src, File dst) throws IOException
+    {
+	InputStream in = src;
+	OutputStream out = new FileOutputStream(dst);
+	
+	byte[] buf = new byte[1024];
+	int len;
+	while ((len = in.read(buf)) > 0)
+	{
+	    out.write(buf, 0, len);
+	}
+	out.close();
+    }
+    
+    private void copy(File src, File dst) throws IOException
+    {
+	InputStream in = new FileInputStream(src);
+	copy(in, dst);
+	in.close();
     }
 }

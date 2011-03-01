@@ -51,7 +51,7 @@ public class SettingsManager
     public boolean warnFire;
     public boolean publicBlockDetails;
     public boolean sneakingBypassesDamage;
-    public boolean allowedCanBreakPstones;    
+    public boolean allowedCanBreakPstones;
     public boolean dropOnDelete;
     public boolean disableAlertsForAdmins;
     public boolean disableBypassAlertsForAdmins;
@@ -156,7 +156,7 @@ public class SettingsManager
     {
 	for (FieldSettings setting : fieldsettings.values())
 	{
-	    if(setting.nameable)
+	    if (setting.nameable)
 	    {
 		return true;
 	    }
@@ -249,6 +249,14 @@ public class SettingsManager
     public FieldSettings getFieldSettings(int typeId)
     {
 	return fieldsettings.get(typeId);
+    }
+    
+    /**
+     * Returns all the field settings
+     */
+    public HashMap<Integer, FieldSettings> getFieldSettings()
+    {
+	return fieldsettings;
     }
     
     public class FieldSettings
@@ -377,6 +385,64 @@ public class SettingsManager
 	    
 	    if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
 		farewellMessage = (Boolean) map.get("farewell-message");
+	}
+	
+	@Override
+	public String toString()
+	{
+	    String header = "Title: " + title + " Type: " + Material.getMaterial(blockId) + " Radius: " + radius + " Height: " + getHeight();
+	    String properties = getProtertiesString();
+	    
+	    return header + " " + properties;
+	}
+	
+	public String getProtertiesString()
+	{	    
+	    String properties = "";
+	    
+	    if (preventFire)
+		properties += ", no-fire";
+	    
+	    if (preventEntry)
+		properties += ", no-entry";
+	    
+	    if (preventPlace)
+		properties += ", no-place";
+	    
+	    if (preventDestroy)
+		properties += ", no-destroy";
+	    
+	    if (preventExplosions)
+		properties += ", no-explosions";
+	    
+	    if (preventPvP)
+		properties += ", no-pvp";
+	    
+	    if (guarddogMode)
+		properties += ", guard-dog-mode";
+	    
+	    if (instantHeal)
+		properties += ", heal";
+	    
+	    if (slowHeal)
+		properties += ", slow-heal";
+	    
+	    if (slowDamage)
+		properties += ", slow-damage";
+	    
+	    if (fastDamage)
+		properties += ", fast-damage";
+	    
+	    if (welcomeMessage)
+		properties += ", welcome";
+	    
+	    if (farewellMessage)
+		properties += ", farewell";
+	    
+	    if (properties.length() > 0)
+		return "Properties: " + properties.substring(2);
+	    
+	    return "";
 	}
     }
 }

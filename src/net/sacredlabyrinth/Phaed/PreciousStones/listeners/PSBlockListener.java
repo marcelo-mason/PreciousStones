@@ -131,7 +131,7 @@ public class PSBlockListener extends BlockListener
     {
 	Block placedblock = event.getBlock();
 	Player player = event.getPlayer();
-	
+
 	if (placedblock == null || player == null)
 	{
 	    return;
@@ -141,7 +141,7 @@ public class PSBlockListener extends BlockListener
 	{
 	    return;
 	}
-	
+
 	if (plugin.settings.isUnbreakableType(placedblock) && plugin.pm.hasPermission(player, "preciousstones.benefit.create.unbreakable"))
 	{
 	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player.getName());
@@ -191,7 +191,7 @@ public class PSBlockListener extends BlockListener
 	else if (plugin.settings.isFieldType(placedblock) && plugin.pm.hasPermission(player, "preciousstones.benefit.create.forcefield"))
 	{
 	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player.getName());
-	    
+
 	    if (conflictfield != null)
 	    {
 		event.setCancelled(true);
@@ -215,7 +215,7 @@ public class PSBlockListener extends BlockListener
 		    }
 		    return;
 		}
-		
+
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(placedblock.getTypeId());
 		
 		if (fieldsettings.preventUnprotectable)
@@ -239,9 +239,9 @@ public class PSBlockListener extends BlockListener
 			return;
 		    }
 		}
-		
+
 		if (plugin.ffm.add(placedblock, player))
-		{		    
+		{		  
 		    if (plugin.ffm.isBreakable(placedblock))
 		    {
 			plugin.cm.notifyPlaceBreakableFF(player, placedblock);

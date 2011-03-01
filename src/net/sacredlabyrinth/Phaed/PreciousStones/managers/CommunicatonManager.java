@@ -811,49 +811,10 @@ public class CommunicatonManager
 	
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Location: [" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
 	
-	String properties = "";
-	
-	if (fieldsettings.preventFire)
-	    properties += ", no-fire";
-	
-	if (fieldsettings.preventEntry)
-	    properties += ", no-entry";
-	
-	if (fieldsettings.preventPlace)
-	    properties += ", no-place";
-	
-	if (fieldsettings.preventDestroy)
-	    properties += ", no-destroy";
-	
-	if (fieldsettings.preventExplosions)
-	    properties += ", no-explosions";
-	
-	if (fieldsettings.preventPvP)
-	    properties += ", no-pvp";
-	
-	if (fieldsettings.guarddogMode)
-	    properties += ", guard-dog-mode";
-	
-	if (fieldsettings.instantHeal)
-	    properties += ", heal";
-	
-	if (fieldsettings.slowHeal)
-	    properties += ", slow-heal";
-	
-	if (fieldsettings.slowDamage)
-	    properties += ", slow-damage";
-	
-	if (fieldsettings.fastDamage)
-	    properties += ", fast-damage";
-	
-	if (fieldsettings.welcomeMessage)
-	    properties += ", welcome";
-	
-	if (fieldsettings.farewellMessage)
-	    properties += ", farewell";
+	String properties = fieldsettings.getProtertiesString();
 	
 	if (properties.length() > 0)
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Properties: " + properties.substring(2));
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + properties);
     }
     
     public void debug(String msg)

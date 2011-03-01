@@ -11,6 +11,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSEntityListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSPlayerListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSWorldListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommandManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForceFieldManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.UnbreakableManager;
@@ -20,6 +21,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommunicatonManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 
+import org.bukkit.entity.Player;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+
 /**
  * PreciousStones for Bukkit
  * 
@@ -27,8 +32,11 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
  */
 public class PreciousStones extends JavaPlugin
 {
+    public static final Logger log = Logger.getLogger("Minecraft");
+    
     public SettingsManager settings;
     public PermissionsManager pm;
+    public CommandManager com;
     public ForceFieldManager ffm;
     public UnbreakableManager um;
     public UnprotectableManager upm;
@@ -36,19 +44,20 @@ public class PreciousStones extends JavaPlugin
     public CommunicatonManager cm;
     public EntryManager em;
     public PlayerManager plm;
-        
-    public static final Logger log = Logger.getLogger("Minecraft");
     
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
     private PSWorldListener worldListener;
-
+    
     @Override
     public void onEnable()
     {
+	log.info("[" + this.getDescription().getName() + "] version [" + this.getDescription().getVersion() + "] loaded");
+
 	settings = new SettingsManager(this);
 	pm = new PermissionsManager(this);
+	com = new CommandManager(this);
 	ffm = new ForceFieldManager(this);
 	um = new UnbreakableManager(this);
 	upm = new UnprotectableManager(this);
@@ -62,24 +71,45 @@ public class PreciousStones extends JavaPlugin
 	entityListener = new PSEntityListener(this);
 	worldListener = new PSWorldListener(this);
 	
-	log.info("[" + this.getDescription().getName() + "] version [" + this.getDescription().getVersion() + "] loaded");
-	
-	// Register our events
-	
-	getServer().getPluginManager().registerEvent(Event.Type.WORLD_SAVED, worldListener, Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Highest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
+	getServer().getPluginManager().registerEvent(Event.Type.WORLD_SAVED, worldListener, Priority.Lowest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);
     }
     
     @Override
     public void onDisable()
     {
 	sm.save();
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+	try
+	{
+	    String[] split = args;
+	    String commandName = command.getName().toLowerCase();
+	    if (sender instanceof Player)
+	    {
+		if (commandName.equals("ps"))
+		{
+		    if (split.length > 0)
+		    {
+			return com.processCommand((Player) sender, split);
+		    }
+		}
+	    }
+	    return false;
+	}
+	catch (Throwable ex)
+	{
+	    ex.printStackTrace();
+	    return true;
+	}
     }
 }

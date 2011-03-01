@@ -130,7 +130,9 @@ public class ForceFieldManager
      */
     public boolean allowedAreOnline(Field field)
     {
-	for (String playername : field.getAllAllowed())
+	ArrayList<String> allowed = field.getAllAllowed();
+	
+	for (String playername : allowed)
 	{
 	    if (Helper.matchExactPlayer(plugin, playername) != null)
 	    {
@@ -245,8 +247,9 @@ public class ForceFieldManager
     public LinkedList<Field> getSourceFields(Block blockInArea, String playerName)
     {
 	LinkedList<Field> fields = new LinkedList<Field>();
+	LinkedList<Field> fieldsinarea = getFieldsInArea(blockInArea);
 	
-	for (Field field : getFieldsInArea(blockInArea))
+	for (Field field : fieldsinarea)
 	{
 	    if (field.envelops(blockInArea) && (playerName == null || !field.isAllAllowed(playerName)))
 	    {
@@ -298,7 +301,9 @@ public class ForceFieldManager
      */
     public Field inOneAllowedVector(Block blockInArea, Player player)
     {
-	for (Field field : getSourceFields(blockInArea))
+	LinkedList<Field> sourcefields = getSourceFields(blockInArea);
+	
+	for (Field field : sourcefields)
 	{
 	    if (field.isAllAllowed(player.getName()))
 	    {
@@ -610,7 +615,9 @@ public class ForceFieldManager
      */
     public String getAreaOwner(Block blockInArea)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	LinkedList<Field> fieldsinarea = getFieldsInArea(blockInArea);
+	
+	for (Field field : fieldsinarea)
 	{
 	    if (field.envelops(blockInArea))
 	    {
@@ -658,7 +665,9 @@ public class ForceFieldManager
      */
     public Field isUprotectableBlockField(Block blockInArea)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	LinkedList<Field> fieldsinarea = getFieldsInArea(blockInArea);
+	
+	for (Field field : fieldsinarea)
 	{
 	    if (field.envelops(blockInArea))
 	    {
@@ -679,7 +688,9 @@ public class ForceFieldManager
      */
     public Field isPlaceProtected(Block blockInArea, Player player)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	LinkedList<Field> fieldsinarea = getFieldsInArea(blockInArea);
+	
+	for (Field field : fieldsinarea)
 	{
 	    if (field.envelops(blockInArea) && !field.isAllAllowed(player.getName()))
 	    {
@@ -708,7 +719,9 @@ public class ForceFieldManager
      */
     public Field isDestroyProtected(Block blockInArea, Player player)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	LinkedList<Field> fieldsinarea = getFieldsInArea(blockInArea);
+	
+	for (Field field : fieldsinarea)
 	{
 	    if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
 	    {
@@ -735,7 +748,9 @@ public class ForceFieldManager
      */
     public Field isFireProtected(Block blockInArea, Player player)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	LinkedList<Field> fieldsinarea = getFieldsInArea(blockInArea);
+	
+	for (Field field : fieldsinarea)
 	{
 	    if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
 	    {
@@ -762,7 +777,9 @@ public class ForceFieldManager
      */
     public Field isEntryProtected(Block blockInArea, Player player)
     {
-	for (Field field : getFieldsInArea(blockInArea))
+	LinkedList<Field> fieldsinarea = getFieldsInArea(blockInArea);
+	
+	for (Field field : fieldsinarea)
 	{
 	    if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
 	    {
@@ -791,7 +808,9 @@ public class ForceFieldManager
 	    
 	    Field placedField = new Field(placedBlock, fieldsettings.radius, fieldsettings.getHeight());
 	    
-	    for (Field field : getFieldsInArea(placedBlock))
+	    LinkedList<Field> fieldsinarea = getFieldsInArea(placedBlock);
+	    
+	    for (Field field : fieldsinarea)
 	    {
 		if (field.isAllAllowed(placer))
 		{
@@ -806,7 +825,9 @@ public class ForceFieldManager
 	}
 	else
 	{
-	    for (Field field : getFieldsInArea(placedBlock))
+	    LinkedList<Field> fieldsinarea = getFieldsInArea(placedBlock);
+	    
+	    for (Field field : fieldsinarea)
 	    {
 		if (field.isAllAllowed(placer))
 		{
