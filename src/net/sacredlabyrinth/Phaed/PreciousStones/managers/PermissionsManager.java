@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 public class PermissionsManager
 {
     public static PermissionHandler Permissions = null;
-    public static PermissionHandler Security = null;
     public GroupManager gm;
     private PreciousStones plugin;
     
@@ -30,10 +29,10 @@ public class PermissionsManager
     
     public boolean hasPermission(Player player, String permission)
     {
-	if(player == null)
+	if (player == null)
 	    return false;
-			
-	return (Security != null && Security.has(player, permission)) || (Permissions != null && Permissions.has(player, permission));
+	
+	return (Permissions != null && Permissions.has(player, permission)) || (gm != null && gm.getWorldsHolder().getWorldPermissions(player).has(player, permission));
     }
     
     public boolean startGroupManager()
@@ -41,14 +40,15 @@ public class PermissionsManager
 	Plugin p = plugin.getServer().getPluginManager().getPlugin("GroupManager");
 	if (p != null)
 	{
-	    if (!p.isEnabled())
+	    if (!plugin.getServer().getPluginManager().isPluginEnabled(p))
 	    {
 		plugin.getServer().getPluginManager().enablePlugin(p);
 	    }
-	    GroupManager _gm = (GroupManager) p;
-	    gm = _gm;
-	    Security = _gm.getPermissionHandler();
-	    return true;
+	    gm = (GroupManager) p;
+	}
+	else
+	{
+	    plugin.getPluginLoader().disablePlugin(plugin);
 	}
 	
 	return false;

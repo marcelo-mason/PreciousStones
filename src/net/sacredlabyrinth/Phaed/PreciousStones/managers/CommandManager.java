@@ -38,22 +38,22 @@ public class CommandManager
 	{
 	    Help helpPlugin = ((Help) test);
 	    
-	    helpPlugin.registerCommand("/ps allow [player] ", "Add player to overlapping fields", plugin, true, "preciousstones.whitelist.allow");
-	    helpPlugin.registerCommand("/ps allowall [player] ", "Add player to all your fields", plugin, true, "preciousstones.whitelist.allowall");
-	    helpPlugin.registerCommand("/ps allowed ", "List all allowed players in overlapping fields", plugin, true, "preciousstones.whitelist.allowed");
-	    helpPlugin.registerCommand("/ps remove [player] ", "Remove player from overlapping fields", plugin, true, "preciousstones.whitelist.remove");
-	    helpPlugin.registerCommand("/ps removeall [player] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
-	    helpPlugin.registerCommand("/ps who ", "List all inhabitants inside the overlapping fields", plugin, true, "preciousstones.whitelist.who");
-	    helpPlugin.registerCommand("/ps setname [name] ", "Set the name of force-fields", plugin, true, "preciousstones.benefit.setname");
-	    helpPlugin.registerCommand("/ps [on|off] ", "Disable or re-eable placing of pstones", plugin, true, "preciousstones.benefit.onoff");
-	    helpPlugin.registerCommand("/ps delete ", "Delete the field(s) you're standing on", plugin, true, "preciousstones.admin.delete");
-	    helpPlugin.registerCommand("/ps delete [blockid] ", "Delete the field(s) from this type", plugin, true, "preciousstones.admin.delete");
-	    helpPlugin.registerCommand("/ps info ", "Get info for the field youre standing on", plugin, true, "preciousstones.admin.info");
-	    helpPlugin.registerCommand("/ps list [chunks-in-radius]", "Lists all pstones in area", plugin, true, "preciousstones.admin.list");
-	    helpPlugin.registerCommand("/ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
-	    helpPlugin.registerCommand("/ps reload ", "Reload configuraton file", plugin, true, "preciousstones.admin.reload");
-	    helpPlugin.registerCommand("/ps save ", "Save force field files", plugin, true, "preciousstones.admin.save");
-	    helpPlugin.registerCommand("/ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
+	    helpPlugin.registerCommand("ps allow [player] ", "Add player to overlapping fields", plugin, true, "preciousstones.whitelist.allow");
+	    helpPlugin.registerCommand("ps allowall [player] ", "Add player to all your fields", plugin, true, "preciousstones.whitelist.allowall");
+	    helpPlugin.registerCommand("ps allowed ", "List allowed players in overlapping fields", plugin, true, "preciousstones.whitelist.allowed");
+	    helpPlugin.registerCommand("ps remove [player] ", "Remove player from overlapping fields", plugin, true, "preciousstones.whitelist.remove");
+	    helpPlugin.registerCommand("ps removeall [player] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
+	    helpPlugin.registerCommand("ps who ", "List all inhabitants inside the overlapping fields", plugin, true, "preciousstones.whitelist.who");
+	    helpPlugin.registerCommand("ps setname [name] ", "Set the name of force-fields", plugin, true, "preciousstones.benefit.setname");
+	    helpPlugin.registerCommand("ps [on|off] ", "Disable or re-eable placing of pstones", plugin, true, "preciousstones.benefit.onoff");
+	    helpPlugin.registerCommand("ps delete ", "Delete the field(s) you're standing on", plugin, true, "preciousstones.admin.delete");
+	    helpPlugin.registerCommand("ps delete [blockid] ", "Delete the field(s) from this type", plugin, true, "preciousstones.admin.delete");
+	    helpPlugin.registerCommand("ps info ", "Get info for the field youre standing on", plugin, true, "preciousstones.admin.info");
+	    helpPlugin.registerCommand("ps list [chunks-in-radius]", "Lists all pstones in area", plugin, true, "preciousstones.admin.list");
+	    helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
+	    helpPlugin.registerCommand("ps reload ", "Reload configuraton file", plugin, true, "preciousstones.admin.reload");
+	    helpPlugin.registerCommand("ps save ", "Save force field files", plugin, true, "preciousstones.admin.save");
+	    helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
 
 	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] version [" + plugin.getDescription().getVersion() + "] 'Help' support enabled");
 	}
@@ -136,7 +136,7 @@ public class CommandManager
 	    {
 		String playerName = "";
 		
-		for (int i = 2; i < split.length; i++)
+		for (int i = 1; i < split.length; i++)
 		{
 		    playerName += split[i] + " ";
 		}
