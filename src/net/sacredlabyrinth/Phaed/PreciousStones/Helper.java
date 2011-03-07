@@ -122,4 +122,12 @@ public class Helper
 	return out.trim();
     }
     
+    /**
+     * Return plural word if count is bigger than one
+     */
+    public static String plural(int count, String word, String ending)
+    {
+	return count == 1 ? word : word + ending;    
+    }
+    
 }

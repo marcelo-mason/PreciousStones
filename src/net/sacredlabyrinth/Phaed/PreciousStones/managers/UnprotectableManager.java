@@ -24,24 +24,7 @@ public class UnprotectableManager
      */
     public boolean touchingUnprotectableBlock(Block block)
     {
-	for (int x = -1; x <= 1; x++)
-	{
-	    for (int z = -1; z <= 1; z++)
-	    {
-		for (int y = -1; y <= 1; y++)
-		{
-		    if (x == 0 && y == 0 && z == 0)
-			continue;
-		    
-		    Block touchingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
-		    
-		    if (plugin.settings.isUnprotectableType(touchingblock))
-			return true;
-		}
-	    }
-	}
-	
-	return false;
+	return getTouchingUnprotectableBlock(block) != null;
     }
     
     /**
@@ -59,7 +42,7 @@ public class UnprotectableManager
 			continue;
 		    
 		    Block touchingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
-		    
+
 		    if (plugin.settings.isUnprotectableType(touchingblock))
 			return touchingblock;
 		}

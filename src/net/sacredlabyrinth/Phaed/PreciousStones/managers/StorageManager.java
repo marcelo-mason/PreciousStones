@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -33,6 +34,11 @@ public class StorageManager
 	createOldDirectory();
 	
 	load();
+	
+	if (plugin.settings.saveFrequency > 0)
+	{
+	    startScheduler();
+	}
     }
     
     /**
@@ -112,11 +118,17 @@ public class StorageManager
 		
 		String world = secworld;
 		
+		if(plugin.getServer().getWorld(world) == null)
+		{
+		    PreciousStones.log.warning("Corrupt unbreakable: sec4 line " + linecount);
+		    continue;
+		}
+		
 		String[] chunk = secchunk.split(",");
 		
 		if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
 		{
-		    PreciousStones.log.warning("Corrupt unbreakable: sec4 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
 		    continue;
 		}
 		
@@ -124,30 +136,40 @@ public class StorageManager
 		
 		if (vec.length < 3 || !Helper.isInteger(vec[0]) || !Helper.isInteger(vec[1]) || !Helper.isInteger(vec[2]))
 		{
-		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: sec6 line " + linecount);
 		    continue;
 		}
 		
-		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
-		LinkedList<Unbreakable> c;
+		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
 		
-		if (loadedUnbreakables.containsKey(chunkvec))
-		    c = loadedUnbreakables.get(chunkvec);
-		else
-		    c = new LinkedList<Unbreakable>();
-		
-		Unbreakable unbreakable = new Unbreakable(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), chunkvec, world, Material.getMaterial(type).getId(), owner);
-		
-		if (!c.contains(unbreakable))
+		if (!plugin.settings.isUnbreakableType(block))
 		{
-		    c.add(unbreakable);
+		    PreciousStones.log.warning("orphan unbreakable - skipping " + new Vec(block).toString());
+		    plugin.um.setDirty();
 		}
 		else
 		{
-		    PreciousStones.log.warning("Rejecting duplicate unbreakable: line " + linecount);
+		    ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
+		    Unbreakable unbreakable = new Unbreakable(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), chunkvec, world, Material.getMaterial(type).getId(), owner);
+		    
+		    LinkedList<Unbreakable> c;
+		    
+		    if (loadedUnbreakables.containsKey(chunkvec))
+			c = loadedUnbreakables.get(chunkvec);
+		    else
+			c = new LinkedList<Unbreakable>();
+		    
+		    if (!c.contains(unbreakable))
+		    {
+			c.add(unbreakable);
+		    }
+		    else
+		    {
+			PreciousStones.log.warning("Rejecting duplicate unbreakable: line " + linecount);
+		    }
+		    
+		    loadedUnbreakables.put(chunkvec, c);
 		}
-		
-		loadedUnbreakables.put(chunkvec, c);
 	    }
 	    
 	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + loadedUnbreakables.size() + " unbreakable blocks");
@@ -239,11 +261,17 @@ public class StorageManager
 		
 		String world = secworld;
 		
+		if(plugin.getServer().getWorld(world) == null)
+		{
+		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
+		    continue;
+		}
+		
 		String[] chunk = secchunk.split(",");
 		
 		if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
 		{
-		    PreciousStones.log.warning("Corrupt forcefield: sec5 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: sec6 line " + linecount);
 		    continue;
 		}
 		
@@ -251,31 +279,41 @@ public class StorageManager
 		
 		if (vec.length < 5 || !Helper.isInteger(vec[0]) || !Helper.isInteger(vec[1]) || !Helper.isInteger(vec[2]) || !Helper.isInteger(vec[3]) || !Helper.isInteger(vec[4]))
 		{
-		    PreciousStones.log.warning("Corrupt forcefield: sec6 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: sec7 line " + linecount);
 		    continue;
 		}
 		
 		String name = secname;
 		
-		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
-		LinkedList<Field> c;
+		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
 		
-		if (loadedFields.containsKey(chunkvec))
-		    c = loadedFields.get(chunkvec);
-		else
-		    c = new LinkedList<Field>();
-		
-		Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), chunkvec, world, Material.getMaterial(type).getId(), owner, allowed, name);
-		
-		if (!c.contains(field))
+		if (!plugin.settings.isFieldType(block))
 		{
-		    c.add(field);
+		    PreciousStones.log.warning("orphan field - skipping " + new Vec(block).toString());
+		    plugin.ffm.setDirty();
 		}
 		else
 		{
-		    PreciousStones.log.warning("Rejecting duplicate forcefield: line " + linecount);
+		    ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
+		    Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), chunkvec, world, Material.getMaterial(type).getId(), owner, allowed, name);
+		    
+		    LinkedList<Field> c;
+		    
+		    if (loadedFields.containsKey(chunkvec))
+			c = loadedFields.get(chunkvec);
+		    else
+			c = new LinkedList<Field>();
+		    
+		    if (!c.contains(field))
+		    {
+			c.add(field);
+		    }
+		    else
+		    {
+			PreciousStones.log.warning("Rejecting duplicate forcefield: line " + linecount);
+		    }
+		    loadedFields.put(chunkvec, c);
 		}
-		loadedFields.put(chunkvec, c);
 	    }
 	    
 	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + loadedFields.size() + " forcefield blocks");
@@ -302,6 +340,8 @@ public class StorageManager
 	{
 	    saveFields();
 	}
+	
+	cleanOldFolder();
     }
     
     /**
@@ -584,6 +624,22 @@ public class StorageManager
 	}
     }
     
+    private void cleanOldFolder()
+    {
+	if (old.exists())
+	{
+	    File[] listFiles = old.listFiles();
+	    long purgeTime = System.currentTimeMillis() - (plugin.settings.purgeDays * 24 * 60 * 60 * 1000);
+	    for (File listFile : listFiles)
+	    {
+		if (listFile.lastModified() < purgeTime)
+		{
+		    listFile.delete();
+		}
+	    }
+	}
+    }
+    
     private void copy(InputStream src, File dst) throws IOException
     {
 	InputStream in = src;
@@ -603,5 +659,16 @@ public class StorageManager
 	InputStream in = new FileInputStream(src);
 	copy(in, dst);
 	in.close();
+    }
+    
+    public void startScheduler()
+    {
+	plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
+	{
+	    public void run()
+	    {
+		save();
+	    }
+	}, 0, 20 * 60 * plugin.settings.saveFrequency);
     }
 }

@@ -42,6 +42,7 @@ public class SettingsManager
     public boolean warnSlowHeal;
     public boolean warnSlowDamage;
     public boolean warnFastDamage;
+    public boolean warnGiveAir;
     public boolean warnPlace;
     public boolean warnDestroy;
     public boolean warnDestroyArea;
@@ -49,12 +50,15 @@ public class SettingsManager
     public boolean warnEntry;
     public boolean warnPvp;
     public boolean warnFire;
+    public long saveFrequency;
+    public int purgeDays;
     public boolean publicBlockDetails;
     public boolean sneakingBypassesDamage;
     public boolean allowedCanBreakPstones;
     public boolean dropOnDelete;
     public boolean disableAlertsForAdmins;
     public boolean disableBypassAlertsForAdmins;
+    public boolean offByDefault;
     
     public int chunksInLargestForceFieldArea;
     public List<Integer> ffBlocks = new ArrayList<Integer>();
@@ -105,6 +109,7 @@ public class SettingsManager
 	warnSlowHeal = config.getBoolean("warn.slow-heal", false);
 	warnSlowDamage = config.getBoolean("warn.slow-damage", false);
 	warnFastDamage = config.getBoolean("warn.fast-damage", false);
+	warnGiveAir = config.getBoolean("warn.give-air", false);
 	warnFire = config.getBoolean("warn.fire", false);
 	warnEntry = config.getBoolean("warn.entry", false);
 	warnPlace = config.getBoolean("warn.place", false);
@@ -112,12 +117,15 @@ public class SettingsManager
 	warnDestroy = config.getBoolean("warn.destroy", false);
 	warnDestroyArea = config.getBoolean("warn.destroy-area", false);
 	warnUnprotectable = config.getBoolean("warn.unprotectable", false);
+	purgeDays = config.getInt("saving.purge-backups-after-days", 5);
+	saveFrequency = config.getInt("saving.frequency-minutes", 5);
 	publicBlockDetails = config.getBoolean("settings.public-block-details", false);
 	sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
 	allowedCanBreakPstones = config.getBoolean("settings.allowed-can-break-pstones", false);
 	dropOnDelete = config.getBoolean("settings.drop-on-delete", false);
 	disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins", false);
 	disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
+	offByDefault = config.getBoolean("settings.off-by-default", false);
     }
     
     @SuppressWarnings("unchecked")
@@ -172,8 +180,15 @@ public class SettingsManager
     {
 	for (Integer t : unprotectableBlocks)
 	{
+	    if (placedblock.getTypeId() == 0)
+	    {
+		continue;
+	    }
+	    
 	    if (placedblock.getTypeId() == t)
+	    {
 		return true;
+	    }
 	}
 	
 	return false;
@@ -217,6 +232,14 @@ public class SettingsManager
     public boolean isFieldType(String type)
     {
 	return ffBlocks.contains(Material.getMaterial(type).getId());
+    }
+    
+    /**
+     * Check if the material is one of the forcefeld types
+     */
+    public boolean isFieldType(Material material)
+    {
+	return ffBlocks.contains(material.getId());
     }
     
     /**
@@ -283,6 +306,7 @@ public class SettingsManager
 	public boolean breakable = false;
 	public boolean welcomeMessage = false;
 	public boolean farewellMessage = false;
+	public boolean giveAir = false;
 	
 	public String getTitle()
 	{
@@ -385,6 +409,9 @@ public class SettingsManager
 	    
 	    if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
 		farewellMessage = (Boolean) map.get("farewell-message");
+
+	    if (map.containsKey("give-air") && Helper.isBoolean(map.get("give-air")))
+		giveAir = (Boolean) map.get("give-air");
 	}
 	
 	@Override
@@ -432,6 +459,9 @@ public class SettingsManager
 	    
 	    if (fastDamage)
 		properties += ", fast-damage";
+
+	    if (giveAir)
+		properties += ", give-air";
 	    
 	    if (welcomeMessage)
 		properties += ", welcome";

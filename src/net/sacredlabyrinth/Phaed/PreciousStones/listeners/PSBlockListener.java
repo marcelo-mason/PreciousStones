@@ -1,7 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import java.util.HashSet;
+
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockListener;
@@ -131,7 +136,7 @@ public class PSBlockListener extends BlockListener
     {
 	Block placedblock = event.getBlock();
 	Player player = event.getPlayer();
-
+	
 	if (placedblock == null || player == null)
 	{
 	    return;
@@ -141,10 +146,10 @@ public class PSBlockListener extends BlockListener
 	{
 	    return;
 	}
-
+	
 	if (plugin.settings.isUnbreakableType(placedblock) && plugin.pm.hasPermission(player, "preciousstones.benefit.create.unbreakable"))
 	{
-	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player.getName());
+	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player);
 	    
 	    if (conflictfield != null)
 	    {
@@ -169,13 +174,13 @@ public class PSBlockListener extends BlockListener
 		    {
 			if (plugin.um.add(placedblock, player))
 			{
-			    plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
+			    plugin.cm.notifyBypassTouchingUnprotectable(player, placedblock);
 			}
 		    }
 		    else
 		    {
 			event.setCancelled(true);
-			plugin.cm.warnPlaceUnprotectableTouching(player, placedblock);
+			plugin.cm.warnPlaceTouchingUnprotectable(player, placedblock);
 		    }
 		}
 		else
@@ -190,8 +195,8 @@ public class PSBlockListener extends BlockListener
 	}
 	else if (plugin.settings.isFieldType(placedblock) && plugin.pm.hasPermission(player, "preciousstones.benefit.create.forcefield"))
 	{
-	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player.getName());
-
+	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player);
+	    
 	    if (conflictfield != null)
 	    {
 		event.setCancelled(true);
@@ -205,17 +210,17 @@ public class PSBlockListener extends BlockListener
 		    {
 			if (plugin.ffm.add(placedblock, player))
 			{
-			    plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
+			    plugin.cm.notifyBypassTouchingUnprotectable(player, placedblock);
 			}
 		    }
 		    else
 		    {
 			event.setCancelled(true);
-			plugin.cm.warnPlaceUnprotectableTouching(player, placedblock);
+			plugin.cm.warnPlaceTouchingUnprotectable(player, placedblock);
 		    }
 		    return;
 		}
-
+		
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(placedblock.getTypeId());
 		
 		if (fieldsettings.preventUnprotectable)
@@ -239,9 +244,9 @@ public class PSBlockListener extends BlockListener
 			return;
 		    }
 		}
-
+		
 		if (plugin.ffm.add(placedblock, player))
-		{		  
+		{
 		    if (plugin.ffm.isBreakable(placedblock))
 		    {
 			plugin.cm.notifyPlaceBreakableFF(player, placedblock);
@@ -256,19 +261,40 @@ public class PSBlockListener extends BlockListener
 	}
 	else if (plugin.settings.isUnprotectableType(placedblock))
 	{
-	    if (plugin.um.touchingUnbrakableBlock(placedblock) || plugin.ffm.touchingFieldBlock(placedblock))
+	    Block unbreakableblock = plugin.um.touchingUnbrakableBlock(placedblock);
+	    
+	    if (unbreakableblock != null)
 	    {
 		if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
 		{
 		    if (plugin.um.add(placedblock, player))
 		    {
-			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock);
+			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock, unbreakableblock);
 		    }
 		}
 		else
 		{
 		    event.setCancelled(true);
-		    plugin.cm.warnPlaceUnprotectableTouching(player, placedblock);
+		    plugin.cm.warnPlaceUnprotectableTouching(player, placedblock, unbreakableblock);
+		    return;
+		}
+	    }
+	    
+	    Block fieldblock = plugin.ffm.touchingFieldBlock(placedblock);
+	    
+	    if (fieldblock != null)
+	    {
+		if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
+		{
+		    if (plugin.um.add(placedblock, player))
+		    {
+			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock, fieldblock);
+		    }
+		}
+		else
+		{
+		    event.setCancelled(true);
+		    plugin.cm.warnPlaceUnprotectableTouching(player, placedblock, fieldblock);
 		    return;
 		}
 	    }
@@ -301,6 +327,30 @@ public class PSBlockListener extends BlockListener
 	    {
 		event.setCancelled(true);
 		plugin.cm.warnPlace(player, placedblock, field);
+	    }
+	}
+    }
+    
+    @Override
+    public void onBlockDamage(BlockDamageEvent event)
+    {
+	Block scopedBlock = event.getBlock();
+	Player player = event.getPlayer();
+	ItemStack is = player.getItemInHand();
+	
+	if (scopedBlock == null || is == null || player == null)
+	{
+	    return;
+	}
+	
+	Material materialInHand = is.getType();
+	
+	if (plugin.settings.isFieldType(materialInHand) && plugin.pm.hasPermission(player, "preciousstones.benefit.scoping"))
+	{
+	    if (!plugin.plm.isDisabled(player))
+	    {
+		HashSet<Field> touching = plugin.ffm.getTouchingFields(scopedBlock, materialInHand);		
+		plugin.cm.printTouchingFields(player, touching);
 	    }
 	}
     }

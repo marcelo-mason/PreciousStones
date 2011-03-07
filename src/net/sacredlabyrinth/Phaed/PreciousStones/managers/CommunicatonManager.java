@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -156,7 +157,6 @@ public class CommunicatonManager
 		ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destroyed his " + fieldsettings.getTitle() + " force-field");
 	}
     }
-    
     
     public void notifyDestroyOthersFF(Player player, Block fieldblock)
     {
@@ -469,8 +469,16 @@ public class CommunicatonManager
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 	
 	if (canWarn(player))
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place unbreakable block here");
-	
+	{
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.viewconflicting"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place unbreakable block here. Conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+	    }
+	    else
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place unbreakable block here");
+	    }
+	}
 	if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
 	    return;
 	
@@ -492,8 +500,16 @@ public class CommunicatonManager
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 	
 	if (canWarn(player))
-	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place force-field here");
-	
+	{
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.viewconflicting"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place force-field here. Conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+	    }
+	    else
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place force-field here");
+	    }
+	}
 	if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
 	    return;
 	
@@ -556,7 +572,29 @@ public class CommunicatonManager
 	}
     }
     
-    public void warnPlaceUnprotectableTouching(Player player, Block placedblock)
+    public void warnPlaceUnprotectableTouching(Player player, Block unprotectableblock, Block protectionblock)
+    {
+	if (plugin.settings.warnUnprotectable && canWarn(player))
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place unprotectable " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " block here");
+	
+	if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+	    return;
+	
+	if (plugin.settings.logUnprotectable)
+	    PreciousStones.log.info("[ps] " + player.getName() + " attempted to place an unprotectable block [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "] near [" + protectionblock.getType() + "|" + protectionblock.getX() + " " + protectionblock.getY() + " " + protectionblock.getZ() + "]");
+	
+	for (Player pl : plugin.getServer().getOnlinePlayers())
+	{
+	    if (pl.equals(player))
+		continue;
+	    
+	    if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.unprotectable") && canAlert(pl))
+		ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place an unprotectable block [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "] near [" + protectionblock.getType() + "|" + protectionblock.getX() + " " + protectionblock.getY() + " " + protectionblock.getZ() + "]");
+	}
+    }
+    
+    
+    public void warnPlaceTouchingUnprotectable(Player player, Block placedblock)
     {
 	Block touchingblock = plugin.upm.getTouchingUnprotectableBlock(placedblock);
 	
@@ -625,7 +663,28 @@ public class CommunicatonManager
 	}
     }
     
-    public void notifyBypassUnprotectableTouching(Player player, Block placedblock)
+    public void notifyBypassUnprotectableTouching(Player player, Block unprotectableblock, Block protectionblock)
+    {	
+	if (plugin.settings.warnUnprotectable && canWarn(player))
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Unprotectable block " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " bypass-placed near " + Helper.friendlyBlockType(protectionblock.getType().toString()) + " block");
+	
+	if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+	    return;
+	
+	if (plugin.settings.logUnprotectable)
+	    PreciousStones.log.info("[ps] " + player.getName() + " bypass-placed an unprotectable block [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "] near [" + protectionblock.getType() + "|" + protectionblock.getX() + " " + protectionblock.getY() + " " + protectionblock.getZ() + "]");
+	
+	for (Player pl : plugin.getServer().getOnlinePlayers())
+	{
+	    if (pl.equals(player))
+		continue;
+	    
+	    if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.unprotectable") && canBypassAlert(pl))
+		ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-placed an unprotectable block [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "] near [" + protectionblock.getType() + "|" + protectionblock.getX() + " " + protectionblock.getY() + " " + protectionblock.getZ() + "]");
+	}
+    }
+    
+    public void notifyBypassTouchingUnprotectable(Player player, Block placedblock)
     {
 	Block unprotectableblock = plugin.upm.getTouchingUnprotectableBlock(placedblock);
 	
@@ -745,7 +804,13 @@ public class CommunicatonManager
     public void showInstantHeal(Player player)
     {
 	if (plugin.settings.warnInstantHeal && canWarn(player))
-	    ChatBlock.sendMessage(player, ChatColor.WHITE + "*healed*");
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "*healed*");
+    }
+    
+    public void showGiveAir(Player player)
+    {
+	if (plugin.settings.warnGiveAir && canWarn(player))
+	    ChatBlock.sendMessage(player, ChatColor.WHITE + "*air*");
     }
     
     public void showSlowHeal(Player player)
@@ -815,6 +880,26 @@ public class CommunicatonManager
 	
 	if (properties.length() > 0)
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + properties);
+    }
+    
+    public void printTouchingFields(Player player, HashSet<Field> scoped)
+    {
+	if (scoped != null && scoped.size() > 0)
+	{
+	    ChatBlock.sendBlank(player);
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Touching fields:");
+	    
+	    for (Field field : scoped)
+	    {
+		String name = field.getStoredName().length() == 0 ? "" : " Name: " + field.getStoredName();
+		
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + field.getOwner() + name + " " + field.getCoords());
+	    }
+	}
+	else
+	{
+	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Your field would touch no other field if placed here");
+	}
     }
     
     public void debug(String msg)

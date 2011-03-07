@@ -296,6 +296,33 @@ public class ForceFieldManager
 	return getSourceFields(block, playerName);
     }
     
+    /*
+     * Returns the blocks that are originating prevent entry fields in the players area
+     */
+    public LinkedList<Field> getSourceEntryFields(Player player)
+    {
+	LinkedList<Field> out = new LinkedList<Field>();
+	LinkedList<Field> fields = plugin.ffm.getSourceFields(player);
+	
+	for (Field field : fields)
+	{
+	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+	    
+	    if (fieldsettings.guarddogMode && allowedAreOnline(field))
+	    {
+		plugin.cm.notifyGuardDog(player, field, "entry attempt");
+		continue;
+	    }
+	    
+	    if (fieldsettings.preventEntry)
+	    {
+		out.add(field);
+	    }
+	}
+	
+	return out;
+    }
+    
     /**
      * Returns the field if hes standing in at least one allowed field
      */
@@ -452,7 +479,7 @@ public class ForceFieldManager
 	{
 	    allowed.addAll(f.getAllAllowed());
 	}
-
+	
 	return allowed;
     }
     
@@ -631,10 +658,10 @@ public class ForceFieldManager
     /**
      * If the block is touching a pstone block
      */
-    public boolean touchingFieldBlock(Block block)
+    public Block touchingFieldBlock(Block block)
     {
 	if (block == null)
-	    return false;
+	    return null;
 	
 	for (int x = -1; x <= 1; x++)
 	{
@@ -651,13 +678,13 @@ public class ForceFieldManager
 		    
 		    if (plugin.settings.isFieldType(surroundingblock))
 		    {
-			return true;
+			return surroundingblock;
 		    }
 		}
 	    }
 	}
 	
-	return false;
+	return null;
     }
     
     /**
@@ -699,9 +726,7 @@ public class ForceFieldManager
 		if (fieldsettings.guarddogMode && allowedAreOnline(field))
 		{
 		    plugin.cm.notifyGuardDog(player, field, "block placement");
-		    {
-			continue;
-		    }
+		    continue;
 		}
 		
 		if (fieldsettings.preventPlace)
@@ -800,7 +825,7 @@ public class ForceFieldManager
     /**
      * Whether the protective block will cover someone elses unbreakable or forcefield blocks
      */
-    public Field isInConflict(Block placedBlock, String placer)
+    public Field isInConflict(Block placedBlock, Player placer)
     {
 	if (plugin.settings.isFieldType(placedBlock))
 	{
@@ -812,7 +837,7 @@ public class ForceFieldManager
 	    
 	    for (Field field : fieldsinarea)
 	    {
-		if (field.isAllAllowed(placer))
+		if (field.isAllAllowed(placer.getName()))
 		{
 		    continue;
 		}
@@ -829,7 +854,7 @@ public class ForceFieldManager
 	    
 	    for (Field field : fieldsinarea)
 	    {
-		if (field.isAllAllowed(placer))
+		if (field.isAllAllowed(placer.getName()))
 		{
 		    continue;
 		}
@@ -845,11 +870,35 @@ public class ForceFieldManager
     }
     
     /**
+     * Get all touching fields
+     */
+    public HashSet<Field> getTouchingFields(Block scopedBlock, Material materialInHand)
+    {
+	HashSet<Field> out = new HashSet<Field>();
+	
+	FieldSettings fieldsettings = plugin.settings.getFieldSettings(materialInHand.getId());
+	
+	Field placedField = new Field(scopedBlock, fieldsettings.radius, fieldsettings.getHeight());
+	
+	LinkedList<Field> fieldsinarea = getFieldsInArea(scopedBlock);
+	
+	for (Field field : fieldsinarea)
+	{
+	    if (field.intersects(placedField))
+	    {
+		out.add(field);
+	    }
+	}
+	
+	return out;
+    }
+    
+    /**
      * Add stone to the collection
      */
     public boolean add(Block fieldblock, Player owner)
     {
-	if(plugin.plm.isDisabled(owner))
+	if (plugin.plm.isDisabled(owner))
 	{
 	    return false;
 	}

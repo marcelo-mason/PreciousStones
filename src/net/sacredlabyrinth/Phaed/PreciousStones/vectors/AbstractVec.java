@@ -52,6 +52,6 @@ public abstract class AbstractVec
     @Override
     public String toString()
     {
-	return "[" + x + " " + y + " " + z + "|" + world + "]";
+	return "[" + x + " " + y + " " + z + "]";
     }
 }

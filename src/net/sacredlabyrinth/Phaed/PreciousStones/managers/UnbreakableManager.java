@@ -205,10 +205,10 @@ public class UnbreakableManager
     /**
      * If the block is touching a pstone block
      */
-    public boolean touchingUnbrakableBlock(Block block)
+    public Block touchingUnbrakableBlock(Block block)
     {
 	if (block == null)
-	    return false;
+	    return null;
 	
 	for (int x = -1; x <= 1; x++)
 	{
@@ -225,13 +225,13 @@ public class UnbreakableManager
 		    
 		    if (plugin.settings.isUnbreakableType(surroundingblock))
 		    {
-			return true;
+			return surroundingblock;
 		    }
 		}
 	    }
 	}
 	
-	return false;
+	return null;
     }
     
     /**

@@ -3,39 +3,40 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.ItemStack;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
-
 public class PlayerManager
 {
-    //private PreciousStones plugin;
+    private PreciousStones plugin;
     private HashMap<String, PlayerStatus> players = new HashMap<String, PlayerStatus>();
     
     public PlayerManager(PreciousStones plugin)
     {
-    	//this.plugin = plugin;
+	this.plugin = plugin;
     }
     
     public boolean isDisabled(Player player)
     {
 	PlayerStatus ps = players.get(player.getName());
 	
-	if(ps == null)
+	if (ps == null)
 	{
-	    return false;
+	    return plugin.settings.offByDefault;
 	}
 	else
 	{
 	    return ps.getDisabled();
-	}	    
+	}
     }
     
     public void setDisabled(Player player, boolean disabled)
     {
 	PlayerStatus ps = players.get(player.getName());
 	
-	if(ps == null)
+	if (ps == null)
 	{
 	    ps = new PlayerStatus();
 	    ps.setDisabled(disabled);
@@ -45,9 +46,8 @@ public class PlayerManager
 	else
 	{
 	    ps.setDisabled(disabled);
-	}	    
+	}
     }
-    
     
     private class PlayerStatus
     {
@@ -63,5 +63,22 @@ public class PlayerManager
 	    this.disabled = disabled;
 	}
     }
+    
+    public void dropInventory(Player player)
+    {
+	PlayerInventory inv = player.getInventory();
+	
+	if (inv != null)
+	{
+	    for (int i = 0; i < inv.getSize(); i++)
+	    {
+		ItemStack stack = inv.getItem(i);
+		
+		if (stack != null)
+		{
+		    player.getWorld().dropItemNaturally(player.getLocation(), stack);
+		}
+	    }
+	}
+    }
 }
-

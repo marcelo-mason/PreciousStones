@@ -268,6 +268,11 @@ public class Field extends AbstractVec
 	return envelops(new Field(block));
     }
     
+    public String getCoords()
+    {
+	return super.toString();
+    }
+    
     @Override
     public String toString()
     {

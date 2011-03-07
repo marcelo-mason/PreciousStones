@@ -45,6 +45,19 @@ public class EntryManager
 			continue;
 		    }
 		    
+		    if (plugin.pm.hasPermission(player, "preciousstones.benefit.giveair"))
+		    {
+			if (fieldsettings.giveAir)
+			{
+			    if (player.getRemainingAir() < 40)
+			    {
+				player.setRemainingAir(900);
+				plugin.cm.showGiveAir(player);
+				continue;
+			    }
+			}
+		    }
+		    
 		    if (plugin.pm.hasPermission(player, "preciousstones.benefit.heal"))
 		    {
 			if (fieldsettings.instantHeal)
@@ -61,7 +74,7 @@ public class EntryManager
 			{
 			    if (player.getHealth() < 20)
 			    {
-				player.setHealth(Math.max(player.getHealth() + 1, 20));
+				player.setHealth(Math.min(player.getHealth() + 1, 20));
 				plugin.cm.showSlowHeal(player);
 				continue;
 			    }
@@ -79,7 +92,17 @@ public class EntryManager
 				{
 				    if (player.getHealth() > 0)
 				    {
-					player.setHealth(Math.min(player.getHealth() - 1, 0));
+					int health = player.getHealth() - 1;
+					
+					if (health > 0)
+					{
+					    player.setHealth(health);
+					}
+					else
+					{
+					    //plugin.plm.dropInventory(player);
+					    player.setHealth(0);
+					}
 					plugin.cm.showSlowDamage(player);
 					continue;
 				    }
@@ -89,12 +112,15 @@ public class EntryManager
 				{
 				    if (player.getHealth() > 0)
 				    {
-					if (player.getHealth() >= 2)
+					int health = player.getHealth() - 4;
+					
+					if (health > 0)
 					{
-					    player.setHealth(Math.min(player.getHealth() - 2, 0));
+					    player.setHealth(health);
 					}
 					else
 					{
+					    //plugin.plm.dropInventory(player);
 					    player.setHealth(0);
 					}
 					plugin.cm.showFastDamage(player);
@@ -135,12 +161,12 @@ public class EntryManager
 	
 	for (String playername : entries.keySet())
 	{
-	   Field testField = entries.get(playername);
-	   
-	   if(field.equals(testField))
-	   {
-	       inhabitants.add(playername);
-	   }
+	    Field testField = entries.get(playername);
+	    
+	    if (field.equals(testField))
+	    {
+		inhabitants.add(playername);
+	    }
 	}
 	
 	return inhabitants;
