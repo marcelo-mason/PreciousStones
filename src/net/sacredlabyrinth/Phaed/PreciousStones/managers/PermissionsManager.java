@@ -62,7 +62,7 @@ public class PermissionsManager
 	if (this.Permissions == null)
 	{
 	    if (test != null)
-	    {
+	    {		
 		this.Permissions = ((Permissions) test).getHandler();
 		return true;
 	    }

@@ -18,10 +18,12 @@ import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 
 public class CommandManager
 {
     private PreciousStones plugin;
+    private ChatBlock cacheblock = new ChatBlock();
     
     public CommandManager(PreciousStones plugin)
     {
@@ -46,6 +48,7 @@ public class CommandManager
 	    helpPlugin.registerCommand("ps removeall [player] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
 	    helpPlugin.registerCommand("ps who ", "List all inhabitants inside the overlapping fields", plugin, true, "preciousstones.whitelist.who");
 	    helpPlugin.registerCommand("ps setname [name] ", "Set the name of force-fields", plugin, true, "preciousstones.benefit.setname");
+	    helpPlugin.registerCommand("ps snitch [list|clean] ", "Snitch list of overlapping fields", plugin, true, "preciousstones.benefit.snitch");
 	    helpPlugin.registerCommand("ps delete ", "Delete the field(s) you're standing on", plugin, true, "preciousstones.admin.delete");
 	    helpPlugin.registerCommand("ps delete [blockid] ", "Delete the field(s) from this type", plugin, true, "preciousstones.admin.delete");
 	    helpPlugin.registerCommand("ps info ", "Get info for the field youre standing on", plugin, true, "preciousstones.admin.info");
@@ -54,6 +57,7 @@ public class CommandManager
 	    helpPlugin.registerCommand("ps reload ", "Reload configuraton file", plugin, true, "preciousstones.admin.reload");
 	    helpPlugin.registerCommand("ps save ", "Save force field files", plugin, true, "preciousstones.admin.save");
 	    helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
+	    helpPlugin.registerCommand("ps clean ", "Clean up all orphaned fields/unbreakables", plugin, true, "preciousstones.admin.clean");
 	    
 	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] version [" + plugin.getDescription().getVersion() + "] 'Help' support enabled");
 	}
@@ -98,7 +102,7 @@ public class CommandManager
 	    }
 	    return true;
 	}
-	else if (split[0].equals("allow") &&  !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.whitelist.allow"))
+	else if (split[0].equals("allow") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.whitelist.allow"))
 	{
 	    if (split.length == 2)
 	    {
@@ -157,7 +161,7 @@ public class CommandManager
 	    }
 	    
 	    return true;
-	}	
+	}
 	else if (split[0].equals("remove") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.whitelist.remove"))
 	{
 	    if (split.length == 2)
@@ -295,7 +299,103 @@ public class CommandManager
 		    return true;
 		}
 	    }
-	}	
+	}
+	else if (split[0].equals("snitch") && plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
+	{
+	    if (split.length == 2)
+	    {
+		if (split[1].equals("list"))
+		{
+		    Field field = plugin.ffm.inOneAllowedVector(block, player);
+		    
+		    if (field != null)
+		    {
+			HashSet<SnitchEntry> snitches = plugin.ffm.getAllSnitches(player, field);
+			
+			if (snitches.size() > 0)
+			{
+			    cacheblock = new ChatBlock();
+			    
+			    ChatBlock.saySingle(player, ChatColor.YELLOW + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
+			    ChatBlock.sendBlank(player);
+			    
+			    cacheblock.addRow(new String[] { "    " + ChatColor.GRAY + "Name", "Last Seen"});
+			    
+			    for (SnitchEntry se : snitches)
+			    {
+				cacheblock.addRow(new String[] { "    " + ChatColor.GOLD + se.getName(), ChatColor.WHITE + se.getDateTime() });
+			    }
+			    
+			    boolean more = cacheblock.sendBlock(player, 12);
+			    
+			    if (more)
+			    {
+				ChatBlock.sendBlank(player);
+				ChatBlock.sendMessage(player, ChatColor.GOLD + "Type " + ChatColor.WHITE + "/ps more " + ChatColor.GOLD + "to view next page.");
+			    }
+			    
+			    ChatBlock.sendBlank(player);
+			}
+			else
+			{
+			    ChatBlock.sendMessage(player, ChatColor.RED + "No intruders found in these overlapped force-field's");
+			}
+		    }
+		    else
+		    {
+			plugin.cm.showNotFound(player);
+		    }
+		    return true;
+		}
+		else if (split[1].equals("clean"))
+		{
+		    Field field = plugin.ffm.inOneAllowedVector(block, player);
+		    
+		    if (field != null)
+		    {
+			int cleaned = plugin.ffm.cleanSnitchLists(player, field);
+			
+			if (cleaned > 0)
+			{
+			    ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned the snitch list of " + cleaned + " fields");
+			}
+			else
+			{
+			    ChatBlock.sendMessage(player, ChatColor.RED + "No intruders found in these overlapped force-field's");
+			}
+		    }
+		    else
+		    {
+			plugin.cm.showNotFound(player);
+		    }
+		    return true;
+		}
+	    }
+	}
+	else if (split[0].equals("more") && plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
+	{
+	    if (cacheblock.size() > 0)
+	    {
+		ChatBlock.saySingle(player, ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------");
+		ChatBlock.sendBlank(player);
+		
+		cacheblock.addRow(new String[] { "    " + ChatColor.GRAY + "Name", "Last Seen" });
+		
+		cacheblock.sendBlock(player, 12);
+		
+		if (cacheblock.size() > 0)
+		{
+		    ChatBlock.sendBlank(player);
+		    ChatBlock.sendMessage(player, ChatColor.GOLD + "Type " + ChatColor.WHITE + "/ps more " + ChatColor.GOLD + "to view next page.");
+		}
+		ChatBlock.sendBlank(player);
+		
+		return true;
+	    }
+		
+	    ChatBlock.sendMessage(player, ChatColor.GOLD + "Nothing more to see.");
+	    return true;
+	}
 	else if (split[0].equals("info") && plugin.pm.hasPermission(player, "preciousstones.admin.info"))
 	{
 	    LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
@@ -467,6 +567,28 @@ public class CommandManager
 	    
 	    return true;
 	}
+	else if (split[0].equals("clean") && plugin.pm.hasPermission(player, "preciousstones.admin.clean"))
+	{
+	    int cleandFF = plugin.ffm.cleanOrphans();
+	    
+	    if (cleandFF > 0)
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned force-fields");
+	    }
+	    
+	    int cleandU = plugin.um.cleanOrphans();
+	    
+	    if (cleandU > 0)
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned unbreakable blocks");
+	    }
+	    
+	    if (cleandFF == 0 && cleandU == 0)
+	    {
+		ChatBlock.sendMessage(player, ChatColor.AQUA + "No orphan fields/unbreakables found");
+	    }
+	    return true;
+	}
 	else if (split[0].equals("help"))
 	{
 	    ChatColor color = plugin.plm.isDisabled(player) ? ChatColor.GRAY : ChatColor.AQUA;
@@ -515,6 +637,11 @@ public class CommandManager
 		ChatBlock.sendMessage(player, color + "/ps setname [name] " + ChatColor.GRAY + "- Set the name of force-fields");
 	    }
 	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
+	    {
+		ChatBlock.sendMessage(player, color + "/ps snitch [list|clean] " + ChatColor.GRAY + "- Snitch list of overlapping fields");
+	    }
+	    
 	    if (plugin.pm.hasPermission(player, "preciousstones.admin.delete"))
 	    {
 		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps delete " + ChatColor.GRAY + "- Delete the field(s) you're standing on");
@@ -549,6 +676,11 @@ public class CommandManager
 	    if (plugin.pm.hasPermission(player, "preciousstones.admin.fields"))
 	    {
 		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps fields " + ChatColor.GRAY + "- List the configured field types");
+	    }
+	    
+	    if (plugin.pm.hasPermission(player, "preciousstones.admin.clean"))
+	    {
+		ChatBlock.sendMessage(player, ChatColor.DARK_RED + "/ps clean " + ChatColor.GRAY + "- Clean up all orphaned fields/unbreakables");
 	    }
 	    
 	    return true;

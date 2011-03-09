@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 
 public class StorageManager
 {
@@ -79,6 +80,12 @@ public class StorageManager
 		
 		String[] u = line.split("\\|");
 		
+		if (u.length < 5)
+		{
+		    PreciousStones.log.warning("Corrupt unbreakable: seccount" + u.length + " line " + linecount);
+		    continue;
+		}
+		
 		String sectype = u[0];
 		String secowner = u[1];
 		String secworld = u[2];
@@ -87,12 +94,6 @@ public class StorageManager
 		
 		sectype = Helper.removeChar(sectype, '[');
 		secvec = Helper.removeChar(secvec, ']');
-		
-		if (u.length < 5)
-		{
-		    PreciousStones.log.warning("Corrupt unbreakable: seccount" + u.length + " line " + linecount);
-		    continue;
-		}
 		
 		if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !plugin.settings.isUnbreakableType(sectype))
 		{
@@ -118,7 +119,7 @@ public class StorageManager
 		
 		String world = secworld;
 		
-		if(plugin.getServer().getWorld(world) == null)
+		if (plugin.getServer().getWorld(world) == null)
 		{
 		    PreciousStones.log.warning("Corrupt unbreakable: sec4 line " + linecount);
 		    continue;
@@ -211,6 +212,12 @@ public class StorageManager
 		
 		String[] u = line.split("\\|");
 		
+		if (u.length < 7)
+		{
+		    PreciousStones.log.warning("Corrupt forcefield: seccount" + u.length + " line " + linecount);
+		    continue;
+		}
+		
 		String sectype = u[0];
 		String secowner = u[1];
 		String secallowed = u[2];
@@ -218,15 +225,15 @@ public class StorageManager
 		String secchunk = u[4];
 		String secvec = u[5];
 		String secname = u[6];
+		String secsnitch = "";
+		
+		if (u.length > 7)
+		{
+		    secsnitch = u[7];
+		}
 		
 		sectype = Helper.removeChar(sectype, '[');
 		secname = Helper.removeChar(secname, ']');
-		
-		if (u.length < 7)
-		{
-		    PreciousStones.log.warning("Corrupt forcefield: seccount" + u.length + " line " + linecount);
-		    continue;
-		}
 		
 		if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !plugin.settings.isFieldType(sectype))
 		{
@@ -261,7 +268,7 @@ public class StorageManager
 		
 		String world = secworld;
 		
-		if(plugin.getServer().getWorld(world) == null)
+		if (plugin.getServer().getWorld(world) == null)
 		{
 		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
 		    continue;
@@ -285,6 +292,22 @@ public class StorageManager
 		
 		String name = secname;
 		
+		List<String> tempsnitch = Arrays.asList(secsnitch.split(";"));
+		HashSet<SnitchEntry> snitch = new HashSet<SnitchEntry>();
+		
+		for (String t : tempsnitch)
+		{
+		    if(!t.contains("#"))
+		    {
+			continue;
+		    }
+		    
+		    String[] tempentry = t.split("#");
+		    
+		    if (t.trim().length() > 0)
+			snitch.add(new SnitchEntry(tempentry[0], tempentry[1]));
+		}
+				
 		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
 		
 		if (!plugin.settings.isFieldType(block))
@@ -295,7 +318,7 @@ public class StorageManager
 		else
 		{
 		    ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
-		    Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), chunkvec, world, Material.getMaterial(type).getId(), owner, allowed, name);
+		    Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), chunkvec, world, Material.getMaterial(type).getId(), owner, allowed, name, snitch);
 		    
 		    LinkedList<Field> c;
 		    
@@ -483,6 +506,8 @@ public class StorageManager
 		    builder.append(field.getHeight());
 		    builder.append("|");
 		    builder.append(field.getStoredName());
+		    builder.append("|");
+		    builder.append(field.getSnitchListString());
 		    builder.append("]");
 		    bwriter.write(builder.toString());
 		    bwriter.newLine();

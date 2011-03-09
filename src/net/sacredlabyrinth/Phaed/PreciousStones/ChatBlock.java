@@ -1,19 +1,19 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
-
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.util.regex.*;
 
 public class ChatBlock
 {
     private final int colspacing = 12;
-    private static final int lineLength = 319;
+    private static final int lineLength = 318;
     private ArrayList<Double> columnSizes = new ArrayList<Double>();
     private ArrayList<Integer> columnSpaces = new ArrayList<Integer>();
     private ArrayList<String> columnAlignments = new ArrayList<String>();
-    private ArrayList<String[]> rows = new ArrayList<String[]>();
+    private LinkedList<String[]> rows = new LinkedList<String[]>();
     private boolean prefix_used = false;
     private String color = "";
     
@@ -52,6 +52,106 @@ public class ChatBlock
     public void addRow(String[] contents)
     {
 	rows.add(contents);
+    }
+        
+    public int size()
+    {
+	return rows.size();
+    }
+        
+    public boolean sendBlock(Player player, int amount)
+    {
+	if (player == null)
+	    return false;
+	
+	if (rows.size() == 0)
+	    return false;
+	
+	// if no column sizes provided them
+	// make some up based on the data
+	
+	if (columnSizes.size() == 0)
+	{
+	    // generate columns sizes
+	    
+	    int col_count = rows.get(0).length;
+	    
+	    for (int i = 0; i < col_count; i++)
+	    {
+		// add custom column spacing if specified
+		
+		int spacing = colspacing;
+		
+		if (columnSpaces.size() >= (i + 1))
+		{
+		    spacing = columnSpaces.get(i);
+		}
+		
+		columnSizes.add(getMaxWidth(i) + spacing);
+	    }
+	}
+	
+	// size up all sections
+	
+	for (int i = 0; i < amount; i++)
+	{
+	    if (rows.size() == 0)
+		continue;
+	    
+	    String rowstring = "";
+	    
+	    String row[] = rows.pollFirst();
+	    
+	    for (int sid = 0; sid < row.length; sid++)
+	    {
+		String section = row[sid];
+		double colsize = (columnSizes.size() >= (sid + 1)) ? columnSizes.get(sid) : 0;
+		String align = (columnAlignments.size() >= (sid + 1)) ? columnAlignments.get(sid) : "l";
+		
+		if (align.equalsIgnoreCase("r"))
+		{
+		    if (msgLength(section) > colsize)
+		    {
+			rowstring += cropLeftToFit(section, colsize);
+		    }
+		    else if (msgLength(section) < colsize)
+		    {
+			rowstring += paddLeftToFit(section, colsize);
+		    }
+		}
+		else if (align.equalsIgnoreCase("l"))
+		{
+		    if (msgLength(section) > colsize)
+		    {
+			rowstring += cropRightToFit(section, colsize);
+		    }
+		    else if (msgLength(section) < colsize)
+		    {
+			rowstring += paddRightToFit(section, colsize);
+		    }
+		}
+		else if (align.equalsIgnoreCase("c"))
+		{
+		    if (msgLength(section) > colsize)
+		    {
+			rowstring += cropRightToFit(section, colsize);
+		    }
+		    else if (msgLength(section) < colsize)
+		    {
+			rowstring += centerInLineOf(section, colsize);
+		    }
+		}
+	    }
+	    
+	    String msg = cropRightToFit(rowstring, lineLength);
+	    
+	    if (color.length() > 0)
+		msg = color + msg;
+	    
+	    player.sendMessage(msg);
+	}
+	
+	return rows.size() > 0;
     }
     
     public void sendBlock(Player player, String prefix)
@@ -421,6 +521,16 @@ public class ChatBlock
 	
 	output[1] = str.substring(x);
 	return output;
+    }
+    
+    // Outputs a single line out, cutting anything else out
+    
+    public static void saySingle(Player receiver, String msg)
+    {
+	if (receiver == null)
+	    return;
+
+	receiver.sendMessage(cropRightToFit(colorize(new String[]{msg})[0], lineLength));
     }
     
     // Outputs a message to a user

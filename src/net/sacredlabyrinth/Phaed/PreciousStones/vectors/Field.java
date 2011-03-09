@@ -1,10 +1,17 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.Date;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
+
+import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 
 public class Field extends AbstractVec
 {
@@ -13,10 +20,11 @@ public class Field extends AbstractVec
     private int typeId;
     private String owner;
     private String name;
+    private HashSet<SnitchEntry> snitchList = new HashSet<SnitchEntry>();
     private ArrayList<String> allowed = new ArrayList<String>();
     private ChunkVec chunkvec;
     
-    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name)
+    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name,  HashSet<SnitchEntry> snitchList)
     {
 	super(x, y, z, world);
 	
@@ -27,6 +35,7 @@ public class Field extends AbstractVec
 	this.allowed = allowed;
 	this.typeId = typeId;
 	this.chunkvec = chunkvec;
+	this.snitchList = snitchList;
     }
     
     public Field(Block block, int radius, int height, String owner, ArrayList<String> allowed, String name)
@@ -128,7 +137,7 @@ public class Field extends AbstractVec
     public String getAllowedList()
     {
 	String out = "";
-
+	
 	if (allowed.size() > 0)
 	{
 	    for (int i = 0; i < allowed.size(); i++)
@@ -271,6 +280,39 @@ public class Field extends AbstractVec
     public String getCoords()
     {
 	return super.toString();
+    }
+    
+    public void addSnitch(String name)
+    {
+	DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy h:mm a z");
+	snitchList.add(new SnitchEntry(name, dateFormat.format(new Date())));
+    }
+    
+    public void cleanSnitchList()
+    {
+	snitchList.clear();
+    }
+    
+    public HashSet<SnitchEntry> getSnitchList()
+    {
+	return snitchList;
+    }
+
+    public String getSnitchListString()
+    {
+	String out = "";
+	
+	for(SnitchEntry se : snitchList)
+	{
+	    out += ";" + se.getName() + "#" + se.getDateTime();
+	}
+	
+	if(out.length() > 1)
+	{
+	    return out.substring(1);
+	}
+	
+	return "";
     }
     
     @Override

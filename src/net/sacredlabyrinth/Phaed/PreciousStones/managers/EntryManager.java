@@ -49,7 +49,7 @@ public class EntryManager
 		    {
 			if (fieldsettings.giveAir)
 			{
-			    if (player.getRemainingAir() < 40)
+			    if (player.getRemainingAir() < 600)
 			    {
 				player.setRemainingAir(900);
 				plugin.cm.showGiveAir(player);
@@ -100,7 +100,7 @@ public class EntryManager
 					}
 					else
 					{
-					    //plugin.plm.dropInventory(player);
+					    // plugin.plm.dropInventory(player);
 					    player.setHealth(0);
 					}
 					plugin.cm.showSlowDamage(player);
@@ -120,7 +120,7 @@ public class EntryManager
 					}
 					else
 					{
-					    //plugin.plm.dropInventory(player);
+					    // plugin.plm.dropInventory(player);
 					    player.setHealth(0);
 					}
 					plugin.cm.showFastDamage(player);
@@ -138,6 +138,7 @@ public class EntryManager
     public void enter(Player player, Field field)
     {
 	entries.put(player.getName(), field);
+	recordSnitch(player, field);
     }
     
     public void leave(Player player)
@@ -170,5 +171,18 @@ public class EntryManager
 	}
 	
 	return inhabitants;
+    }
+    
+    public void recordSnitch(Player player, Field field)
+    {
+	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+	
+	if (fieldsettings.snitch)
+	{
+	    if (!field.isAllAllowed(player.getName()))
+	    {
+		field.addSnitch(player.getName());
+	    }
+	}
     }
 }

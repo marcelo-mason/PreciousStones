@@ -105,6 +105,37 @@ public class UnbreakableManager
     }
     
     /**
+     * Clean up orphan fields
+     */
+    public int cleanOrphans()
+    {
+	int cleanedCount = 0;
+	
+	for (LinkedList<Unbreakable> c : chunkLists.values())
+	{
+	    for (Unbreakable unbreakable : c)
+	    {
+		if(plugin.getServer().getWorld(unbreakable.getWorld()) == null)
+		{
+		    cleanedCount++;
+		    queueRelease(unbreakable);
+		}
+		    
+		Block block = plugin.getServer().getWorld(unbreakable.getWorld()).getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+		
+		if (!plugin.settings.isUnbreakableType(block))
+		{
+		    cleanedCount++;
+		    queueRelease(unbreakable);
+		}
+	    }
+	}
+	flush();
+	
+	return cleanedCount;
+    }
+    
+    /**
      * Gets the unbreakable from source block
      */
     public Unbreakable getUnbreakable(Block unbreakableblock)
@@ -283,5 +314,13 @@ public class UnbreakableManager
     public void queueRelease(Block unbreakableblock)
     {
 	deletionQueue.add(new Unbreakable(unbreakableblock));
+    }
+    
+    /**
+     * Adds to deletion queue
+     */
+    public void queueRelease(Unbreakable unbreakable)
+    {
+	deletionQueue.add(unbreakable);
     }
 }

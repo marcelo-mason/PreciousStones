@@ -307,6 +307,7 @@ public class SettingsManager
 	public boolean welcomeMessage = false;
 	public boolean farewellMessage = false;
 	public boolean giveAir = false;
+	public boolean snitch = false;
 	
 	public String getTitle()
 	{
@@ -412,6 +413,9 @@ public class SettingsManager
 
 	    if (map.containsKey("give-air") && Helper.isBoolean(map.get("give-air")))
 		giveAir = (Boolean) map.get("give-air");
+	    
+	    if (map.containsKey("snitch") && Helper.isBoolean(map.get("snitch")))
+		snitch = (Boolean) map.get("snitch");
 	}
 	
 	@Override
@@ -462,12 +466,16 @@ public class SettingsManager
 
 	    if (giveAir)
 		properties += ", give-air";
-	    
+
+	    if (snitch)
+		properties += ", snitch";
+
 	    if (welcomeMessage)
 		properties += ", welcome";
 	    
 	    if (farewellMessage)
 		properties += ", farewell";
+
 	    
 	    if (properties.length() > 0)
 		return "Properties: " + properties.substring(2);

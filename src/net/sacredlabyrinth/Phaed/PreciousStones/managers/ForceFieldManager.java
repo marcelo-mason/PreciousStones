@@ -17,6 +17,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 
 /**
  * Handles force-fields
@@ -114,6 +115,37 @@ public class ForceFieldManager
 	    size += c.size();
 	}
 	return size;
+    }
+    
+    /**
+     * Clean up orphan fields
+     */
+    public int cleanOrphans()
+    {
+	int cleanedCount = 0;
+	
+	for (LinkedList<Field> c : chunkLists.values())
+	{
+	    for (Field field : c)
+	    {
+		if(plugin.getServer().getWorld(field.getWorld()) == null)
+		{
+		    cleanedCount++;
+		    queueRelease(field);
+		}
+		    
+		Block block = plugin.getServer().getWorld(field.getWorld()).getBlockAt(field.getX(), field.getY(), field.getZ());
+		
+		if (!plugin.settings.isFieldType(block))
+		{
+		    cleanedCount++;
+		    queueRelease(field);
+		}
+	    }
+	}
+	flush();
+	
+	return cleanedCount;
     }
     
     /**
@@ -399,6 +431,53 @@ public class ForceFieldManager
 	}
 	
 	return null;
+    }
+    
+    /**
+     * Get all snitches from all intersecting fields
+     */
+    public HashSet<SnitchEntry> getAllSnitches(Player player, Field field)
+    {
+	HashSet<SnitchEntry> out = new HashSet<SnitchEntry>();
+	HashSet<Field> total = getOverlappedFields(player, field);
+	
+	for (Field f : total)
+	{
+	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(f);
+	    
+	    if (fieldsettings.snitch)
+	    {
+		out.addAll(f.getSnitchList());
+	    }
+	}
+	return out;
+    }
+    
+    /**
+     * Clean up snitch lists of all intersecting fields
+     */
+    public int cleanSnitchLists(Player player, Field field)
+    {
+	HashSet<Field> total = getOverlappedFields(player, field);
+	
+	int cleanedCount = 0;
+	
+	for (Field f : total)
+	{
+	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(f);
+	    
+	    if (fieldsettings.snitch)
+	    {
+		f.cleanSnitchList();
+		cleanedCount++;
+	    }
+	}
+	
+	if (cleanedCount > 0)
+	{
+	    setDirty();
+	}
+	return cleanedCount;
     }
     
     /**
@@ -984,10 +1063,13 @@ public class ForceFieldManager
     {
 	World world = plugin.getServer().getWorld(field.getWorld());
 	Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
-	ItemStack is = new ItemStack(block.getTypeId(), 1);
 	
-	block.setType(Material.AIR);
-	world.dropItemNaturally(block.getLocation(), is);
+	if (plugin.settings.isFieldType(block))
+	{
+	    ItemStack is = new ItemStack(block.getTypeId(), 1);
+	    block.setType(Material.AIR);
+	    world.dropItemNaturally(block.getLocation(), is);
+	}
     }
     
     /**
@@ -998,7 +1080,10 @@ public class ForceFieldManager
 	World world = block.getWorld();
 	ItemStack is = new ItemStack(block.getTypeId(), 1);
 	
-	block.setType(Material.AIR);
-	world.dropItemNaturally(block.getLocation(), is);
+	if (plugin.settings.isFieldType(block))
+	{
+	    block.setType(Material.AIR);
+	    world.dropItemNaturally(block.getLocation(), is);
+	}
     }
 }
