@@ -234,6 +234,7 @@ public class StorageManager
 		
 		sectype = Helper.removeChar(sectype, '[');
 		secname = Helper.removeChar(secname, ']');
+		secsnitch = Helper.removeChar(secsnitch, ']');
 		
 		if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !plugin.settings.isFieldType(sectype))
 		{

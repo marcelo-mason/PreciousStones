@@ -20,54 +20,80 @@ public class PermissionsManager
     {
 	this.plugin = plugin;
 	
-	if (!startGroupManager() && !startPermissions())
-	{
-	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] Permission system not found. Disabling plugin.");
-	    plugin.getServer().getPluginManager().disablePlugin(plugin);
-	}
+	startGroupManager();
+	startPermissions();
     }
     
     public boolean hasPermission(Player player, String permission)
     {
 	if (player == null)
-	    return false;
-	
-	return (Permissions != null && Permissions.has(player, permission)) || (gm != null && gm.getWorldsHolder().getWorldPermissions(player).has(player, permission));
-    }
-    
-    public boolean startGroupManager()
-    {
-	Plugin p = plugin.getServer().getPluginManager().getPlugin("GroupManager");
-	if (p != null)
 	{
-	    if (!plugin.getServer().getPluginManager().isPluginEnabled(p))
-	    {
-		plugin.getServer().getPluginManager().enablePlugin(p);
-	    }
-	    gm = (GroupManager) p;
+	    return false;
+	}
+	
+	if (hasPermissionPlugin())
+	{
+	    return (Permissions != null && Permissions.has(player, permission)) || (gm != null && gm.getWorldsHolder().getWorldPermissions(player).has(player, permission));
 	}
 	else
 	{
-	    plugin.getPluginLoader().disablePlugin(plugin);
-	}
-	
-	return false;
-    }
-    
-    @SuppressWarnings("static-access")
-    public boolean startPermissions()
-    {
-	Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
-	
-	if (this.Permissions == null)
-	{
-	    if (test != null)
-	    {		
-		this.Permissions = ((Permissions) test).getHandler();
+	    if (player.isOp())
+	    {
 		return true;
 	    }
+	    else
+	    {
+		if (permission.contains("benefit"))
+		{
+		    return true;
+		}
+		else if (permission.contains("whitelist"))
+		{
+		    return true;
+		}
+		
+		return false;
+	    }
 	}
-	
-	return false;
+    }
+    
+    private boolean hasPermissionPlugin()
+    {
+	return gm != null || Permissions != null;
+    }
+    
+    public void startGroupManager()
+    {
+	if (gm == null)
+	{
+	    Plugin p = plugin.getServer().getPluginManager().getPlugin("GroupManager");
+	    
+	    if (p != null)
+	    {
+		if (!plugin.getServer().getPluginManager().isPluginEnabled(p))
+		{
+		    plugin.getServer().getPluginManager().enablePlugin(p);
+		}
+		gm = (GroupManager) p;
+	    }
+	}
+    }
+    
+    public void startPermissions()
+    {
+	if (PermissionsManager.Permissions == null)
+	{
+	    Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
+	    
+	    if (test != null)
+	    {
+		if (!plugin.getServer().getPluginManager().isPluginEnabled(test))
+		{
+		    plugin.getServer().getPluginManager().enablePlugin(test);
+		}
+		
+		PermissionsManager.Permissions = ((Permissions) test).getHandler();
+	    }
+	}
     }
 }

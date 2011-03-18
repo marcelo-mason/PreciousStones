@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 2.7.3
+version: 2.8.4
 commands:
   ps:
     description: All of the PreciousStones commands

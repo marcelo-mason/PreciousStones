@@ -24,7 +24,7 @@ public class Field extends AbstractVec
     private ArrayList<String> allowed = new ArrayList<String>();
     private ChunkVec chunkvec;
     
-    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name,  HashSet<SnitchEntry> snitchList)
+    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name, HashSet<SnitchEntry> snitchList)
     {
 	super(x, y, z, world);
 	
@@ -114,6 +114,21 @@ public class Field extends AbstractVec
 	}
 	
 	return this.name;
+    }
+    
+    public boolean isName(String name)
+    {
+	if(name == null && this.name == null)
+	{
+	    return true;
+	}
+	
+	if(name == null || this.name == null)
+	{
+	    return false;
+	}
+	
+	return this.name.equals(name);
     }
     
     public String getStoredName()
@@ -211,6 +226,11 @@ public class Field extends AbstractVec
     
     public boolean intersects(Field field)
     {
+	if(!field.getWorld().equals(this.world))
+	{
+	    return false;
+	}
+	
 	ArrayList<Vector> corners = field.getCorners();
 	
 	for (Vector vec : corners)
@@ -297,17 +317,17 @@ public class Field extends AbstractVec
     {
 	return snitchList;
     }
-
+    
     public String getSnitchListString()
     {
 	String out = "";
 	
-	for(SnitchEntry se : snitchList)
+	for (SnitchEntry se : snitchList)
 	{
 	    out += ";" + se.getName() + "#" + se.getDateTime();
 	}
 	
-	if(out.length() > 1)
+	if (out.length() > 1)
 	{
 	    return out.substring(1);
 	}

@@ -128,12 +128,12 @@ public class ForceFieldManager
 	{
 	    for (Field field : c)
 	    {
-		if(plugin.getServer().getWorld(field.getWorld()) == null)
+		if (plugin.getServer().getWorld(field.getWorld()) == null)
 		{
 		    cleanedCount++;
 		    queueRelease(field);
 		}
-		    
+		
 		Block block = plugin.getServer().getWorld(field.getWorld()).getBlockAt(field.getX(), field.getY(), field.getZ());
 		
 		if (!plugin.settings.isFieldType(block))
@@ -757,7 +757,10 @@ public class ForceFieldManager
 		    
 		    if (plugin.settings.isFieldType(surroundingblock))
 		    {
-			return surroundingblock;
+			if (plugin.ffm.isField(surroundingblock))
+			{
+			    return surroundingblock;
+			}
 		    }
 		}
 	    }

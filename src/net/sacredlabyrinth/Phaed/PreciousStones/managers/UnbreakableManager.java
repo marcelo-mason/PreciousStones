@@ -115,12 +115,12 @@ public class UnbreakableManager
 	{
 	    for (Unbreakable unbreakable : c)
 	    {
-		if(plugin.getServer().getWorld(unbreakable.getWorld()) == null)
+		if (plugin.getServer().getWorld(unbreakable.getWorld()) == null)
 		{
 		    cleanedCount++;
 		    queueRelease(unbreakable);
 		}
-		    
+		
 		Block block = plugin.getServer().getWorld(unbreakable.getWorld()).getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 		
 		if (!plugin.settings.isUnbreakableType(block))
@@ -189,7 +189,7 @@ public class UnbreakableManager
 	}
 	return "";
     }
-        
+    
     /**
      * Returns the unbreakable blocks in the chunk and adjacent chunks
      */
@@ -256,7 +256,10 @@ public class UnbreakableManager
 		    
 		    if (plugin.settings.isUnbreakableType(surroundingblock))
 		    {
-			return surroundingblock;
+			if (plugin.um.isUnbreakable(surroundingblock))
+			{
+			    return surroundingblock;
+			}
 		    }
 		}
 	    }
@@ -270,7 +273,7 @@ public class UnbreakableManager
      */
     public boolean add(Block unbreakableblock, Player owner)
     {
-	if(plugin.plm.isDisabled(owner))
+	if (plugin.plm.isDisabled(owner))
 	{
 	    return false;
 	}
@@ -293,7 +296,7 @@ public class UnbreakableManager
 	    newc.add(unbreakable);
 	    chunkLists.put(chunkvec, newc);
 	}
-	setDirty();	
+	setDirty();
 	return true;
     }
     

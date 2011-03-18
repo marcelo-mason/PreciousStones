@@ -35,7 +35,6 @@ public class PreciousStones extends JavaPlugin
     public static final Logger log = Logger.getLogger("Minecraft");
     
     public SettingsManager settings;
-    public PermissionsManager pm;
     public CommandManager com;
     public ForceFieldManager ffm;
     public UnbreakableManager um;
@@ -44,19 +43,21 @@ public class PreciousStones extends JavaPlugin
     public CommunicatonManager cm;
     public EntryManager em;
     public PlayerManager plm;
+    public PermissionsManager pm;
     
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
     private PSWorldListener worldListener;
     
+    private boolean eventsRegistered = false;
+    
     @Override
     public void onEnable()
     {
 	log.info("[" + this.getDescription().getName() + "] version [" + this.getDescription().getVersion() + "] loaded");
-
+	
 	settings = new SettingsManager(this);
-	pm = new PermissionsManager(this);
 	com = new CommandManager(this);
 	ffm = new ForceFieldManager(this);
 	um = new UnbreakableManager(this);
@@ -65,12 +66,23 @@ public class PreciousStones extends JavaPlugin
 	cm = new CommunicatonManager(this);
 	em = new EntryManager(this);
 	plm = new PlayerManager(this);
+	pm = new PermissionsManager(this);
 	
 	playerListener = new PSPlayerListener(this);
 	blockListener = new PSBlockListener(this);
 	entityListener = new PSEntityListener(this);
 	worldListener = new PSWorldListener(this);
 	
+	if(!eventsRegistered)
+	{
+	    registerEvents();
+	}
+	
+	com.registerHelpCommands();
+    }
+    
+    private void registerEvents()
+    {
 	getServer().getPluginManager().registerEvent(Event.Type.WORLD_SAVED, worldListener, Priority.Lowest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
@@ -81,12 +93,14 @@ public class PreciousStones extends JavaPlugin
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Monitor, this);
+	
+	eventsRegistered = true;
     }
     
     @Override
     public void onDisable()
     {
-	if(sm != null)
+	if (sm != null)
 	{
 	    sm.save();
 	}
@@ -103,10 +117,7 @@ public class PreciousStones extends JavaPlugin
 	    {
 		if (commandName.equals("ps"))
 		{
-		    if (split.length > 0)
-		    {
-			return com.processCommand((Player) sender, split);
-		    }
+		    return com.processCommand((Player) sender, split);
 		}
 	    }
 	    return false;

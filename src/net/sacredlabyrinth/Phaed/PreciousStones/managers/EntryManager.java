@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -9,6 +10,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.EntryFields;
 
 /**
  * Handles what happens inside fields
@@ -19,13 +21,18 @@ public class EntryManager
 {
     private PreciousStones plugin;
     
-    private final HashMap<String, Field> entries = new HashMap<String, Field>();
+    private final HashMap<String, EntryFields> entries = new HashMap<String, EntryFields>();
     
     public EntryManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
 	
 	startScheduler();
+    }
+    
+    public EntryFields getEntryFields(String name)
+    {
+	return entries.get(name);
     }
     
     public void startScheduler()
@@ -36,95 +43,80 @@ public class EntryManager
 	    {
 		for (String playername : entries.keySet())
 		{
-		    Field field = entries.get(playername);
-		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-		    Player player = Helper.matchExactPlayer(plugin, playername);
+		    EntryFields ef = entries.get(playername);
+		    LinkedList<Field> fields = ef.getFields();
 		    
-		    if (player == null)
+		    for (Field field : fields)
 		    {
-			continue;
-		    }
-		    
-		    if (plugin.pm.hasPermission(player, "preciousstones.benefit.giveair"))
-		    {
-			if (fieldsettings.giveAir)
+			FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+			Player player = Helper.matchExactPlayer(plugin, playername);
+			
+			if (player == null)
 			{
-			    if (player.getRemainingAir() < 600)
-			    {
-				player.setRemainingAir(900);
-				plugin.cm.showGiveAir(player);
-				continue;
-			    }
+			    continue;
 			}
-		    }
-		    
-		    if (plugin.pm.hasPermission(player, "preciousstones.benefit.heal"))
-		    {
-			if (fieldsettings.instantHeal)
+			
+			if (plugin.pm.hasPermission(player, "preciousstones.benefit.giveair"))
 			{
-			    if (player.getHealth() < 20)
+			    if (fieldsettings.giveAir)
 			    {
-				player.setHealth(20);
-				plugin.cm.showInstantHeal(player);
-				continue;
+				if (player.getRemainingAir() < 300)
+				{
+				    player.setRemainingAir(600);
+				    plugin.cm.showGiveAir(player);
+				    continue;
+				}
 			    }
 			}
 			
-			if (fieldsettings.slowHeal)
+			if (plugin.pm.hasPermission(player, "preciousstones.benefit.heal"))
 			{
-			    if (player.getHealth() < 20)
+			    if (fieldsettings.instantHeal)
 			    {
-				player.setHealth(Math.min(player.getHealth() + 1, 20));
-				plugin.cm.showSlowHeal(player);
-				continue;
+				if (player.getHealth() < 20)
+				{
+				    player.setHealth(20);
+				    plugin.cm.showInstantHeal(player);
+				    continue;
+				}
 			    }
 			    
-			}
-		    }
-		    
-		    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.damage"))
-		    {
-			if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
-			{
-			    if (!field.isAllAllowed(playername))
+			    if (fieldsettings.slowHeal)
 			    {
-				if (fieldsettings.slowDamage)
+				if (player.getHealth() < 20)
 				{
-				    if (player.getHealth() > 0)
-				    {
-					int health = player.getHealth() - 1;
-					
-					if (health > 0)
-					{
-					    player.setHealth(health);
-					}
-					else
-					{
-					    // plugin.plm.dropInventory(player);
-					    player.setHealth(0);
-					}
-					plugin.cm.showSlowDamage(player);
-					continue;
-				    }
+				    player.setHealth(healthCheck(player.getHealth() + 1));
+				    plugin.cm.showSlowHeal(player);
+				    continue;
 				}
 				
-				if (fieldsettings.fastDamage)
+			    }
+			}
+			
+			if (!plugin.pm.hasPermission(player, "preciousstones.bypass.damage"))
+			{
+			    if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
+			    {
+				if (!field.isAllAllowed(playername))
 				{
-				    if (player.getHealth() > 0)
+				    if (fieldsettings.slowDamage)
 				    {
-					int health = player.getHealth() - 4;
-					
-					if (health > 0)
+					if (player.getHealth() > 0)
 					{
-					    player.setHealth(health);
+					    player.setHealth(healthCheck(player.getHealth() - 1));
+					    plugin.cm.showSlowDamage(player);
+					    continue;
 					}
-					else
+				    }
+				    
+				    if (fieldsettings.fastDamage)
+				    {
+					if (player.getHealth() > 0)
 					{
-					    // plugin.plm.dropInventory(player);
-					    player.setHealth(0);
+					    player.setHealth(healthCheck(player.getHealth() - 4));
+					    plugin.cm.showFastDamage(player);
+					    continue;
 					}
-					plugin.cm.showFastDamage(player);
-					continue;
 				    }
 				}
 			    }
@@ -135,25 +127,86 @@ public class EntryManager
 	}, 0, 20L);
     }
     
-    public void enter(Player player, Field field)
+    public LinkedList<Field> getPlayerEntryFields(Player player)
     {
-	entries.put(player.getName(), field);
+	if (entries.containsKey(player.getName()))
+	{
+	    return entries.get(player.getName()).getFields();
+	}
+	
+	return null;
+    }
+    
+    public void enterField(Player player, Field field)
+    {
+	if (entries.containsKey(player.getName()))
+	{
+	    EntryFields ef = entries.get(player.getName());
+	    ef.addField(field);
+	}
+	else
+	{
+	    entries.put(player.getName(), new EntryFields(field));
+	}
+	
 	recordSnitch(player, field);
     }
     
-    public void leave(Player player)
+    public void leaveField(Player player, Field field)
     {
-	entries.remove(player.getName());
+	EntryFields ef = entries.get(player.getName());
+	ef.removeField(field);
+	
+	if (ef.size() == 0)
+	{
+	    entries.remove(player.getName());
+	}
     }
     
-    public boolean isInsideField(Player player)
+    public boolean isInsideField(Player player, Field field)
     {
-	return entries.containsKey(player.getName());
+	EntryFields ef = entries.get(player.getName());
+	
+	if (ef == null)
+	{
+	    return false;
+	}
+	
+	return ef.containsField(field);
     }
     
-    public Field getEnvelopingField(Player player)
+    public boolean containsSameNameAllowedField(Player player, Field field)
     {
-	return entries.get(player.getName());
+	if (entries.containsKey(player.getName()))
+	{
+	    EntryFields ef = entries.get(player.getName());
+	    LinkedList<Field> entryfields = ef.getFields();
+	    
+	    for (Field entryfield : entryfields)
+	    {
+		if (entryfield.isAllAllowed(player.getName()) && entryfield.isName(entryfield.getStoredName()))
+		{
+		    return true;
+		}
+	    }
+	}
+	
+	return false;
+    }
+    
+    private int healthCheck(int health)
+    {
+	if (health < 0)
+	{
+	    return 0;
+	}
+	
+	if (health > 20)
+	{
+	    return 20;
+	}
+	
+	return health;
     }
     
     public HashSet<String> getInhabitants(Field field)
@@ -162,11 +215,15 @@ public class EntryManager
 	
 	for (String playername : entries.keySet())
 	{
-	    Field testField = entries.get(playername);
+	    EntryFields ef = entries.get(playername);
+	    LinkedList<Field> fields = ef.getFields();
 	    
-	    if (field.equals(testField))
+	    for (Field testfield : fields)
 	    {
-		inhabitants.add(playername);
+		if (field.equals(testfield))
+		{
+		    inhabitants.add(playername);
+		}
 	    }
 	}
 	
@@ -181,7 +238,10 @@ public class EntryManager
 	{
 	    if (!field.isAllAllowed(player.getName()))
 	    {
-		field.addSnitch(player.getName());
+		if(!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
+		{
+		    field.addSnitch(player.getName());
+		}
 	    }
 	}
     }

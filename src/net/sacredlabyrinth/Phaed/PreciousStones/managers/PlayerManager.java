@@ -49,7 +49,7 @@ public class PlayerManager
 	}
     }
     
-    private class PlayerStatus
+    public class PlayerStatus
     {
 	boolean disabled = false;
 	

@@ -89,60 +89,61 @@ public class PSPlayerListener extends PlayerListener
     {
 	Player player = event.getPlayer();
 	
-	// handle entries and exits from fields
+	LinkedList<Field> currentfields = plugin.ffm.getSourceFields(player);
 	
-	boolean insideField = false;
+	// loop through all fields the player just moved into
 	
-	LinkedList<Field> fields = plugin.ffm.getSourceFields(player);
-	
-	for (Field field : fields)
+	if (currentfields != null)
 	{
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-	    
-	    if (plugin.em.isInsideField(player))
+	    for (Field currentfield : currentfields)
 	    {
-		Field previousField = plugin.em.getEnvelopingField(player);
-		
-		if (previousField.getOwner().equals(field.getOwner()))
+		if (!plugin.em.isInsideField(player, currentfield))
 		{
-		    insideField = true;
+		    if (!plugin.em.containsSameNameAllowedField(player, currentfield))
+		    {
+			FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
+			
+			if (fieldsettings.welcomeMessage)
+			{
+			    plugin.cm.showWelcomeMessage(player, currentfield.getName());
+			}
+		    }
+		    
+		    plugin.em.enterField(player, currentfield);
 		}
-		else
-		{
-		    plugin.em.leave(player);
-		}
-		
-		continue;
 	    }
-	    
-	    plugin.em.enter(player, field);
-	    
-	    if (fieldsettings.welcomeMessage)
-	    {
-		plugin.cm.showWelcomeMessage(player, field.getName());
-	    }
-	    
-	    insideField = true;
-	    break;
 	}
 	
-	if (!insideField && plugin.em.isInsideField(player))
+	// remove all stored entry fields that the player is no longer currently in
+	
+	LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
+	
+	if (entryfields != null)
 	{
-	    Field field = plugin.em.getEnvelopingField(player);
-	    
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-	    
-	    if (fieldsettings.farewellMessage)
+	    if (currentfields != null)
 	    {
-		plugin.cm.showFarewellMessage(player, field.getName());
+		entryfields.removeAll(currentfields);
 	    }
 	    
-	    plugin.em.leave(player);
+	    for (Field entryfield : entryfields)
+	    {
+		plugin.em.leaveField(player, entryfield);
+		
+		if (!plugin.em.containsSameNameAllowedField(player, entryfield))
+		{
+		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
+		    
+		    if (fieldsettings.farewellMessage)
+		    {
+			plugin.cm.showFarewellMessage(player, entryfield.getName());
+		    }
+		}
+	    }
 	}
 	
-	// check if were on a prevent entry field, only those not owned by player
+	// check if were on a prevent entry field not owned by player
 	
-	fields = plugin.ffm.getSourceFields(player, player.getName());
+	LinkedList<Field> fields = plugin.ffm.getSourceFields(player, player.getName());
 	
 	for (Field field : fields)
 	{
