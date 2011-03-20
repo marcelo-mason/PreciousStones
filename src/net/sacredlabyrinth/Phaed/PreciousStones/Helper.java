@@ -78,6 +78,26 @@ public class Helper
 	return r;
     }
     
+    
+    /**
+     * Remove first character from a string
+     */
+    public static String removeFirstChar(String s, char c)
+    {
+	String r = "";
+	
+	for (int i = 0; i < s.length(); i++)
+	{
+	    if (s.charAt(i) != c)
+	    {
+		r += s.charAt(i);
+		break;
+	    }
+	}
+	
+	return r;
+    }
+        
     /**
      * Capitalize first word of sentence
      */
@@ -129,5 +149,4 @@ public class Helper
     {
 	return count == 1 ? word : word + ending;    
     }
-    
 }

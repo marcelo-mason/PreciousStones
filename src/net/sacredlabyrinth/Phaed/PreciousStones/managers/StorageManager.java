@@ -294,21 +294,25 @@ public class StorageManager
 		String name = secname;
 		
 		List<String> tempsnitch = Arrays.asList(secsnitch.split(";"));
-		HashSet<SnitchEntry> snitch = new HashSet<SnitchEntry>();
+		ArrayList<SnitchEntry> snitch = new ArrayList<SnitchEntry>();
 		
 		for (String t : tempsnitch)
 		{
-		    if(!t.contains("#"))
+		    if (!t.contains("#") || !t.contains("@"))
 		    {
 			continue;
 		    }
 		    
-		    String[] tempentry = t.split("#");
+		    int a = t.indexOf("@");
+		    int b = t.indexOf("#");
 		    
-		    if (t.trim().length() > 0)
-			snitch.add(new SnitchEntry(tempentry[0], tempentry[1]));
+		    String playername = t.substring(0, a);
+		    String reason = t.substring(a + 1, b);
+		    String details = t.substring(b + 1);
+		    
+		    snitch.add(new SnitchEntry(playername, reason, details));
 		}
-				
+		
 		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
 		
 		if (!plugin.settings.isFieldType(block))

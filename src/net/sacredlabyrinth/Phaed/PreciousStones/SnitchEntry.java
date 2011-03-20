@@ -3,12 +3,14 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 public class SnitchEntry
 {
     private String name;
-    private String datetime;
+    private String reason;
+    private String details;
     
-    public SnitchEntry(String name, String datetime)
+    public SnitchEntry(String name, String reason, String details)
     {
 	this.name = name;
-	this.datetime = datetime;
+	this.reason = reason;
+	this.details = details;
     }
     
     public String getName()
@@ -16,24 +18,13 @@ public class SnitchEntry
 	return this.name;
     }
     
-    public String getDateTime()
+    public String getReason()
     {
-	return datetime;
+	return this.reason;
     }
-    
-    @Override
-    public int hashCode()
+
+    public String getDetails()
     {
-	return (new String(name)).hashCode();
-    }
-    
-    @Override
-    public boolean equals(Object obj)
-    {
-	if (!(obj instanceof SnitchEntry))
-	    return false;
-	
-	SnitchEntry other = (SnitchEntry) obj;
-	return other.name.equals(this.name);
+	return this.details;
     }
 }

@@ -25,7 +25,7 @@ public class PSPlayerListener extends PlayerListener
     {
 	this.plugin = plugin;
     }
-    
+
     @Override
     public void onPlayerItem(PlayerItemEvent event)
     {
@@ -42,7 +42,11 @@ public class PSPlayerListener extends PlayerListener
 	    return;
 	}
 	
-	if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
+	if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
+	{
+	    plugin.snm.showIntruderList(player, plugin.ffm.getField(block));
+	}
+	else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
 	{
 	    if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
 	    {
@@ -99,7 +103,7 @@ public class PSPlayerListener extends PlayerListener
 	    {
 		if (!plugin.em.isInsideField(player, currentfield))
 		{
-		    if (!plugin.em.containsSameNameAllowedField(player, currentfield))
+		    if (!plugin.em.containsSameNameOwnedField(player, currentfield))
 		    {
 			FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
 			
@@ -129,7 +133,7 @@ public class PSPlayerListener extends PlayerListener
 	    {
 		plugin.em.leaveField(player, entryfield);
 		
-		if (!plugin.em.containsSameNameAllowedField(player, entryfield))
+		if (!plugin.em.containsSameNameOwnedField(player, entryfield))
 		{
 		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
 		    
