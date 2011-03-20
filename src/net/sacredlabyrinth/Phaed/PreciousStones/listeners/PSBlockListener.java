@@ -5,12 +5,10 @@ import java.util.HashSet;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.entity.Player;
 
@@ -30,18 +28,6 @@ public class PSBlockListener extends BlockListener
     public PSBlockListener(final PreciousStones plugin)
     {
 	this.plugin = plugin;
-    }
-    
-    @Override
-    public void onBlockInteract(BlockInteractEvent event)
-    {
-	Player player = (Player) event.getEntity();
-	Block block = event.getBlock();
-	
-	if (block.getState() instanceof ContainerBlock)
-	{
-	    plugin.snm.recordSnitchUsed(player, block);
-	}
     }
     
     @Override
@@ -79,8 +65,6 @@ public class PSBlockListener extends BlockListener
 	{
 	    return;
 	}
-	
-	plugin.snm.recordSnitchBlockBreak(player, damagedblock);
 	
 	if (plugin.settings.isUnbreakableType(damagedblock) && plugin.um.isUnbreakable(damagedblock))
 	{
@@ -163,11 +147,9 @@ public class PSBlockListener extends BlockListener
 	    return;
 	}
 	
-	plugin.snm.recordSnitchBlockPlace(player, placedblock);
-	
 	if (plugin.settings.isUnbreakableType(placedblock) && plugin.pm.hasPermission(player, "preciousstones.benefit.create.unbreakable"))
 	{
-	    Field conflictfield = plugin.ffm.unbreakableConflicts(placedblock, player);
+	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player);
 	    
 	    if (conflictfield != null)
 	    {
@@ -213,7 +195,7 @@ public class PSBlockListener extends BlockListener
 	}
 	else if (plugin.settings.isFieldType(placedblock) && plugin.pm.hasPermission(player, "preciousstones.benefit.create.forcefield"))
 	{
-	    Field conflictfield = plugin.ffm.fieldConflicts(placedblock, player);
+	    Field conflictfield = plugin.ffm.isInConflict(placedblock, player);
 	    
 	    if (conflictfield != null)
 	    {
@@ -367,7 +349,7 @@ public class PSBlockListener extends BlockListener
 	{
 	    if (!plugin.plm.isDisabled(player))
 	    {
-		HashSet<Field> touching = plugin.ffm.getTouchingFields(scopedBlock, materialInHand);
+		HashSet<Field> touching = plugin.ffm.getTouchingFields(scopedBlock, materialInHand);		
 		plugin.cm.printTouchingFields(player, touching);
 	    }
 	}

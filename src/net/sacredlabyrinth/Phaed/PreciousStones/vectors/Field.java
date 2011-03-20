@@ -1,6 +1,11 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.Date;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.bukkit.block.Block;
 import org.bukkit.Material;
@@ -15,11 +20,11 @@ public class Field extends AbstractVec
     private int typeId;
     private String owner;
     private String name;
-    private ArrayList<SnitchEntry> snitchList = new ArrayList<SnitchEntry>();
+    private HashSet<SnitchEntry> snitchList = new HashSet<SnitchEntry>();
     private ArrayList<String> allowed = new ArrayList<String>();
     private ChunkVec chunkvec;
     
-    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name, ArrayList<SnitchEntry> snitchList)
+    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name, HashSet<SnitchEntry> snitchList)
     {
 	super(x, y, z, world);
 	
@@ -113,12 +118,12 @@ public class Field extends AbstractVec
     
     public boolean isName(String name)
     {
-	if (name == null && this.name == null)
+	if(name == null && this.name == null)
 	{
 	    return true;
 	}
 	
-	if (name == null || this.name == null)
+	if(name == null || this.name == null)
 	{
 	    return false;
 	}
@@ -221,7 +226,7 @@ public class Field extends AbstractVec
     
     public boolean intersects(Field field)
     {
-	if (!field.getWorld().equals(this.world))
+	if(!field.getWorld().equals(this.world))
 	{
 	    return false;
 	}
@@ -297,17 +302,10 @@ public class Field extends AbstractVec
 	return super.toString();
     }
     
-    public void addIntruder(String name, String reason, String details)
+    public void addSnitch(String name)
     {
-	for(SnitchEntry se : snitchList)
-	{
-	    if(se.getName().equals(name) && se.getReason().equals(reason) && se.getDetails().equals(details))
-	    {
-		return;
-	    }
-	}
-	   
-	snitchList.add(new SnitchEntry(name, reason, details));
+	DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy h:mm a z");
+	snitchList.add(new SnitchEntry(name, dateFormat.format(new Date())));
     }
     
     public void cleanSnitchList()
@@ -315,7 +313,7 @@ public class Field extends AbstractVec
 	snitchList.clear();
     }
     
-    public ArrayList<SnitchEntry> getSnitchList()
+    public HashSet<SnitchEntry> getSnitchList()
     {
 	return snitchList;
     }
@@ -326,7 +324,7 @@ public class Field extends AbstractVec
 	
 	for (SnitchEntry se : snitchList)
 	{
-	    out += ";" + se.getName() + "@" + se.getReason() + "#" + se.getDetails();
+	    out += ";" + se.getName() + "#" + se.getDateTime();
 	}
 	
 	if (out.length() > 1)

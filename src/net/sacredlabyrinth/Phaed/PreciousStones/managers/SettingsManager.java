@@ -197,22 +197,6 @@ public class SettingsManager
     /**
      * Check if a block is one of the unbreakable types
      */
-    public boolean isSnitchType(Block block)
-    {
-	for (FieldSettings setting : fieldsettings.values())
-	{
-	    if (setting.snitch && setting.blockId == block.getTypeId())
-	    {
-		return true;
-	    }
-	}
-	
-	return false;
-    }
-    
-    /**
-     * Check if a block is one of the unbreakable types
-     */
     public boolean isUnbreakableType(Block unbreakableblock)
     {
 	return unbreakableBlocks.contains(unbreakableblock.getTypeId());
@@ -324,7 +308,6 @@ public class SettingsManager
 	public boolean farewellMessage = false;
 	public boolean giveAir = false;
 	public boolean snitch = false;
-	public boolean noConflict = false;
 	
 	public String getTitle()
 	{
@@ -433,9 +416,6 @@ public class SettingsManager
 	    
 	    if (map.containsKey("snitch") && Helper.isBoolean(map.get("snitch")))
 		snitch = (Boolean) map.get("snitch");
-
-	    if (map.containsKey("no-conflict") && Helper.isBoolean(map.get("no-conflict")))
-		noConflict = (Boolean) map.get("no-conflict");
 	}
 	
 	@Override

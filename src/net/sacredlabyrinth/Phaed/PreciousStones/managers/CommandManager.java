@@ -18,10 +18,12 @@ import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 
 public class CommandManager
 {
     private PreciousStones plugin;
+    private ChatBlock cacheblock = new ChatBlock();
     public Help helpPlugin;
     
     public CommandManager(PreciousStones plugin)
@@ -51,7 +53,7 @@ public class CommandManager
 	    helpPlugin.registerCommand("ps removeall [player] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
 	    helpPlugin.registerCommand("ps who ", "List all inhabitants inside the overlapping fields", plugin, true, "preciousstones.whitelist.who");
 	    helpPlugin.registerCommand("ps setname [name] ", "Set the name of force-fields", plugin, true, "preciousstones.benefit.setname");
-	    helpPlugin.registerCommand("ps snitch <clear> ", "View/clear snitch you're pointing at", plugin, true, "preciousstones.benefit.snitch");
+	    helpPlugin.registerCommand("ps snitch <clean> ", "View/clear lists of overlapping fields", plugin, true, "preciousstones.benefit.snitch");
 	    helpPlugin.registerCommand("ps delete ", "Delete the field(s) you're standing on", plugin, true, "preciousstones.admin.delete");
 	    helpPlugin.registerCommand("ps delete [blockid] ", "Delete the field(s) from this type", plugin, true, "preciousstones.admin.delete");
 	    helpPlugin.registerCommand("ps info ", "Get info for the field youre standing on", plugin, true, "preciousstones.admin.info");
@@ -107,7 +109,7 @@ public class CommandManager
 	    {
 		if (split.length == 2)
 		{
-		    Field field = plugin.ffm.getOneAllowedField(block, player);
+		    Field field = plugin.ffm.inOneAllowedVector(block, player);
 		    
 		    if (field != null)
 		    {
@@ -134,7 +136,7 @@ public class CommandManager
 	    }
 	    else if (split[0].equals("allowed") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.whitelist.allowed"))
 	    {
-		Field field = plugin.ffm.getOneAllowedField(block, player);
+		Field field = plugin.ffm.inOneAllowedVector(block, player);
 		
 		if (field != null)
 		{
@@ -167,7 +169,7 @@ public class CommandManager
 	    {
 		if (split.length == 2)
 		{
-		    Field field = plugin.ffm.getOneAllowedField(block, player);
+		    Field field = plugin.ffm.inOneAllowedVector(block, player);
 		    
 		    if (field != null)
 		    {
@@ -234,7 +236,7 @@ public class CommandManager
 	    }
 	    else if (split[0].equals("who") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.benefit.who"))
 	    {
-		Field field = plugin.ffm.getOneAllowedField(block, player);
+		Field field = plugin.ffm.inOneAllowedVector(block, player);
 		
 		if (field != null)
 		{
@@ -277,7 +279,7 @@ public class CommandManager
 		    
 		    if (playerName.length() > 0)
 		    {
-			Field field = plugin.ffm.getOneAllowedField(block, player);
+			Field field = plugin.ffm.inOneAllowedVector(block, player);
 			
 			if (field != null)
 			{
@@ -305,36 +307,52 @@ public class CommandManager
 	    {
 		if (split.length == 1)
 		{
-		    TargetBlock tb = new TargetBlock(player, 100, 0.2, new int[] { 0, 6, 8, 9, 37, 38, 39, 40, 50, 51, 55, 59, 63, 68, 69, 70, 72, 75, 76, 83, 85 });
+		    Field field = plugin.ffm.inOneAllowedVector(block, player);
 		    
-		    if (tb != null)
+		    if (field != null)
 		    {
-			Block targetblock = tb.getTargetBlock();
+			HashSet<SnitchEntry> snitches = plugin.ffm.getAllSnitches(player, field);
 			
-			if (targetblock != null)
+			if (snitches.size() > 0)
 			{
-			    if (plugin.settings.isFieldType(targetblock) && plugin.ffm.isField(targetblock))
+			    cacheblock = new ChatBlock();
+			    
+			    ChatBlock.saySingle(player, ChatColor.YELLOW + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
+			    ChatBlock.sendBlank(player);
+			    
+			    cacheblock.addRow(new String[] { "    " + ChatColor.GRAY + "Name", "Last Seen" });
+			    
+			    for (SnitchEntry se : snitches)
 			    {
-				FieldSettings fieldsettings = plugin.settings.getFieldSettings(targetblock.getTypeId());
-				
-				if (fieldsettings.snitch)
-				{
-				    Field field = plugin.ffm.getField(targetblock);				    
-				    plugin.snm.showIntruderList(player, field);
-				}
+				cacheblock.addRow(new String[] { "    " + ChatColor.GOLD + se.getName(), ChatColor.WHITE + se.getDateTime() });
 			    }
+			    
+			    boolean more = cacheblock.sendBlock(player, 12);
+			    
+			    if (more)
+			    {
+				ChatBlock.sendBlank(player);
+				ChatBlock.sendMessage(player, ChatColor.GOLD + "Type " + ChatColor.WHITE + "/ps more " + ChatColor.GOLD + "to view next page.");
+			    }
+			    
+			    ChatBlock.sendBlank(player);
+			}
+			else
+			{
+			    ChatBlock.sendMessage(player, ChatColor.RED + "There have been no intruders around here");
 			}
 		    }
-		    
-		    ChatBlock.sendMessage(player, ChatColor.RED + "You are not pointing at a snitch block");
-		    
+		    else
+		    {
+			plugin.cm.showNotFound(player);
+		    }
 		    return true;
 		}
 		else if (split.length == 2)
 		{
-		    if (split[1].equals("clear"))
+		    if (split[1].equals("clean"))
 		    {
-			Field field = plugin.ffm.getOneAllowedField(block, player);
+			Field field = plugin.ffm.inOneAllowedVector(block, player);
 			
 			if (field != null)
 			{
@@ -359,8 +377,6 @@ public class CommandManager
 	    }
 	    else if (split[0].equals("more") && plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
 	    {
-		ChatBlock cacheblock = plugin.snm.getCacheBlock();
-		
 		if (cacheblock.size() > 0)
 		{
 		    ChatBlock.saySingle(player, ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------");
@@ -402,11 +418,11 @@ public class CommandManager
 	    {
 		if (split.length == 1)
 		{
-		    LinkedList<Field> sourcefields = plugin.ffm.getSourceFields(block);
+		    Field field = plugin.ffm.inOneAllowedVector(block, player);
 		    
-		    if (sourcefields.size() > 0)
+		    if (field != null)
 		    {
-			int count = plugin.ffm.deleteFields(null, sourcefields.get(0));
+			int count = plugin.ffm.deleteFields(player, field);
 			
 			if (count > 0)
 			{
@@ -414,7 +430,7 @@ public class CommandManager
 			    
 			    if (plugin.settings.logBypassDelete)
 			    {
-				PreciousStones.log.info("[ps] Protective field removed from " + count + Helper.plural(count, " force-field", "s") + " by " + player.getName() + " near " + sourcefields.get(0).toString());
+				PreciousStones.log.info("[ps] Protective field removed from " + count + Helper.plural(count, " force-field", "s") + " by " + player.getName() + " near " + field.toString());
 			    }
 			}
 			else
@@ -626,7 +642,7 @@ public class CommandManager
 	
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
 	{
-	    ChatBlock.sendMessage(player, color + "/ps snitch <clear> " + ChatColor.GRAY + "- View/clear snitch you're pointing at");
+	    ChatBlock.sendMessage(player, color + "/ps snitch <clean> " + ChatColor.GRAY + "- View/clear lists of overlapping fields");
 	}
 	
 	if (plugin.pm.hasPermission(player, "preciousstones.admin.delete"))

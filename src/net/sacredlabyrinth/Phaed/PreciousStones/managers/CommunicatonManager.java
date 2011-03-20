@@ -879,9 +879,7 @@ public class CommunicatonManager
 	String properties = fieldsettings.getProtertiesString();
 	
 	if (properties.length() > 0)
-	{
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + properties);
-	}
     }
     
     public void printTouchingFields(Player player, HashSet<Field> scoped)
