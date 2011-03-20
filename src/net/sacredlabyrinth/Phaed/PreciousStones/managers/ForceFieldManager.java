@@ -17,7 +17,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 
 /**
  * Handles force-fields
@@ -358,7 +357,7 @@ public class ForceFieldManager
     /**
      * Returns the field if hes standing in at least one allowed field
      */
-    public Field inOneAllowedVector(Block blockInArea, Player player)
+    public Field getOneAllowedField(Block blockInArea, Player player)
     {
 	LinkedList<Field> sourcefields = getSourceFields(blockInArea);
 	
@@ -388,7 +387,7 @@ public class ForceFieldManager
 		{
 		    if (foundfield.intersects(otherfield))
 		    {
-			if (!otherfield.isAllAllowed(player.getName()))
+			if (player != null && !otherfield.isAllAllowed(player.getName()))
 			{
 			    continue;
 			}
@@ -434,12 +433,12 @@ public class ForceFieldManager
     }
     
     /**
-     * Get all snitches from all intersecting fields
+     * Get first snitch fields youre standing on that youre allowed on
      */
-    public HashSet<SnitchEntry> getAllSnitches(Player player, Field field)
+    public LinkedList<Field> getSnitchFields(Block block)
     {
-	HashSet<SnitchEntry> out = new HashSet<SnitchEntry>();
-	HashSet<Field> total = getOverlappedFields(player, field);
+	LinkedList<Field> out = new LinkedList<Field>();
+	LinkedList<Field> total = getSourceFields(block);
 	
 	for (Field f : total)
 	{
@@ -447,7 +446,7 @@ public class ForceFieldManager
 	    
 	    if (fieldsettings.snitch)
 	    {
-		out.addAll(f.getSnitchList());
+		out.add(f);
 	    }
 	}
 	return out;
@@ -518,12 +517,13 @@ public class ForceFieldManager
 	
 	for (Field f : total)
 	{
-	    plugin.ffm.release(f);
+	    plugin.ffm.queueRelease(f);
 	    deletedCount++;
 	}
 	
 	if (deletedCount > 0)
 	{
+	    flush();
 	    setDirty();
 	}
 	return deletedCount;
@@ -905,46 +905,68 @@ public class ForceFieldManager
     }
     
     /**
-     * Whether the protective block will cover someone elses unbreakable or forcefield blocks
+     * Return the first field that conflicts with the unbreakable
      */
-    public Field isInConflict(Block placedBlock, Player placer)
+    public Field unbreakableConflicts(Block placedBlock, Player placer)
     {
-	if (plugin.settings.isFieldType(placedBlock))
+	LinkedList<Field> fieldsinarea = getFieldsInArea(placedBlock);
+	
+	for (Field field : fieldsinarea)
 	{
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(placedBlock.getTypeId());
+	    FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
 	    
-	    Field placedField = new Field(placedBlock, fieldsettings.radius, fieldsettings.getHeight());
-	    
-	    LinkedList<Field> fieldsinarea = getFieldsInArea(placedBlock);
-	    
-	    for (Field field : fieldsinarea)
+	    if (fs.noConflict)
 	    {
-		if (field.isAllAllowed(placer.getName()))
-		{
-		    continue;
-		}
-		
-		if (field.intersects(placedField))
-		{
-		    return field;
-		}
+		continue;
+	    }
+	    
+	    if (field.isAllAllowed(placer.getName()))
+	    {
+		continue;
+	    }
+	    
+	    if (field.envelops(placedBlock))
+	    {
+		return field;
 	    }
 	}
-	else
+	
+	return null;
+    }
+    
+    /**
+     * Return the first field that conflicts with the field
+     */
+    public Field fieldConflicts(Block placedBlock, Player placer)
+    {
+	FieldSettings fieldsettings = plugin.settings.getFieldSettings(placedBlock.getTypeId());
+	
+	if (fieldsettings.noConflict)
 	{
-	    LinkedList<Field> fieldsinarea = getFieldsInArea(placedBlock);
+	    return null;
+	}
+	
+	Field placedField = new Field(placedBlock, fieldsettings.radius, fieldsettings.getHeight());
+	
+	LinkedList<Field> fieldsinarea = getFieldsInArea(placedBlock);
+	
+	for (Field field : fieldsinarea)
+	{
+	    FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
 	    
-	    for (Field field : fieldsinarea)
+	    if (fs.noConflict)
 	    {
-		if (field.isAllAllowed(placer.getName()))
-		{
-		    continue;
-		}
-		
-		if (field.envelops(placedBlock))
-		{
-		    return field;
-		}
+		continue;
+	    }
+	    
+	    if (field.isAllAllowed(placer.getName()))
+	    {
+		continue;
+	    }
+	    
+	    if (field.intersects(placedField))
+	    {
+		return field;
 	    }
 	}
 	
@@ -965,7 +987,14 @@ public class ForceFieldManager
 	LinkedList<Field> fieldsinarea = getFieldsInArea(scopedBlock);
 	
 	for (Field field : fieldsinarea)
-	{
+	{	
+	    FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
+	    
+	    if (fs.noConflict)
+	    {
+		continue;
+	    }
+	    
 	    if (field.intersects(placedField))
 	    {
 		out.add(field);

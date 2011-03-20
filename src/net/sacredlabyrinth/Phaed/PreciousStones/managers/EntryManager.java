@@ -149,7 +149,7 @@ public class EntryManager
 	    entries.put(player.getName(), new EntryFields(field));
 	}
 	
-	recordSnitch(player, field);
+	plugin.snm.recordSnitchEntry(player, field);
     }
     
     public void leaveField(Player player, Field field)
@@ -175,7 +175,7 @@ public class EntryManager
 	return ef.containsField(field);
     }
     
-    public boolean containsSameNameAllowedField(Player player, Field field)
+    public boolean containsSameNameOwnedField(Player player, Field field)
     {
 	if (entries.containsKey(player.getName()))
 	{
@@ -184,7 +184,7 @@ public class EntryManager
 	    
 	    for (Field entryfield : entryfields)
 	    {
-		if (entryfield.isAllAllowed(player.getName()) && entryfield.isName(entryfield.getStoredName()))
+		if (entryfield.getOwner().equals(field.getOwner()) && entryfield.getStoredName().equals(field.getStoredName()))
 		{
 		    return true;
 		}
@@ -228,21 +228,5 @@ public class EntryManager
 	}
 	
 	return inhabitants;
-    }
-    
-    public void recordSnitch(Player player, Field field)
-    {
-	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-	
-	if (fieldsettings.snitch)
-	{
-	    if (!field.isAllAllowed(player.getName()))
-	    {
-		if(!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
-		{
-		    field.addSnitch(player.getName());
-		}
-	    }
-	}
     }
 }
