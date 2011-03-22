@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
@@ -48,7 +49,6 @@ public class PSEntityListener extends EntityListener
 		{
 		    if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
 		    {
-			// plugin.cm.notifyGuardDog((Player) event.getEntity(), field, "tnt explosion");
 			plugin.cm.notifyGuardDog(null, field, "creeper explosion");
 			continue;
 		    }
@@ -63,6 +63,20 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onEntityDamage(EntityDamageEvent event)
     {
+	if (event.getCause().equals(DamageCause.FALL))
+	{
+	    if (event.getEntity() instanceof Player)
+	    {
+		Player player = (Player) event.getEntity();
+		
+		if (plugin.vm.isFallDamageImmune(player))
+		{
+		    event.setCancelled(true);
+		    plugin.cm.showThump(player);
+		}
+	    }
+	}
+	
 	if (event instanceof EntityDamageByEntityEvent)
 	{
 	    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;

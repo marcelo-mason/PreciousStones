@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -127,6 +128,20 @@ public class EntryManager
 	}, 0, 20L);
     }
     
+    public static Vector Reposition(Vector Pos, float Ang, float Hyp, float y)
+    {
+	float r = Ang * (float) Math.PI / 180.0f;
+	float a = (float) (Math.sin(r)) * Hyp;
+	float b = (float) (Math.cos(r)) * Hyp;
+	return new Vector((double) (Pos.getX() + b), y, (double) (Pos.getZ() + a));
+    }
+    
+    public static float Heading(Vector Origin, Vector Dest)
+    {
+	double ang = (double) Math.atan2((Dest.getZ() - Origin.getZ()), (Dest.getX() - Origin.getX()));
+	return (float) Math.toDegrees(ang);
+    }
+    
     public LinkedList<Field> getPlayerEntryFields(Player player)
     {
 	if (entries.containsKey(player.getName()))
@@ -150,6 +165,8 @@ public class EntryManager
 	}
 	
 	plugin.snm.recordSnitchEntry(player, field);
+	plugin.vm.launchPlayer(player, field);
+	plugin.vm.bouncePlayer(player, field);
     }
     
     public void leaveField(Player player, Field field)

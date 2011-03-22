@@ -21,6 +21,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommunicatonManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
 
 import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
@@ -45,6 +46,7 @@ public class PreciousStones extends JavaPlugin
     public EntryManager em;
     public PlayerManager plm;
     public SnitchManager snm;
+    public VelocityManager vm;
     public PermissionsManager pm;
     
     private PSPlayerListener playerListener;
@@ -69,6 +71,7 @@ public class PreciousStones extends JavaPlugin
 	em = new EntryManager(this);
 	plm = new PlayerManager(this);
 	snm = new SnitchManager(this);
+	vm = new VelocityManager(this);
 	pm = new PermissionsManager(this);
 	
 	playerListener = new PSPlayerListener(this);
@@ -92,6 +95,7 @@ public class PreciousStones extends JavaPlugin
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FLOW, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);

@@ -303,6 +303,7 @@ public class Field extends AbstractVec
 	{
 	    if(se.getName().equals(name) && se.getReason().equals(reason) && se.getDetails().equals(details))
 	    {
+		se.addCount();
 		return;
 	    }
 	}
@@ -331,7 +332,7 @@ public class Field extends AbstractVec
 	
 	if (out.length() > 1)
 	{
-	    return out.substring(1);
+	    return out.substring(1).replace("§", "?");
 	}
 	
 	return "";

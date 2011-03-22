@@ -593,7 +593,6 @@ public class CommunicatonManager
 	}
     }
     
-    
     public void warnPlaceTouchingUnprotectable(Player player, Block placedblock)
     {
 	Block touchingblock = plugin.upm.getTouchingUnprotectableBlock(placedblock);
@@ -664,7 +663,7 @@ public class CommunicatonManager
     }
     
     public void notifyBypassUnprotectableTouching(Player player, Block unprotectableblock, Block protectionblock)
-    {	
+    {
 	if (plugin.settings.warnUnprotectable && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "Unprotectable block " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " bypass-placed near " + Helper.friendlyBlockType(protectionblock.getType().toString()) + " block");
 	
@@ -813,6 +812,23 @@ public class CommunicatonManager
 	    ChatBlock.sendMessage(player, ChatColor.WHITE + "*air*");
     }
     
+    public void showLaunch(Player player)
+    {
+	if (plugin.settings.warnLaunch && canWarn(player))
+	    ChatBlock.sendMessage(player, ChatColor.LIGHT_PURPLE + "*launch*");
+    }
+    
+    public void showBounce(Player player)
+    {
+	if (plugin.settings.warnBounce && canWarn(player))
+	    ChatBlock.sendMessage(player, ChatColor.LIGHT_PURPLE + "*bounce*");
+    }
+    
+    public void showThump(Player player)
+    {
+	ChatBlock.sendMessage(player, ChatColor.DARK_RED + "*thump*");
+    }
+    
     public void showSlowHeal(Player player)
     {
 	if (plugin.settings.warnSlowHeal && canWarn(player))
@@ -906,6 +922,6 @@ public class CommunicatonManager
     
     public void debug(String msg)
     {
-	PreciousStones.log.info("***** " + msg);
+	PreciousStones.log.info("[debug] ***************** " + msg);
     }
 }

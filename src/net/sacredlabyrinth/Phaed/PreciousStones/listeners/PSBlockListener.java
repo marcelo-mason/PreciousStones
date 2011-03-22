@@ -5,12 +5,12 @@ import java.util.HashSet;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockInteractEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.entity.Player;
 
@@ -33,13 +33,26 @@ public class PSBlockListener extends BlockListener
     }
     
     @Override
-    public void onBlockInteract(BlockInteractEvent event)
+    public void onBlockFlow(BlockFromToEvent event)
     {
-	Player player = (Player) event.getEntity();
 	Block block = event.getBlock();
 	
-	if (block.getState() instanceof ContainerBlock)
+	Field field = plugin.ffm.isPlaceProtected(block, null);
+	
+	if (field != null)
 	{
+	    event.setCancelled(true);
+	}
+    }
+    
+    @Override
+    public void onBlockInteract(BlockInteractEvent event)
+    {
+	if (event.getEntity() instanceof Player)
+	{
+	    Player player = (Player) event.getEntity();
+	    Block block = event.getBlock();
+	    
 	    plugin.snm.recordSnitchUsed(player, block);
 	}
     }
@@ -50,9 +63,14 @@ public class PSBlockListener extends BlockListener
 	Block block = event.getBlock();
 	Player player = event.getPlayer();
 	
-	if (block == null || player == null)
+	if (block == null)
 	{
 	    return;
+	}
+	
+	if (player != null)
+	{
+	    plugin.snm.recordSnitchIgnite(player, block);
 	}
 	
 	Field field = plugin.ffm.isFireProtected(block, player);
@@ -60,7 +78,11 @@ public class PSBlockListener extends BlockListener
 	if (field != null)
 	{
 	    event.setCancelled(true);
-	    plugin.cm.warnFire(player, field);
+	    
+	    if (player != null)
+	    {
+		plugin.cm.warnFire(player, field);
+	    }
 	}
     }
     

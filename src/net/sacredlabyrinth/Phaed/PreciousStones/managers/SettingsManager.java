@@ -50,6 +50,8 @@ public class SettingsManager
     public boolean warnEntry;
     public boolean warnPvp;
     public boolean warnFire;
+    public boolean warnLaunch;
+    public boolean warnBounce;
     public long saveFrequency;
     public int purgeDays;
     public boolean publicBlockDetails;
@@ -117,6 +119,8 @@ public class SettingsManager
 	warnDestroy = config.getBoolean("warn.destroy", false);
 	warnDestroyArea = config.getBoolean("warn.destroy-area", false);
 	warnUnprotectable = config.getBoolean("warn.unprotectable", false);
+	warnLaunch = config.getBoolean("warn.launch", false);
+	warnBounce = config.getBoolean("warn.bounce", false);
 	purgeDays = config.getInt("saving.purge-backups-after-days", 5);
 	saveFrequency = config.getInt("saving.frequency-minutes", 5);
 	publicBlockDetails = config.getBoolean("settings.public-block-details", false);
@@ -325,6 +329,10 @@ public class SettingsManager
 	public boolean giveAir = false;
 	public boolean snitch = false;
 	public boolean noConflict = false;
+	public boolean launch = false;
+	public int launchHeight = 0;
+	public boolean bounce = false;
+	public int bounceHeight = 0;
 	
 	public String getTitle()
 	{
@@ -436,6 +444,18 @@ public class SettingsManager
 
 	    if (map.containsKey("no-conflict") && Helper.isBoolean(map.get("no-conflict")))
 		noConflict = (Boolean) map.get("no-conflict");
+
+	    if (map.containsKey("launch") && Helper.isBoolean(map.get("launch")))
+		launch = (Boolean) map.get("launch");
+
+	    if (map.containsKey("launch-height") && Helper.isInteger(map.get("launch-height")))
+		launchHeight = (Integer) map.get("launch-height");
+
+	    if (map.containsKey("bounce") && Helper.isBoolean(map.get("bounce")))
+		bounce = (Boolean) map.get("bounce");
+
+	    if (map.containsKey("bounce-height") && Helper.isInteger(map.get("bounce-height")))
+		bounceHeight = (Integer) map.get("bounce-height");
 	}
 	
 	@Override
@@ -489,6 +509,15 @@ public class SettingsManager
 
 	    if (snitch)
 		properties += ", snitch";
+
+	    if (launch)
+		properties += ", launch";
+
+	    if (bounce)
+		properties += ", bounce";
+
+	    if (noConflict)
+		properties += ", no-conflict";
 
 	    if (welcomeMessage)
 		properties += ", welcome";

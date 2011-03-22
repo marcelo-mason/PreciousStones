@@ -801,7 +801,7 @@ public class ForceFieldManager
 	
 	for (Field field : fieldsinarea)
 	{
-	    if (field.envelops(blockInArea) && !field.isAllAllowed(player.getName()))
+	    if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 		

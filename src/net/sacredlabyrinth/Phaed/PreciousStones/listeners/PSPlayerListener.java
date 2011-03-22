@@ -25,7 +25,7 @@ public class PSPlayerListener extends PlayerListener
     {
 	this.plugin = plugin;
     }
-
+    
     @Override
     public void onPlayerItem(PlayerItemEvent event)
     {

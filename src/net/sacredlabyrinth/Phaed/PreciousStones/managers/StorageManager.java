@@ -229,7 +229,7 @@ public class StorageManager
 		
 		if (u.length > 7)
 		{
-		    secsnitch = u[7];
+		    secsnitch = u[7].replace("?", "§");
 		}
 		
 		sectype = Helper.removeChar(sectype, '[');
