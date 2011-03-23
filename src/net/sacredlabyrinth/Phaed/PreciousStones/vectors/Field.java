@@ -170,11 +170,21 @@ public class Field extends AbstractVec
     
     public boolean isAllowed(String allowedName)
     {
+	if(allowed.contains("*"))
+	{
+	    return true;
+	}
+	
 	return allowed.contains(allowedName);
     }
     
     public boolean isAllAllowed(String allowedName)
     {
+	if(allowed.contains("*"))
+	{
+	    return true;
+	}
+
 	return allowedName.equals(owner) || allowed.contains(allowedName);
     }
     

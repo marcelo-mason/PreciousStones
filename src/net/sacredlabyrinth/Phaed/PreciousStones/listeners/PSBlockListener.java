@@ -11,9 +11,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.entity.Player;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
@@ -35,11 +37,10 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockFlow(BlockFromToEvent event)
     {
-	Block block = event.getBlock();
+	Field fromfield = plugin.ffm.isPlaceProtected(event.getBlock(), null);
+	Field tofield = plugin.ffm.isPlaceProtected(event.getToBlock(), null);
 	
-	Field field = plugin.ffm.isPlaceProtected(block, null);
-	
-	if (field != null)
+	if (fromfield == null && tofield != null)
 	{
 	    event.setCancelled(true);
 	}
@@ -82,6 +83,71 @@ public class PSBlockListener extends BlockListener
 	    if (player != null)
 	    {
 		plugin.cm.warnFire(player, field);
+	    }
+	}
+    }
+    
+    @Override
+    public void onBlockRedstoneChange(BlockRedstoneEvent event)
+    {
+	Block redstoneblock = event.getBlock();
+	
+	for (int x = -1; x <= 1; x++)
+	{
+	    for (int y = -1; y <= 1; y++)
+	    {
+		for (int z = -1; z <= 1; z++)
+		{
+		    if (x == 0 && y == 0 && z == 0)
+		    {
+			continue;
+		    }
+		    
+		    Block fieldblock = redstoneblock.getRelative(x, y, z);
+		    
+		    if (plugin.settings.isFieldType(fieldblock))
+		    {
+			if (plugin.ffm.isField(fieldblock))
+			{
+			    if (event.getNewCurrent() > event.getOldCurrent())
+			    {				
+				Field field = plugin.ffm.getField(fieldblock);
+				FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+				
+				if (fieldsettings.bounce)
+				{
+				    HashSet<String> players = plugin.em.getInhabitants(field);
+				    
+				    for (String pl : players)
+				    {
+					Player player = Helper.matchExactPlayer(plugin, pl);
+					
+					if (player != null)
+					{
+					    plugin.vm.bouncePlayer(player, field);
+					}
+				    }
+				}
+				
+				if (fieldsettings.launch)
+				{
+				    HashSet<String> players = plugin.em.getInhabitants(field);
+				    
+				    for (String pl : players)
+				    {
+					Player player = Helper.matchExactPlayer(plugin, pl);
+					
+					if (player != null)
+					{
+					    plugin.cm.debug("pl");
+					    plugin.vm.launchPlayer(player, field);
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
 	    }
 	}
     }

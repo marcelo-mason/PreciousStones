@@ -25,39 +25,41 @@ public class VelocityManager
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.launch"))
 	{
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-	    
-	    final int launchheight = fieldsettings.launchHeight;
-	    
-	    if (fieldsettings.launch)
+	    if (field.isAllAllowed(player.getName()))
 	    {
-		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+		
+		final int launchheight = fieldsettings.launchHeight;
+		
+		if (fieldsettings.launch)
 		{
-		    public void run()
+		    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 		    {
-			double speed = 8;
-			
-			Vector loc = player.getLocation().toVector();
-			
-			Vector target = new Vector(field.getX(), field.getY(), field.getZ());
-			
-			Vector velocity = target.clone().subtract(new Vector(loc.getX(), loc.getY(), loc.getZ()));
-			
-			velocity.multiply(speed / velocity.length());
-			
-			float height = (((player.getLocation().getPitch() * -1) + 90) / 35);
-			
-			if (launchheight > 0)
+			public void run()
 			{
-			    height = launchheight;
+			    double speed = 8;
+			    
+			    Vector loc = player.getLocation().toVector();
+			    
+			    Vector target = new Vector(field.getX(), field.getY(), field.getZ());
+			    
+			    Vector velocity = target.clone().subtract(new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+			    
+			    velocity.multiply(speed / velocity.length());
+			    
+			    float height = (((player.getLocation().getPitch() * -1) + 90) / 35);
+			    
+			    if (launchheight > 0)
+			    {
+				height = launchheight;
+			    }
+			    
+			    player.setVelocity(velocity.setY(height));			    
+			    plugin.cm.showLaunch(player);
+			    startFallImmunity(player);
 			}
-			
-			player.setVelocity(velocity.setY(height));
-			
-			plugin.cm.showLaunch(player);
-			startFallImmunity(player);
-		    }
-		}, 0L);
+		    }, 0L);
+		}
 	    }
 	}
     }
@@ -66,28 +68,31 @@ public class VelocityManager
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
 	{
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-	    
-	    final int bounceHeight = fieldsettings.bounceHeight;
-	    
-	    if (fieldsettings.bounce)
+	    if (field.isAllAllowed(player.getName()))
 	    {
-		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+		
+		final int bounceHeight = fieldsettings.bounceHeight;
+		
+		if (fieldsettings.bounce)
 		{
-		    public void run()
+		    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 		    {
-			float height = (((player.getLocation().getPitch() * -1) + 90) / 35);
-			
-			if (bounceHeight > 0)
+			public void run()
 			{
-			    height = bounceHeight;
+			    float height = (((player.getLocation().getPitch() * -1) + 90) / 35);
+			    
+			    if (bounceHeight > 0)
+			    {
+				height = bounceHeight;
+			    }
+			    
+			    player.setVelocity(new Vector(0, height, 0));
+			    plugin.cm.showBounce(player);
+			    startFallImmunity(player);
 			}
-			
-			player.setVelocity(new Vector(0, height, 0));
-			plugin.cm.showBounce(player);
-			startFallImmunity(player);
-		    }
-		}, 5L);
+		    }, 5L);
+		}
 	    }
 	}
     }
@@ -113,7 +118,7 @@ public class VelocityManager
     {
 	final String name = player.getName();
 	
-	plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable()
+	plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 	{
 	    public void run()
 	    {

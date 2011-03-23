@@ -165,8 +165,12 @@ public class EntryManager
 	}
 	
 	plugin.snm.recordSnitchEntry(player, field);
-	plugin.vm.launchPlayer(player, field);
-	plugin.vm.bouncePlayer(player, field);
+	
+	if (!plugin.ffm.isRedstoneHookedDisabled(field))
+	{
+	    plugin.vm.launchPlayer(player, field);
+	    plugin.vm.bouncePlayer(player, field);
+	}
     }
     
     public void leaveField(Player player, Field field)

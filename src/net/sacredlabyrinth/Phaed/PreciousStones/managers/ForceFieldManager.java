@@ -12,9 +12,11 @@ import org.bukkit.World;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
@@ -194,11 +196,128 @@ public class ForceFieldManager
     }
     
     /**
+     * Returns the source block for the field
+     */
+    public Block getBlock(Field field)
+    {
+	if (plugin.getServer().getWorld(field.getWorld()) == null)
+	{
+	    return null;
+	}
+	
+	return plugin.getServer().getWorld(field.getWorld()).getBlockAt(field.getX(), field.getY(), field.getZ());
+    }
+    
+    /**
      * Looks for the block in our field collection
      */
     public boolean isField(Block fieldblock)
     {
 	return getField(fieldblock) != null;
+    }
+    
+    /**
+     * Wehter a redstone hooked field is in a disabled state
+     */
+    public boolean isRedstoneHookedDisabled(Field field)
+    {
+	Block block = plugin.ffm.getBlock(field);
+	
+	if (isAnywayPowered(block))
+	{
+	    return false;
+	}
+	
+	Material topmat = block.getRelative(BlockFace.UP).getType();
+	
+	if (topmat.equals(Material.STONE_PLATE) || topmat.equals(Material.WOOD_PLATE))
+	{
+	    return true;
+	}
+	
+	for (int x = -1; x <= 1; x++)
+	{
+	    for (int y = -1; y <= 1; y++)
+	    {
+		for (int z = -1; z <= 1; z++)
+		{
+		    if (x == 0 && y == 0 && z == 0)
+		    {
+			continue;
+		    }
+		    
+		    Block source = block.getRelative(x, y, z);
+		    
+		    if ((source.getType().equals(Material.REDSTONE_WIRE) && source.getBlockPower() == 0))
+		    {
+			return true;
+		    }
+		}
+	    }
+	}
+	
+	Block up = block.getRelative(BlockFace.UP);
+	Block down = block.getRelative(BlockFace.DOWN);
+	Block west = block.getRelative(BlockFace.WEST);
+	Block east = block.getRelative(BlockFace.EAST);
+	Block north = block.getRelative(BlockFace.NORTH);
+	Block south = block.getRelative(BlockFace.SOUTH);
+	
+	
+	if (up.getType().equals(Material.REDSTONE_TORCH_OFF) || down.getType().equals(Material.REDSTONE_TORCH_OFF) || east.getType().equals(Material.REDSTONE_TORCH_OFF) || west.getType().equals(Material.REDSTONE_TORCH_OFF) || north.getType().equals(Material.REDSTONE_TORCH_OFF) || south.getType().equals(Material.REDSTONE_TORCH_OFF))
+	{
+	    return true;
+	}
+	
+	if (up.getType().equals(Material.STONE_BUTTON) || down.getType().equals(Material.STONE_BUTTON) || east.getType().equals(Material.STONE_BUTTON) || west.getType().equals(Material.STONE_BUTTON) || north.getType().equals(Material.STONE_BUTTON) || south.getType().equals(Material.STONE_BUTTON))
+	{
+	    return true;
+	}
+	
+	if (up.getType().equals(Material.LEVER) && up.getBlockPower() == 0 || down.getType().equals(Material.LEVER) && up.getBlockPower() == 0 || east.getType().equals(Material.LEVER) && up.getBlockPower() == 0 || west.getType().equals(Material.LEVER) && up.getBlockPower() == 0 || north.getType().equals(Material.LEVER) && up.getBlockPower() == 0 || south.getType().equals(Material.LEVER) && up.getBlockPower() == 0)
+	{
+	    return true;
+	}
+	
+	return false;
+    }
+    
+    /**
+     * If there is current any where around the block
+     */
+    public boolean isAnywayPowered(Block block)
+    {
+	if (block.isBlockIndirectlyPowered() || block.isBlockPowered())
+	{
+	    return true;
+	}
+	
+	for (int x = -1; x <= 1; x++)
+	{
+	    for (int y = -1; y <= 1; y++)
+	    {
+		for (int z = -1; z <= 1; z++)
+		{
+		    if (x == 0 && y == 0 && z == 0)
+		    {
+			continue;
+		    }
+		    
+		    Block source = block.getRelative(x, y, z);
+		    
+		    if (source.getType().equals(Material.REDSTONE_WIRE))
+		    {
+			if (source.getBlockPower() > 0)
+			{
+			    return true;
+			}
+		    }
+
+		}
+	    }
+	}
+	
+	return false;
     }
     
     /**
@@ -359,6 +478,21 @@ public class ForceFieldManager
      */
     public Field getOneAllowedField(Block blockInArea, Player player)
     {
+	TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.settings.throughFields);
+	
+	if (tb != null)
+	{
+	    Block targetblock = tb.getTargetBlock();
+	    
+	    if (targetblock != null)
+	    {
+		if (plugin.settings.isFieldType(targetblock) && plugin.ffm.isField(targetblock))
+		{
+		    return getField(targetblock);
+		}
+	    }
+	}
+	
 	LinkedList<Field> sourcefields = getSourceFields(blockInArea);
 	
 	for (Field field : sourcefields)
@@ -987,7 +1121,7 @@ public class ForceFieldManager
 	LinkedList<Field> fieldsinarea = getFieldsInArea(scopedBlock);
 	
 	for (Field field : fieldsinarea)
-	{	
+	{
 	    FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
 	    
 	    if (fs.noConflict)

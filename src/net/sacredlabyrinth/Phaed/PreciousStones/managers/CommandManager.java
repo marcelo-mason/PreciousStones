@@ -44,11 +44,11 @@ public class CommandManager
 	if (helpPlugin != null)
 	{
 	    helpPlugin.registerCommand("ps [on|off] ", " Disable/Enable the placing of pstones", plugin, true, "preciousstones.benefit.onoff");
-	    helpPlugin.registerCommand("ps allow [player] ", "Add player to overlapping fields", plugin, true, "preciousstones.whitelist.allow");
-	    helpPlugin.registerCommand("ps allowall [player] ", "Add player to all your fields", plugin, true, "preciousstones.whitelist.allowall");
+	    helpPlugin.registerCommand("ps allow [player|*] ", "Add player to overlapping fields", plugin, true, "preciousstones.whitelist.allow");
+	    helpPlugin.registerCommand("ps allowall [player|*] ", "Add player to all your fields", plugin, true, "preciousstones.whitelist.allowall");
 	    helpPlugin.registerCommand("ps allowed ", "List allowed players in overlapping fields", plugin, true, "preciousstones.whitelist.allowed");
-	    helpPlugin.registerCommand("ps remove [player] ", "Remove player from overlapping fields", plugin, true, "preciousstones.whitelist.remove");
-	    helpPlugin.registerCommand("ps removeall [player] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
+	    helpPlugin.registerCommand("ps remove [player|*] ", "Remove player from overlapping fields", plugin, true, "preciousstones.whitelist.remove");
+	    helpPlugin.registerCommand("ps removeall [player|*] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
 	    helpPlugin.registerCommand("ps who ", "List all inhabitants inside the overlapping fields", plugin, true, "preciousstones.whitelist.who");
 	    helpPlugin.registerCommand("ps setname [name] ", "Set the name of force-fields", plugin, true, "preciousstones.benefit.setname");
 	    helpPlugin.registerCommand("ps snitch <clear> ", "View/clear snitch you're pointing at", plugin, true, "preciousstones.benefit.snitch");
@@ -107,6 +107,7 @@ public class CommandManager
 	    {
 		if (split.length == 2)
 		{
+		    
 		    Field field = plugin.ffm.getOneAllowedField(block, player);
 		    
 		    if (field != null)
@@ -305,25 +306,11 @@ public class CommandManager
 	    {
 		if (split.length == 1)
 		{
-		    TargetBlock tb = new TargetBlock(player, 100, 0.2, new int[] { 0, 6, 8, 9, 37, 38, 39, 40, 50, 51, 55, 59, 63, 68, 69, 70, 72, 75, 76, 83, 85 });
+		    Field field = plugin.ffm.getOneAllowedField(block, player);
 		    
-		    if (tb != null)
+		    if (field != null)
 		    {
-			Block targetblock = tb.getTargetBlock();
-			
-			if (targetblock != null)
-			{
-			    if (plugin.settings.isFieldType(targetblock) && plugin.ffm.isField(targetblock))
-			    {
-				FieldSettings fieldsettings = plugin.settings.getFieldSettings(targetblock.getTypeId());
-				
-				if (fieldsettings.snitch)
-				{
-				    Field field = plugin.ffm.getField(targetblock);				    
-				    plugin.snm.showIntruderList(player, field);
-				}
-			    }
-			}
+			plugin.snm.showIntruderList(player, field);
 		    }
 		    
 		    ChatBlock.sendMessage(player, ChatColor.RED + "You are not pointing at a snitch block");
@@ -385,7 +372,13 @@ public class CommandManager
 	    }
 	    else if (split[0].equals("info") && plugin.pm.hasPermission(player, "preciousstones.admin.info"))
 	    {
+		Field pointing = plugin.ffm.getOneAllowedField(block, player);
 		LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
+		
+		if(pointing != null && !fields.contains(pointing))
+		{
+		    fields.addLast(pointing);
+		}
 		
 		for (Field field : fields)
 		{
@@ -463,7 +456,7 @@ public class CommandManager
 		{
 		    String owner = split[1];
 		    
-		    TargetBlock tb = new TargetBlock(player, 100, 0.2, new int[] { 0, 6, 8, 9, 37, 38, 39, 40, 50, 51, 55, 59, 63, 68, 69, 70, 72, 75, 76, 83, 85 });
+		    TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.settings.throughFields);
 		    
 		    if (tb != null)
 		    {
@@ -591,12 +584,12 @@ public class CommandManager
 	
 	if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allow"))
 	{
-	    ChatBlock.sendMessage(player, color + "/ps allow [player] " + ChatColor.GRAY + "- Add player to overlapping fields");
+	    ChatBlock.sendMessage(player, color + "/ps allow [player|*] " + ChatColor.GRAY + "- Add player to overlapping fields");
 	}
 	
 	if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allowall"))
 	{
-	    ChatBlock.sendMessage(player, color + "/ps allowall [player] " + ChatColor.GRAY + "- Add player to all your fields");
+	    ChatBlock.sendMessage(player, color + "/ps allowall [player|*] " + ChatColor.GRAY + "- Add player to all your fields");
 	}
 	
 	if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allowed"))
@@ -606,12 +599,12 @@ public class CommandManager
 	
 	if (plugin.pm.hasPermission(player, "preciousstones.whitelist.remove"))
 	{
-	    ChatBlock.sendMessage(player, color + "/ps remove [player] " + ChatColor.GRAY + "- Remove player from overlapping fields");
+	    ChatBlock.sendMessage(player, color + "/ps remove [player|*] " + ChatColor.GRAY + "- Remove player from overlapping fields");
 	}
 	
 	if (plugin.pm.hasPermission(player, "preciousstones.whitelist.removeall"))
 	{
-	    ChatBlock.sendMessage(player, color + "/ps removeall [player] " + ChatColor.GRAY + "- Remove player from all your fields");
+	    ChatBlock.sendMessage(player, color + "/ps removeall [player|*] " + ChatColor.GRAY + "- Remove player from all your fields");
 	}
 	
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.who"))

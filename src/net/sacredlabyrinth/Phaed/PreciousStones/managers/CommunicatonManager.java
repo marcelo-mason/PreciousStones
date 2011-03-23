@@ -826,7 +826,7 @@ public class CommunicatonManager
     
     public void showThump(Player player)
     {
-	ChatBlock.sendMessage(player, ChatColor.DARK_RED + "*thump*");
+	ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "*thump*");
     }
     
     public void showSlowHeal(Player player)

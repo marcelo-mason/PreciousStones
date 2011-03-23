@@ -61,10 +61,11 @@ public class SettingsManager
     public boolean disableAlertsForAdmins;
     public boolean disableBypassAlertsForAdmins;
     public boolean offByDefault;
-    
     public int chunksInLargestForceFieldArea;
     public List<Integer> ffBlocks = new ArrayList<Integer>();
     
+    public int[] throughFields = new int[] { 0, 6, 8, 9, 37, 38, 39, 40, 50, 51, 55, 59, 63, 68, 69, 70, 72, 75, 76, 83, 85 };
+
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
     
