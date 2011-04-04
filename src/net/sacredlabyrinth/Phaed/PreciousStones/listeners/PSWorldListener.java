@@ -19,7 +19,7 @@ public class PSWorldListener extends WorldListener
     }
     
     @Override
-    public void onWorldSaved(WorldEvent event)
+    public void onWorldSave(WorldSaveEvent event)
     {
 	plugin.sm.save();
     }

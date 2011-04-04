@@ -169,8 +169,10 @@ public class EntryManager
 	if (!plugin.ffm.isRedstoneHookedDisabled(field))
 	{
 	    plugin.vm.launchPlayer(player, field);
-	    plugin.vm.bouncePlayer(player, field);
+	    plugin.vm.shootPlayer(player, field);
 	}
+	
+	plugin.mm.enterMine(player, field);
     }
     
     public void leaveField(Player player, Field field)

@@ -818,12 +818,18 @@ public class CommunicatonManager
 	    ChatBlock.sendMessage(player, ChatColor.LIGHT_PURPLE + "*launch*");
     }
     
-    public void showBounce(Player player)
+    public void showCannon(Player player)
     {
-	if (plugin.settings.warnBounce && canWarn(player))
-	    ChatBlock.sendMessage(player, ChatColor.LIGHT_PURPLE + "*bounce*");
+	if (plugin.settings.warnCannon && canWarn(player))
+	    ChatBlock.sendMessage(player, ChatColor.LIGHT_PURPLE + "*boom*");
     }
-    
+
+    public void showMine(Player player)
+    {
+	if (plugin.settings.warnMine && canWarn(player))
+	    ChatBlock.sendMessage(player, ChatColor.RED + "*goodbye*");
+    }    
+
     public void showThump(Player player)
     {
 	ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "*thump*");

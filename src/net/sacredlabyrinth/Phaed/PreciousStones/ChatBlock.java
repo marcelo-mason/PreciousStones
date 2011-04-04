@@ -9,7 +9,7 @@ import java.util.regex.*;
 public class ChatBlock
 {
     private final int colspacing = 12;
-    private static final int lineLength = 318;
+    private static final int lineLength = 320;
     private ArrayList<Double> columnSizes = new ArrayList<Double>();
     private ArrayList<Integer> columnSpaces = new ArrayList<Integer>();
     private ArrayList<String> columnAlignments = new ArrayList<String>();

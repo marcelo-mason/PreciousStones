@@ -68,7 +68,7 @@ public class PSEntityListener extends EntityListener
 	    if (event.getEntity() instanceof Player)
 	    {
 		Player player = (Player) event.getEntity();
-		
+
 		if (plugin.vm.isFallDamageImmune(player))
 		{
 		    event.setCancelled(true);

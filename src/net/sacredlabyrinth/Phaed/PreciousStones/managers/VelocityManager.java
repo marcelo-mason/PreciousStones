@@ -1,8 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -14,7 +12,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 public class VelocityManager
 {
     private PreciousStones plugin;
-    private Set<String> fallDamageImmune = Collections.synchronizedSet(new HashSet<String>());
+    private HashMap<String, Integer> fallDamageImmune = new HashMap<String, Integer>();
     
     public VelocityManager(PreciousStones plugin)
     {
@@ -54,17 +52,17 @@ public class VelocityManager
 				height = launchheight;
 			    }
 			    
-			    player.setVelocity(velocity.setY(height));			    
+			    player.setVelocity(velocity.setY(height));
 			    plugin.cm.showLaunch(player);
 			    startFallImmunity(player);
 			}
-		    }, 0L);
+		    }, 5L);
 		}
 	    }
 	}
     }
     
-    public void bouncePlayer(final Player player, Field field)
+    public void shootPlayer(final Player player, Field field)
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
 	{
@@ -72,9 +70,9 @@ public class VelocityManager
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 		
-		final int bounceHeight = fieldsettings.bounceHeight;
+		final int bounceHeight = fieldsettings.cannonHeight;
 		
-		if (fieldsettings.bounce)
+		if (fieldsettings.cannon)
 		{
 		    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 		    {
@@ -88,7 +86,7 @@ public class VelocityManager
 			    }
 			    
 			    player.setVelocity(new Vector(0, height, 0));
-			    plugin.cm.showBounce(player);
+			    plugin.cm.showCannon(player);
 			    startFallImmunity(player);
 			}
 		    }, 5L);
@@ -97,28 +95,28 @@ public class VelocityManager
 	}
     }
     
-    public void startFallImmunity(Player player)
-    {
-	fallDamageImmune.add(player.getName());
-	startImmuneRemovalDelay(player);
+    public void startFallImmunity(final Player player)
+    {	
+	if (fallDamageImmune.containsKey(player.getName()))
+	{
+	    int current = fallDamageImmune.get(player.getName());
+	    
+	    plugin.getServer().getScheduler().cancelTask(current);
+	}
+
+	fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
     }
     
-    public boolean isFallDamageImmune(Player player)
+    public boolean isFallDamageImmune(final Player player)
     {
-	return fallDamageImmune.contains(player.getName());
+	return fallDamageImmune.containsKey(player.getName());
     }
     
-    public void stopFallImmunity(Player player)
-    {
-	fallDamageImmune.remove(player.getName());
-	plugin.cm.showThump(player);
-    }
-    
-    public void startImmuneRemovalDelay(final Player player)
+    public int startImmuneRemovalDelay(final Player player)
     {
 	final String name = player.getName();
 	
-	plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+	return plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 	{
 	    public void run()
 	    {

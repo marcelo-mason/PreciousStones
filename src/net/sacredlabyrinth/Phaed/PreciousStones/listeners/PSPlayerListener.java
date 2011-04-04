@@ -3,7 +3,8 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import java.util.LinkedList;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerItemEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.block.Block;
@@ -27,64 +28,72 @@ public class PSPlayerListener extends PlayerListener
     }
     
     @Override
-    public void onPlayerItem(PlayerItemEvent event)
+    public void onPlayerInteract(PlayerInteractEvent event)
     {
 	Player player = event.getPlayer();
-	Block block = event.getBlockClicked();
+	Block block = event.getClickedBlock();
 	
 	if (block == null || player == null)
 	{
 	    return;
 	}
 	
-	if (plugin.settings.isBypassBlock(block))
+	if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 	{
-	    return;
-	}
-	
-	if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
-	{
-	    plugin.snm.showIntruderList(player, plugin.ffm.getField(block));
-	}
-	else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
-	{
-	    if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+	    if (plugin.settings.isBypassBlock(block))
 	    {
-		plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
+		return;
 	    }
-	    else
-	    {
-		plugin.cm.showUnbreakableOwner(player, block);
-	    }
-	}
-	else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
-	{
-	    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
-	    {
-		plugin.cm.showFieldDetails(plugin.ffm.getField(block), player);
-	    }
-	    else
-	    {
-		plugin.cm.showFieldOwner(player, block);
-	    }
-	}
-	else
-	{
-	    Field field = plugin.ffm.isDestroyProtected(block, null);
 	    
-	    if (field != null)
+	    if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
 	    {
-		if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails)
+		plugin.snm.showIntruderList(player, plugin.ffm.getField(block));
+	    }
+	    else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
+	    {
+		if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
 		{
-		    LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
-		    
-		    plugin.cm.showProtectedLocation(fields, player);
+		    plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
 		}
 		else
 		{
-		    plugin.cm.showProtected(player);
+		    plugin.cm.showUnbreakableOwner(player, block);
 		}
 	    }
+	    else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
+	    {
+		if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+		{
+		    plugin.cm.showFieldDetails(plugin.ffm.getField(block), player);
+		}
+		else
+		{
+		    plugin.cm.showFieldOwner(player, block);
+		}
+	    }
+	    else
+	    {
+		Field field = plugin.ffm.isDestroyProtected(block, null);
+		
+		if (field != null)
+		{
+		    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails)
+		    {
+			LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
+			
+			plugin.cm.showProtectedLocation(fields, player);
+		    }
+		    else
+		    {
+			plugin.cm.showProtected(player);
+		    }
+		}
+	    }
+	}
+	
+	if (event.getAction().equals(Action.PHYSICAL))
+	{
+	    plugin.snm.recordSnitchUsed(player, block);
 	}
     }
     
@@ -109,7 +118,10 @@ public class PSPlayerListener extends PlayerListener
 			
 			if (fieldsettings.welcomeMessage)
 			{
-			    plugin.cm.showWelcomeMessage(player, currentfield.getName());
+			    if (currentfield.getStoredName().length() > 0)
+			    {
+				plugin.cm.showWelcomeMessage(player, currentfield.getName());
+			    }
 			}
 		    }
 		    
@@ -139,7 +151,10 @@ public class PSPlayerListener extends PlayerListener
 		    
 		    if (fieldsettings.farewellMessage)
 		    {
-			plugin.cm.showFarewellMessage(player, entryfield.getName());
+			if (entryfield.getStoredName().length() > 0)
+			{
+			    plugin.cm.showFarewellMessage(player, entryfield.getName());
+			}
 		    }
 		}
 	    }
@@ -157,7 +172,7 @@ public class PSPlayerListener extends PlayerListener
 	    {
 		if (fieldsettings.preventEntry)
 		{
-		    player.teleportTo(event.getFrom());
+		    player.teleport(event.getFrom());
 		    event.setCancelled(true);
 		    plugin.cm.warnEntry(player, field);
 		    break;

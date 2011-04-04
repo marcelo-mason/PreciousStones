@@ -21,6 +21,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommunicatonManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
 
 import org.bukkit.entity.Player;
@@ -34,7 +35,7 @@ import org.bukkit.command.CommandSender;
  */
 public class PreciousStones extends JavaPlugin
 {
-    public static final Logger log = Logger.getLogger("Minecraft");
+    public static Logger log;
     
     public SettingsManager settings;
     public CommandManager com;
@@ -46,6 +47,7 @@ public class PreciousStones extends JavaPlugin
     public EntryManager em;
     public PlayerManager plm;
     public SnitchManager snm;
+    public MineManager mm;
     public VelocityManager vm;
     public PermissionsManager pm;
     
@@ -59,6 +61,7 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onEnable()
     {
+	log = Logger.getLogger("Minecraft");	
 	log.info("[" + this.getDescription().getName() + "] version [" + this.getDescription().getVersion() + "] loaded");
 	
 	settings = new SettingsManager(this);
@@ -71,6 +74,7 @@ public class PreciousStones extends JavaPlugin
 	em = new EntryManager(this);
 	plm = new PlayerManager(this);
 	snm = new SnitchManager(this);
+	mm = new MineManager(this);
 	vm = new VelocityManager(this);
 	pm = new PermissionsManager(this);
 	
@@ -89,18 +93,17 @@ public class PreciousStones extends JavaPlugin
     
     private void registerEvents()
     {
-	getServer().getPluginManager().registerEvent(Event.Type.WORLD_SAVED, worldListener, Priority.Lowest, this);
-	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.WORLD_SAVE, worldListener, Priority.Lowest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Monitor, this);
-	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Monitor, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FLOW, blockListener, Priority.Monitor, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FROMTO, blockListener, Priority.Monitor, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Monitor, this);
-	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_INTERACT, blockListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Priority.Highest, this);
 	
 	eventsRegistered = true;

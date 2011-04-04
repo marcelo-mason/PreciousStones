@@ -1207,6 +1207,18 @@ public class ForceFieldManager
     }
     
     /**
+     * Remove stones from the collection
+     */
+    public void silentRelease(Field field)
+    {
+	LinkedList<Field> c = chunkLists.get(field.getChunkVec());
+	
+	c.remove(field);
+	
+	setDirty();
+    }
+        
+    /**
      * Adds to deletion queue
      */
     public void queueRelease(Block fieldblock)

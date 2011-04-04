@@ -9,7 +9,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockListener;
@@ -35,7 +34,7 @@ public class PSBlockListener extends BlockListener
     }
     
     @Override
-    public void onBlockFlow(BlockFromToEvent event)
+    public void onBlockFromTo(BlockFromToEvent event)
     {
 	Field fromfield = plugin.ffm.isPlaceProtected(event.getBlock(), null);
 	Field tofield = plugin.ffm.isPlaceProtected(event.getToBlock(), null);
@@ -43,18 +42,6 @@ public class PSBlockListener extends BlockListener
 	if (fromfield == null && tofield != null)
 	{
 	    event.setCancelled(true);
-	}
-    }
-    
-    @Override
-    public void onBlockInteract(BlockInteractEvent event)
-    {
-	if (event.getEntity() instanceof Player)
-	{
-	    Player player = (Player) event.getEntity();
-	    Block block = event.getBlock();
-	    
-	    plugin.snm.recordSnitchUsed(player, block);
 	}
     }
     
@@ -114,7 +101,7 @@ public class PSBlockListener extends BlockListener
 				Field field = plugin.ffm.getField(fieldblock);
 				FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 				
-				if (fieldsettings.bounce)
+				if (fieldsettings.cannon)
 				{
 				    HashSet<String> players = plugin.em.getInhabitants(field);
 				    
@@ -124,7 +111,7 @@ public class PSBlockListener extends BlockListener
 					
 					if (player != null)
 					{
-					    plugin.vm.bouncePlayer(player, field);
+					    plugin.vm.shootPlayer(player, field);
 					}
 				    }
 				}
@@ -139,7 +126,6 @@ public class PSBlockListener extends BlockListener
 					
 					if (player != null)
 					{
-					    plugin.cm.debug("pl");
 					    plugin.vm.launchPlayer(player, field);
 					}
 				    }

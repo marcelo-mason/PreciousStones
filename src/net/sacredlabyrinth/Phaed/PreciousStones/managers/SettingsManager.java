@@ -51,7 +51,8 @@ public class SettingsManager
     public boolean warnPvp;
     public boolean warnFire;
     public boolean warnLaunch;
-    public boolean warnBounce;
+    public boolean warnCannon;
+    public boolean warnMine;
     public long saveFrequency;
     public int purgeDays;
     public boolean publicBlockDetails;
@@ -121,7 +122,8 @@ public class SettingsManager
 	warnDestroyArea = config.getBoolean("warn.destroy-area", false);
 	warnUnprotectable = config.getBoolean("warn.unprotectable", false);
 	warnLaunch = config.getBoolean("warn.launch", false);
-	warnBounce = config.getBoolean("warn.bounce", false);
+	warnCannon = config.getBoolean("warn.cannon", false);
+	warnMine = config.getBoolean("warn.mine", false);
 	purgeDays = config.getInt("saving.purge-backups-after-days", 5);
 	saveFrequency = config.getInt("saving.frequency-minutes", 5);
 	publicBlockDetails = config.getBoolean("settings.public-block-details", false);
@@ -332,8 +334,11 @@ public class SettingsManager
 	public boolean noConflict = false;
 	public boolean launch = false;
 	public int launchHeight = 0;
-	public boolean bounce = false;
-	public int bounceHeight = 0;
+	public boolean cannon = false;
+	public int cannonHeight = 0;
+	public boolean mine = false;
+	public int mineDelaySeconds = 0;
+	public int mineReplaceBlock = 0;
 	
 	public String getTitle()
 	{
@@ -452,11 +457,20 @@ public class SettingsManager
 	    if (map.containsKey("launch-height") && Helper.isInteger(map.get("launch-height")))
 		launchHeight = (Integer) map.get("launch-height");
 
-	    if (map.containsKey("bounce") && Helper.isBoolean(map.get("bounce")))
-		bounce = (Boolean) map.get("bounce");
+	    if (map.containsKey("cannon") && Helper.isBoolean(map.get("cannon")))
+		cannon = (Boolean) map.get("cannon");
 
-	    if (map.containsKey("bounce-height") && Helper.isInteger(map.get("bounce-height")))
-		bounceHeight = (Integer) map.get("bounce-height");
+	    if (map.containsKey("cannon-height") && Helper.isInteger(map.get("cannon-height")))
+		cannonHeight = (Integer) map.get("cannon-height");
+
+	    if (map.containsKey("mine") && Helper.isBoolean(map.get("mine")))
+		mine = (Boolean) map.get("mine");
+
+	    if (map.containsKey("mine-replace-block") && Helper.isInteger(map.get("mine-replace-block")))
+		mineReplaceBlock = (Integer) map.get("mine-replace-block");
+	    
+	    if (map.containsKey("mine-delay-seconds") && Helper.isInteger(map.get("mine-delay-seconds")))
+		mineDelaySeconds = (Integer) map.get("mine-delay-seconds");
 	}
 	
 	@Override
@@ -472,6 +486,12 @@ public class SettingsManager
 	{	    
 	    String properties = "";
 	    
+	    if (welcomeMessage)
+		properties += ", welcome";
+	    
+	    if (farewellMessage)
+		properties += ", farewell";
+
 	    if (preventFire)
 		properties += ", no-fire";
 	    
@@ -514,18 +534,14 @@ public class SettingsManager
 	    if (launch)
 		properties += ", launch";
 
-	    if (bounce)
-		properties += ", bounce";
+	    if (cannon)
+		properties += ", cannon";
 
 	    if (noConflict)
 		properties += ", no-conflict";
 
-	    if (welcomeMessage)
-		properties += ", welcome";
-	    
-	    if (farewellMessage)
-		properties += ", farewell";
-
+	    if (mine)
+		properties += ", mine";
 	    
 	    if (properties.length() > 0)
 		return "Properties: " + properties.substring(2);
