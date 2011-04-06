@@ -137,7 +137,7 @@ public class ForceFieldManager
 		
 		Block block = plugin.getServer().getWorld(field.getWorld()).getBlockAt(field.getX(), field.getY(), field.getZ());
 		
-		if (!plugin.settings.isFieldType(block))
+		if (!plugin.settings.isFieldType(block) && !(plugin.settings.isCloakableType(field.getTypeId()) && (plugin.settings.isCloakType(block) || plugin.settings.isCloakableType(block))))
 		{
 		    cleanedCount++;
 		    queueRelease(field);
@@ -194,7 +194,25 @@ public class ForceFieldManager
 	}
 	return null;
     }
-    
+        
+    /**
+     * Check if a field exists in our list
+     */
+    public boolean existsField(Field field)
+    {
+	LinkedList<Field> c = chunkLists.get(field.getChunkVec());
+	
+	if (c != null)
+	{
+	    int index = c.indexOf(field);
+	    
+	    if (index > -1)
+	    {
+		return true;
+	    }
+	}
+	return false;
+    }
     /**
      * Returns the source block for the field
      */
@@ -263,7 +281,6 @@ public class ForceFieldManager
 	Block north = block.getRelative(BlockFace.NORTH);
 	Block south = block.getRelative(BlockFace.SOUTH);
 	
-	
 	if (up.getType().equals(Material.REDSTONE_TORCH_OFF) || down.getType().equals(Material.REDSTONE_TORCH_OFF) || east.getType().equals(Material.REDSTONE_TORCH_OFF) || west.getType().equals(Material.REDSTONE_TORCH_OFF) || north.getType().equals(Material.REDSTONE_TORCH_OFF) || south.getType().equals(Material.REDSTONE_TORCH_OFF))
 	{
 	    return true;
@@ -312,7 +329,7 @@ public class ForceFieldManager
 			    return true;
 			}
 		    }
-
+		    
 		}
 	    }
 	}
@@ -403,7 +420,7 @@ public class ForceFieldManager
 	{
 	    if (field.envelops(blockInArea) && (playerName == null || !field.isAllAllowed(playerName)))
 	    {
-		if (!plugin.settings.isFieldType(field.getTypeId()))
+		if (!plugin.settings.isFieldType(field.getTypeId()) && !plugin.settings.isCloakableType(field.getTypeId()))
 		{
 		    queueRelease(field);
 		}
@@ -486,7 +503,7 @@ public class ForceFieldManager
 	    
 	    if (targetblock != null)
 	    {
-		if (plugin.settings.isFieldType(targetblock) && plugin.ffm.isField(targetblock))
+		if ((plugin.settings.isFieldType(targetblock) || plugin.settings.isCloakableType(targetblock)) && plugin.ffm.isField(targetblock))
 		{
 		    return getField(targetblock);
 		}
@@ -503,6 +520,29 @@ public class ForceFieldManager
 	    }
 	}
 	
+	return null;
+    }
+    
+    /**
+     * Returns the field pointed at
+     */
+    public Field getPointedField(Block blockInArea, Player player)
+    {
+	TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.settings.throughFields);
+	
+	if (tb != null)
+	{
+	    Block targetblock = tb.getTargetBlock();
+	    
+	    if (targetblock != null)
+	    {
+		if ((plugin.settings.isFieldType(targetblock) || plugin.settings.isCloakableType(targetblock)) && plugin.ffm.isField(targetblock))
+		{
+		    return getField(targetblock);
+		}
+	    }
+	}
+
 	return null;
     }
     
@@ -889,7 +929,7 @@ public class ForceFieldManager
 		    
 		    Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 		    
-		    if (plugin.settings.isFieldType(surroundingblock))
+		    if (plugin.settings.isFieldType(surroundingblock) || plugin.settings.isCloakableType(surroundingblock))
 		    {
 			if (plugin.ffm.isField(surroundingblock))
 			{
@@ -1152,7 +1192,7 @@ public class ForceFieldManager
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
 	Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), new ArrayList<String>(), "");
 	
-	LinkedList<Field> c = chunkLists.get(new ChunkVec(fieldblock.getChunk()));
+	LinkedList<Field> c = chunkLists.get(chunkvec);
 	
 	if (c != null)
 	{
@@ -1211,13 +1251,12 @@ public class ForceFieldManager
      */
     public void silentRelease(Field field)
     {
-	LinkedList<Field> c = chunkLists.get(field.getChunkVec());
-	
+	LinkedList<Field> c = chunkLists.get(field.getChunkVec());	
 	c.remove(field);
 	
 	setDirty();
     }
-        
+    
     /**
      * Adds to deletion queue
      */
@@ -1242,7 +1281,7 @@ public class ForceFieldManager
 	World world = plugin.getServer().getWorld(field.getWorld());
 	Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
 	
-	if (plugin.settings.isFieldType(block))
+	if (plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block))
 	{
 	    ItemStack is = new ItemStack(block.getTypeId(), 1);
 	    block.setType(Material.AIR);
@@ -1258,7 +1297,7 @@ public class ForceFieldManager
 	World world = block.getWorld();
 	ItemStack is = new ItemStack(block.getTypeId(), 1);
 	
-	if (plugin.settings.isFieldType(block))
+	if (plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block))
 	{
 	    block.setType(Material.AIR);
 	    world.dropItemNaturally(block.getLocation(), is);

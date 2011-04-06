@@ -173,6 +173,7 @@ public class EntryManager
 	}
 	
 	plugin.mm.enterMine(player, field);
+	plugin.clm.decloak(field);
     }
     
     public void leaveField(Player player, Field field)
@@ -183,6 +184,11 @@ public class EntryManager
 	if (ef.size() == 0)
 	{
 	    entries.remove(player.getName());
+	}
+	
+	if (plugin.ffm.existsField(field))
+	{
+	    plugin.clm.cloak(field);
 	}
     }
     

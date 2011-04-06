@@ -23,6 +23,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.CloakManager;
 
 import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
@@ -49,6 +50,7 @@ public class PreciousStones extends JavaPlugin
     public SnitchManager snm;
     public MineManager mm;
     public VelocityManager vm;
+    public CloakManager clm;
     public PermissionsManager pm;
     
     private PSPlayerListener playerListener;
@@ -76,6 +78,7 @@ public class PreciousStones extends JavaPlugin
 	snm = new SnitchManager(this);
 	mm = new MineManager(this);
 	vm = new VelocityManager(this);
+	clm = new CloakManager(this);
 	pm = new PermissionsManager(this);
 	
 	playerListener = new PSPlayerListener(this);

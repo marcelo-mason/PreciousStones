@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
 
 public class Field extends AbstractVec
 {
@@ -17,9 +18,10 @@ public class Field extends AbstractVec
     private String name;
     private ArrayList<SnitchEntry> snitchList = new ArrayList<SnitchEntry>();
     private ArrayList<String> allowed = new ArrayList<String>();
+    private CloakEntry cloakEntry;
     private ChunkVec chunkvec;
     
-    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name, ArrayList<SnitchEntry> snitchList)
+    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name, ArrayList<SnitchEntry> snitchList, CloakEntry cloakEntry)
     {
 	super(x, y, z, world);
 	
@@ -31,6 +33,7 @@ public class Field extends AbstractVec
 	this.typeId = typeId;
 	this.chunkvec = chunkvec;
 	this.snitchList = snitchList;
+	this.cloakEntry = cloakEntry;
     }
     
     public Field(Block block, int radius, int height, String owner, ArrayList<String> allowed, String name)
@@ -59,6 +62,12 @@ public class Field extends AbstractVec
     public Field(Block block)
     {
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+    }
+    
+    public void setRadius(int radius)
+    {
+	this.radius = radius;
+	this.height = (this.radius * 2) + 1;
     }
     
     public int getTypeId()
@@ -337,16 +346,27 @@ public class Field extends AbstractVec
 	
 	for (SnitchEntry se : snitchList)
 	{
-	    out += ";" + se.getName() + "@" + se.getReason() + "#" + se.getDetails();
+	    out += se.toString();
 	}
-	
-	if (out.length() > 1)
-	{
-	    return out.substring(1).replace("§", "?");
-	}
-	
+
 	return "";
+    }    
+   
+    public CloakEntry getCloakEntry()
+    {
+	return cloakEntry;
     }
+
+    public void setCloakEntry(CloakEntry cloakEntry)
+    {
+	this.cloakEntry = cloakEntry;
+    }
+    
+    public String getCloakString()
+    {
+	return cloakEntry == null ? "" : cloakEntry.toString();
+    }
+
     
     @Override
     public String toString()

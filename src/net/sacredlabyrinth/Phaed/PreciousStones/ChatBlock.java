@@ -53,10 +53,20 @@ public class ChatBlock
     {
 	rows.add(contents);
     }
-        
+    
+    public void addRow(String contents)
+    {
+	rows.add(new String[] {contents});
+    }
+    
     public int size()
     {
 	return rows.size();
+    }
+    
+    public void clear()
+    {
+	rows.clear();
     }
         
     public boolean sendBlock(Player player, int amount)

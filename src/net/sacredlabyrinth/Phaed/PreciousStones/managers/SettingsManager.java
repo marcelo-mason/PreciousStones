@@ -18,6 +18,12 @@ public class SettingsManager
     public List<Integer> unbreakableBlocks;
     public List<Integer> bypassBlocks;
     public List<Integer> unprotectableBlocks;
+    public List<Integer> cloakableBlocks;
+    public List<Integer> cloakBlocks;
+    public int cloakMinRadius;
+    public int cloakDefaultRadius;
+    public int cloakMaxRadius;
+    public List<Integer> toolItems;
     public boolean logFire;
     public boolean logEntry;
     public boolean logPlace;
@@ -38,6 +44,7 @@ public class SettingsManager
     public boolean notifyBypassDestroy;
     public boolean notifyBypassUnprotectable;
     public boolean notifyGuardDog;
+    public boolean warnCloaking;
     public boolean warnInstantHeal;
     public boolean warnSlowHeal;
     public boolean warnSlowDamage;
@@ -64,9 +71,9 @@ public class SettingsManager
     public boolean offByDefault;
     public int chunksInLargestForceFieldArea;
     public List<Integer> ffBlocks = new ArrayList<Integer>();
+    public int[] throughFields = new int[] { 0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94 };
+    public int linesPerPage;
     
-    public int[] throughFields = new int[] { 0, 6, 8, 9, 37, 38, 39, 40, 50, 51, 55, 59, 63, 68, 69, 70, 72, 75, 76, 83, 85 };
-
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
     
@@ -90,6 +97,12 @@ public class SettingsManager
 	unbreakableBlocks = config.getIntList("unbreakable-blocks", new ArrayList<Integer>());
 	bypassBlocks = config.getIntList("bypass-blocks", new ArrayList<Integer>());
 	unprotectableBlocks = config.getIntList("unprotectable-blocks", new ArrayList<Integer>());
+	toolItems = config.getIntList("tool-items", new ArrayList<Integer>());
+	cloakableBlocks = config.getIntList("cloak.cloakable-blocks", new ArrayList<Integer>());
+	cloakBlocks = config.getIntList("cloak.cloak-blocks", new ArrayList<Integer>());
+	cloakMinRadius = config.getInt("cloak.viewing-radius.min", 5);
+	cloakMaxRadius = config.getInt("cloak.viewing-radius.max", 20);
+	cloakDefaultRadius = config.getInt("cloak.viewing-radius.default", 10);
 	logFire = config.getBoolean("log.fire", false);
 	logEntry = config.getBoolean("log.entry", false);
 	logPlace = config.getBoolean("log.place", false);
@@ -109,6 +122,7 @@ public class SettingsManager
 	notifyBypassPlace = config.getBoolean("notify.bypass-place", false);
 	notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", false);
 	notifyGuardDog = config.getBoolean("notify.guard-dog", false);
+	warnCloaking = config.getBoolean("warn.cloaking", false);
 	warnInstantHeal = config.getBoolean("warn.instant-heal", false);
 	warnSlowHeal = config.getBoolean("warn.slow-heal", false);
 	warnSlowDamage = config.getBoolean("warn.slow-damage", false);
@@ -133,6 +147,7 @@ public class SettingsManager
 	disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins", false);
 	disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
 	offByDefault = config.getBoolean("settings.off-by-default", false);
+	linesPerPage = config.getInt("settings.lines-per-page", 12);
     }
     
     @SuppressWarnings("unchecked")
@@ -160,6 +175,8 @@ public class SettingsManager
 		    largestForceField = pstone.radius;
 	    }
 	}
+	
+	largestForceField = Math.max(largestForceField, cloakMaxRadius);
 	
 	chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(((largestForceField * 2.0) + 1.0) / 16.0), 1);
     }
@@ -202,7 +219,71 @@ public class SettingsManager
     }
     
     /**
-     * Check if a block is one of the unbreakable types
+     * Check if a block is one of the tool item types
+     */
+    public boolean isToolItemType(Block block)
+    {
+	return toolItems.contains(block.getTypeId());
+    }
+    
+    /**
+     * Check if a block is one of the tool item types
+     */
+    public boolean isToolItemType(int typeId)
+    {
+	return toolItems.contains(typeId);
+    }
+    
+    /**
+     * Check if a block is one of the tool item types
+     */
+    public boolean isToolItemType(String type)
+    {
+	return toolItems.contains(Material.getMaterial(type).getId());
+    }
+    
+    /**
+     * Check if a block is one of the cloakable types
+     */
+    public boolean isCloakableType(Block block)
+    {
+	return cloakableBlocks.contains(block.getTypeId());
+    }
+    
+    /**
+     * Check if a block is one of the cloakable types
+     */
+    public boolean isCloakableType(int typeId)
+    {
+	return cloakableBlocks.contains(typeId);
+    }
+    
+    /**
+     * Check if a block is one of the cloakable types
+     */
+    public boolean isCloakableType(String type)
+    {
+	return cloakableBlocks.contains(Material.getMaterial(type).getId());
+    }
+    
+    /**
+     * Check if a block is one of the cloak types
+     */
+    public boolean isCloakType(Block block)
+    {
+	return cloakBlocks.contains(block.getTypeId());
+    }
+    
+    /**
+     * Check if a block is one of the cloak types
+     */
+    public boolean isCloakType(int typeId)
+    {
+	return cloakBlocks.contains(typeId);
+    }
+    
+    /**
+     * Check if a block is one of the snitch types
      */
     public boolean isSnitchType(Block block)
     {
@@ -286,7 +367,7 @@ public class SettingsManager
      */
     public FieldSettings getFieldSettings(Field field)
     {
-	return fieldsettings.get(field.getTypeId());
+	return getFieldSettings(field.getTypeId());
     }
     
     /**
@@ -294,6 +375,12 @@ public class SettingsManager
      */
     public FieldSettings getFieldSettings(int typeId)
     {
+	if (isCloakableType(typeId))
+	{
+	    FieldSettings fs = new FieldSettings(typeId);
+	    return fs;
+	}
+	
 	return fieldsettings.get(typeId);
     }
     
@@ -339,6 +426,7 @@ public class SettingsManager
 	public boolean mine = false;
 	public int mineDelaySeconds = 0;
 	public int mineReplaceBlock = 0;
+	public boolean cloak = false;
 	
 	public String getTitle()
 	{
@@ -366,6 +454,16 @@ public class SettingsManager
 		return (this.radius * 2) + 1;
 	    else
 		return this.height;
+	}
+	
+	public FieldSettings(int blockId)
+	{
+	    this.title = "Cloak";
+	    this.blockId = blockId;
+	    this.radius = cloakDefaultRadius;
+	    this.cloak = true;
+	    this.noConflict = true;
+	    this.breakable = true;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -441,31 +539,31 @@ public class SettingsManager
 	    
 	    if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
 		farewellMessage = (Boolean) map.get("farewell-message");
-
+	    
 	    if (map.containsKey("give-air") && Helper.isBoolean(map.get("give-air")))
 		giveAir = (Boolean) map.get("give-air");
 	    
 	    if (map.containsKey("snitch") && Helper.isBoolean(map.get("snitch")))
 		snitch = (Boolean) map.get("snitch");
-
+	    
 	    if (map.containsKey("no-conflict") && Helper.isBoolean(map.get("no-conflict")))
 		noConflict = (Boolean) map.get("no-conflict");
-
+	    
 	    if (map.containsKey("launch") && Helper.isBoolean(map.get("launch")))
 		launch = (Boolean) map.get("launch");
-
+	    
 	    if (map.containsKey("launch-height") && Helper.isInteger(map.get("launch-height")))
 		launchHeight = (Integer) map.get("launch-height");
-
+	    
 	    if (map.containsKey("cannon") && Helper.isBoolean(map.get("cannon")))
 		cannon = (Boolean) map.get("cannon");
-
+	    
 	    if (map.containsKey("cannon-height") && Helper.isInteger(map.get("cannon-height")))
 		cannonHeight = (Integer) map.get("cannon-height");
-
+	    
 	    if (map.containsKey("mine") && Helper.isBoolean(map.get("mine")))
 		mine = (Boolean) map.get("mine");
-
+	    
 	    if (map.containsKey("mine-replace-block") && Helper.isInteger(map.get("mine-replace-block")))
 		mineReplaceBlock = (Integer) map.get("mine-replace-block");
 	    
@@ -483,7 +581,7 @@ public class SettingsManager
 	}
 	
 	public String getProtertiesString()
-	{	    
+	{
 	    String properties = "";
 	    
 	    if (welcomeMessage)
@@ -491,7 +589,7 @@ public class SettingsManager
 	    
 	    if (farewellMessage)
 		properties += ", farewell";
-
+	    
 	    if (preventFire)
 		properties += ", no-fire";
 	    
@@ -524,24 +622,27 @@ public class SettingsManager
 	    
 	    if (fastDamage)
 		properties += ", fast-damage";
-
+	    
 	    if (giveAir)
 		properties += ", give-air";
-
+	    
 	    if (snitch)
 		properties += ", snitch";
-
+	    
 	    if (launch)
 		properties += ", launch";
-
+	    
 	    if (cannon)
 		properties += ", cannon";
-
+	    
 	    if (noConflict)
 		properties += ", no-conflict";
-
+	    
 	    if (mine)
 		properties += ", mine";
+	    
+	    if (cloak)
+		properties += ", cloak";
 	    
 	    if (properties.length() > 0)
 		return "Properties: " + properties.substring(2);

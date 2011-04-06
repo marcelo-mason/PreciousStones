@@ -7,6 +7,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Block;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -32,14 +33,26 @@ public class PSPlayerListener extends PlayerListener
     {
 	Player player = event.getPlayer();
 	Block block = event.getClickedBlock();
-	
+
 	if (block == null || player == null)
 	{
 	    return;
 	}
 	
+	if (event.getAction().equals(Action.PHYSICAL))
+	{
+	    plugin.snm.recordSnitchUsed(player, block);
+	}
+	
 	if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 	{
+	    ItemStack is = player.getItemInHand();
+	    
+	    if(is == null || !plugin.settings.isToolItemType(is.getTypeId()))
+	    {
+		return;
+	    }
+	    
 	    if (plugin.settings.isBypassBlock(block))
 	    {
 		return;
@@ -60,7 +73,7 @@ public class PSPlayerListener extends PlayerListener
 		    plugin.cm.showUnbreakableOwner(player, block);
 		}
 	    }
-	    else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
+	    else if ((plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block)) && plugin.ffm.isField(block))
 	    {
 		if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
 		{
@@ -89,11 +102,6 @@ public class PSPlayerListener extends PlayerListener
 		    }
 		}
 	    }
-	}
-	
-	if (event.getAction().equals(Action.PHYSICAL))
-	{
-	    plugin.snm.recordSnitchUsed(player, block);
 	}
     }
     

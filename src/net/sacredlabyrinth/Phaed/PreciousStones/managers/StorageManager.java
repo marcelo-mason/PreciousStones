@@ -5,7 +5,9 @@ import java.util.*;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
@@ -97,7 +99,7 @@ public class StorageManager
 		
 		if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !plugin.settings.isUnbreakableType(sectype))
 		{
-		    PreciousStones.log.warning(" Corrupt unbreakable: sec1 line " + linecount);
+		    PreciousStones.log.warning(" Corrupt unbreakable: type error " + linecount);
 		    continue;
 		}
 		
@@ -105,7 +107,7 @@ public class StorageManager
 		
 		if (secowner.trim().length() == 0)
 		{
-		    PreciousStones.log.warning("Corrupt unbreakable: sec2 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: owner error " + linecount);
 		    continue;
 		}
 		
@@ -113,7 +115,7 @@ public class StorageManager
 		
 		if (secworld.trim().length() == 0)
 		{
-		    PreciousStones.log.warning("Corrupt unbreakable: sec3 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: owner error " + linecount);
 		    continue;
 		}
 		
@@ -121,7 +123,7 @@ public class StorageManager
 		
 		if (plugin.getServer().getWorld(world) == null)
 		{
-		    PreciousStones.log.warning("Corrupt unbreakable: sec4 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: world error " + linecount);
 		    continue;
 		}
 		
@@ -129,7 +131,7 @@ public class StorageManager
 		
 		if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
 		{
-		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: chunk error " + linecount);
 		    continue;
 		}
 		
@@ -137,7 +139,7 @@ public class StorageManager
 		
 		if (vec.length < 3 || !Helper.isInteger(vec[0]) || !Helper.isInteger(vec[1]) || !Helper.isInteger(vec[2]))
 		{
-		    PreciousStones.log.warning("Corrupt unbreakable: sec6 line " + linecount);
+		    PreciousStones.log.warning("Corrupt unbreakable: vec error " + linecount);
 		    continue;
 		}
 		
@@ -226,19 +228,26 @@ public class StorageManager
 		String secvec = u[5];
 		String secname = u[6];
 		String secsnitch = "";
+		String seccloak = "";
 		
 		if (u.length > 7)
 		{
 		    secsnitch = u[7].replace("?", "§");
 		}
 		
+		if (u.length > 8)
+		{
+		    seccloak = u[8];
+		}
+		
 		sectype = Helper.removeChar(sectype, '[');
 		secname = Helper.removeChar(secname, ']');
 		secsnitch = Helper.removeChar(secsnitch, ']');
+		seccloak = Helper.removeChar(seccloak, ']');
 		
-		if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !plugin.settings.isFieldType(sectype))
+		if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !(plugin.settings.isFieldType(sectype) || plugin.settings.isCloakableType(sectype)))
 		{
-		    PreciousStones.log.warning("Corrupt forcefield : sec1 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield : type error " + linecount);
 		    continue;
 		}
 		
@@ -246,7 +255,7 @@ public class StorageManager
 		
 		if (secowner.trim().length() == 0)
 		{
-		    PreciousStones.log.warning("Corrupt forcefield: sec2 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: type error " + linecount);
 		    continue;
 		}
 		
@@ -263,7 +272,7 @@ public class StorageManager
 		
 		if (secworld.trim().length() == 0)
 		{
-		    PreciousStones.log.warning("Corrupt forcefield : sec4 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield : world error " + linecount);
 		    continue;
 		}
 		
@@ -271,7 +280,7 @@ public class StorageManager
 		
 		if (plugin.getServer().getWorld(world) == null)
 		{
-		    PreciousStones.log.warning("Corrupt unbreakable: sec5 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: world error " + linecount);
 		    continue;
 		}
 		
@@ -279,7 +288,7 @@ public class StorageManager
 		
 		if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
 		{
-		    PreciousStones.log.warning("Corrupt forcefield: sec6 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: chunk error " + linecount);
 		    continue;
 		}
 		
@@ -287,7 +296,7 @@ public class StorageManager
 		
 		if (vec.length < 5 || !Helper.isInteger(vec[0]) || !Helper.isInteger(vec[1]) || !Helper.isInteger(vec[2]) || !Helper.isInteger(vec[3]) || !Helper.isInteger(vec[4]))
 		{
-		    PreciousStones.log.warning("Corrupt forcefield: sec7 line " + linecount);
+		    PreciousStones.log.warning("Corrupt forcefield: vec error " + linecount);
 		    continue;
 		}
 		
@@ -313,35 +322,96 @@ public class StorageManager
 		    snitch.add(new SnitchEntry(playername, reason, details));
 		}
 		
-		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
+		CloakEntry cloakEntry = null;
 		
-		if (!plugin.settings.isFieldType(block))
+		if (seccloak.length() > 0)
 		{
-		    PreciousStones.log.warning("orphan field - skipping " + new Vec(block).toString());
-		    plugin.ffm.setDirty();
+		    if (seccloak.length() > 3 && (!seccloak.contains(";") || !seccloak.contains("<") || !seccloak.contains("/") || !seccloak.contains(">")))
+		    {
+			PreciousStones.log.warning("Corrupt forcefield: cloak1 error " + linecount);
+			continue;
+		    }
+		    
+		    byte data;
+		    ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+		    
+		    String[] cloaksplit = seccloak.split(";");
+
+		    if (Helper.isByte(cloaksplit[0]))
+		    {
+			data = Byte.parseByte(cloaksplit[0]);
+			
+			if (cloaksplit.length > 1)
+			{
+			    List<String> tempcloak = Arrays.asList(seccloak.split(","));
+			    
+			    for (String t : tempcloak)
+			    {
+				if (!t.contains("<") || !t.contains("/") || !t.contains(">"))
+				{
+				    continue;
+				}
+				
+				int a = t.indexOf("<");
+				int b = t.indexOf("/");
+				int c = t.indexOf(">");
+				
+				String item = t.substring(0, a);
+				String itemdata = t.substring(a + 1, b);
+				String damage = t.substring(b + 1, c);
+				String amount = t.substring(c + 1);
+				
+				if (Helper.isInteger(item) && Helper.isByte(itemdata) && Helper.isShort(damage) && Helper.isInteger(amount))
+				{
+				    stacks.add(new ItemStack(Integer.parseInt(item), Integer.parseInt(amount), Short.parseShort(damage), Byte.parseByte(itemdata)));
+				}
+				else
+				{
+				    stacks.add(new ItemStack(Material.AIR));
+				}
+			    }
+			}
+			
+			cloakEntry = new CloakEntry(data, stacks);
+		    }
 		}
 		else
 		{
-		    ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
-		    Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), chunkvec, world, Material.getMaterial(type).getId(), owner, allowed, name, snitch);
-		    
-		    LinkedList<Field> c;
-		    
-		    if (loadedFields.containsKey(chunkvec))
-			c = loadedFields.get(chunkvec);
-		    else
-			c = new LinkedList<Field>();
-		    
-		    if (!c.contains(field))
+		    if(plugin.settings.isCloakableType(Material.getMaterial(type).getId()))
 		    {
-			c.add(field);
+			PreciousStones.log.warning("Corrupt forcefield: cloak2 error " + linecount);
+			continue;
 		    }
-		    else
-		    {
-			PreciousStones.log.warning("Rejecting duplicate forcefield: line " + linecount);
-		    }
-		    loadedFields.put(chunkvec, c);
 		}
+		
+		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
+		
+		if (!plugin.settings.isFieldType(block) && !(plugin.settings.isCloakableType(Material.getMaterial(type).getId()) && (plugin.settings.isCloakType(block) || plugin.settings.isCloakableType(block))))
+		{
+		    PreciousStones.log.warning("orphan field - skipping " + new Vec(block).toString());
+		    plugin.ffm.setDirty();
+		    continue;
+		}
+		
+		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
+		Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), chunkvec, world, Material.getMaterial(type).getId(), owner, allowed, name, snitch, cloakEntry);
+		
+		LinkedList<Field> c;
+		
+		if (loadedFields.containsKey(chunkvec))
+		    c = loadedFields.get(chunkvec);
+		else
+		    c = new LinkedList<Field>();
+		
+		if (!c.contains(field))
+		{
+		    c.add(field);
+		}
+		else
+		{
+		    PreciousStones.log.warning("Rejecting duplicate forcefield: line " + linecount);
+		}
+		loadedFields.put(chunkvec, c);
 	    }
 	    
 	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + loadedFields.size() + " forcefield blocks");
@@ -384,7 +454,9 @@ public class StorageManager
 	try
 	{
 	    if (!temp_unbreakable.exists())
+	    {
 		temp_unbreakable.createNewFile();
+	    }
 	    
 	    fwriter = new FileWriter(temp_unbreakable);
 	    bwriter = new BufferedWriter(fwriter);
@@ -463,7 +535,9 @@ public class StorageManager
 	try
 	{
 	    if (!temp_forcefield.exists())
+	    {
 		temp_forcefield.createNewFile();
+	    }
 	    
 	    fwriter = new FileWriter(temp_forcefield);
 	    bwriter = new BufferedWriter(fwriter);
@@ -513,6 +587,8 @@ public class StorageManager
 		    builder.append(field.getStoredName());
 		    builder.append("|");
 		    builder.append(field.getSnitchListString());
+		    builder.append("|");
+		    builder.append(field.getCloakString());
 		    builder.append("]");
 		    bwriter.write(builder.toString());
 		    bwriter.newLine();

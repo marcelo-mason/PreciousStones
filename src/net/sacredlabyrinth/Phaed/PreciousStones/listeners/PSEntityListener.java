@@ -36,7 +36,7 @@ public class PSEntityListener extends EntityListener
 	    if (plugin.settings.isUnbreakableType(block))
 		event.setCancelled(true);
 	    
-	    if (plugin.settings.isFieldType(block))
+	    if (plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block))
 		event.setCancelled(true);
 	    
 	    LinkedList<Field> fields = plugin.ffm.getSourceFields(block);

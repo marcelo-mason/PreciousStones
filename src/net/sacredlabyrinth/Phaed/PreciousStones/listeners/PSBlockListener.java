@@ -174,7 +174,7 @@ public class PSBlockListener extends BlockListener
 		plugin.cm.warnDestroyU(player, damagedblock);
 	    }
 	}
-	else if (plugin.settings.isFieldType(damagedblock) && plugin.ffm.isField(damagedblock))
+	else if ((plugin.settings.isFieldType(damagedblock) || plugin.settings.isCloakableType(damagedblock)) && plugin.ffm.isField(damagedblock))
 	{
 	    if (plugin.ffm.isBreakable(damagedblock))
 	    {

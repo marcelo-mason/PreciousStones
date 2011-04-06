@@ -15,6 +15,37 @@ public class Helper
     }
     
     /**
+     * Helper function to check for byte
+     */
+    public static boolean isByte(String input)
+    {
+	try
+	{
+	    Byte.parseByte(input);
+	    return true;
+	}
+	catch (Exception ex)
+	{
+	    return false;
+	}
+    }
+    
+    /**
+     * Helper function to check for short
+     */
+    public static boolean isShort(String input)
+    {
+	try
+	{
+	    Short.parseShort(input);
+	    return true;
+	}
+	catch (Exception ex)
+	{
+	    return false;
+	}
+    }
+    /**
      * Helper function to check for integer
      */
     public static boolean isInteger(String input)

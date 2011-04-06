@@ -20,18 +20,12 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 public class SnitchManager
 {
     private PreciousStones plugin;
-    private ChatBlock cacheblock = new ChatBlock();
     
     public SnitchManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
-    
-    public ChatBlock getCacheBlock()
-    {
-	return cacheblock;
-    }
-    
+
     public void recordSnitchEntry(Player player, Field field)
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
@@ -129,20 +123,20 @@ public class SnitchManager
 		
 		if (snitches.size() > 0)
 		{
-		    cacheblock = new ChatBlock();
+		    plugin.com.getCacheBlock().clear();
 		    
 		    ChatBlock.sendBlank(player);
 		    ChatBlock.saySingle(player, ChatColor.YELLOW + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
 		    ChatBlock.sendBlank(player);
 		    
-		    cacheblock.addRow(new String[] { "  " + ChatColor.GRAY + "Name", "Reason", "Details" });
+		    plugin.com.getCacheBlock().addRow(new String[] { "  " + ChatColor.GRAY + "Name", "Reason", "Details" });
 		    
 		    for (SnitchEntry se : snitches)
 		    {
-			cacheblock.addRow(new String[] { "  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails().replace("{", "[").replace("}", "]") });
+			plugin.com.getCacheBlock().addRow(new String[] { "  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails().replace("{", "[").replace("}", "]") });
 		    }
 		    
-		    boolean more = cacheblock.sendBlock(player, 12);
+		    boolean more = plugin.com.getCacheBlock().sendBlock(player, plugin.settings.linesPerPage);
 		    
 		    if (more)
 		    {

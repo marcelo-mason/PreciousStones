@@ -22,14 +22,14 @@ public class SnitchEntry
     
     public String getReasonDisplay()
     {
-	if(count > 1)
+	if (count > 1)
 	{
 	    return this.reason + " (" + count + ")";
 	}
 	
 	return this.reason;
     }
-
+    
     public String getReason()
     {
 	return this.reason;
@@ -44,4 +44,10 @@ public class SnitchEntry
     {
 	this.count = this.count + 1;
     }
+    
+    @Override
+    public String toString()
+    {
+	return (";" + name + "@" +  reason + "#" + details).replace("§", "?");
+    } 
 }
