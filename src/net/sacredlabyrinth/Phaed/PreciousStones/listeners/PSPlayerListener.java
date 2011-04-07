@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Block;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -56,6 +57,11 @@ public class PSPlayerListener extends PlayerListener
 	    if (plugin.settings.isBypassBlock(block))
 	    {
 		return;
+	    }
+	    
+	    if(block.getState() instanceof ContainerBlock)
+	    {
+		plugin.snm.recordSnitchUsed(player, block);
 	    }
 	    
 	    if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))

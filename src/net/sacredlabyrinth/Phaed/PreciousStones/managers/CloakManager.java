@@ -73,6 +73,11 @@ public class CloakManager
 	{
 	    CloakEntry ce = field.getCloakEntry();
 	    
+	    if(ce == null)
+	    {
+		return;
+	    }
+	    
 	    block.setType(Material.getMaterial(field.getTypeId()));
 	    block.setData(ce.getData());
 	    
