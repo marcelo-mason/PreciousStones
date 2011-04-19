@@ -1,7 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.util.LinkedList;
-
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 public class EntryFields

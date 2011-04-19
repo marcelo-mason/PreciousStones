@@ -49,6 +49,12 @@ public class CloakManager
 	    if (inhabitants.size() == 0)
 	    {
 		CloakEntry ce = field.getCloakEntry();
+		
+		if(ce == null)
+		{
+		    return;
+		}
+		
 		ce.setData(block.getData());
 		
 		if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))

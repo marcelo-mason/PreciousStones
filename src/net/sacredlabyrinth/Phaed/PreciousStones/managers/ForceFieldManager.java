@@ -19,6 +19,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.entity.Vehicle;
 
 /**
  * Handles force-fields
@@ -148,6 +149,7 @@ public class ForceFieldManager
 	
 	return cleanedCount;
     }
+
     
     /**
      * If its unbreakable or not
@@ -194,7 +196,7 @@ public class ForceFieldManager
 	}
 	return null;
     }
-        
+    
     /**
      * Check if a field exists in our list
      */
@@ -213,6 +215,7 @@ public class ForceFieldManager
 	}
 	return false;
     }
+    
     /**
      * Returns the source block for the field
      */
@@ -440,6 +443,15 @@ public class ForceFieldManager
     /**
      * Returns the blocks that are originating the protective fields the block is in
      */
+    public LinkedList<Field> getSourceFields(Vehicle vehicle)
+    {
+	Block block = vehicle.getWorld().getBlockAt(vehicle.getLocation().getBlockX(), vehicle.getLocation().getBlockY(), vehicle.getLocation().getBlockZ());
+	return getSourceFields(block, null);
+    }
+    
+    /**
+     * Returns the blocks that are originating the protective fields the block is in
+     */
     public LinkedList<Field> getSourceFields(Block blockInArea)
     {
 	return getSourceFields(blockInArea, null);
@@ -505,7 +517,12 @@ public class ForceFieldManager
 	    {
 		if ((plugin.settings.isFieldType(targetblock) || plugin.settings.isCloakableType(targetblock)) && plugin.ffm.isField(targetblock))
 		{
-		    return getField(targetblock);
+		    Field f = getField(targetblock);
+		    
+		    if (f.isAllAllowed(player.getName()))
+		    {
+			return f;
+		    }
 		}
 	    }
 	}
@@ -538,11 +555,16 @@ public class ForceFieldManager
 	    {
 		if ((plugin.settings.isFieldType(targetblock) || plugin.settings.isCloakableType(targetblock)) && plugin.ffm.isField(targetblock))
 		{
-		    return getField(targetblock);
+		    Field f = getField(targetblock);
+		    
+		    if (f.isAllAllowed(player.getName()))
+		    {
+			return f;
+		    }
 		}
 	    }
 	}
-
+	
 	return null;
     }
     
@@ -1251,7 +1273,7 @@ public class ForceFieldManager
      */
     public void silentRelease(Field field)
     {
-	LinkedList<Field> c = chunkLists.get(field.getChunkVec());	
+	LinkedList<Field> c = chunkLists.get(field.getChunkVec());
 	c.remove(field);
 	
 	setDirty();

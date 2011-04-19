@@ -392,12 +392,12 @@ public class CommandManager
 			    {
 				if (radius > plugin.settings.cloakMaxRadius)
 				{
-				    ChatBlock.sendMessage(player, ChatColor.RED + "Minimum cloak field size is " + plugin.settings.cloakMinRadius + " blocks");
+				    ChatBlock.sendMessage(player, ChatColor.RED + "Maximum cloak field size is " + plugin.settings.cloakMaxRadius + " blocks");
 				}
 				
 				if (radius < plugin.settings.cloakMinRadius)
 				{
-				    ChatBlock.sendMessage(player, ChatColor.RED + "Maximum cloak field size is " + plugin.settings.cloakMaxRadius + " blocks");
+				    ChatBlock.sendMessage(player, ChatColor.RED + "Minimum cloak field size is " + plugin.settings.cloakMinRadius + " blocks");
 				}
 				
 				return true;

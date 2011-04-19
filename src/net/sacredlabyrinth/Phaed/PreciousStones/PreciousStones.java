@@ -10,6 +10,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSBlockListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSEntityListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSPlayerListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSWorldListener;
+import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSVehicleListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommandManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager;
@@ -57,8 +58,7 @@ public class PreciousStones extends JavaPlugin
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
     private PSWorldListener worldListener;
-    
-    private boolean eventsRegistered = false;
+    private PSVehicleListener vehicleListener;
     
     @Override
     public void onEnable()
@@ -85,11 +85,9 @@ public class PreciousStones extends JavaPlugin
 	blockListener = new PSBlockListener(this);
 	entityListener = new PSEntityListener(this);
 	worldListener = new PSWorldListener(this);
+	vehicleListener = new PSVehicleListener(this);
 	
-	if(!eventsRegistered)
-	{
-	    registerEvents();
-	}
+	registerEvents();
 	
 	com.registerHelpCommands();
     }
@@ -108,8 +106,8 @@ public class PreciousStones extends JavaPlugin
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Priority.Highest, this);
-	
-	eventsRegistered = true;
+	getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.Highest, this);
+	getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.Highest, this);
     }
     
     @Override
