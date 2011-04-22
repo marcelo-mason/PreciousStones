@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.ChatColor;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
@@ -90,6 +91,25 @@ public class SnitchManager
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Used", toBlockDetails(block));
+		    plugin.ffm.setDirty();
+		}
+	    }
+	}
+    }
+    
+    public void recordSnitchShop(Player player, Block block)
+    {
+	Sign sign = (Sign) block.getState();
+	
+	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
+	{
+	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+	    
+	    for (Field field : snitchFields)
+	    {
+		if (!field.isAllAllowed(player.getName()))
+		{
+		    field.addIntruder(player.getName(), ChatColor.GREEN + "Shopped", sign.getLines().length == 0 ? "empty" : sign.getLine(0));
 		    plugin.ffm.setDirty();
 		}
 	    }

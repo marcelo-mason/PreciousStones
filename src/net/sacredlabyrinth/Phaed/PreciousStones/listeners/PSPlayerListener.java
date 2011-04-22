@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Block;
+import org.bukkit.Material;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
@@ -34,7 +35,7 @@ public class PSPlayerListener extends PlayerListener
     {
 	Player player = event.getPlayer();
 	Block block = event.getClickedBlock();
-
+	
 	if (block == null || player == null)
 	{
 	    return;
@@ -46,10 +47,20 @@ public class PSPlayerListener extends PlayerListener
 	}
 	
 	if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-	{
+	{   
+	    if (block.getType().equals(Material.WALL_SIGN))
+	    {
+		plugin.snm.recordSnitchShop(player, block);
+	    }	    
+	    
+	    if (block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.STONE_BUTTON))
+	    {
+		plugin.snm.recordSnitchUsed(player, block);
+	    }
+	    
 	    ItemStack is = player.getItemInHand();
 	    
-	    if(is == null || !plugin.settings.isToolItemType(is.getTypeId()))
+	    if (is == null || !plugin.settings.isToolItemType(is.getTypeId()))
 	    {
 		return;
 	    }
@@ -59,7 +70,7 @@ public class PSPlayerListener extends PlayerListener
 		return;
 	    }
 	    
-	    if(block.getState() instanceof ContainerBlock)
+	    if (block.getState() instanceof ContainerBlock)
 	    {
 		plugin.snm.recordSnitchUsed(player, block);
 	    }
