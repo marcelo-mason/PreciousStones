@@ -54,7 +54,7 @@ public class ChatBlock
 	rows.add(contents);
     }
     
-    public void addRow(String contents)
+    public void addSingleRow(String contents)
     {
 	rows.add(new String[] {contents});
     }
