@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -68,7 +69,7 @@ public class PSEntityListener extends EntityListener
 	    if (event.getEntity() instanceof Player)
 	    {
 		Player player = (Player) event.getEntity();
-
+		
 		if (plugin.vm.isFallDamageImmune(player))
 		{
 		    event.setCancelled(true);
@@ -80,8 +81,6 @@ public class PSEntityListener extends EntityListener
 	if (event instanceof EntityDamageByEntityEvent)
 	{
 	    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
-	    
-	    // prevent pvp
 	    
 	    if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Player)
 	    {
@@ -111,6 +110,70 @@ public class PSEntityListener extends EntityListener
 			    sub.setCancelled(true);
 			    plugin.cm.warnPvP(attacker, victim, field);
 			}
+			break;
+		    }
+		}
+	    }
+	}
+	
+	if (event instanceof EntityDamageByProjectileEvent)
+	{
+	    EntityDamageByProjectileEvent sub = (EntityDamageByProjectileEvent) event;
+	    
+	    if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Player)
+	    {
+		Player attacker = (Player) sub.getDamager();
+		Player victim = (Player) sub.getEntity();
+		
+		LinkedList<Field> fields = plugin.ffm.getSourceFields(victim);
+		
+		for (Field field : fields)
+		{
+		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+		    
+		    if (fieldsettings.preventPvP)
+		    {
+			if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
+			{
+			    plugin.cm.notifyGuardDog(attacker, field, "pvp");
+			    continue;
+			}
+			
+			if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
+			{
+			    plugin.cm.warnBypassPvP(attacker, victim, field);
+			}
+			else
+			{
+			    sub.setCancelled(true);
+			    plugin.cm.warnPvP(attacker, victim, field);
+			}
+			break;
+		    }
+		}
+	    }
+	}
+	
+	if (event.getCause().equals(DamageCause.ENTITY_ATTACK))
+	{
+	    if (event.getEntity() instanceof Player)
+	    {
+		Player player = (Player) event.getEntity();
+		
+		LinkedList<Field> fields = plugin.ffm.getSourceFields(player);
+		
+		for (Field field : fields)
+		{
+		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+		    
+		    if (fieldsettings.preventPvP)
+		    {
+			if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
+			{
+			    continue;
+			}
+			
+			event.setCancelled(true);
 			break;
 		    }
 		}
