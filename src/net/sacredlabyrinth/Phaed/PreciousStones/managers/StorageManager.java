@@ -375,17 +375,12 @@ public class StorageManager
 			cloakEntry = new CloakEntry(data, stacks);
 		    }
 		}
-		else
-		{
-		    if(plugin.settings.isCloakableType(Material.getMaterial(type).getId()))
-		    {
-			PreciousStones.log.warning("Corrupt forcefield: cloak2 error " + linecount);
-			continue;
-		    }
-		}
 		
 		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
 		
+		// if the field is a cloakable field yet the material type is neither a cloaked or clokable material (means its corrupted) then we orphan it
+		// otherwise if the field is not a field type, then we orphan it as well.
+			
 		if (!plugin.settings.isFieldType(block) && !(plugin.settings.isCloakableType(Material.getMaterial(type).getId()) && (plugin.settings.isCloakType(block) || plugin.settings.isCloakableType(block))))
 		{
 		    PreciousStones.log.warning("orphan field - skipping " + new Vec(block).toString());
