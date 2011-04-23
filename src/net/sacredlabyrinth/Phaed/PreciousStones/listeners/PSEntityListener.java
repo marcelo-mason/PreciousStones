@@ -31,23 +31,31 @@ public class PSEntityListener extends EntityListener
     {
 	for (Block block : event.blockList())
 	{
-	    if (plugin.settings.isUnbreakableType(block))
+	    // prevent explosion if breaking unbreakable
+	    
+	    if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
 	    {
 		event.setCancelled(true);
 		break;
 	    }
 	    
-	    if (plugin.settings.isFieldType(block))
+	    // prevent explosion if breaking field
+	    
+	    if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
 	    {
 		event.setCancelled(true);
 		break;
 	    }
 	    
-	    if (plugin.settings.isCloakableType(block))
+	    // prevent explosion if breaking cloaked block
+	    
+	    if (plugin.settings.isCloakableType(block) && plugin.ffm.isField(block))
 	    {
 		event.setCancelled(true);
 		break;
 	    }
+	    
+	    // prevent explosion if explosion protected
 
 	    Field field = plugin.ffm.isExplosionProtected(block);
 	    
