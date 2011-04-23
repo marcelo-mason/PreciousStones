@@ -435,7 +435,7 @@ public class PSBlockListener extends BlockListener
 		else
 		{
 		    event.setCancelled(true);
-		    plugin.cm.warnPlace(player, placedblock, field);
+		    plugin.cm.warnPvPLavaPlace(player, field);
 		}
 	    }
 	}
