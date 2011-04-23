@@ -47,14 +47,6 @@ public class PSEntityListener extends EntityListener
 		break;
 	    }
 	    
-	    // prevent explosion if breaking cloaked block
-	    
-	    if (plugin.settings.isCloakableType(block) && plugin.ffm.isField(block))
-	    {
-		event.setCancelled(true);
-		break;
-	    }
-	    
 	    // prevent explosion if explosion protected
 
 	    Field field = plugin.ffm.isExplosionProtected(block);
