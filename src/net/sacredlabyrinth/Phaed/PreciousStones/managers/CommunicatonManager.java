@@ -572,6 +572,29 @@ public class CommunicatonManager
 	}
     }
     
+    public void warnBypassPvPLavaPlace(Player attacker, Field field)
+    {
+	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+	
+	if (plugin.settings.notifyBypassPvp && canNotify(attacker))
+	    attacker.sendMessage(ChatColor.AQUA + "PvP bypass");
+	
+	if (plugin.pm.hasPermission(attacker, "preciousstones.admin.bypass.log"))
+	    return;
+	
+	if (plugin.settings.logBypassPvp)
+	    PreciousStones.log.info("[ps] " + attacker.getName() + " bypass-lava-place in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+	
+	for (Player pl : plugin.getServer().getOnlinePlayers())
+	{
+	    if (pl.equals(attacker))
+		continue;
+	    
+	    if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.pvp") && canAlert(pl))
+		ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " bypass-lava-place in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+	}
+    }
+    
     public void warnPlaceUnprotectableTouching(Player player, Block unprotectableblock, Block protectionblock)
     {
 	if (plugin.settings.warnUnprotectable && canWarn(player))

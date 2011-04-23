@@ -1,7 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import java.util.LinkedList;
-
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -12,7 +10,6 @@ import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
@@ -35,28 +32,29 @@ public class PSEntityListener extends EntityListener
 	for (Block block : event.blockList())
 	{
 	    if (plugin.settings.isUnbreakableType(block))
-		event.setCancelled(true);
-	    
-	    if (plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block))
-		event.setCancelled(true);
-	    
-	    LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
-	    
-	    for (Field field : fields)
 	    {
-		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-		
-		if (fieldsettings.preventExplosions)
-		{
-		    if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
-		    {
-			plugin.cm.notifyGuardDog(null, field, "creeper explosion");
-			continue;
-		    }
-		    
-		    event.setCancelled(true);
-		    break;
-		}
+		event.setCancelled(true);
+		break;
+	    }
+	    
+	    if (plugin.settings.isFieldType(block))
+	    {
+		event.setCancelled(true);
+		break;
+	    }
+	    
+	    if (plugin.settings.isCloakableType(block))
+	    {
+		event.setCancelled(true);
+		break;
+	    }
+
+	    Field field = plugin.ffm.isExplosionProtected(block);
+	    
+	    if (field != null)
+	    {
+		event.setCancelled(true);
+		break;
 	    }
 	}
     }
@@ -64,6 +62,8 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onEntityDamage(EntityDamageEvent event)
     {
+	// prevent fall damage after cannon throws
+	
 	if (event.getCause().equals(DamageCause.FALL))
 	{
 	    if (event.getEntity() instanceof Player)
@@ -78,6 +78,8 @@ public class PSEntityListener extends EntityListener
 	    }
 	}
 	
+	// pvp protect against player
+	
 	if (event instanceof EntityDamageByEntityEvent)
 	{
 	    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
@@ -87,34 +89,24 @@ public class PSEntityListener extends EntityListener
 		Player attacker = (Player) sub.getDamager();
 		Player victim = (Player) sub.getEntity();
 		
-		LinkedList<Field> fields = plugin.ffm.getSourceFields(victim);
+		Field field = plugin.ffm.isPvPProtected(victim, attacker);
 		
-		for (Field field : fields)
+		if (field != null)
 		{
-		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-		    
-		    if (fieldsettings.preventPvP)
+		    if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
 		    {
-			if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
-			{
-			    plugin.cm.notifyGuardDog(attacker, field, "pvp");
-			    continue;
-			}
-			
-			if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
-			{
-			    plugin.cm.warnBypassPvP(attacker, victim, field);
-			}
-			else
-			{
-			    sub.setCancelled(true);
-			    plugin.cm.warnPvP(attacker, victim, field);
-			}
-			break;
+			plugin.cm.warnBypassPvP(attacker, victim, field);
+		    }
+		    else
+		    {
+			sub.setCancelled(true);
+			plugin.cm.warnPvP(attacker, victim, field);
 		    }
 		}
 	    }
 	}
+	
+	// pvp protect against projectile
 	
 	if (event instanceof EntityDamageByProjectileEvent)
 	{
@@ -125,34 +117,24 @@ public class PSEntityListener extends EntityListener
 		Player attacker = (Player) sub.getDamager();
 		Player victim = (Player) sub.getEntity();
 		
-		LinkedList<Field> fields = plugin.ffm.getSourceFields(victim);
+		Field field = plugin.ffm.isPvPProtected(victim, attacker);
 		
-		for (Field field : fields)
+		if (field != null)
 		{
-		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-		    
-		    if (fieldsettings.preventPvP)
+		    if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
 		    {
-			if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
-			{
-			    plugin.cm.notifyGuardDog(attacker, field, "pvp");
-			    continue;
-			}
-			
-			if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
-			{
-			    plugin.cm.warnBypassPvP(attacker, victim, field);
-			}
-			else
-			{
-			    sub.setCancelled(true);
-			    plugin.cm.warnPvP(attacker, victim, field);
-			}
-			break;
+			plugin.cm.warnBypassPvP(attacker, victim, field);
+		    }
+		    else
+		    {
+			sub.setCancelled(true);
+			plugin.cm.warnPvP(attacker, victim, field);
 		    }
 		}
 	    }
 	}
+	
+	// pvp protect against any other entity attack
 	
 	if (event.getCause().equals(DamageCause.ENTITY_ATTACK))
 	{
@@ -160,22 +142,11 @@ public class PSEntityListener extends EntityListener
 	    {
 		Player player = (Player) event.getEntity();
 		
-		LinkedList<Field> fields = plugin.ffm.getSourceFields(player);
+		Field field = plugin.ffm.isPvPProtected(player, null);
 		
-		for (Field field : fields)
+		if (field != null)
 		{
-		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-		    
-		    if (fieldsettings.preventPvP)
-		    {
-			if (fieldsettings.guarddogMode && plugin.ffm.allowedAreOnline(field))
-			{
-			    continue;
-			}
-			
-			event.setCancelled(true);
-			break;
-		    }
+		    event.setCancelled(true);
 		}
 	    }
 	}

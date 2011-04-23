@@ -19,6 +19,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+
 import org.bukkit.entity.Vehicle;
 
 /**
@@ -149,7 +150,6 @@ public class ForceFieldManager
 	
 	return cleanedCount;
     }
-
     
     /**
      * If its unbreakable or not
@@ -1091,6 +1091,59 @@ public class ForceFieldManager
 		if (fieldsettings.guarddogMode && allowedAreOnline(field))
 		{
 		    plugin.cm.notifyGuardDog(player, field, "fire");
+		    continue;
+		}
+		return field;
+	    }
+	}
+	
+	return null;
+    }
+    
+    /**
+     * Whether the player is in a pvp protected area
+     */
+    public Field isPvPProtected(Player player, Player attacker)
+    {
+	LinkedList<Field> fields = getSourceFields(player);
+	
+	for (Field field : fields)
+	{
+	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+	    
+	    if (fieldsettings.preventPvP)
+	    {
+		if (fieldsettings.guarddogMode && allowedAreOnline(field))
+		{
+		    if (attacker != null)
+		    {
+			plugin.cm.notifyGuardDog(attacker, field, "pvp");
+		    }
+		    continue;
+		}
+		return field;
+	    }
+	}
+	
+	return null;
+    }
+    
+    /**
+     * Whether the block is in an explosion protected area
+     */
+    public Field isExplosionProtected(Block placedBlock)
+    {
+	LinkedList<Field> fields = getSourceFields(placedBlock);
+	
+	for (Field field : fields)
+	{
+	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+	    
+	    if (fieldsettings.preventExplosions)
+	    {
+		if (fieldsettings.guarddogMode && allowedAreOnline(field))
+		{
+		    plugin.cm.notifyGuardDog(null, field, "creeper explosion");
 		    continue;
 		}
 		return field;

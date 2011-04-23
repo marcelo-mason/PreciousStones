@@ -97,7 +97,7 @@ public class PSBlockListener extends BlockListener
 			if (plugin.ffm.isField(fieldblock))
 			{
 			    if (event.getNewCurrent() > event.getOldCurrent())
-			    {				
+			    {
 				Field field = plugin.ffm.getField(fieldblock);
 				FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 				
@@ -419,6 +419,24 @@ public class PSBlockListener extends BlockListener
 	    {
 		event.setCancelled(true);
 		plugin.cm.warnPlace(player, placedblock, field);
+	    }
+	}
+	
+	if (placedblock.getType().equals(Material.LAVA))
+	{
+	    field = plugin.ffm.isPvPProtected(player, player);
+	    
+	    if (field != null)
+	    {
+		if (plugin.pm.hasPermission(player, "preciousstones.bypass.pvp"))
+		{
+		    plugin.cm.warnBypassPvPLavaPlace(player, field);
+		}
+		else
+		{
+		    event.setCancelled(true);
+		    plugin.cm.warnPlace(player, placedblock, field);
+		}
 	    }
 	}
     }
