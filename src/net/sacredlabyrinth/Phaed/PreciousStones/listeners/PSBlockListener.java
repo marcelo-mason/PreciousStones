@@ -422,7 +422,7 @@ public class PSBlockListener extends BlockListener
 	    }
 	}
 	
-	if (placedblock.getType().equals(Material.LAVA))
+	if (placedblock.getType().equals(Material.LAVA) || placedblock.getType().equals(Material.LAVA_BUCKET))
 	{
 	    field = plugin.ffm.isPvPProtected(player, player);
 	    
