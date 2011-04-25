@@ -1113,14 +1113,6 @@ public class ForceFieldManager
 	    
 	    if (fieldsettings.preventPvP)
 	    {
-		if (fieldsettings.guarddogMode && allowedAreOnline(field))
-		{
-		    if (attacker != null)
-		    {
-			plugin.cm.notifyGuardDog(attacker, field, "pvp");
-		    }
-		    continue;
-		}
 		return field;
 	    }
 	}
