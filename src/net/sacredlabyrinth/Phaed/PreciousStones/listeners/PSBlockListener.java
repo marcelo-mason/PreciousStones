@@ -36,10 +36,18 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockFromTo(BlockFromToEvent event)
     {
-	Field fromfield = plugin.ffm.isPlaceProtected(event.getBlock(), null);
-	Field tofield = plugin.ffm.isPlaceProtected(event.getToBlock(), null);
+	Field from = plugin.ffm.isPlaceProtected(event.getBlock(), null);
+	Field to = plugin.ffm.isPlaceProtected(event.getToBlock(), null);
 	
-	if (fromfield == null && tofield != null)
+	if (from == null && to != null)
+	{
+	    event.setCancelled(true);
+	}
+	
+	from = plugin.ffm.isPvPProtected(event.getBlock());
+	to = plugin.ffm.isPvPProtected(event.getToBlock());
+	
+	if (from == null && to != null)
 	{
 	    event.setCancelled(true);
 	}
@@ -424,18 +432,18 @@ public class PSBlockListener extends BlockListener
 	
 	if (placedblock.getType().equals(Material.LAVA) || placedblock.getType().equals(Material.LAVA_BUCKET))
 	{
-	    field = plugin.ffm.isPvPProtected(player, player);
+	    Field nopvpfield = plugin.ffm.isPvPProtected(player);
 	    
-	    if (field != null)
+	    if (nopvpfield != null)
 	    {
 		if (plugin.pm.hasPermission(player, "preciousstones.bypass.pvp"))
 		{
-		    plugin.cm.warnBypassPvPLavaPlace(player, field);
+		    plugin.cm.warnBypassPvPLavaPlace(player, nopvpfield);
 		}
 		else
 		{
 		    event.setCancelled(true);
-		    plugin.cm.warnPvPLavaPlace(player, field);
+		    plugin.cm.warnPvPLavaPlace(player, nopvpfield);
 		}
 	    }
 	}

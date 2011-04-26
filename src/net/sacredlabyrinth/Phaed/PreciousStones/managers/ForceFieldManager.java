@@ -1103,9 +1103,29 @@ public class ForceFieldManager
     /**
      * Whether the player is in a pvp protected area
      */
-    public Field isPvPProtected(Player player, Player attacker)
+    public Field isPvPProtected(Player player)
     {
 	LinkedList<Field> fields = getSourceFields(player);
+	
+	for (Field field : fields)
+	{
+	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+	    
+	    if (fieldsettings.preventPvP)
+	    {
+		return field;
+	    }
+	}
+	
+	return null;
+    }
+    
+    /**
+     * Whether the block is in a pvp protected area
+     */
+    public Field isPvPProtected(Block block)
+    {
+	LinkedList<Field> fields = getSourceFields(block);
 	
 	for (Field field : fields)
 	{

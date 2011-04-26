@@ -121,12 +121,6 @@ public class StorageManager
 		
 		String world = secworld;
 		
-		if (plugin.getServer().getWorld(world) == null)
-		{
-		    PreciousStones.log.warning("Corrupt unbreakable: world error " + linecount);
-		    continue;
-		}
-		
 		String[] chunk = secchunk.split(",");
 		
 		if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
@@ -145,34 +139,33 @@ public class StorageManager
 		
 		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
 		
-		if (!plugin.settings.isUnbreakableType(block))
+		if (block != null && !plugin.settings.isUnbreakableType(block))
 		{
 		    PreciousStones.log.warning("orphan unbreakable - skipping " + new Vec(block).toString());
-		    plugin.um.setDirty();
+		    plugin.um.setDirty();	
+		    continue;
+		}
+		
+		ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
+		Unbreakable unbreakable = new Unbreakable(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), chunkvec, world, Material.getMaterial(type).getId(), owner);
+		
+		LinkedList<Unbreakable> c;
+		
+		if (loadedUnbreakables.containsKey(chunkvec))
+		    c = loadedUnbreakables.get(chunkvec);
+		else
+		    c = new LinkedList<Unbreakable>();
+		
+		if (!c.contains(unbreakable))
+		{
+		    c.add(unbreakable);
 		}
 		else
 		{
-		    ChunkVec chunkvec = new ChunkVec(Integer.parseInt(chunk[0]), Integer.parseInt(chunk[1]), world);
-		    Unbreakable unbreakable = new Unbreakable(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), chunkvec, world, Material.getMaterial(type).getId(), owner);
-		    
-		    LinkedList<Unbreakable> c;
-		    
-		    if (loadedUnbreakables.containsKey(chunkvec))
-			c = loadedUnbreakables.get(chunkvec);
-		    else
-			c = new LinkedList<Unbreakable>();
-		    
-		    if (!c.contains(unbreakable))
-		    {
-			c.add(unbreakable);
-		    }
-		    else
-		    {
-			PreciousStones.log.warning("Rejecting duplicate unbreakable: line " + linecount);
-		    }
-		    
-		    loadedUnbreakables.put(chunkvec, c);
+		    PreciousStones.log.warning("Rejecting duplicate unbreakable: line " + linecount);
 		}
+		
+		loadedUnbreakables.put(chunkvec, c);		
 	    }
 	    
 	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + loadedUnbreakables.size() + " unbreakable blocks");
@@ -278,12 +271,6 @@ public class StorageManager
 		
 		String world = secworld;
 		
-		if (plugin.getServer().getWorld(world) == null)
-		{
-		    PreciousStones.log.warning("Corrupt forcefield: world error " + linecount);
-		    continue;
-		}
-		
 		String[] chunk = secchunk.split(",");
 		
 		if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
@@ -336,7 +323,7 @@ public class StorageManager
 		    ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 		    
 		    String[] cloaksplit = seccloak.split(";");
-
+		    
 		    if (Helper.isByte(cloaksplit[0]))
 		    {
 			data = Byte.parseByte(cloaksplit[0]);
@@ -380,8 +367,8 @@ public class StorageManager
 		
 		// if the field is a cloakable field yet the material type is neither a cloaked or clokable material (means its corrupted) then we orphan it
 		// otherwise if the field is not a field type, then we orphan it as well.
-			
-		if (!plugin.settings.isFieldType(block) && !(plugin.settings.isCloakableType(Material.getMaterial(type).getId()) && (plugin.settings.isCloakType(block) || plugin.settings.isCloakableType(block))))
+		
+		if (block != null && !plugin.settings.isFieldType(block) && !(plugin.settings.isCloakableType(Material.getMaterial(type).getId()) && (plugin.settings.isCloakType(block) || plugin.settings.isCloakableType(block))))
 		{
 		    PreciousStones.log.warning("orphan field - skipping " + new Vec(block).toString());
 		    plugin.ffm.setDirty();

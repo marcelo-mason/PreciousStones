@@ -48,7 +48,7 @@ public class PSEntityListener extends EntityListener
 	    }
 	    
 	    // prevent explosion if explosion protected
-
+	    
 	    Field field = plugin.ffm.isExplosionProtected(block);
 	    
 	    if (field != null)
@@ -89,7 +89,7 @@ public class PSEntityListener extends EntityListener
 		Player attacker = (Player) sub.getDamager();
 		Player victim = (Player) sub.getEntity();
 		
-		Field field = plugin.ffm.isPvPProtected(victim, attacker);
+		Field field = plugin.ffm.isPvPProtected(victim);
 		
 		if (field != null)
 		{
@@ -101,6 +101,23 @@ public class PSEntityListener extends EntityListener
 		    {
 			sub.setCancelled(true);
 			plugin.cm.warnPvP(attacker, victim, field);
+		    }
+		}
+		else
+		{
+		    field = plugin.ffm.isPvPProtected(attacker);
+		    
+		    if (field != null)
+		    {
+			if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
+			{
+			    plugin.cm.warnBypassPvP(attacker, victim, field);
+			}
+			else
+			{
+			    sub.setCancelled(true);
+			    plugin.cm.warnPvP(attacker, victim, field);
+			}
 		    }
 		}
 	    }
@@ -117,7 +134,7 @@ public class PSEntityListener extends EntityListener
 		Player attacker = (Player) sub.getDamager();
 		Player victim = (Player) sub.getEntity();
 		
-		Field field = plugin.ffm.isPvPProtected(victim, attacker);
+		Field field = plugin.ffm.isPvPProtected(victim);
 		
 		if (field != null)
 		{
@@ -131,6 +148,23 @@ public class PSEntityListener extends EntityListener
 			plugin.cm.warnPvP(attacker, victim, field);
 		    }
 		}
+		else
+		{
+		    field = plugin.ffm.isPvPProtected(attacker);
+		    
+		    if (field != null)
+		    {
+			if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
+			{
+			    plugin.cm.warnBypassPvP(attacker, victim, field);
+			}
+			else
+			{
+			    sub.setCancelled(true);
+			    plugin.cm.warnPvP(attacker, victim, field);
+			}
+		    }
+		}
 	    }
 	}
 	
@@ -142,7 +176,7 @@ public class PSEntityListener extends EntityListener
 	    {
 		Player player = (Player) event.getEntity();
 		
-		Field field = plugin.ffm.isPvPProtected(player, null);
+		Field field = plugin.ffm.isPvPProtected(player);
 		
 		if (field != null)
 		{
