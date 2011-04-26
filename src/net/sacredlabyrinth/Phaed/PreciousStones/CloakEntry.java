@@ -57,7 +57,7 @@ public class CloakEntry
 	    {
 		if(stack == null)
 		{
-		    continue;
+		    out += "0<0/0>0,";
 		}
 		
 		out += stack.getTypeId() + "<" + (stack.getData() == null ? "0" : stack.getData().getData()) + "/" + stack.getDurability() + ">" + stack.getAmount() + ",";
