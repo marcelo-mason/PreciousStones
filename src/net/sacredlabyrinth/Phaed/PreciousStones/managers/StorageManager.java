@@ -137,12 +137,18 @@ public class StorageManager
 		    continue;
 		}
 		
-		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
+		
+		Block block = null;
+		
+		if (plugin.getServer().getWorld(world) != null)
+		{
+		    block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
+		}
 		
 		if (block != null && !plugin.settings.isUnbreakableType(block))
 		{
 		    PreciousStones.log.warning("orphan unbreakable - skipping " + new Vec(block).toString());
-		    plugin.um.setDirty();	
+		    plugin.um.setDirty();
 		    continue;
 		}
 		
@@ -165,7 +171,7 @@ public class StorageManager
 		    PreciousStones.log.warning("Rejecting duplicate unbreakable: line " + linecount);
 		}
 		
-		loadedUnbreakables.put(chunkvec, c);		
+		loadedUnbreakables.put(chunkvec, c);
 	    }
 	    
 	    PreciousStones.log.info("[" + plugin.getDescription().getName() + "] loaded " + loadedUnbreakables.size() + " unbreakable blocks");
@@ -348,13 +354,13 @@ public class StorageManager
 				String damage = t.substring(b + 1, c);
 				String amount = t.substring(c + 1);
 				
-				if (Helper.isInteger(item) && Helper.isByte(itemdata) && Helper.isShort(damage) && Helper.isInteger(amount))
+				if (item != "0" && Helper.isInteger(item) && Helper.isByte(itemdata) && Helper.isShort(damage) && Helper.isInteger(amount))
 				{
 				    stacks.add(new ItemStack(Integer.parseInt(item), Integer.parseInt(amount), Short.parseShort(damage), Byte.parseByte(itemdata)));
 				}
 				else
 				{
-				    stacks.add(new ItemStack(Material.AIR));
+				    stacks.add(null);
 				}
 			    }
 			}
@@ -363,7 +369,12 @@ public class StorageManager
 		    }
 		}
 		
-		Block block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
+		Block block = null;
+		
+		if (plugin.getServer().getWorld(world) != null)
+		{
+		    block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
+		}
 		
 		// if the field is a cloakable field yet the material type is neither a cloaked or clokable material (means its corrupted) then we orphan it
 		// otherwise if the field is not a field type, then we orphan it as well.
@@ -533,47 +544,54 @@ public class StorageManager
 		
 		for (Field field : c)
 		{
-		    ArrayList<String> allowed = field.getAllowed();
-		    Collections.sort(allowed);
-		    
-		    StringBuilder builder = new StringBuilder();
-		    builder.append("[");
-		    builder.append(field.getType());
-		    builder.append("|");
-		    builder.append(field.getOwner());
-		    builder.append("|");
-		    for (int i = 0; i < allowed.size(); i++)
+		    try
 		    {
-			builder.append(allowed.get(i));
+			ArrayList<String> allowed = field.getAllowed();
+			Collections.sort(allowed);
 			
-			if (i < allowed.size() - 1)
-			    builder.append(",");
+			StringBuilder builder = new StringBuilder();
+			builder.append("[");
+			builder.append(field.getType());
+			builder.append("|");
+			builder.append(field.getOwner());
+			builder.append("|");
+			for (int i = 0; i < allowed.size(); i++)
+			{
+			    builder.append(allowed.get(i));
+			    
+			    if (i < allowed.size() - 1)
+				builder.append(",");
+			}
+			builder.append("|");
+			builder.append(field.getWorld());
+			builder.append("|");
+			builder.append(field.getChunkVec().getX());
+			builder.append(",");
+			builder.append(field.getChunkVec().getZ());
+			builder.append("|");
+			builder.append(field.getX());
+			builder.append(",");
+			builder.append(field.getY());
+			builder.append(",");
+			builder.append(field.getZ());
+			builder.append(",");
+			builder.append(field.getRadius());
+			builder.append(",");
+			builder.append(field.getHeight());
+			builder.append("|");
+			builder.append(field.getStoredName());
+			builder.append("|");
+			builder.append(field.getSnitchListString());
+			builder.append("|");
+			builder.append(field.getCloakString());
+			builder.append("]");
+			bwriter.write(builder.toString());
+			bwriter.newLine();
 		    }
-		    builder.append("|");
-		    builder.append(field.getWorld());
-		    builder.append("|");
-		    builder.append(field.getChunkVec().getX());
-		    builder.append(",");
-		    builder.append(field.getChunkVec().getZ());
-		    builder.append("|");
-		    builder.append(field.getX());
-		    builder.append(",");
-		    builder.append(field.getY());
-		    builder.append(",");
-		    builder.append(field.getZ());
-		    builder.append(",");
-		    builder.append(field.getRadius());
-		    builder.append(",");
-		    builder.append(field.getHeight());
-		    builder.append("|");
-		    builder.append(field.getStoredName());
-		    builder.append("|");
-		    builder.append(field.getSnitchListString());
-		    builder.append("|");
-		    builder.append(field.getCloakString());
-		    builder.append("]");
-		    bwriter.write(builder.toString());
-		    bwriter.newLine();
+		    catch (FileNotFoundException e)
+		    {
+			PreciousStones.log.severe("[" + plugin.getDescription().getName() + "] failed to save field");
+		    }
 		}
 	    }
 	    
