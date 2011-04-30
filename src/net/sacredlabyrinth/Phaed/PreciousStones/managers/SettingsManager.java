@@ -426,6 +426,9 @@ public class SettingsManager
 	public boolean mine = false;
 	public int mineDelaySeconds = 0;
 	public int mineReplaceBlock = 0;
+	public boolean lightning = false;
+	public int lightningDelaySeconds = 0;
+	public int lightningReplaceBlock = 0;
 	public boolean cloak = false;
 	
 	public String getTitle()
@@ -569,6 +572,15 @@ public class SettingsManager
 	    
 	    if (map.containsKey("mine-delay-seconds") && Helper.isInteger(map.get("mine-delay-seconds")))
 		mineDelaySeconds = (Integer) map.get("mine-delay-seconds");
+	    
+	    if (map.containsKey("lightning") && Helper.isBoolean(map.get("lightning")))
+	    lightning = (Boolean) map.get("lightning");
+	    
+	    if (map.containsKey("lightning-replace-block") && Helper.isInteger(map.get("lightning-replace-block")))
+	    lightningReplaceBlock = (Integer) map.get("lightning-replace-block");
+	    
+	    if (map.containsKey("lightning-delay-seconds") && Helper.isInteger(map.get("lightning-delay-seconds")))
+	    lightningDelaySeconds = (Integer) map.get("lightning-delay-seconds");
 	}
 	
 	@Override

@@ -173,6 +173,7 @@ public class EntryManager
 	}
 	
 	plugin.mm.enterMine(player, field);
+	plugin.lm.enterLightning(player, field);
 	plugin.clm.decloak(field);
     }
     

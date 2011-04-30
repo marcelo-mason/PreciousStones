@@ -23,6 +23,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.LightningManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CloakManager;
 
@@ -50,6 +51,7 @@ public class PreciousStones extends JavaPlugin
     public PlayerManager plm;
     public SnitchManager snm;
     public MineManager mm;
+    public LightningManager lm;
     public VelocityManager vm;
     public CloakManager clm;
     public PermissionsManager pm;
@@ -77,6 +79,7 @@ public class PreciousStones extends JavaPlugin
 	plm = new PlayerManager(this);
 	snm = new SnitchManager(this);
 	mm = new MineManager(this);
+	lm = new LightningManager(this);
 	vm = new VelocityManager(this);
 	clm = new CloakManager(this);
 	pm = new PermissionsManager(this);
