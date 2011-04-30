@@ -875,6 +875,12 @@ public class CommunicatonManager
 	if (plugin.settings.warnMine && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.RED + "*goodbye*");
     }    
+    
+    public void showLightning(Player player)
+    {
+	if (plugin.settings.warnMine && canWarn(player))
+	    ChatBlock.sendMessage(player, ChatColor.RED + "*crash*");
+    }
 
     public void showThump(Player player)
     {
