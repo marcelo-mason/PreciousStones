@@ -19,6 +19,9 @@ public class LightningManager
     
     public void enterLightning(final Player player, final Field field)
     {
+	if (plugin.pm.hasPermission(player, "preciousstones.bypass.lightning")){
+		return;
+	}
 	if (!field.isAllAllowed(player.getName()))
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);

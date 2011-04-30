@@ -21,6 +21,9 @@ public class MineManager
     
     public void enterMine(final Player player, final Field field)
     {
+	if (plugin.pm.hasPermission(player, "preciousstones.bypass.mine")){
+		return;
+	}    	
 	if (!field.isAllAllowed(player.getName()))
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
