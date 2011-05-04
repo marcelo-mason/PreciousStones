@@ -52,6 +52,25 @@ public class ForceFieldManager
     }
 
     /**
+     * Gets the field from field block
+     * @param fieldblock
+     * @return
+     */
+    public Field getField(Block block)
+    {
+        return plugin.getDatabase().find(Field.class).where().eq("x", block.getX()).eq("y", block.getY()).eq("z", block.getZ()).ieq("world", block.getWorld().getName()).findUnique();
+    }
+
+    /**
+     * Check if a field exists in our list
+     * @param field
+     * @return
+     */
+    public boolean existsField(Field field)
+    {
+        return plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findRowCount() > 0;
+    }
+    /**
      * Process pending deletions
      */
     public void flush()
@@ -123,6 +142,8 @@ public class ForceFieldManager
                 currentChunk = cv;
             }
 
+            // do the deed
+
             Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
 
             if (!plugin.settings.isFieldType(block) && !(plugin.settings.isCloakableType(field.getTypeId()) && (plugin.settings.isCloakType(block) || plugin.settings.isCloakableType(block))))
@@ -166,26 +187,6 @@ public class ForceFieldManager
         }
 
         return false;
-    }
-
-    /**
-     * Gets the field from field block
-     * @param fieldblock
-     * @return
-     */
-    public Field getField(Block block)
-    {
-        return plugin.getDatabase().find(Field.class).where().eq("x", block.getX()).eq("y", block.getY()).eq("z", block.getZ()).ieq("world", block.getWorld().getName()).findUnique();
-    }
-
-    /**
-     * Check if a field exists in our list
-     * @param field
-     * @return
-     */
-    public boolean existsField(Field field)
-    {
-        return plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findRowCount() > 0;
     }
 
     /**
@@ -1171,6 +1172,28 @@ public class ForceFieldManager
      * @param player
      * @return
      */
+    public Field isMobDamageProtected(Player player)
+    {
+        List<Field> fields = getSourceFields(player);
+
+        for (Field field : fields)
+        {
+            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings.preventMobDamage)
+            {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether the player is in a pvp protected area
+     * @param player
+     * @return
+     */
     public Field isPvPProtected(Player player)
     {
         List<Field> fields = getSourceFields(player);
@@ -1358,7 +1381,7 @@ public class ForceFieldManager
         {
             return false;
         }
-        
+
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
         Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), new ArrayList<String>(), "");
 
