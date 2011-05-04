@@ -5,6 +5,7 @@ import com.avaje.ebean.validation.NotNull;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -14,7 +15,7 @@ import org.bukkit.block.Block;
  */
 @Entity()
 @CacheStrategy
-@Table(name = "unbreakables")
+@Table(name = "unbreakables", uniqueConstraints = @UniqueConstraint(columnNames = { "x", "y", "z", "world" }))
 public class Unbreakable extends AbstractVec
 {
     @NotNull

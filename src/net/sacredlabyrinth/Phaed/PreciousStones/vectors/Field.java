@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.bukkit.block.Block;
 import org.bukkit.Material;
@@ -26,9 +27,12 @@ import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
  */
 @Entity()
 @CacheStrategy
-@Table(name = "fields")
+@Table(name = "fields", uniqueConstraints = @UniqueConstraint(columnNames = { "x", "y", "z", "world" }))
 public class Field extends AbstractVec implements Serializable
 {
+    @Id
+    private Long id;
+
     private int radius;
     private int height;
     private int typeId;
@@ -47,8 +51,8 @@ public class Field extends AbstractVec implements Serializable
     @OneToOne(cascade = CascadeType.ALL)
     private CloakEntry cloakEntry;
 
-    @Id
-    private Long id;
+    private int chunkX;
+    private int chunkZ;
 
     public Field()
     {
@@ -70,18 +74,18 @@ public class Field extends AbstractVec implements Serializable
      * @param snitchList
      * @param cloakEntry
      */
-    public Field(int x, int y, int z, int radius, int height, String world, int typeId, String owner, ArrayList<String> allowed, String name, ArrayList<SnitchEntry> snitchList, CloakEntry cloakEntry)
+    public Field(int x, int y, int z, int radius, int height, String world, int typeId, String owner, ArrayList<String> allowed, String name)
     {
 	super(x, y, z, world);
 
+        this.chunkX = x >> 4;
+        this.chunkZ = z >> 4;
 	this.radius = radius;
 	this.height = height;
 	this.owner = owner;
 	this.name = name;
 	this.allowed = allowed;
 	this.typeId = typeId;
-	this.snitchList = snitchList;
-	this.cloakEntry = cloakEntry;
     }
 
     /**
@@ -97,6 +101,8 @@ public class Field extends AbstractVec implements Serializable
     {
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
+        this.chunkX = block.getX() >> 4;
+        this.chunkZ = block.getZ() >> 4;
 	this.radius = radius;
 	this.height = height;
 	this.owner = owner;
@@ -115,6 +121,8 @@ public class Field extends AbstractVec implements Serializable
     {
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
+        this.chunkX = block.getX() >> 4;
+        this.chunkZ = block.getZ() >> 4;
 	this.radius = radius;
 	this.height = height;
 	this.typeId = block.getTypeId();
@@ -127,6 +135,9 @@ public class Field extends AbstractVec implements Serializable
     public Field(Block block)
     {
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+
+        this.chunkX = block.getX() >> 4;
+        this.chunkZ = block.getZ() >> 4;
     }
 
     public Long getId()
@@ -137,6 +148,38 @@ public class Field extends AbstractVec implements Serializable
     public void setId(Long id)
     {
         this.id = id;
+    }
+
+    /**
+     * @return the chunk x
+     */
+    public int getChunkX()
+    {
+        return chunkX;
+    }
+
+    /**
+     * @param ChunkX the chunk x to set
+     */
+    public void setChunkX(int chunkX)
+    {
+        this.chunkX = chunkX;
+    }
+
+    /**
+     * @return the chunk z
+     */
+    public int getChunkZ()
+    {
+        return chunkZ;
+    }
+
+    /**
+     * @param ChunkZ the chunk z to set
+     */
+    public void setChunkZ(int chunkZ)
+    {
+        this.chunkZ = chunkZ;
     }
 
     /**
@@ -603,7 +646,7 @@ public class Field extends AbstractVec implements Serializable
      * @param field
      * @return
      */
-    public boolean envelops(Field field)
+    public boolean envelops(AbstractVec field)
     {
 	int px = field.getX();
 	int py = field.getY();
@@ -629,6 +672,6 @@ public class Field extends AbstractVec implements Serializable
      */
     public boolean envelops(Block block)
     {
-	return envelops(new Field(block));
+	return envelops(new Vec(block));
     }
 }

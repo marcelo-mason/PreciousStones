@@ -6,6 +6,7 @@ import me.taylorkelly.help.Help;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.LinkedList;
 
 import org.bukkit.plugin.Plugin;
@@ -88,7 +89,6 @@ public final class CommandManager implements CommandExecutor
 	    helpPlugin.registerCommand("ps list [chunks-in-radius]", "Lists all pstones in area", plugin, true, "preciousstones.admin.list");
 	    helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
 	    helpPlugin.registerCommand("ps reload ", "Reload configuraton file", plugin, true, "preciousstones.admin.reload");
-	    helpPlugin.registerCommand("ps save ", "Save force field files", plugin, true, "preciousstones.admin.save");
 	    helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
 	    helpPlugin.registerCommand("ps clean ", "Clean up all orphaned fields/unbreakables", plugin, true, "preciousstones.admin.clean");
 
@@ -502,11 +502,11 @@ public final class CommandManager implements CommandExecutor
                         else if (split[0].equals("info") && plugin.pm.hasPermission(player, "preciousstones.admin.info"))
                         {
                             Field pointing = plugin.ffm.getOneAllowedField(block, player);
-                            LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
+                            List<Field> fields = plugin.ffm.getSourceFields(block);
 
                             if (pointing != null && !fields.contains(pointing))
                             {
-                                fields.addLast(pointing);
+                                fields.add(pointing);
                             }
 
                             for (Field field : fields)
@@ -514,7 +514,7 @@ public final class CommandManager implements CommandExecutor
                                 plugin.cm.showFieldDetails(field, player);
                             }
 
-                            if (fields.size() == 0)
+                            if (fields.isEmpty())
                             {
                                 plugin.cm.showNotFound(player);
                             }
@@ -524,7 +524,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (split.length == 1)
                             {
-                                LinkedList<Field> sourcefields = plugin.ffm.getSourceFields(block);
+                                List<Field> sourcefields = plugin.ffm.getSourceFields(block);
 
                                 if (sourcefields.size() > 0)
                                 {
@@ -555,7 +555,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (Helper.isInteger(split[1]))
                                 {
-                                    LinkedList<Field> fields = plugin.ffm.getFieldsOfType(Integer.parseInt(split[1]), player.getWorld());
+                                    List<Field> fields = plugin.ffm.getFieldsOfType(Integer.parseInt(split[1]), player.getWorld());
 
                                     for (Field field : fields)
                                     {
@@ -629,8 +629,8 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (Helper.isInteger(split[1]))
                                 {
-                                    LinkedList<Unbreakable> unbreakables = plugin.um.getUnbreakablesInArea(player, Integer.parseInt(split[1]));
-                                    LinkedList<Field> fields = plugin.ffm.getFieldsInArea(player, Integer.parseInt(split[1]));
+                                    List<Unbreakable> unbreakables = plugin.um.getUnbreakablesInArea(player, Integer.parseInt(split[1]));
+                                    List<Field> fields = plugin.ffm.getFieldsInArea(player, Integer.parseInt(split[1]));
 
                                     for (Unbreakable u : unbreakables)
                                     {
@@ -642,7 +642,7 @@ public final class CommandManager implements CommandExecutor
                                         ChatBlock.sendMessage(player, ChatColor.AQUA + f.toString());
                                     }
 
-                                    if (unbreakables.size() == 0 && fields.size() == 0)
+                                    if (unbreakables.isEmpty() && fields.isEmpty())
                                     {
                                         ChatBlock.sendMessage(player, ChatColor.AQUA + "No force-field or unbreakable blocks found");
                                     }
@@ -655,13 +655,6 @@ public final class CommandManager implements CommandExecutor
                             plugin.settings.loadConfiguration();
 
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Configuration reloaded");
-                            return true;
-                        }
-                        else if (split[0].equals("save") && plugin.pm.hasPermission(player, "preciousstones.admin.save"))
-                        {
-                            plugin.sm.save();
-
-                            ChatBlock.sendMessage(player, ChatColor.AQUA + "PStones saved to files");
                             return true;
                         }
                         else if (split[0].equals("fields") && plugin.pm.hasPermission(player, "preciousstones.admin.fields"))
@@ -792,11 +785,6 @@ public final class CommandManager implements CommandExecutor
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.reload"))
                     {
                         cacheBlock.addSingleRow(ChatColor.DARK_RED + "/ps reload " + ChatColor.AQUA + "- Reload configuraton file");
-                    }
-
-                    if (plugin.pm.hasPermission(player, "preciousstones.admin.save"))
-                    {
-                        cacheBlock.addSingleRow(ChatColor.DARK_RED + "/ps save " + ChatColor.AQUA + "- Save force field files");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.fields"))

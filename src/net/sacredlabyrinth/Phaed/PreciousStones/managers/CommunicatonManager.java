@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -1169,7 +1169,7 @@ public class CommunicatonManager
      * @param fields
      * @param player
      */
-    public void showProtectedLocation(LinkedList<Field> fields, Player player)
+    public void showProtectedLocation(List<Field> fields, Player player)
     {
 	ChatBlock.sendBlank(player);
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Protected");

@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import java.util.List;
 import java.util.LinkedList;
 
 import org.bukkit.entity.Player;
@@ -117,7 +118,7 @@ public class PSPlayerListener extends PlayerListener
 		{
 		    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails)
 		    {
-			LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
+                        List<Field> fields = plugin.ffm.getSourceFields(block);
 
 			plugin.cm.showProtectedLocation(fields, player);
 		    }
@@ -139,7 +140,7 @@ public class PSPlayerListener extends PlayerListener
     {
 	Player player = event.getPlayer();
 
-	LinkedList<Field> currentfields = plugin.ffm.getSourceFields(player);
+	List<Field> currentfields = plugin.ffm.getSourceFields(player);
 
 	// loop through all fields the player just moved into
 
@@ -199,7 +200,7 @@ public class PSPlayerListener extends PlayerListener
 
 	// check if were on a prevent entry field not owned by player
 
-	LinkedList<Field> fields = plugin.ffm.getSourceFields(player, player.getName());
+	List<Field> fields = plugin.ffm.getSourceFields(player, player.getName());
 
 	for (Field field : fields)
 	{

@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSBlockListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSEntityListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSPlayerListener;
-import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSWorldListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSVehicleListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommandManager;
@@ -31,6 +30,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.LightningManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CloakManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 
 /**
  * PreciousStones for Bukkit
@@ -39,80 +39,31 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
  */
 public class PreciousStones extends JavaPlugin
 {
-    /**
-     *
-     */
     public static final Logger log = Logger.getLogger("Minecraft");
 
-    /**
-     *
-     */
     public SettingsManager settings;
-    /**
-     *
-     */
     public CommandManager com;
-    /**
-     *
-     */
     public ForceFieldManager ffm;
-    /**
-     *
-     */
     public UnbreakableManager um;
-    /**
-     *
-     */
     public UnprotectableManager upm;
-    /**
-     *
-     */
     public StorageManager sm;
-    /**
-     *
-     */
     public CommunicatonManager cm;
-    /**
-     *
-     */
     public EntryManager em;
-    /**
-     *
-     */
     public PlayerManager plm;
-    /**
-     *
-     */
     public SnitchManager snm;
-    /**
-     *
-     */
     public MineManager mm;
-    /**
-     *
-     */
     public LightningManager lm;
-    /**
-     *
-     */
     public VelocityManager vm;
-    /**
-     *
-     */
     public CloakManager clm;
-    /**
-     *
-     */
     public PermissionsManager pm;
 
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
-    private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
 
     /**
-     *
+     *  Run on plugin enable
      */
     @Override
     public void onEnable()
@@ -138,7 +89,6 @@ public class PreciousStones extends JavaPlugin
 	playerListener = new PSPlayerListener(this);
 	blockListener = new PSBlockListener(this);
 	entityListener = new PSEntityListener(this);
-	worldListener = new PSWorldListener(this);
 	vehicleListener = new PSVehicleListener(this);
 
 	registerEvents();
@@ -148,7 +98,6 @@ public class PreciousStones extends JavaPlugin
 
     private void registerEvents()
     {
-	getServer().getPluginManager().registerEvent(Event.Type.WORLD_SAVE, worldListener, Priority.Lowest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
 	getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
@@ -164,10 +113,7 @@ public class PreciousStones extends JavaPlugin
 	getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.Highest, this);
     }
 
-    /**
-     *
-     */
-    public void registerCommands()
+    private void registerCommands()
     {
 	getCommand("ps").setExecutor(com);
     }
@@ -194,20 +140,20 @@ public class PreciousStones extends JavaPlugin
     {
 	List<Class<?>> list = new ArrayList<Class<?>>();
 	list.add(Field.class);
+        list.add(Unbreakable.class);
+        list.add(CloakEntry.class);
+        list.add(SnitchEntry.class);
+        list.add(PSItemStack.class);
+        list.add(EntryFields.class);
 	return list;
     }
 
     /**
-     *
+     *  Run on plugin disable
      */
     @Override
     public void onDisable()
     {
-	if (sm != null)
-	{
-	    sm.save();
-	}
-
         getDatabase().endTransaction();
     }
 }

@@ -18,6 +18,7 @@ public abstract class AbstractVec implements Serializable
     private int x;
     private int y;
     private int z;
+
     private String world;
 
     public AbstractVec()
@@ -38,7 +39,6 @@ public abstract class AbstractVec implements Serializable
 	this.z = z;
 	this.world = world;
     }
-
 
     /**
      * @param x the x to set

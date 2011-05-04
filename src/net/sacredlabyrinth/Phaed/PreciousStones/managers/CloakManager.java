@@ -47,7 +47,7 @@ public class CloakManager
 	}
 
 	field.setCloakEntry(ce);
-	plugin.ffm.setDirty();
+	plugin.getDatabase().save(field);
     }
 
     /**
@@ -81,9 +81,9 @@ public class CloakManager
 		    ce.importStacks(inv.getContents());
 		    inv.clear();
 		}
-                
+
 		block.setType(getCloakMaterial(block));
-		plugin.ffm.setDirty();
+		plugin.getDatabase().save(field);
 	    }
 	}
     }
@@ -118,7 +118,7 @@ public class CloakManager
 		    inv.setContents(ce.exportStacks());
 		}
 	    }
-	    plugin.ffm.setDirty();
+	    plugin.getDatabase().save(field);
 	}
     }
 

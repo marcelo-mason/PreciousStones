@@ -9,8 +9,6 @@ import org.bukkit.Location;
  */
 public class Vec extends AbstractVec
 {
-    private ChunkVec chunkvec;
-
     /**
      *
      * @param block
@@ -18,8 +16,6 @@ public class Vec extends AbstractVec
     public Vec(Block block)
     {
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-
-	this.chunkvec = new ChunkVec(block.getChunk());
     }
 
     /**
@@ -37,6 +33,6 @@ public class Vec extends AbstractVec
      */
     public ChunkVec getChunkVec()
     {
-	return this.chunkvec;
+	return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
     }
 }

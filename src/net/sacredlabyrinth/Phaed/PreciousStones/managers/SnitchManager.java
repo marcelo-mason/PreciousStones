@@ -52,7 +52,7 @@ public class SnitchManager
 		{
 		    DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
 		    field.addIntruder(player.getName(), ChatColor.BLUE + "Entry", dateFormat.format(new Date()));
-		    plugin.ffm.setDirty();
+		    plugin.getDatabase().save(field);
 		}
 	    }
 	}
@@ -68,14 +68,14 @@ public class SnitchManager
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
-	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+	    List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
 
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Break", toBlockDetails(block));
-		    plugin.ffm.setDirty();
+		   plugin.getDatabase().save(field);
 		}
 	    }
 	}
@@ -90,14 +90,14 @@ public class SnitchManager
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
-	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+	    List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
 
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Place", toBlockDetails(block));
-		    plugin.ffm.setDirty();
+		    plugin.getDatabase().save(field);
 		}
 	    }
 	}
@@ -112,14 +112,14 @@ public class SnitchManager
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
-	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+	    List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
 
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Used", toBlockDetails(block));
-		    plugin.ffm.setDirty();
+		    plugin.getDatabase().save(field);
 		}
 	    }
 	}
@@ -136,14 +136,14 @@ public class SnitchManager
 
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
-	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+	    List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
 
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Shopped", sign.getLines().length == 0 ? "empty" : sign.getLine(0));
-		    plugin.ffm.setDirty();
+		    plugin.getDatabase().save(field);
 		}
 	    }
 	}
@@ -158,14 +158,14 @@ public class SnitchManager
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
-	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+	    List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
 
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.RED + "Ignite", toBlockDetails(block));
-		    plugin.ffm.setDirty();
+		    plugin.getDatabase().save(field);
 		}
 	    }
 	}
