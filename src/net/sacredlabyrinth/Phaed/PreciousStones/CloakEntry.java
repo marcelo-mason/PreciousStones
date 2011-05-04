@@ -1,69 +1,152 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import com.avaje.ebean.annotation.CacheStrategy;
+import com.avaje.ebean.validation.NotNull;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import org.bukkit.inventory.ItemStack;
 
-public class CloakEntry
+/**
+ *
+ * @author cc_madelg
+ */
+@Entity()
+@CacheStrategy
+@Table(name = "cloaked_blocks")
+public class CloakEntry implements Serializable
 {
-    private byte data;
-    private ItemStack[] stacks;
-    
+    private byte dataByte;
+
+    @OneToMany(mappedBy = "cloakEntry", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @NotNull
+    private List<PSItemStack> stacks;
+
+    @Id
+    private Long id;
+
+    /**
+     *
+     */
+    public CloakEntry()
+    {
+    }
+
+    /**
+     *
+     * @param data
+     */
     public CloakEntry(byte data)
     {
-	this.data = data;
+        this.dataByte = data;
     }
-    
-    public CloakEntry(byte data, ArrayList<ItemStack> stacks)
+
+    /**
+     *
+     * @return
+     */
+    public byte getDataByte()
     {
-	this.data = data;
-	
-	this.stacks = new ItemStack[stacks.size()];
-	this.stacks = stacks.toArray(this.stacks);
+        return dataByte;
     }
-    
-    public byte getData()
+
+    /**
+     *
+     * @param data
+     */
+    public void setDataByte(byte data)
     {
-	return data;
+        this.dataByte = data;
     }
-    
-    public ItemStack[] getStacks()
+
+    /**
+     *
+     * @param stacks
+     */
+    public void setStacks(List<PSItemStack> stacks)
     {
-	return stacks;
+        this.stacks = stacks;
     }
-    
-    public void setData(byte data)
+
+    /**
+     *
+     * @return
+     */
+    public List<PSItemStack> getStacks()
     {
-	this.data = data;
+        if (stacks == null)
+        {
+            return new ArrayList<PSItemStack>();
+        }
+
+        return stacks;
     }
-    
-    public void setStacks(ItemStack[] stacks)
+
+    /**
+     *
+     * @param stacks
+     */
+    public void importStacks(ItemStack[] stacks)
     {
-	this.stacks = stacks;
+        this.setStacks(new ArrayList<PSItemStack>());
+
+        for (ItemStack stack : stacks)
+        {
+            if (stack == null)
+            {
+                this.getStacks().add(null);
+            }
+            else
+            {
+                this.getStacks().add(new PSItemStack(stack));
+            }
+        }
     }
-    
-    @Override
-    public String toString()
+
+    /**
+     *
+     * @return
+     */
+    public ItemStack[] exportStacks()
     {
-	String out = data + "";
-	
-	if (stacks != null)
-	{
-	    if (stacks.length > 0)
-	    {
-		out += ";";
-	    }
-	    
-	    for (ItemStack stack : stacks)
-	    {
-		if(stack == null)
-		{
-		    out += "0<0/0>0,";
-		}
-		
-		out += stack.getTypeId() + "<" + (stack.getData() == null ? "0" : stack.getData().getData()) + "/" + stack.getDurability() + ">" + stack.getAmount() + ",";
-	    }
-	}
-	
-	return out;
+        ItemStack[] out = new ItemStack[getStacks().size()];
+
+        for(int i = 0; i < getStacks().size(); i++)
+        {
+            if(getStacks().get(i) == null)
+            {
+                out[i] = null;
+            }
+            else
+            {
+                out[i] = getStacks().get(i).toItemStack();
+            }
+        }
+
+        return out;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Long getId()
+    {
+        return id;
+    }
+
+    /**
+     *
+     * @param id
+     */
+    public void setId(Long id)
+    {
+        this.id = id;
     }
 }
