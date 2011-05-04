@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.event.Event.Priority;
@@ -33,13 +34,13 @@ import org.bukkit.command.CommandSender;
 
 /**
  * PreciousStones for Bukkit
- * 
+ *
  * @author Phaed
  */
 public class PreciousStones extends JavaPlugin
 {
-    public static Logger log;
-    
+    public static final Logger log = Logger.getLogger("Minecraft");
+
     public SettingsManager settings;
     public CommandManager com;
     public ForceFieldManager ffm;
@@ -55,19 +56,18 @@ public class PreciousStones extends JavaPlugin
     public VelocityManager vm;
     public CloakManager clm;
     public PermissionsManager pm;
-    
+
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
     private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
-    
+
     @Override
     public void onEnable()
     {
-	log = Logger.getLogger("Minecraft");	
-	log.info("[" + this.getDescription().getName() + "] version [" + this.getDescription().getVersion() + "] loaded");
-	
+	log.log(Level.INFO, "[{0}] version [{1}] loaded", new Object[]{this.getDescription().getName(), this.getDescription().getVersion()});
+
 	settings = new SettingsManager(this);
 	com = new CommandManager(this);
 	ffm = new ForceFieldManager(this);
@@ -83,18 +83,18 @@ public class PreciousStones extends JavaPlugin
 	vm = new VelocityManager(this);
 	clm = new CloakManager(this);
 	pm = new PermissionsManager(this);
-	
+
 	playerListener = new PSPlayerListener(this);
 	blockListener = new PSBlockListener(this);
 	entityListener = new PSEntityListener(this);
 	worldListener = new PSWorldListener(this);
 	vehicleListener = new PSVehicleListener(this);
-	
+
 	registerEvents();
-	
+
 	com.registerHelpCommands();
     }
-    
+
     private void registerEvents()
     {
 	getServer().getPluginManager().registerEvent(Event.Type.WORLD_SAVE, worldListener, Priority.Lowest, this);
@@ -112,7 +112,7 @@ public class PreciousStones extends JavaPlugin
 	getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.Highest, this);
 	getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.Highest, this);
     }
-    
+
     @Override
     public void onDisable()
     {
@@ -121,7 +121,7 @@ public class PreciousStones extends JavaPlugin
 	    sm.save();
 	}
     }
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
     {
@@ -140,7 +140,6 @@ public class PreciousStones extends JavaPlugin
 	}
 	catch (Throwable ex)
 	{
-	    ex.printStackTrace();
 	    return true;
 	}
     }

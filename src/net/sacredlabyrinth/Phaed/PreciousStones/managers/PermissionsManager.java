@@ -9,25 +9,25 @@ import org.bukkit.plugin.Plugin;
 
 import org.bukkit.entity.Player;
 
-public class PermissionsManager
+public final class PermissionsManager
 {
     public static PermissionHandler Permissions = null;
     private PreciousStones plugin;
-    
+
     public PermissionsManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
-	
+
 	startoolmissions();
     }
-    
+
     public boolean hasPermission(Player player, String permission)
     {
 	if (player == null)
 	{
 	    return false;
 	}
-	
+
 	if (hasPermissionPlugin())
 	{
 	    return (Permissions != null && Permissions.has(player, permission));
@@ -48,30 +48,30 @@ public class PermissionsManager
 		{
 		    return true;
 		}
-		
+
 		return false;
 	    }
 	}
     }
-    
+
     private boolean hasPermissionPlugin()
     {
 	return Permissions != null;
     }
-    
+
     public void startoolmissions()
     {
 	if (PermissionsManager.Permissions == null)
 	{
 	    Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
-	    
+
 	    if (test != null)
 	    {
 		if (!plugin.getServer().getPluginManager().isPluginEnabled(test))
 		{
 		    plugin.getServer().getPluginManager().enablePlugin(test);
 		}
-		
+
 		PermissionsManager.Permissions = ((Permissions) test).getHandler();
 	    }
 	}

@@ -11,12 +11,12 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 public class LightningManager
 {
     private PreciousStones plugin;
-    
+
     public LightningManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
-    
+
     public void enterLightning(final Player player, final Field field)
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.bypass.lightning")){
@@ -25,28 +25,29 @@ public class LightningManager
 	if (!field.isAllAllowed(player.getName()))
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-	    
+
 	    final int delay = fieldsettings.lightningDelaySeconds;
 	    final int leftbehind = fieldsettings.lightningReplaceBlock;
-	    
+
 	    if (fieldsettings.lightning)
 	    {
 		plugin.cm.showLightning(player);
 
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 		{
+                    @Override
 		    public void run()
 		    {
 			Block block = plugin.ffm.getBlock(field);
-			
-			
+
+
 			player.getWorld().strikeLightning(player.getLocation());
-			
+
 			if(leftbehind >= 0){
 				plugin.ffm.silentRelease(field);
-				block.setType(Material.getMaterial(leftbehind));	
+				block.setType(Material.getMaterial(leftbehind));
 			}
-			
+
 		    }
 		}, delay * 20L);
 	    }

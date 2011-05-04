@@ -13,7 +13,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
-public class SettingsManager
+public final class SettingsManager
 {
     public List<Integer> unbreakableBlocks;
     public List<Integer> bypassBlocks;
@@ -73,17 +73,17 @@ public class SettingsManager
     public List<Integer> ffBlocks = new ArrayList<Integer>();
     public int[] throughFields = new int[] { 0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94 };
     public int linesPerPage;
-    
+
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
-    
+
     public SettingsManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
-	
+
 	loadConfiguration();
     }
-    
+
     /**
      * Load the configuration
      */
@@ -92,7 +92,7 @@ public class SettingsManager
     {
 	Configuration config = plugin.getConfiguration();
 	config.load();
-	
+
 	addForceFieldStones((ArrayList) config.getProperty("force-field-blocks"));
 	unbreakableBlocks = config.getIntList("unbreakable-blocks", new ArrayList<Integer>());
 	bypassBlocks = config.getIntList("bypass-blocks", new ArrayList<Integer>());
@@ -149,38 +149,38 @@ public class SettingsManager
 	offByDefault = config.getBoolean("settings.off-by-default", false);
 	linesPerPage = config.getInt("settings.lines-per-page", 12);
     }
-    
+
     @SuppressWarnings("unchecked")
     public void addForceFieldStones(ArrayList<LinkedHashMap> maps)
     {
 	if (maps == null)
 	    return;
-	
+
 	double largestForceField = 0;
-	
+
 	for (LinkedHashMap map : maps)
 	{
 	    FieldSettings pstone = new FieldSettings(map);
-	    
+
 	    if (pstone.blockDefined)
 	    {
 		// add stone to our collection
 		fieldsettings.put(pstone.blockId, pstone);
-		
+
 		// add the values to our reference lists
 		ffBlocks.add(pstone.blockId);
-		
+
 		// see if the radius is the largest
 		if (pstone.radius > largestForceField)
 		    largestForceField = pstone.radius;
 	    }
 	}
-	
+
 	largestForceField = Math.max(largestForceField, cloakMaxRadius);
-	
+
 	chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(((largestForceField * 2.0) + 1.0) / 16.0), 1);
     }
-    
+
     /**
      * Whether any nameable pstones have been defined
      */
@@ -193,10 +193,10 @@ public class SettingsManager
 		return true;
 	    }
 	}
-	
+
 	return false;
     }
-    
+
     /**
      * Check if a block is one of the unprotectable types
      */
@@ -208,16 +208,16 @@ public class SettingsManager
 	    {
 		continue;
 	    }
-	    
+
 	    if (placedblock.getTypeId() == t)
 	    {
 		return true;
 	    }
 	}
-	
+
 	return false;
     }
-    
+
     /**
      * Check if a block is one of the tool item types
      */
@@ -225,7 +225,7 @@ public class SettingsManager
     {
 	return toolItems.contains(block.getTypeId());
     }
-    
+
     /**
      * Check if a block is one of the tool item types
      */
@@ -233,7 +233,7 @@ public class SettingsManager
     {
 	return toolItems.contains(typeId);
     }
-    
+
     /**
      * Check if a block is one of the tool item types
      */
@@ -241,7 +241,7 @@ public class SettingsManager
     {
 	return toolItems.contains(Material.getMaterial(type).getId());
     }
-    
+
     /**
      * Check if a block is one of the cloakable types
      */
@@ -249,7 +249,7 @@ public class SettingsManager
     {
 	return cloakableBlocks.contains(block.getTypeId());
     }
-    
+
     /**
      * Check if a block is one of the cloakable types
      */
@@ -257,7 +257,7 @@ public class SettingsManager
     {
 	return cloakableBlocks.contains(typeId);
     }
-    
+
     /**
      * Check if a block is one of the cloakable types
      */
@@ -265,7 +265,7 @@ public class SettingsManager
     {
 	return cloakableBlocks.contains(Material.getMaterial(type).getId());
     }
-    
+
     /**
      * Check if a block is one of the cloak types
      */
@@ -273,7 +273,7 @@ public class SettingsManager
     {
 	return cloakBlocks.contains(block.getTypeId());
     }
-    
+
     /**
      * Check if a block is one of the cloak types
      */
@@ -281,7 +281,7 @@ public class SettingsManager
     {
 	return cloakBlocks.contains(typeId);
     }
-    
+
     /**
      * Check if a block is one of the snitch types
      */
@@ -294,10 +294,10 @@ public class SettingsManager
 		return true;
 	    }
 	}
-	
+
 	return false;
     }
-    
+
     /**
      * Check if a block is one of the unbreakable types
      */
@@ -305,7 +305,7 @@ public class SettingsManager
     {
 	return unbreakableBlocks.contains(unbreakableblock.getTypeId());
     }
-    
+
     /**
      * Check if a type is one of the unbreakable types
      */
@@ -313,7 +313,7 @@ public class SettingsManager
     {
 	return unbreakableBlocks.contains(typeId);
     }
-    
+
     /**
      * Check if a type is one of the unbreakable types
      */
@@ -321,7 +321,7 @@ public class SettingsManager
     {
 	return unbreakableBlocks.contains(Material.getMaterial(type).getId());
     }
-    
+
     /**
      * Check if a block is one of the forcefeld types
      */
@@ -329,7 +329,7 @@ public class SettingsManager
     {
 	return ffBlocks.contains(block.getTypeId());
     }
-    
+
     /**
      * Check if a type is one of the forcefeld types
      */
@@ -337,7 +337,7 @@ public class SettingsManager
     {
 	return ffBlocks.contains(Material.getMaterial(type).getId());
     }
-    
+
     /**
      * Check if the material is one of the forcefeld types
      */
@@ -345,7 +345,7 @@ public class SettingsManager
     {
 	return ffBlocks.contains(material.getId());
     }
-    
+
     /**
      * Check if a type is one of the forcefeld types
      */
@@ -353,7 +353,7 @@ public class SettingsManager
     {
 	return ffBlocks.contains(typeId);
     }
-    
+
     /**
      * Whetehr the block is a bypass type
      */
@@ -361,7 +361,7 @@ public class SettingsManager
     {
 	return bypassBlocks.contains(block.getTypeId());
     }
-    
+
     /**
      * Returns the settings for a specific field type
      */
@@ -369,7 +369,7 @@ public class SettingsManager
     {
 	return getFieldSettings(field.getTypeId());
     }
-    
+
     /**
      * Returns the settings for a specific block type
      */
@@ -380,10 +380,10 @@ public class SettingsManager
 	    FieldSettings fs = new FieldSettings(typeId);
 	    return fs;
 	}
-	
+
 	return fieldsettings.get(typeId);
     }
-    
+
     /**
      * Returns all the field settings
      */
@@ -391,11 +391,11 @@ public class SettingsManager
     {
 	return fieldsettings;
     }
-    
+
     public class FieldSettings
     {
 	public boolean blockDefined = false;
-	
+
 	public int blockId;
 	public int radius = 0;
 	public int height = 0;
@@ -430,27 +430,27 @@ public class SettingsManager
 	public int lightningDelaySeconds = 0;
 	public int lightningReplaceBlock = 0;
 	public boolean cloak = false;
-	
+
 	public String getTitle()
 	{
 	    if (title == null)
 	    {
 		return "";
 	    }
-	    
+
 	    return title;
 	}
-	
+
 	public String getTitleCap()
 	{
 	    if (title == null)
 	    {
 		return "";
 	    }
-	    
+
 	    return Helper.capitalize(title);
 	}
-	
+
 	public int getHeight()
 	{
 	    if (this.height == 0)
@@ -458,7 +458,7 @@ public class SettingsManager
 	    else
 		return this.height;
 	}
-	
+
 	public FieldSettings(int blockId)
 	{
 	    this.title = "Cloak";
@@ -468,197 +468,197 @@ public class SettingsManager
 	    this.noConflict = true;
 	    this.breakable = true;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public FieldSettings(LinkedHashMap map)
 	{
 	    // if no block specified then skip it its garbage
 	    if (!map.containsKey("block") || !Helper.isInteger(map.get("block")))
 		return;
-	    
+
 	    blockDefined = true;
-	    
+
 	    blockId = (Integer) map.get("block");
 	    title = (String) map.get("title");
-	    
+
 	    if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
 		radius = (Integer) map.get("radius");
-	    
+
 	    if (map.containsKey("custom-height"))
 	    {
 		if (Helper.isInteger(map.get("custom-height")))
 		{
 		    height = (Integer) map.get("custom-height");
-		    
+
 		}
 		if (height == 0)
 		    height = radius;
 	    }
-	    
+
 	    if (map.containsKey("nameable") && Helper.isBoolean(map.get("nameable")))
 		nameable = (Boolean) map.get("nameable");
-	    
+
 	    if (map.containsKey("prevent-fire") && Helper.isBoolean(map.get("prevent-fire")))
 		preventFire = (Boolean) map.get("prevent-fire");
-	    
+
 	    if (map.containsKey("prevent-place") && Helper.isBoolean(map.get("prevent-place")))
 		preventPlace = (Boolean) map.get("prevent-place");
-	    
+
 	    if (map.containsKey("prevent-destroy") && Helper.isBoolean(map.get("prevent-destroy")))
 		preventDestroy = (Boolean) map.get("prevent-destroy");
-	    
+
 	    if (map.containsKey("prevent-explosions") && Helper.isBoolean(map.get("prevent-explosions")))
 		preventExplosions = (Boolean) map.get("prevent-explosions");
-	    
+
 	    if (map.containsKey("prevent-pvp") && Helper.isBoolean(map.get("prevent-pvp")))
 		preventPvP = (Boolean) map.get("prevent-pvp");
-	    
+
 	    if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
 		preventEntry = (Boolean) map.get("prevent-entry");
-	    
+
 	    if (map.containsKey("prevent-unprotectable") && Helper.isBoolean(map.get("prevent-unprotectable")))
 		preventUnprotectable = (Boolean) map.get("prevent-unprotectable");
-	    
+
 	    if (map.containsKey("guard-dog-mode") && Helper.isBoolean(map.get("guard-dog-mode")))
 		guarddogMode = (Boolean) map.get("guard-dog-mode");
-	    
+
 	    if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
 		instantHeal = (Boolean) map.get("instant-heal");
-	    
+
 	    if (map.containsKey("slow-heal") && Helper.isBoolean(map.get("slow-heal")))
 		slowHeal = (Boolean) map.get("slow-heal");
-	    
+
 	    if (map.containsKey("slow-damage") && Helper.isBoolean(map.get("slow-damage")))
 		slowDamage = (Boolean) map.get("slow-damage");
-	    
+
 	    if (map.containsKey("fast-damage") && Helper.isBoolean(map.get("fast-damage")))
 		fastDamage = (Boolean) map.get("fast-damage");
-	    
+
 	    if (map.containsKey("breakable") && Helper.isBoolean(map.get("breakable")))
 		breakable = (Boolean) map.get("breakable");
-	    
+
 	    if (map.containsKey("welcome-message") && Helper.isBoolean(map.get("welcome-message")))
 		welcomeMessage = (Boolean) map.get("welcome-message");
-	    
+
 	    if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
 		farewellMessage = (Boolean) map.get("farewell-message");
-	    
+
 	    if (map.containsKey("give-air") && Helper.isBoolean(map.get("give-air")))
 		giveAir = (Boolean) map.get("give-air");
-	    
+
 	    if (map.containsKey("snitch") && Helper.isBoolean(map.get("snitch")))
 		snitch = (Boolean) map.get("snitch");
-	    
+
 	    if (map.containsKey("no-conflict") && Helper.isBoolean(map.get("no-conflict")))
 		noConflict = (Boolean) map.get("no-conflict");
-	    
+
 	    if (map.containsKey("launch") && Helper.isBoolean(map.get("launch")))
 		launch = (Boolean) map.get("launch");
-	    
+
 	    if (map.containsKey("launch-height") && Helper.isInteger(map.get("launch-height")))
 		launchHeight = (Integer) map.get("launch-height");
-	    
+
 	    if (map.containsKey("cannon") && Helper.isBoolean(map.get("cannon")))
 		cannon = (Boolean) map.get("cannon");
-	    
+
 	    if (map.containsKey("cannon-height") && Helper.isInteger(map.get("cannon-height")))
 		cannonHeight = (Integer) map.get("cannon-height");
-	    
+
 	    if (map.containsKey("mine") && Helper.isBoolean(map.get("mine")))
 		mine = (Boolean) map.get("mine");
-	    
+
 	    if (map.containsKey("mine-replace-block") && Helper.isInteger(map.get("mine-replace-block")))
 		mineReplaceBlock = (Integer) map.get("mine-replace-block");
-	    
+
 	    if (map.containsKey("mine-delay-seconds") && Helper.isInteger(map.get("mine-delay-seconds")))
 		mineDelaySeconds = (Integer) map.get("mine-delay-seconds");
-	    
+
 	    if (map.containsKey("lightning") && Helper.isBoolean(map.get("lightning")))
 	    lightning = (Boolean) map.get("lightning");
-	    
+
 	    if (map.containsKey("lightning-replace-block") && Helper.isInteger(map.get("lightning-replace-block")))
 	    lightningReplaceBlock = (Integer) map.get("lightning-replace-block");
-	    
+
 	    if (map.containsKey("lightning-delay-seconds") && Helper.isInteger(map.get("lightning-delay-seconds")))
 	    lightningDelaySeconds = (Integer) map.get("lightning-delay-seconds");
 	}
-	
+
 	@Override
 	public String toString()
 	{
 	    String header = "Title: " + title + " Type: " + Material.getMaterial(blockId) + " Radius: " + radius + " Height: " + getHeight();
 	    String properties = getProtertiesString();
-	    
+
 	    return header + " " + properties;
 	}
-	
+
 	public String getProtertiesString()
 	{
 	    String properties = "";
-	    
+
 	    if (welcomeMessage)
 		properties += ", welcome";
-	    
+
 	    if (farewellMessage)
 		properties += ", farewell";
-	    
+
 	    if (preventFire)
 		properties += ", no-fire";
-	    
+
 	    if (preventEntry)
 		properties += ", no-entry";
-	    
+
 	    if (preventPlace)
 		properties += ", no-place";
-	    
+
 	    if (preventDestroy)
 		properties += ", no-destroy";
-	    
+
 	    if (preventExplosions)
 		properties += ", no-explosions";
-	    
+
 	    if (preventPvP)
 		properties += ", no-pvp";
-	    
+
 	    if (guarddogMode)
 		properties += ", guard-dog-mode";
-	    
+
 	    if (instantHeal)
 		properties += ", heal";
-	    
+
 	    if (slowHeal)
 		properties += ", slow-heal";
-	    
+
 	    if (slowDamage)
 		properties += ", slow-damage";
-	    
+
 	    if (fastDamage)
 		properties += ", fast-damage";
-	    
+
 	    if (giveAir)
 		properties += ", give-air";
-	    
+
 	    if (snitch)
 		properties += ", snitch";
-	    
+
 	    if (launch)
 		properties += ", launch";
-	    
+
 	    if (cannon)
 		properties += ", cannon";
-	    
+
 	    if (noConflict)
 		properties += ", no-conflict";
-	    
+
 	    if (mine)
 		properties += ", mine";
-	    
+
 	    if (cloak)
 		properties += ", cloak";
-	    
+
 	    if (properties.length() > 0)
 		return "Properties: " + properties.substring(2);
-	    
+
 	    return "";
 	}
     }

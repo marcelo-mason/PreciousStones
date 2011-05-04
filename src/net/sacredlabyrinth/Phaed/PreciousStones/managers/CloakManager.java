@@ -14,54 +14,54 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 public class CloakManager
 {
     private PreciousStones plugin;
-    
+
     public CloakManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
-    
+
     public void initiate(Field field)
     {
 	Block block = plugin.ffm.getBlock(field);
-	
+
 	CloakEntry ce = new CloakEntry(block.getData());
-	
+
 	if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
 	{
 	    ContainerBlock container = (ContainerBlock) block.getState();
 	    Inventory inv = container.getInventory();
-	    
+
 	    ce.setStacks(inv.getContents());
 	}
-	
+
 	field.setCloakEntry(ce);
 	plugin.ffm.setDirty();
     }
-    
+
     public void cloak(Field field)
     {
 	Block block = plugin.ffm.getBlock(field);
-	
+
 	if (plugin.settings.isCloakableType(block))
 	{
 	    HashSet<String> inhabitants = plugin.em.getInhabitants(field);
-	    
-	    if (inhabitants.size() == 0)
+
+	    if (inhabitants.isEmpty())
 	    {
 		CloakEntry ce = field.getCloakEntry();
-		
+
 		if(ce == null)
 		{
 		    return;
 		}
-		
+
 		ce.setData(block.getData());
-		
+
 		if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
 		{
 		    ContainerBlock container = (ContainerBlock) block.getState();
 		    Inventory inv = container.getInventory();
-		    
+
 		    ce.setStacks(inv.getContents());
 		    inv.clear();
 		}
@@ -70,28 +70,28 @@ public class CloakManager
 	    }
 	}
     }
-    
+
     public void decloak(Field field)
     {
 	Block block = plugin.ffm.getBlock(field);
-	
+
 	if (plugin.settings.isCloakType(block))
 	{
 	    CloakEntry ce = field.getCloakEntry();
-	    
+
 	    if(ce == null)
 	    {
 		return;
 	    }
-	    
+
 	    block.setType(Material.getMaterial(field.getTypeId()));
 	    block.setData(ce.getData());
-	    
+
 	    if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
 	    {
 		ContainerBlock container = (ContainerBlock) block.getState();
 		Inventory inv = container.getInventory();
-		
+
 		if (ce.getStacks() != null && ce.getStacks().length > 0)
 		{
 		    inv.setContents(ce.getStacks());
@@ -100,11 +100,11 @@ public class CloakManager
 	    plugin.ffm.setDirty();
 	}
     }
-    
+
     public Material getCloakMaterial(Block block)
     {
 	Material mat = Material.STONE;
-	
+
 	for (int x = -1; x <= 1; x++)
 	{
 	    for (int y = -1; y <= 1; y++)
@@ -115,9 +115,9 @@ public class CloakManager
 		    {
 			continue;
 		    }
-		    
+
 		    Block adjacent = block.getRelative(x, y, z);
-		    
+
 		    if (plugin.settings.isCloakType(adjacent))
 		    {
 			mat = adjacent.getType();
@@ -126,7 +126,7 @@ public class CloakManager
 		}
 	    }
 	}
-	
+
 	return mat;
     }
 }
