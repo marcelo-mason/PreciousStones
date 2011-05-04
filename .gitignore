@@ -3,3 +3,5 @@ bin
 /nbproject/private/
 /nbproject
 /build.xml
+/build/
+/dist/

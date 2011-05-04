@@ -1,0 +1,7 @@
+name: PreciousStones
+main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
+version: 4.0
+commands:
+  ps:
+    description: All of the PreciousStones commands
+    usage: /ps help - Displays PreciousStones commands
