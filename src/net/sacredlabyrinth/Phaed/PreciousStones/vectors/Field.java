@@ -9,6 +9,10 @@ import org.bukkit.util.Vector;
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class Field extends AbstractVec
 {
     private int radius;
@@ -20,11 +24,27 @@ public class Field extends AbstractVec
     private ArrayList<String> allowed = new ArrayList<String>();
     private CloakEntry cloakEntry;
     private ChunkVec chunkvec;
-    
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param radius
+     * @param height
+     * @param chunkvec
+     * @param world
+     * @param typeId
+     * @param owner
+     * @param allowed
+     * @param name
+     * @param snitchList
+     * @param cloakEntry
+     */
     public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name, ArrayList<SnitchEntry> snitchList, CloakEntry cloakEntry)
     {
 	super(x, y, z, world);
-	
+
 	this.radius = radius;
 	this.height = height;
 	this.owner = owner;
@@ -35,11 +55,20 @@ public class Field extends AbstractVec
 	this.snitchList = snitchList;
 	this.cloakEntry = cloakEntry;
     }
-    
+
+    /**
+     *
+     * @param block
+     * @param radius
+     * @param height
+     * @param owner
+     * @param allowed
+     * @param name
+     */
     public Field(Block block, int radius, int height, String owner, ArrayList<String> allowed, String name)
     {
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-	
+
 	this.radius = radius;
 	this.height = height;
 	this.owner = owner;
@@ -48,103 +77,170 @@ public class Field extends AbstractVec
 	this.typeId = block.getTypeId();
 	this.chunkvec = new ChunkVec(block.getChunk());
     }
-    
+
+    /**
+     *
+     * @param block
+     * @param radius
+     * @param height
+     */
     public Field(Block block, int radius, int height)
     {
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-	
+
 	this.radius = radius;
 	this.height = height;
 	this.typeId = block.getTypeId();
 	this.chunkvec = new ChunkVec(block.getChunk());
     }
-    
+
+    /**
+     *
+     * @param block
+     */
     public Field(Block block)
     {
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
-    
+
+    /**
+     *
+     * @param radius
+     */
     public void setRadius(int radius)
     {
 	this.radius = radius;
 	this.height = (this.radius * 2) + 1;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public int getTypeId()
     {
 	return this.typeId;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getType()
     {
 	return Material.getMaterial(this.typeId).toString();
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public ChunkVec getChunkVec()
     {
 	return this.chunkvec;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public int getRadius()
     {
 	return this.radius;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public int getHeight()
     {
 	return this.height;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getOwner()
     {
 	return this.owner;
     }
-    
+
+    /**
+     *
+     * @param owner
+     */
     public void setOwner(String owner)
     {
 	this.owner = owner;
     }
-    
+
+    /**
+     *
+     * @param name
+     */
     public void setName(String name)
     {
 	this.name = name;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getName()
     {
 	if (this.name.length() == 0)
 	{
 	    return this.owner + "'s domain";
 	}
-	
+
 	return this.name;
     }
-    
+
+    /**
+     *
+     * @param name
+     * @return
+     */
     public boolean isName(String name)
     {
 	if (name == null && this.name == null)
 	{
 	    return true;
 	}
-	
+
 	if (name == null || this.name == null)
 	{
 	    return false;
 	}
-	
+
 	return this.name.equals(name);
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getStoredName()
     {
 	return this.name;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public ArrayList<String> getAllowed()
     {
 	return allowed;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public ArrayList<String> getAllAllowed()
     {
 	ArrayList<String> all = new ArrayList<String>();
@@ -152,11 +248,15 @@ public class Field extends AbstractVec
 	all.addAll(allowed);
 	return all;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getAllowedList()
     {
 	String out = "";
-	
+
 	if (allowed.size() > 0)
 	{
 	    for (int i = 0; i < allowed.size(); i++)
@@ -168,25 +268,40 @@ public class Field extends AbstractVec
 	{
 	    return null;
 	}
-	
+
 	return out.substring(2);
     }
-    
+
+    /**
+     *
+     * @param playerName
+     * @return
+     */
     public boolean isOwner(String playerName)
     {
 	return playerName.equals(owner);
     }
-    
+
+    /**
+     *
+     * @param allowedName
+     * @return
+     */
     public boolean isAllowed(String allowedName)
     {
 	if(allowed.contains("*"))
 	{
 	    return true;
 	}
-	
+
 	return allowed.contains(allowedName);
     }
-    
+
+    /**
+     *
+     * @param allowedName
+     * @return
+     */
     public boolean isAllAllowed(String allowedName)
     {
 	if(allowed.contains("*"))
@@ -196,36 +311,50 @@ public class Field extends AbstractVec
 
 	return allowedName.equals(owner) || allowed.contains(allowedName);
     }
-    
+
+    /**
+     *
+     * @param allowedName
+     * @return
+     */
     public boolean addAllowed(String allowedName)
     {
 	if (allowed.contains(allowedName))
 	    return false;
-	
+
 	allowed.add(allowedName);
 	return true;
     }
-    
+
+    /**
+     *
+     * @param allowedName
+     * @return
+     */
     public boolean removeAllowed(String allowedName)
     {
 	if (!allowed.contains(allowedName))
 	    return false;
-	
+
 	allowed.remove(allowedName);
 	return true;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public ArrayList<Vector> getCorners()
     {
 	ArrayList<Vector> corners = new ArrayList<Vector>();
-	
+
 	int minx = x - radius;
 	int maxx = x + radius;
 	int minz = z - radius;
 	int maxz = z + radius;
 	int miny = y - (int) Math.floor(((double) height) / 2);
 	int maxy = y + (int) Math.ceil(((double) height) / 2);
-	
+
 	corners.add(new Vector(minx, miny, minz));
 	corners.add(new Vector(minx, miny, maxz));
 	corners.add(new Vector(minx, maxy, minz));
@@ -234,19 +363,24 @@ public class Field extends AbstractVec
 	corners.add(new Vector(maxx, miny, maxz));
 	corners.add(new Vector(maxx, maxy, minz));
 	corners.add(new Vector(maxx, maxy, maxz));
-	
+
 	return corners;
     }
-    
+
+    /**
+     *
+     * @param field
+     * @return
+     */
     public boolean intersects(Field field)
     {
 	if (!field.getWorld().equals(this.world))
 	{
 	    return false;
 	}
-	
+
 	ArrayList<Vector> corners = field.getCorners();
-	
+
 	for (Vector vec : corners)
 	{
 	    if (this.envelops(vec))
@@ -254,9 +388,9 @@ public class Field extends AbstractVec
 		return true;
 	    }
 	}
-	
+
 	corners = this.getCorners();
-	
+
 	for (Vector vec : corners)
 	{
 	    if (field.envelops(vec))
@@ -264,58 +398,83 @@ public class Field extends AbstractVec
 		return true;
 	    }
 	}
-	
+
 	return false;
     }
-    
+
+    /**
+     *
+     * @param vec
+     * @return
+     */
     public boolean envelops(Vector vec)
     {
 	int px = vec.getBlockX();
 	int py = vec.getBlockY();
 	int pz = vec.getBlockZ();
-	
+
 	int minx = x - radius;
 	int maxx = x + radius;
 	int minz = z - radius;
 	int maxz = z + radius;
 	int miny = y - (int) Math.floor(((double) height) / 2);
 	int maxy = y + (int) Math.ceil(((double) height) / 2);
-	
+
 	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
 	    return true;
-	
+
 	return false;
     }
-    
+
+    /**
+     *
+     * @param field
+     * @return
+     */
     public boolean envelops(Field field)
     {
 	int px = field.getX();
 	int py = field.getY();
 	int pz = field.getZ();
-	
+
 	int minx = x - radius;
 	int maxx = x + radius;
 	int minz = z - radius;
 	int maxz = z + radius;
 	int miny = y - (int) Math.floor(((double) height) / 2);
 	int maxy = y + (int) Math.ceil(((double) height) / 2);
-	
+
 	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
 	    return true;
-	
+
 	return false;
     }
-    
+
+    /**
+     *
+     * @param block
+     * @return
+     */
     public boolean envelops(Block block)
     {
 	return envelops(new Field(block));
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getCoords()
     {
 	return super.toString();
     }
-    
+
+    /**
+     *
+     * @param name
+     * @param reason
+     * @param details
+     */
     public void addIntruder(String name, String reason, String details)
     {
 	for(SnitchEntry se : snitchList)
@@ -326,48 +485,71 @@ public class Field extends AbstractVec
 		return;
 	    }
 	}
-	   
+
 	snitchList.add(new SnitchEntry(name, reason, details));
     }
-    
+
+    /**
+     *
+     */
     public void cleanSnitchList()
     {
 	snitchList.clear();
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public ArrayList<SnitchEntry> getSnitchList()
     {
 	return snitchList;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getSnitchListString()
     {
 	String out = "";
-	
+
 	for (SnitchEntry se : snitchList)
 	{
 	    out += se.toString();
 	}
 
 	return "";
-    }    
-   
+    }
+
+    /**
+     *
+     * @return
+     */
     public CloakEntry getCloakEntry()
     {
 	return cloakEntry;
     }
 
+    /**
+     *
+     * @param cloakEntry
+     */
     public void setCloakEntry(CloakEntry cloakEntry)
     {
 	this.cloakEntry = cloakEntry;
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public String getCloakString()
     {
 	return cloakEntry == null ? "" : cloakEntry.toString();
     }
 
-    
+
     @Override
     public String toString()
     {

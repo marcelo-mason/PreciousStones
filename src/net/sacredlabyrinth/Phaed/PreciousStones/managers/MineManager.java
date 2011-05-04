@@ -10,15 +10,28 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class MineManager
 {
     private PreciousStones plugin;
 
+    /**
+     *
+     * @param plugin
+     */
     public MineManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void enterMine(final Player player, final Field field)
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.bypass.mine")){

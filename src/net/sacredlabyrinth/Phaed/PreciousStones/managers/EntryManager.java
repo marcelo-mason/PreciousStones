@@ -24,6 +24,10 @@ public final class EntryManager
 
     private final HashMap<String, EntryFields> entries = new HashMap<String, EntryFields>();
 
+    /**
+     *
+     * @param plugin
+     */
     public EntryManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
@@ -31,11 +35,19 @@ public final class EntryManager
 	startScheduler();
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public EntryFields getEntryFields(String name)
     {
 	return entries.get(name);
     }
 
+    /**
+     *
+     */
     public void startScheduler()
     {
 	plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
@@ -129,6 +141,14 @@ public final class EntryManager
 	}, 0, 20L);
     }
 
+    /**
+     *
+     * @param Pos
+     * @param Ang
+     * @param Hyp
+     * @param y
+     * @return
+     */
     public static Vector Reposition(Vector Pos, float Ang, float Hyp, float y)
     {
 	float r = Ang * (float) Math.PI / 180.0f;
@@ -137,12 +157,23 @@ public final class EntryManager
 	return new Vector((double) (Pos.getX() + b), y, (double) (Pos.getZ() + a));
     }
 
+    /**
+     *
+     * @param Origin
+     * @param Dest
+     * @return
+     */
     public static float Heading(Vector Origin, Vector Dest)
     {
 	double ang = (double) Math.atan2((Dest.getZ() - Origin.getZ()), (Dest.getX() - Origin.getX()));
 	return (float) Math.toDegrees(ang);
     }
 
+    /**
+     *
+     * @param player
+     * @return
+     */
     public LinkedList<Field> getPlayerEntryFields(Player player)
     {
 	if (entries.containsKey(player.getName()))
@@ -153,6 +184,11 @@ public final class EntryManager
 	return null;
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void enterField(Player player, Field field)
     {
 	if (entries.containsKey(player.getName()))
@@ -178,6 +214,11 @@ public final class EntryManager
 	plugin.clm.decloak(field);
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void leaveField(Player player, Field field)
     {
 	EntryFields ef = entries.get(player.getName());
@@ -194,6 +235,12 @@ public final class EntryManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     * @return
+     */
     public boolean isInsideField(Player player, Field field)
     {
 	EntryFields ef = entries.get(player.getName());
@@ -206,6 +253,12 @@ public final class EntryManager
 	return ef.containsField(field);
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     * @return
+     */
     public boolean containsSameNameOwnedField(Player player, Field field)
     {
 	if (entries.containsKey(player.getName()))
@@ -240,6 +293,11 @@ public final class EntryManager
 	return health;
     }
 
+    /**
+     *
+     * @param field
+     * @return
+     */
     public HashSet<String> getInhabitants(Field field)
     {
 	HashSet<String> inhabitants = new HashSet<String>();

@@ -13,70 +13,252 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public final class SettingsManager
 {
+    /**
+     *
+     */
     public List<Integer> unbreakableBlocks;
+    /**
+     *
+     */
     public List<Integer> bypassBlocks;
+    /**
+     *
+     */
     public List<Integer> unprotectableBlocks;
+    /**
+     *
+     */
     public List<Integer> cloakableBlocks;
+    /**
+     *
+     */
     public List<Integer> cloakBlocks;
+    /**
+     *
+     */
     public int cloakMinRadius;
+    /**
+     *
+     */
     public int cloakDefaultRadius;
+    /**
+     *
+     */
     public int cloakMaxRadius;
+    /**
+     *
+     */
     public List<Integer> toolItems;
+    /**
+     *
+     */
     public boolean logFire;
+    /**
+     *
+     */
     public boolean logEntry;
+    /**
+     *
+     */
     public boolean logPlace;
+    /**
+     *
+     */
     public boolean logDestroy;
+    /**
+     *
+     */
     public boolean logDestroyArea;
+    /**
+     *
+     */
     public boolean logUnprotectable;
+    /**
+     *
+     */
     public boolean logPvp;
+    /**
+     *
+     */
     public boolean logBypassPvp;
+    /**
+     *
+     */
     public boolean logBypassDelete;
+    /**
+     *
+     */
     public boolean logBypassPlace;
+    /**
+     *
+     */
     public boolean logBypassDestroy;
+    /**
+     *
+     */
     public boolean logBypassUnprotectable;
+    /**
+     *
+     */
     public boolean logConflictPlace;
+    /**
+     *
+     */
     public boolean notifyPlace;
+    /**
+     *
+     */
     public boolean notifyDestroy;
+    /**
+     *
+     */
     public boolean notifyBypassPvp;
+    /**
+     *
+     */
     public boolean notifyBypassPlace;
+    /**
+     *
+     */
     public boolean notifyBypassDestroy;
+    /**
+     *
+     */
     public boolean notifyBypassUnprotectable;
+    /**
+     *
+     */
     public boolean notifyGuardDog;
+    /**
+     *
+     */
     public boolean warnCloaking;
+    /**
+     *
+     */
     public boolean warnInstantHeal;
+    /**
+     *
+     */
     public boolean warnSlowHeal;
+    /**
+     *
+     */
     public boolean warnSlowDamage;
+    /**
+     *
+     */
     public boolean warnFastDamage;
+    /**
+     *
+     */
     public boolean warnGiveAir;
+    /**
+     *
+     */
     public boolean warnPlace;
+    /**
+     *
+     */
     public boolean warnDestroy;
+    /**
+     *
+     */
     public boolean warnDestroyArea;
+    /**
+     *
+     */
     public boolean warnUnprotectable;
+    /**
+     *
+     */
     public boolean warnEntry;
+    /**
+     *
+     */
     public boolean warnPvp;
+    /**
+     *
+     */
     public boolean warnFire;
+    /**
+     *
+     */
     public boolean warnLaunch;
+    /**
+     *
+     */
     public boolean warnCannon;
+    /**
+     *
+     */
     public boolean warnMine;
+    /**
+     *
+     */
     public long saveFrequency;
+    /**
+     *
+     */
     public int purgeDays;
+    /**
+     *
+     */
     public boolean publicBlockDetails;
+    /**
+     *
+     */
     public boolean sneakingBypassesDamage;
+    /**
+     *
+     */
     public boolean allowedCanBreakPstones;
+    /**
+     *
+     */
     public boolean dropOnDelete;
+    /**
+     *
+     */
     public boolean disableAlertsForAdmins;
+    /**
+     *
+     */
     public boolean disableBypassAlertsForAdmins;
+    /**
+     *
+     */
     public boolean offByDefault;
+    /**
+     *
+     */
     public int chunksInLargestForceFieldArea;
+    /**
+     *
+     */
     public List<Integer> ffBlocks = new ArrayList<Integer>();
+    /**
+     *
+     */
     public int[] throughFields = new int[] { 0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94 };
+    /**
+     *
+     */
     public int linesPerPage;
 
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
 
+    /**
+     *
+     * @param plugin
+     */
     public SettingsManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
@@ -150,6 +332,10 @@ public final class SettingsManager
 	linesPerPage = config.getInt("settings.lines-per-page", 12);
     }
 
+    /**
+     *
+     * @param maps
+     */
     @SuppressWarnings("unchecked")
     public void addForceFieldStones(ArrayList<LinkedHashMap> maps)
     {
@@ -183,6 +369,7 @@ public final class SettingsManager
 
     /**
      * Whether any nameable pstones have been defined
+     * @return
      */
     public boolean haveNameable()
     {
@@ -199,6 +386,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the unprotectable types
+     * @param placedblock
+     * @return
      */
     public boolean isUnprotectableType(Block placedblock)
     {
@@ -220,6 +409,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the tool item types
+     * @param block
+     * @return
      */
     public boolean isToolItemType(Block block)
     {
@@ -228,6 +419,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the tool item types
+     * @param typeId
+     * @return
      */
     public boolean isToolItemType(int typeId)
     {
@@ -236,6 +429,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the tool item types
+     * @param type
+     * @return
      */
     public boolean isToolItemType(String type)
     {
@@ -244,6 +439,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the cloakable types
+     * @param block
+     * @return
      */
     public boolean isCloakableType(Block block)
     {
@@ -252,6 +449,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the cloakable types
+     * @param typeId
+     * @return
      */
     public boolean isCloakableType(int typeId)
     {
@@ -260,6 +459,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the cloakable types
+     * @param type
+     * @return
      */
     public boolean isCloakableType(String type)
     {
@@ -268,6 +469,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the cloak types
+     * @param block
+     * @return
      */
     public boolean isCloakType(Block block)
     {
@@ -276,6 +479,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the cloak types
+     * @param typeId
+     * @return
      */
     public boolean isCloakType(int typeId)
     {
@@ -284,6 +489,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the snitch types
+     * @param block
+     * @return
      */
     public boolean isSnitchType(Block block)
     {
@@ -300,6 +507,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the unbreakable types
+     * @param unbreakableblock
+     * @return
      */
     public boolean isUnbreakableType(Block unbreakableblock)
     {
@@ -308,6 +517,8 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the unbreakable types
+     * @param typeId
+     * @return
      */
     public boolean isUnbreakableType(int typeId)
     {
@@ -316,6 +527,8 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the unbreakable types
+     * @param type
+     * @return
      */
     public boolean isUnbreakableType(String type)
     {
@@ -324,6 +537,8 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the forcefeld types
+     * @param block
+     * @return
      */
     public boolean isFieldType(Block block)
     {
@@ -332,6 +547,8 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the forcefeld types
+     * @param type
+     * @return
      */
     public boolean isFieldType(String type)
     {
@@ -340,6 +557,8 @@ public final class SettingsManager
 
     /**
      * Check if the material is one of the forcefeld types
+     * @param material
+     * @return
      */
     public boolean isFieldType(Material material)
     {
@@ -348,6 +567,8 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the forcefeld types
+     * @param typeId
+     * @return
      */
     public boolean isFieldType(int typeId)
     {
@@ -356,6 +577,8 @@ public final class SettingsManager
 
     /**
      * Whetehr the block is a bypass type
+     * @param block
+     * @return
      */
     public boolean isBypassBlock(Block block)
     {
@@ -364,6 +587,8 @@ public final class SettingsManager
 
     /**
      * Returns the settings for a specific field type
+     * @param field
+     * @return
      */
     public FieldSettings getFieldSettings(Field field)
     {
@@ -372,6 +597,8 @@ public final class SettingsManager
 
     /**
      * Returns the settings for a specific block type
+     * @param typeId
+     * @return
      */
     public FieldSettings getFieldSettings(int typeId)
     {
@@ -386,52 +613,165 @@ public final class SettingsManager
 
     /**
      * Returns all the field settings
+     * @return
      */
     public HashMap<Integer, FieldSettings> getFieldSettings()
     {
 	return fieldsettings;
     }
 
+    /**
+     *
+     */
     public class FieldSettings
     {
-	public boolean blockDefined = false;
+        /**
+         *
+         */
+        public boolean blockDefined = false;
 
-	public int blockId;
-	public int radius = 0;
-	public int height = 0;
-	public String title;
-	public boolean nameable = false;
-	public boolean preventFire = false;
-	public boolean preventPlace = false;
-	public boolean preventDestroy = false;
-	public boolean preventExplosions = false;
-	public boolean preventPvP = false;
-	public boolean preventEntry = false;
-	public boolean preventUnprotectable = false;
-	public boolean guarddogMode = false;
-	public boolean instantHeal = false;
-	public boolean slowHeal = false;
-	public boolean slowDamage = false;
-	public boolean fastDamage = false;
-	public boolean breakable = false;
-	public boolean welcomeMessage = false;
-	public boolean farewellMessage = false;
-	public boolean giveAir = false;
-	public boolean snitch = false;
-	public boolean noConflict = false;
-	public boolean launch = false;
-	public int launchHeight = 0;
-	public boolean cannon = false;
-	public int cannonHeight = 0;
-	public boolean mine = false;
-	public int mineDelaySeconds = 0;
-	public int mineReplaceBlock = 0;
-	public boolean lightning = false;
-	public int lightningDelaySeconds = 0;
-	public int lightningReplaceBlock = 0;
-	public boolean cloak = false;
+        /**
+         *
+         */
+        public int blockId;
+        /**
+         *
+         */
+        public int radius = 0;
+        /**
+         *
+         */
+        public int height = 0;
+        /**
+         *
+         */
+        public String title;
+        /**
+         *
+         */
+        public boolean nameable = false;
+        /**
+         *
+         */
+        public boolean preventFire = false;
+        /**
+         *
+         */
+        public boolean preventPlace = false;
+        /**
+         *
+         */
+        public boolean preventDestroy = false;
+        /**
+         *
+         */
+        public boolean preventExplosions = false;
+        /**
+         *
+         */
+        public boolean preventPvP = false;
+        /**
+         *
+         */
+        public boolean preventEntry = false;
+        /**
+         *
+         */
+        public boolean preventUnprotectable = false;
+        /**
+         *
+         */
+        public boolean guarddogMode = false;
+        /**
+         *
+         */
+        public boolean instantHeal = false;
+        /**
+         *
+         */
+        public boolean slowHeal = false;
+        /**
+         *
+         */
+        public boolean slowDamage = false;
+        /**
+         *
+         */
+        public boolean fastDamage = false;
+        /**
+         *
+         */
+        public boolean breakable = false;
+        /**
+         *
+         */
+        public boolean welcomeMessage = false;
+        /**
+         *
+         */
+        public boolean farewellMessage = false;
+        /**
+         *
+         */
+        public boolean giveAir = false;
+        /**
+         *
+         */
+        public boolean snitch = false;
+        /**
+         *
+         */
+        public boolean noConflict = false;
+        /**
+         *
+         */
+        public boolean launch = false;
+        /**
+         *
+         */
+        public int launchHeight = 0;
+        /**
+         *
+         */
+        public boolean cannon = false;
+        /**
+         *
+         */
+        public int cannonHeight = 0;
+        /**
+         *
+         */
+        public boolean mine = false;
+        /**
+         *
+         */
+        public int mineDelaySeconds = 0;
+        /**
+         *
+         */
+        public int mineReplaceBlock = 0;
+        /**
+         *
+         */
+        public boolean lightning = false;
+        /**
+         *
+         */
+        public int lightningDelaySeconds = 0;
+        /**
+         *
+         */
+        public int lightningReplaceBlock = 0;
+        /**
+         *
+         */
+        public boolean cloak = false;
 
-	public String getTitle()
+        /**
+         *
+         * @return
+         */
+        public String getTitle()
 	{
 	    if (title == null)
 	    {
@@ -441,7 +781,11 @@ public final class SettingsManager
 	    return title;
 	}
 
-	public String getTitleCap()
+        /**
+         *
+         * @return
+         */
+        public String getTitleCap()
 	{
 	    if (title == null)
 	    {
@@ -451,7 +795,11 @@ public final class SettingsManager
 	    return Helper.capitalize(title);
 	}
 
-	public int getHeight()
+        /**
+         *
+         * @return
+         */
+        public int getHeight()
 	{
 	    if (this.height == 0)
 		return (this.radius * 2) + 1;
@@ -459,7 +807,11 @@ public final class SettingsManager
 		return this.height;
 	}
 
-	public FieldSettings(int blockId)
+        /**
+         *
+         * @param blockId
+         */
+        public FieldSettings(int blockId)
 	{
 	    this.title = "Cloak";
 	    this.blockId = blockId;
@@ -469,7 +821,11 @@ public final class SettingsManager
 	    this.breakable = true;
 	}
 
-	@SuppressWarnings("unchecked")
+        /**
+         *
+         * @param map
+         */
+        @SuppressWarnings("unchecked")
 	public FieldSettings(LinkedHashMap map)
 	{
 	    // if no block specified then skip it its garbage
@@ -592,7 +948,11 @@ public final class SettingsManager
 	    return header + " " + properties;
 	}
 
-	public String getProtertiesString()
+        /**
+         *
+         * @return
+         */
+        public String getProtertiesString()
 	{
 	    String properties = "";
 

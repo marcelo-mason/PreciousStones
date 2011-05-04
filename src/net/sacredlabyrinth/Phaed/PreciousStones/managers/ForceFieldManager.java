@@ -35,6 +35,10 @@ public class ForceFieldManager
     private PreciousStones plugin;
     private boolean dirty = false;
 
+    /**
+     *
+     * @param plugin
+     */
     public ForceFieldManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
@@ -42,6 +46,7 @@ public class ForceFieldManager
 
     /**
      * Retrieve a copy of the chunk list
+     * @return
      */
     public HashMap<ChunkVec, LinkedList<Field>> getChunks()
     {
@@ -52,6 +57,7 @@ public class ForceFieldManager
 
     /**
      * Import chunks to the chunklist
+     * @param chunks
      */
     public void importChunks(HashMap<ChunkVec, LinkedList<Field>> chunks)
     {
@@ -60,6 +66,7 @@ public class ForceFieldManager
 
     /**
      * Whether we need to save
+     * @return
      */
     public boolean isDirty()
     {
@@ -108,6 +115,7 @@ public class ForceFieldManager
 
     /**
      * Total number of forcefield stones
+     * @return
      */
     public int count()
     {
@@ -122,6 +130,7 @@ public class ForceFieldManager
 
     /**
      * Clean up orphan fields
+     * @return
      */
     public int cleanOrphans()
     {
@@ -153,6 +162,8 @@ public class ForceFieldManager
 
     /**
      * If its unbreakable or not
+     * @param block
+     * @return
      */
     public boolean isBreakable(Block block)
     {
@@ -162,6 +173,8 @@ public class ForceFieldManager
 
     /**
      * If any of the allowed playes are online
+     * @param field
+     * @return
      */
     public boolean allowedAreOnline(Field field)
     {
@@ -180,6 +193,8 @@ public class ForceFieldManager
 
     /**
      * Gets the field from field block
+     * @param fieldblock
+     * @return
      */
     public Field getField(Block fieldblock)
     {
@@ -199,6 +214,8 @@ public class ForceFieldManager
 
     /**
      * Check if a field exists in our list
+     * @param field
+     * @return
      */
     public boolean existsField(Field field)
     {
@@ -218,6 +235,8 @@ public class ForceFieldManager
 
     /**
      * Returns the source block for the field
+     * @param field
+     * @return
      */
     public Block getBlock(Field field)
     {
@@ -231,6 +250,8 @@ public class ForceFieldManager
 
     /**
      * Looks for the block in our field collection
+     * @param fieldblock
+     * @return
      */
     public boolean isField(Block fieldblock)
     {
@@ -239,6 +260,8 @@ public class ForceFieldManager
 
     /**
      * Wehter a redstone hooked field is in a disabled state
+     * @param field
+     * @return
      */
     public boolean isRedstoneHookedDisabled(Field field)
     {
@@ -304,6 +327,8 @@ public class ForceFieldManager
 
     /**
      * If there is current any where around the block
+     * @param block
+     * @return
      */
     public boolean isAnywayPowered(Block block)
     {
@@ -342,6 +367,9 @@ public class ForceFieldManager
 
     /**
      * Returns the fields in the chunk and adjacent chunks
+     * @param blockInArea
+     * @param chunkradius
+     * @return
      */
     public LinkedList<Field> getFieldsInArea(Block blockInArea, int chunkradius)
     {
@@ -371,6 +399,9 @@ public class ForceFieldManager
 
     /**
      * Returns the fields in the chunk and adjacent chunks
+     * @param player
+     * @param chunkradius
+     * @return
      */
     public LinkedList<Field> getFieldsInArea(Player player, int chunkradius)
     {
@@ -380,6 +411,8 @@ public class ForceFieldManager
 
     /**
      * Returns the fields in the chunk and adjacent chunks
+     * @param blockInArea
+     * @return
      */
     public LinkedList<Field> getFieldsInArea(Block blockInArea)
     {
@@ -388,6 +421,9 @@ public class ForceFieldManager
 
     /**
      * Returns all fields of the type
+     * @param typeid
+     * @param world
+     * @return
      */
     public LinkedList<Field> getFieldsOfType(int typeid, World world)
     {
@@ -413,6 +449,9 @@ public class ForceFieldManager
 
     /**
      * Returns the blocks that is originating the protective field the block is in and that the player is not allowed in
+     * @param blockInArea
+     * @param playerName
+     * @return
      */
     public LinkedList<Field> getSourceFields(Block blockInArea, String playerName)
     {
@@ -442,6 +481,8 @@ public class ForceFieldManager
 
     /**
      * Returns the blocks that are originating the protective fields the block is in
+     * @param vehicle
+     * @return
      */
     public LinkedList<Field> getSourceFields(Vehicle vehicle)
     {
@@ -451,6 +492,8 @@ public class ForceFieldManager
 
     /**
      * Returns the blocks that are originating the protective fields the block is in
+     * @param blockInArea
+     * @return
      */
     public LinkedList<Field> getSourceFields(Block blockInArea)
     {
@@ -459,6 +502,8 @@ public class ForceFieldManager
 
     /**
      * Returns the blocks that are originating the protective fields the player is standing in
+     * @param player
+     * @return
      */
     public LinkedList<Field> getSourceFields(Player player)
     {
@@ -468,6 +513,9 @@ public class ForceFieldManager
 
     /**
      * Returns the blocks that are originating the protective fields the player is standing in. That the player is not allowed in
+     * @param player
+     * @param playerName
+     * @return
      */
     public LinkedList<Field> getSourceFields(Player player, String playerName)
     {
@@ -477,6 +525,11 @@ public class ForceFieldManager
 
     /*
      * Returns the blocks that are originating prevent entry fields in the players area
+     */
+    /**
+     *
+     * @param player
+     * @return
      */
     public LinkedList<Field> getSourceEntryFields(Player player)
     {
@@ -504,6 +557,9 @@ public class ForceFieldManager
 
     /**
      * Returns the field if hes standing in at least one allowed field
+     * @param blockInArea
+     * @param player
+     * @return
      */
     public Field getOneAllowedField(Block blockInArea, Player player)
     {
@@ -542,6 +598,9 @@ public class ForceFieldManager
 
     /**
      * Returns the field pointed at
+     * @param blockInArea
+     * @param player
+     * @return
      */
     public Field getPointedField(Block blockInArea, Player player)
     {
@@ -570,6 +629,10 @@ public class ForceFieldManager
 
     /**
      * Gets all fields intersecting to the passed fields
+     * @param fields
+     * @param player
+     * @param total
+     * @return
      */
     public HashSet<Field> getIntersecting(HashSet<Field> fields, Player player, HashSet<Field> total)
     {
@@ -602,6 +665,9 @@ public class ForceFieldManager
 
     /**
      * Renurns all overlapped force-fiels
+     * @param player
+     * @param field
+     * @return
      */
     public HashSet<Field> getOverlappedFields(Player player, Field field)
     {
@@ -630,6 +696,8 @@ public class ForceFieldManager
 
     /**
      * Get first snitch fields youre standing on that youre allowed on
+     * @param block
+     * @return
      */
     public LinkedList<Field> getSnitchFields(Block block)
     {
@@ -650,6 +718,9 @@ public class ForceFieldManager
 
     /**
      * Clean up snitch lists of all intersecting fields
+     * @param player
+     * @param field
+     * @return
      */
     public int cleanSnitchLists(Player player, Field field)
     {
@@ -677,6 +748,10 @@ public class ForceFieldManager
 
     /**
      * Sets the name of the field and all interseting fields
+     * @param player
+     * @param field
+     * @param name
+     * @return
      */
     public int setNameFields(Player player, Field field, String name)
     {
@@ -704,6 +779,9 @@ public class ForceFieldManager
 
     /**
      * Delete fields
+     * @param player
+     * @param field
+     * @return
      */
     public int deleteFields(Player player, Field field)
     {
@@ -727,6 +805,9 @@ public class ForceFieldManager
 
     /**
      * Returns a list of players who are inside he overlapped fields
+     * @param player
+     * @param field
+     * @return
      */
     public HashSet<String> getWho(Player player, Field field)
     {
@@ -744,6 +825,9 @@ public class ForceFieldManager
 
     /**
      * Get allowed players on the overlapped force-fields
+     * @param player
+     * @param field
+     * @return
      */
     public HashSet<String> getAllAllowed(Player player, Field field)
     {
@@ -760,6 +844,10 @@ public class ForceFieldManager
 
     /**
      * Add allowed player to overlapped force-fields
+     * @param player
+     * @param field
+     * @param allowedName
+     * @return
      */
     public int addAllowed(Player player, Field field, String allowedName)
     {
@@ -785,6 +873,10 @@ public class ForceFieldManager
 
     /**
      * Remove allowed player from overlapped force-fields
+     * @param player
+     * @param allowedName
+     * @param field
+     * @return
      */
     public int removeAllowed(Player player, Field field, String allowedName)
     {
@@ -809,6 +901,8 @@ public class ForceFieldManager
 
     /**
      * Get all the fields belonging to player
+     * @param player
+     * @return
      */
     public LinkedList<Field> getOwnersFields(Player player)
     {
@@ -830,6 +924,9 @@ public class ForceFieldManager
 
     /**
      * Add allowed player to all your force fields
+     * @param player
+     * @param allowedName
+     * @return
      */
     public int allowAll(Player player, String allowedName)
     {
@@ -851,6 +948,9 @@ public class ForceFieldManager
 
     /**
      * Remove allowed player to all your force fields
+     * @param player
+     * @param allowedName
+     * @return
      */
     public int removeAll(Player player, String allowedName)
     {
@@ -872,6 +972,9 @@ public class ForceFieldManager
 
     /**
      * Determine whether a player is allowed on a field
+     * @param fieldblock
+     * @param playerName
+     * @return
      */
     public boolean isAllowed(Block fieldblock, String playerName)
     {
@@ -886,6 +989,9 @@ public class ForceFieldManager
 
     /**
      * Determine whether a player is the owner of the field
+     * @param fieldblock
+     * @param playerName
+     * @return
      */
     public boolean isOwner(Block fieldblock, String playerName)
     {
@@ -900,6 +1006,8 @@ public class ForceFieldManager
 
     /**
      * Return the owner of a field
+     * @param fieldblock
+     * @return
      */
     public String getOwner(Block fieldblock)
     {
@@ -914,6 +1022,8 @@ public class ForceFieldManager
 
     /**
      * Return the owner of a field by passign a block in the area
+     * @param blockInArea
+     * @return
      */
     public String getAreaOwner(Block blockInArea)
     {
@@ -932,6 +1042,8 @@ public class ForceFieldManager
 
     /**
      * If the block is touching a pstone block
+     * @param block
+     * @return
      */
     public Block touchingFieldBlock(Block block)
     {
@@ -967,6 +1079,8 @@ public class ForceFieldManager
 
     /**
      * Whether the block is in a unprotectable prevention area
+     * @param blockInArea
+     * @return
      */
     public Field isUprotectableBlockField(Block blockInArea)
     {
@@ -990,6 +1104,9 @@ public class ForceFieldManager
 
     /**
      * Whether the block is in a build proteced area owned by someone else, exclude unprotected guarddogfields
+     * @param blockInArea
+     * @param player
+     * @return
      */
     public Field isPlaceProtected(Block blockInArea, Player player)
     {
@@ -1019,6 +1136,9 @@ public class ForceFieldManager
 
     /**
      * Whether the block is in a break protected area belonging to somebody else (not playerName)
+     * @param blockInArea
+     * @param player
+     * @return
      */
     public Field isDestroyProtected(Block blockInArea, Player player)
     {
@@ -1048,6 +1168,9 @@ public class ForceFieldManager
 
     /**
      * Whether the block is in a fire protected area belonging to somebody else (not playerName)
+     * @param blockInArea
+     * @param player
+     * @return
      */
     public Field isFireProtected(Block blockInArea, Player player)
     {
@@ -1077,6 +1200,9 @@ public class ForceFieldManager
 
     /**
      * Whether the block is in a entry protected area belonging to somebody else (not playerName) Expands the protected area by one to more acurately predict block entry
+     * @param blockInArea
+     * @param player
+     * @return
      */
     public Field isEntryProtected(Block blockInArea, Player player)
     {
@@ -1102,6 +1228,8 @@ public class ForceFieldManager
 
     /**
      * Whether the player is in a pvp protected area
+     * @param player
+     * @return
      */
     public Field isPvPProtected(Player player)
     {
@@ -1122,6 +1250,8 @@ public class ForceFieldManager
 
     /**
      * Whether the block is in a pvp protected area
+     * @param block
+     * @return
      */
     public Field isPvPProtected(Block block)
     {
@@ -1142,6 +1272,8 @@ public class ForceFieldManager
 
     /**
      * Whether the block is in an explosion protected area
+     * @param placedBlock
+     * @return
      */
     public Field isExplosionProtected(Block placedBlock)
     {
@@ -1167,6 +1299,9 @@ public class ForceFieldManager
 
     /**
      * Return the first field that conflicts with the unbreakable
+     * @param placedBlock
+     * @param placer
+     * @return
      */
     public Field unbreakableConflicts(Block placedBlock, Player placer)
     {
@@ -1197,6 +1332,9 @@ public class ForceFieldManager
 
     /**
      * Return the first field that conflicts with the field
+     * @param placedBlock
+     * @param placer
+     * @return
      */
     public Field fieldConflicts(Block placedBlock, Player placer)
     {
@@ -1236,6 +1374,9 @@ public class ForceFieldManager
 
     /**
      * Get all touching fields
+     * @param scopedBlock
+     * @param materialInHand
+     * @return
      */
     public HashSet<Field> getTouchingFields(Block scopedBlock, Material materialInHand)
     {
@@ -1267,6 +1408,9 @@ public class ForceFieldManager
 
     /**
      * Add stone to the collection
+     * @param fieldblock
+     * @param owner
+     * @return
      */
     public boolean add(Block fieldblock, Player owner)
     {
@@ -1301,6 +1445,7 @@ public class ForceFieldManager
 
     /**
      * Remove stones from the collection
+     * @param fieldblock
      */
     public void release(Block fieldblock)
     {
@@ -1318,6 +1463,7 @@ public class ForceFieldManager
 
     /**
      * Remove stones from the collection
+     * @param field
      */
     public void release(Field field)
     {
@@ -1335,6 +1481,7 @@ public class ForceFieldManager
 
     /**
      * Remove stones from the collection
+     * @param field
      */
     public void silentRelease(Field field)
     {
@@ -1346,6 +1493,7 @@ public class ForceFieldManager
 
     /**
      * Adds to deletion queue
+     * @param fieldblock
      */
     public void queueRelease(Block fieldblock)
     {
@@ -1354,6 +1502,7 @@ public class ForceFieldManager
 
     /**
      * Adds to deletion queue
+     * @param field
      */
     public void queueRelease(Field field)
     {
@@ -1362,6 +1511,7 @@ public class ForceFieldManager
 
     /**
      * Drop block
+     * @param field
      */
     public void dropBlock(Field field)
     {
@@ -1378,6 +1528,7 @@ public class ForceFieldManager
 
     /**
      * Drop block
+     * @param block
      */
     public void dropBlock(Block block)
     {

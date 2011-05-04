@@ -18,21 +18,34 @@ import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class SnitchManager
 {
     private PreciousStones plugin;
-    
+
+    /**
+     *
+     * @param plugin
+     */
     public SnitchManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void recordSnitchEntry(Player player, Field field)
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-	    
+
 	    if (fieldsettings.snitch)
 	    {
 		if (!field.isAllAllowed(player.getName()))
@@ -43,15 +56,20 @@ public class SnitchManager
 		}
 	    }
 	}
-	
+
     }
-    
+
+    /**
+     *
+     * @param player
+     * @param block
+     */
     public void recordSnitchBlockBreak(Player player, Block block)
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
 	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
-	    
+
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
@@ -62,13 +80,18 @@ public class SnitchManager
 	    }
 	}
     }
-    
+
+    /**
+     *
+     * @param player
+     * @param block
+     */
     public void recordSnitchBlockPlace(Player player, Block block)
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
 	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
-	    
+
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
@@ -79,13 +102,18 @@ public class SnitchManager
 	    }
 	}
     }
-    
+
+    /**
+     *
+     * @param player
+     * @param block
+     */
     public void recordSnitchUsed(Player player, Block block)
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
 	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
-	    
+
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
@@ -96,15 +124,20 @@ public class SnitchManager
 	    }
 	}
     }
-    
+
+    /**
+     *
+     * @param player
+     * @param block
+     */
     public void recordSnitchShop(Player player, Block block)
     {
 	Sign sign = (Sign) block.getState();
-	
+
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
 	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
-	    
+
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
@@ -115,13 +148,18 @@ public class SnitchManager
 	    }
 	}
     }
-    
+
+    /**
+     *
+     * @param player
+     * @param block
+     */
     public void recordSnitchIgnite(Player player, Block block)
     {
 	if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
 	{
 	    LinkedList<Field> snitchFields = plugin.ffm.getSnitchFields(block);
-	    
+
 	    for (Field field : snitchFields)
 	    {
 		if (!field.isAllAllowed(player.getName()))
@@ -132,7 +170,12 @@ public class SnitchManager
 	    }
 	}
     }
-    
+
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void showIntruderList(Player player, Field field)
     {
 	if (field.getOwner().equals(player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
@@ -140,37 +183,37 @@ public class SnitchManager
 	    if (field != null)
 	    {
 		ArrayList<SnitchEntry> snitches = field.getSnitchList();
-		
+
 		if (snitches.size() > 0)
 		{
 		    plugin.com.getCacheBlock().clear();
-		    
+
 		    ChatBlock.sendBlank(player);
 		    ChatBlock.saySingle(player, ChatColor.YELLOW + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
 		    ChatBlock.sendBlank(player);
-		    
+
 		    plugin.com.getCacheBlock().addRow(new String[] { "  " + ChatColor.GRAY + "Name", "Reason", "Details" });
-		    
+
 		    for (SnitchEntry se : snitches)
 		    {
 			plugin.com.getCacheBlock().addRow(new String[] { "  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails().replace("{", "[").replace("}", "]") });
 		    }
-		    
+
 		    boolean more = plugin.com.getCacheBlock().sendBlock(player, plugin.settings.linesPerPage);
-		    
+
 		    if (more)
 		    {
 			ChatBlock.sendBlank(player);
 			ChatBlock.sendMessage(player, ChatColor.GOLD + "Type " + ChatColor.WHITE + "/ps more " + ChatColor.GOLD + "to view next page.");
 		    }
-		    
+
 		    ChatBlock.sendBlank(player);
 		}
 		else
 		{
 		    ChatBlock.sendMessage(player, ChatColor.RED + "There have been no intruders around here");
 		}
-		
+
 		return;
 	    }
 	    else
@@ -179,9 +222,11 @@ public class SnitchManager
 	    }
 	}
     }
-    
+
     /**
      * Returns formatted coordinates
+     * @param block
+     * @return
      */
     public static String toBlockDetails(Block block)
     {

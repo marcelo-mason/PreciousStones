@@ -11,15 +11,27 @@ import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class CloakManager
 {
     private PreciousStones plugin;
 
+    /**
+     *
+     * @param plugin
+     */
     public CloakManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
 
+    /**
+     *
+     * @param field
+     */
     public void initiate(Field field)
     {
 	Block block = plugin.ffm.getBlock(field);
@@ -38,6 +50,10 @@ public class CloakManager
 	plugin.ffm.setDirty();
     }
 
+    /**
+     *
+     * @param field
+     */
     public void cloak(Field field)
     {
 	Block block = plugin.ffm.getBlock(field);
@@ -71,6 +87,10 @@ public class CloakManager
 	}
     }
 
+    /**
+     *
+     * @param field
+     */
     public void decloak(Field field)
     {
 	Block block = plugin.ffm.getBlock(field);
@@ -101,6 +121,11 @@ public class CloakManager
 	}
     }
 
+    /**
+     *
+     * @param block
+     * @return
+     */
     public Material getCloakMaterial(Block block)
     {
 	Material mat = Material.STONE;

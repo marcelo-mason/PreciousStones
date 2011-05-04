@@ -14,10 +14,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class CommunicatonManager
 {
     private PreciousStones plugin;
 
+    /**
+     *
+     * @param plugin
+     */
     public CommunicatonManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
@@ -43,6 +51,11 @@ public class CommunicatonManager
 	return !(plugin.settings.disableBypassAlertsForAdmins && plugin.pm.hasPermission(player, "preciousstones.admin.isadmin"));
     }
 
+    /**
+     *
+     * @param player
+     * @param unbreakableblock
+     */
     public void notifyPlaceU(Player player, Block unbreakableblock)
     {
 	Unbreakable unbreakable = plugin.um.getUnbreakable(unbreakableblock);
@@ -66,6 +79,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param fieldblock
+     */
     public void notifyPlaceFF(Player player, Block fieldblock)
     {
 	Field field = plugin.ffm.getField(fieldblock);
@@ -90,6 +108,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param fieldblock
+     */
     public void notifyPlaceBreakableFF(Player player, Block fieldblock)
     {
 	Field field = plugin.ffm.getField(fieldblock);
@@ -114,6 +137,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param unbreakableblock
+     */
     public void notifyDestroyU(Player player, Block unbreakableblock)
     {
 	if (plugin.settings.notifyDestroy && canNotify(player))
@@ -135,6 +163,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param fieldblock
+     */
     public void notifyDestroyFF(Player player, Block fieldblock)
     {
 	Field field = plugin.ffm.getField(fieldblock);
@@ -159,6 +192,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param fieldblock
+     */
     public void notifyDestroyOthersFF(Player player, Block fieldblock)
     {
 	Field field = plugin.ffm.getField(fieldblock);
@@ -183,6 +221,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param fieldblock
+     */
     public void notifyDestroyBreakableFF(Player player, Block fieldblock)
     {
 	Field field = plugin.ffm.getField(fieldblock);
@@ -207,6 +250,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void notifyBypassPlace(Player player, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -230,6 +278,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void notifyBypassPlaceU(Player player, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -253,6 +306,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param block
+     * @param field
+     */
     public void notifyBypassDestroy(Player player, Block block, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -276,6 +335,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param fieldblock
+     */
     public void notifyBypassDestroyU(Player player, Block fieldblock)
     {
 	Unbreakable unbreakable = plugin.um.getUnbreakable(fieldblock);
@@ -299,6 +363,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param fieldblock
+     */
     public void notifyBypassDestroyFF(Player player, Block fieldblock)
     {
 	Field field = plugin.ffm.getField(fieldblock);
@@ -323,6 +392,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void warnEntry(Player player, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -349,6 +423,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void warnFire(Player player, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -372,6 +451,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param block
+     * @param field
+     */
     public void warnPlace(Player player, Block block, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -395,6 +480,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param unbreakableblock
+     */
     public void warnDestroyU(Player player, Block unbreakableblock)
     {
 	Unbreakable unbreakable = plugin.um.getUnbreakable(unbreakableblock);
@@ -418,6 +508,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param fieldblock
+     */
     public void warnDestroyFF(Player player, Block fieldblock)
     {
 	Field field = plugin.ffm.getField(fieldblock);
@@ -442,6 +537,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param damagedblock
+     * @param field
+     */
     public void warnDestroyArea(Player player, Block damagedblock, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -465,6 +566,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param block
+     * @param field
+     */
     public void warnConflictU(Player player, Block block, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -496,6 +603,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param block
+     * @param field
+     */
     public void warnConflictFF(Player player, Block block, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -527,6 +640,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param attacker
+     * @param victim
+     * @param field
+     */
     public void warnPvP(Player attacker, Player victim, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -550,6 +669,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param attacker
+     * @param victim
+     * @param field
+     */
     public void warnBypassPvP(Player attacker, Player victim, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -573,6 +698,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param attacker
+     * @param field
+     */
     public void warnPvPLavaPlace(Player attacker, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -596,6 +726,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param attacker
+     * @param field
+     */
     public void warnBypassPvPLavaPlace(Player attacker, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -619,6 +754,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param unprotectableblock
+     * @param protectionblock
+     */
     public void warnPlaceUnprotectableTouching(Player player, Block unprotectableblock, Block protectionblock)
     {
 	if (plugin.settings.warnUnprotectable && canWarn(player))
@@ -640,6 +781,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param placedblock
+     */
     public void warnPlaceTouchingUnprotectable(Player player, Block placedblock)
     {
 	Block touchingblock = plugin.upm.getTouchingUnprotectableBlock(placedblock);
@@ -663,6 +809,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param unprotectableblock
+     * @param field
+     */
     public void warnPlaceUnprotectableInField(Player player, Block unprotectableblock, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -686,6 +838,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param unprotectableblock
+     * @param fieldtypeblock
+     */
     public void warnPlaceFieldInUnprotectable(Player player, Block unprotectableblock, Block fieldtypeblock)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldtypeblock.getTypeId());
@@ -709,6 +867,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param unprotectableblock
+     * @param protectionblock
+     */
     public void notifyBypassUnprotectableTouching(Player player, Block unprotectableblock, Block protectionblock)
     {
 	if (plugin.settings.warnUnprotectable && canWarn(player))
@@ -730,6 +894,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param placedblock
+     */
     public void notifyBypassTouchingUnprotectable(Player player, Block placedblock)
     {
 	Block unprotectableblock = plugin.upm.getTouchingUnprotectableBlock(placedblock);
@@ -753,6 +922,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param unprotectableblock
+     * @param field
+     */
     public void notifyBypassPlaceUnprotectableInField(Player player, Block unprotectableblock, Field field)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -776,6 +951,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param unprotectableblock
+     * @param fieldtypeblock
+     */
     public void notifyBypassFieldInUnprotectable(Player player, Block unprotectableblock, Block fieldtypeblock)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldtypeblock.getTypeId());
@@ -799,6 +980,12 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     * @param property
+     */
     public void notifyGuardDog(Player player, Field field, String property)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -820,95 +1007,168 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param name
+     */
     public void showWelcomeMessage(Player player, String name)
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + name);
     }
 
+    /**
+     *
+     * @param player
+     * @param name
+     */
     public void showFarewellMessage(Player player, String name)
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Leaving " + name);
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showNotFound(Player player)
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "No force-fields found");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showSlowDamage(Player player)
     {
 	if (plugin.settings.warnSlowDamage && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.DARK_RED + "*damage*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showFastDamage(Player player)
     {
 	if (plugin.settings.warnFastDamage && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.DARK_RED + "*damage*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showInstantHeal(Player player)
     {
 	if (plugin.settings.warnInstantHeal && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.AQUA + "*healed*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showGiveAir(Player player)
     {
 	if (plugin.settings.warnGiveAir && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.WHITE + "*air*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showLaunch(Player player)
     {
 	if (plugin.settings.warnLaunch && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.LIGHT_PURPLE + "*launch*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showCannon(Player player)
     {
 	if (plugin.settings.warnCannon && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.LIGHT_PURPLE + "*boom*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showMine(Player player)
     {
 	if (plugin.settings.warnMine && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.RED + "*goodbye*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showLightning(Player player)
     {
 	if (plugin.settings.warnMine && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.RED + "*crash*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showThump(Player player)
     {
 	ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "*thump*");
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showSlowHeal(Player player)
     {
 	if (plugin.settings.warnSlowHeal && canWarn(player))
 	    ChatBlock.sendMessage(player, ChatColor.WHITE + "*healing*");
     }
 
+    /**
+     *
+     * @param player
+     * @param block
+     */
     public void showUnbreakableOwner(Player player, Block block)
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + plugin.um.getOwner(block));
     }
 
+    /**
+     *
+     * @param player
+     * @param block
+     */
     public void showFieldOwner(Player player, Block block)
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + plugin.ffm.getOwner(block));
     }
 
+    /**
+     *
+     * @param player
+     */
     public void showProtected(Player player)
     {
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Protected");
     }
 
+    /**
+     *
+     * @param fields
+     * @param player
+     */
     public void showProtectedLocation(LinkedList<Field> fields, Player player)
     {
 	ChatBlock.sendBlank(player);
@@ -919,6 +1179,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param unbreakable
+     * @param player
+     */
     public void showUnbreakableDetails(Unbreakable unbreakable, Player player)
     {
 	ChatBlock.sendBlank(player);
@@ -926,6 +1191,11 @@ public class CommunicatonManager
 	ChatBlock.sendMessage(player, ChatColor.AQUA + "Location: [" + unbreakable.getX() + " " + unbreakable.getY() + " " + unbreakable.getZ() + "]");
     }
 
+    /**
+     *
+     * @param field
+     * @param player
+     */
     public void showFieldDetails(Field field, Player player)
     {
 	FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -959,6 +1229,11 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param scoped
+     */
     public void printTouchingFields(Player player, HashSet<Field> scoped)
     {
 	if (scoped != null && scoped.size() > 0)
@@ -979,6 +1254,10 @@ public class CommunicatonManager
 	}
     }
 
+    /**
+     *
+     * @param msg
+     */
     public void debug(String msg)
     {
 	PreciousStones.log.log(Level.INFO, "[debug] ***************** {0}", msg);

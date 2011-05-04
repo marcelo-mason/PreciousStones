@@ -8,20 +8,35 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class LightningManager
 {
     private PreciousStones plugin;
 
+    /**
+     *
+     * @param plugin
+     */
     public LightningManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void enterLightning(final Player player, final Field field)
     {
-	if (plugin.pm.hasPermission(player, "preciousstones.bypass.lightning")){
-		return;
+	if (plugin.pm.hasPermission(player, "preciousstones.bypass.lightning"))
+        {
+            return;
 	}
+
 	if (!field.isAllAllowed(player.getName()))
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -40,12 +55,12 @@ public class LightningManager
 		    {
 			Block block = plugin.ffm.getBlock(field);
 
-
 			player.getWorld().strikeLightning(player.getLocation());
 
-			if(leftbehind >= 0){
-				plugin.ffm.silentRelease(field);
-				block.setType(Material.getMaterial(leftbehind));
+			if(leftbehind >= 0)
+                        {
+                            plugin.ffm.silentRelease(field);
+                            block.setType(Material.getMaterial(leftbehind));
 			}
 
 		    }

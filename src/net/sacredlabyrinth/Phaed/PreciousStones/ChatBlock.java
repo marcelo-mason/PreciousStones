@@ -7,6 +7,10 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.util.regex.*;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class ChatBlock
 {
     private final int colspacing = 12;
@@ -18,19 +22,35 @@ public class ChatBlock
     private boolean prefix_used = false;
     private String color = "";
 
+    /**
+     *
+     */
     public static final Logger log = Logger.getLogger("Minecraft");
 
+    /**
+     *
+     * @param columnAlignment
+     */
     public void setAlignment(String[] columnAlignment)
     {
         columnAlignments.addAll(Arrays.asList(columnAlignment));
     }
 
+    /**
+     *
+     * @param columnSpacings
+     */
     public void setSpacing(int[] columnSpacings)
     {
 	for (int spacing : columnSpacings)
 	    columnSpaces.add(spacing);
     }
 
+    /**
+     *
+     * @param columnPercentages
+     * @param prefix
+     */
     public void setColumnSizes(double[] columnPercentages, String prefix)
     {
 	int ll = lineLength;
@@ -44,31 +64,56 @@ public class ChatBlock
 	    columnSizes.add(Math.floor((percentage / 100) * ll));
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean hasContent()
     {
 	return rows.size() > 0;
     }
 
+    /**
+     *
+     * @param contents
+     */
     public void addRow(String[] contents)
     {
 	rows.add(contents);
     }
 
+    /**
+     *
+     * @param contents
+     */
     public void addSingleRow(String contents)
     {
 	rows.add(new String[] {contents});
     }
 
+    /**
+     *
+     * @return
+     */
     public int size()
     {
 	return rows.size();
     }
 
+    /**
+     *
+     */
     public void clear()
     {
 	rows.clear();
     }
 
+    /**
+     *
+     * @param player
+     * @param amount
+     * @return
+     */
     public boolean sendBlock(Player player, int amount)
     {
 	if (player == null)
@@ -164,6 +209,11 @@ public class ChatBlock
 	return rows.size() > 0;
     }
 
+    /**
+     *
+     * @param player
+     * @param prefix
+     */
     public void sendBlock(Player player, String prefix)
     {
 	if (player == null)
@@ -258,6 +308,10 @@ public class ChatBlock
 	}
     }
 
+    /**
+     *
+     * @param player
+     */
     public void sendBlock(Player player)
     {
 	sendBlock(player, null);
@@ -265,11 +319,21 @@ public class ChatBlock
 
     // Outputs a message to everybody
 
+    /**
+     *
+     * @param sender
+     * @param msg
+     */
     public static void sendMessageAll(Player sender, String msg)
     {
 	sendMessageAll(sender, msg);
     }
 
+    /**
+     *
+     * @param col
+     * @return
+     */
     public double getMaxWidth(double col)
     {
 	double maxWidth = 0;
@@ -282,11 +346,22 @@ public class ChatBlock
 	return maxWidth;
     }
 
+    /**
+     *
+     * @param msg
+     * @return
+     */
     public static String centerInLine(String msg)
     {
 	return centerInLineOf(msg, lineLength);
     }
 
+    /**
+     *
+     * @param msg
+     * @param lineLength
+     * @return
+     */
     public static String centerInLineOf(String msg, double lineLength)
     {
 	double length = msgLength(msg);
@@ -310,6 +385,11 @@ public class ChatBlock
 	return msg;
     }
 
+    /**
+     *
+     * @param str
+     * @return
+     */
     public static String makeEmpty(String str)
     {
 	if (str == null)
@@ -318,6 +398,12 @@ public class ChatBlock
 	return paddLeftToFit("", msgLength(str));
     }
 
+    /**
+     *
+     * @param msg
+     * @param length
+     * @return
+     */
     public static String cropRightToFit(String msg, double length)
     {
 	if (msg == null || msg.length() == 0 || length == 0)
@@ -331,6 +417,12 @@ public class ChatBlock
 	return msg;
     }
 
+    /**
+     *
+     * @param msg
+     * @param length
+     * @return
+     */
     public static String cropLeftToFit(String msg, double length)
     {
 	if (msg == null || msg.length() == 0 || length == 0)
@@ -346,6 +438,12 @@ public class ChatBlock
 
     // padds left til the string is a certain size
 
+    /**
+     *
+     * @param msg
+     * @param length
+     * @return
+     */
     public static String paddLeftToFit(String msg, double length)
     {
 	if (msgLength(msg) > length)
@@ -361,6 +459,12 @@ public class ChatBlock
 
     // padds right til the string is a certain size
 
+    /**
+     *
+     * @param msg
+     * @param length
+     * @return
+     */
     public static String paddRightToFit(String msg, double length)
     {
 	if (msgLength(msg) > length)
@@ -376,6 +480,11 @@ public class ChatBlock
 
     // Finds the length on the screen of a string. Ignores colors.
 
+    /**
+     *
+     * @param str
+     * @return
+     */
     public static double msgLength(String str)
     {
 	double length = 0;
@@ -394,6 +503,11 @@ public class ChatBlock
 	return length;
     }
 
+    /**
+     *
+     * @param str
+     * @return
+     */
     public static String cleanColors(String str)
     {
 	String patternStr = "�.";
@@ -408,6 +522,11 @@ public class ChatBlock
 
     // Use: Finds the visual length of the character on the screen.
 
+    /**
+     *
+     * @param x
+     * @return
+     */
     public static int charLength(char x)
     {
 	if ("i.:,;|!".indexOf(x) != -1)
@@ -428,6 +547,11 @@ public class ChatBlock
 	    return -1;
     }
 
+    /**
+     *
+     * @param msg
+     * @return
+     */
     public static String[] wordWrap(String msg)
     {
 	return wordWrap(msg, 0);
@@ -435,6 +559,12 @@ public class ChatBlock
 
     // Cuts the message apart into whole words short enough to fit on one line
 
+    /**
+     *
+     * @param msg
+     * @param prefixLn
+     * @return
+     */
     public static String[] wordWrap(String msg, int prefixLn)
     {
 	// Split each word apart
@@ -487,6 +617,13 @@ public class ChatBlock
 	return out.toArray(new String[out.size()]);
     }
 
+    /**
+     *
+     * @param startIndex
+     * @param string
+     * @param seperator
+     * @return
+     */
     public static String combineSplit(int startIndex, String[] string, String seperator)
     {
 	StringBuilder builder = new StringBuilder();
@@ -502,6 +639,12 @@ public class ChatBlock
 
     // Use: Cuts apart a word that is too long to fit on one line
 
+    /**
+     *
+     * @param lengthBefore
+     * @param str
+     * @return
+     */
     public static String[] wordCut(int lengthBefore, String str)
     {
 	int length = lengthBefore;
@@ -534,6 +677,11 @@ public class ChatBlock
 
     // Outputs a single line out, cutting anything else out
 
+    /**
+     *
+     * @param receiver
+     * @param msg
+     */
     public static void saySingle(Player receiver, String msg)
     {
 	if (receiver == null)
@@ -544,6 +692,11 @@ public class ChatBlock
 
     // Outputs a message to a user
 
+    /**
+     *
+     * @param receiver
+     * @param msg
+     */
     public static void sendMessage(Player receiver, String msg)
     {
 	sendMessage(receiver, null, msg);
@@ -551,6 +704,12 @@ public class ChatBlock
 
     // Outputs a message to a user
 
+    /**
+     *
+     * @param receiver
+     * @param prefix
+     * @param msg
+     */
     public static void sendMessage(Player receiver, String prefix, String msg)
     {
 	if (receiver == null)
@@ -566,6 +725,10 @@ public class ChatBlock
 
     // Send blank lie
 
+    /**
+     *
+     * @param color
+     */
     public void startColor(String color)
     {
 	this.color = color;
@@ -573,6 +736,10 @@ public class ChatBlock
 
     // Send blank lie
 
+    /**
+     *
+     * @param receiver
+     */
     public static void sendBlank(Player receiver)
     {
 	if (receiver == null)
@@ -583,21 +750,42 @@ public class ChatBlock
 
     // Colors each line
 
+    /**
+     *
+     * @param message
+     * @return
+     */
     public static String[] say(String message)
     {
 	return colorize(wordWrap(message));
     }
 
+    /**
+     *
+     * @param message
+     * @return
+     */
     public static String[] colorize(String[] message)
     {
 	return colorizeBase(message, 167);
     }
 
+    /**
+     *
+     * @param message
+     * @return
+     */
     public static String colorize(String message)
     {
 	return colorizeBase((new String[] { message }), 167)[0];
     }
 
+    /**
+     *
+     * @param message
+     * @param charcode
+     * @return
+     */
     public static String[] colorizeBase(String[] message, int charcode)
     {
 	if (message != null && message[0] != null && !message[0].isEmpty())
@@ -634,6 +822,11 @@ public class ChatBlock
 	return message;
     }
 
+    /**
+     *
+     * @param prefix
+     * @return
+     */
     public String firstPrefix(String prefix)
     {
 	if (prefix_used)

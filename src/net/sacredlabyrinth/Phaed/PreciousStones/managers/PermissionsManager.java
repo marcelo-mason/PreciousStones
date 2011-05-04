@@ -9,11 +9,22 @@ import org.bukkit.plugin.Plugin;
 
 import org.bukkit.entity.Player;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public final class PermissionsManager
 {
+    /**
+     *
+     */
     public static PermissionHandler Permissions = null;
     private PreciousStones plugin;
 
+    /**
+     *
+     * @param plugin
+     */
     public PermissionsManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
@@ -21,6 +32,12 @@ public final class PermissionsManager
 	startoolmissions();
     }
 
+    /**
+     *
+     * @param player
+     * @param permission
+     * @return
+     */
     public boolean hasPermission(Player player, String permission)
     {
 	if (player == null)
@@ -59,6 +76,9 @@ public final class PermissionsManager
 	return Permissions != null;
     }
 
+    /**
+     *
+     */
     public void startoolmissions()
     {
 	if (PermissionsManager.Permissions == null)

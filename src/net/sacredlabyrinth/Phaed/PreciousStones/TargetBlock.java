@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
  * @author toi Thanks to Raphfrk for optimization of this class.
  */
 public class TargetBlock
-{    
+{
     private Location loc;
     private double viewHeight;
     private int maxDistance;
@@ -23,10 +23,10 @@ public class TargetBlock
     private Vector targetPosDouble = new Vector();
     private Vector prevPos = new Vector();
     private Vector offset = new Vector();
-    
+
     /**
      * Constructor requiring a player, uses default values
-     * 
+     *
      * @param player
      *                Player to work with
      */
@@ -34,10 +34,10 @@ public class TargetBlock
     {
 	this.setValues(player.getLocation(), 300, 1.65, 0.2, null);
     }
-    
+
     /**
      * Constructor requiring a location, uses default values
-     * 
+     *
      * @param loc
      *                Location to work with
      */
@@ -45,10 +45,10 @@ public class TargetBlock
     {
 	this.setValues(loc, 300, 0, 0.2, null);
     }
-    
+
     /**
      * Constructor requiring a player, max distance and a checking distance
-     * 
+     *
      * @param player
      *                Player to work with
      * @param maxDistance
@@ -60,10 +60,10 @@ public class TargetBlock
     {
 	this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, null);
     }
-    
+
     /**
      * Constructor requiring a location, max distance and a checking distance
-     * 
+     *
      * @param loc
      *                What location to work with
      * @param maxDistance
@@ -75,10 +75,10 @@ public class TargetBlock
     {
 	this.setValues(loc, maxDistance, 0, checkDistance, null);
     }
-    
+
     /**
      * Constructor requiring a player, max distance, checking distance and an array of blocks to ignore
-     * 
+     *
      * @param player
      *                What player to work with
      * @param maxDistance
@@ -92,10 +92,10 @@ public class TargetBlock
     {
 	this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, blocksToIgnore);
     }
-    
+
     /**
      * Constructor requiring a location, max distance, checking distance and an array of blocks to ignore
-     * 
+     *
      * @param loc
      *                What location to work with
      * @param maxDistance
@@ -109,10 +109,10 @@ public class TargetBlock
     {
 	this.setValues(loc, maxDistance, 0, checkDistance, blocksToIgnore);
     }
-    
+
     /**
      * Constructor requiring a player, max distance, checking distance and an array of blocks to ignore
-     * 
+     *
      * @param player
      *                What player to work with
      * @param maxDistance
@@ -127,10 +127,10 @@ public class TargetBlock
 	int[] bti = this.convertStringArraytoIntArray(blocksToIgnore);
 	this.setValues(player.getLocation(), maxDistance, 1.65, checkDistance, bti);
     }
-    
+
     /**
      * Constructor requiring a location, max distance, checking distance and an array of blocks to ignore
-     * 
+     *
      * @param loc
      *                What location to work with
      * @param maxDistance
@@ -145,10 +145,10 @@ public class TargetBlock
 	int[] bti = this.convertStringArraytoIntArray(blocksToIgnore);
 	this.setValues(loc, maxDistance, 0, checkDistance, bti);
     }
-    
+
     /**
      * Set the values, all constructors uses this function
-     * 
+     *
      * @param loc
      *                Location of the view
      * @param maxDistance
@@ -170,17 +170,17 @@ public class TargetBlock
 	this.curDistance = 0;
 	xRotation = (loc.getYaw() + 90) % 360;
 	yRotation = loc.getPitch() * -1;
-	
+
 	double h = (checkDistance * Math.cos(Math.toRadians(yRotation)));
 	offset.setY((checkDistance * Math.sin(Math.toRadians(yRotation))));
 	offset.setX((h * Math.cos(Math.toRadians(xRotation))));
 	offset.setZ((h * Math.sin(Math.toRadians(xRotation))));
-	
+
 	targetPosDouble = new Vector(loc.getX(), loc.getY() + viewHeight, loc.getZ());
 	targetPos = new Vector(targetPosDouble.getBlockX(), targetPosDouble.getBlockY(), targetPosDouble.getBlockZ());
 	prevPos = targetPos.clone();
     }
-    
+
     /**
      * Call this to reset checking position to allow you to check for a new target with the same TargetBlock instance.
      */
@@ -191,44 +191,44 @@ public class TargetBlock
 	prevPos = targetPos.clone();
 	this.curDistance = 0;
     }
-    
+
     /**
      * Gets the distance to a block. Measures from the block underneath the player to the targetblock Should only be used when passing player as an constructor parameter
-     * 
+     *
      * @return double
      */
     public double getDistanceToBlock()
     {
 	Vector blockUnderPlayer = new Vector((int) Math.floor(loc.getX() + 0.5), (int) Math.floor(loc.getY() - 0.5), (int) Math.floor(loc.getZ() + 0.5));
-	
+
 	Block blk = getTargetBlock();
 	double x = blk.getX() - blockUnderPlayer.getBlockX();
 	double y = blk.getY() - blockUnderPlayer.getBlockY();
 	double z = blk.getZ() - blockUnderPlayer.getBlockZ();
-	
+
 	return Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)));
     }
-    
+
     /**
      * Gets the rounded distance to a block. Measures from the block underneath the player to the targetblock Should only be used when passing player as an constructor parameter
-     * 
+     *
      * @return int
      */
     public int getDistanceToBlockRounded()
     {
 	Vector blockUnderPlayer = new Vector((int) Math.floor(loc.getX() + 0.5), (int) Math.floor(loc.getY() - 0.5), (int) Math.floor(loc.getZ() + 0.5));
-	
+
 	Block blk = getTargetBlock();
 	double x = blk.getX() - blockUnderPlayer.getBlockX();
 	double y = blk.getY() - blockUnderPlayer.getBlockY();
 	double z = blk.getZ() - blockUnderPlayer.getBlockZ();
-	
+
 	return (int) Math.round((Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))));
     }
-    
+
     /**
      * Gets the floored x distance to a block.
-     * 
+     *
      * @return int
      */
     public int getXDistanceToBlock()
@@ -236,10 +236,10 @@ public class TargetBlock
 	this.reset();
 	return (int) Math.floor(getTargetBlock().getX() - loc.getBlockX() + 0.5);
     }
-    
+
     /**
      * Gets the floored y distance to a block
-     * 
+     *
      * @return int
      */
     public int getYDistanceToBlock()
@@ -247,10 +247,10 @@ public class TargetBlock
 	this.reset();
 	return (int) Math.floor(getTargetBlock().getY() - loc.getBlockY() + viewHeight);
     }
-    
+
     /**
      * Gets the floored z distance to a block
-     * 
+     *
      * @return int
      */
     public int getZDistanceToBlock()
@@ -258,10 +258,10 @@ public class TargetBlock
 	this.reset();
 	return (int) Math.floor(getTargetBlock().getZ() - loc.getBlockZ() + 0.5);
     }
-    
+
     /**
      * Returns the block at the sight. Returns null if out of range or if no viable target was found
-     * 
+     *
      * @return Block
      */
     public Block getTargetBlock()
@@ -270,10 +270,10 @@ public class TargetBlock
 	while ((getNextBlock() != null) && ((getCurrentBlock().getTypeId() == 0) || this.blockToIgnoreHasValue(getCurrentBlock().getTypeId())));
 	return getCurrentBlock();
     }
-    
+
     /**
      * Sets the type of the block at the sight. Returns false if the block wasn't set.
-     * 
+     *
      * @param typeID
      *                ID of type to set the block to
      * @return boolean
@@ -293,10 +293,10 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Sets the type of the block at the sight. Returns false if the block wasn't set.
-     * 
+     *
      * @param type
      *                Material to set the block to
      * @return boolean
@@ -313,10 +313,10 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Sets the type of the block at the sight. Returns false if the block wasn't set. Observe! At the moment this function is using the built-in enumerator function .valueOf(String) but would preferably be changed to smarter function, when implemented
-     * 
+     *
      * @param type
      *                Name of type to set the block to
      * @return boolean
@@ -337,10 +337,10 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Returns the block attached to the face at the sight. Returns null if out of range or if no viable target was found
-     * 
+     *
      * @return Block
      */
     public Block getFaceBlock()
@@ -355,10 +355,10 @@ public class TargetBlock
 	    return null;
 	}
     }
-    
+
     /**
      * Sets the type of the block attached to the face at the sight. Returns false if the block wasn't set.
-     * 
+     *
      * @param typeID
      * @return boolean
      */
@@ -375,10 +375,10 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Sets the type of the block attached to the face at the sight. Returns false if the block wasn't set.
-     * 
+     *
      * @param type
      * @return boolean
      */
@@ -392,10 +392,10 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Sets the type of the block attached to the face at the sight. Returns false if the block wasn't set. Observe! At the moment this function is using the built-in enumerator function .valueOf(String) but would preferably be changed to smarter function, when implemented
-     * 
+     *
      * @param type
      * @return boolean
      */
@@ -413,10 +413,10 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Get next block
-     * 
+     *
      * @return Block
      */
     public Block getNextBlock()
@@ -425,7 +425,7 @@ public class TargetBlock
 	do
 	{
 	    curDistance += checkDistance;
-	    
+
 	    targetPosDouble.setX(offset.getX() + targetPosDouble.getX());
 	    targetPosDouble.setY(offset.getY() + targetPosDouble.getY());
 	    targetPosDouble.setZ(offset.getZ() + targetPosDouble.getZ());
@@ -436,13 +436,13 @@ public class TargetBlock
 	{
 	    return null;
 	}
-	
+
 	return this.loc.getWorld().getBlockAt(this.targetPos.getBlockX(), this.targetPos.getBlockY(), this.targetPos.getBlockZ());
     }
-    
+
     /**
      * Returns the current block along the line of vision
-     * 
+     *
      * @return Block
      */
     public Block getCurrentBlock()
@@ -456,11 +456,12 @@ public class TargetBlock
 	    return this.loc.getWorld().getBlockAt(this.targetPos.getBlockX(), this.targetPos.getBlockY(), this.targetPos.getBlockZ());
 	}
     }
-    
+
     /**
      * Sets current block type. Returns false if the block wasn't set.
-     * 
+     *
      * @param typeID
+     * @return
      */
     public boolean setCurrentBlock(int typeID)
     {
@@ -475,11 +476,12 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Sets current block type. Returns false if the block wasn't set.
-     * 
+     *
      * @param type
+     * @return
      */
     public boolean setCurrentBlock(Material type)
     {
@@ -491,11 +493,12 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Sets current block type. Returns false if the block wasn't set. Observe! At the moment this function is using the built-in enumerator function .valueOf(String) but would preferably be changed to smarter function, when implemented
-     * 
+     *
      * @param type
+     * @return
      */
     public boolean setCurrentBlock(String type)
     {
@@ -511,21 +514,22 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Returns the previous block in the aimed path
-     * 
+     *
      * @return Block
      */
     public Block getPreviousBlock()
     {
 	return this.loc.getWorld().getBlockAt(prevPos.getBlockX(), prevPos.getBlockY(), prevPos.getBlockZ());
     }
-    
+
     /**
      * Sets previous block type id. Returns false if the block wasn't set.
-     * 
+     *
      * @param typeID
+     * @return
      */
     public boolean setPreviousBlock(int typeID)
     {
@@ -540,11 +544,12 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Sets previous block type id. Returns false if the block wasn't set.
-     * 
+     *
      * @param type
+     * @return
      */
     public boolean setPreviousBlock(Material type)
     {
@@ -556,11 +561,12 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     /**
      * Sets previous block type id. Returns false if the block wasn't set. Observe! At the moment this function is using the built-in enumerator function .valueOf(String) but would preferably be changed to smarter function, when implemented
-     * 
+     *
      * @param type
+     * @return
      */
     public boolean setPreviousBlock(String type)
     {
@@ -576,7 +582,7 @@ public class TargetBlock
 	}
 	return false;
     }
-    
+
     private int[] convertStringArraytoIntArray(ArrayList<String> array)
     {
 	if (array != null)
@@ -597,7 +603,7 @@ public class TargetBlock
 	}
 	return null;
     }
-    
+
     private boolean blockToIgnoreHasValue(int value)
     {
 	if (this.blockToIgnore != null)

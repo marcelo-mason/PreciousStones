@@ -1,10 +1,33 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public abstract class AbstractVec
 {
+    /**
+     *
+     */
+    /**
+     *
+     */
+    /**
+     *
+     */
     protected final int x, y, z;
+    /**
+     *
+     */
     protected final String world;
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param world
+     */
     public AbstractVec(int x, int y, int z, String world)
     {
 	this.x = x;
@@ -13,21 +36,37 @@ public abstract class AbstractVec
 	this.world = world;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getX()
     {
 	return this.x;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getY()
     {
 	return this.y;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getZ()
     {
 	return this.z;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getWorld()
     {
 	return this.world;

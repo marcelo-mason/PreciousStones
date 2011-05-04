@@ -18,63 +18,71 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 /**
  * PreciousStones player listener
- * 
+ *
  * @author Phaed
  */
 public class PSPlayerListener extends PlayerListener
 {
     private final PreciousStones plugin;
-    
+
+    /**
+     *
+     * @param plugin
+     */
     public PSPlayerListener(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
-    
+
+    /**
+     *
+     * @param event
+     */
     @Override
     public void onPlayerInteract(PlayerInteractEvent event)
     {
 	Player player = event.getPlayer();
 	Block block = event.getClickedBlock();
-	
+
 	if (block == null || player == null)
 	{
 	    return;
 	}
-	
+
 	if (event.getAction().equals(Action.PHYSICAL))
 	{
 	    plugin.snm.recordSnitchUsed(player, block);
 	}
-	
+
 	if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-	{   
+	{
 	    if (block.getType().equals(Material.WALL_SIGN))
 	    {
 		plugin.snm.recordSnitchShop(player, block);
-	    }	    
-	    
+	    }
+
 	    if (block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.STONE_BUTTON))
 	    {
 		plugin.snm.recordSnitchUsed(player, block);
 	    }
-	    
+
 	    ItemStack is = player.getItemInHand();
-	    
+
 	    if (is == null || !plugin.settings.isToolItemType(is.getTypeId()))
 	    {
 		return;
 	    }
-	    
+
 	    if (plugin.settings.isBypassBlock(block))
 	    {
 		return;
 	    }
-	    
+
 	    if (block.getState() instanceof ContainerBlock)
 	    {
 		plugin.snm.recordSnitchUsed(player, block);
 	    }
-	    
+
 	    if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
 	    {
 		plugin.snm.showIntruderList(player, plugin.ffm.getField(block));
@@ -104,13 +112,13 @@ public class PSPlayerListener extends PlayerListener
 	    else
 	    {
 		Field field = plugin.ffm.isDestroyProtected(block, null);
-		
+
 		if (field != null)
 		{
 		    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails)
 		    {
 			LinkedList<Field> fields = plugin.ffm.getSourceFields(block);
-			
+
 			plugin.cm.showProtectedLocation(fields, player);
 		    }
 		    else
@@ -121,16 +129,20 @@ public class PSPlayerListener extends PlayerListener
 	    }
 	}
     }
-    
+
+    /**
+     *
+     * @param event
+     */
     @Override
     public void onPlayerMove(PlayerMoveEvent event)
     {
 	Player player = event.getPlayer();
-	
+
 	LinkedList<Field> currentfields = plugin.ffm.getSourceFields(player);
-	
+
 	// loop through all fields the player just moved into
-	
+
 	if (currentfields != null)
 	{
 	    for (Field currentfield : currentfields)
@@ -140,7 +152,7 @@ public class PSPlayerListener extends PlayerListener
 		    if (!plugin.em.containsSameNameOwnedField(player, currentfield))
 		    {
 			FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
-			
+
 			if (fieldsettings.welcomeMessage)
 			{
 			    if (currentfield.getStoredName().length() > 0)
@@ -149,31 +161,31 @@ public class PSPlayerListener extends PlayerListener
 			    }
 			}
 		    }
-		    
+
 		    plugin.em.enterField(player, currentfield);
 		}
 	    }
 	}
-	
+
 	// remove all stored entry fields that the player is no longer currently in
-	
+
 	LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
-	
+
 	if (entryfields != null)
 	{
 	    if (currentfields != null)
 	    {
 		entryfields.removeAll(currentfields);
 	    }
-	    
+
 	    for (Field entryfield : entryfields)
 	    {
 		plugin.em.leaveField(player, entryfield);
-		
+
 		if (!plugin.em.containsSameNameOwnedField(player, entryfield))
 		{
 		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
-		    
+
 		    if (fieldsettings.farewellMessage)
 		    {
 			if (entryfield.getStoredName().length() > 0)
@@ -184,15 +196,15 @@ public class PSPlayerListener extends PlayerListener
 		}
 	    }
 	}
-	
+
 	// check if were on a prevent entry field not owned by player
-	
+
 	LinkedList<Field> fields = plugin.ffm.getSourceFields(player, player.getName());
-	
+
 	for (Field field : fields)
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-	    
+
 	    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
 	    {
 		if (fieldsettings.preventEntry)

@@ -9,16 +9,29 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class VelocityManager
 {
     private PreciousStones plugin;
     private HashMap<String, Integer> fallDamageImmune = new HashMap<String, Integer>();
 
+    /**
+     *
+     * @param plugin
+     */
     public VelocityManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void launchPlayer(final Player player, final Field field)
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.launch"))
@@ -63,6 +76,11 @@ public class VelocityManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void shootPlayer(final Player player, Field field)
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
@@ -97,6 +115,10 @@ public class VelocityManager
 	}
     }
 
+    /**
+     *
+     * @param player
+     */
     public void startFallImmunity(final Player player)
     {
 	if (fallDamageImmune.containsKey(player.getName()))
@@ -109,11 +131,21 @@ public class VelocityManager
 	fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
     }
 
+    /**
+     *
+     * @param player
+     * @return
+     */
     public boolean isFallDamageImmune(final Player player)
     {
 	return fallDamageImmune.containsKey(player.getName());
     }
 
+    /**
+     *
+     * @param player
+     * @return
+     */
     public int startImmuneRemovalDelay(final Player player)
     {
 	final String name = player.getName();

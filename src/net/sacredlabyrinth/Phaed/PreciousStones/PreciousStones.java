@@ -39,22 +39,70 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
  */
 public class PreciousStones extends JavaPlugin
 {
+    /**
+     *
+     */
     public static final Logger log = Logger.getLogger("Minecraft");
 
+    /**
+     *
+     */
     public SettingsManager settings;
+    /**
+     *
+     */
     public CommandManager com;
+    /**
+     *
+     */
     public ForceFieldManager ffm;
+    /**
+     *
+     */
     public UnbreakableManager um;
+    /**
+     *
+     */
     public UnprotectableManager upm;
+    /**
+     *
+     */
     public StorageManager sm;
+    /**
+     *
+     */
     public CommunicatonManager cm;
+    /**
+     *
+     */
     public EntryManager em;
+    /**
+     *
+     */
     public PlayerManager plm;
+    /**
+     *
+     */
     public SnitchManager snm;
+    /**
+     *
+     */
     public MineManager mm;
+    /**
+     *
+     */
     public LightningManager lm;
+    /**
+     *
+     */
     public VelocityManager vm;
+    /**
+     *
+     */
     public CloakManager clm;
+    /**
+     *
+     */
     public PermissionsManager pm;
 
     private PSPlayerListener playerListener;
@@ -63,6 +111,9 @@ public class PreciousStones extends JavaPlugin
     private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
 
+    /**
+     *
+     */
     @Override
     public void onEnable()
     {
@@ -113,6 +164,9 @@ public class PreciousStones extends JavaPlugin
 	getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.Highest, this);
     }
 
+    /**
+     *
+     */
     public void registerCommands()
     {
 	getCommand("ps").setExecutor(com);
@@ -131,6 +185,10 @@ public class PreciousStones extends JavaPlugin
 	}
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<Class<?>> getDatabaseClasses()
     {
@@ -139,6 +197,9 @@ public class PreciousStones extends JavaPlugin
 	return list;
     }
 
+    /**
+     *
+     */
     @Override
     public void onDisable()
     {

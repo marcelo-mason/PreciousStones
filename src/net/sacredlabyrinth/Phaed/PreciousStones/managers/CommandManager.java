@@ -22,23 +22,41 @@ import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public final class CommandManager implements CommandExecutor
 {
     private PreciousStones plugin;
+    /**
+     *
+     */
     public Help helpPlugin;
     private ChatBlock cacheBlock = new ChatBlock();
 
+    /**
+     *
+     * @param plugin
+     */
     public CommandManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
         registerHelpCommands();
     }
 
+    /**
+     *
+     * @return
+     */
     public ChatBlock getCacheBlock()
     {
 	return cacheBlock;
     }
 
+    /**
+     *
+     */
     public void registerHelpCommands()
     {
 	Plugin test = plugin.getServer().getPluginManager().getPlugin("Help");
@@ -78,6 +96,14 @@ public final class CommandManager implements CommandExecutor
 	}
     }
 
+    /**
+     *
+     * @param sender
+     * @param command
+     * @param label
+     * @param args
+     * @return
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
