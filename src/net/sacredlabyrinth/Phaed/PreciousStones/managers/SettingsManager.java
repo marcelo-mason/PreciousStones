@@ -19,237 +19,63 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public final class SettingsManager
 {
-    /**
-     *
-     */
     public List<Integer> unbreakableBlocks;
-    /**
-     *
-     */
     public List<Integer> bypassBlocks;
-    /**
-     *
-     */
     public List<Integer> unprotectableBlocks;
-    /**
-     *
-     */
     public List<Integer> cloakableBlocks;
-    /**
-     *
-     */
     public List<Integer> cloakBlocks;
-    /**
-     *
-     */
     public int cloakMinRadius;
-    /**
-     *
-     */
     public int cloakDefaultRadius;
-    /**
-     *
-     */
     public int cloakMaxRadius;
-    /**
-     *
-     */
     public List<Integer> toolItems;
-    /**
-     *
-     */
     public boolean logFire;
-    /**
-     *
-     */
     public boolean logEntry;
-    /**
-     *
-     */
     public boolean logPlace;
-    /**
-     *
-     */
     public boolean logDestroy;
-    /**
-     *
-     */
     public boolean logDestroyArea;
-    /**
-     *
-     */
     public boolean logUnprotectable;
-    /**
-     *
-     */
     public boolean logPvp;
-    /**
-     *
-     */
     public boolean logBypassPvp;
-    /**
-     *
-     */
     public boolean logBypassDelete;
-    /**
-     *
-     */
     public boolean logBypassPlace;
-    /**
-     *
-     */
     public boolean logBypassDestroy;
-    /**
-     *
-     */
     public boolean logBypassUnprotectable;
-    /**
-     *
-     */
     public boolean logConflictPlace;
-    /**
-     *
-     */
     public boolean notifyPlace;
-    /**
-     *
-     */
     public boolean notifyDestroy;
-    /**
-     *
-     */
     public boolean notifyBypassPvp;
-    /**
-     *
-     */
     public boolean notifyBypassPlace;
-    /**
-     *
-     */
     public boolean notifyBypassDestroy;
-    /**
-     *
-     */
     public boolean notifyBypassUnprotectable;
-    /**
-     *
-     */
     public boolean notifyGuardDog;
-    /**
-     *
-     */
     public boolean warnCloaking;
-    /**
-     *
-     */
     public boolean warnInstantHeal;
-    /**
-     *
-     */
     public boolean warnSlowHeal;
-    /**
-     *
-     */
     public boolean warnSlowDamage;
-    /**
-     *
-     */
     public boolean warnFastDamage;
-    /**
-     *
-     */
     public boolean warnGiveAir;
-    /**
-     *
-     */
     public boolean warnPlace;
-    /**
-     *
-     */
     public boolean warnDestroy;
-    /**
-     *
-     */
     public boolean warnDestroyArea;
-    /**
-     *
-     */
     public boolean warnUnprotectable;
-    /**
-     *
-     */
     public boolean warnEntry;
-    /**
-     *
-     */
     public boolean warnPvp;
-    /**
-     *
-     */
     public boolean warnFire;
-    /**
-     *
-     */
     public boolean warnLaunch;
-    /**
-     *
-     */
     public boolean warnCannon;
-    /**
-     *
-     */
     public boolean warnMine;
-    /**
-     *
-     */
     public long saveFrequency;
-    /**
-     *
-     */
     public int purgeDays;
-    /**
-     *
-     */
     public boolean publicBlockDetails;
-    /**
-     *
-     */
     public boolean sneakingBypassesDamage;
-    /**
-     *
-     */
     public boolean allowedCanBreakPstones;
-    /**
-     *
-     */
     public boolean dropOnDelete;
-    /**
-     *
-     */
     public boolean disableAlertsForAdmins;
-    /**
-     *
-     */
     public boolean disableBypassAlertsForAdmins;
-    /**
-     *
-     */
     public boolean offByDefault;
-    /**
-     *
-     */
     public int chunksInLargestForceFieldArea;
-    /**
-     *
-     */
     public List<Integer> ffBlocks = new ArrayList<Integer>();
-    /**
-     *
-     */
     public int[] throughFields = new int[] { 0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94 };
-    /**
-     *
-     */
     public int linesPerPage;
 
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
@@ -625,146 +451,41 @@ public final class SettingsManager
      */
     public class FieldSettings
     {
-        /**
-         *
-         */
         public boolean blockDefined = false;
-
-        /**
-         *
-         */
         public int blockId;
-        /**
-         *
-         */
         public int radius = 0;
-        /**
-         *
-         */
         public int height = 0;
-        /**
-         *
-         */
         public String title;
-        /**
-         *
-         */
         public boolean nameable = false;
-        /**
-         *
-         */
         public boolean preventFire = false;
-        /**
-         *
-         */
         public boolean preventPlace = false;
-        /**
-         *
-         */
         public boolean preventDestroy = false;
-        /**
-         *
-         */
         public boolean preventExplosions = false;
-        /**
-         *
-         */
         public boolean preventPvP = false;
-        /**
-         *
-         */
+        public boolean preventMobDamage = false;
         public boolean preventEntry = false;
-        /**
-         *
-         */
         public boolean preventUnprotectable = false;
-        /**
-         *
-         */
         public boolean guarddogMode = false;
-        /**
-         *
-         */
         public boolean instantHeal = false;
-        /**
-         *
-         */
         public boolean slowHeal = false;
-        /**
-         *
-         */
         public boolean slowDamage = false;
-        /**
-         *
-         */
         public boolean fastDamage = false;
-        /**
-         *
-         */
         public boolean breakable = false;
-        /**
-         *
-         */
         public boolean welcomeMessage = false;
-        /**
-         *
-         */
         public boolean farewellMessage = false;
-        /**
-         *
-         */
         public boolean giveAir = false;
-        /**
-         *
-         */
         public boolean snitch = false;
-        /**
-         *
-         */
         public boolean noConflict = false;
-        /**
-         *
-         */
         public boolean launch = false;
-        /**
-         *
-         */
         public int launchHeight = 0;
-        /**
-         *
-         */
         public boolean cannon = false;
-        /**
-         *
-         */
         public int cannonHeight = 0;
-        /**
-         *
-         */
         public boolean mine = false;
-        /**
-         *
-         */
         public int mineDelaySeconds = 0;
-        /**
-         *
-         */
         public int mineReplaceBlock = 0;
-        /**
-         *
-         */
         public boolean lightning = false;
-        /**
-         *
-         */
         public int lightningDelaySeconds = 0;
-        /**
-         *
-         */
         public int lightningReplaceBlock = 0;
-        /**
-         *
-         */
         public boolean cloak = false;
 
         /**
@@ -868,6 +589,9 @@ public final class SettingsManager
 
 	    if (map.containsKey("prevent-pvp") && Helper.isBoolean(map.get("prevent-pvp")))
 		preventPvP = (Boolean) map.get("prevent-pvp");
+
+	    if (map.containsKey("prevent-mob-damage") && Helper.isBoolean(map.get("prevent-mob-damage")))
+		preventMobDamage = (Boolean) map.get("prevent-mob-damage");
 
 	    if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
 		preventEntry = (Boolean) map.get("prevent-entry");
