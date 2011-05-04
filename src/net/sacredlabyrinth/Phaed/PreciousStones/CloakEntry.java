@@ -10,7 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -30,6 +32,9 @@ public class CloakEntry implements Serializable
 
     @Id
     private Long id;
+    
+    @OneToOne(mappedBy = "cloakEntry")
+    private Field field;
 
     /**
      *

@@ -1,5 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import com.avaje.ebean.annotation.CacheStrategy;
+import com.avaje.ebean.validation.NotNull;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -7,11 +12,22 @@ import org.bukkit.block.Block;
  *
  * @author cc_madelg
  */
+@Entity()
+@CacheStrategy
+@Table(name = "unbreakables")
 public class Unbreakable extends AbstractVec
 {
+    @NotNull
     private String owner;
+
     private int typeId;
-    private ChunkVec chunkvec;
+
+    @Id
+    private Long id;
+
+    public Unbreakable()
+    {
+    }
 
     /**
      *
@@ -23,13 +39,12 @@ public class Unbreakable extends AbstractVec
      * @param typeId
      * @param owner
      */
-    public Unbreakable(int x, int y, int z, ChunkVec chunkvec, String world, int typeId, String owner)
+    public Unbreakable(int x, int y, int z, String world, int typeId, String owner)
     {
 	super(x, y, z, world);
 
 	this.owner = owner;
 	this.typeId = typeId;
-	this.chunkvec = chunkvec;
     }
 
     /**
@@ -43,7 +58,6 @@ public class Unbreakable extends AbstractVec
 
 	this.owner = owner;
 	this.typeId = block.getTypeId();
-	this.chunkvec = new ChunkVec(block.getChunk());
     }
 
     /**
@@ -55,7 +69,6 @@ public class Unbreakable extends AbstractVec
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
 	this.typeId = block.getTypeId();
-	this.chunkvec = new ChunkVec(block.getChunk());
     }
 
     /**
@@ -73,7 +86,7 @@ public class Unbreakable extends AbstractVec
      */
     public String getType()
     {
-	return Material.getMaterial(this.typeId).toString();
+	return Material.getMaterial(this.getTypeId()).toString();
     }
 
     /**
@@ -82,7 +95,7 @@ public class Unbreakable extends AbstractVec
      */
     public ChunkVec getChunkVec()
     {
-	return this.chunkvec;
+	return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
     }
 
     /**
@@ -110,12 +123,30 @@ public class Unbreakable extends AbstractVec
      */
     public boolean isOwner(String playerName)
     {
-	return playerName.equals(owner);
+	return playerName.equals(getOwner());
     }
 
     @Override
     public String toString()
     {
-	return super.toString() + " [owner:" + owner + "]";
+	return super.toString() + " [owner:" + getOwner() + "]";
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    /**
+     * @param typeId the typeId to set
+     */
+    public void setTypeId(int typeId)
+    {
+        this.typeId = typeId;
     }
 }

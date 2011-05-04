@@ -43,7 +43,7 @@ public class CloakManager
 	    ContainerBlock container = (ContainerBlock) block.getState();
 	    Inventory inv = container.getInventory();
 
-	    ce.setStacks(inv.getContents());
+	    ce.importStacks(inv.getContents());
 	}
 
 	field.setCloakEntry(ce);
@@ -71,16 +71,17 @@ public class CloakManager
 		    return;
 		}
 
-		ce.setData(block.getData());
+		ce.setDataByte(block.getData());
 
 		if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
 		{
 		    ContainerBlock container = (ContainerBlock) block.getState();
 		    Inventory inv = container.getInventory();
 
-		    ce.setStacks(inv.getContents());
+		    ce.importStacks(inv.getContents());
 		    inv.clear();
 		}
+                
 		block.setType(getCloakMaterial(block));
 		plugin.ffm.setDirty();
 	    }
@@ -105,16 +106,16 @@ public class CloakManager
 	    }
 
 	    block.setType(Material.getMaterial(field.getTypeId()));
-	    block.setData(ce.getData());
+	    block.setData(ce.getDataByte());
 
 	    if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
 	    {
 		ContainerBlock container = (ContainerBlock) block.getState();
 		Inventory inv = container.getInventory();
 
-		if (ce.getStacks() != null && ce.getStacks().length > 0)
+		if (ce.getStacks() != null && ce.getStacks().size() > 0)
 		{
-		    inv.setContents(ce.getStacks());
+		    inv.setContents(ce.exportStacks());
 		}
 	    }
 	    plugin.ffm.setDirty();

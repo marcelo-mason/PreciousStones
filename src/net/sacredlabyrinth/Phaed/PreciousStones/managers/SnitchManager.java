@@ -3,7 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.LinkedList;
 
 import org.bukkit.entity.Player;
@@ -182,7 +182,7 @@ public class SnitchManager
 	{
 	    if (field != null)
 	    {
-		ArrayList<SnitchEntry> snitches = field.getSnitchList();
+		List<SnitchEntry> snitches = field.getSnitchList();
 
 		if (snitches.size() > 0)
 		{

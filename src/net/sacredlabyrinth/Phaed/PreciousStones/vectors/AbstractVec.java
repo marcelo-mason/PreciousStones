@@ -1,25 +1,28 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import java.io.Serializable;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
 /**
  *
  * @author cc_madelg
  */
-public abstract class AbstractVec
+@MappedSuperclass
+public abstract class AbstractVec implements Serializable
 {
+
     /**
-     *
+     *  The world name the vector belongs to
      */
-    /**
-     *
-     */
-    /**
-     *
-     */
-    protected final int x, y, z;
-    /**
-     *
-     */
-    protected final String world;
+    private int x;
+    private int y;
+    private int z;
+    private String world;
+
+    public AbstractVec()
+    {
+    }
 
     /**
      *
@@ -36,6 +39,15 @@ public abstract class AbstractVec
 	this.world = world;
     }
 
+
+    /**
+     * @param x the x to set
+     */
+    public void setX(int x)
+    {
+        this.x = x;
+    }
+
     /**
      *
      * @return
@@ -43,6 +55,14 @@ public abstract class AbstractVec
     public int getX()
     {
 	return this.x;
+    }
+
+    /**
+     * @param y the y to set
+     */
+    public void setY(int y)
+    {
+        this.y = y;
     }
 
     /**
@@ -55,12 +75,28 @@ public abstract class AbstractVec
     }
 
     /**
+     * @param z the z to set
+     */
+    public void setZ(int z)
+    {
+        this.z = z;
+    }
+
+    /**
      *
      * @return
      */
     public int getZ()
     {
 	return this.z;
+    }
+
+    /**
+     * @param world the world to set
+     */
+    public void setWorld(String world)
+    {
+        this.world = world;
     }
 
     /**
@@ -75,7 +111,7 @@ public abstract class AbstractVec
     @Override
     public int hashCode()
     {
-	return ((new Integer(x)).hashCode() >> 13) ^ ((new Integer(y)).hashCode() >> 7) ^ ((new Integer(z)).hashCode()) ^ ((world).hashCode());
+	return ((new Integer(getX())).hashCode() >> 13) ^ ((new Integer(getY())).hashCode() >> 7) ^ ((new Integer(getZ())).hashCode()) ^ ((getWorld()).hashCode());
     }
 
     @Override
@@ -85,12 +121,12 @@ public abstract class AbstractVec
 	    return false;
 
 	AbstractVec other = (AbstractVec) obj;
-	return other.x == this.x && other.y == this.y && other.z == this.z && other.world.equals(this.world);
+	return other.getX() == this.getX() && other.getY() == this.getY() && other.getZ() == this.getZ() && other.getWorld().equals(this.getWorld());
     }
 
     @Override
     public String toString()
     {
-	return "[" + x + " " + y + " " + z + "]";
+	return "[" + getX() + " " + getY() + " " + getZ() + "]";
     }
 }

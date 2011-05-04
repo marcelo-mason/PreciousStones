@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Queue;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
 
@@ -178,7 +179,7 @@ public class ForceFieldManager
      */
     public boolean allowedAreOnline(Field field)
     {
-	ArrayList<String> allowed = field.getAllAllowed();
+	List<String> allowed = field.getAllAllowed();
 
 	for (String playername : allowed)
 	{

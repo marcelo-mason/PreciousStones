@@ -1,6 +1,17 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import com.avaje.ebean.annotation.CacheStrategy;
+import com.avaje.ebean.validation.NotNull;
+import java.io.Serializable;
+import java.util.List;
 import java.util.ArrayList;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import org.bukkit.block.Block;
 import org.bukkit.Material;
@@ -13,17 +24,35 @@ import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
  *
  * @author cc_madelg
  */
-public class Field extends AbstractVec
+@Entity()
+@CacheStrategy
+@Table(name = "fields")
+public class Field extends AbstractVec implements Serializable
 {
     private int radius;
     private int height;
     private int typeId;
+
+    @NotNull
     private String owner;
+
+    @NotNull
     private String name;
-    private ArrayList<SnitchEntry> snitchList = new ArrayList<SnitchEntry>();
-    private ArrayList<String> allowed = new ArrayList<String>();
+
+    @OneToMany(mappedBy = "field", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<SnitchEntry> snitchList = new ArrayList<SnitchEntry>();
+
+    private List<String> allowed = new ArrayList<String>();
+
+    @OneToOne(cascade = CascadeType.ALL)
     private CloakEntry cloakEntry;
-    private ChunkVec chunkvec;
+
+    @Id
+    private Long id;
+
+    public Field()
+    {
+    }
 
     /**
      *
@@ -41,7 +70,7 @@ public class Field extends AbstractVec
      * @param snitchList
      * @param cloakEntry
      */
-    public Field(int x, int y, int z, int radius, int height, ChunkVec chunkvec, String world, int typeId, String owner, ArrayList<String> allowed, String name, ArrayList<SnitchEntry> snitchList, CloakEntry cloakEntry)
+    public Field(int x, int y, int z, int radius, int height, String world, int typeId, String owner, ArrayList<String> allowed, String name, ArrayList<SnitchEntry> snitchList, CloakEntry cloakEntry)
     {
 	super(x, y, z, world);
 
@@ -51,7 +80,6 @@ public class Field extends AbstractVec
 	this.name = name;
 	this.allowed = allowed;
 	this.typeId = typeId;
-	this.chunkvec = chunkvec;
 	this.snitchList = snitchList;
 	this.cloakEntry = cloakEntry;
     }
@@ -75,7 +103,6 @@ public class Field extends AbstractVec
 	this.name = name;
 	this.allowed = allowed;
 	this.typeId = block.getTypeId();
-	this.chunkvec = new ChunkVec(block.getChunk());
     }
 
     /**
@@ -91,7 +118,6 @@ public class Field extends AbstractVec
 	this.radius = radius;
 	this.height = height;
 	this.typeId = block.getTypeId();
-	this.chunkvec = new ChunkVec(block.getChunk());
     }
 
     /**
@@ -103,6 +129,16 @@ public class Field extends AbstractVec
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
 
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
     /**
      *
      * @param radius
@@ -110,7 +146,7 @@ public class Field extends AbstractVec
     public void setRadius(int radius)
     {
 	this.radius = radius;
-	this.height = (this.radius * 2) + 1;
+	this.setHeight((this.radius * 2) + 1);
     }
 
     /**
@@ -128,7 +164,7 @@ public class Field extends AbstractVec
      */
     public String getType()
     {
-	return Material.getMaterial(this.typeId).toString();
+	return Material.getMaterial(this.getTypeId()).toString();
     }
 
     /**
@@ -137,7 +173,7 @@ public class Field extends AbstractVec
      */
     public ChunkVec getChunkVec()
     {
-	return this.chunkvec;
+	return this.getChunkvec();
     }
 
     /**
@@ -193,7 +229,7 @@ public class Field extends AbstractVec
     {
 	if (this.name.length() == 0)
 	{
-	    return this.owner + "'s domain";
+	    return this.getOwner() + "'s domain";
 	}
 
 	return this.name;
@@ -206,17 +242,17 @@ public class Field extends AbstractVec
      */
     public boolean isName(String name)
     {
-	if (name == null && this.name == null)
+	if (name == null && this.getName() == null)
 	{
 	    return true;
 	}
 
-	if (name == null || this.name == null)
+	if (name == null || this.getName() == null)
 	{
 	    return false;
 	}
 
-	return this.name.equals(name);
+	return this.getName().equals(name);
     }
 
     /**
@@ -225,14 +261,14 @@ public class Field extends AbstractVec
      */
     public String getStoredName()
     {
-	return this.name;
+	return this.getName();
     }
 
     /**
      *
      * @return
      */
-    public ArrayList<String> getAllowed()
+    public List<String> getAllowed()
     {
 	return allowed;
     }
@@ -241,11 +277,11 @@ public class Field extends AbstractVec
      *
      * @return
      */
-    public ArrayList<String> getAllAllowed()
+    public List<String> getAllAllowed()
     {
-	ArrayList<String> all = new ArrayList<String>();
-	all.add(owner);
-	all.addAll(allowed);
+	List<String> all = new ArrayList<String>();
+	all.add(getOwner());
+	all.addAll(getAllowed());
 	return all;
     }
 
@@ -257,11 +293,11 @@ public class Field extends AbstractVec
     {
 	String out = "";
 
-	if (allowed.size() > 0)
+	if (getAllowed().size() > 0)
 	{
-	    for (int i = 0; i < allowed.size(); i++)
+	    for (int i = 0; i < getAllowed().size(); i++)
 	    {
-		out += ", " + allowed.get(i);
+		out += ", " + getAllowed().get(i);
 	    }
 	}
 	else
@@ -279,7 +315,7 @@ public class Field extends AbstractVec
      */
     public boolean isOwner(String playerName)
     {
-	return playerName.equals(owner);
+	return playerName.equals(getOwner());
     }
 
     /**
@@ -289,12 +325,12 @@ public class Field extends AbstractVec
      */
     public boolean isAllowed(String allowedName)
     {
-	if(allowed.contains("*"))
+	if(getAllowed().contains("*"))
 	{
 	    return true;
 	}
 
-	return allowed.contains(allowedName);
+	return getAllowed().contains(allowedName);
     }
 
     /**
@@ -304,12 +340,12 @@ public class Field extends AbstractVec
      */
     public boolean isAllAllowed(String allowedName)
     {
-	if(allowed.contains("*"))
+	if(getAllowed().contains("*"))
 	{
 	    return true;
 	}
 
-	return allowedName.equals(owner) || allowed.contains(allowedName);
+	return allowedName.equals(getOwner()) || getAllowed().contains(allowedName);
     }
 
     /**
@@ -319,10 +355,10 @@ public class Field extends AbstractVec
      */
     public boolean addAllowed(String allowedName)
     {
-	if (allowed.contains(allowedName))
+	if (getAllowed().contains(allowedName))
 	    return false;
 
-	allowed.add(allowedName);
+	getAllowed().add(allowedName);
 	return true;
     }
 
@@ -336,8 +372,144 @@ public class Field extends AbstractVec
 	if (!allowed.contains(allowedName))
 	    return false;
 
-	allowed.remove(allowedName);
+	getAllowed().remove(allowedName);
 	return true;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getCoords()
+    {
+	return super.toString();
+    }
+
+    /**
+     *
+     * @param name
+     * @param reason
+     * @param details
+     */
+    public void addIntruder(String name, String reason, String details)
+    {
+	for(SnitchEntry se : getSnitchList())
+	{
+	    if(se.getName().equals(name) && se.getReason().equals(reason) && se.getDetails().equals(details))
+	    {
+		se.addCount();
+		return;
+	    }
+	}
+
+	getSnitchList().add(new SnitchEntry(name, reason, details));
+    }
+
+    /**
+     * @param snitchList the snitchList to set
+     */
+    public void setSnitchList(List<SnitchEntry> snitchList)
+    {
+        this.snitchList = snitchList;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<SnitchEntry> getSnitchList()
+    {
+	return snitchList;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getSnitchListString()
+    {
+	String out = "";
+
+	for (SnitchEntry se : getSnitchList())
+	{
+	    out += se.toString();
+	}
+
+	return out;
+    }
+
+    /**
+     *
+     */
+    public void cleanSnitchList()
+    {
+	getSnitchList().clear();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public CloakEntry getCloakEntry()
+    {
+	return cloakEntry;
+    }
+
+    /**
+     *
+     * @param cloakEntry
+     */
+    public void setCloakEntry(CloakEntry cloakEntry)
+    {
+	this.cloakEntry = cloakEntry;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getCloakString()
+    {
+	return getCloakEntry() == null ? "" : getCloakEntry().toString();
+    }
+
+
+    @Override
+    public String toString()
+    {
+	return super.toString() + " [" + getOwner() + "]";
+    }
+
+    /**
+     * @param height the height to set
+     */
+    public void setHeight(int height)
+    {
+        this.height = height;
+    }
+
+    /**
+     * @param typeId the typeId to set
+     */
+    public void setTypeId(int typeId)
+    {
+        this.typeId = typeId;
+    }
+
+    /**
+     * @param allowed the allowed to set
+     */
+    public void setAllowed(List<String> allowed)
+    {
+        this.allowed = allowed;
+    }
+
+    /**
+     * @return the chunkvec
+     */
+    public ChunkVec getChunkvec()
+    {
+        return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
     }
 
     /**
@@ -348,12 +520,12 @@ public class Field extends AbstractVec
     {
 	ArrayList<Vector> corners = new ArrayList<Vector>();
 
-	int minx = x - radius;
-	int maxx = x + radius;
-	int minz = z - radius;
-	int maxz = z + radius;
-	int miny = y - (int) Math.floor(((double) height) / 2);
-	int maxy = y + (int) Math.ceil(((double) height) / 2);
+	int minx = getX() - getRadius();
+	int maxx = getX() + getRadius();
+	int minz = getZ() - getRadius();
+	int maxz = getZ() + getRadius();
+	int miny = getY() - (int) Math.floor(((double) getHeight()) / 2);
+	int maxy = getY() + (int) Math.ceil(((double) getHeight()) / 2);
 
 	corners.add(new Vector(minx, miny, minz));
 	corners.add(new Vector(minx, miny, maxz));
@@ -374,7 +546,7 @@ public class Field extends AbstractVec
      */
     public boolean intersects(Field field)
     {
-	if (!field.getWorld().equals(this.world))
+	if (!field.getWorld().equals(getWorld()))
 	{
 	    return false;
 	}
@@ -413,12 +585,12 @@ public class Field extends AbstractVec
 	int py = vec.getBlockY();
 	int pz = vec.getBlockZ();
 
-	int minx = x - radius;
-	int maxx = x + radius;
-	int minz = z - radius;
-	int maxz = z + radius;
-	int miny = y - (int) Math.floor(((double) height) / 2);
-	int maxy = y + (int) Math.ceil(((double) height) / 2);
+	int minx = getX() - getRadius();
+	int maxx = getX() + getRadius();
+	int minz = getZ() - getRadius();
+	int maxz = getZ() + getRadius();
+	int miny = getY() - (int) Math.floor(((double) getHeight()) / 2);
+	int maxy = getY() + (int) Math.ceil(((double) getHeight()) / 2);
 
 	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
 	    return true;
@@ -437,12 +609,12 @@ public class Field extends AbstractVec
 	int py = field.getY();
 	int pz = field.getZ();
 
-	int minx = x - radius;
-	int maxx = x + radius;
-	int minz = z - radius;
-	int maxz = z + radius;
-	int miny = y - (int) Math.floor(((double) height) / 2);
-	int maxy = y + (int) Math.ceil(((double) height) / 2);
+	int minx = getX() - getRadius();
+	int maxx = getX() + getRadius();
+	int minz = getZ() - getRadius();
+	int maxz = getZ() + getRadius();
+	int miny = getY() - (int) Math.floor(((double) getHeight()) / 2);
+	int maxy = getY() + (int) Math.ceil(((double) getHeight()) / 2);
 
 	if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
 	    return true;
@@ -458,101 +630,5 @@ public class Field extends AbstractVec
     public boolean envelops(Block block)
     {
 	return envelops(new Field(block));
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getCoords()
-    {
-	return super.toString();
-    }
-
-    /**
-     *
-     * @param name
-     * @param reason
-     * @param details
-     */
-    public void addIntruder(String name, String reason, String details)
-    {
-	for(SnitchEntry se : snitchList)
-	{
-	    if(se.getName().equals(name) && se.getReason().equals(reason) && se.getDetails().equals(details))
-	    {
-		se.addCount();
-		return;
-	    }
-	}
-
-	snitchList.add(new SnitchEntry(name, reason, details));
-    }
-
-    /**
-     *
-     */
-    public void cleanSnitchList()
-    {
-	snitchList.clear();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ArrayList<SnitchEntry> getSnitchList()
-    {
-	return snitchList;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getSnitchListString()
-    {
-	String out = "";
-
-	for (SnitchEntry se : snitchList)
-	{
-	    out += se.toString();
-	}
-
-	return "";
-    }
-
-    /**
-     *
-     * @return
-     */
-    public CloakEntry getCloakEntry()
-    {
-	return cloakEntry;
-    }
-
-    /**
-     *
-     * @param cloakEntry
-     */
-    public void setCloakEntry(CloakEntry cloakEntry)
-    {
-	this.cloakEntry = cloakEntry;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getCloakString()
-    {
-	return cloakEntry == null ? "" : cloakEntry.toString();
-    }
-
-
-    @Override
-    public String toString()
-    {
-	return super.toString() + " [" + owner + "]";
     }
 }
