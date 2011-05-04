@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.World;
 
 /**
  * Handles unbreakable blocks
@@ -18,8 +20,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public class UnbreakableManager
 {
-    private final HashMap<ChunkVec, LinkedList<Unbreakable>> chunkLists = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
-
     private Queue<Unbreakable> deletionQueue = new LinkedList<Unbreakable>();
     private PreciousStones plugin;
     private boolean dirty = false;
@@ -30,52 +30,17 @@ public class UnbreakableManager
      */
     public UnbreakableManager(PreciousStones plugin)
     {
-	this.plugin = plugin;
+        this.plugin = plugin;
     }
 
-    /**
-     * Retrieve a copy of the chunk list
-     * @return
-     */
-    public HashMap<ChunkVec, LinkedList<Unbreakable>> getChunks()
+    private List<Unbreakable> retrieveUnbreakables(ChunkVec cv)
     {
-	HashMap<ChunkVec, LinkedList<Unbreakable>> out = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
-	out.putAll(chunkLists);
-	return out;
+        return plugin.getDatabase().find(Unbreakable.class).where().eq("chunkX", cv.getX()).eq("chunkZ", cv.getZ()).ieq("world", cv.getWorld()).findList();
     }
 
-    /**
-     * Import chunks to the chunklist
-     * @param chunks
-     */
-    public void importChunks(HashMap<ChunkVec, LinkedList<Unbreakable>> chunks)
+    private List<Unbreakable> retrieveUnbreakables()
     {
-	chunkLists.putAll(chunks);
-    }
-
-    /**
-     * Whether we need to save
-     * @return
-     */
-    public boolean isDirty()
-    {
-	return dirty;
-    }
-
-    /**
-     * force dirty
-     */
-    public void setDirty()
-    {
-	dirty = true;
-    }
-
-    /**
-     * reset dirty
-     */
-    public void resetDirty()
-    {
-	dirty = false;
+        return plugin.getDatabase().find(Unbreakable.class).orderBy("chunkX").orderBy("chunkZ").findList();
     }
 
     /**
@@ -83,33 +48,21 @@ public class UnbreakableManager
      */
     public void flush()
     {
-	while (deletionQueue.size() > 0)
-	{
-	    Unbreakable pending = deletionQueue.poll();
+        while (deletionQueue.size() > 0)
+        {
+            Unbreakable pending = deletionQueue.poll();
 
-	    LinkedList<Unbreakable> chunkunbreakables = chunkLists.get(pending.getChunkVec());
-
-	    if (chunkunbreakables != null)
-	    {
-		chunkunbreakables.remove(pending);
-	    }
-	    setDirty();
-	}
+            plugin.getDatabase().delete(pending);
+        }
     }
 
     /**
      * Total number of unbreakable stones
      * @return
      */
-    public int count()
+    public int getCount()
     {
-	int size = 0;
-
-	for (LinkedList<Unbreakable> c : chunkLists.values())
-	{
-	    size += c.size();
-	}
-	return size;
+        return plugin.getDatabase().find(Unbreakable.class).findRowCount();
     }
 
     /**
@@ -118,52 +71,73 @@ public class UnbreakableManager
      */
     public int cleanOrphans()
     {
-	int cleanedCount = 0;
+        int cleanedCount = 0;
+        boolean currentChunkLoaded = false;
+        ChunkVec currentChunk = null;
 
-	for (LinkedList<Unbreakable> c : chunkLists.values())
-	{
-	    for (Unbreakable unbreakable : c)
-	    {
-		if (plugin.getServer().getWorld(unbreakable.getWorld()) == null)
-		{
-		    cleanedCount++;
-		    queueRelease(unbreakable);
-		}
+        List<Unbreakable> ubs = retrieveUnbreakables();
 
-		Block block = plugin.getServer().getWorld(unbreakable.getWorld()).getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+        for (Unbreakable unbreakable : ubs)
+        {
+            World world = plugin.getServer().getWorld(unbreakable.getWorld());
 
-		if (!plugin.settings.isUnbreakableType(block))
-		{
-		    cleanedCount++;
-		    queueRelease(unbreakable);
-		}
-	    }
-	}
-	flush();
+            if (world == null)
+            {
+                continue;
+            }
 
-	return cleanedCount;
+            // ensure chunk is loaded prior to polling
+
+            ChunkVec cv = unbreakable.getChunkVec();
+
+            if (!cv.equals(currentChunk))
+            {
+                if (!currentChunkLoaded)
+                {
+                    if (currentChunk != null)
+                    {
+                        world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                    }
+                }
+
+                currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                if (!currentChunkLoaded)
+                {
+                    world.loadChunk(cv.getX(), cv.getZ());
+                }
+
+                currentChunk = cv;
+            }
+
+            if (plugin.getServer().getWorld(unbreakable.getWorld()) == null)
+            {
+                cleanedCount++;
+                queueRelease(unbreakable);
+            }
+
+            Block block = plugin.getServer().getWorld(unbreakable.getWorld()).getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+
+            if (!plugin.settings.isUnbreakableType(block))
+            {
+                cleanedCount++;
+                queueRelease(unbreakable);
+            }
+        }
+
+        flush();
+
+        return cleanedCount;
     }
-
 
     /**
      * Gets the unbreakable from source block
      * @param unbreakableblock
      * @return
      */
-    public Unbreakable getUnbreakable(Block unbreakableblock)
+    public Unbreakable getUnbreakable(Block block)
     {
-	LinkedList<Unbreakable> c = chunkLists.get(new ChunkVec(unbreakableblock.getChunk()));
-
-	if (c != null)
-	{
-	    int index = c.indexOf(new Vec(unbreakableblock));
-
-	    if (index > -1)
-	    {
-		return (c.get(index));
-	    }
-	}
-	return null;
+        return plugin.getDatabase().find(Unbreakable.class).where().eq("x", block.getX()).eq("y", block.getY()).eq("z", block.getZ()).ieq("world", block.getWorld().getName()).findUnique();
     }
 
     /**
@@ -173,7 +147,7 @@ public class UnbreakableManager
      */
     public boolean isUnbreakable(Block unbreakableblock)
     {
-	return getUnbreakable(unbreakableblock) != null;
+        return getUnbreakable(unbreakableblock) != null;
     }
 
     /**
@@ -184,13 +158,13 @@ public class UnbreakableManager
      */
     public boolean isOwner(Block unbreakableblock, String playerName)
     {
-	Unbreakable unbreakable = getUnbreakable(unbreakableblock);
+        Unbreakable unbreakable = getUnbreakable(unbreakableblock);
 
-	if (unbreakable != null)
-	{
-	    return unbreakable.isOwner(playerName);
-	}
-	return false;
+        if (unbreakable != null)
+        {
+            return unbreakable.isOwner(playerName);
+        }
+        return false;
     }
 
     /**
@@ -200,13 +174,13 @@ public class UnbreakableManager
      */
     public String getOwner(Block unbreakableblock)
     {
-	Unbreakable unbreakable = getUnbreakable(unbreakableblock);
+        Unbreakable unbreakable = getUnbreakable(unbreakableblock);
 
-	if (unbreakable != null)
-	{
-	    return unbreakable.getOwner();
-	}
-	return "";
+        if (unbreakable != null)
+        {
+            return unbreakable.getOwner();
+        }
+        return "";
     }
 
     /**
@@ -217,33 +191,33 @@ public class UnbreakableManager
      */
     public LinkedList<Unbreakable> getUnbreakablesInArea(Block blockInArea, int chunkradius)
     {
-	LinkedList<Unbreakable> out = new LinkedList<Unbreakable>();
-	Chunk chunk = blockInArea.getChunk();
+        LinkedList<Unbreakable> out = new LinkedList<Unbreakable>();
+        Chunk chunk = blockInArea.getChunk();
 
-	int xlow = chunk.getX() - chunkradius;
-	int xhigh = chunk.getX() + chunkradius;
-	int zlow = chunk.getZ() - chunkradius;
-	int zhigh = chunk.getZ() + chunkradius;
+        int xlow = chunk.getX() - chunkradius;
+        int xhigh = chunk.getX() + chunkradius;
+        int zlow = chunk.getZ() - chunkradius;
+        int zhigh = chunk.getZ() + chunkradius;
 
-	for (int x = xlow; x <= xhigh; x++)
-	{
-	    for (int z = zlow; z <= zhigh; z++)
-	    {
-		Chunk chnk = blockInArea.getWorld().getChunkAt(x, z);
+        for (int x = xlow; x <= xhigh; x++)
+        {
+            for (int z = zlow; z <= zhigh; z++)
+            {
+                Chunk chnk = blockInArea.getWorld().getChunkAt(x, z);
 
-		if (chunk != null)
-		{
-		    LinkedList<Unbreakable> c = chunkLists.get(new ChunkVec(chnk));
+                if (chunk != null)
+                {
+                    List<Unbreakable> ubs = retrieveUnbreakables(new ChunkVec(chnk));
 
-		    if (c != null)
-		    {
-			out.addAll(c);
-		    }
-		}
-	    }
-	}
+                    if (ubs != null)
+                    {
+                        out.addAll(ubs);
+                    }
+                }
+            }
+        }
 
-	return out;
+        return out;
     }
 
     /**
@@ -254,8 +228,8 @@ public class UnbreakableManager
      */
     public LinkedList<Unbreakable> getUnbreakablesInArea(Player player, int chunkradius)
     {
-	Block blockInArea = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-	return getUnbreakablesInArea(blockInArea, chunkradius);
+        Block blockInArea = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+        return getUnbreakablesInArea(blockInArea, chunkradius);
     }
 
     /**
@@ -265,34 +239,36 @@ public class UnbreakableManager
      */
     public Block touchingUnbrakableBlock(Block block)
     {
-	if (block == null)
-	    return null;
+        if (block == null)
+        {
+            return null;
+        }
 
-	for (int x = -1; x <= 1; x++)
-	{
-	    for (int z = -1; z <= 1; z++)
-	    {
-		for (int y = -1; y <= 1; y++)
-		{
-		    if (x == 0 && y == 0 && z == 0)
-		    {
-			continue;
-		    }
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int z = -1; z <= 1; z++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (x == 0 && y == 0 && z == 0)
+                    {
+                        continue;
+                    }
 
-		    Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
+                    Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-		    if (plugin.settings.isUnbreakableType(surroundingblock))
-		    {
-			if (plugin.um.isUnbreakable(surroundingblock))
-			{
-			    return surroundingblock;
-			}
-		    }
-		}
-	    }
-	}
+                    if (plugin.settings.isUnbreakableType(surroundingblock))
+                    {
+                        if (plugin.um.isUnbreakable(surroundingblock))
+                        {
+                            return surroundingblock;
+                        }
+                    }
+                }
+            }
+        }
 
-	return null;
+        return null;
     }
 
     /**
@@ -303,31 +279,15 @@ public class UnbreakableManager
      */
     public boolean add(Block unbreakableblock, Player owner)
     {
-	if (plugin.plm.isDisabled(owner))
-	{
-	    return false;
-	}
+        if (plugin.plm.isDisabled(owner))
+        {
+            return false;
+        }
 
-	ChunkVec chunkvec = new ChunkVec(unbreakableblock.getChunk());
-	Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
+        Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
 
-	LinkedList<Unbreakable> c = chunkLists.get(chunkvec);
-
-	if (c != null)
-	{
-	    if (!c.contains(unbreakable))
-	    {
-		c.add(unbreakable);
-	    }
-	}
-	else
-	{
-	    LinkedList<Unbreakable> newc = new LinkedList<Unbreakable>();
-	    newc.add(unbreakable);
-	    chunkLists.put(chunkvec, newc);
-	}
-	setDirty();
-	return true;
+        plugin.getDatabase().save(unbreakable);
+        return true;
     }
 
     /**
@@ -336,10 +296,9 @@ public class UnbreakableManager
      */
     public void release(Block unbreakableblock)
     {
-	LinkedList<Unbreakable> c = chunkLists.get(new ChunkVec(unbreakableblock.getChunk()));
+        Unbreakable ub = getUnbreakable(unbreakableblock);
 
-	c.remove(new Vec(unbreakableblock));
-	setDirty();
+        plugin.getDatabase().save(ub);
     }
 
     /**
@@ -348,7 +307,7 @@ public class UnbreakableManager
      */
     public void queueRelease(Block unbreakableblock)
     {
-	deletionQueue.add(new Unbreakable(unbreakableblock));
+        deletionQueue.add(getUnbreakable(unbreakableblock));
     }
 
     /**
@@ -357,6 +316,6 @@ public class UnbreakableManager
      */
     public void queueRelease(Unbreakable unbreakable)
     {
-	deletionQueue.add(unbreakable);
+        deletionQueue.add(unbreakable);
     }
 }
