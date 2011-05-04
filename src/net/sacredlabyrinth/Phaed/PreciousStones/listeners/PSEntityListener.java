@@ -180,7 +180,7 @@ public class PSEntityListener extends EntityListener
 	    }
 	}
 
-	// pvp protect against any other entity attack
+	// pvp protect against any other player attack
 
 	if (event.getCause().equals(DamageCause.ENTITY_ATTACK))
 	{
@@ -188,7 +188,7 @@ public class PSEntityListener extends EntityListener
 	    {
 		Player player = (Player) event.getEntity();
 
-		Field field = plugin.ffm.isPvPProtected(player);
+		Field field = plugin.ffm.isMobDamageProtected(player);
 
 		if (field != null)
 		{
