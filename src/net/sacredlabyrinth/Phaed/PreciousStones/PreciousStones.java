@@ -1,7 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
 
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
@@ -27,10 +30,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.LightningManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CloakManager;
-
-import org.bukkit.entity.Player;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
  * PreciousStones for Bukkit
@@ -91,8 +91,8 @@ public class PreciousStones extends JavaPlugin
 	vehicleListener = new PSVehicleListener(this);
 
 	registerEvents();
-
-	com.registerHelpCommands();
+        registerCommands();
+        setupDatabase();
     }
 
     private void registerEvents()
@@ -113,6 +113,32 @@ public class PreciousStones extends JavaPlugin
 	getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.Highest, this);
     }
 
+    public void registerCommands()
+    {
+	getCommand("ps").setExecutor(com);
+    }
+
+    private void setupDatabase()
+    {
+	try
+	{
+	    getDatabase().find(Field.class).findRowCount();
+	}
+	catch (PersistenceException ex)
+	{
+	    System.out.println("Installing database for " + getDescription().getName() + " due to first time usage");
+	    installDDL();
+	}
+    }
+
+    @Override
+    public List<Class<?>> getDatabaseClasses()
+    {
+	List<Class<?>> list = new ArrayList<Class<?>>();
+	list.add(Field.class);
+	return list;
+    }
+
     @Override
     public void onDisable()
     {
@@ -120,27 +146,7 @@ public class PreciousStones extends JavaPlugin
 	{
 	    sm.save();
 	}
-    }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
-    {
-	try
-	{
-	    String[] split = args;
-	    String commandName = command.getName().toLowerCase();
-	    if (sender instanceof Player)
-	    {
-		if (commandName.equals("ps"))
-		{
-		    return com.processCommand((Player) sender, split);
-		}
-	    }
-	    return false;
-	}
-	catch (Throwable ex)
-	{
-	    return true;
-	}
+        getDatabase().endTransaction();
     }
 }
