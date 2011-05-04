@@ -1,0 +1,6 @@
+database:
+    username: root
+    isolation: SERIALIZABLE
+    driver: com.mysql.jdbc.Driver
+    password: yourpassword
+    url: jdbc:mysql://localhost/minecraft
