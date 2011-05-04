@@ -66,6 +66,26 @@ public class UnbreakableManager
     }
 
     /**
+     * Gets the unbreakable from source block
+     * @param unbreakableblock
+     * @return
+     */
+    public Unbreakable getUnbreakable(Block block)
+    {
+        return plugin.getDatabase().find(Unbreakable.class).where().eq("x", block.getX()).eq("y", block.getY()).eq("z", block.getZ()).ieq("world", block.getWorld().getName()).findUnique();
+    }
+
+    /**
+     * Looks for the block in our unbreakable collection
+     * @param unbreakableblock
+     * @return
+     */
+    public boolean isUnbreakable(Block unbreakableblock)
+    {
+        return getUnbreakable(unbreakableblock) != null;
+    }
+    
+    /**
      * Clean up orphan fields
      * @return
      */
@@ -128,26 +148,6 @@ public class UnbreakableManager
         flush();
 
         return cleanedCount;
-    }
-
-    /**
-     * Gets the unbreakable from source block
-     * @param unbreakableblock
-     * @return
-     */
-    public Unbreakable getUnbreakable(Block block)
-    {
-        return plugin.getDatabase().find(Unbreakable.class).where().eq("x", block.getX()).eq("y", block.getY()).eq("z", block.getZ()).ieq("world", block.getWorld().getName()).findUnique();
-    }
-
-    /**
-     * Looks for the block in our unbreakable collection
-     * @param unbreakableblock
-     * @return
-     */
-    public boolean isUnbreakable(Block unbreakableblock)
-    {
-        return getUnbreakable(unbreakableblock) != null;
     }
 
     /**
