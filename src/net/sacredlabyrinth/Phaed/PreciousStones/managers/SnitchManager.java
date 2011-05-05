@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.logging.Level;
 
 import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
@@ -20,7 +21,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class SnitchManager
 {
@@ -33,6 +34,22 @@ public class SnitchManager
     public SnitchManager(PreciousStones plugin)
     {
 	this.plugin = plugin;
+    }
+
+    /**
+     *
+     * @param field
+     */
+    public void deleteSnitchEntry(SnitchEntry se)
+    {
+        try
+        {
+            plugin.getDatabase().delete(se);
+        }
+        catch (Exception ex)
+        {
+            PreciousStones.log(Level.SEVERE, "Error deleting snitchEntry: {0}", ex.getMessage());
+        }
     }
 
     /**
@@ -52,7 +69,7 @@ public class SnitchManager
 		{
 		    DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
 		    field.addIntruder(player.getName(), ChatColor.BLUE + "Entry", dateFormat.format(new Date()));
-		    plugin.getDatabase().save(field);
+		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -75,7 +92,7 @@ public class SnitchManager
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Break", toBlockDetails(block));
-		   plugin.getDatabase().save(field);
+		   plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -97,7 +114,7 @@ public class SnitchManager
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Place", toBlockDetails(block));
-		    plugin.getDatabase().save(field);
+		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -119,7 +136,7 @@ public class SnitchManager
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Used", toBlockDetails(block));
-		    plugin.getDatabase().save(field);
+		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -143,7 +160,7 @@ public class SnitchManager
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Shopped", sign.getLines().length == 0 ? "empty" : sign.getLine(0));
-		    plugin.getDatabase().save(field);
+		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -165,7 +182,7 @@ public class SnitchManager
 		if (!field.isAllAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.RED + "Ignite", toBlockDetails(block));
-		    plugin.getDatabase().save(field);
+		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -186,20 +203,20 @@ public class SnitchManager
 
 		if (snitches.size() > 0)
 		{
-		    plugin.com.getCacheBlock().clear();
+		    ChatBlock chatBlock = plugin.com.getCacheBlock();
 
 		    ChatBlock.sendBlank(player);
 		    ChatBlock.saySingle(player, ChatColor.YELLOW + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
 		    ChatBlock.sendBlank(player);
 
-		    plugin.com.getCacheBlock().addRow(new String[] { "  " + ChatColor.GRAY + "Name", "Reason", "Details" });
+		    chatBlock.addRow(new String[] { "  " + ChatColor.GRAY + "Name", "Reason", "Details" });
 
 		    for (SnitchEntry se : snitches)
 		    {
-			plugin.com.getCacheBlock().addRow(new String[] { "  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails().replace("{", "[").replace("}", "]") });
+			chatBlock.addRow(new String[] { "  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails().replace("{", "[").replace("}", "]") });
 		    }
 
-		    boolean more = plugin.com.getCacheBlock().sendBlock(player, plugin.settings.linesPerPage);
+		    boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
 
 		    if (more)
 		    {
