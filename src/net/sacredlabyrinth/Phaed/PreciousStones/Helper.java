@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class Helper
 {

@@ -10,7 +10,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class LightningManager
 {
@@ -37,7 +37,7 @@ public class LightningManager
             return;
 	}
 
-	if (!field.isAllAllowed(player.getName()))
+	if (!field.isAllowed(player.getName()))
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 

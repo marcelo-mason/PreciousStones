@@ -11,13 +11,16 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 @Entity()
 @CacheStrategy
 @Table(name = "snitch_entries")
 public class SnitchEntry implements Serializable
 {
+    @Id
+    private Long id;
+
     @NotNull
     private String name;
 
@@ -27,10 +30,7 @@ public class SnitchEntry implements Serializable
     @NotNull
     private String details;
 
-    private int count;
-
-    @Id
-    private Long id;
+    private int eventCount;
 
     @ManyToOne
     private Field field;
@@ -53,7 +53,7 @@ public class SnitchEntry implements Serializable
 	this.name = name;
 	this.reason = reason;
 	this.details = details;
-	this.count = 1;
+	this.eventCount = 1;
     }
 
     /**
@@ -96,9 +96,9 @@ public class SnitchEntry implements Serializable
      */
     public String getReasonDisplay()
     {
-	if (getCount() > 1)
+	if (getEventCount() > 1)
 	{
-	    return this.getReason() + " (" + getCount() + ")";
+	    return this.getReason() + " (" + getEventCount() + ")";
 	}
 
 	return this.getReason();
@@ -122,34 +122,26 @@ public class SnitchEntry implements Serializable
     }
 
     /**
-     * @return the count
-     */
-    public int getCount()
-    {
-        return count;
-    }
-
-    /**
-     * @param count the count to set
-     */
-    public void setCount(int count)
-    {
-        this.count = count;
-    }
-
-    /**
      *
      */
     public void addCount()
     {
-	this.setCount(this.getCount() + 1);
+	this.setEventCount(this.getEventCount() + 1);
     }
 
+    /**
+     *
+     * @return
+     */
     public Long getId()
     {
         return id;
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setId(Long id)
     {
         this.id = id;
@@ -169,5 +161,21 @@ public class SnitchEntry implements Serializable
     public void setField(Field field)
     {
         this.field = field;
+    }
+
+    /**
+     * @return the eventCount
+     */
+    public int getEventCount()
+    {
+        return eventCount;
+    }
+
+    /**
+     * @param eventCount the eventCount to set
+     */
+    public void setEventCount(int eventCount)
+    {
+        this.eventCount = eventCount;
     }
 }

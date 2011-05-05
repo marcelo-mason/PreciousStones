@@ -11,7 +11,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class VelocityManager
 {
@@ -36,7 +36,7 @@ public class VelocityManager
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.launch"))
 	{
-	    if (field.isAllAllowed(player.getName()))
+	    if (field.isAllowed(player.getName()))
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
@@ -85,7 +85,7 @@ public class VelocityManager
     {
 	if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
 	{
-	    if (field.isAllAllowed(player.getName()))
+	    if (field.isAllowed(player.getName()))
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 

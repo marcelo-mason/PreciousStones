@@ -9,7 +9,7 @@ import java.util.regex.*;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class ChatBlock
 {
@@ -31,7 +31,7 @@ public class ChatBlock
      *
      * @param columnAlignment
      */
-    public void setAlignment(String[] columnAlignment)
+    public void setAlignment(String... columnAlignment)
     {
         columnAlignments.addAll(Arrays.asList(columnAlignment));
     }
@@ -40,7 +40,7 @@ public class ChatBlock
      *
      * @param columnSpacings
      */
-    public void setSpacing(int[] columnSpacings)
+    public void setSpacing(int... columnSpacings)
     {
 	for (int spacing : columnSpacings)
 	    columnSpaces.add(spacing);
@@ -51,7 +51,7 @@ public class ChatBlock
      * @param columnPercentages
      * @param prefix
      */
-    public void setColumnSizes(double[] columnPercentages, String prefix)
+    public void setColumnSizes(String prefix, double... columnPercentages)
     {
 	int ll = lineLength;
 
@@ -77,18 +77,9 @@ public class ChatBlock
      *
      * @param contents
      */
-    public void addRow(String[] contents)
+    public void addRow(String... contents)
     {
 	rows.add(contents);
-    }
-
-    /**
-     *
-     * @param contents
-     */
-    public void addSingleRow(String contents)
-    {
-	rows.add(new String[] {contents});
     }
 
     /**
@@ -154,7 +145,6 @@ public class ChatBlock
 		continue;
 
 	    String rowstring = "";
-
 	    String row[] = rows.pollFirst();
 
 	    for (int sid = 0; sid < row.length; sid++)
@@ -194,6 +184,17 @@ public class ChatBlock
 		    else if (msgLength(section) < colsize)
 		    {
 			rowstring += centerInLineOf(section, colsize);
+		    }
+		}
+                else if (align.equalsIgnoreCase("w"))
+		{
+		    if (msgLength(section) > colsize)
+		    {
+			rowstring += section;
+ 		    }
+		    else if (msgLength(section) < colsize)
+		    {
+			rowstring += paddRightToFit(section, colsize);
 		    }
 		}
 	    }
@@ -510,7 +511,7 @@ public class ChatBlock
      */
     public static String cleanColors(String str)
     {
-	String patternStr = "�.";
+	String patternStr = "ï¿½.";
 	String replacementStr = "";
 
 	Pattern pattern = Pattern.compile(patternStr);

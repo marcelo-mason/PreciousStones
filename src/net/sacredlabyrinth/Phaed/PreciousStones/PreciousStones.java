@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.PersistenceException;
-
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSBlockListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSEntityListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSPlayerListener;
+import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSWorldListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSVehicleListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommandManager;
@@ -60,10 +59,14 @@ public class PreciousStones extends JavaPlugin
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
+    private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
 
     /**
-     *  Parameterized logger
+     * Parameterized logger
+     * @param level
+     * @param msg
+     * @param arg
      */
     public static void log(Level level, String msg, Object... arg)
     {
@@ -102,6 +105,7 @@ public class PreciousStones extends JavaPlugin
         blockListener = new PSBlockListener(this);
         entityListener = new PSEntityListener(this);
         vehicleListener = new PSVehicleListener(this);
+        worldListener = new PSWorldListener(this);
 
         registerEvents();
         registerCommands();
@@ -130,6 +134,7 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Priority.Highest, this);
         getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.Highest, this);
         getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.Highest, this);
+        getServer().getPluginManager().registerEvent(Event.Type.WORLD_LOAD, worldListener, Priority.Highest, this);
     }
 
     private void registerCommands()
@@ -163,6 +168,7 @@ public class PreciousStones extends JavaPlugin
         list.add(CloakEntry.class);
         list.add(SnitchEntry.class);
         list.add(PSItemStack.class);
+        list.add(AllowedEntry.class);
         return list;
     }
 

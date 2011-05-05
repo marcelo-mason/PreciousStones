@@ -15,7 +15,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public final class SettingsManager
 {
@@ -680,32 +680,29 @@ public final class SettingsManager
 	{
 	    String properties = "";
 
-	    if (welcomeMessage)
-		properties += ", welcome";
-
-	    if (farewellMessage)
-		properties += ", farewell";
+	    if (welcomeMessage || farewellMessage)
+		properties += ", message";
 
 	    if (preventFire)
-		properties += ", no-fire";
+		properties += ", -fire";
 
 	    if (preventEntry)
-		properties += ", no-entry";
+		properties += ", -entry";
 
 	    if (preventPlace)
-		properties += ", no-place";
+		properties += ", -place";
 
 	    if (preventDestroy)
-		properties += ", no-destroy";
+		properties += ", -destroy";
 
 	    if (preventExplosions)
-		properties += ", no-explosions";
+		properties += ", -explosions";
 
 	    if (preventPvP)
-		properties += ", no-pvp";
+		properties += ", -pvp";
 
 	    if (guarddogMode)
-		properties += ", guard-dog-mode";
+		properties += ", guard-dog";
 
 	    if (instantHeal)
 		properties += ", heal";
@@ -720,7 +717,7 @@ public final class SettingsManager
 		properties += ", fast-damage";
 
 	    if (giveAir)
-		properties += ", give-air";
+		properties += ", air";
 
 	    if (snitch)
 		properties += ", snitch";
@@ -731,8 +728,10 @@ public final class SettingsManager
 	    if (cannon)
 		properties += ", cannon";
 
-	    if (noConflict)
+	    /*
+            if (noConflict)
 		properties += ", no-conflict";
+            */
 
 	    if (mine)
 		properties += ", mine";
@@ -741,7 +740,7 @@ public final class SettingsManager
 		properties += ", cloak";
 
 	    if (properties.length() > 0)
-		return "Properties: " + properties.substring(2);
+		return properties.substring(2);
 
 	    return "";
 	}

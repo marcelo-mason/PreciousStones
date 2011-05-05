@@ -11,7 +11,7 @@ import org.bukkit.block.Block;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 @Entity()
 @CacheStrategy
@@ -26,6 +26,9 @@ public class Unbreakable extends AbstractVec
     @Id
     private Long id;
 
+    /**
+     *
+     */
     public Unbreakable()
     {
     }
@@ -35,7 +38,6 @@ public class Unbreakable extends AbstractVec
      * @param x
      * @param y
      * @param z
-     * @param chunkvec
      * @param world
      * @param typeId
      * @param owner
@@ -133,11 +135,19 @@ public class Unbreakable extends AbstractVec
 	return super.toString() + " [owner:" + getOwner() + "]";
     }
 
+    /**
+     *
+     * @return
+     */
     public Long getId()
     {
         return id;
     }
 
+    /**
+     *
+     * @param id
+     */
     public void setId(Long id)
     {
         this.id = id;

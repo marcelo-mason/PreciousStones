@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.ArrayList;
+import java.util.logging.Level;
+import net.sacredlabyrinth.Phaed.PreciousStones.AllowedEntry;
 
 import org.bukkit.entity.Player;
 import org.bukkit.Chunk;
@@ -16,6 +17,7 @@ import org.bukkit.block.BlockFace;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
@@ -41,19 +43,38 @@ public class ForceFieldManager
         this.plugin = plugin;
     }
 
-    private List<Field> retrieveFields(ChunkVec cv)
+    /**
+     *
+     * @param cv
+     * @return all fields from database that match the chunkvec
+     */
+    public List<Field> retrieveFields(ChunkVec cv)
     {
         return plugin.getDatabase().find(Field.class).where().eq("chunkX", cv.getX()).eq("chunkZ", cv.getZ()).ieq("world", cv.getWorld()).findList();
     }
 
-    private List<Field> retrieveFields()
+    /**
+     *
+     * @param world
+     * @return all fields from the database that match the world
+     */
+    public List<Field> retrieveFields(String world)
+    {
+        return plugin.getDatabase().find(Field.class).where().ieq("world", world).findList();
+    }
+
+    /**
+     *
+     * @return all fields from the database
+     */
+    public List<Field> retrieveFields()
     {
         return plugin.getDatabase().find(Field.class).orderBy("chunkX").orderBy("chunkZ").findList();
     }
 
     /**
      * Gets the field from field block
-     * @param fieldblock
+     * @param block
      * @return
      */
     public Field getField(Block block)
@@ -70,6 +91,39 @@ public class ForceFieldManager
     {
         return plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findRowCount() > 0;
     }
+
+    /**
+     *
+     * @param field
+     */
+    public void saveField(Field field)
+    {
+        try
+        {
+            plugin.getDatabase().save(field);
+        }
+        catch (Exception ex)
+        {
+            PreciousStones.log(Level.SEVERE, "Error saving field: {0}", ex.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @param field
+     */
+    public void deleteField(Field field)
+    {
+        try
+        {
+            plugin.getDatabase().delete(field);
+        }
+        catch (Exception ex)
+        {
+            PreciousStones.log(Level.SEVERE, "Error saving field: {0}", ex.getMessage());
+        }
+    }
+
     /**
      * Process pending deletions
      */
@@ -84,7 +138,7 @@ public class ForceFieldManager
                 dropBlock(pending);
             }
 
-            plugin.getDatabase().delete(pending);
+            deleteField(pending);
         }
     }
 
@@ -99,25 +153,26 @@ public class ForceFieldManager
 
     /**
      * Clean up orphan fields
+     * @param worldName
      * @return
      */
-    public int cleanOrphans()
+    public int cleanOrphans(String worldName)
     {
         int cleanedCount = 0;
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
-        List<Field> fields = retrieveFields();
+        World world = plugin.getServer().getWorld(worldName);
+
+        if (world == null)
+        {
+            return 0;
+        }
+
+        List<Field> fields = plugin.ffm.retrieveFields(world.getName());
 
         for (Field field : fields)
         {
-            World world = plugin.getServer().getWorld(field.getWorld());
-
-            if (world == null)
-            {
-                continue;
-            }
-
             // ensure chunk is loaded prior to polling
 
             ChunkVec cv = field.getChunkVec();
@@ -176,11 +231,11 @@ public class ForceFieldManager
      */
     public boolean allowedAreOnline(Field field)
     {
-        List<String> allowed = field.getAllAllowed();
+        List<AllowedEntry> allowed = field.getAllAllowed();
 
-        for (String playername : allowed)
+        for (AllowedEntry ae : allowed)
         {
-            if (Helper.matchExactPlayer(plugin, playername) != null)
+            if (Helper.matchExactPlayer(plugin, ae.getName()) != null)
             {
                 return true;
             }
@@ -416,7 +471,7 @@ public class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (playerName == null || !field.isAllAllowed(playerName)))
+            if (field.envelops(blockInArea) && (playerName == null || !field.isAllowed(playerName)))
             {
                 if (!plugin.settings.isFieldType(field.getTypeId()) && !plugin.settings.isCloakableType(field.getTypeId()))
                 {
@@ -511,7 +566,7 @@ public class ForceFieldManager
     }
 
     /**
-     * Returns the field if hes standing in at least one allowed field
+     * Returns the field if he's standing in at least one allowed field
      * @param blockInArea
      * @param player
      * @return
@@ -530,7 +585,7 @@ public class ForceFieldManager
                 {
                     Field f = getField(targetblock);
 
-                    if (f.isAllAllowed(player.getName()))
+                    if (f.isAllowed(player.getName()))
                     {
                         return f;
                     }
@@ -542,7 +597,7 @@ public class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            if (field.isAllAllowed(player.getName()))
+            if (field.isAllowed(player.getName()))
             {
                 return field;
             }
@@ -571,7 +626,7 @@ public class ForceFieldManager
                 {
                     Field f = getField(targetblock);
 
-                    if (f.isAllAllowed(player.getName()))
+                    if (f.isAllowed(player.getName()))
                     {
                         return f;
                     }
@@ -601,7 +656,7 @@ public class ForceFieldManager
             {
                 if (foundfield.intersects(otherfield))
                 {
-                    if (player != null && !otherfield.isAllAllowed(player.getName()))
+                    if (player != null && !otherfield.isAllowed(player.getName()))
                     {
                         continue;
                     }
@@ -671,30 +726,31 @@ public class ForceFieldManager
     }
 
     /**
-     * Clean up snitch lists of all intersecting fields
+     * Clean up snitch lists of the field
      * @param player
      * @param field
      * @return
      */
-    public int cleanSnitchLists(Player player, Field field)
+    public boolean cleanSnitchList(Player player, Field field)
     {
-        HashSet<Field> total = getOverlappedFields(player, field);
+        FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
-        int cleanedCount = 0;
-
-        for (Field f : total)
+        if (fieldsettings.snitch)
         {
-            FieldSettings fieldsettings = plugin.settings.getFieldSettings(f);
+            List<SnitchEntry> ses = field.getSnitchList();
 
-            if (fieldsettings.snitch)
+            for (SnitchEntry se : ses)
             {
-                f.cleanSnitchList();
-                plugin.getDatabase().save(f);
-                cleanedCount++;
+                plugin.snm.deleteSnitchEntry(se);
             }
+
+            field.cleanSnitchList();
+            saveField(field);
+
+            return true;
         }
 
-        return cleanedCount;
+        return false;
     }
 
     /**
@@ -717,7 +773,7 @@ public class ForceFieldManager
             if (fieldsettings.nameable && !f.getName().equals(name))
             {
                 f.setName(name);
-                plugin.getDatabase().save(f);
+                saveField(f);
                 renamedCount++;
             }
         }
@@ -775,9 +831,9 @@ public class ForceFieldManager
      * @param field
      * @return
      */
-    public HashSet<String> getAllAllowed(Player player, Field field)
+    public HashSet<AllowedEntry> getAllowed(Player player, Field field)
     {
-        HashSet<String> allowed = new HashSet<String>();
+        HashSet<AllowedEntry> allowed = new HashSet<AllowedEntry>();
         HashSet<Field> total = getOverlappedFields(player, field);
 
         for (Field f : total)
@@ -795,7 +851,7 @@ public class ForceFieldManager
      * @param allowedName
      * @return
      */
-    public int addAllowed(Player player, Field field, String allowedName)
+    public int addAllowed(Player player, Field field, String allowedName, String perm)
     {
         HashSet<Field> total = getOverlappedFields(player, field);
 
@@ -803,10 +859,10 @@ public class ForceFieldManager
 
         for (Field f : total)
         {
-            if (!f.isAllAllowed(allowedName))
+            if (!f.isAllowed(allowedName))
             {
-                f.addAllowed(allowedName);
-                plugin.getDatabase().save(f);
+                f.addAllowed(allowedName, perm);
+                saveField(f);
                 allowedCount++;
             }
         }
@@ -827,10 +883,16 @@ public class ForceFieldManager
 
         for (Field f : total)
         {
-            if (f.isAllAllowed(allowedName))
+            if (f.isAllowed(allowedName))
             {
-                f.removeAllowed(allowedName);
-                plugin.getDatabase().save(f);
+                AllowedEntry ae = f.removeAllowed(allowedName);
+
+                if (ae != null)
+                {
+                    plugin.getDatabase().delete(ae);
+                }
+
+                saveField(f);
                 removedCount++;
             }
         }
@@ -865,7 +927,7 @@ public class ForceFieldManager
      * @param allowedName
      * @return
      */
-    public int allowAll(Player player, String allowedName)
+    public int allowAll(Player player, String allowedName, String perm)
     {
         List<Field> fields = getOwnersFields(player);
 
@@ -875,8 +937,8 @@ public class ForceFieldManager
         {
             if (!field.isAllowed(allowedName))
             {
-                field.addAllowed(allowedName);
-                plugin.getDatabase().save(field);
+                field.addAllowed(allowedName, perm);
+                saveField(field);
                 allowedCount++;
             }
         }
@@ -900,8 +962,14 @@ public class ForceFieldManager
         {
             if (field.isAllowed(allowedName))
             {
-                field.removeAllowed(allowedName);
-                plugin.getDatabase().save(field);
+                AllowedEntry ae = field.removeAllowed(allowedName);
+
+                if (ae != null)
+                {
+                    plugin.getDatabase().delete(ae);
+                }
+
+                saveField(field);
                 removedCount++;
             }
         }
@@ -921,7 +989,7 @@ public class ForceFieldManager
 
         if (field != null)
         {
-            return field.isAllAllowed(playerName);
+            return field.isAllowed(playerName);
         }
         return false;
     }
@@ -1055,7 +1123,7 @@ public class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
+            if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
@@ -1087,7 +1155,7 @@ public class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
+            if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
@@ -1119,7 +1187,7 @@ public class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
+            if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
@@ -1151,7 +1219,7 @@ public class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (player == null || !field.isAllAllowed(player.getName())))
+            if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
@@ -1279,7 +1347,7 @@ public class ForceFieldManager
                 continue;
             }
 
-            if (field.isAllAllowed(placer.getName()))
+            if (field.isAllowed(placer.getName()))
             {
                 continue;
             }
@@ -1321,7 +1389,7 @@ public class ForceFieldManager
                 continue;
             }
 
-            if (field.isAllAllowed(placer.getName()))
+            if (field.isAllowed(placer.getName()))
             {
                 continue;
             }
@@ -1383,15 +1451,15 @@ public class ForceFieldManager
         }
 
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
-        Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), new ArrayList<String>(), "");
+        Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), "");
 
-        plugin.getDatabase().save(field);
+        saveField(field);
         return true;
     }
 
     /**
      * Remove stones from the collection
-     * @param fieldblock
+     * @param block
      */
     public void release(Block block)
     {
@@ -1402,7 +1470,7 @@ public class ForceFieldManager
             dropBlock(block);
         }
 
-        plugin.getDatabase().delete(field);
+        deleteField(field);
     }
 
     /**
@@ -1416,7 +1484,7 @@ public class ForceFieldManager
             dropBlock(field);
         }
 
-        plugin.getDatabase().delete(field);
+        deleteField(field);
     }
 
     /**
@@ -1425,7 +1493,7 @@ public class ForceFieldManager
      */
     public void silentRelease(Field field)
     {
-        plugin.getDatabase().delete(field);
+        deleteField(field);
     }
 
     /**

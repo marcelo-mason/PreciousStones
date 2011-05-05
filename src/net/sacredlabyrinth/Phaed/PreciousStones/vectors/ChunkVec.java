@@ -4,7 +4,7 @@ import org.bukkit.Chunk;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class ChunkVec extends AbstractVec
 {

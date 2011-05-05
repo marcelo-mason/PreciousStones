@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.logging.Level;
 
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -26,21 +26,72 @@ public class UnbreakableManager
 
     /**
      *
-     * @param plugin
+     * @param plugin all unbreakables from the database
      */
     public UnbreakableManager(PreciousStones plugin)
     {
         this.plugin = plugin;
     }
 
-    private List<Unbreakable> retrieveUnbreakables(ChunkVec cv)
+    /**
+     *
+     * @param cv
+     * @return all unbreakables form the database that match the chunkvec
+     */
+    public List<Unbreakable> retrieveUnbreakables(ChunkVec cv)
     {
         return plugin.getDatabase().find(Unbreakable.class).where().eq("chunkX", cv.getX()).eq("chunkZ", cv.getZ()).ieq("world", cv.getWorld()).findList();
     }
 
-    private List<Unbreakable> retrieveUnbreakables()
+    /**
+     *
+     * @param world
+     * @return all unbreakables from the database that match the world
+     */
+    public List<Unbreakable> retrieveUnbreakables(String world)
+    {
+        return plugin.getDatabase().find(Unbreakable.class).where().ieq("world", world).findList();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<Unbreakable> retrieveUnbreakables()
     {
         return plugin.getDatabase().find(Unbreakable.class).orderBy("chunkX").orderBy("chunkZ").findList();
+    }
+
+    /**
+     *
+     * @param ub
+     */
+    public void saveUnbreakable(Unbreakable ub)
+    {
+        try
+        {
+            plugin.getDatabase().save(ub);
+        }
+        catch (Exception ex)
+        {
+            PreciousStones.log(Level.SEVERE, "Error saving unbreakable: {0}", ex.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @param ub
+     */
+    public void deleteUnbreakable(Unbreakable ub)
+    {
+        try
+        {
+            plugin.getDatabase().delete(ub);
+        }
+        catch (Exception ex)
+        {
+            PreciousStones.log(Level.SEVERE, "Error saving unbreakable: {0}", ex.getMessage());
+        }
     }
 
     /**
@@ -67,7 +118,7 @@ public class UnbreakableManager
 
     /**
      * Gets the unbreakable from source block
-     * @param unbreakableblock
+     * @param block
      * @return
      */
     public Unbreakable getUnbreakable(Block block)
@@ -84,28 +135,29 @@ public class UnbreakableManager
     {
         return getUnbreakable(unbreakableblock) != null;
     }
-    
+
     /**
      * Clean up orphan fields
+     * @param worldName
      * @return
      */
-    public int cleanOrphans()
+    public int cleanOrphans(String worldName)
     {
         int cleanedCount = 0;
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
-        List<Unbreakable> ubs = retrieveUnbreakables();
+        World world = plugin.getServer().getWorld(worldName);
+
+        if (world == null)
+        {
+            return 0;
+        }
+
+        List<Unbreakable> ubs = plugin.um.retrieveUnbreakables(world.getName());
 
         for (Unbreakable unbreakable : ubs)
         {
-            World world = plugin.getServer().getWorld(unbreakable.getWorld());
-
-            if (world == null)
-            {
-                continue;
-            }
-
             // ensure chunk is loaded prior to polling
 
             ChunkVec cv = unbreakable.getChunkVec();
@@ -285,8 +337,7 @@ public class UnbreakableManager
         }
 
         Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
-
-        plugin.getDatabase().save(unbreakable);
+        saveUnbreakable(unbreakable);
         return true;
     }
 
@@ -298,7 +349,7 @@ public class UnbreakableManager
     {
         Unbreakable ub = getUnbreakable(unbreakableblock);
 
-        plugin.getDatabase().save(ub);
+        deleteUnbreakable(ub);
     }
 
     /**

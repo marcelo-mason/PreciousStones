@@ -17,22 +17,22 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 @Entity()
 @CacheStrategy
-@Table(name = "cloaked_blocks")
+@Table(name = "cloaked")
 public class CloakEntry implements Serializable
 {
     private byte dataByte;
 
     @OneToMany(mappedBy = "cloakEntry", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @NotNull
-    private List<PSItemStack> stacks;
+    private List<PSItemStack> stacks = new ArrayList<PSItemStack>();
+
 
     @Id
     private Long id;
-    
+
     @OneToOne(mappedBy = "cloakEntry")
     private Field field;
 
@@ -50,6 +50,40 @@ public class CloakEntry implements Serializable
     public CloakEntry(byte data)
     {
         this.dataByte = data;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Long getId()
+    {
+        return id;
+    }
+
+    /**
+     *
+     * @param id
+     */
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    /**
+     * @return the field
+     */
+    public Field getField()
+    {
+        return field;
+    }
+
+    /**
+     * @param field the field to set
+     */
+    public void setField(Field field)
+    {
+        this.field = field;
     }
 
     /**
@@ -85,32 +119,18 @@ public class CloakEntry implements Serializable
      */
     public List<PSItemStack> getStacks()
     {
-        if (stacks == null)
-        {
-            return new ArrayList<PSItemStack>();
-        }
-
         return stacks;
     }
 
     /**
      *
-     * @param stacks
+     * @param nativeStacks
      */
-    public void importStacks(ItemStack[] stacks)
+    public void importStacks(ItemStack[] nativeStacks)
     {
-        this.setStacks(new ArrayList<PSItemStack>());
-
-        for (ItemStack stack : stacks)
+        for (ItemStack stack : nativeStacks)
         {
-            if (stack == null)
-            {
-                this.getStacks().add(null);
-            }
-            else
-            {
-                this.getStacks().add(new PSItemStack(stack));
-            }
+            stacks.add(new PSItemStack(stack));
         }
     }
 
@@ -120,38 +140,20 @@ public class CloakEntry implements Serializable
      */
     public ItemStack[] exportStacks()
     {
-        ItemStack[] out = new ItemStack[getStacks().size()];
+        ItemStack[] out = new ItemStack[stacks.size()];
 
-        for(int i = 0; i < getStacks().size(); i++)
+        for(int i = 0; i < stacks.size(); i++)
         {
-            if(getStacks().get(i) == null)
+            if(stacks.get(i).getType() == 0)
             {
                 out[i] = null;
             }
             else
             {
-                out[i] = getStacks().get(i).toItemStack();
+                out[i] = stacks.get(i).toItemStack();
             }
         }
 
         return out;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     *
-     * @param id
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 }

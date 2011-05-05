@@ -5,7 +5,7 @@ import org.bukkit.Location;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class Vec extends AbstractVec
 {

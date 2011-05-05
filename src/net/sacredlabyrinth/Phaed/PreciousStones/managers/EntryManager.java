@@ -111,7 +111,7 @@ public final class EntryManager
 			{
 			    if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
 			    {
-				if (!field.isAllAllowed(playername))
+				if (!field.isAllowed(playername))
 				{
 				    if (fieldsettings.slowDamage)
 				    {
@@ -268,7 +268,7 @@ public final class EntryManager
 
 	    for (Field entryfield : entryfields)
 	    {
-		if (entryfield.getOwner().equals(field.getOwner()) && entryfield.getStoredName().equals(field.getStoredName()))
+		if (entryfield.getOwner().equals(field.getOwner()) && entryfield.getName().equals(field.getName()))
 		{
 		    return true;
 		}

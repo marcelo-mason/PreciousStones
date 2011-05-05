@@ -10,7 +10,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class PlayerManager
 {

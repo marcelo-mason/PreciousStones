@@ -8,7 +8,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public class PSVehicleListener extends VehicleListener
 {

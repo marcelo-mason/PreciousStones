@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -86,7 +87,7 @@ public class PSPlayerListener extends PlayerListener
 
 	    if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
 	    {
-		plugin.snm.showIntruderList(player, plugin.ffm.getField(block));
+		plugin.cm.showIntruderList(player, plugin.ffm.getField(block));
 	    }
 	    else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
 	    {
@@ -103,7 +104,9 @@ public class PSPlayerListener extends PlayerListener
 	    {
 		if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
 		{
-		    plugin.cm.showFieldDetails(plugin.ffm.getField(block), player);
+                    List<Field> fields = new ArrayList<Field>();
+                    fields.add(plugin.ffm.getField(block));
+		    plugin.cm.showFieldDetails(player, fields);
 		}
 		else
 		{
@@ -138,6 +141,11 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerMove(PlayerMoveEvent event)
     {
+        if((new Vec(event.getTo())).equals(new Vec(event.getFrom())))
+        {
+            return;
+        }
+
 	Player player = event.getPlayer();
 
 	List<Field> currentfields = plugin.ffm.getSourceFields(player);
@@ -156,7 +164,7 @@ public class PSPlayerListener extends PlayerListener
 
 			if (fieldsettings.welcomeMessage)
 			{
-			    if (currentfield.getStoredName().length() > 0)
+			    if (currentfield.getName().length() > 0)
 			    {
 				plugin.cm.showWelcomeMessage(player, currentfield.getName());
 			    }
@@ -189,7 +197,7 @@ public class PSPlayerListener extends PlayerListener
 
 		    if (fieldsettings.farewellMessage)
 		    {
-			if (entryfield.getStoredName().length() > 0)
+			if (entryfield.getName().length() > 0)
 			{
 			    plugin.cm.showFarewellMessage(player, entryfield.getName());
 			}
@@ -200,10 +208,13 @@ public class PSPlayerListener extends PlayerListener
 
 	// check if were on a prevent entry field not owned by player
 
-	List<Field> fields = plugin.ffm.getSourceFields(player, player.getName());
-
-	for (Field field : fields)
+	for (Field field : currentfields)
 	{
+            if(field.getOwner().equals(player.getName()))
+            {
+                continue;
+            }
+
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
 	    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))

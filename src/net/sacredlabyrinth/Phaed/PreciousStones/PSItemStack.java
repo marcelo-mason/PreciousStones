@@ -10,10 +10,9 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 @Entity()
-@CacheStrategy
 @Table(name = "item_stacks")
 public class PSItemStack implements Serializable
 {
@@ -24,7 +23,7 @@ public class PSItemStack implements Serializable
 
     @Id
     private Long id;
-
+    
     @ManyToOne
     private CloakEntry cloakEntry;
 
@@ -41,10 +40,20 @@ public class PSItemStack implements Serializable
      */
     public PSItemStack(ItemStack stack)
     {
-        this.type = stack.getTypeId();
-        this.amount = stack.getAmount();
-        this.durability = stack.getDurability();
-        this.dataByte = stack.getData() == null ? 0 : stack.getData().getData();
+        if (stack == null)
+        {
+            this.type = 0;
+            this.amount = 0;
+            this.durability = 0;
+            this.dataByte = 0;
+        }
+        else
+        {
+            this.type = stack.getTypeId();
+            this.amount = stack.getAmount();
+            this.durability = stack.getDurability();
+            this.dataByte = stack.getData() == null ? 0 : stack.getData().getData();
+        }
     }
 
     /**

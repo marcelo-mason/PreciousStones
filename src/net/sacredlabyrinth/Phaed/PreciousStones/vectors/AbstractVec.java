@@ -1,12 +1,11 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import java.io.Serializable;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 @MappedSuperclass
 public abstract class AbstractVec implements Serializable
@@ -21,6 +20,9 @@ public abstract class AbstractVec implements Serializable
 
     private String world;
 
+    /**
+     *
+     */
     public AbstractVec()
     {
     }
