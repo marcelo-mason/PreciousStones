@@ -64,8 +64,6 @@ public final class SettingsManager
     public boolean warnLaunch;
     public boolean warnCannon;
     public boolean warnMine;
-    public long saveFrequency;
-    public int purgeDays;
     public boolean publicBlockDetails;
     public boolean sneakingBypassesDamage;
     public boolean allowedCanBreakPstones;
@@ -146,8 +144,6 @@ public final class SettingsManager
 	warnLaunch = config.getBoolean("warn.launch", false);
 	warnCannon = config.getBoolean("warn.cannon", false);
 	warnMine = config.getBoolean("warn.mine", false);
-	purgeDays = config.getInt("saving.purge-backups-after-days", 5);
-	saveFrequency = config.getInt("saving.frequency-minutes", 5);
 	publicBlockDetails = config.getBoolean("settings.public-block-details", false);
 	sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
 	allowedCanBreakPstones = config.getBoolean("settings.allowed-can-break-pstones", false);
