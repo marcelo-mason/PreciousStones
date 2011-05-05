@@ -7,7 +7,6 @@ import me.taylorkelly.help.Help;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.LinkedList;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.ChatColor;
@@ -25,7 +24,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSe
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public final class CommandManager implements CommandExecutor
 {
@@ -92,7 +91,7 @@ public final class CommandManager implements CommandExecutor
 	    helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
 	    helpPlugin.registerCommand("ps clean ", "Clean up all orphaned fields/unbreakables", plugin, true, "preciousstones.admin.clean");
 
-	    PreciousStones.log.log(Level.INFO, "[{0}] ''Help'' support enabled", plugin.getDescription().getName());
+	    PreciousStones.log(Level.INFO, "[{0}] ''Help'' support enabled", plugin.getDescription().getName());
 	}
     }
 
@@ -536,7 +535,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (plugin.settings.logBypassDelete)
                                         {
-                                            PreciousStones.log.log(Level.INFO, "[ps] Protective field removed from {0}{1} by {2} near {3}", new Object[]{count, Helper.plural(count, " force-field", "s"), player.getName(), sourcefields.get(0).toString()});
+                                            PreciousStones.log(Level.INFO, "[ps] Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " force-field", "s"), player.getName(), sourcefields.get(0).toString());
                                         }
                                     }
                                     else
@@ -568,7 +567,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (plugin.settings.logBypassDelete)
                                         {
-                                            PreciousStones.log.log(Level.INFO, "[ps] Protective field removed from {0}{1} of type {2} by {3} near {4}", new Object[]{fields.size(), Helper.plural(fields.size(), " force-field", "s"), split[1], player.getName(), fields.get(0).toString()});
+                                            PreciousStones.log(Level.INFO, "[ps] Protective field removed from {0}{1} of type {2} by {3} near {4}", fields.size(), Helper.plural(fields.size(), " force-field", "s"), split[1], player.getName(), fields.get(0).toString());
                                         }
                                     }
                                     else
@@ -700,7 +699,7 @@ public final class CommandManager implements CommandExecutor
                     ChatColor color = plugin.plm.isDisabled(player) ? ChatColor.DARK_GRAY : ChatColor.YELLOW;
                     String status = plugin.plm.isDisabled(player) ? ChatColor.GRAY + " - disabled" : "";
 
-                    cacheBlock.clear();
+                    cacheBlock = new ChatBlock();
 
                     ChatBlock.sendBlank(player);
                     ChatBlock.saySingle(player, ChatColor.AQUA + plugin.getDescription().getName() + " " + plugin.getDescription().getVersion() + status + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
@@ -812,7 +811,7 @@ public final class CommandManager implements CommandExecutor
         }
         catch(Exception ex)
         {
-            PreciousStones.log.severe(ex.getMessage());
+            PreciousStones.logger.severe(ex.getMessage());
         }
 
         return false;
