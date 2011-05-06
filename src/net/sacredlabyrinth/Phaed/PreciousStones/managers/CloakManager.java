@@ -55,7 +55,7 @@ public class CloakManager
 
         CloakEntry ce = new CloakEntry(block.getData());
 
-        field.setCloakEntry(ce);
+        field.addCloakEntry(ce);
         plugin.ffm.saveField(field);
     }
 
@@ -95,17 +95,17 @@ public class CloakManager
                     inv.clear();
 
                     deleteCloakEntry(oldce);
-                    field.setCloakEntry(ce);
+                    field.addCloakEntry(ce);
                 }
                 else
                 {
                     if (olddata != newdata)
                     {
-                        field.setCloakEntry(new CloakEntry(newdata));
+                        field.addCloakEntry(new CloakEntry(newdata));
                     }
                     else
                     {
-                        field.setCloakEntry(oldce);
+                        field.addCloakEntry(oldce);
                     }
                 }
 
@@ -148,7 +148,7 @@ public class CloakManager
                 }
 
                 deleteCloakEntry(ce);
-                field.setCloakEntry(new CloakEntry(data));
+                field.addCloakEntry(new CloakEntry(data));
             }
 
             plugin.ffm.saveField(field);

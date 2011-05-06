@@ -2,7 +2,9 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sacredlabyrinth.Phaed.PreciousStones.AllowedEntry;
 
 import org.bukkit.Material;
@@ -23,6 +25,9 @@ public final class StorageManager
     private File forcefield;
     private PreciousStones plugin;
 
+    private FileHandler errorHandler;
+    public Logger errorLog = Logger.getLogger("preciousstones");
+
     /**
      *
      * @param plugin
@@ -33,6 +38,15 @@ public final class StorageManager
 
         unbreakable = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakables.txt");
         forcefield = new File(plugin.getDataFolder().getPath() + File.separator + "forcefields.txt");
+
+        try
+        {
+            errorHandler = new FileHandler(plugin.getDataFolder().getPath() + File.separator + "error.log", true);
+            errorLog.addHandler(errorHandler);
+        }
+        catch (IOException e)
+        {
+        }
 
         if (unbreakable.exists())
         {

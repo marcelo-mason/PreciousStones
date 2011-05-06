@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import net.sacredlabyrinth.Phaed.PreciousStones.AllowedEntry;
 
@@ -55,6 +56,9 @@ public class Field extends AbstractVec implements Serializable
     private int chunkX;
     private int chunkZ;
 
+    @Transient
+    private boolean dirty;
+
     /**
      *
      */
@@ -85,6 +89,7 @@ public class Field extends AbstractVec implements Serializable
         this.owner = owner;
         this.name = name;
         this.typeId = typeId;
+        this.dirty = true;
     }
 
     /**
@@ -106,6 +111,7 @@ public class Field extends AbstractVec implements Serializable
         this.owner = owner;
         this.name = name;
         this.typeId = block.getTypeId();
+        this.dirty = true;
     }
 
     /**
@@ -123,6 +129,7 @@ public class Field extends AbstractVec implements Serializable
         this.radius = radius;
         this.height = height;
         this.typeId = block.getTypeId();
+        this.dirty = true;
     }
 
     /**
@@ -135,6 +142,7 @@ public class Field extends AbstractVec implements Serializable
 
         this.chunkX = block.getX() >> 4;
         this.chunkZ = block.getZ() >> 4;
+        this.dirty = true;
     }
 
     /**
@@ -262,12 +270,22 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Set the name value
      * @param name
      */
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    /**
+     * Set the name of the field, mark for database save
+     * @param name
+     */
+    public void setFieldName(String name)
+    {
+        this.name = name;
+        this.dirty = true;
     }
 
     /**
@@ -388,6 +406,7 @@ public class Field extends AbstractVec implements Serializable
         }
 
         allowed.add(new AllowedEntry(allowedName, perm));
+        this.dirty = true;
         return true;
     }
 
@@ -408,6 +427,7 @@ public class Field extends AbstractVec implements Serializable
             if (ae.getName().equals(allowedName))
             {
                 allowed.remove(ae);
+                this.dirty = true;
                 return ae;
             }
         }
@@ -442,6 +462,7 @@ public class Field extends AbstractVec implements Serializable
         }
 
         snitchList.add(new SnitchEntry(name, reason, details));
+        this.dirty = true;
     }
 
     /**
@@ -467,6 +488,7 @@ public class Field extends AbstractVec implements Serializable
     public void cleanSnitchList()
     {
         snitchList.clear();
+        this.dirty = true;
     }
 
     /**
@@ -479,12 +501,22 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Set the cloak entry value
      * @param cloakEntry
      */
     public void setCloakEntry(CloakEntry cloakEntry)
     {
         this.cloakEntry = cloakEntry;
+    }
+
+    /**
+     * Add cloak entry to the field, mark for database save
+     * @param cloakEntry
+     */
+    public void addCloakEntry(CloakEntry cloakEntry)
+    {
+        this.cloakEntry = cloakEntry;
+        this.dirty = true;
     }
 
     @Override
@@ -639,5 +671,21 @@ public class Field extends AbstractVec implements Serializable
     public boolean envelops(Block block)
     {
         return envelops(new Vec(block));
+    }
+
+    /**
+     * @return the dirty
+     */
+    public boolean isDirty()
+    {
+        return dirty;
+    }
+
+    /**
+     * @param dirty the dirty to set
+     */
+    public void setDirty(boolean dirty)
+    {
+        this.dirty = dirty;
     }
 }

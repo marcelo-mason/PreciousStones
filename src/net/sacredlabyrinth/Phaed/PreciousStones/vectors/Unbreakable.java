@@ -5,6 +5,7 @@ import com.avaje.ebean.validation.NotNull;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,6 +26,9 @@ public class Unbreakable extends AbstractVec
 
     @Id
     private Long id;
+
+    @Transient
+    private boolean dirty;
 
     /**
      *
@@ -48,6 +52,7 @@ public class Unbreakable extends AbstractVec
 
 	this.owner = owner;
 	this.typeId = typeId;
+        this.dirty = true;
     }
 
     /**
@@ -61,6 +66,7 @@ public class Unbreakable extends AbstractVec
 
 	this.owner = owner;
 	this.typeId = block.getTypeId();
+        this.dirty = true;
     }
 
     /**
@@ -72,6 +78,7 @@ public class Unbreakable extends AbstractVec
 	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
 	this.typeId = block.getTypeId();
+        this.dirty = true;
     }
 
     /**
@@ -159,5 +166,21 @@ public class Unbreakable extends AbstractVec
     public void setTypeId(int typeId)
     {
         this.typeId = typeId;
+    }
+
+    /**
+     * @return the dirty
+     */
+    public boolean isDirty()
+    {
+        return dirty;
+    }
+
+    /**
+     * @param dirty the dirty to set
+     */
+    public void setDirty(boolean dirty)
+    {
+        this.dirty = dirty;
     }
 }

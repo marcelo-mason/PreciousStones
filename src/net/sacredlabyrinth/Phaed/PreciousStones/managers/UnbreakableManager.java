@@ -67,7 +67,7 @@ public class UnbreakableManager
 
             if (c != null)
             {
-                if(!c.contains(ub))
+                if (!c.contains(ub))
                 {
                     c.add(ub);
                 }
@@ -92,7 +92,7 @@ public class UnbreakableManager
         {
             LinkedList<Unbreakable> list = chunkLists.get(cv);
 
-            for(Unbreakable ub : list)
+            for (Unbreakable ub : list)
             {
                 saveUnbreakable(ub);
             }
@@ -107,11 +107,14 @@ public class UnbreakableManager
     {
         try
         {
-            plugin.getDatabase().save(ub);
+            if (ub.isDirty())
+            {
+                plugin.getDatabase().save(ub);
+            }
         }
         catch (Exception ex)
         {
-            PreciousStones.log(Level.SEVERE, "Error saving unbreakable: {0}", ex.getMessage());
+            plugin.sm.errorLog.severe(ex.getMessage());
         }
     }
 
@@ -265,9 +268,9 @@ public class UnbreakableManager
                 queueRelease(unbreakable);
             }
 
-            Block block = plugin.getServer().getWorld(unbreakable.getWorld()).getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+            int type = plugin.getServer().getWorld(unbreakable.getWorld()).getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 
-            if (!plugin.settings.isUnbreakableType(block))
+            if (!plugin.settings.isUnbreakableType(type))
             {
                 cleanedCount++;
                 queueRelease(unbreakable);

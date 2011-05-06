@@ -117,11 +117,14 @@ public class ForceFieldManager
     {
         try
         {
-            plugin.getDatabase().save(field);
+            if (field.isDirty())
+            {
+                plugin.getDatabase().save(field);
+            }
         }
         catch (Exception ex)
         {
-            PreciousStones.log(Level.SEVERE, "Error saving field: {0}", ex.getMessage());
+            plugin.sm.errorLog.severe(ex.getMessage());
         }
     }
 
@@ -292,9 +295,9 @@ public class ForceFieldManager
 
             // do the deed
 
-            Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
+            int type  = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
-            if (!plugin.settings.isFieldType(block) && !(plugin.settings.isCloakableType(field.getTypeId()) && (plugin.settings.isCloakType(block) || plugin.settings.isCloakableType(block))))
+            if (!plugin.settings.isFieldType(type) && !(plugin.settings.isCloakableType(type) && (plugin.settings.isCloakType(type) || plugin.settings.isCloakableType(type))))
             {
                 cleanedCount++;
                 queueRelease(field);
@@ -821,7 +824,6 @@ public class ForceFieldManager
             }
 
             field.cleanSnitchList();
-
             return true;
         }
 
@@ -847,7 +849,7 @@ public class ForceFieldManager
 
             if (fieldsettings.nameable && !f.getName().equals(name))
             {
-                f.setName(name);
+                f.setFieldName(name);
                 renamedCount++;
             }
         }
