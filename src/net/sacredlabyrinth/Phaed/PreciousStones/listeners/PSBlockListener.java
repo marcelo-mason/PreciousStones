@@ -383,7 +383,7 @@ public class PSBlockListener extends BlockListener
 	    }
 	    return;
 	}
-	else if (plugin.settings.isUnprotectableType(placedblock))
+	else if (plugin.settings.isUnprotectableType(placedblock.getTypeId()))
 	{
 	    Block unbreakableblock = plugin.um.touchingUnbrakableBlock(placedblock);
 

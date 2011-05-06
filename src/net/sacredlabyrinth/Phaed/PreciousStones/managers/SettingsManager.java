@@ -209,20 +209,15 @@ public final class SettingsManager
     }
 
     /**
-     * Check if a block is one of the unprotectable types
+     * Check if a type is one of the unprotectable types
      * @param placedblock
      * @return
      */
-    public boolean isUnprotectableType(Block placedblock)
+    public boolean isUnprotectableType(int type)
     {
 	for (Integer t : unprotectableBlocks)
 	{
-	    if (placedblock.getTypeId() == 0)
-	    {
-		continue;
-	    }
-
-	    if (placedblock.getTypeId() == t)
+	    if (type == t)
 	    {
 		return true;
 	    }

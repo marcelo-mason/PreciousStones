@@ -127,7 +127,7 @@ public final class CommandManager implements CommandExecutor
                     if (split.length > 0)
                     {
                         Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-                        
+
                         if (split[0].equals("on") && plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
                         {
                             if (plugin.plm.isDisabled(player))
@@ -653,7 +653,6 @@ public final class CommandManager implements CommandExecutor
                         else if (split[0].equals("reload") && plugin.pm.hasPermission(player, "preciousstones.admin.reload"))
                         {
                             plugin.settings.loadConfiguration();
-
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Configuration reloaded");
                             return true;
                         }
@@ -699,10 +698,10 @@ public final class CommandManager implements CommandExecutor
                             }
                             return true;
                         }
-                        else if (split[0].equals("help"))
-                        {
-                            // fall through
-                        }
+
+                        ChatBlock.sendMessage(player, ChatColor.RED + "Not a valid command or syntax error.  Try agian.");
+
+                        return true;
                     }
 
                     ChatColor color = plugin.plm.isDisabled(player) ? ChatColor.DARK_GRAY : ChatColor.YELLOW;

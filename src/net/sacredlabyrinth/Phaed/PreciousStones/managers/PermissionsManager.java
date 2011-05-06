@@ -6,7 +6,6 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 import com.nijiko.permissions.PermissionHandler;
 
 import org.bukkit.plugin.Plugin;
-
 import org.bukkit.entity.Player;
 
 /**
