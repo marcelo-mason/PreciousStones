@@ -67,7 +67,6 @@ public class SnitchManager
 		{
 		    DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
 		    field.addIntruder(player.getName(), ChatColor.BLUE + "Entry", dateFormat.format(new Date()));
-		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -90,7 +89,6 @@ public class SnitchManager
 		if (!field.isAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Break", toBlockDetails(block));
-		   plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -112,7 +110,6 @@ public class SnitchManager
 		if (!field.isAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Place", toBlockDetails(block));
-		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -134,7 +131,6 @@ public class SnitchManager
 		if (!field.isAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Used", toBlockDetails(block));
-		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -158,7 +154,6 @@ public class SnitchManager
 		if (!field.isAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Shopped", sign.getLines().length == 0 ? "empty" : sign.getLine(0));
-		    plugin.ffm.saveField(field);
 		}
 	    }
 	}
@@ -180,7 +175,6 @@ public class SnitchManager
 		if (!field.isAllowed(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.RED + "Ignite", toBlockDetails(block));
-		    plugin.ffm.saveField(field);
 		}
 	    }
 	}

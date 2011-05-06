@@ -1533,8 +1533,8 @@ public class CommunicatonManager
 
     /**
      *
-     * @param field
      * @param player
+     * @param fields
      */
     public void showFieldDetails(Player player, List<Field> fields)
     {
@@ -1581,6 +1581,10 @@ public class CommunicatonManager
         if (more)
         {
             ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+        }
+        else
+        {
+            ChatBlock.sendBlank(player);
         }
     }
 

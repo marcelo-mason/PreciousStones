@@ -30,12 +30,20 @@ public class AllowedEntry implements Serializable
     @ManyToOne
     private Field field;
 
+    /**
+     *
+     * @param name
+     * @param perm
+     */
     public AllowedEntry(String name, String perm)
     {
         this.name = name;
         this.perm = perm;
     }
 
+    /**
+     *
+     */
     public AllowedEntry()
     {
 

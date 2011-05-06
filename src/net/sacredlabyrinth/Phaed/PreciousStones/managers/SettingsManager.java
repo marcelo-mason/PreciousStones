@@ -75,6 +75,7 @@ public final class SettingsManager
     public List<Integer> ffBlocks = new ArrayList<Integer>();
     public int[] throughFields = new int[] { 0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94 };
     public int linesPerPage;
+    public long saveFrequency;
 
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
@@ -152,6 +153,7 @@ public final class SettingsManager
 	disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
 	offByDefault = config.getBoolean("settings.off-by-default", false);
 	linesPerPage = config.getInt("settings.lines-per-page", 12);
+        saveFrequency = config.getInt("saving-frequency-minutes", 30);
     }
 
     /**

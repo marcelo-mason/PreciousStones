@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -20,9 +21,9 @@ import org.bukkit.World;
  */
 public class UnbreakableManager
 {
+    private final HashMap<ChunkVec, LinkedList<Unbreakable>> chunkLists = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
     private Queue<Unbreakable> deletionQueue = new LinkedList<Unbreakable>();
     private PreciousStones plugin;
-    private boolean dirty = false;
 
     /**
      *
@@ -34,36 +35,72 @@ public class UnbreakableManager
     }
 
     /**
-     *
-     * @param cv
-     * @return all unbreakables form the database that match the chunkvec
+     * Loads all unbreakables for a specific world into memory
+     * @param world
      */
-    public List<Unbreakable> retrieveUnbreakables(ChunkVec cv)
+    public void loadWorld(String world)
     {
-        return plugin.getDatabase().find(Unbreakable.class).where().eq("chunkX", cv.getX()).eq("chunkZ", cv.getZ()).ieq("world", cv.getWorld()).findList();
+        int orphans = cleanOrphans(world);
+
+        if (orphans > 0)
+        {
+            PreciousStones.log(Level.INFO, "[{0}] {1} orphan unbreakables: {2}", plugin.getDescription().getName(), world, orphans);
+        }
+
+        int ubs = importFromDatabase(world);
+
+        PreciousStones.log(Level.INFO, "[{0}] {1} unbreakables: {2}", plugin.getDescription().getName(), world, ubs);
     }
 
     /**
      *
      * @param world
-     * @return all unbreakables from the database that match the world
+     * @return imports all unbreakables from the database
      */
-    public List<Unbreakable> retrieveUnbreakables(String world)
+    public int importFromDatabase(String world)
     {
-        return plugin.getDatabase().find(Unbreakable.class).where().ieq("world", world).findList();
+        List<Unbreakable> ubs = plugin.getDatabase().find(Unbreakable.class).where().ieq("world", world).orderBy("x").orderBy("z").findList();
+
+        for (Unbreakable ub : ubs)
+        {
+            LinkedList<Unbreakable> c = chunkLists.get(ub.toChunkVec());
+
+            if (c != null)
+            {
+                if(!c.contains(ub))
+                {
+                    c.add(ub);
+                }
+            }
+            else
+            {
+                LinkedList<Unbreakable> newc = new LinkedList<Unbreakable>();
+                newc.add(ub);
+                chunkLists.put(ub.toChunkVec(), newc);
+            }
+        }
+
+        return ubs.size();
     }
 
     /**
-     *
-     * @return
+     * Saves all unbreakables on DB
      */
-    public List<Unbreakable> retrieveUnbreakables()
+    public void saveAll()
     {
-        return plugin.getDatabase().find(Unbreakable.class).orderBy("chunkX").orderBy("chunkZ").findList();
+        for (ChunkVec cv : chunkLists.keySet())
+        {
+            LinkedList<Unbreakable> list = chunkLists.get(cv);
+
+            for(Unbreakable ub : list)
+            {
+                saveUnbreakable(ub);
+            }
+        }
     }
 
     /**
-     *
+     * Save an unbreakable back into the database
      * @param ub
      */
     public void saveUnbreakable(Unbreakable ub)
@@ -79,41 +116,55 @@ public class UnbreakableManager
     }
 
     /**
-     *
+     * Delete an unbreakable from memory and from the database
      * @param ub
      */
     public void deleteUnbreakable(Unbreakable ub)
     {
+        LinkedList<Unbreakable> c = chunkLists.get(ub.toChunkVec());
+
+        if (c != null)
+        {
+            c.remove(ub);
+        }
+
         try
         {
             plugin.getDatabase().delete(ub);
         }
         catch (Exception ex)
         {
-            PreciousStones.log(Level.SEVERE, "Error saving unbreakable: {0}", ex.getMessage());
         }
     }
 
     /**
-     * Process pending deletions
+     *
+     * @param cv
+     * @return all unbreakables from database that match the chunkvec
      */
-    public void flush()
+    public List<Unbreakable> retrieveUnbreakables(ChunkVec cv)
     {
-        while (deletionQueue.size() > 0)
+        return chunkLists.get(cv);
+    }
+
+    /**
+     *
+     * @param world
+     * @return all unbreakables from the database that match the world
+     */
+    public List<Unbreakable> retrieveUnbreakables(String world)
+    {
+        List<Unbreakable> out = new LinkedList<Unbreakable>();
+
+        for (ChunkVec cv : chunkLists.keySet())
         {
-            Unbreakable pending = deletionQueue.poll();
-
-            plugin.getDatabase().delete(pending);
+            if (cv.getWorld().equalsIgnoreCase(world))
+            {
+                out.addAll(chunkLists.get(cv));
+            }
         }
-    }
 
-    /**
-     * Total number of unbreakable stones
-     * @return
-     */
-    public int getCount()
-    {
-        return plugin.getDatabase().find(Unbreakable.class).findRowCount();
+        return out;
     }
 
     /**
@@ -123,7 +174,18 @@ public class UnbreakableManager
      */
     public Unbreakable getUnbreakable(Block block)
     {
-        return plugin.getDatabase().find(Unbreakable.class).where().eq("x", block.getX()).eq("y", block.getY()).eq("z", block.getZ()).ieq("world", block.getWorld().getName()).findUnique();
+        LinkedList<Unbreakable> c = chunkLists.get(new ChunkVec(block));
+
+        if (c != null)
+        {
+            int index = c.indexOf(new Vec(block));
+
+            if (index > -1)
+            {
+                return (c.get(index));
+            }
+        }
+        return null;
     }
 
     /**
@@ -134,6 +196,21 @@ public class UnbreakableManager
     public boolean isUnbreakable(Block unbreakableblock)
     {
         return getUnbreakable(unbreakableblock) != null;
+    }
+
+    /**
+     * Total number of unbreakable stones
+     * @return
+     */
+    public int getCount()
+    {
+        int size = 0;
+
+        for (LinkedList<Unbreakable> c : chunkLists.values())
+        {
+            size += c.size();
+        }
+        return size;
     }
 
     /**
@@ -154,13 +231,13 @@ public class UnbreakableManager
             return 0;
         }
 
-        List<Unbreakable> ubs = plugin.um.retrieveUnbreakables(world.getName());
+        List<Unbreakable> ubs = retrieveUnbreakables(world.getName());
 
         for (Unbreakable unbreakable : ubs)
         {
             // ensure chunk is loaded prior to polling
 
-            ChunkVec cv = unbreakable.getChunkVec();
+            ChunkVec cv = unbreakable.toChunkVec();
 
             if (!cv.equals(currentChunk))
             {
@@ -237,34 +314,28 @@ public class UnbreakableManager
 
     /**
      * Returns the unbreakable blocks in the chunk and adjacent chunks
-     * @param blockInArea
+     * @param vec
      * @param chunkradius
      * @return
      */
-    public LinkedList<Unbreakable> getUnbreakablesInArea(Block blockInArea, int chunkradius)
+    public LinkedList<Unbreakable> getUnbreakablesInArea(Vec vec, int chunkradius)
     {
         LinkedList<Unbreakable> out = new LinkedList<Unbreakable>();
-        Chunk chunk = blockInArea.getChunk();
 
-        int xlow = chunk.getX() - chunkradius;
-        int xhigh = chunk.getX() + chunkradius;
-        int zlow = chunk.getZ() - chunkradius;
-        int zhigh = chunk.getZ() + chunkradius;
+        int xlow = (vec.getX() >> 4) - chunkradius;
+        int xhigh = (vec.getX() >> 4) + chunkradius;
+        int zlow = (vec.getZ() >> 4) - chunkradius;
+        int zhigh = (vec.getZ() >> 4) + chunkradius;
 
         for (int x = xlow; x <= xhigh; x++)
         {
             for (int z = zlow; z <= zhigh; z++)
             {
-                Chunk chnk = blockInArea.getWorld().getChunkAt(x, z);
+                List<Unbreakable> ubs = retrieveUnbreakables(new ChunkVec(x, z, vec.getWorld()));
 
-                if (chunk != null)
+                if (ubs != null)
                 {
-                    List<Unbreakable> ubs = retrieveUnbreakables(new ChunkVec(chnk));
-
-                    if (ubs != null)
-                    {
-                        out.addAll(ubs);
-                    }
+                    out.addAll(ubs);
                 }
             }
         }
@@ -280,8 +351,7 @@ public class UnbreakableManager
      */
     public LinkedList<Unbreakable> getUnbreakablesInArea(Player player, int chunkradius)
     {
-        Block blockInArea = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-        return getUnbreakablesInArea(blockInArea, chunkradius);
+        return getUnbreakablesInArea(new Vec(player.getLocation()), chunkradius);
     }
 
     /**
@@ -368,5 +438,18 @@ public class UnbreakableManager
     public void queueRelease(Unbreakable unbreakable)
     {
         deletionQueue.add(unbreakable);
+    }
+
+    /**
+     * Delete unbreakables in deletion queue
+     */
+    public void flush()
+    {
+        while (deletionQueue.size() > 0)
+        {
+            Unbreakable pending = deletionQueue.poll();
+
+            plugin.getDatabase().delete(pending);
+        }
     }
 }

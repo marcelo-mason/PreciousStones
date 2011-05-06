@@ -21,7 +21,6 @@ import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 /**
  *
@@ -70,11 +69,9 @@ public class Field extends AbstractVec implements Serializable
      * @param z
      * @param radius
      * @param height
-     * @param chunkvec
      * @param world
      * @param typeId
      * @param owner
-     * @param allowed
      * @param name
      */
     public Field(int x, int y, int z, int radius, int height, String world, int typeId, String owner, String name)
@@ -96,7 +93,6 @@ public class Field extends AbstractVec implements Serializable
      * @param radius
      * @param height
      * @param owner
-     * @param allowed
      * @param name
      */
     public Field(Block block, int radius, int height, String owner, String name)
@@ -381,6 +377,7 @@ public class Field extends AbstractVec implements Serializable
     /**
      *
      * @param allowedName
+     * @param perm
      * @return whether the player was allowed
      */
     public boolean addAllowed(String allowedName, String perm)
@@ -515,9 +512,9 @@ public class Field extends AbstractVec implements Serializable
     /**
      * @return the chunkvec
      */
-    public ChunkVec getChunkVec()
+    public ChunkVec toChunkVec()
     {
-        return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
+        return new ChunkVec(chunkX, chunkZ, getWorld());
     }
 
     /**

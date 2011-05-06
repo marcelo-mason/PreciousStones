@@ -31,7 +31,7 @@ public class Vec extends AbstractVec
      *
      * @return
      */
-    public ChunkVec getChunkVec()
+    public ChunkVec toChunkVec()
     {
 	return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
     }

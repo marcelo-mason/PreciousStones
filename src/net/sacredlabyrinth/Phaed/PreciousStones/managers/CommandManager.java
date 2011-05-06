@@ -90,6 +90,7 @@ public final class CommandManager implements CommandExecutor
             helpPlugin.registerCommand("ps list [chunks-in-radius]", "Lists all pstones in area", plugin, true, "preciousstones.admin.list");
             helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
             helpPlugin.registerCommand("ps reload ", "Reload configuraton file", plugin, true, "preciousstones.admin.reload");
+            helpPlugin.registerCommand("ps save ", "Save pstones to database", plugin, true, "preciousstones.admin.save");
             helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
             helpPlugin.registerCommand("ps clean ", "Cleans up all orphan fields in the world", plugin, true, "preciousstones.admin.clean");
 
@@ -102,7 +103,7 @@ public final class CommandManager implements CommandExecutor
      * @param sender
      * @param command
      * @param label
-     * @param split
+     * @param args
      * @return
      */
     @Override
@@ -126,7 +127,7 @@ public final class CommandManager implements CommandExecutor
                     if (split.length > 0)
                     {
                         Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-
+                        
                         if (split[0].equals("on") && plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
                         {
                             if (plugin.plm.isDisabled(player))
@@ -656,6 +657,14 @@ public final class CommandManager implements CommandExecutor
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Configuration reloaded");
                             return true;
                         }
+                        else if (split[0].equals("save") && plugin.pm.hasPermission(player, "preciousstones.admin.save"))
+                        {
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Saving...");
+                            plugin.ffm.saveAll();
+                            plugin.um.saveAll();
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Done.");
+                            return true;
+                        }
                         else if (split[0].equals("fields") && plugin.pm.hasPermission(player, "preciousstones.admin.fields"))
                         {
                             HashMap<Integer, FieldSettings> fieldsettings = plugin.settings.getFieldSettings();
@@ -784,6 +793,11 @@ public final class CommandManager implements CommandExecutor
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.reload"))
                     {
                         cacheBlock.addRow(ChatColor.DARK_RED + "/ps reload " + ChatColor.AQUA + "- Reload configuraton file");
+                    }
+
+                    if (plugin.pm.hasPermission(player, "preciousstones.admin.save"))
+                    {
+                        cacheBlock.addRow(ChatColor.DARK_RED + "/ps save " + ChatColor.AQUA + "- Save pstones to database");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.fields"))

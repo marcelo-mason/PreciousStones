@@ -1,8 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.Material;
@@ -11,10 +9,8 @@ import org.bukkit.block.ContainerBlock;
 import org.bukkit.inventory.Inventory;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.PSItemStack;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.inventory.ItemStack;
 
 /**
  *

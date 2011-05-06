@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.World;
 
 /**
  *
@@ -44,6 +45,47 @@ public final class StorageManager
             loadFields();
             forcefield.delete();
         }
+
+        loadWorldData();
+        startScheduler();
+    }
+
+    /**
+     *
+     */
+    public void loadWorldData()
+    {
+        List<World> worlds = plugin.getServer().getWorlds();
+
+        for (World world : worlds)
+        {
+            plugin.ffm.loadWorld(world.getName());
+            plugin.um.loadWorld(world.getName());
+        }
+    }
+
+    /**
+     *
+     */
+    public void startScheduler()
+    {
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        PreciousStones.log(Level.INFO, "[{0}] Saving...", plugin.getDescription().getName());
+                        plugin.ffm.saveAll();
+                        plugin.um.saveAll();
+                    }
+                }, 0, 20L * 60 * plugin.settings.saveFrequency);
+            }
+        }, 20L * 60 * plugin.settings.saveFrequency);
     }
 
     /**

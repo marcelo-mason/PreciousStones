@@ -114,9 +114,6 @@ public class PreciousStones extends JavaPlugin
     private void displayStatusInfo()
     {
         log(Level.INFO, "[{0}] version [{1}] loaded", this.getDescription().getName(), this.getDescription().getVersion());
-        log(Level.INFO, "[{0}] fields: {1}", this.getDescription().getName(), getDatabase().find(Field.class).findRowCount());
-        log(Level.INFO, "[{0}] cloaked: {1}", this.getDescription().getName(), getDatabase().find(CloakEntry.class).findRowCount());
-        log(Level.INFO, "[{0}] unbreakables: {1}", this.getDescription().getName(), getDatabase().find(Unbreakable.class).findRowCount());
     }
 
     private void registerEvents()
@@ -178,6 +175,10 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onDisable()
     {
+        PreciousStones.log(Level.INFO, "[{0}] Saving...", getDescription().getName());
+        ffm.saveAll();
+        um.saveAll();
+
         getDatabase().endTransaction();
     }
 }
