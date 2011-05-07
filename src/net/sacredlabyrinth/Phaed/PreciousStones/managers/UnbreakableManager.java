@@ -44,12 +44,12 @@ public class UnbreakableManager
 
         if (orphans > 0)
         {
-            PreciousStones.log(Level.INFO, "[{0}] {1} orphan unbreakables: {2}", plugin.getDescription().getName(), world, orphans);
+            PreciousStones.log(Level.INFO, "{1} orphan unbreakables: {2}", world, orphans);
         }
 
         int ubs = importFromDatabase(world);
 
-        PreciousStones.log(Level.INFO, "[{0}] {1} unbreakables: {2}", plugin.getDescription().getName(), world, ubs);
+        PreciousStones.log(Level.INFO, "{1} unbreakables: {2}", world, ubs);
     }
 
     private int importFromDatabase(String world)

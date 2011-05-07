@@ -589,7 +589,7 @@ public final class SettingsManager
 		preventMobSpawn = (Boolean) map.get("prevent-mob-spawn");
 
             if (map.containsKey("prevent-animal-spawn") && Helper.isBoolean(map.get("prevent-animal-spawn")))
-		preventAnimalSpawn = (Boolean) map.get("preventanimalmob-spawn");
+		preventAnimalSpawn = (Boolean) map.get("prevent-animal-spawn");
 
 	    if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
 		preventEntry = (Boolean) map.get("prevent-entry");

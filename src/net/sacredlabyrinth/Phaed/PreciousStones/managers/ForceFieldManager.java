@@ -56,12 +56,12 @@ public class ForceFieldManager
 
         if (orphans > 0)
         {
-            PreciousStones.log(Level.INFO, "[{0}] {1} orphan fields: {2}", plugin.getDescription().getName(), world, orphans);
+            PreciousStones.log(Level.INFO, "{1} orphan fields: {2}", world, orphans);
         }
 
         int fields = importFromDatabase(world);
 
-        PreciousStones.log(Level.INFO, "[{0}] {1} fields: {2}", plugin.getDescription().getName(), world, fields);
+        PreciousStones.log(Level.INFO, "{1} fields: {2}", world, fields);
     }
 
     private int importFromDatabase(String world)

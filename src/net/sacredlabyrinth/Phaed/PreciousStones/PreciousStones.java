@@ -65,16 +65,16 @@ public class PreciousStones extends JavaPlugin
     /**
      * Parameterized logger
      * @param level
-     * @param msg
-     * @param arg
+     * @param msg the message
+     * @param arg the arguments
      */
     public static void log(Level level, String msg, Object... arg)
     {
-        logger.log(level, MessageFormat.format(msg, arg));
+        logger.log(level, new StringBuilder().append("[PreciousStones]").append(MessageFormat.format(msg, arg)).toString());
     }
 
     /**
-     *  Run on plugin enable
+     *  Runs on plugin enable
      */
     @Override
     public void onEnable()
@@ -113,7 +113,7 @@ public class PreciousStones extends JavaPlugin
 
     private void displayStatusInfo()
     {
-        log(Level.INFO, "[{0}] version [{1}] loaded", this.getDescription().getName(), this.getDescription().getVersion());
+        log(Level.INFO, "version [{1}] loaded", this.getDescription().getVersion());
     }
 
     private void registerEvents()
@@ -171,7 +171,7 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
-     *  Run on plugin disable
+     *  Runs on plugin disable
      */
     @Override
     public void onDisable()
@@ -183,9 +183,10 @@ public class PreciousStones extends JavaPlugin
         }
         catch (Exception ex)
         {
+            PreciousStones.log(Level.SEVERE, "Error Saving: ", ex.getMessage());
         }
 
-        PreciousStones.log(Level.INFO, "[{0}] data saved.", getDescription().getName());
+        PreciousStones.log(Level.INFO, "data saved.");
 
         getDatabase().endTransaction();
     }

@@ -74,7 +74,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPlace)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} placed an unbreakable block [{1}|{2} {3} {4}]", player.getName(), unbreakable.getTypeId(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+            PreciousStones.log(Level.INFO, " {0} placed an unbreakable block [{1}|{2} {3} {4}]", player.getName(), unbreakable.getTypeId(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -113,7 +113,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPlace)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} placed a {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} placed a {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -152,7 +152,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPlace)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} placed a breakable {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), fieldblock.getType(), fieldblock.getX(), fieldblock.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} placed a breakable {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), fieldblock.getType(), fieldblock.getX(), fieldblock.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -188,7 +188,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} destroyed his own unbreakable block [{1}|{2} {3} {4}]", player.getName(), unbreakableblock.getType(), unbreakableblock.getX(), unbreakableblock.getY(), unbreakableblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} destroyed his own unbreakable block [{1}|{2} {3} {4}]", player.getName(), unbreakableblock.getType(), unbreakableblock.getX(), unbreakableblock.getY(), unbreakableblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -227,7 +227,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} destroyed his {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} destroyed his {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -266,7 +266,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} destroyed {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} destroyed {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -305,7 +305,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} destroyed {1}''s breakable {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} destroyed {1}''s breakable {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -343,7 +343,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassPlace)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-placed a block inside {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed a block inside {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -381,7 +381,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassPlace)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-placed an unbreakable block inside {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed an unbreakable block inside {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -420,7 +420,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-destroyed a block {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-destroyed a block {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -458,7 +458,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-destroyed {1}''s unbreakable block [{2}|{3} {4} {5}]", player.getName(), unbreakable.getOwner(), unbreakable.getType(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-destroyed {1}''s unbreakable block [{2}|{3} {4} {5}]", player.getName(), unbreakable.getOwner(), unbreakable.getType(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -497,7 +497,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-destroyed {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-destroyed {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -535,7 +535,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logEntry)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted entry into {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted entry into {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -578,7 +578,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logFire)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to light fire in {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to light fire in {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -617,7 +617,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPlace)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted place a block {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted place a block {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -655,7 +655,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to destroy {1}''s unbreakable block [{2}|{3} {4} {5}]", player.getName(), unbreakable.getOwner(), unbreakable.getType(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to destroy {1}''s unbreakable block [{2}|{3} {4} {5}]", player.getName(), unbreakable.getOwner(), unbreakable.getType(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -694,7 +694,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to destroy {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to destroy {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -733,7 +733,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroyArea)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to destroy a block {1} inside {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(damagedblock)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to destroy a block {1} inside {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(damagedblock)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -778,7 +778,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logConflictPlace)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to place an unbreakable block {1} conflicting with {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to place an unbreakable block {1} conflicting with {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -823,7 +823,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logConflictPlace)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to place a force-field {1} conflicting with {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to place a force-field {1} conflicting with {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -862,7 +862,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPvp)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} tried to attack {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} tried to attack {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -901,7 +901,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassPvp)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-attack {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-attack {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -939,7 +939,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPvp)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} tried to place lava in {1}''s {2} force-field [{3}|{4} {5} {6}]", attacker.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} tried to place lava in {1}''s {2} force-field [{3}|{4} {5} {6}]", attacker.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -977,7 +977,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassPvp)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-lava-place in {1}''s {2} force-field [{3}|{4} {5} {6}]", attacker.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-lava-place in {1}''s {2} force-field [{3}|{4} {5} {6}]", attacker.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1014,7 +1014,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to place an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to place an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1052,7 +1052,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}]", player.getName(), touchingblock.getType(), touchingblock.getX(), touchingblock.getY(), touchingblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}]", player.getName(), touchingblock.getType(), touchingblock.getX(), touchingblock.getY(), touchingblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1091,7 +1091,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}] inside a force-field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}] inside a force-field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1130,7 +1130,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} attempted to place a force-field [{1}] but an unprotectable was found in the area [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to place a force-field [{1}] but an unprotectable was found in the area [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1167,7 +1167,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1205,7 +1205,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-protected an unprotectable block [{1}|{2} {3} {4}]", player.getName(), placedblock.getType(), placedblock.getX(), placedblock.getY(), placedblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-protected an unprotectable block [{1}|{2} {3} {4}]", player.getName(), placedblock.getType(), placedblock.getX(), placedblock.getY(), placedblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1244,7 +1244,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] inside a force-field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] inside a force-field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1283,7 +1283,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, "[ps] {0}bypass-placed a force-field [{1}] in an area with an unprotectable block [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed a force-field [{1}] in an area with an unprotectable block [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())

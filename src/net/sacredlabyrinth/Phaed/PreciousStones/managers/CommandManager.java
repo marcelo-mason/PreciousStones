@@ -94,7 +94,7 @@ public final class CommandManager implements CommandExecutor
             helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
             helpPlugin.registerCommand("ps clean ", "Cleans up all orphan fields in the world", plugin, true, "preciousstones.admin.clean");
 
-            PreciousStones.log(Level.INFO, "[{0}] ''Help'' support enabled", plugin.getDescription().getName());
+            PreciousStones.log(Level.INFO, "Help plugin support enabled");
         }
     }
 
@@ -548,7 +548,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (plugin.settings.logBypassDelete)
                                         {
-                                            PreciousStones.log(Level.INFO, "[ps] Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " force-field", "s"), player.getName(), sourcefields.get(0).toString());
+                                            PreciousStones.log(Level.INFO, "Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " force-field", "s"), player.getName(), sourcefields.get(0).toString());
                                         }
                                     }
                                     else
