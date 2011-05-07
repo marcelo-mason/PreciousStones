@@ -82,6 +82,24 @@ public class Unbreakable extends AbstractVec
     }
 
     /**
+     * Table identity column
+     * @return the id
+     */
+    public Long getId()
+    {
+        return id;
+    }
+
+    /**
+     * Set the table identity column
+     * @param id the id
+     */
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+    
+    /**
      *
      * @return
      */
@@ -140,24 +158,6 @@ public class Unbreakable extends AbstractVec
     public String toString()
     {
 	return super.toString() + " [owner:" + getOwner() + "]";
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     *
-     * @param id
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 
     /**

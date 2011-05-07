@@ -47,7 +47,6 @@ public final class SettingsManager
     public boolean notifyBypassPlace;
     public boolean notifyBypassDestroy;
     public boolean notifyBypassUnprotectable;
-    public boolean notifyGuardDog;
     public boolean warnCloaking;
     public boolean warnInstantHeal;
     public boolean warnSlowHeal;
@@ -128,7 +127,6 @@ public final class SettingsManager
 	notifyBypassPvp = config.getBoolean("notify.bypass-pvp", false);
 	notifyBypassPlace = config.getBoolean("notify.bypass-place", false);
 	notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", false);
-	notifyGuardDog = config.getBoolean("notify.guard-dog", false);
 	warnCloaking = config.getBoolean("warn.cloaking", false);
 	warnInstantHeal = config.getBoolean("warn.instant-heal", false);
 	warnSlowHeal = config.getBoolean("warn.slow-heal", false);
@@ -456,9 +454,10 @@ public final class SettingsManager
         public boolean preventExplosions = false;
         public boolean preventPvP = false;
         public boolean preventMobDamage = false;
+        public boolean preventMobSpawn = false;
+        public boolean preventAnimalSpawn = false;
         public boolean preventEntry = false;
         public boolean preventUnprotectable = false;
-        public boolean guarddogMode = false;
         public boolean instantHeal = false;
         public boolean slowHeal = false;
         public boolean slowDamage = false;
@@ -586,14 +585,17 @@ public final class SettingsManager
 	    if (map.containsKey("prevent-mob-damage") && Helper.isBoolean(map.get("prevent-mob-damage")))
 		preventMobDamage = (Boolean) map.get("prevent-mob-damage");
 
+	    if (map.containsKey("prevent-mob-spawn") && Helper.isBoolean(map.get("prevent-mob-spawn")))
+		preventMobSpawn = (Boolean) map.get("prevent-mob-spawn");
+
+            if (map.containsKey("prevent-animal-spawn") && Helper.isBoolean(map.get("prevent-animal-spawn")))
+		preventAnimalSpawn = (Boolean) map.get("preventanimalmob-spawn");
+
 	    if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
 		preventEntry = (Boolean) map.get("prevent-entry");
 
 	    if (map.containsKey("prevent-unprotectable") && Helper.isBoolean(map.get("prevent-unprotectable")))
 		preventUnprotectable = (Boolean) map.get("prevent-unprotectable");
-
-	    if (map.containsKey("guard-dog-mode") && Helper.isBoolean(map.get("guard-dog-mode")))
-		guarddogMode = (Boolean) map.get("guard-dog-mode");
 
 	    if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
 		instantHeal = (Boolean) map.get("instant-heal");
@@ -693,9 +695,6 @@ public final class SettingsManager
 
 	    if (preventPvP)
 		properties += ", -pvp";
-
-	    if (guarddogMode)
-		properties += ", guard-dog";
 
 	    if (instantHeal)
 		properties += ", heal";

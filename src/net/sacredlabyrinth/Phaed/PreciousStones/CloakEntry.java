@@ -20,18 +20,16 @@ import org.bukkit.inventory.ItemStack;
  * @author phaed
  */
 @Entity()
-@CacheStrategy
 @Table(name = "cloaked")
 public class CloakEntry implements Serializable
 {
+    @Id
+    private Long id;
+
     private byte dataByte;
 
     @OneToMany(mappedBy = "cloakEntry", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<PSItemStack> stacks = new ArrayList<PSItemStack>();
-
-
-    @Id
-    private Long id;
 
     @OneToOne(mappedBy = "cloakEntry")
     private Field field;
@@ -53,8 +51,8 @@ public class CloakEntry implements Serializable
     }
 
     /**
-     *
-     * @return
+     * Table identity column
+     * @return the id
      */
     public Long getId()
     {
@@ -62,8 +60,8 @@ public class CloakEntry implements Serializable
     }
 
     /**
-     *
-     * @param id
+     * Set the table identity column
+     * @param id the id
      */
     public void setId(Long id)
     {
@@ -122,12 +120,25 @@ public class CloakEntry implements Serializable
         return stacks;
     }
 
+    /*
+     *
+     */
+    /**
+     *
+     */
+    public void clearStacks()
+    {
+        stacks.clear();
+    }
+
     /**
      *
      * @param nativeStacks
      */
     public void importStacks(ItemStack[] nativeStacks)
     {
+        stacks.clear();
+
         for (ItemStack stack : nativeStacks)
         {
             stacks.add(new PSItemStack(stack));

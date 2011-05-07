@@ -18,6 +18,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.event.painting.PaintingBreakEvent;
 
 /**
  * PreciousStones block listener
@@ -36,7 +37,7 @@ public class PSBlockListener extends BlockListener
     {
 	this.plugin = plugin;
     }
-
+    
     /**
      *
      * @param event
@@ -44,6 +45,11 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockFromTo(BlockFromToEvent event)
     {
+        if(event.isCancelled())
+        {
+            return;
+        }
+
 	Field from = plugin.ffm.isPlaceProtected(event.getBlock(), null);
 	Field to = plugin.ffm.isPlaceProtected(event.getToBlock(), null);
 
@@ -68,6 +74,11 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockIgnite(BlockIgniteEvent event)
     {
+        if(event.isCancelled())
+        {
+            return;
+        }
+
 	Block block = event.getBlock();
 	Player player = event.getPlayer();
 
@@ -169,6 +180,11 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockBreak(BlockBreakEvent event)
     {
+        if(event.isCancelled())
+        {
+            return;
+        }
+
 	Block damagedblock = event.getBlock();
 	Player player = event.getPlayer();
 
@@ -256,6 +272,11 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockPlace(BlockPlaceEvent event)
     {
+        if(event.isCancelled())
+        {
+            return;
+        }
+
 	Block placedblock = event.getBlock();
 	Player player = event.getPlayer();
 
@@ -391,10 +412,7 @@ public class PSBlockListener extends BlockListener
 	    {
 		if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
 		{
-		    if (plugin.um.add(placedblock, player))
-		    {
-			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock, unbreakableblock);
-		    }
+                    plugin.cm.notifyBypassUnprotectableTouching(player, placedblock, unbreakableblock);
 		}
 		else
 		{
@@ -410,10 +428,7 @@ public class PSBlockListener extends BlockListener
 	    {
 		if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
 		{
-		    if (plugin.um.add(placedblock, player))
-		    {
-			plugin.cm.notifyBypassUnprotectableTouching(player, placedblock, fieldblock);
-		    }
+                    plugin.cm.notifyBypassUnprotectableTouching(player, placedblock, fieldblock);
 		}
 		else
 		{
@@ -480,6 +495,11 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockDamage(BlockDamageEvent event)
     {
+        if(event.isCancelled())
+        {
+            return;
+        }
+
 	Block scopedBlock = event.getBlock();
 	Player player = event.getPlayer();
 	ItemStack is = player.getItemInHand();

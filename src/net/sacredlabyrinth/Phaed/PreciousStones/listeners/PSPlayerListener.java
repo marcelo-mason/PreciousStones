@@ -141,14 +141,32 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerMove(PlayerMoveEvent event)
     {
-        if((new Vec(event.getTo())).equals(new Vec(event.getFrom())))
-        {
-            return;
-        }
-
 	Player player = event.getPlayer();
 
 	List<Field> currentfields = plugin.ffm.getSourceFields(player);
+
+        // check if were on a prevent entry field the player is no allowed in
+
+	for (Field field : currentfields)
+	{
+            if(field.isAllowed(player.getName()))
+            {
+                continue;
+            }
+
+	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+	    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
+	    {
+		if (fieldsettings.preventEntry)
+		{
+		    player.teleport(event.getFrom());
+		    event.setCancelled(true);
+		    plugin.cm.warnEntry(player, field);
+		    break;
+		}
+	    }
+	}
 
 	// loop through all fields the player just moved into
 
@@ -202,29 +220,6 @@ public class PSPlayerListener extends PlayerListener
 			    plugin.cm.showFarewellMessage(player, entryfield.getName());
 			}
 		    }
-		}
-	    }
-	}
-
-	// check if were on a prevent entry field not owned by player
-
-	for (Field field : currentfields)
-	{
-            if(field.getOwner().equals(player.getName()))
-            {
-                continue;
-            }
-
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-	    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
-	    {
-		if (fieldsettings.preventEntry)
-		{
-		    player.teleport(event.getFrom());
-		    event.setCancelled(true);
-		    plugin.cm.warnEntry(player, field);
-		    break;
 		}
 	    }
 	}

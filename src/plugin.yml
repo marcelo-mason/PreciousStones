@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 4.0pre
+version: 4.0.1
 database: true
 commands:
   ps:

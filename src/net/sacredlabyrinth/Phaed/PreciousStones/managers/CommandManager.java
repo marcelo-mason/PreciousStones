@@ -169,11 +169,11 @@ public final class CommandManager implements CommandExecutor
 
                                     if (count > 0)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " has been allowed in " + count + Helper.plural(count, " force-field", "s"));
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " force-field", "s"));
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " is already on the list");
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " is already on the list");
                                     }
                                 }
                                 else
@@ -229,11 +229,11 @@ public final class CommandManager implements CommandExecutor
 
                                     if (count > 0)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was removed from " + count + Helper.plural(count, " force-field", "s"));
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed from " + count + Helper.plural(count, " force-field", "s"));
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.RED + playerName + " not found or is the last player on the list");
+                                        ChatBlock.sendMessage(player, ChatColor.RED + Helper.capitalize(playerName) + " not found or is the last player on the list");
                                     }
                                 }
                                 else
@@ -255,11 +255,11 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " has been allowed in " + count + Helper.plural(count, " force-field", "s"));
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " force-field", "s"));
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " is already on all your lists");
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " is already on all your lists");
                                 }
 
                                 return true;
@@ -275,11 +275,11 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " was removed " + count + Helper.plural(count, " force-field", "s"));
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed " + count + Helper.plural(count, " force-field", "s"));
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + playerName + " is not in any of your lists");
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " is not in any of your lists");
                                 }
 
                                 return true;
@@ -424,13 +424,15 @@ public final class CommandManager implements CommandExecutor
                                     plugin.ffm.add(targetblock, player);
                                     Field newfield = plugin.ffm.getField(targetblock);
 
+                                    int radius = plugin.settings.cloakDefaultRadius;
+
                                     if (split.length > 1 && Helper.isInteger(split[1]))
                                     {
-                                        int radius = Integer.parseInt(split[1]);
+                                        radius = Integer.parseInt(split[1]);
 
                                         if (radius >= plugin.settings.cloakMinRadius && radius <= plugin.settings.cloakMaxRadius && radius != 0)
                                         {
-                                            newfield.setRadius(Integer.parseInt(split[1]));
+                                            newfield.setRadius(radius);
                                         }
                                         else
                                         {
@@ -449,6 +451,11 @@ public final class CommandManager implements CommandExecutor
                                     }
 
                                     plugin.clm.initiate(newfield);
+
+                                    if (tb.getDistanceToBlock() > radius)
+                                    {
+                                        plugin.clm.cloak(newfield);
+                                    }
 
                                     ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.friendlyBlockType(targetblock.getType().toString()) + " has been cloaked");
                                     return true;
@@ -470,6 +477,11 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fieldsettings.cloak)
                                     {
+                                        if(!plugin.settings.isCloakableType(block.getTypeId()))
+                                        {
+                                            plugin.clm.decloak(field);
+                                        }
+
                                         plugin.ffm.silentRelease(field);
                                         ChatBlock.sendMessage(player, ChatColor.AQUA + "The block has been decloaked");
                                         return true;
@@ -658,10 +670,10 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (split[0].equals("save") && plugin.pm.hasPermission(player, "preciousstones.admin.save"))
                         {
-                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Saving...");
-                            plugin.ffm.saveAll();
-                            plugin.um.saveAll();
-                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Done.");
+                              plugin.um.saveAll();
+                              plugin.ffm.saveAll();
+
+                              ChatBlock.sendMessage(player, ChatColor.AQUA + "Data saved.");
                             return true;
                         }
                         else if (split[0].equals("fields") && plugin.pm.hasPermission(player, "preciousstones.admin.fields"))

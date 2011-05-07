@@ -22,9 +22,10 @@ import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
+import org.bukkit.Location;
 
 /**
- *
+ * A field object
  * @author phaed
  */
 @Entity()
@@ -146,8 +147,8 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
-     * @return
+     * Table identity column
+     * @return the id
      */
     public Long getId()
     {
@@ -155,8 +156,8 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
-     * @param id
+     * Set the table identity column
+     * @param id the id
      */
     public void setId(Long id)
     {
@@ -672,6 +673,17 @@ public class Field extends AbstractVec implements Serializable
     {
         return envelops(new Vec(block));
     }
+
+    /**
+     *
+     * @param loc
+     * @return whether location is enveloped by the field
+     */
+    public boolean envelops(Location loc)
+    {
+        return envelops(new Vec(loc));
+    }
+
 
     /**
      * @return the dirty

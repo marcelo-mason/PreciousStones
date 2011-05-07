@@ -1303,35 +1303,6 @@ public class CommunicatonManager
     /**
      *
      * @param player
-     * @param field
-     * @param property
-     */
-    public void notifyGuardDog(Player player, Field field, String property)
-    {
-        FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-        if (player != null && canWarn(player))
-        {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Owners have been notified of your " + property);
-        }
-
-        if (plugin.settings.notifyGuardDog && canNotify(player))
-        {
-            for (AllowedEntry ae : field.getAllAllowed())
-            {
-                Player allowedPlayer = Helper.matchExactPlayer(plugin, ae.getName());
-
-                if (allowedPlayer != null && canNotify(allowedPlayer))
-                {
-                    ChatBlock.sendMessage(allowedPlayer, ChatColor.YELLOW + Helper.capitalize(property) + " detected at " + fieldsettings.getTitle() + " " + field);
-                }
-            }
-        }
-    }
-
-    /**
-     *
-     * @param player
      * @param name
      */
     public void showWelcomeMessage(Player player, String name)
@@ -1576,15 +1547,13 @@ public class CommunicatonManager
             }
         }
 
+        ChatBlock.sendBlank(player);
+
         boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
 
         if (more)
         {
             ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
-        }
-        else
-        {
-            ChatBlock.sendBlank(player);
         }
     }
 

@@ -57,6 +57,24 @@ public class SnitchEntry implements Serializable
     }
 
     /**
+     * Table identity column
+     * @return the id
+     */
+    public Long getId()
+    {
+        return id;
+    }
+
+    /**
+     * Set the table identity column
+     * @param id the id
+     */
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+    
+    /**
      * @param name the name to set
      */
     public void setName(String name)
@@ -127,24 +145,6 @@ public class SnitchEntry implements Serializable
     public void addCount()
     {
 	this.setEventCount(this.getEventCount() + 1);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     *
-     * @param id
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 
     /**

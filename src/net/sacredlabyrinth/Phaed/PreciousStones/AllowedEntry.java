@@ -50,6 +50,7 @@ public class AllowedEntry implements Serializable
     }
 
     /**
+     * Table identity column
      * @return the id
      */
     public Long getId()
@@ -58,7 +59,8 @@ public class AllowedEntry implements Serializable
     }
 
     /**
-     * @param id the id to set
+     * Set the table identity column
+     * @param id the id
      */
     public void setId(Long id)
     {

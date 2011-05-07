@@ -120,6 +120,7 @@ public class PreciousStones extends JavaPlugin
     {
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.Monitor, this);
+        getServer().getPluginManager().registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Event.Priority.Highest, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Monitor, this);
@@ -175,9 +176,16 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onDisable()
     {
-        PreciousStones.log(Level.INFO, "[{0}] Saving...", getDescription().getName());
-        ffm.saveAll();
-        um.saveAll();
+        try
+        {
+            um.saveAll();
+            ffm.saveAll();
+        }
+        catch (Exception ex)
+        {
+        }
+
+        PreciousStones.log(Level.INFO, "[{0}] data saved.", getDescription().getName());
 
         getDatabase().endTransaction();
     }

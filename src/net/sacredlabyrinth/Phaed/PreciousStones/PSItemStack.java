@@ -23,7 +23,7 @@ public class PSItemStack implements Serializable
 
     @Id
     private Long id;
-    
+
     @ManyToOne
     private CloakEntry cloakEntry;
 
@@ -56,6 +56,24 @@ public class PSItemStack implements Serializable
         }
     }
 
+    /**
+     * Table identity column
+     * @return the id
+     */
+    public Long getId()
+    {
+        return id;
+    }
+
+    /**
+     * Set the table identity column
+     * @param id the id
+     */
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+    
     /**
      * @return the type
      */
@@ -127,24 +145,6 @@ public class PSItemStack implements Serializable
     public ItemStack toItemStack()
     {
         return new ItemStack(getType(), getAmount(), getDurability(), getDataByte());
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     *
-     * @param id
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 
     /**

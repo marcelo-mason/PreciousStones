@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashSet;
-import java.util.logging.Level;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -9,11 +9,12 @@ import org.bukkit.block.ContainerBlock;
 import org.bukkit.inventory.Inventory;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.PSItemStack;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
- *
+ * Manages cloaking
  * @author phaed
  */
 public class CloakManager
@@ -30,38 +31,27 @@ public class CloakManager
     }
 
     /**
-     *
-     * @param ce
-     */
-    public void deleteCloakEntry(CloakEntry ce)
-    {
-        try
-        {
-            plugin.getDatabase().delete(ce);
-        }
-        catch (Exception ex)
-        {
-            PreciousStones.log(Level.SEVERE, "Error deleting cloakEntry: {0}", ex.getMessage());
-        }
-    }
-
-    /**
-     *
-     * @param field
+     * Marks the field as a cloak type field (by adding an empty cloak entry inside of it)
+     * @param field the field to cloak
      */
     public void initiate(Field field)
     {
         Block block = plugin.ffm.getBlock(field);
-
-        CloakEntry ce = new CloakEntry(block.getData());
-
-        field.addCloakEntry(ce);
-        plugin.ffm.saveField(field);
+        field.addCloakEntry(new CloakEntry(block.getData()));
+        field.setDirty(true);
     }
 
     /**
      *
-     * @param field
+     */
+    public void cloakAll()
+    {
+
+    }
+
+    /**
+     * Cloaks the field into a block type from its surroundings
+     * @param field the field to cloak
      */
     public void cloak(Field field)
     {
@@ -73,51 +63,41 @@ public class CloakManager
 
             if (inhabitants.isEmpty())
             {
-                CloakEntry oldce = field.getCloakEntry();
+                CloakEntry ce = field.getCloakEntry();
 
-                if (oldce == null)
+                if (ce == null)
                 {
                     return;
                 }
 
-                byte olddata = oldce.getDataByte();
+                byte olddata = ce.getDataByte();
                 byte newdata = block.getData();
 
-                if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
+                if (block.getState() instanceof ContainerBlock)
                 {
-                    CloakEntry ce = new CloakEntry(newdata);
-
                     ContainerBlock container = (ContainerBlock) block.getState();
                     Inventory inv = container.getInventory();
 
                     ce.importStacks(inv.getContents());
 
                     inv.clear();
-
-                    deleteCloakEntry(oldce);
-                    field.addCloakEntry(ce);
+                    field.setDirty(true);
                 }
-                else
+
+                if (olddata != newdata)
                 {
-                    if (olddata != newdata)
-                    {
-                        field.addCloakEntry(new CloakEntry(newdata));
-                    }
-                    else
-                    {
-                        field.addCloakEntry(oldce);
-                    }
+                    ce.setDataByte(newdata);
+                    field.setDirty(true);
                 }
 
                 block.setType(getCloakMaterial(block));
-                plugin.ffm.saveField(field);
             }
         }
     }
 
     /**
-     *
-     * @param field
+     * Turns the field back into its original block type
+     * @param field the field to decloak
      */
     public void decloak(Field field)
     {
@@ -137,27 +117,42 @@ public class CloakManager
             block.setData(data);
             block.setType(Material.getMaterial(field.getTypeId()));
 
-            if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
+            if (block.getState() instanceof ContainerBlock)
             {
                 ContainerBlock container = (ContainerBlock) block.getState();
                 Inventory inv = container.getInventory();
 
-                if (ce.getStacks() != null && ce.getStacks().size() > 0)
+                if (ce.getStacks() != null && ce.getStacks().size() == inv.getSize())
                 {
                     inv.setContents(ce.exportStacks());
+                    deleteStacks(ce);
                 }
-
-                deleteCloakEntry(ce);
-                field.addCloakEntry(new CloakEntry(data));
             }
-
-            plugin.ffm.saveField(field);
         }
     }
 
     /**
-     *
-     * @param block
+     * Delete a cloaked container's items stacks from the entry and database
+     * @param ce cloakentry containing the stacks to delete
+     */
+    public void deleteStacks(CloakEntry ce)
+    {
+        List<PSItemStack> stacks = ce.getStacks();
+
+        try
+        {
+            plugin.getDatabase().delete(stacks);
+        }
+        catch (Exception ex)
+        {
+        }
+
+        ce.clearStacks();
+    }
+
+    /**
+     * Returns an approved material from the blocks surroundings
+     * @param block the field's block
      * @return the material this block should be cloaked as
      */
     public Material getCloakMaterial(Block block)

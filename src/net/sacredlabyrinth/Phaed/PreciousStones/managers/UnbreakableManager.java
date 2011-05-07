@@ -52,12 +52,7 @@ public class UnbreakableManager
         PreciousStones.log(Level.INFO, "[{0}] {1} unbreakables: {2}", plugin.getDescription().getName(), world, ubs);
     }
 
-    /**
-     *
-     * @param world
-     * @return imports all unbreakables from the database
-     */
-    public int importFromDatabase(String world)
+    private int importFromDatabase(String world)
     {
         List<Unbreakable> ubs = plugin.getDatabase().find(Unbreakable.class).where().ieq("world", world).orderBy("x").orderBy("z").findList();
 
@@ -84,6 +79,26 @@ public class UnbreakableManager
     }
 
     /**
+     * Saves unbreakable to database
+     * @param ub
+     */
+    public void saveUnbreakable(Unbreakable ub)
+    {
+        try
+        {
+            if (ub.isDirty())
+            {
+                plugin.getDatabase().save(ub);
+                ub.setDirty(false);
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+    /**
      * Saves all unbreakables on DB
      */
     public void saveAll()
@@ -96,25 +111,6 @@ public class UnbreakableManager
             {
                 saveUnbreakable(ub);
             }
-        }
-    }
-
-    /**
-     * Save an unbreakable back into the database
-     * @param ub
-     */
-    public void saveUnbreakable(Unbreakable ub)
-    {
-        try
-        {
-            if (ub.isDirty())
-            {
-                plugin.getDatabase().save(ub);
-            }
-        }
-        catch (Exception ex)
-        {
-            plugin.sm.errorLog.severe(ex.getMessage());
         }
     }
 
@@ -133,10 +129,17 @@ public class UnbreakableManager
 
         try
         {
-            plugin.getDatabase().delete(ub);
+            Unbreakable old = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
+
+            if(old != null)
+            {
+                plugin.getDatabase().delete(old);
+            }
+
         }
         catch (Exception ex)
         {
+
         }
     }
 
@@ -410,7 +413,23 @@ public class UnbreakableManager
         }
 
         Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
-        saveUnbreakable(unbreakable);
+
+         LinkedList<Unbreakable> c = chunkLists.get(unbreakable.toChunkVec());
+
+        if (c != null)
+        {
+            if (!c.contains(unbreakable))
+            {
+                c.add(unbreakable);
+            }
+        }
+        else
+        {
+            LinkedList<Unbreakable> newc = new LinkedList<Unbreakable>();
+            newc.add(unbreakable);
+            chunkLists.put(unbreakable.toChunkVec(), newc);
+        }
+
         return true;
     }
 
@@ -421,7 +440,6 @@ public class UnbreakableManager
     public void release(Block unbreakableblock)
     {
         Unbreakable ub = getUnbreakable(unbreakableblock);
-
         deleteUnbreakable(ub);
     }
 
@@ -451,8 +469,7 @@ public class UnbreakableManager
         while (deletionQueue.size() > 0)
         {
             Unbreakable pending = deletionQueue.poll();
-
-            plugin.getDatabase().delete(pending);
+            deleteUnbreakable(pending);
         }
     }
 }

@@ -21,6 +21,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.Location;
 
 import org.bukkit.entity.Vehicle;
 
@@ -33,6 +34,7 @@ public class ForceFieldManager
 {
     private final HashMap<ChunkVec, LinkedList<Field>> chunkLists = new HashMap<ChunkVec, LinkedList<Field>>();
     private Queue<Field> deletionQueue = new LinkedList<Field>();
+    private Queue<Field> replacementQueue = new LinkedList<Field>();
     private PreciousStones plugin;
 
     /**
@@ -62,12 +64,7 @@ public class ForceFieldManager
         PreciousStones.log(Level.INFO, "[{0}] {1} fields: {2}", plugin.getDescription().getName(), world, fields);
     }
 
-    /**
-     * Import the fields from the database into memory
-     * @param world the world to import
-     * @return count of imported fields
-     */
-    public int importFromDatabase(String world)
+    private int importFromDatabase(String world)
     {
         List<Field> fields = plugin.getDatabase().find(Field.class).where().ieq("world", world).orderBy("chunk_x").orderBy("chunk_z").findList();
 
@@ -94,6 +91,26 @@ public class ForceFieldManager
     }
 
     /**
+     * Save field to database
+     * @param field the field to save
+     */
+    public void saveField(Field field)
+    {
+        try
+        {
+            if (field.isDirty())
+            {
+                plugin.getDatabase().save(field);
+                Field newfield = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
+                replacementQueue.add(newfield);
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+
+    /**
      * Saves all fields to the database
      */
     public void saveAll()
@@ -107,29 +124,22 @@ public class ForceFieldManager
                 saveField(field);
             }
         }
+
+        for (Field field : replacementQueue)
+        {
+            replaceReference(field);
+        }
     }
 
-    /**
-     * Saves a field back into the database
-     * @param field the field to save
-     */
-    public void saveField(Field field)
+    private void replaceReference(Field field)
     {
-        try
-        {
-            if (field.isDirty())
-            {
-                plugin.getDatabase().save(field);
-            }
-        }
-        catch (Exception ex)
-        {
-            plugin.sm.errorLog.severe(ex.getMessage());
-        }
+        LinkedList<Field> c = chunkLists.get(field.toChunkVec());
+        c.remove(field);
+        c.add(field);
     }
 
     /**
-     * Deletes a filed from memory and from the database
+     * Saves a field from memory and from the database
      * @param field the field to delete
      */
     public void deleteField(Field field)
@@ -143,7 +153,12 @@ public class ForceFieldManager
 
         try
         {
-            plugin.getDatabase().delete(field);
+            Field old = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
+
+            if (old != null)
+            {
+                plugin.getDatabase().delete(old);
+            }
         }
         catch (Exception ex)
         {
@@ -204,7 +219,7 @@ public class ForceFieldManager
     /**
      * Check if a field exists in memory
      * @param field
-     * @return
+     * @return confirmation
      */
     public boolean existsField(Field field)
     {
@@ -225,7 +240,7 @@ public class ForceFieldManager
     /**
      * Looks for the block in our field collection
      * @param fieldblock
-     * @return
+     * @return confirmation
      */
     public boolean isField(Block fieldblock)
     {
@@ -234,7 +249,7 @@ public class ForceFieldManager
 
     /**
      * Total number of forcefield stones
-     * @return
+     * @return the count
      */
     public int getCount()
     {
@@ -250,7 +265,7 @@ public class ForceFieldManager
     /**
      * Clean up orphan fields
      * @param worldName
-     * @return
+     * @return count of cleaned orphans
      */
     public int cleanOrphans(String worldName)
     {
@@ -295,7 +310,7 @@ public class ForceFieldManager
 
             // do the deed
 
-            int type  = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
+            int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
             if (!plugin.settings.isFieldType(type) && !(plugin.settings.isCloakableType(type) && (plugin.settings.isCloakType(type) || plugin.settings.isCloakableType(type))))
             {
@@ -310,9 +325,9 @@ public class ForceFieldManager
     }
 
     /**
-     * If its unbreakable or not
+     * Whether the block is an unbreakable field
      * @param block
-     * @return
+     * @return confirmation
      */
     public boolean isBreakable(Block block)
     {
@@ -321,9 +336,9 @@ public class ForceFieldManager
     }
 
     /**
-     * If any of the allowed players are online
+     * Whether any of the allowed players are online
      * @param field
-     * @return
+     * @return confirmation
      */
     public boolean allowedAreOnline(Field field)
     {
@@ -343,7 +358,7 @@ public class ForceFieldManager
     /**
      * Returns the source block for the field
      * @param field
-     * @return
+     * @return the source block
      */
     public Block getBlock(Field field)
     {
@@ -360,7 +375,7 @@ public class ForceFieldManager
     /**
      * Whether a Redstone hooked field is in a disabled state
      * @param field
-     * @return
+     * @return confirmation
      */
     public boolean isRedstoneHookedDisabled(Field field)
     {
@@ -425,9 +440,9 @@ public class ForceFieldManager
     }
 
     /**
-     * If there is current any where around the block
+     * Whether there is current any where around the block
      * @param block
-     * @return
+     * @return confirmation
      */
     public boolean isAnywayPowered(Block block)
     {
@@ -466,24 +481,24 @@ public class ForceFieldManager
 
     /**
      * Returns the fields in the chunk and adjacent chunks
-     * @param vec
+     * @param loc
      * @param chunkradius
-     * @return
+     * @return the fields
      */
-    public List<Field> getFieldsInArea(Vec vec, int chunkradius)
+    public List<Field> getFieldsInArea(Location loc, int chunkradius)
     {
         List<Field> out = new LinkedList<Field>();
 
-        int xlow = (vec.getX() >> 4) - chunkradius;
-        int xhigh = (vec.getX() >> 4) + chunkradius;
-        int zlow = (vec.getZ() >> 4) - chunkradius;
-        int zhigh = (vec.getZ() >> 4) + chunkradius;
+        int xlow = (loc.getBlockX() >> 4) - chunkradius;
+        int xhigh = (loc.getBlockX() >> 4) + chunkradius;
+        int zlow = (loc.getBlockZ() >> 4) - chunkradius;
+        int zhigh = (loc.getBlockZ() >> 4) + chunkradius;
 
         for (int x = xlow; x <= xhigh; x++)
         {
             for (int z = zlow; z <= zhigh; z++)
             {
-                List<Field> fields = retrieveFields(new ChunkVec(x, z, vec.getWorld()));
+                List<Field> fields = retrieveFields(new ChunkVec(x, z, loc.getWorld().getName()));
 
                 if (fields != null)
                 {
@@ -499,28 +514,38 @@ public class ForceFieldManager
      * Returns the fields in the chunk and adjacent chunks
      * @param player
      * @param chunkradius
-     * @return
+     * @return the fields
      */
     public List<Field> getFieldsInArea(Player player, int chunkradius)
     {
-        return getFieldsInArea(new Vec(player.getLocation()), chunkradius);
+        return getFieldsInArea(player.getLocation(), chunkradius);
+    }
+
+    /**
+     * Returns the fields in the chunk and adjacent chunks
+     * @param loc
+     * @return the fields
+     */
+    public List<Field> getFieldsInArea(Location loc)
+    {
+        return getFieldsInArea(loc, plugin.settings.chunksInLargestForceFieldArea);
     }
 
     /**
      * Returns the fields in the chunk and adjacent chunks
      * @param blockInArea
-     * @return
+     * @return the fields
      */
     public List<Field> getFieldsInArea(Block blockInArea)
     {
-        return getFieldsInArea(new Vec(blockInArea), plugin.settings.chunksInLargestForceFieldArea);
+        return getFieldsInArea(blockInArea.getLocation(), plugin.settings.chunksInLargestForceFieldArea);
     }
 
     /**
      * Returns all fields of the type
      * @param typeid
      * @param world
-     * @return
+     * @return the fields
      */
     public List<Field> getFieldsOfType(int typeid, World world)
     {
@@ -539,18 +564,18 @@ public class ForceFieldManager
 
     /**
      * Returns the blocks that is originating the protective field the block is in and that the player is not allowed in
-     * @param blockInArea
+     * @param loc
      * @param playerName
-     * @return
+     * @return the fields
      */
-    public List<Field> getSourceFields(Block blockInArea, String playerName)
+    public List<Field> getSourceFields(Location loc, String playerName)
     {
         List<Field> fields = new LinkedList<Field>();
-        List<Field> fieldsinarea = getFieldsInArea(blockInArea);
+        List<Field> fieldsinarea = getFieldsInArea(loc);
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (playerName == null || !field.isAllowed(playerName)))
+            if (field.envelops(loc) && (playerName == null || !field.isAllowed(playerName)))
             {
                 if (!plugin.settings.isFieldType(field.getTypeId()) && !plugin.settings.isCloakableType(field.getTypeId()))
                 {
@@ -570,55 +595,59 @@ public class ForceFieldManager
 
     /**
      * Returns the blocks that are originating the protective fields the block is in
+     * @param loc
+     * @return the fields
+     */
+    public List<Field> getSourceFields(Location loc)
+    {
+        return getSourceFields(loc, null);
+    }
+
+    /**
+     * Returns the blocks that are originating the protective fields the block is in
      * @param vehicle
-     * @return
+     * @return the fields
      */
     public List<Field> getSourceFields(Vehicle vehicle)
     {
-        Block block = vehicle.getWorld().getBlockAt(vehicle.getLocation().getBlockX(), vehicle.getLocation().getBlockY(), vehicle.getLocation().getBlockZ());
-        return getSourceFields(block, null);
+        return getSourceFields(vehicle.getLocation(), null);
     }
 
     /**
      * Returns the blocks that are originating the protective fields the block is in
      * @param blockInArea
-     * @return
+     * @return the fields
      */
     public List<Field> getSourceFields(Block blockInArea)
     {
-        return getSourceFields(blockInArea, null);
+        return getSourceFields(blockInArea.getLocation(), null);
     }
 
     /**
      * Returns the blocks that are originating the protective fields the player is standing in
      * @param player
-     * @return
+     * @return the fields
      */
     public List<Field> getSourceFields(Player player)
     {
-        Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-        return getSourceFields(block, null);
+        return getSourceFields(player.getLocation(), null);
     }
 
     /**
      * Returns the blocks that are originating the protective fields the player is standing in. That the player is not allowed in
      * @param player
      * @param playerName
-     * @return
+     * @return the fields
      */
     public List<Field> getSourceFields(Player player, String playerName)
     {
-        Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-        return getSourceFields(block, playerName);
+        return getSourceFields(player.getLocation(), playerName);
     }
 
     /*
      * Returns the blocks that are originating prevent entry fields in the players area
-     */
-    /**
-     *
      * @param player
-     * @return
+     * @return the fields
      */
     public List<Field> getSourceEntryFields(Player player)
     {
@@ -628,12 +657,6 @@ public class ForceFieldManager
         for (Field field : fields)
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-            if (fieldsettings.guarddogMode && allowedAreOnline(field))
-            {
-                plugin.cm.notifyGuardDog(player, field, "entry attempt");
-                continue;
-            }
 
             if (fieldsettings.preventEntry)
             {
@@ -648,7 +671,7 @@ public class ForceFieldManager
      * Returns the field if he's standing in at least one allowed field
      * @param blockInArea
      * @param player
-     * @return
+     * @return the field
      */
     public Field getOneAllowedField(Block blockInArea, Player player)
     {
@@ -689,7 +712,7 @@ public class ForceFieldManager
      * Returns the field pointed at
      * @param blockInArea
      * @param player
-     * @return
+     * @return the field
      */
     public Field getPointedField(Block blockInArea, Player player)
     {
@@ -721,7 +744,7 @@ public class ForceFieldManager
      * @param fields
      * @param player
      * @param total
-     * @return
+     * @return the fields
      */
     public HashSet<Field> getIntersecting(HashSet<Field> fields, Player player, HashSet<Field> total)
     {
@@ -755,7 +778,7 @@ public class ForceFieldManager
      * Returns all overlapped force-fields
      * @param player
      * @param field
-     * @return
+     * @return the fields
      */
     public HashSet<Field> getOverlappedFields(Player player, Field field)
     {
@@ -785,7 +808,7 @@ public class ForceFieldManager
     /**
      * Get first snitch fields you're standing on that you're allowed on
      * @param block
-     * @return
+     * @return the fields
      */
     public List<Field> getSnitchFields(Block block)
     {
@@ -808,7 +831,7 @@ public class ForceFieldManager
      * Clean up snitch lists of the field
      * @param player
      * @param field
-     * @return
+     * @return confirmation
      */
     public boolean cleanSnitchList(Player player, Field field)
     {
@@ -820,7 +843,13 @@ public class ForceFieldManager
 
             for (SnitchEntry se : ses)
             {
-                plugin.snm.deleteSnitchEntry(se);
+                try
+                {
+                    plugin.snm.deleteSnitchEntry(se);
+                }
+                catch (Exception ex)
+                {
+                }
             }
 
             field.cleanSnitchList();
@@ -835,7 +864,7 @@ public class ForceFieldManager
      * @param player
      * @param field
      * @param name
-     * @return
+     * @return count of fields set
      */
     public int setNameFields(Player player, Field field, String name)
     {
@@ -860,7 +889,7 @@ public class ForceFieldManager
      * Delete fields
      * @param player
      * @param field
-     * @return
+     * @return count of fields deleted
      */
     public int deleteFields(Player player, Field field)
     {
@@ -885,7 +914,7 @@ public class ForceFieldManager
      * Returns a list of players who are inside he overlapped fields
      * @param player
      * @param field
-     * @return
+     * @return list of player names
      */
     public HashSet<String> getWho(Player player, Field field)
     {
@@ -905,7 +934,7 @@ public class ForceFieldManager
      * Get allowed players on the overlapped force-fields
      * @param player
      * @param field
-     * @return
+     * @return allowed entry object per user
      */
     public HashSet<AllowedEntry> getAllowed(Player player, Field field)
     {
@@ -926,7 +955,7 @@ public class ForceFieldManager
      * @param field
      * @param allowedName
      * @param perm
-     * @return
+     * @return count of fields the player was allowed in
      */
     public int addAllowed(Player player, Field field, String allowedName, String perm)
     {
@@ -946,39 +975,9 @@ public class ForceFieldManager
     }
 
     /**
-     * Remove allowed player from overlapped force-fields
-     * @param player
-     * @param allowedName
-     * @param field
-     * @return
-     */
-    public int removeAllowed(Player player, Field field, String allowedName)
-    {
-        HashSet<Field> total = getOverlappedFields(player, field);
-        int removedCount = 0;
-
-        for (Field f : total)
-        {
-            if (f.isAllowed(allowedName))
-            {
-                AllowedEntry ae = f.removeAllowed(allowedName);
-
-                if (ae != null)
-                {
-                    plugin.getDatabase().delete(ae);
-                }
-
-                removedCount++;
-            }
-        }
-
-        return removedCount;
-    }
-
-    /**
      * Get all the fields belonging to player
      * @param player
-     * @return
+     * @return the fields
      */
     public List<Field> getOwnersFields(Player player)
     {
@@ -1001,7 +1000,7 @@ public class ForceFieldManager
      * @param player
      * @param allowedName
      * @param perm
-     * @return
+     * @return count of fields allowed
      */
     public int allowAll(Player player, String allowedName, String perm)
     {
@@ -1022,10 +1021,46 @@ public class ForceFieldManager
     }
 
     /**
+     * Remove allowed player from overlapped force-fields
+     * @param player
+     * @param allowedName
+     * @param field
+     * @return count of fields the player was removed from
+     */
+    public int removeAllowed(Player player, Field field, String allowedName)
+    {
+        HashSet<Field> total = getOverlappedFields(player, field);
+        int removedCount = 0;
+
+        for (Field f : total)
+        {
+            if (f.isAllowed(allowedName))
+            {
+                AllowedEntry ae = f.removeAllowed(allowedName);
+
+                if (ae != null)
+                {
+                    try
+                    {
+                        plugin.getDatabase().delete(ae);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+
+                removedCount++;
+            }
+        }
+
+        return removedCount;
+    }
+
+    /**
      * Remove allowed player to all your force fields
      * @param player
      * @param allowedName
-     * @return
+     * @return count of fields the player was removed from
      */
     public int removeAll(Player player, String allowedName)
     {
@@ -1041,7 +1076,13 @@ public class ForceFieldManager
 
                 if (ae != null)
                 {
-                    plugin.getDatabase().delete(ae);
+                    try
+                    {
+                        plugin.getDatabase().delete(ae);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
                 }
 
                 removedCount++;
@@ -1055,7 +1096,7 @@ public class ForceFieldManager
      * Determine whether a player is allowed on a field
      * @param fieldblock
      * @param playerName
-     * @return
+     * @return confirmation
      */
     public boolean isAllowed(Block fieldblock, String playerName)
     {
@@ -1072,7 +1113,7 @@ public class ForceFieldManager
      * Determine whether a player is the owner of the field
      * @param fieldblock
      * @param playerName
-     * @return
+     * @return confirmation
      */
     public boolean isOwner(Block fieldblock, String playerName)
     {
@@ -1087,8 +1128,8 @@ public class ForceFieldManager
 
     /**
      * Return the owner of a field
-     * @param fieldblock
-     * @return
+     * @param fieldblock a block which is a field
+     * @return owner's name
      */
     public String getOwner(Block fieldblock)
     {
@@ -1103,8 +1144,8 @@ public class ForceFieldManager
 
     /**
      * Return the owner of a field by passing a block in the area
-     * @param blockInArea
-     * @return
+     * @param blockInArea a block inside a field
+     * @return owner's name
      */
     public String getAreaOwner(Block blockInArea)
     {
@@ -1122,9 +1163,9 @@ public class ForceFieldManager
     }
 
     /**
-     * If the block is touching a plugin block
+     * Whether the block is touching a field block
      * @param block
-     * @return
+     * @return the touching block, null if none
      */
     public Block touchingFieldBlock(Block block)
     {
@@ -1161,9 +1202,9 @@ public class ForceFieldManager
     }
 
     /**
-     * Whether the block is in a unprotectable prevention area
-     * @param blockInArea
-     * @return
+     * Whether the block is in a unprotectable prevention field
+     * @param blockInArea block placed
+     * @return the unprotectable field, null if not near a prevent unprotectable field
      */
     public Field isUprotectableBlockField(Block blockInArea)
     {
@@ -1189,7 +1230,7 @@ public class ForceFieldManager
      * Whether the block is in a build protected area owned by someone else, exclude unprotected guarddog fields
      * @param blockInArea
      * @param player
-     * @return
+     * @return the field, null if its not
      */
     public Field isPlaceProtected(Block blockInArea, Player player)
     {
@@ -1200,12 +1241,6 @@ public class ForceFieldManager
             if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-                if (fieldsettings.guarddogMode && allowedAreOnline(field))
-                {
-                    plugin.cm.notifyGuardDog(player, field, "block placement");
-                    continue;
-                }
 
                 if (fieldsettings.preventPlace)
                 {
@@ -1221,7 +1256,7 @@ public class ForceFieldManager
      * Whether the block is in a break protected area belonging to somebody else (not playerName)
      * @param blockInArea
      * @param player
-     * @return
+     * @return the field, null if its not
      */
     public Field isDestroyProtected(Block blockInArea, Player player)
     {
@@ -1232,12 +1267,6 @@ public class ForceFieldManager
             if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-                if (fieldsettings.guarddogMode && allowedAreOnline(field))
-                {
-                    plugin.cm.notifyGuardDog(player, field, "block destruction");
-                    continue;
-                }
 
                 if (fieldsettings.preventDestroy)
                 {
@@ -1253,7 +1282,7 @@ public class ForceFieldManager
      * Whether the block is in a fire protected area belonging to somebody else (not playerName)
      * @param blockInArea
      * @param player
-     * @return
+     * @return the field, null if its not
      */
     public Field isFireProtected(Block blockInArea, Player player)
     {
@@ -1264,12 +1293,6 @@ public class ForceFieldManager
             if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-                if (fieldsettings.guarddogMode && allowedAreOnline(field))
-                {
-                    plugin.cm.notifyGuardDog(player, field, "fire placement");
-                    continue;
-                }
 
                 if (fieldsettings.preventFire)
                 {
@@ -1283,26 +1306,25 @@ public class ForceFieldManager
 
     /**
      * Whether the block is in a entry protected area belonging to somebody else (not playerName) Expands the protected area by one to more acurately predict block entry
-     * @param blockInArea
+     * @param loc
      * @param player
      * @return
+     * @returnthe field, null if its not
      */
-    public Field isEntryProtected(Block blockInArea, Player player)
+    public Field isEntryProtected(Location loc, Player player)
     {
-        List<Field> fieldsinarea = getFieldsInArea(blockInArea);
+        List<Field> fieldsinarea = getFieldsInArea(loc);
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
+            if (field.envelops(loc) && (player == null || !field.isAllowed(player.getName())))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
-                if (fieldsettings.guarddogMode && allowedAreOnline(field))
+                if (fieldsettings.preventEntry)
                 {
-                    plugin.cm.notifyGuardDog(player, field, "fire");
-                    continue;
+                    return field;
                 }
-                return field;
             }
         }
 
@@ -1310,9 +1332,9 @@ public class ForceFieldManager
     }
 
     /**
-     * Whether the player is in a pvp protected area
+     * Whether the player is in a mob damage protected area
      * @param player
-     * @return
+     * @return the field, null if its not
      */
     public Field isMobDamageProtected(Player player)
     {
@@ -1332,9 +1354,53 @@ public class ForceFieldManager
     }
 
     /**
+     * Whether the player is in a mob spawn protected area
+     * @param loc
+     * @return the field, null if its not
+     */
+    public Field isMobSpawnProtected(Location loc)
+    {
+        List<Field> fields = getSourceFields(loc);
+
+        for (Field field : fields)
+        {
+            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings.preventMobSpawn)
+            {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether the player is in a animal spawn protected area
+     * @param loc
+     * @return the field, null if its not
+     */
+    public Field isAnimalSpawnProtected(Location loc)
+    {
+        List<Field> fields = getSourceFields(loc);
+
+        for (Field field : fields)
+        {
+            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings.preventAnimalSpawn)
+            {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Whether the player is in a pvp protected area
      * @param player
-     * @return
+     * @return the field, null if its not
      */
     public Field isPvPProtected(Player player)
     {
@@ -1356,7 +1422,7 @@ public class ForceFieldManager
     /**
      * Whether the block is in a pvp protected area
      * @param block
-     * @return
+     * @return the field, null if its not
      */
     public Field isPvPProtected(Block block)
     {
@@ -1378,7 +1444,7 @@ public class ForceFieldManager
     /**
      * Whether the block is in an explosion protected area
      * @param placedBlock
-     * @return
+     * @return the field, null if its not
      */
     public Field isExplosionProtected(Block placedBlock)
     {
@@ -1390,11 +1456,6 @@ public class ForceFieldManager
 
             if (fieldsettings.preventExplosions)
             {
-                if (fieldsettings.guarddogMode && allowedAreOnline(field))
-                {
-                    plugin.cm.notifyGuardDog(null, field, "creeper explosion");
-                    continue;
-                }
                 return field;
             }
         }
@@ -1406,7 +1467,7 @@ public class ForceFieldManager
      * Return the first field that conflicts with the unbreakable
      * @param placedBlock
      * @param placer
-     * @return
+     * @return the field, null if none found
      */
     public Field unbreakableConflicts(Block placedBlock, Player placer)
     {
@@ -1439,7 +1500,7 @@ public class ForceFieldManager
      * Return the first field that conflicts with the field block
      * @param placedBlock
      * @param placer
-     * @return
+     * @return the field, null if none found
      */
     public Field fieldConflicts(Block placedBlock, Player placer)
     {
@@ -1481,7 +1542,7 @@ public class ForceFieldManager
      * Get all touching fields
      * @param scopedBlock
      * @param materialInHand
-     * @return
+     * @return the fields
      */
     public HashSet<Field> getTouchingFields(Block scopedBlock, Material materialInHand)
     {
@@ -1515,7 +1576,7 @@ public class ForceFieldManager
      * Add field to the collection
      * @param fieldblock
      * @param owner
-     * @return
+     * @return confirmation
      */
     public boolean add(Block fieldblock, Player owner)
     {

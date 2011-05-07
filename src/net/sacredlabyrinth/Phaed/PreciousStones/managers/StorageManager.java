@@ -2,9 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sacredlabyrinth.Phaed.PreciousStones.AllowedEntry;
 
 import org.bukkit.Material;
@@ -25,9 +23,6 @@ public final class StorageManager
     private File forcefield;
     private PreciousStones plugin;
 
-    private FileHandler errorHandler;
-    public Logger errorLog = Logger.getLogger("preciousstones");
-
     /**
      *
      * @param plugin
@@ -38,15 +33,6 @@ public final class StorageManager
 
         unbreakable = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakables.txt");
         forcefield = new File(plugin.getDataFolder().getPath() + File.separator + "forcefields.txt");
-
-        try
-        {
-            errorHandler = new FileHandler(plugin.getDataFolder().getPath() + File.separator + "error.log", true);
-            errorLog.addHandler(errorHandler);
-        }
-        catch (IOException e)
-        {
-        }
 
         if (unbreakable.exists())
         {
@@ -93,9 +79,10 @@ public final class StorageManager
                     @Override
                     public void run()
                     {
-                        PreciousStones.log(Level.INFO, "[{0}] Saving...", plugin.getDescription().getName());
-                        plugin.ffm.saveAll();
                         plugin.um.saveAll();
+                        plugin.ffm.saveAll();
+
+                        PreciousStones.log(Level.INFO, "[{0}] data saved.", plugin.getDescription().getName());
                     }
                 }, 0, 20L * 60 * plugin.settings.saveFrequency);
             }
@@ -260,7 +247,7 @@ public final class StorageManager
 
                     if (u.length > 7)
                     {
-                        secsnitch = u[7].replace("?", "ï¿½");
+                        secsnitch = u[7].replace("?", "ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â½");
                     }
 
                     if (u.length > 8)
