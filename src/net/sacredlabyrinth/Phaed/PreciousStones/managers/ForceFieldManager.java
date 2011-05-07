@@ -166,6 +166,22 @@ public class ForceFieldManager
     }
 
     /**
+     * Retrieve all fields
+     * @return all fields from the database
+     */
+    public List<Field> retrieveFields()
+    {
+        List<Field> out = new LinkedList<Field>();
+
+        for (ChunkVec cv : chunkLists.keySet())
+        {
+            out.addAll(chunkLists.get(cv));
+        }
+
+        return out;
+    }
+
+    /**
      * Retrieve all fields in a chunk
      * @param cv the chunk vector you want the fields from
      * @return all fields from database that match the chunkvec
@@ -644,10 +660,10 @@ public class ForceFieldManager
         return getSourceFields(player.getLocation(), playerName);
     }
 
-    /*
+    /**
      * Returns the blocks that are originating prevent entry fields in the players area
      * @param player
-     * @return the fields
+     * @return
      */
     public List<Field> getSourceEntryFields(Player player)
     {
@@ -1606,6 +1622,31 @@ public class ForceFieldManager
         }
 
         return true;
+    }
+
+    /**
+     * Deletes all fields belonging to a player
+     * @param playerName the players
+     * @return the count of deleted fields
+     */
+    public int deleteBelonging(String playerName)
+    {
+        List<Field> fields = retrieveFields();
+
+        int deletedFields = 0;
+
+        for (Field field : fields)
+        {
+            if (field.getOwner().equalsIgnoreCase(playerName))
+            {
+                queueRelease(field);
+                deletedFields++;
+            }
+        }
+
+        flush();
+
+        return deletedFields;
     }
 
     /**

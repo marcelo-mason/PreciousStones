@@ -94,7 +94,6 @@ public class UnbreakableManager
         }
         catch (Exception ex)
         {
-
         }
     }
 
@@ -131,7 +130,7 @@ public class UnbreakableManager
         {
             Unbreakable old = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
 
-            if(old != null)
+            if (old != null)
             {
                 plugin.getDatabase().delete(old);
             }
@@ -139,13 +138,28 @@ public class UnbreakableManager
         }
         catch (Exception ex)
         {
-
         }
     }
 
     /**
-     *
-     * @param cv
+     * Retrieve all unbreakables
+     * @return all unbreakables from the database that match the world
+     */
+    public List<Unbreakable> retrieveUnbreakables()
+    {
+        List<Unbreakable> out = new LinkedList<Unbreakable>();
+
+        for (ChunkVec cv : chunkLists.keySet())
+        {
+            out.addAll(chunkLists.get(cv));
+        }
+
+        return out;
+    }
+
+    /**
+     * Retrieve all unbreakables in a chunk
+     * @param cv the chunk vec
      * @return all unbreakables from database that match the chunkvec
      */
     public List<Unbreakable> retrieveUnbreakables(ChunkVec cv)
@@ -154,8 +168,8 @@ public class UnbreakableManager
     }
 
     /**
-     *
-     * @param world
+     * Retrieve all unbreakables in a world
+     * @param world the world
      * @return all unbreakables from the database that match the world
      */
     public List<Unbreakable> retrieveUnbreakables(String world)
@@ -176,7 +190,7 @@ public class UnbreakableManager
     /**
      * Gets the unbreakable from source block
      * @param block
-     * @return
+     * @return the unbreakable
      */
     public Unbreakable getUnbreakable(Block block)
     {
@@ -197,7 +211,7 @@ public class UnbreakableManager
     /**
      * Looks for the block in our unbreakable collection
      * @param unbreakableblock
-     * @return
+     * @return confirmation
      */
     public boolean isUnbreakable(Block unbreakableblock)
     {
@@ -206,7 +220,7 @@ public class UnbreakableManager
 
     /**
      * Total number of unbreakable stones
-     * @return
+     * @return the count
      */
     public int getCount()
     {
@@ -220,9 +234,9 @@ public class UnbreakableManager
     }
 
     /**
-     * Clean up orphan fields
-     * @param worldName
-     * @return
+     * Clean up orphan unbreakables
+     * @param worldName the world name
+     * @return count of orphaned unbreakables
      */
     public int cleanOrphans(String worldName)
     {
@@ -289,7 +303,7 @@ public class UnbreakableManager
      * Determine whether a player is the owner of the stone
      * @param unbreakableblock
      * @param playerName
-     * @return
+     * @return confirmation
      */
     public boolean isOwner(Block unbreakableblock, String playerName)
     {
@@ -305,7 +319,7 @@ public class UnbreakableManager
     /**
      * Return the owner of a stone
      * @param unbreakableblock
-     * @return
+     * @return the owner's name
      */
     public String getOwner(Block unbreakableblock)
     {
@@ -322,7 +336,7 @@ public class UnbreakableManager
      * Returns the unbreakable blocks in the chunk and adjacent chunks
      * @param vec
      * @param chunkradius
-     * @return
+     * @return the unbreakables
      */
     public LinkedList<Unbreakable> getUnbreakablesInArea(Vec vec, int chunkradius)
     {
@@ -353,7 +367,7 @@ public class UnbreakableManager
      * Returns the unbreakable blocks in the chunk and adjacent chunks
      * @param player
      * @param chunkradius
-     * @return
+     * @return the unbreakables
      */
     public LinkedList<Unbreakable> getUnbreakablesInArea(Player player, int chunkradius)
     {
@@ -363,7 +377,7 @@ public class UnbreakableManager
     /**
      * If the block is touching a pstone block
      * @param block
-     * @return
+     * @return the block
      */
     public Block touchingUnbrakableBlock(Block block)
     {
@@ -414,7 +428,7 @@ public class UnbreakableManager
 
         Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
 
-         LinkedList<Unbreakable> c = chunkLists.get(unbreakable.toChunkVec());
+        LinkedList<Unbreakable> c = chunkLists.get(unbreakable.toChunkVec());
 
         if (c != null)
         {
@@ -431,6 +445,31 @@ public class UnbreakableManager
         }
 
         return true;
+    }
+
+    /**
+     * Deletes all unbreakables belonging to a player
+     * @param playerName the players
+     * @return the count of deleted unbreakables
+     */
+    public int deleteBelonging(String playerName)
+    {
+        List<Unbreakable> ubs = retrieveUnbreakables();
+
+        int deletedUbs = 0;
+
+        for (Unbreakable ub : ubs)
+        {
+            if (ub.getOwner().equalsIgnoreCase(playerName))
+            {
+                queueRelease(ub);
+                deletedUbs++;
+            }
+        }
+
+        flush();
+
+        return deletedUbs;
     }
 
     /**

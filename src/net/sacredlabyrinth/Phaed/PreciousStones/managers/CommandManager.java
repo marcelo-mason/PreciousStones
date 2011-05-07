@@ -85,7 +85,7 @@ public final class CommandManager implements CommandExecutor
             helpPlugin.registerCommand("ps cloak <radius>", "Cloaks the block you are looking at", plugin, true, "preciousstones.special.cloak");
             helpPlugin.registerCommand("ps decloak ", "Decloaks the block you are looking at", plugin, true, "preciousstones.special.cloak");
             helpPlugin.registerCommand("ps delete ", "Delete the field(s) you're standing on", plugin, true, "preciousstones.admin.delete");
-            helpPlugin.registerCommand("ps delete [blockid] ", "Delete the field(s) from this type", plugin, true, "preciousstones.admin.delete");
+            helpPlugin.registerCommand("ps delete [player] ", "Delete all pstones of the player", plugin, true, "preciousstones.admin.delete");
             helpPlugin.registerCommand("ps info ", "Get info for the field youre standing on", plugin, true, "preciousstones.admin.info");
             helpPlugin.registerCommand("ps list [chunks-in-radius]", "Lists all pstones in area", plugin, true, "preciousstones.admin.list");
             helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
@@ -477,7 +477,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fieldsettings.cloak)
                                     {
-                                        if(!plugin.settings.isCloakableType(block.getTypeId()))
+                                        if (!plugin.settings.isCloakableType(block.getTypeId()))
                                         {
                                             plugin.clm.decloak(field);
                                         }
@@ -565,30 +565,33 @@ public final class CommandManager implements CommandExecutor
                             }
                             else if (split.length == 2)
                             {
-                                if (Helper.isInteger(split[1]))
+                                Player badplayer = Helper.matchExactPlayer(plugin, split[1]);
+
+                                if (badplayer != null)
                                 {
-                                    List<Field> fields = plugin.ffm.getFieldsOfType(Integer.parseInt(split[1]), player.getWorld());
+                                    int fields = plugin.ffm.deleteBelonging(badplayer.getName());
+                                    int ubs = plugin.ffm.deleteBelonging(badplayer.getName());
 
-                                    for (Field field : fields)
+                                    if (fields > 0)
                                     {
-                                        plugin.ffm.release(field);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Deleted " + badplayer.getName() + "'s " + fields + " fields");
                                     }
 
-                                    if (fields.size() > 0)
+                                    if (ubs > 0)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Protective field removed from " + fields.size() + Helper.plural(fields.size(), " force-field", "s") + " of type " + split[1]);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Deleted " + badplayer.getName() + "'s " + fields + " unbreakables");
+                                    }
 
-                                        if (plugin.settings.logBypassDelete)
-                                        {
-                                            PreciousStones.log(Level.INFO, "[ps] Protective field removed from {0}{1} of type {2} by {3} near {4}", fields.size(), Helper.plural(fields.size(), " force-field", "s"), split[1], player.getName(), fields.get(0).toString());
-                                        }
-                                    }
-                                    else
+                                    if (ubs == 0 && fields == 0)
                                     {
-                                        plugin.cm.showNotFound(player);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "The player had no pstones");
                                     }
-                                    return true;
                                 }
+                                else
+                                {
+                                    plugin.cm.showNotFound(player);
+                                }
+                                return true;
                             }
                         }
                         else if (split[0].equals("setowner") && plugin.pm.hasPermission(player, "preciousstones.admin.setowner"))
@@ -670,10 +673,10 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (split[0].equals("save") && plugin.pm.hasPermission(player, "preciousstones.admin.save"))
                         {
-                              plugin.um.saveAll();
-                              plugin.ffm.saveAll();
+                            plugin.um.saveAll();
+                            plugin.ffm.saveAll();
 
-                              ChatBlock.sendMessage(player, ChatColor.AQUA + "Data saved.");
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Data saved.");
                             return true;
                         }
                         else if (split[0].equals("fields") && plugin.pm.hasPermission(player, "preciousstones.admin.fields"))
@@ -783,7 +786,7 @@ public final class CommandManager implements CommandExecutor
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.delete"))
                     {
                         cacheBlock.addRow(ChatColor.DARK_RED + "/ps delete " + ChatColor.AQUA + "- Delete the field(s) you're standing on");
-                        cacheBlock.addRow(ChatColor.DARK_RED + "/ps delete [blockid] " + ChatColor.AQUA + "- Delete the field(s) from this type");
+                        cacheBlock.addRow(ChatColor.DARK_RED + "/ps delete [player] " + ChatColor.AQUA + "- Delete all pstones of the player");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.info"))
