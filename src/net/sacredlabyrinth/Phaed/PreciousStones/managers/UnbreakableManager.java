@@ -23,6 +23,7 @@ public class UnbreakableManager
 {
     private final HashMap<ChunkVec, LinkedList<Unbreakable>> chunkLists = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
     private Queue<Unbreakable> deletionQueue = new LinkedList<Unbreakable>();
+    private Queue<Unbreakable> replacementQueue = new LinkedList<Unbreakable>();
     private PreciousStones plugin;
 
     /**
@@ -58,21 +59,7 @@ public class UnbreakableManager
 
         for (Unbreakable ub : ubs)
         {
-            LinkedList<Unbreakable> c = chunkLists.get(ub.toChunkVec());
-
-            if (c != null)
-            {
-                if (!c.contains(ub))
-                {
-                    c.add(ub);
-                }
-            }
-            else
-            {
-                LinkedList<Unbreakable> newc = new LinkedList<Unbreakable>();
-                newc.add(ub);
-                chunkLists.put(ub.toChunkVec(), newc);
-            }
+            addToCollection(ub);
         }
 
         return ubs.size();
@@ -89,6 +76,8 @@ public class UnbreakableManager
             if (ub.isDirty())
             {
                 plugin.getDatabase().save(ub);
+                Unbreakable newub = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
+                replacementQueue.add(newub);
                 ub.setDirty(false);
             }
         }
@@ -110,6 +99,40 @@ public class UnbreakableManager
             {
                 saveUnbreakable(ub);
             }
+        }
+
+        processReplacementQueue();
+    }
+
+    /**
+     * Replaces outdated references in memory with the new db references
+     */
+    public void processReplacementQueue()
+    {
+        for (Unbreakable ub : replacementQueue)
+        {
+            addToCollection(ub);
+        }
+    }
+
+    /**
+     * Add the unbreakable to the collection held in memory
+     * @param ub the unbreakable
+     */
+    public void addToCollection(Unbreakable ub)
+    {
+        LinkedList<Unbreakable> c = chunkLists.get(ub.toChunkVec());
+
+        if (c != null)
+        {
+            c.remove(ub);
+            c.add(ub);
+        }
+        else
+        {
+            LinkedList<Unbreakable> newc = new LinkedList<Unbreakable>();
+            newc.add(ub);
+            chunkLists.put(ub.toChunkVec(), newc);
         }
     }
 

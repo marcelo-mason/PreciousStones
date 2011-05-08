@@ -70,21 +70,7 @@ public class ForceFieldManager
 
         for (Field field : fields)
         {
-            LinkedList<Field> c = chunkLists.get(field.toChunkVec());
-
-            if (c != null)
-            {
-                if (!c.contains(field))
-                {
-                    c.add(field);
-                }
-            }
-            else
-            {
-                LinkedList<Field> newc = new LinkedList<Field>();
-                newc.add(field);
-                chunkLists.put(field.toChunkVec(), newc);
-            }
+            addToCollection(field);
         }
 
         return fields.size();
@@ -125,17 +111,40 @@ public class ForceFieldManager
             }
         }
 
+        processReplacementQueue();
+    }
+
+    /**
+     * Replaces outdated references in memory with the new db references
+     */
+    public void processReplacementQueue()
+    {
         for (Field field : replacementQueue)
         {
-            replaceReference(field);
+            addToCollection(field);
         }
     }
 
-    private void replaceReference(Field field)
+
+    /**
+     * Add the field to the collection held in memory
+     * @param ub the unbreakable
+     */
+    public void addToCollection(Field field)
     {
         LinkedList<Field> c = chunkLists.get(field.toChunkVec());
-        c.remove(field);
-        c.add(field);
+
+        if (c != null)
+        {
+            c.remove(field);
+            c.add(field);
+        }
+        else
+        {
+            LinkedList<Field> newc = new LinkedList<Field>();
+            newc.add(field);
+            chunkLists.put(field.toChunkVec(), newc);
+        }
     }
 
     /**

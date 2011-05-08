@@ -194,6 +194,8 @@ public final class StorageManager
                 }
             }
 
+            plugin.um.processReplacementQueue();
+            
             PreciousStones.log(Level.INFO, "< imported {0} unbreakables", plugin.um.getCount());
         }
         catch (FileNotFoundException e)
@@ -339,6 +341,8 @@ public final class StorageManager
                     PreciousStones.log(Level.WARNING, "Corrupt field could not be imported");
                 }
             }
+
+            plugin.ffm.processReplacementQueue();
 
             PreciousStones.log(Level.INFO, "< imported {0} fields", plugin.ffm.getCount());
         }
