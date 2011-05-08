@@ -78,7 +78,6 @@ public class UnbreakableManager
                 plugin.getDatabase().save(ub);
                 Unbreakable newub = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
                 replacementQueue.add(newub);
-                ub.setDirty(false);
             }
         }
         catch (Exception ex)
