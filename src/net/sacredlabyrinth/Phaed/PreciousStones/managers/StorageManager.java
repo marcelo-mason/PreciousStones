@@ -194,11 +194,11 @@ public final class StorageManager
                 }
             }
 
-            PreciousStones.log(Level.INFO, "< imported {1} unbreakables", plugin.um.getCount());
+            PreciousStones.log(Level.INFO, "< imported {0} unbreakables", plugin.um.getCount());
         }
         catch (FileNotFoundException e)
         {
-            PreciousStones.log(Level.SEVERE, "Cannot read file {1}", unbreakable.getName());
+            PreciousStones.log(Level.SEVERE, "Cannot read file {0}", unbreakable.getName());
         }
     }
 
@@ -340,11 +340,11 @@ public final class StorageManager
                 }
             }
 
-            PreciousStones.log(Level.INFO, "< imported {1} fields", plugin.ffm.getCount());
+            PreciousStones.log(Level.INFO, "< imported {0} fields", plugin.ffm.getCount());
         }
         catch (FileNotFoundException e)
         {
-            PreciousStones.log(Level.SEVERE, "Cannot read file {1}", forcefield.getName());
+            PreciousStones.log(Level.SEVERE, "Cannot read file {0}", forcefield.getName());
         }
     }
 }

@@ -1307,7 +1307,7 @@ public class CommunicatonManager
      */
     public void showWelcomeMessage(Player player, String name)
     {
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + name);
+        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Entering: " + ChatColor.AQUA + name);
     }
 
     /**
@@ -1317,7 +1317,7 @@ public class CommunicatonManager
      */
     public void showFarewellMessage(Player player, String name)
     {
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Leaving " + name);
+        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Leaving " + ChatColor.AQUA + name);
     }
 
     /**
@@ -1326,7 +1326,7 @@ public class CommunicatonManager
      */
     public void showNotFound(Player player)
     {
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "No force-fields found");
+        ChatBlock.sendMessage(player, ChatColor.RED + "No force-fields found");
     }
 
     /**
@@ -1361,7 +1361,7 @@ public class CommunicatonManager
     {
         if (plugin.settings.warnInstantHeal && canWarn(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "*healed*");
+            ChatBlock.sendMessage(player, ChatColor.WHITE + "*healed*");
         }
     }
 
@@ -1453,7 +1453,7 @@ public class CommunicatonManager
      */
     public void showUnbreakableOwner(Player player, Block block)
     {
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + plugin.um.getOwner(block));
+        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Owner: " + ChatColor.AQUA + plugin.um.getOwner(block));
     }
 
     /**
@@ -1463,7 +1463,7 @@ public class CommunicatonManager
      */
     public void showFieldOwner(Player player, Block block)
     {
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + plugin.ffm.getOwner(block));
+        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Owner: " + ChatColor.AQUA + plugin.ffm.getOwner(block));
     }
 
     /**
@@ -1472,7 +1472,7 @@ public class CommunicatonManager
      */
     public void showProtected(Player player)
     {
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Protected");
+        ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected");
     }
 
     /**
@@ -1483,10 +1483,10 @@ public class CommunicatonManager
     public void showProtectedLocation(List<Field> fields, Player player)
     {
         ChatBlock.sendBlank(player);
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Protected");
+        ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected");
         for (Field field : fields)
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Source: [" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+            ChatBlock.sendMessage(player, ChatColor.YELLOW + "Source: " + ChatColor.AQUA + field.getX() + " " + field.getY() + " " + field.getZ());
         }
     }
 
@@ -1498,8 +1498,7 @@ public class CommunicatonManager
     public void showUnbreakableDetails(Unbreakable unbreakable, Player player)
     {
         ChatBlock.sendBlank(player);
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner: " + unbreakable.getOwner());
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Location: [" + unbreakable.getX() + " " + unbreakable.getY() + " " + unbreakable.getZ() + "]");
+        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Owner: " + ChatColor.AQUA + unbreakable.getOwner());
     }
 
     /**
@@ -1623,9 +1622,17 @@ public class CommunicatonManager
 
             for (Field field : scoped)
             {
-                String name = field.getName().length() == 0 ? "" : " Name: " + field.getName();
+                StringBuilder sb = new StringBuilder();
+                sb.append(ChatColor.YELLOW);
+                sb.append( "Owner: " );
+                sb.append(ChatColor.AQUA);
+                sb.append(field.getOwner());
+                sb.append(ChatColor.YELLOW);
+                sb.append(" Name: ");
+                sb.append(ChatColor.AQUA);
+                sb.append(field.getCoords());
 
-                ChatBlock.sendMessage(player, ChatColor.YELLOW + "Owner: " +  ChatColor.AQUA + field.getOwner() + name + " " + field.getCoords());
+                ChatBlock.sendMessage(player, sb.toString());
             }
         }
         else

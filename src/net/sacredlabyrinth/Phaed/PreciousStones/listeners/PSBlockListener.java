@@ -18,7 +18,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import org.bukkit.event.painting.PaintingBreakEvent;
 
 /**
  * PreciousStones block listener
@@ -37,7 +36,7 @@ public class PSBlockListener extends BlockListener
     {
 	this.plugin = plugin;
     }
-    
+
     /**
      *
      * @param event

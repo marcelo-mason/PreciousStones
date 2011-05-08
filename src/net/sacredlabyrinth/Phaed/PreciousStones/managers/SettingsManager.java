@@ -443,10 +443,19 @@ public final class SettingsManager
     public class FieldSettings
     {
         public boolean blockDefined = false;
+
         public int blockId;
         public int radius = 0;
         public int height = 0;
+        public int launchHeight = 0;
+        public int cannonHeight = 0;
+        public int mineDelaySeconds = 0;
+        public int mineReplaceBlock = 0;
+        public int lightningDelaySeconds = 0;
+        public int lightningReplaceBlock = 0;
+
         public String title;
+        
         public boolean nameable = false;
         public boolean preventFire = false;
         public boolean preventPlace = false;
@@ -469,15 +478,9 @@ public final class SettingsManager
         public boolean snitch = false;
         public boolean noConflict = false;
         public boolean launch = false;
-        public int launchHeight = 0;
         public boolean cannon = false;
-        public int cannonHeight = 0;
         public boolean mine = false;
-        public int mineDelaySeconds = 0;
-        public int mineReplaceBlock = 0;
         public boolean lightning = false;
-        public int lightningDelaySeconds = 0;
-        public int lightningReplaceBlock = 0;
         public boolean cloak = false;
 
         /**

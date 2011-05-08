@@ -806,12 +806,12 @@ public final class CommandManager implements CommandExecutor
 
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.reload"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "/ps reload " + ChatColor.AQUA + "- Reload configuraton file");
+                        cacheBlock.addRow(ChatColor.DARK_RED + "/ps reload " + ChatColor.AQUA + "- Reloads configuraton file");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.save"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "/ps save " + ChatColor.AQUA + "- Save pstones to database");
+                        cacheBlock.addRow(ChatColor.DARK_RED + "/ps save " + ChatColor.AQUA + "- Saves pstones to database");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.fields"))

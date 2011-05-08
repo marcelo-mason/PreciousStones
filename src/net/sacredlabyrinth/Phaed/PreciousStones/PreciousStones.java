@@ -1,4 +1,4 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -40,7 +40,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
  */
 public class PreciousStones extends JavaPlugin
 {
-    public static Logger logger;
+    public static final Logger logger = Logger.getLogger("Minecraft");
+
     public SettingsManager settings;
     public CommandManager com;
     public ForceFieldManager ffm;
@@ -70,7 +71,7 @@ public class PreciousStones extends JavaPlugin
      */
     public static void log(Level level, String msg, Object... arg)
     {
-        logger.log(level, new StringBuilder().append("[PreciousStones]").append(MessageFormat.format(msg, arg)).toString());
+        logger.log(level, new StringBuilder().append("[PreciousStones] ").append(MessageFormat.format(msg, arg)).toString());
     }
 
     /**
@@ -79,8 +80,6 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onEnable()
     {
-        logger = Logger.getLogger("Minecraft");
-
         setupDatabase();
         displayStatusInfo();
 
@@ -113,7 +112,7 @@ public class PreciousStones extends JavaPlugin
 
     private void displayStatusInfo()
     {
-        log(Level.INFO, "version [{1}] loaded", this.getDescription().getVersion());
+        log(Level.INFO, "version {0} loaded", this.getDescription().getVersion());
     }
 
     private void registerEvents()
