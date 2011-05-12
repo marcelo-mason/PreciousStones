@@ -98,7 +98,7 @@ public class Unbreakable extends AbstractVec
     {
         this.id = id;
     }
-    
+
     /**
      *
      * @return

@@ -1,8 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
+import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -35,6 +37,20 @@ public class PSVehicleListener extends VehicleListener
     @Override
     public void onVehicleMove(VehicleMoveEvent event)
     {
+        if(new Vec(event.getFrom()).equals(new Vec(event.getTo())))
+        {
+            return;
+        }
+
+        // skip chunks that never had pstones
+
+        Chunk chunk = event.getTo().getBlock().getChunk();
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
+
         Vehicle v = event.getVehicle();
         Entity entity = v.getPassenger();
 

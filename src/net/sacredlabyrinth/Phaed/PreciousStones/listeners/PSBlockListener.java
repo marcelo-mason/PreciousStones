@@ -18,6 +18,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.Chunk;
 
 /**
  * PreciousStones block listener
@@ -49,18 +50,33 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-	Field from = plugin.ffm.isPlaceProtected(event.getBlock(), null);
+        // skip chunks that never had pstones
+
+        Chunk chunk = event.getToBlock().getChunk();
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
+
 	Field to = plugin.ffm.isPlaceProtected(event.getToBlock(), null);
+	Field to2 = plugin.ffm.isPvPProtected(event.getToBlock());
+
+        if(to == null && to2 == null)
+        {
+            return;
+        }
+
+	Field from = plugin.ffm.isPlaceProtected(event.getBlock(), null);
 
 	if (from == null && to != null)
 	{
 	    event.setCancelled(true);
 	}
 
-	from = plugin.ffm.isPvPProtected(event.getBlock());
-	to = plugin.ffm.isPvPProtected(event.getToBlock());
+	Field from2 = plugin.ffm.isPvPProtected(event.getBlock());
 
-	if (from == null && to != null)
+	if (from2 == null && to2 != null)
 	{
 	    event.setCancelled(true);
 	}
@@ -74,6 +90,15 @@ public class PSBlockListener extends BlockListener
     public void onBlockIgnite(BlockIgniteEvent event)
     {
         if(event.isCancelled())
+        {
+            return;
+        }
+
+        // skip chunks that never had pstones
+
+        Chunk chunk = event.getBlock().getChunk();
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
         {
             return;
         }
@@ -111,6 +136,15 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockRedstoneChange(BlockRedstoneEvent event)
     {
+        // skip chunks that never had pstones
+
+        Chunk chunk = event.getBlock().getChunk();
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
+
 	Block redstoneblock = event.getBlock();
 
 	for (int x = -1; x <= 1; x++)
@@ -184,6 +218,15 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
+        // skip chunks that never had pstones
+
+        Chunk chunk = event.getBlock().getChunk();
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
+
 	Block damagedblock = event.getBlock();
 	Player player = event.getPlayer();
 
@@ -199,25 +242,7 @@ public class PSBlockListener extends BlockListener
 
 	plugin.snm.recordSnitchBlockBreak(player, damagedblock);
 
-	if (plugin.settings.isUnbreakableType(damagedblock) && plugin.um.isUnbreakable(damagedblock))
-	{
-	    if (plugin.um.isOwner(damagedblock, player.getName()))
-	    {
-		plugin.cm.notifyDestroyU(player, damagedblock);
-		plugin.um.release(damagedblock);
-	    }
-	    else if (plugin.pm.hasPermission(player, "preciousstones.bypass.unbreakable"))
-	    {
-		plugin.cm.notifyBypassDestroyU(player, damagedblock);
-		plugin.um.release(damagedblock);
-	    }
-	    else
-	    {
-		event.setCancelled(true);
-		plugin.cm.warnDestroyU(player, damagedblock);
-	    }
-	}
-	else if ((plugin.settings.isFieldType(damagedblock) || plugin.settings.isCloakableType(damagedblock)) && plugin.ffm.isField(damagedblock))
+	if ((plugin.settings.isFieldType(damagedblock) || plugin.settings.isCloakableType(damagedblock)) && plugin.ffm.isField(damagedblock))
 	{
 	    if (plugin.ffm.isBreakable(damagedblock))
 	    {
@@ -243,6 +268,24 @@ public class PSBlockListener extends BlockListener
 	    {
 		event.setCancelled(true);
 		plugin.cm.warnDestroyFF(player, damagedblock);
+	    }
+	}
+        else if (plugin.settings.isUnbreakableType(damagedblock) && plugin.um.isUnbreakable(damagedblock))
+	{
+	    if (plugin.um.isOwner(damagedblock, player.getName()))
+	    {
+		plugin.cm.notifyDestroyU(player, damagedblock);
+		plugin.um.release(damagedblock);
+	    }
+	    else if (plugin.pm.hasPermission(player, "preciousstones.bypass.unbreakable"))
+	    {
+		plugin.cm.notifyBypassDestroyU(player, damagedblock);
+		plugin.um.release(damagedblock);
+	    }
+	    else
+	    {
+		event.setCancelled(true);
+		plugin.cm.warnDestroyU(player, damagedblock);
 	    }
 	}
 	else

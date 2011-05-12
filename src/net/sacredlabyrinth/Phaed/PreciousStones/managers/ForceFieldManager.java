@@ -125,10 +125,9 @@ public class ForceFieldManager
         }
     }
 
-
     /**
      * Add the field to the collection held in memory
-     * @param ub the unbreakable
+     * @param field
      */
     public void addToCollection(Field field)
     {
@@ -198,6 +197,26 @@ public class ForceFieldManager
     public List<Field> retrieveFields(ChunkVec cv)
     {
         return chunkLists.get(cv);
+    }
+
+    /**
+     * Retrieve all chunks in collection
+     * @param world the world you want the fields from
+     * @return all the chunks that match the world
+     */
+    public List<ChunkVec> retrieveChunks(String world)
+    {
+        List<ChunkVec> out = new LinkedList<ChunkVec>();
+
+        for (ChunkVec cv : chunkLists.keySet())
+        {
+            if (cv.getWorld().equalsIgnoreCase(world))
+            {
+                out.add(cv);
+            }
+        }
+
+        return out;
     }
 
     /**
@@ -602,14 +621,7 @@ public class ForceFieldManager
         {
             if (field.envelops(loc) && (playerName == null || !field.isAllowed(playerName)))
             {
-                if (!plugin.settings.isFieldType(field.getTypeId()) && !plugin.settings.isCloakableType(field.getTypeId()))
-                {
-                    queueRelease(field);
-                }
-                else
-                {
-                    fields.add(field);
-                }
+                fields.add(field);
             }
         }
 
@@ -1610,10 +1622,10 @@ public class ForceFieldManager
             return false;
         }
 
-        ChunkVec chunkvec = new ChunkVec(fieldblock.getChunk());
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
         Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), "");
 
+        ChunkVec chunkvec = field.toChunkVec();
         LinkedList<Field> c = chunkLists.get(chunkvec);
 
         if (c != null)
@@ -1630,6 +1642,7 @@ public class ForceFieldManager
             chunkLists.put(chunkvec, newc);
         }
 
+        plugin.tm.tagChunk(chunkvec);
         return true;
     }
 

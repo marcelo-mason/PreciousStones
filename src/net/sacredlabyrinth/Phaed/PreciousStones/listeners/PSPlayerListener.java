@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.Chunk;
 
 /**
  * PreciousStones player listener
@@ -43,6 +44,11 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerInteract(PlayerInteractEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
 	Player player = event.getPlayer();
 	Block block = event.getClickedBlock();
 
@@ -50,6 +56,15 @@ public class PSPlayerListener extends PlayerListener
 	{
 	    return;
 	}
+
+        // skip chunks that never had pstones
+
+        Chunk chunk = event.getClickedBlock().getChunk();
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
 
 	if (event.getAction().equals(Action.PHYSICAL))
 	{
@@ -141,6 +156,25 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerMove(PlayerMoveEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        if(new Vec(event.getFrom()).equals(new Vec(event.getTo())))
+        {
+            return;
+        }
+
+        // skip chunks that never had pstones
+
+        Chunk chunk = event.getTo().getBlock().getChunk();
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
+
 	Player player = event.getPlayer();
 
 	List<Field> currentfields = plugin.ffm.getSourceFields(player);

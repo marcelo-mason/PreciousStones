@@ -24,6 +24,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.UnprotectableManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.StorageManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommunicatonManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.TagManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
@@ -50,6 +51,7 @@ public class PreciousStones extends JavaPlugin
     public StorageManager sm;
     public CommunicatonManager cm;
     public EntryManager em;
+    public TagManager tm;
     public PlayerManager plm;
     public SnitchManager snm;
     public MineManager mm;
@@ -99,6 +101,7 @@ public class PreciousStones extends JavaPlugin
         pm = new PermissionsManager(this);
 
         sm = new StorageManager(this);
+        tm = new TagManager(this);
 
         playerListener = new PSPlayerListener(this);
         blockListener = new PSBlockListener(this);

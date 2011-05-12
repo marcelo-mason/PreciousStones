@@ -34,5 +34,10 @@ public class PSWorldListener extends WorldListener
 
         plugin.ffm.loadWorld(world.getName());
         plugin.um.loadWorld(world.getName());
+
+        if(!plugin.tm.isTaggedWorld(world.getName()))
+        {
+            plugin.tm.tagWorld(world.getName());
+        }
     }
 }

@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
 
-import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -187,6 +186,26 @@ public class UnbreakableManager
     public List<Unbreakable> retrieveUnbreakables(ChunkVec cv)
     {
         return chunkLists.get(cv);
+    }
+
+    /**
+     * Retrieve all chunks in collection
+     * @param world the world you want the unbreakables from
+     * @return all the chunks that match the world
+     */
+    public List<ChunkVec> retrieveChunks(String world)
+    {
+        List<ChunkVec> out = new LinkedList<ChunkVec>();
+
+        for (ChunkVec cv : chunkLists.keySet())
+        {
+            if (cv.getWorld().equalsIgnoreCase(world))
+            {
+                out.add(cv);
+            }
+        }
+
+        return out;
     }
 
     /**
@@ -449,7 +468,7 @@ public class UnbreakableManager
         }
 
         Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
-
+        ChunkVec chunkvec = unbreakable.toChunkVec();
         LinkedList<Unbreakable> c = chunkLists.get(unbreakable.toChunkVec());
 
         if (c != null)
@@ -466,6 +485,7 @@ public class UnbreakableManager
             chunkLists.put(unbreakable.toChunkVec(), newc);
         }
 
+        plugin.tm.tagChunk(chunkvec);
         return true;
     }
 

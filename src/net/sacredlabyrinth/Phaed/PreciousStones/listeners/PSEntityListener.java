@@ -10,7 +10,9 @@ import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -40,6 +42,15 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
+       // skip chunks that never had pstones
+
+        Chunk chunk = event.getLocation().getBlock().getChunk();
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
+
         CreatureType mob = event.getCreatureType();
         Location loc = event.getLocation();
 
@@ -80,6 +91,11 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onEntityExplode(EntityExplodeEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         for (Block block : event.blockList())
         {
             // prevent explosion if breaking unbreakable
@@ -117,6 +133,11 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onEntityDamage(EntityDamageEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+        
         // prevent fall damage after cannon throws
 
         if (event.getCause().equals(DamageCause.FALL))

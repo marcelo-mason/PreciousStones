@@ -187,6 +187,7 @@ public final class StorageManager
                     Unbreakable ub = new Unbreakable(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), world, Material.getMaterial(type).getId(), owner);
 
                     plugin.um.saveUnbreakable(ub);
+                    plugin.um.processReplacementQueue();
                 }
                 catch (Exception ex)
                 {
@@ -194,8 +195,6 @@ public final class StorageManager
                 }
             }
 
-            plugin.um.processReplacementQueue();
-            
             PreciousStones.log(Level.INFO, "< imported {0} unbreakables", plugin.um.getCount());
         }
         catch (FileNotFoundException e)
@@ -335,14 +334,13 @@ public final class StorageManager
                     field.setAllowed(allowed);
 
                     plugin.ffm.saveField(field);
+                    plugin.ffm.processReplacementQueue();
                 }
                 catch (Exception ex)
                 {
                     PreciousStones.log(Level.WARNING, "Corrupt field could not be imported");
                 }
             }
-
-            plugin.ffm.processReplacementQueue();
 
             PreciousStones.log(Level.INFO, "< imported {0} fields", plugin.ffm.getCount());
         }

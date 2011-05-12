@@ -1546,7 +1546,7 @@ public class CommunicatonManager
             }
         }
 
-        ChatBlock.sendBlank(player);
+        chatBlock.addRow("", "");
 
         boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
 
