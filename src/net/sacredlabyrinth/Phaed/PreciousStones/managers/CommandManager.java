@@ -81,6 +81,10 @@ public final class CommandManager implements CommandExecutor
             helpPlugin.registerCommand("ps removeall [player|*] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
             helpPlugin.registerCommand("ps who ", "List all inhabitants inside the overlapping fields", plugin, true, "preciousstones.whitelist.who");
             helpPlugin.registerCommand("ps setname [name] ", "Set the name of force-fields", plugin, true, "preciousstones.benefit.setname");
+            helpPlugin.registerCommand("ps setradius [radius]", "Sets the field's radius", plugin, true, "preciousstones.benefit.setradius");
+            helpPlugin.registerCommand("ps setheight [height]", "Sets the field's height", plugin, true, "preciousstones.benefit.setheight");
+            helpPlugin.registerCommand("ps setvelocity [0-5] ", "Sets velocity of launchers/cannons", plugin, true, "preciousstones.benefit.setvelocity");
+            helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
             helpPlugin.registerCommand("ps snitch <clear> ", "View/clear snitch you're pointing at", plugin, true, "preciousstones.benefit.snitch");
             helpPlugin.registerCommand("ps cloak <radius>", "Cloaks the block you are looking at", plugin, true, "preciousstones.special.cloak");
             helpPlugin.registerCommand("ps decloak ", "Decloaks the block you are looking at", plugin, true, "preciousstones.special.cloak");
@@ -88,7 +92,6 @@ public final class CommandManager implements CommandExecutor
             helpPlugin.registerCommand("ps delete [player] ", "Delete all pstones of the player", plugin, true, "preciousstones.admin.delete");
             helpPlugin.registerCommand("ps info ", "Get info for the field youre standing on", plugin, true, "preciousstones.admin.info");
             helpPlugin.registerCommand("ps list [chunks-in-radius]", "Lists all pstones in area", plugin, true, "preciousstones.admin.list");
-            helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
             helpPlugin.registerCommand("ps reload ", "Reload configuraton file", plugin, true, "preciousstones.admin.reload");
             helpPlugin.registerCommand("ps save ", "Save pstones to database", plugin, true, "preciousstones.admin.save");
             helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
@@ -352,6 +355,107 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     return true;
                                 }
+                            }
+                        }
+                        else if (split[0].equals("setradius") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.benefit.setradius"))
+                        {
+                            if (split.length == 2 && Helper.isInteger(split[1]))
+                            {
+                                int radius = Integer.parseInt(split[1]);
+
+                                Field field = plugin.ffm.getOneAllowedField(block, player);
+
+                                if (field != null)
+                                {
+                                    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                                    if (radius >= 0 && radius <= fieldsettings.radius)
+                                    {
+                                        field.setRadius(radius);
+                                        field.setDirty(true);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Radius set to " + radius);
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "Radius must be less than or equal to " + fieldsettings.radius);
+                                    }
+                                    return true;
+                                }
+                                else
+                                {
+                                    plugin.cm.showNotFound(player);
+                                }
+                                return true;
+                            }
+                        }
+                        else if (split[0].equals("setheight") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.benefit.setheight"))
+                        {
+                            if (split.length == 2 && Helper.isInteger(split[1]))
+                            {
+                                int height = Integer.parseInt(split[1]);
+
+                                Field field = plugin.ffm.getOneAllowedField(block, player);
+
+                                if (field != null)
+                                {
+                                    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                                    int maxHeight = (((fieldsettings.radius * 2) + 1) + fieldsettings.height);
+
+                                    if (height >= 0 && height <= maxHeight)
+                                    {
+                                        field.setHeight(height);
+                                        field.setDirty(true);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Height set to " + height);
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "Height must be less than or equal to " + maxHeight);
+                                    }
+                                    return true;
+                                }
+                                else
+                                {
+                                    plugin.cm.showNotFound(player);
+                                }
+                                return true;
+                            }
+                        }
+                        else if (split[0].equals("setvelocity") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.benefit.setvelocity"))
+                        {
+                            if (split.length == 2 && Helper.isInteger(split[1]))
+                            {
+                                int velocity = Integer.parseInt(split[1]);
+
+                                Field field = plugin.ffm.getOneAllowedField(block, player);
+
+                                if (field != null)
+                                {
+                                    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                                    if (fieldsettings.cannon || fieldsettings.launch)
+                                    {
+                                        if (velocity < 0 || velocity > 5)
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.RED + "Velocity must be from 0 to 5");
+                                            return true;
+                                        }
+
+                                        field.setVelocity(velocity);
+                                        field.setDirty(true);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Velocity set to " + velocity);
+                                    }
+                                    else
+                                    {
+                                        plugin.cm.showNotFound(player);
+                                    }
+                                    return true;
+                                }
+                                else
+                                {
+                                    plugin.cm.showNotFound(player);
+                                }
+                                return true;
                             }
                         }
                         else if (split[0].equals("snitch") && plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
@@ -766,6 +870,21 @@ public final class CommandManager implements CommandExecutor
                     if (plugin.settings.haveNameable() && plugin.pm.hasPermission(player, "preciousstones.benefit.setname"))
                     {
                         cacheBlock.addRow(color + "/ps setname [name] " + ChatColor.AQUA + "- Set the name of force-fields");
+                    }
+
+                    if (plugin.pm.hasPermission(player, "preciousstones.benefit.setradius"))
+                    {
+                        cacheBlock.addRow(color + "/ps setradius [radius] " + ChatColor.AQUA + "- Sets the field's radius");
+                    }
+
+                    if (plugin.pm.hasPermission(player, "preciousstones.benefit.setheight"))
+                    {
+                        cacheBlock.addRow(color + "/ps setheight [height] " + ChatColor.AQUA + "- Sets the field's height");
+                    }
+
+                    if (plugin.pm.hasPermission(player, "preciousstones.benefit.setvelocity"))
+                    {
+                        cacheBlock.addRow(color + "/ps setvelocity [0-5] " + ChatColor.AQUA + "- Sets velocity of launchers/cannons");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))

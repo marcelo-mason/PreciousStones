@@ -40,7 +40,7 @@ public class VelocityManager
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
-		final int launchheight = fieldsettings.launchHeight;
+		final int launchheight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.launchHeight;
 
 		if (fieldsettings.launch)
 		{
@@ -89,8 +89,8 @@ public class VelocityManager
 	    {
 		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
-		final int bounceHeight = fieldsettings.cannonHeight;
-
+		final int bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.cannonHeight;
+                
 		if (fieldsettings.cannon)
 		{
 		    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()

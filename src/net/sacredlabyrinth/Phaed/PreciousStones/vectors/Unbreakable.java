@@ -16,7 +16,7 @@ import org.bukkit.block.Block;
  */
 @Entity()
 @CacheStrategy
-@Table(name = "unbreakables", uniqueConstraints = @UniqueConstraint(columnNames = { "x", "y", "z", "world" }))
+@Table(name = "ps_unbreakables", uniqueConstraints = @UniqueConstraint(columnNames = { "x", "y", "z", "world" }))
 public class Unbreakable extends AbstractVec
 {
     @NotNull

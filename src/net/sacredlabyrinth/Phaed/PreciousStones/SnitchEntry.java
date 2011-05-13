@@ -15,7 +15,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
  */
 @Entity()
 @CacheStrategy
-@Table(name = "snitch_entries")
+@Table(name = "ps_snitch_entries")
 public class SnitchEntry implements Serializable
 {
     @Id
@@ -73,7 +73,7 @@ public class SnitchEntry implements Serializable
     {
         this.id = id;
     }
-    
+
     /**
      * @param name the name to set
      */

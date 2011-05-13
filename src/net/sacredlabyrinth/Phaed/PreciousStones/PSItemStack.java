@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
  * @author phaed
  */
 @Entity()
-@Table(name = "item_stacks")
+@Table(name = "ps_item_stacks")
 public class PSItemStack implements Serializable
 {
     private int type;
@@ -73,7 +73,7 @@ public class PSItemStack implements Serializable
     {
         this.id = id;
     }
-    
+
     /**
      * @return the type
      */

@@ -15,7 +15,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
  */
 @Entity()
 @CacheStrategy
-@Table(name = "allowed_players")
+@Table(name = "ps_allowed_players")
 public class AllowedEntry implements Serializable
 {
     @Id

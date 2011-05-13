@@ -30,13 +30,14 @@ import org.bukkit.Location;
  */
 @Entity()
 @CacheStrategy
-@Table(name = "fields", uniqueConstraints = @UniqueConstraint(columnNames ={"x", "y", "z", "world"}))
+@Table(name = "ps_fields", uniqueConstraints = @UniqueConstraint(columnNames ={"x", "y", "z", "world"}))
 public class Field extends AbstractVec implements Serializable
 {
     @Id
     private Long id;
     private int radius;
     private int height;
+    private int velocity;
     private int typeId;
 
     @NotNull
@@ -684,7 +685,6 @@ public class Field extends AbstractVec implements Serializable
         return envelops(new Vec(loc));
     }
 
-
     /**
      * @return the dirty
      */
@@ -699,5 +699,21 @@ public class Field extends AbstractVec implements Serializable
     public void setDirty(boolean dirty)
     {
         this.dirty = dirty;
+    }
+
+    /**
+     * @return the velocity
+     */
+    public int getVelocity()
+    {
+        return velocity;
+    }
+
+    /**
+     * @param velocity the velocity to set
+     */
+    public void setVelocity(int velocity)
+    {
+        this.velocity = velocity;
     }
 }

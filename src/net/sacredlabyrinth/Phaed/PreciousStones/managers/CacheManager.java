@@ -10,6 +10,10 @@ public class CacheManager
 {
     private PreciousStones plugin;
 
+    /**
+     *
+     * @param plugin
+     */
     public CacheManager(PreciousStones plugin)
     {
 	this.plugin = plugin;

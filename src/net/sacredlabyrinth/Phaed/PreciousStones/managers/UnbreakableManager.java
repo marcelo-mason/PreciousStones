@@ -135,31 +135,23 @@ public class UnbreakableManager
     }
 
     /**
-     * Delete an unbreakable from memory and from the database
-     * @param ub
+     * Check if a chunk contains an unbreakable
+     * @param cv the chunk vec
+     * @return whether the chunk contains unbreakables
      */
-    public void deleteUnbreakable(Unbreakable ub)
+    public boolean hasUnbreakable(ChunkVec cv)
     {
-        LinkedList<Unbreakable> c = chunkLists.get(ub.toChunkVec());
-
-        if (c != null)
+        if (chunkLists.containsKey(cv))
         {
-            c.remove(ub);
-        }
+            LinkedList<Unbreakable> c = chunkLists.get(cv);
 
-        try
-        {
-            Unbreakable old = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
-
-            if (old != null)
+            if (!c.isEmpty())
             {
-                plugin.getDatabase().delete(old);
+                return true;
             }
+        }
 
-        }
-        catch (Exception ex)
-        {
-        }
+        return false;
     }
 
     /**
@@ -551,6 +543,39 @@ public class UnbreakableManager
         {
             Unbreakable pending = deletionQueue.poll();
             deleteUnbreakable(pending);
+        }
+    }
+
+    /**
+     * Delete an unbreakable from memory and from the database
+     * @param ub
+     */
+    public void deleteUnbreakable(Unbreakable ub)
+    {
+        LinkedList<Unbreakable> c = chunkLists.get(ub.toChunkVec());
+
+        if (c != null)
+        {
+            c.remove(ub);
+        }
+
+        try
+        {
+            Unbreakable old = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
+
+            if (old != null)
+            {
+                plugin.getDatabase().delete(old);
+            }
+
+        }
+        catch (Exception ex)
+        {
+        }
+
+        if (!plugin.tm.containsPStones(ub.toChunkVec()))
+        {
+            plugin.tm.untagChunk(ub.toChunkVec());
         }
     }
 }

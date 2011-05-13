@@ -1,7 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import com.avaje.ebean.annotation.CacheStrategy;
-import com.avaje.ebean.validation.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
  * @author phaed
  */
 @Entity()
-@Table(name = "cloaked")
+@Table(name = "ps_cloaked")
 public class CloakEntry implements Serializable
 {
     @Id

@@ -147,30 +147,23 @@ public class ForceFieldManager
     }
 
     /**
-     * Saves a field from memory and from the database
-     * @param field the field to delete
+     * Check if a chunk contains a field
+     * @param cv the chunk vec
+     * @return whether the chunk contains fields
      */
-    public void deleteField(Field field)
+    public boolean hasField(ChunkVec cv)
     {
-        LinkedList<Field> c = chunkLists.get(field.toChunkVec());
-
-        if (c != null)
+        if (chunkLists.containsKey(cv))
         {
-            c.remove(field);
-        }
+            LinkedList<Field> c = chunkLists.get(cv);
 
-        try
-        {
-            Field old = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
-
-            if (old != null)
+            if (!c.isEmpty())
             {
-                plugin.getDatabase().delete(old);
+                return true;
             }
         }
-        catch (Exception ex)
-        {
-        }
+
+        return false;
     }
 
     /**
@@ -920,31 +913,6 @@ public class ForceFieldManager
             }
         }
         return renamedCount;
-    }
-
-    /**
-     * Delete fields
-     * @param player
-     * @param field
-     * @return count of fields deleted
-     */
-    public int deleteFields(Player player, Field field)
-    {
-        HashSet<Field> total = getOverlappedFields(player, field);
-
-        int deletedCount = 0;
-
-        for (Field f : total)
-        {
-            plugin.ffm.queueRelease(f);
-            deletedCount++;
-        }
-
-        if (deletedCount > 0)
-        {
-            flush();
-        }
-        return deletedCount;
     }
 
     /**
@@ -1737,19 +1705,70 @@ public class ForceFieldManager
         {
             Field pending = deletionQueue.poll();
 
-            LinkedList<Field> c = chunkLists.get(pending.toChunkVec());
+            deleteField(pending);
 
-            if (c != null)
+            if (plugin.settings.dropOnDelete)
             {
-                c.remove(pending);
-                deleteField(pending);
-
-                if (plugin.settings.dropOnDelete)
-                {
-                    dropBlock(pending);
-                }
+                dropBlock(pending);
             }
         }
+    }
+
+    /**
+     * Saves a field from memory and from the database
+     * @param field the field to delete
+     */
+    public void deleteField(Field field)
+    {
+        LinkedList<Field> c = chunkLists.get(field.toChunkVec());
+
+        if (c != null)
+        {
+            c.remove(field);
+        }
+
+        try
+        {
+            Field old = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
+
+            if (old != null)
+            {
+                plugin.getDatabase().delete(old);
+            }
+        }
+        catch (Exception ex)
+        {
+        }
+
+        if (!plugin.tm.containsPStones(field.toChunkVec()))
+        {
+            plugin.tm.untagChunk(field.toChunkVec());
+        }
+    }
+
+    /**
+     * Delete fields the overlapping fields the player is standing on
+     * @param player
+     * @param field
+     * @return count of fields deleted
+     */
+    public int deleteFields(Player player, Field field)
+    {
+        HashSet<Field> total = getOverlappedFields(player, field);
+
+        int deletedCount = 0;
+
+        for (Field f : total)
+        {
+            plugin.ffm.queueRelease(f);
+            deletedCount++;
+        }
+
+        if (deletedCount > 0)
+        {
+            flush();
+        }
+        return deletedCount;
     }
 
     /**

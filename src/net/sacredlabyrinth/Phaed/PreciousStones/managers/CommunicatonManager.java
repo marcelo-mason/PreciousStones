@@ -3,7 +3,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
-import net.sacredlabyrinth.Phaed.PreciousStones.AllowedEntry;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
@@ -1531,9 +1530,11 @@ public class CommunicatonManager
                 chatBlock.addRow("  " + ChatColor.YELLOW + "Allowed: ", ChatColor.AQUA + field.getAllowedList());
             }
 
-            if (fieldsettings.radius > 0)
+            chatBlock.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1));
+
+            if (field.getVelocity() > 0)
             {
-                chatBlock.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1));
+                chatBlock.addRow("  " + ChatColor.YELLOW + "Velocity: ", ChatColor.AQUA + "" + field.getVelocity());
             }
 
             chatBlock.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ());

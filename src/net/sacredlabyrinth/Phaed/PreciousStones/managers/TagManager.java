@@ -15,6 +15,10 @@ public class TagManager
 {
     private PreciousStones plugin;
 
+    /**
+     *
+     * @param plugin
+     */
     public TagManager(PreciousStones plugin)
     {
         this.plugin = plugin;
@@ -34,17 +38,40 @@ public class TagManager
         }
     }
 
+    /**
+     * Tags the chunk, used when a pstone is placed on the chunk
+     * @param cv
+     */
     public void tagChunk(ChunkVec cv)
     {
         plugin.getServer().getWorld(cv.getWorld()).getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4).setType(Material.OBSIDIAN);
         plugin.getServer().getWorld(cv.getWorld()).getBlockAt(cv.getX() << 4, 1, cv.getZ() << 4).setType(Material.BEDROCK);
     }
 
+    /**
+     * Un-tags the chunk, used when there are no more pstones
+     * @param cv
+     */
     public void untagChunk(ChunkVec cv)
     {
         plugin.getServer().getWorld(cv.getWorld()).getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4).setType(Material.BEDROCK);
     }
 
+    /**
+     * Whether the chunk contains any pstones
+     * @param cv
+     * @return Whether the chunk contains any pstones
+     */
+    public boolean containsPStones(ChunkVec cv)
+    {
+        return plugin.ffm.hasField(cv) || plugin.um.hasUnbreakable(cv);
+    }
+
+    /**
+     * Check if the area around the chunk contains a tagged chunk
+     * @param cv
+     * @return whether the area around the chunk contains a tagged chunk
+     */
     public boolean isTaggedArea(ChunkVec cv)
     {
         World world = plugin.getServer().getWorld(cv.getWorld());
@@ -81,6 +108,11 @@ public class TagManager
         return false;
     }
 
+    /**
+     * Check whether the world's pstones have been initially  tagged
+     * @param worldName
+     * @return
+     */
     public boolean isTaggedWorld(String worldName)
     {
         World world = plugin.getServer().getWorld(worldName);
@@ -94,6 +126,10 @@ public class TagManager
         return false;
     }
 
+    /**
+     * Tags all of the worlds pstone chunks
+     * @param worldName
+     */
     public void tagWorld(String worldName)
     {
         List<ChunkVec> chunks = plugin.ffm.retrieveChunks(worldName);
