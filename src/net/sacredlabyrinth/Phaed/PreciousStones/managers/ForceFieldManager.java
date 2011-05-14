@@ -1047,7 +1047,7 @@ public class ForceFieldManager
                 {
                     try
                     {
-                        plugin.getDatabase().delete(ae);
+                        plugin.getDatabase().delete(AllowedEntry.class, ae.getId());
                     }
                     catch (Exception ex)
                     {
@@ -1083,7 +1083,7 @@ public class ForceFieldManager
                 {
                     try
                     {
-                        plugin.getDatabase().delete(ae);
+                        plugin.getDatabase().delete(AllowedEntry.class, ae.getId());
                     }
                     catch (Exception ex)
                     {
@@ -1733,7 +1733,7 @@ public class ForceFieldManager
 
             if (old != null)
             {
-                plugin.getDatabase().delete(old);
+                plugin.getDatabase().delete(Field.class, old.getId());
             }
         }
         catch (Exception ex)

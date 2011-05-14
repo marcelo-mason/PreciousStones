@@ -28,7 +28,7 @@ public final class PermissionsManager
     {
 	this.plugin = plugin;
 
-	startoolmissions();
+	startPermissions();
     }
 
     /**
@@ -46,7 +46,12 @@ public final class PermissionsManager
 
 	if (hasPermissionPlugin())
 	{
-	    return (Permissions != null && Permissions.has(player, permission));
+            if (Permissions.has(player, "preciousstones.blacklist"))
+            {
+                return false;
+            }
+
+	    return Permissions.has(player, permission);
 	}
 	else
 	{
@@ -78,7 +83,7 @@ public final class PermissionsManager
     /**
      *
      */
-    public void startoolmissions()
+    public void startPermissions()
     {
 	if (PermissionsManager.Permissions == null)
 	{

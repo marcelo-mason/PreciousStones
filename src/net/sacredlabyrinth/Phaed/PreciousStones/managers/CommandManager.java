@@ -83,7 +83,7 @@ public final class CommandManager implements CommandExecutor
             helpPlugin.registerCommand("ps setname [name] ", "Set the name of force-fields", plugin, true, "preciousstones.benefit.setname");
             helpPlugin.registerCommand("ps setradius [radius]", "Sets the field's radius", plugin, true, "preciousstones.benefit.setradius");
             helpPlugin.registerCommand("ps setheight [height]", "Sets the field's height", plugin, true, "preciousstones.benefit.setheight");
-            helpPlugin.registerCommand("ps setvelocity [0-5] ", "Sets velocity of launchers/cannons", plugin, true, "preciousstones.benefit.setvelocity");
+            helpPlugin.registerCommand("ps setvelocity [.1-5] ", "Sets velocity of launchers/cannons", plugin, true, "preciousstones.benefit.setvelocity");
             helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
             helpPlugin.registerCommand("ps snitch <clear> ", "View/clear snitch you're pointing at", plugin, true, "preciousstones.benefit.snitch");
             helpPlugin.registerCommand("ps cloak <radius>", "Cloaks the block you are looking at", plugin, true, "preciousstones.special.cloak");
@@ -884,7 +884,7 @@ public final class CommandManager implements CommandExecutor
 
                     if (plugin.pm.hasPermission(player, "preciousstones.benefit.setvelocity"))
                     {
-                        cacheBlock.addRow(color + "/ps setvelocity [0-5] " + ChatColor.AQUA + "- Sets velocity of launchers/cannons");
+                        cacheBlock.addRow(color + "/ps setvelocity [.1-5] " + ChatColor.AQUA + "- For launchers and cannons (0=auto)");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))

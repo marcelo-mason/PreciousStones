@@ -42,7 +42,7 @@ public class SnitchManager
     {
         try
         {
-            plugin.getDatabase().delete(se);
+            plugin.getDatabase().delete(SnitchEntry.class, se.getId());
         }
         catch (Exception ex)
         {

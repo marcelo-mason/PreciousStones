@@ -1316,7 +1316,7 @@ public class CommunicatonManager
      */
     public void showFarewellMessage(Player player, String name)
     {
-        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Leaving " + ChatColor.AQUA + name);
+        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Leaving: " + ChatColor.AQUA + name);
     }
 
     /**

@@ -565,7 +565,7 @@ public class UnbreakableManager
 
             if (old != null)
             {
-                plugin.getDatabase().delete(old);
+                plugin.getDatabase().delete(Unbreakable.class, old.getId());
             }
 
         }

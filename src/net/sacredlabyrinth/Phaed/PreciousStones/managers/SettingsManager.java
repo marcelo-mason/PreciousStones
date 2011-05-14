@@ -455,7 +455,7 @@ public final class SettingsManager
         public int lightningReplaceBlock = 0;
 
         public String title;
-        
+
         public boolean nameable = false;
         public boolean preventFire = false;
         public boolean preventPlace = false;
@@ -734,6 +734,15 @@ public final class SettingsManager
 	    if (cloak)
 		properties += ", cloak";
 
+            if (preventMobDamage)
+		properties += ", -mob-damage";
+
+            if (preventMobSpawn)
+		properties += ", -mob-spawn";
+
+            if (preventAnimalSpawn)
+		properties += ", -animal-spawn";
+            
 	    if (properties.length() > 0)
 		return properties.substring(2);
 
