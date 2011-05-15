@@ -187,6 +187,6 @@ public class SnitchManager
      */
     public static String toBlockDetails(Block block)
     {
-	return Helper.friendlyBlockType(block.getType().toString()) + " {" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "}";
+	return Helper.friendlyBlockType(block.getType().toString()) + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
     }
 }

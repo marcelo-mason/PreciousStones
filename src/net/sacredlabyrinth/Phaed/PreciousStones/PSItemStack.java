@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import com.avaje.ebean.annotation.CacheStrategy;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;

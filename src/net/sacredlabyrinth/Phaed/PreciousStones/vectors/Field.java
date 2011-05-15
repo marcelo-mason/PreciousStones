@@ -30,7 +30,11 @@ import org.bukkit.Location;
  */
 @Entity()
 @CacheStrategy
-@Table(name = "ps_fields", uniqueConstraints = @UniqueConstraint(columnNames ={"x", "y", "z", "world"}))
+@Table(name = "ps_fields", uniqueConstraints =
+@UniqueConstraint(columnNames =
+{
+    "x", "y", "z", "world"
+}))
 public class Field extends AbstractVec implements Serializable
 {
     @Id
@@ -39,25 +43,18 @@ public class Field extends AbstractVec implements Serializable
     private int height;
     private float velocity;
     private int typeId;
-
     @NotNull
     private String owner;
-
     @NotNull
     private String name;
-
     @OneToMany(mappedBy = "field", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<SnitchEntry> snitchList = new ArrayList<SnitchEntry>();
-
     @OneToMany(mappedBy = "field", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<AllowedEntry> allowed = new ArrayList<AllowedEntry>();
-
     @OneToOne(cascade = CascadeType.ALL)
     private CloakEntry cloakEntry;
-
     private int chunkX;
     private int chunkZ;
-
     @Transient
     private boolean dirty;
 
@@ -549,6 +546,14 @@ public class Field extends AbstractVec implements Serializable
     public ChunkVec toChunkVec()
     {
         return new ChunkVec(chunkX, chunkZ, getWorld());
+    }
+
+    /**
+     * @return the vec
+     */
+    public Vec toVec()
+    {
+        return new Vec(this);
     }
 
     /**

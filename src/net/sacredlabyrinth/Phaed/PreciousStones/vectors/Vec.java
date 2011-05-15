@@ -20,6 +20,15 @@ public class Vec extends AbstractVec
 
     /**
      *
+     * @param field
+     */
+    public Vec(Field field)
+    {
+	super(field.getX(), field.getY(), field.getZ(), field.getWorld());
+    }
+
+    /**
+     *
      * @param loc
      */
     public Vec(Location loc)

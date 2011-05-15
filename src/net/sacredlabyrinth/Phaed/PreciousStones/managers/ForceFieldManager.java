@@ -100,6 +100,7 @@ public class ForceFieldManager
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
         }
     }
 
@@ -225,7 +226,7 @@ public class ForceFieldManager
 
             if (c != null)
             {
-                int index = c.indexOf(field);
+                int index = c.indexOf(field.toVec());
 
                 if (index > -1)
                 {
@@ -1607,7 +1608,7 @@ public class ForceFieldManager
 
             if (c != null)
             {
-                c.remove(field);
+                c.remove(field.toVec());
                 c.add(field);
             }
             else
@@ -1736,7 +1737,7 @@ public class ForceFieldManager
     }
 
     /**
-     * Saves a field from memory and from the database
+     * Deletes a field from memory and from the database
      * @param field the field to delete
      */
     public void deleteField(Field field)
@@ -1749,9 +1750,7 @@ public class ForceFieldManager
 
             if (c != null)
             {
-                c.remove(field);
-
-
+                c.remove(field.toVec());
             }
         }
 

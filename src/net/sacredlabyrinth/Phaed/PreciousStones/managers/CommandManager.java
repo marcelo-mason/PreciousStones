@@ -600,7 +600,6 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (cacheBlock.size() > 0)
                             {
-                                ChatBlock.saySingle(player, ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------");
                                 ChatBlock.sendBlank(player);
 
                                 cacheBlock.sendBlock(player, plugin.settings.linesPerPage);

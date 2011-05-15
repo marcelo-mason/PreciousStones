@@ -1,10 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import org.bukkit.Material;
 import org.bukkit.World;
 
@@ -136,8 +141,21 @@ public class TagManager
      */
     public void tagWorld(String worldName)
     {
-        Set<ChunkVec> chunks = plugin.ffm.retrieveFields(worldName).keySet();
-        chunks.addAll(plugin.um.retrieveUnbreakables(worldName).keySet());
+        Set<ChunkVec> chunks = new HashSet<ChunkVec>();
+
+        HashMap<ChunkVec, LinkedList<Field>> c = plugin.ffm.retrieveFields(worldName);
+
+        if (c != null)
+        {
+            chunks.addAll(c.keySet());
+        }
+
+        HashMap<ChunkVec, LinkedList<Unbreakable>> u = plugin.um.retrieveUnbreakables(worldName);
+
+        if (u != null)
+        {
+            chunks.addAll(u.keySet());
+        }
 
         PreciousStones.log(Level.INFO, "Tagging {0} chunks", chunks.size());
 
