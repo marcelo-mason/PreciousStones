@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
@@ -54,7 +55,10 @@ public class TagManager
      */
     public void untagChunk(ChunkVec cv)
     {
-        plugin.getServer().getWorld(cv.getWorld()).getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4).setType(Material.BEDROCK);
+        if (!plugin.tm.containsPStones(cv))
+        {
+            plugin.getServer().getWorld(cv.getWorld()).getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4).setType(Material.BEDROCK);
+        }
     }
 
     /**
@@ -132,8 +136,8 @@ public class TagManager
      */
     public void tagWorld(String worldName)
     {
-        List<ChunkVec> chunks = plugin.ffm.retrieveChunks(worldName);
-        chunks.addAll(plugin.um.retrieveChunks(worldName));
+        Set<ChunkVec> chunks = plugin.ffm.retrieveFields(worldName).keySet();
+        chunks.addAll(plugin.um.retrieveUnbreakables(worldName).keySet());
 
         PreciousStones.log(Level.INFO, "Tagging {0} chunks", chunks.size());
 

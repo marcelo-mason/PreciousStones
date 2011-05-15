@@ -423,9 +423,9 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (split[0].equals("setvelocity") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.benefit.setvelocity"))
                         {
-                            if (split.length == 2 && Helper.isInteger(split[1]))
+                            if (split.length == 2 && Helper.isFloat(split[1]))
                             {
-                                int velocity = Integer.parseInt(split[1]);
+                                float velocity = Float.parseFloat(split[1]);
 
                                 Field field = plugin.ffm.getOneAllowedField(block, player);
 

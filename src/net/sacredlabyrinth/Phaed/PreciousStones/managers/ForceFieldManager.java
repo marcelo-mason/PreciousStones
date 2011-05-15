@@ -1,5 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.avaje.ebean.Page;
+import com.avaje.ebean.PagingList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Queue;
@@ -32,7 +34,7 @@ import org.bukkit.entity.Vehicle;
  */
 public class ForceFieldManager
 {
-    private final HashMap<ChunkVec, LinkedList<Field>> chunkLists = new HashMap<ChunkVec, LinkedList<Field>>();
+    private final HashMap<String, HashMap<ChunkVec, LinkedList<Field>>> chunkLists = new HashMap<String, HashMap<ChunkVec, LinkedList<Field>>>();
     private Queue<Field> deletionQueue = new LinkedList<Field>();
     private Queue<Field> replacementQueue = new LinkedList<Field>();
     private PreciousStones plugin;
@@ -66,14 +68,19 @@ public class ForceFieldManager
 
     private int importFromDatabase(String world)
     {
-        List<Field> fields = plugin.getDatabase().find(Field.class).where().ieq("world", world).orderBy("chunk_x").orderBy("chunk_z").findList();
+        PagingList<Field> pages = plugin.getDatabase().find(Field.class).where().ieq("world", world).orderBy("chunk_x").orderBy("chunk_z").findPagingList(999999);
 
-        for (Field field : fields)
+        for (int i = 0; i < pages.getTotalPageCount(); i++)
         {
-            addToCollection(field);
+            List<Field> fields = pages.getPage(i).getList();
+
+            for (Field field : fields)
+            {
+                addToCollection(field);
+            }
         }
 
-        return fields.size();
+        return pages.getTotalRowCount();
     }
 
     /**
@@ -101,16 +108,19 @@ public class ForceFieldManager
      */
     public void saveAll()
     {
-        for (ChunkVec cv : chunkLists.keySet())
+        for (HashMap<ChunkVec, LinkedList<Field>> w : chunkLists.values())
         {
-            LinkedList<Field> list = chunkLists.get(cv);
-
-            for (Field field : list)
+            if (w != null)
             {
-                saveField(field);
+                for (LinkedList<Field> fields : w.values())
+                {
+                    for (Field field : fields)
+                    {
+                        saveField(field);
+                    }
+                }
             }
         }
-
         processReplacementQueue();
     }
 
@@ -126,60 +136,27 @@ public class ForceFieldManager
     }
 
     /**
-     * Add the field to the collection held in memory
-     * @param field
-     */
-    public void addToCollection(Field field)
-    {
-        LinkedList<Field> c = chunkLists.get(field.toChunkVec());
-
-        if (c != null)
-        {
-            c.remove(field);
-            c.add(field);
-        }
-        else
-        {
-            LinkedList<Field> newc = new LinkedList<Field>();
-            newc.add(field);
-            chunkLists.put(field.toChunkVec(), newc);
-        }
-    }
-
-    /**
      * Check if a chunk contains a field
      * @param cv the chunk vec
      * @return whether the chunk contains fields
      */
     public boolean hasField(ChunkVec cv)
     {
-        if (chunkLists.containsKey(cv))
-        {
-            LinkedList<Field> c = chunkLists.get(cv);
+        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(cv.getWorld());
 
-            if (!c.isEmpty())
+        if (w != null)
+        {
+            if (w.containsKey(cv))
             {
-                return true;
+                LinkedList<Field> c = w.get(cv);
+
+                if (!c.isEmpty())
+                {
+                    return true;
+                }
             }
         }
-
         return false;
-    }
-
-    /**
-     * Retrieve all fields
-     * @return all fields from the database
-     */
-    public List<Field> retrieveFields()
-    {
-        List<Field> out = new LinkedList<Field>();
-
-        for (ChunkVec cv : chunkLists.keySet())
-        {
-            out.addAll(chunkLists.get(cv));
-        }
-
-        return out;
     }
 
     /**
@@ -189,27 +166,12 @@ public class ForceFieldManager
      */
     public List<Field> retrieveFields(ChunkVec cv)
     {
-        return chunkLists.get(cv);
-    }
-
-    /**
-     * Retrieve all chunks in collection
-     * @param world the world you want the fields from
-     * @return all the chunks that match the world
-     */
-    public List<ChunkVec> retrieveChunks(String world)
-    {
-        List<ChunkVec> out = new LinkedList<ChunkVec>();
-
-        for (ChunkVec cv : chunkLists.keySet())
+        if (chunkLists.get(cv.getWorld()) == null)
         {
-            if (cv.getWorld().equalsIgnoreCase(world))
-            {
-                out.add(cv);
-            }
+            return null;
         }
 
-        return out;
+        return chunkLists.get(cv.getWorld()).get(cv);
     }
 
     /**
@@ -217,19 +179,9 @@ public class ForceFieldManager
      * @param world the world you want the fields from
      * @return all fields from the database that match the world
      */
-    public List<Field> retrieveFields(String world)
+    public HashMap<ChunkVec, LinkedList<Field>> retrieveFields(String world)
     {
-        List<Field> out = new LinkedList<Field>();
-
-        for (ChunkVec cv : chunkLists.keySet())
-        {
-            if (cv.getWorld().equalsIgnoreCase(world))
-            {
-                out.addAll(chunkLists.get(cv));
-            }
-        }
-
-        return out;
+        return chunkLists.get(world);
     }
 
     /**
@@ -239,15 +191,20 @@ public class ForceFieldManager
      */
     public Field getField(Block block)
     {
-        LinkedList<Field> c = chunkLists.get(new ChunkVec(block));
+        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(block.getLocation().getWorld().getName());
 
-        if (c != null)
+        if (w != null)
         {
-            int index = c.indexOf(new Vec(block));
+            LinkedList<Field> c = w.get(new ChunkVec(block));
 
-            if (index > -1)
+            if (c != null)
             {
-                return (c.get(index));
+                int index = c.indexOf(new Vec(block));
+
+                if (index > -1)
+                {
+                    return (c.get(index));
+                }
             }
         }
         return null;
@@ -260,15 +217,20 @@ public class ForceFieldManager
      */
     public boolean existsField(Field field)
     {
-        LinkedList<Field> c = chunkLists.get(field.toChunkVec());
+        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(field.getWorld());
 
-        if (c != null)
+        if (w != null)
         {
-            int index = c.indexOf(field);
+            LinkedList<Field> c = w.get(field.toChunkVec());
 
-            if (index > -1)
+            if (c != null)
             {
-                return true;
+                int index = c.indexOf(field);
+
+                if (index > -1)
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -292,9 +254,15 @@ public class ForceFieldManager
     {
         int size = 0;
 
-        for (LinkedList<Field> c : chunkLists.values())
+        for (HashMap<ChunkVec, LinkedList<Field>> w : chunkLists.values())
         {
-            size += c.size();
+            if (w != null)
+            {
+                for (LinkedList<Field> c : w.values())
+                {
+                    size += c.size();
+                }
+            }
         }
         return size;
     }
@@ -317,42 +285,48 @@ public class ForceFieldManager
             return 0;
         }
 
-        List<Field> fields = retrieveFields(world.getName());
+        HashMap<ChunkVec, LinkedList<Field>> w = retrieveFields(worldName);
 
-        for (Field field : fields)
+        if (w != null)
         {
-            // ensure chunk is loaded prior to polling
-
-            ChunkVec cv = field.toChunkVec();
-
-            if (!cv.equals(currentChunk))
+            for (LinkedList<Field> fields : w.values())
             {
-                if (!currentChunkLoaded)
+                for (Field field : fields)
                 {
-                    if (currentChunk != null)
+                    // ensure chunk is loaded prior to polling
+
+                    ChunkVec cv = field.toChunkVec();
+
+                    if (!cv.equals(currentChunk))
                     {
-                        world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                        if (!currentChunkLoaded)
+                        {
+                            if (currentChunk != null)
+                            {
+                                world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                            }
+                        }
+
+                        currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                        if (!currentChunkLoaded)
+                        {
+                            world.loadChunk(cv.getX(), cv.getZ());
+                        }
+
+                        currentChunk = cv;
+                    }
+
+                    // do the deed
+
+                    int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
+
+                    if (!plugin.settings.isFieldType(type) && !(plugin.settings.isCloakableType(type) && (plugin.settings.isCloakType(type) || plugin.settings.isCloakableType(type))))
+                    {
+                        cleanedCount++;
+                        queueRelease(field);
                     }
                 }
-
-                currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
-
-                if (!currentChunkLoaded)
-                {
-                    world.loadChunk(cv.getX(), cv.getZ());
-                }
-
-                currentChunk = cv;
-            }
-
-            // do the deed
-
-            int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
-
-            if (!plugin.settings.isFieldType(type) && !(plugin.settings.isCloakableType(type) && (plugin.settings.isCloakType(type) || plugin.settings.isCloakableType(type))))
-            {
-                cleanedCount++;
-                queueRelease(field);
             }
         }
 
@@ -579,27 +553,6 @@ public class ForceFieldManager
     }
 
     /**
-     * Returns all fields of the type
-     * @param typeid
-     * @param world
-     * @return the fields
-     */
-    public List<Field> getFieldsOfType(int typeid, World world)
-    {
-        List<Field> out = new LinkedList<Field>();
-        List<Field> fields = retrieveFields(world.getName());
-
-        for (Field field : fields)
-        {
-            if (field.getTypeId() == typeid)
-            {
-                out.add(field);
-            }
-        }
-        return out;
-    }
-
-    /**
      * Returns the blocks that is originating the protective field the block is in and that the player is not allowed in
      * @param loc
      * @param playerName
@@ -780,27 +733,32 @@ public class ForceFieldManager
     {
         HashSet<Field> touching = new HashSet<Field>();
 
-        List<Field> all = retrieveFields(player.getWorld().getName());
+        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(player.getLocation().getWorld().getName());
 
-        for (Field otherfield : all)
+        if (w != null)
         {
-            for (Field foundfield : fields)
+            for (LinkedList<Field> all : w.values())
             {
-                if (foundfield.intersects(otherfield))
+                for (Field otherfield : all)
                 {
-                    if (player != null && !otherfield.isAllowed(player.getName()))
+                    for (Field foundfield : fields)
                     {
-                        continue;
+                        if (foundfield.intersects(otherfield))
+                        {
+                            if (player != null && !otherfield.isAllowed(player.getName()))
+                            {
+                                continue;
+                            }
+                            if (total.contains(otherfield))
+                            {
+                                continue;
+                            }
+                            touching.add(otherfield);
+                        }
                     }
-                    if (total.contains(otherfield))
-                    {
-                        continue;
-                    }
-                    touching.add(otherfield);
                 }
             }
         }
-
         return touching;
     }
 
@@ -987,16 +945,23 @@ public class ForceFieldManager
     public List<Field> getOwnersFields(Player player)
     {
         List<Field> out = new LinkedList<Field>();
-        List<Field> fields = retrieveFields(player.getWorld().getName());
 
-        for (Field field : fields)
+        for (HashMap<ChunkVec, LinkedList<Field>> w : chunkLists.values())
         {
-            if (field.isOwner(player.getName()))
+            if (w != null)
             {
-                out.add(field);
+                for (LinkedList<Field> fields : w.values())
+                {
+                    for (Field field : fields)
+                    {
+                        if (field.isOwner(player.getName()))
+                        {
+                            out.add(field);
+                        }
+                    }
+                }
             }
         }
-
         return out;
     }
 
@@ -1043,6 +1008,8 @@ public class ForceFieldManager
             {
                 AllowedEntry ae = f.removeAllowed(allowedName);
 
+
+
                 if (ae != null)
                 {
                     try
@@ -1078,6 +1045,8 @@ public class ForceFieldManager
             if (field.isAllowed(allowedName))
             {
                 AllowedEntry ae = field.removeAllowed(allowedName);
+
+
 
                 if (ae != null)
                 {
@@ -1447,6 +1416,28 @@ public class ForceFieldManager
     }
 
     /**
+     * Whether the block is in a flow protected area
+     * @param block
+     * @return the field, null if its not
+     */
+    public Field isFlowProtected(Block block)
+    {
+        List<Field> fields = getSourceFields(block);
+
+        for (Field field : fields)
+        {
+            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings.preventFlow)
+            {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Whether the block is in an explosion protected area
      * @param placedBlock
      * @return the field, null if its not
@@ -1578,7 +1569,7 @@ public class ForceFieldManager
     }
 
     /**
-     * Add field to the collection
+     * Add a brand new field
      * @param fieldblock
      * @param owner
      * @return confirmation
@@ -1593,25 +1584,48 @@ public class ForceFieldManager
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
         Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), "");
 
-        ChunkVec chunkvec = field.toChunkVec();
-        LinkedList<Field> c = chunkLists.get(chunkvec);
+        addToCollection(field);
 
-        if (c != null)
+        plugin.tm.tagChunk(field.toChunkVec());
+        return true;
+    }
+
+    /**
+     * Add the field to the collection, used by add()
+     * @param field
+     */
+    public void addToCollection(Field field)
+    {
+        String world = field.getWorld();
+        ChunkVec chunkvec = field.toChunkVec();
+
+        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(world);
+
+        if (w != null)
         {
-            if (!c.contains(field))
+            LinkedList<Field> c = w.get(chunkvec);
+
+            if (c != null)
             {
+                c.remove(field);
                 c.add(field);
+            }
+            else
+            {
+                LinkedList<Field> newc = new LinkedList<Field>();
+                newc.add(field);
+                w.put(chunkvec, newc);
             }
         }
         else
         {
-            LinkedList<Field> newc = new LinkedList<Field>();
-            newc.add(field);
-            chunkLists.put(chunkvec, newc);
-        }
+            HashMap<ChunkVec, LinkedList<Field>> _w = new HashMap<ChunkVec, LinkedList<Field>>();
+            LinkedList<Field> _c = new LinkedList<Field>();
 
-        plugin.tm.tagChunk(chunkvec);
-        return true;
+            _c.add(field);
+            _w.put(chunkvec, _c);
+            chunkLists.put(world, _w);
+        }
     }
 
     /**
@@ -1621,16 +1635,23 @@ public class ForceFieldManager
      */
     public int deleteBelonging(String playerName)
     {
-        List<Field> fields = retrieveFields();
-
         int deletedFields = 0;
 
-        for (Field field : fields)
+        for (HashMap<ChunkVec, LinkedList<Field>> w : chunkLists.values())
         {
-            if (field.getOwner().equalsIgnoreCase(playerName))
+            if (w != null)
             {
-                queueRelease(field);
-                deletedFields++;
+                for (LinkedList<Field> fields : w.values())
+                {
+                    for (Field field : fields)
+                    {
+                        if (field.getOwner().equalsIgnoreCase(playerName))
+                        {
+                            queueRelease(field);
+                            deletedFields++;
+                        }
+                    }
+                }
             }
         }
 
@@ -1720,30 +1741,29 @@ public class ForceFieldManager
      */
     public void deleteField(Field field)
     {
-        LinkedList<Field> c = chunkLists.get(field.toChunkVec());
+        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(field.getWorld());
 
-        if (c != null)
+        if (w != null)
         {
-            c.remove(field);
+            LinkedList<Field> c = w.get(field.toChunkVec());
+
+            if (c != null)
+            {
+                c.remove(field);
+
+
+            }
         }
 
         try
         {
-            Field old = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
-
-            if (old != null)
-            {
-                plugin.getDatabase().delete(Field.class, old.getId());
-            }
+            plugin.getDatabase().delete(Field.class, field.getId());
         }
         catch (Exception ex)
         {
         }
 
-        if (!plugin.tm.containsPStones(field.toChunkVec()))
-        {
-            plugin.tm.untagChunk(field.toChunkVec());
-        }
+        plugin.tm.untagChunk(field.toChunkVec());
     }
 
     /**

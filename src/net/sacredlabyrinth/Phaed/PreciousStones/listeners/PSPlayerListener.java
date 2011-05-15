@@ -57,9 +57,9 @@ public class PSPlayerListener extends PlayerListener
 	    return;
 	}
 
-        // skip chunks that never had pstones
+        // skip areas that don't have pstones
 
-        Chunk chunk = event.getClickedBlock().getChunk();
+        Chunk chunk = block.getChunk();
 
         if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
         {
@@ -166,7 +166,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        // skip chunks that never had pstones
+        // skip areas that don't have pstones
 
         Chunk chunk = event.getTo().getBlock().getChunk();
 

@@ -55,6 +55,7 @@ public class Helper
 	    return false;
 	}
     }
+
     /**
      * Helper function to check for integer
      * @param input
@@ -74,15 +75,15 @@ public class Helper
     }
 
     /**
-     * Helper function to check for long
+     * Helper function to check for float
      * @param input
      * @return
      */
-    public static boolean isLong(String input)
+    public static boolean isFloat(String input)
     {
 	try
 	{
-	    Long.parseLong(input);
+	    Float.parseFloat(input);
 	    return true;
 	}
 	catch (Exception ex)

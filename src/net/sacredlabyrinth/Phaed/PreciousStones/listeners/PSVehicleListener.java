@@ -42,7 +42,7 @@ public class PSVehicleListener extends VehicleListener
             return;
         }
 
-        // skip chunks that never had pstones
+        // skip areas that don't have pstones
 
         Chunk chunk = event.getTo().getBlock().getChunk();
 

@@ -46,7 +46,7 @@ public final class PermissionsManager
 
 	if (hasPermissionPlugin())
 	{
-            if (Permissions.has(player, "preciousstones.blacklist"))
+            if (Permissions.has(player, "preciousstones.blacklist") && !Permissions.has(player, "preciousstones.admintest"))
             {
                 return false;
             }

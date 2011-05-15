@@ -467,6 +467,7 @@ public final class SettingsManager
         public boolean preventAnimalSpawn = false;
         public boolean preventEntry = false;
         public boolean preventUnprotectable = false;
+        public boolean preventFlow = false;
         public boolean instantHeal = false;
         public boolean slowHeal = false;
         public boolean slowDamage = false;
@@ -652,13 +653,16 @@ public final class SettingsManager
 		mineDelaySeconds = (Integer) map.get("mine-delay-seconds");
 
 	    if (map.containsKey("lightning") && Helper.isBoolean(map.get("lightning")))
-	    lightning = (Boolean) map.get("lightning");
+                lightning = (Boolean) map.get("lightning");
 
 	    if (map.containsKey("lightning-replace-block") && Helper.isInteger(map.get("lightning-replace-block")))
-	    lightningReplaceBlock = (Integer) map.get("lightning-replace-block");
+                lightningReplaceBlock = (Integer) map.get("lightning-replace-block");
 
 	    if (map.containsKey("lightning-delay-seconds") && Helper.isInteger(map.get("lightning-delay-seconds")))
-	    lightningDelaySeconds = (Integer) map.get("lightning-delay-seconds");
+                lightningDelaySeconds = (Integer) map.get("lightning-delay-seconds");
+
+            if (map.containsKey("prevent-flow") && Helper.isBoolean(map.get("prevent-flow")))
+                preventFlow = (Boolean) map.get("prevent-flow");
 	}
 
 	@Override
@@ -742,7 +746,10 @@ public final class SettingsManager
 
             if (preventAnimalSpawn)
 		properties += ", -animal-spawn";
-            
+
+            if (preventFlow)
+		properties += ", -flow";
+
 	    if (properties.length() > 0)
 		return properties.substring(2);
 

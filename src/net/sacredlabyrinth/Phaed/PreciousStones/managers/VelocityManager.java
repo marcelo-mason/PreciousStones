@@ -24,7 +24,7 @@ public class VelocityManager
      */
     public VelocityManager(PreciousStones plugin)
     {
-	this.plugin = plugin;
+        this.plugin = plugin;
     }
 
     /**
@@ -34,46 +34,37 @@ public class VelocityManager
      */
     public void launchPlayer(final Player player, final Field field)
     {
-	if (plugin.pm.hasPermission(player, "preciousstones.benefit.launch"))
-	{
-	    if (field.isAllowed(player.getName()))
-	    {
-		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+        if (plugin.pm.hasPermission(player, "preciousstones.benefit.launch"))
+        {
+            if (field.isAllowed(player.getName()))
+            {
+                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
-		final int launchheight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.launchHeight;
+                final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.launchHeight;
+                double speed = 8;
 
-		if (fieldsettings.launch)
-		{
-		    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-		    {
+                Vector loc = player.getLocation().toVector();
+                Vector target = new Vector(field.getX(), field.getY(), field.getZ());
+
+                final Vector velocity = target.clone().subtract(new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                velocity.multiply(speed / velocity.length());
+                velocity.setY(launchheight > 0 ? launchheight : (((player.getLocation().getPitch() * -1) + 90) / 35));
+
+                if (fieldsettings.launch)
+                {
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    {
                         @Override
-			public void run()
-			{
-			    double speed = 8;
-
-			    Vector loc = player.getLocation().toVector();
-
-			    Vector target = new Vector(field.getX(), field.getY(), field.getZ());
-
-			    Vector velocity = target.clone().subtract(new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-
-			    velocity.multiply(speed / velocity.length());
-
-			    float height = (((player.getLocation().getPitch() * -1) + 90) / 35);
-
-			    if (launchheight > 0)
-			    {
-				height = launchheight;
-			    }
-
-			    player.setVelocity(velocity.setY(height));
-			    plugin.cm.showLaunch(player);
-			    startFallImmunity(player);
-			}
-		    }, 5L);
-		}
-	    }
-	}
+                        public void run()
+                        {
+                            player.setVelocity(velocity);
+                            plugin.cm.showLaunch(player);
+                            startFallImmunity(player);
+                        }
+                    }, 0L);
+                }
+            }
+        }
     }
 
     /**
@@ -83,36 +74,30 @@ public class VelocityManager
      */
     public void shootPlayer(final Player player, Field field)
     {
-	if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
-	{
-	    if (field.isAllowed(player.getName()))
-	    {
-		FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+        if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
+        {
+            if (field.isAllowed(player.getName()))
+            {
+                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
-		final int bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.cannonHeight;
-                
-		if (fieldsettings.cannon)
-		{
-		    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-		    {
+                final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.cannonHeight;
+                final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
+
+                if (fieldsettings.cannon)
+                {
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    {
                         @Override
-			public void run()
-			{
-			    float height = (((player.getLocation().getPitch() * -1) + 90) / 35);
-
-			    if (bounceHeight > 0)
-			    {
-				height = bounceHeight;
-			    }
-
-			    player.setVelocity(new Vector(0, height, 0));
-			    plugin.cm.showCannon(player);
-			    startFallImmunity(player);
-			}
-		    }, 5L);
-		}
-	    }
-	}
+                        public void run()
+                        {
+                            player.setVelocity(new Vector(0, height, 0));
+                            plugin.cm.showCannon(player);
+                            startFallImmunity(player);
+                        }
+                    }, 0L);
+                }
+            }
+        }
     }
 
     /**
@@ -121,14 +106,14 @@ public class VelocityManager
      */
     public void startFallImmunity(final Player player)
     {
-	if (fallDamageImmune.containsKey(player.getName()))
-	{
-	    int current = fallDamageImmune.get(player.getName());
+        if (fallDamageImmune.containsKey(player.getName()))
+        {
+            int current = fallDamageImmune.get(player.getName());
 
-	    plugin.getServer().getScheduler().cancelTask(current);
-	}
+            plugin.getServer().getScheduler().cancelTask(current);
+        }
 
-	fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
+        fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
     }
 
     /**
@@ -138,7 +123,7 @@ public class VelocityManager
      */
     public boolean isFallDamageImmune(final Player player)
     {
-	return fallDamageImmune.containsKey(player.getName());
+        return fallDamageImmune.containsKey(player.getName());
     }
 
     /**
@@ -148,15 +133,15 @@ public class VelocityManager
      */
     public int startImmuneRemovalDelay(final Player player)
     {
-	final String name = player.getName();
+        final String name = player.getName();
 
-	return plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-	{
+        return plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
             @Override
-	    public void run()
-	    {
-		fallDamageImmune.remove(name);
-	    }
-	}, 15 * 20L);
+            public void run()
+            {
+                fallDamageImmune.remove(name);
+            }
+        }, 15 * 20L);
     }
 }

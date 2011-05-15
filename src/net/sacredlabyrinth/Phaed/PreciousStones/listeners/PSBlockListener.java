@@ -50,7 +50,7 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        // skip chunks that never had pstones
+        // skip areas that don't have pstones
 
         Chunk chunk = event.getToBlock().getChunk();
 
@@ -59,24 +59,16 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-	Field to = plugin.ffm.isPlaceProtected(event.getToBlock(), null);
-	Field to2 = plugin.ffm.isPvPProtected(event.getToBlock());
+	Field to = plugin.ffm.isFlowProtected(event.getToBlock());
 
-        if(to == null && to2 == null)
+        if (to == null)
         {
             return;
         }
 
-	Field from = plugin.ffm.isPlaceProtected(event.getBlock(), null);
+	Field from = plugin.ffm.isFlowProtected(event.getBlock());
 
-	if (from == null && to != null)
-	{
-	    event.setCancelled(true);
-	}
-
-	Field from2 = plugin.ffm.isPvPProtected(event.getBlock());
-
-	if (from2 == null && to2 != null)
+	if (from == null)
 	{
 	    event.setCancelled(true);
 	}
@@ -94,15 +86,9 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        // skip chunks that never had pstones
+        // skip areas that don't have pstones
 
         Chunk chunk = event.getBlock().getChunk();
-
-        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
-        {
-            return;
-        }
-
 	Block block = event.getBlock();
 	Player player = event.getPlayer();
 
@@ -110,6 +96,11 @@ public class PSBlockListener extends BlockListener
 	{
 	    return;
 	}
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
 
 	if (player != null)
 	{
@@ -136,16 +127,15 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockRedstoneChange(BlockRedstoneEvent event)
     {
-        // skip chunks that never had pstones
-
         Chunk chunk = event.getBlock().getChunk();
+	Block redstoneblock = event.getBlock();
+
+        // skip areas that don't have pstones
 
         if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
         {
             return;
         }
-
-	Block redstoneblock = event.getBlock();
 
 	for (int x = -1; x <= 1; x++)
 	{
@@ -218,15 +208,7 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        // skip chunks that never had pstones
-
         Chunk chunk = event.getBlock().getChunk();
-
-        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
-        {
-            return;
-        }
-
 	Block damagedblock = event.getBlock();
 	Player player = event.getPlayer();
 
@@ -239,6 +221,13 @@ public class PSBlockListener extends BlockListener
 	{
 	    return;
 	}
+
+        // skip areas that don't have pstones
+
+        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        {
+            return;
+        }
 
 	plugin.snm.recordSnitchBlockBreak(player, damagedblock);
 

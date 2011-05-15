@@ -42,11 +42,11 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
-       // skip chunks that never had pstones
+        // skip areas that don't have pstones
 
         Chunk chunk = event.getLocation().getBlock().getChunk();
 
-        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        if (!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
         {
             return;
         }
@@ -54,30 +54,30 @@ public class PSEntityListener extends EntityListener
         CreatureType mob = event.getCreatureType();
         Location loc = event.getLocation();
 
-        if (plugin.ffm.isMobSpawnProtected(loc) != null)
+        if (mob.equals(CreatureType.CREEPER)
+                || mob.equals(CreatureType.GHAST)
+                || mob.equals(CreatureType.GIANT)
+                || mob.equals(CreatureType.MONSTER)
+                || mob.equals(CreatureType.PIG_ZOMBIE)
+                || mob.equals(CreatureType.SKELETON)
+                || mob.equals(CreatureType.SLIME)
+                || mob.equals(CreatureType.SPIDER)
+                || mob.equals(CreatureType.ZOMBIE))
         {
-            if (mob.equals(CreatureType.CREEPER)
-                    || mob.equals(CreatureType.GHAST)
-                    || mob.equals(CreatureType.GIANT)
-                    || mob.equals(CreatureType.MONSTER)
-                    || mob.equals(CreatureType.PIG_ZOMBIE)
-                    || mob.equals(CreatureType.SKELETON)
-                    || mob.equals(CreatureType.SLIME)
-                    || mob.equals(CreatureType.SPIDER)
-                    || mob.equals(CreatureType.ZOMBIE))
+            if (plugin.ffm.isMobSpawnProtected(loc) != null)
             {
                 event.setCancelled(true);
             }
         }
 
-        if (plugin.ffm.isAnimalSpawnProtected(loc) != null)
+        if (mob.equals(CreatureType.CHICKEN)
+                || mob.equals(CreatureType.COW)
+                || mob.equals(CreatureType.PIG)
+                || mob.equals(CreatureType.SHEEP)
+                || mob.equals(CreatureType.SQUID)
+                || mob.equals(CreatureType.WOLF))
         {
-            if (mob.equals(CreatureType.CHICKEN)
-                    || mob.equals(CreatureType.COW)
-                    || mob.equals(CreatureType.PIG)
-                    || mob.equals(CreatureType.SHEEP)
-                    || mob.equals(CreatureType.SQUID)
-                    || mob.equals(CreatureType.WOLF))
+            if (plugin.ffm.isAnimalSpawnProtected(loc) != null)
             {
                 event.setCancelled(true);
             }
@@ -137,7 +137,7 @@ public class PSEntityListener extends EntityListener
         {
             return;
         }
-        
+
         // prevent fall damage after cannon throws
 
         if (event.getCause().equals(DamageCause.FALL))

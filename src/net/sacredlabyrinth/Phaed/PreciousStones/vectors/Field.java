@@ -37,7 +37,7 @@ public class Field extends AbstractVec implements Serializable
     private Long id;
     private int radius;
     private int height;
-    private int velocity;
+    private float velocity;
     private int typeId;
 
     @NotNull
@@ -704,7 +704,7 @@ public class Field extends AbstractVec implements Serializable
     /**
      * @return the velocity
      */
-    public int getVelocity()
+    public float getVelocity()
     {
         return velocity;
     }
@@ -712,7 +712,7 @@ public class Field extends AbstractVec implements Serializable
     /**
      * @param velocity the velocity to set
      */
-    public void setVelocity(int velocity)
+    public void setVelocity(float velocity)
     {
         this.velocity = velocity;
     }
