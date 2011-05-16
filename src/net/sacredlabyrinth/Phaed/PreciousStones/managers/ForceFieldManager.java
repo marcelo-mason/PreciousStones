@@ -94,8 +94,36 @@ public class ForceFieldManager
             if (field.isDirty())
             {
                 plugin.getDatabase().save(field);
-                Field newfield = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
-                replacementQueue.add(newfield);
+
+                Field newfield = null;
+
+                try
+                {
+                    newfield = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
+                }
+                catch (Exception ex)
+                {
+                }
+
+                if (newfield == null)
+                {
+                    try
+                    {
+                        newfield = plugin.getDatabase().find(Field.class).where().eq("x", field.getX()).eq("y", field.getY()).eq("z", field.getZ()).ieq("world", field.getWorld()).findUnique();
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+
+                if (newfield != null)
+                {
+                    replacementQueue.add(newfield);
+                }
+                else
+                {
+                    replacementQueue.add(field);
+                }
             }
         }
         catch (Exception ex)
@@ -1590,7 +1618,7 @@ public class ForceFieldManager
         plugin.tm.tagChunk(field.toChunkVec());
         return true;
     }
-
+    
     /**
      * Add the field to the collection, used by add()
      * @param field

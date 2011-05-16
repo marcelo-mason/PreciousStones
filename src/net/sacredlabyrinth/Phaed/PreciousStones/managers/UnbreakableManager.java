@@ -81,8 +81,37 @@ public class UnbreakableManager
             if (ub.isDirty())
             {
                 plugin.getDatabase().save(ub);
-                Unbreakable newub = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
-                replacementQueue.add(newub);
+
+                Unbreakable newub = null;
+
+                try
+                {
+                    newub = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
+                }
+                catch (Exception ex)
+                {
+                }
+
+                if (newub == null)
+                {
+                    try
+                    {
+                        newub = plugin.getDatabase().find(Unbreakable.class).where().eq("x", ub.getX()).eq("y", ub.getY()).eq("z", ub.getZ()).ieq("world", ub.getWorld()).findUnique();
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+
+                if (newub != null)
+                {
+                    replacementQueue.add(newub);
+                }
+                else
+                {
+                    replacementQueue.add(ub);
+                }
+
             }
         }
         catch (Exception ex)
