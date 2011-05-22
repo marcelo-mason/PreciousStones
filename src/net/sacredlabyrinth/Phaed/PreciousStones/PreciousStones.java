@@ -156,7 +156,7 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
-     *
+     * DB Classes registration
      * @return
      */
     @Override

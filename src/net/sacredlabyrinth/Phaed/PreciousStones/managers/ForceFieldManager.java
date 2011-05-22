@@ -93,7 +93,13 @@ public class ForceFieldManager
         {
             if (field.isDirty())
             {
-                plugin.getDatabase().save(field);
+                try
+                {
+                    plugin.getDatabase().save(field);
+                }
+                catch (Exception ex)
+                {
+                }
 
                 Field newfield = null;
 
@@ -1618,7 +1624,7 @@ public class ForceFieldManager
         plugin.tm.tagChunk(field.toChunkVec());
         return true;
     }
-    
+
     /**
      * Add the field to the collection, used by add()
      * @param field

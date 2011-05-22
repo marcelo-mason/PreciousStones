@@ -80,7 +80,13 @@ public class UnbreakableManager
         {
             if (ub.isDirty())
             {
-                plugin.getDatabase().save(ub);
+                try
+                {
+                    plugin.getDatabase().save(ub);
+                }
+                catch (Exception ex)
+                {
+                }
 
                 Unbreakable newub = null;
 

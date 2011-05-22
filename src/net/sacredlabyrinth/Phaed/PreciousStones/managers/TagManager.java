@@ -37,10 +37,7 @@ public class TagManager
 
         for (World world : worlds)
         {
-            if (!isTaggedWorld(world.getName()))
-            {
-                tagWorld(world.getName());
-            }
+            tagWorld(world.getName());
         }
     }
 
@@ -157,7 +154,7 @@ public class TagManager
             chunks.addAll(u.keySet());
         }
 
-        PreciousStones.log(Level.INFO, "Tagging {0} chunks", chunks.size());
+        PreciousStones.log(Level.INFO, "tagging {0} chunks", chunks.size());
 
         World world = plugin.getServer().getWorld(worldName);
 

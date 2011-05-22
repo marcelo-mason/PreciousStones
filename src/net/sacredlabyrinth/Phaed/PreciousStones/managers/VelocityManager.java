@@ -8,6 +8,8 @@ import org.bukkit.util.Vector;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Vehicle;
 
 /**
  *
@@ -32,8 +34,35 @@ public class VelocityManager
      * @param player
      * @param field
      */
-    public void launchPlayer(final Player player, final Field field)
+    public void launchPlayer(final Entity entity, final Field field)
     {
+        Player p = null;
+        Vehicle v = null;
+
+        if (entity instanceof Player)
+        {
+            p = (Player) entity;
+        }
+
+        if (entity instanceof Vehicle)
+        {
+            v = (Vehicle) entity;
+            Entity e = v.getPassenger();
+
+            if (e instanceof Player)
+            {
+                p = (Player) e;
+            }
+        }
+
+        if (p == null)
+        {
+            return;
+        }
+
+        final Player player = p;
+        final Vehicle vehicle = v;
+
         if (plugin.pm.hasPermission(player, "preciousstones.benefit.launch"))
         {
             if (field.isAllowed(player.getName()))
@@ -57,7 +86,14 @@ public class VelocityManager
                         @Override
                         public void run()
                         {
-                            player.setVelocity(velocity);
+                            if (vehicle != null)
+                            {
+                                vehicle.setVelocity(velocity);
+                            }
+                            else
+                            {
+                                player.setVelocity(velocity);
+                            }
                             plugin.cm.showLaunch(player);
                             startFallImmunity(player);
                         }
@@ -72,8 +108,35 @@ public class VelocityManager
      * @param player
      * @param field
      */
-    public void shootPlayer(final Player player, Field field)
+    public void shootPlayer(final Entity entity, Field field)
     {
+        Player p = null;
+        Vehicle v = null;
+
+        if (entity instanceof Player)
+        {
+            p = (Player) entity;
+        }
+
+        if (entity instanceof Vehicle)
+        {
+            v = (Vehicle) entity;
+            Entity e = v.getPassenger();
+
+            if (e instanceof Player)
+            {
+                p = (Player) e;
+            }
+        }
+
+        if (p == null)
+        {
+            return;
+        }
+
+        final Player player = p;
+        final Vehicle vehicle = v;
+
         if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
         {
             if (field.isAllowed(player.getName()))
@@ -90,7 +153,14 @@ public class VelocityManager
                         @Override
                         public void run()
                         {
-                            player.setVelocity(new Vector(0, height, 0));
+                            if (vehicle != null)
+                            {
+                                vehicle.setVelocity(new Vector(0, height, 0));
+                            }
+                            else
+                            {
+                                player.setVelocity(new Vector(0, height, 0));
+                            }
                             plugin.cm.showCannon(player);
                             startFallImmunity(player);
                         }
