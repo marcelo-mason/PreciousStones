@@ -445,12 +445,21 @@ public class ForceFieldManager
             {
                 for (int z = -1; z <= 1; z++)
                 {
+                    if (Math.abs(x) + Math.abs(z) == 2)
+                    {
+                        continue;
+                    }
                     if (x == 0 && y == 0 && z == 0)
                     {
                         continue;
                     }
 
                     Block source = block.getRelative(x, y, z);
+
+                    if(source.getType().equals(Material.REDSTONE_TORCH_OFF))
+                    {
+                        return true;
+                    }
 
                     if ((source.getType().equals(Material.REDSTONE_WIRE) && source.getBlockPower() == 0))
                     {

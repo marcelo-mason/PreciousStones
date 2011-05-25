@@ -392,10 +392,10 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Whether the player was allowed
      * @param allowedName
      * @param perm
-     * @return whether the player was allowed
+     * @return confirmation
      */
     public boolean addAllowed(String allowedName, String perm)
     {
@@ -410,9 +410,9 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Whether the player was removed
      * @param allowedName
-     * @return whether the player was removed
+     * @return confirmation
      */
     public AllowedEntry removeAllowed(String allowedName)
     {
@@ -584,9 +584,9 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Whether the fields intersect
      * @param field
-     * @return whether the fields intersect
+     * @return confirmation
      */
     public boolean intersects(Field field)
     {
@@ -619,9 +619,9 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Whether vector is enveloped by the field
      * @param vec
-     * @return whether vector is enveloped by the field
+     * @return confirmation
      */
     public boolean envelops(Vector vec)
     {
@@ -645,9 +645,9 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Whether field block is enveloped by the field
      * @param field
-     * @return whether field block is enveloped by the field
+     * @return confirmation
      */
     public boolean envelops(AbstractVec field)
     {
@@ -671,9 +671,9 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Whether block is enveloped by the field
      * @param block
-     * @return whether block is enveloped by the field
+     * @return confirmation
      */
     public boolean envelops(Block block)
     {
@@ -681,9 +681,9 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     *
+     * Whether location is enveloped by the field
      * @param loc
-     * @return whether location is enveloped by the field
+     * @return confirmation
      */
     public boolean envelops(Location loc)
     {
