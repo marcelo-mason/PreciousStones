@@ -615,8 +615,6 @@ public class ForceFieldManager
             }
         }
 
-        flush();
-
         return fields;
     }
 

@@ -50,6 +50,13 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
+        // only capture water and lava movement
+
+        if(!event.getBlock().getType().equals(Material.WATER) && !event.getBlock().getType().equals(Material.LAVA))
+        {
+            return;
+        }
+
         // skip areas that don't have pstones
 
         Chunk chunk = event.getToBlock().getChunk();
