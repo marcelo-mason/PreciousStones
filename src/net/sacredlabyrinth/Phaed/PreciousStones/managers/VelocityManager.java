@@ -65,7 +65,7 @@ public class VelocityManager
 
         if (plugin.pm.hasPermission(player, "preciousstones.benefit.launch"))
         {
-            if (field.isAllowed(player.getName()))
+            if (field.isAllowed(player.getName()) || plugin.stm.isTeamMate(player.getName(), field.getOwner()))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
@@ -139,7 +139,7 @@ public class VelocityManager
 
         if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
         {
-            if (field.isAllowed(player.getName()))
+            if (field.isAllowed(player.getName()) || plugin.stm.isTeamMate(player.getName(), field.getOwner()))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 

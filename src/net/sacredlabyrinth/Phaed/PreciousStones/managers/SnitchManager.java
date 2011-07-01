@@ -63,7 +63,7 @@ public class SnitchManager
 
 	    if (fieldsettings.snitch)
 	    {
-		if (!field.isAllowed(player.getName()))
+		if (!field.isOwner(player.getName()))
 		{
 		    DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
 		    field.addIntruder(player.getName(), ChatColor.BLUE + "Entry", dateFormat.format(new Date()));
@@ -86,7 +86,7 @@ public class SnitchManager
 
 	    for (Field field : snitchFields)
 	    {
-		if (!field.isAllowed(player.getName()))
+		if (!field.isOwner(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Break", toBlockDetails(block));
 		}
@@ -107,7 +107,7 @@ public class SnitchManager
 
 	    for (Field field : snitchFields)
 	    {
-		if (!field.isAllowed(player.getName()))
+		if (!field.isOwner(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Place", toBlockDetails(block));
 		}
@@ -128,7 +128,7 @@ public class SnitchManager
 
 	    for (Field field : snitchFields)
 	    {
-		if (!field.isAllowed(player.getName()))
+		if (!field.isOwner(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Used", toBlockDetails(block));
 		}
@@ -151,7 +151,7 @@ public class SnitchManager
 
 	    for (Field field : snitchFields)
 	    {
-		if (!field.isAllowed(player.getName()))
+		if (!field.isOwner(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.GREEN + "Shopped", sign.getLines().length == 0 ? "empty" : sign.getLine(0));
 		}
@@ -172,7 +172,7 @@ public class SnitchManager
 
 	    for (Field field : snitchFields)
 	    {
-		if (!field.isAllowed(player.getName()))
+		if (!field.isOwner(player.getName()))
 		{
 		    field.addIntruder(player.getName(), ChatColor.RED + "Ignite", toBlockDetails(block));
 		}

@@ -12,6 +12,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSe
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
 
@@ -629,6 +630,45 @@ public class CommunicatonManager
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.place") && canAlert(pl))
             {
                 ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a block " + (new Vec(block)).toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+            }
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param block
+     * @param field
+     */
+    public void warnEmpty(Player player, Material mat, Field field)
+    {
+        FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+        if (plugin.settings.warnPlace && canWarn(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place here");
+        }
+
+        if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.settings.logPlace)
+        {
+            PreciousStones.log(Level.INFO, " {0} attempted empty a {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), mat.toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.place") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to empty a " + mat.toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
             }
         }
     }

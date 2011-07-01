@@ -31,6 +31,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.LightningManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CloakManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SimpleTeamsManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 
@@ -59,6 +60,8 @@ public class PreciousStones extends JavaPlugin
     public VelocityManager vm;
     public CloakManager clm;
     public PermissionsManager pm;
+    public SimpleTeamsManager stm;
+
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
@@ -99,6 +102,7 @@ public class PreciousStones extends JavaPlugin
         vm = new VelocityManager(this);
         clm = new CloakManager(this);
         pm = new PermissionsManager(this);
+        stm = new SimpleTeamsManager(this);
 
         sm = new StorageManager(this);
         tm = new TagManager(this);
@@ -126,6 +130,7 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Monitor, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, playerListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FROMTO, blockListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Highest, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.Monitor, this);

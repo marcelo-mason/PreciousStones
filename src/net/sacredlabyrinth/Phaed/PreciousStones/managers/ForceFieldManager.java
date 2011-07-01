@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.avaje.ebean.Page;
 import com.avaje.ebean.PagingList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -456,7 +455,7 @@ public class ForceFieldManager
 
                     Block source = block.getRelative(x, y, z);
 
-                    if(source.getType().equals(Material.REDSTONE_TORCH_OFF))
+                    if (source.getType().equals(Material.REDSTONE_TORCH_OFF))
                     {
                         return true;
                     }
@@ -611,6 +610,11 @@ public class ForceFieldManager
         {
             if (field.envelops(loc) && (playerName == null || !field.isAllowed(playerName)))
             {
+                if (plugin.stm.isTeamMate(playerName, field.getOwner()))
+                {
+                    continue;
+                }
+
                 fields.add(field);
             }
         }
@@ -716,6 +720,11 @@ public class ForceFieldManager
                     {
                         return f;
                     }
+
+                    if (plugin.stm.isTeamMate(player.getName(), f.getOwner()))
+                    {
+                        return f;
+                    }
                 }
             }
         }
@@ -725,6 +734,11 @@ public class ForceFieldManager
         for (Field field : sourcefields)
         {
             if (field.isAllowed(player.getName()))
+            {
+                return field;
+            }
+
+            if (plugin.stm.isTeamMate(player.getName(), field.getOwner()))
             {
                 return field;
             }
@@ -754,6 +768,11 @@ public class ForceFieldManager
                     Field f = getField(targetblock);
 
                     if (f.isAllowed(player.getName()))
+                    {
+                        return f;
+                    }
+
+                    if (plugin.stm.isTeamMate(player.getName(), f.getOwner()))
                     {
                         return f;
                     }
@@ -791,10 +810,17 @@ public class ForceFieldManager
                             {
                                 continue;
                             }
+
+                            if (!plugin.stm.isTeamMate(player.getName(), otherfield.getOwner()))
+                            {
+                                continue;
+                            }
+
                             if (total.contains(otherfield))
                             {
                                 continue;
                             }
+
                             touching.add(otherfield);
                         }
                     }
@@ -1050,8 +1076,6 @@ public class ForceFieldManager
             {
                 AllowedEntry ae = f.removeAllowed(allowedName);
 
-
-
                 if (ae != null)
                 {
                     try
@@ -1088,8 +1112,6 @@ public class ForceFieldManager
             {
                 AllowedEntry ae = field.removeAllowed(allowedName);
 
-
-
                 if (ae != null)
                 {
                     try
@@ -1120,7 +1142,7 @@ public class ForceFieldManager
 
         if (field != null)
         {
-            return field.isAllowed(playerName);
+            return field.isAllowed(playerName) || plugin.stm.isTeamMate(playerName, field.getOwner());
         }
         return false;
     }
@@ -1256,6 +1278,11 @@ public class ForceFieldManager
         {
             if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
+                if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
+                {
+                    continue;
+                }
+
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
                 if (fieldsettings.preventPlace)
@@ -1282,6 +1309,16 @@ public class ForceFieldManager
         {
             if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
+                if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
+                {
+                    continue;
+                }
+
+                if (player != null && plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
+                {
+                    continue;
+                }
+
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
                 if (fieldsettings.preventDestroy)
@@ -1308,6 +1345,11 @@ public class ForceFieldManager
         {
             if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
             {
+                if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
+                {
+                    continue;
+                }
+
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
                 if (fieldsettings.preventFire)
@@ -1335,6 +1377,16 @@ public class ForceFieldManager
         {
             if (field.envelops(loc) && (player == null || !field.isAllowed(player.getName())))
             {
+                if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
+                {
+                    continue;
+                }
+
+                if (player != null && plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
+                {
+                    continue;
+                }
+
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
                 if (fieldsettings.preventEntry)
@@ -1525,6 +1577,11 @@ public class ForceFieldManager
                 continue;
             }
 
+            if (plugin.stm.isTeamMate(placer.getName(), field.getOwner()))
+            {
+                continue;
+            }
+
             if (field.envelops(placedBlock))
             {
                 return field;
@@ -1563,6 +1620,11 @@ public class ForceFieldManager
             }
 
             if (field.isAllowed(placer.getName()))
+            {
+                continue;
+            }
+
+            if (plugin.stm.isTeamMate(placer.getName(), field.getOwner()))
             {
                 continue;
             }

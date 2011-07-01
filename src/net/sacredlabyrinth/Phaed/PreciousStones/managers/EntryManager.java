@@ -112,7 +112,7 @@ public final class EntryManager
                         {
                             if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
                             {
-                                if (!field.isAllowed(playername))
+                                if (!field.isAllowed(playername) && !plugin.stm.isTeamMate(playername, field.getOwner()))
                                 {
                                     if (fieldsettings.slowDamage)
                                     {

@@ -18,6 +18,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.Chunk;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
 /**
  * PreciousStones player listener
@@ -34,7 +35,7 @@ public class PSPlayerListener extends PlayerListener
      */
     public PSPlayerListener(PreciousStones plugin)
     {
-	this.plugin = plugin;
+        this.plugin = plugin;
     }
 
     /**
@@ -49,104 +50,104 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-	Player player = event.getPlayer();
-	Block block = event.getClickedBlock();
+        Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
 
-	if (block == null || player == null)
-	{
-	    return;
-	}
+        if (block == null || player == null)
+        {
+            return;
+        }
 
         // skip areas that don't have pstones
 
         Chunk chunk = block.getChunk();
 
-        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        if (!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
         {
             return;
         }
 
-	if (event.getAction().equals(Action.PHYSICAL))
-	{
-	    plugin.snm.recordSnitchUsed(player, block);
-	}
+        if (event.getAction().equals(Action.PHYSICAL))
+        {
+            plugin.snm.recordSnitchUsed(player, block);
+        }
 
-	if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-	{
-	    if (block.getType().equals(Material.WALL_SIGN))
-	    {
-		plugin.snm.recordSnitchShop(player, block);
-	    }
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+        {
+            if (block.getType().equals(Material.WALL_SIGN))
+            {
+                plugin.snm.recordSnitchShop(player, block);
+            }
 
-	    if (block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.STONE_BUTTON))
-	    {
-		plugin.snm.recordSnitchUsed(player, block);
-	    }
+            if (block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.STONE_BUTTON))
+            {
+                plugin.snm.recordSnitchUsed(player, block);
+            }
 
-	    ItemStack is = player.getItemInHand();
+            ItemStack is = player.getItemInHand();
 
-	    if (is == null || !plugin.settings.isToolItemType(is.getTypeId()))
-	    {
-		return;
-	    }
+            if (is == null || !plugin.settings.isToolItemType(is.getTypeId()))
+            {
+                return;
+            }
 
-	    if (plugin.settings.isBypassBlock(block))
-	    {
-		return;
-	    }
+            if (plugin.settings.isBypassBlock(block))
+            {
+                return;
+            }
 
-	    if (block.getState() instanceof ContainerBlock)
-	    {
-		plugin.snm.recordSnitchUsed(player, block);
-	    }
+            if (block.getState() instanceof ContainerBlock)
+            {
+                plugin.snm.recordSnitchUsed(player, block);
+            }
 
-	    if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
-	    {
-		plugin.cm.showIntruderList(player, plugin.ffm.getField(block));
-	    }
-	    else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
-	    {
-		if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
-		{
-		    plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
-		}
-		else
-		{
-		    plugin.cm.showUnbreakableOwner(player, block);
-		}
-	    }
-	    else if ((plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block)) && plugin.ffm.isField(block))
-	    {
-		if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
-		{
+            if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
+            {
+                plugin.cm.showIntruderList(player, plugin.ffm.getField(block));
+            }
+            else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
+            {
+                if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+                {
+                    plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
+                }
+                else
+                {
+                    plugin.cm.showUnbreakableOwner(player, block);
+                }
+            }
+            else if ((plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block)) && plugin.ffm.isField(block))
+            {
+                if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+                {
                     List<Field> fields = new ArrayList<Field>();
                     fields.add(plugin.ffm.getField(block));
-		    plugin.cm.showFieldDetails(player, fields);
-		}
-		else
-		{
-		    plugin.cm.showFieldOwner(player, block);
-		}
-	    }
-	    else
-	    {
-		Field field = plugin.ffm.isDestroyProtected(block, null);
+                    plugin.cm.showFieldDetails(player, fields);
+                }
+                else
+                {
+                    plugin.cm.showFieldOwner(player, block);
+                }
+            }
+            else
+            {
+                Field field = plugin.ffm.isDestroyProtected(block, null);
 
-		if (field != null)
-		{
-		    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails)
-		    {
+                if (field != null)
+                {
+                    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails)
+                    {
                         List<Field> fields = plugin.ffm.getSourceFields(block);
 
-			plugin.cm.showProtectedLocation(fields, player);
-		    }
-		    else
-		    {
-			plugin.cm.showProtected(player);
-		    }
-		}
-	    }
-	}
+                        plugin.cm.showProtectedLocation(fields, player);
+                    }
+                    else
+                    {
+                        plugin.cm.showProtected(player);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -161,101 +162,142 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if(new Vec(event.getFrom()).equals(new Vec(event.getTo())))
+        if (new Vec(event.getFrom()).equals(new Vec(event.getTo())))
         {
             return;
+        }
+
+        Player player = event.getPlayer();
+
+        // remove player form any entry field he is not currently in
+
+        LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
+
+        if (entryfields != null)
+        {
+            for (Field entryfield : entryfields)
+            {
+                if (!entryfield.envelops(player.getLocation()))
+                {
+                    plugin.em.leaveField(player, entryfield);
+
+                    if (!plugin.em.containsSameNameOwnedField(player, entryfield))
+                    {
+                        FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
+
+                        if (fieldsettings.farewellMessage)
+                        {
+                            if (entryfield.getName().length() > 0)
+                            {
+                                plugin.cm.showFarewellMessage(player, entryfield.getName());
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // skip areas that don't have pstones
 
         Chunk chunk = event.getTo().getBlock().getChunk();
 
-        if(!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
+        if (!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
         {
             return;
         }
 
-	Player player = event.getPlayer();
-
-	List<Field> currentfields = plugin.ffm.getSourceFields(player);
+        List<Field> currentfields = plugin.ffm.getSourceFields(player);
 
         // check if were on a prevent entry field the player is no allowed in
 
-	for (Field field : currentfields)
-	{
-            if(field.isAllowed(player.getName()))
+        for (Field field : currentfields)
+        {
+            if (field.isAllowed(player.getName()))
             {
                 continue;
             }
 
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+            if (plugin.stm.isTeamMate(player.getName(), field.getOwner()))
+            {
+                continue;
+            }
 
-	    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
-	    {
-		if (fieldsettings.preventEntry)
-		{
-		    player.teleport(event.getFrom());
-		    event.setCancelled(true);
-		    plugin.cm.warnEntry(player, field);
-		    break;
-		}
-	    }
-	}
+            if (plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
+            {
+                continue;
+            }
 
-	// loop through all fields the player just moved into
+            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
-	if (currentfields != null)
-	{
-	    for (Field currentfield : currentfields)
-	    {
-		if (!plugin.em.isInsideField(player, currentfield))
-		{
-		    if (!plugin.em.containsSameNameOwnedField(player, currentfield))
-		    {
-			FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
+            if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
+            {
+                if (fieldsettings.preventEntry)
+                {
+                    event.setTo(event.getFrom());
+                    plugin.cm.warnEntry(player, field);
+                    return;
+                }
+            }
+        }
 
-			if (fieldsettings.welcomeMessage)
-			{
-			    if (currentfield.getName().length() > 0)
-			    {
-				plugin.cm.showWelcomeMessage(player, currentfield.getName());
-			    }
-			}
-		    }
+        // enter all fields the player just moved into
 
-		    plugin.em.enterField(player, currentfield);
-		}
-	    }
-	}
+        if (currentfields != null)
+        {
+            for (Field currentfield : currentfields)
+            {
+                if (!plugin.em.isInsideField(player, currentfield))
+                {
+                    if (!plugin.em.containsSameNameOwnedField(player, currentfield))
+                    {
+                        FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
 
-	// remove all stored entry fields that the player is no longer currently in
+                        if (fieldsettings.welcomeMessage)
+                        {
+                            if (currentfield.getName().length() > 0)
+                            {
+                                plugin.cm.showWelcomeMessage(player, currentfield.getName());
+                            }
+                        }
+                    }
 
-	LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
+                    plugin.em.enterField(player, currentfield);
+                }
+            }
+        }
+    }
 
-	if (entryfields != null)
-	{
-	    if (currentfields != null)
-	    {
-		entryfields.removeAll(currentfields);
-	    }
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
+    {
+        Player player = event.getPlayer();
+        Block block = event.getBlockClicked();
+        Material mat = event.getBucket();
 
-	    for (Field entryfield : entryfields)
-	    {
-		plugin.em.leaveField(player, entryfield);
+        Field field = plugin.ffm.isPlaceProtected(block, player);
 
-		if (!plugin.em.containsSameNameOwnedField(player, entryfield))
-		{
-		    FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
-
-		    if (fieldsettings.farewellMessage)
-		    {
-			if (entryfield.getName().length() > 0)
-			{
-			    plugin.cm.showFarewellMessage(player, entryfield.getName());
-			}
-		    }
-		}
-	    }
-	}
+        if (field != null)
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+            {
+                plugin.cm.notifyBypassPlace(player, field);
+            }
+            else
+            {
+                if (plugin.stm.isTeamMate(player.getName(), field.getOwner()))
+                {
+                    // do nothing
+                }
+                else
+                {
+                    event.setCancelled(true);
+                    plugin.cm.warnEmpty(player, mat, field);
+                }
+            }
+        }
     }
 }

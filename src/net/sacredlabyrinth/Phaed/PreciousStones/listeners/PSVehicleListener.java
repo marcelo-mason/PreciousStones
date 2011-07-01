@@ -11,6 +11,7 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.server.PluginEnableEvent;
 
 import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
@@ -68,6 +69,16 @@ public class PSVehicleListener extends VehicleListener
             for (Field field : currentfields)
             {
                 if (field.isAllowed(player.getName()))
+                {
+                    continue;
+                }
+
+                if (plugin.stm.isTeamMate(player.getName(), field.getOwner()))
+                {
+                    continue;
+                }
+
+                if (plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
                 {
                     continue;
                 }
