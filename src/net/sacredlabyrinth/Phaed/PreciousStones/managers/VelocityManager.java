@@ -69,6 +69,12 @@ public class VelocityManager
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+                if (fieldsettings == null)
+                {
+                    plugin.ffm.queueRelease(field);
+                    return;
+                }
+
                 final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.launchHeight;
                 double speed = 8;
 
@@ -142,6 +148,12 @@ public class VelocityManager
             if (field.isAllowed(player.getName()) || plugin.stm.isTeamMate(player.getName(), field.getOwner()))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                if (fieldsettings == null)
+                {
+                    plugin.ffm.queueRelease(field);
+                    return;
+                }
 
                 final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.cannonHeight;
                 final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);

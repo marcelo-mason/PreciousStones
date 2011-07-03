@@ -41,6 +41,12 @@ public class MineManager
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                return;
+            }
+            
 	    final int delay = fieldsettings.mineDelaySeconds;
 	    final int leftbehind = fieldsettings.mineReplaceBlock;
 
@@ -58,7 +64,7 @@ public class MineManager
 
 			CraftWorld world = (CraftWorld)block.getWorld();
 			EntityTNTPrimed tnt = new EntityTNTPrimed(world.getHandle(), block.getX()+0.5F, block.getY()+0.5F, block.getZ()+0.5F);
-			world.getHandle().a(tnt);
+			//world.getHandle().a(tnt);
 
 			block.setType(Material.getMaterial(leftbehind));
 		    }

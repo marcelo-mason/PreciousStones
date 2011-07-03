@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
+import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -17,8 +18,8 @@ import org.bukkit.Material;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import org.bukkit.Chunk;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  * PreciousStones player listener
@@ -50,19 +51,12 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
+        DebugTimer dt = new DebugTimer("onPlayerInteract");
+
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
 
         if (block == null || player == null)
-        {
-            return;
-        }
-
-        // skip areas that don't have pstones
-
-        Chunk chunk = block.getChunk();
-
-        if (!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
         {
             return;
         }
@@ -116,7 +110,7 @@ public class PSPlayerListener extends PlayerListener
                     plugin.cm.showUnbreakableOwner(player, block);
                 }
             }
-            else if ((plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block)) && plugin.ffm.isField(block))
+            else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
             {
                 if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
                 {
@@ -139,15 +133,35 @@ public class PSPlayerListener extends PlayerListener
                     {
                         List<Field> fields = plugin.ffm.getSourceFields(block);
 
-                        plugin.cm.showProtectedLocation(fields, player);
+                        plugin.cm.showProtectedLocation(fields, player, block);
                     }
                     else
                     {
-                        plugin.cm.showProtected(player);
+                        plugin.cm.showProtected(player, block);
                     }
                 }
             }
         }
+
+        if (plugin.settings.debug)
+        {
+            dt.logProcessTime();
+        }
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onPlayerTeleport(PlayerTeleportEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        handlePlayerMove(event);
     }
 
     /**
@@ -167,8 +181,21 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
+        handlePlayerMove(event);
+    }
+
+    private void handlePlayerMove(PlayerMoveEvent event)
+    {
+        DebugTimer dt = new DebugTimer("onPlayerMove");
         Player player = event.getPlayer();
 
+        // undo a player's visualization if it exists
+
+        if (plugin.settings.visualizeEndOnMove)
+        {
+            plugin.viz.revertVisualization(player);
+        }
+        
         // remove player form any entry field he is not currently in
 
         LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
@@ -185,6 +212,12 @@ public class PSPlayerListener extends PlayerListener
                     {
                         FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
 
+                        if (fieldsettings == null)
+                        {
+                            plugin.ffm.queueRelease(entryfield);
+                            return;
+                        }
+
                         if (fieldsettings.farewellMessage)
                         {
                             if (entryfield.getName().length() > 0)
@@ -195,15 +228,6 @@ public class PSPlayerListener extends PlayerListener
                     }
                 }
             }
-        }
-
-        // skip areas that don't have pstones
-
-        Chunk chunk = event.getTo().getBlock().getChunk();
-
-        if (!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
-        {
-            return;
         }
 
         List<Field> currentfields = plugin.ffm.getSourceFields(player);
@@ -229,6 +253,12 @@ public class PSPlayerListener extends PlayerListener
 
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                return;
+            }
+
             if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
             {
                 if (fieldsettings.preventEntry)
@@ -252,11 +282,22 @@ public class PSPlayerListener extends PlayerListener
                     {
                         FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
 
+                        if (fieldsettings == null)
+                        {
+                            plugin.ffm.queueRelease(currentfield);
+                            return;
+                        }
+
                         if (fieldsettings.welcomeMessage)
                         {
                             if (currentfield.getName().length() > 0)
                             {
                                 plugin.cm.showWelcomeMessage(player, currentfield.getName());
+
+                                if (plugin.stm.isRival(player.getName(), currentfield.getOwner()))
+                                {
+                                    plugin.stm.bypassAnnounce(currentfield, player.getName());
+                                }
                             }
                         }
                     }
@@ -264,6 +305,11 @@ public class PSPlayerListener extends PlayerListener
                     plugin.em.enterField(player, currentfield);
                 }
             }
+        }
+
+        if (plugin.settings.debug)
+        {
+            dt.logProcessTime();
         }
     }
 
@@ -274,6 +320,8 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
     {
+        DebugTimer dt = new DebugTimer("onPlayerBucketEmpty");
+
         Player player = event.getPlayer();
         Block block = event.getBlockClicked();
         Material mat = event.getBucket();
@@ -298,6 +346,11 @@ public class PSPlayerListener extends PlayerListener
                     plugin.cm.warnEmpty(player, mat, field);
                 }
             }
+        }
+
+        if (plugin.settings.debug)
+        {
+            dt.logProcessTime();
         }
     }
 }

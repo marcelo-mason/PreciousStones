@@ -41,6 +41,12 @@ public class LightningManager
 	{
 	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                return;
+            }
+
 	    final int delay = fieldsettings.lightningDelaySeconds;
 	    final int leftbehind = fieldsettings.lightningReplaceBlock;
 

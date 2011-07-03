@@ -7,7 +7,6 @@ import java.util.HashSet;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
@@ -64,7 +63,14 @@ public final class EntryManager
                     for (Field field : fields)
                     {
                         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-                        Player player = Helper.matchExactPlayer(plugin, playername);
+
+                        if (fieldsettings == null)
+                        {
+                            plugin.ffm.queueRelease(field);
+                            continue;
+                        }
+
+                        Player player = plugin.helper.matchExactPlayer(playername);
 
                         if (player == null)
                         {
@@ -244,7 +250,6 @@ public final class EntryManager
 
         plugin.mm.enterMine(player, field);
         plugin.lm.enterLightning(player, field);
-        plugin.clm.decloak(field);
     }
 
     /**
@@ -260,11 +265,6 @@ public final class EntryManager
         if (ef.size() == 0)
         {
             entries.remove(player.getName());
-        }
-
-        if (plugin.ffm.existsField(field))
-        {
-            plugin.clm.cloak(field);
         }
     }
 

@@ -20,7 +20,7 @@ public class UnprotectableManager
      */
     public UnprotectableManager(PreciousStones plugin)
     {
-	this.plugin = plugin;
+        this.plugin = plugin;
     }
 
     /**
@@ -30,7 +30,7 @@ public class UnprotectableManager
      */
     public boolean touchingUnprotectableBlock(Block block)
     {
-	return getTouchingUnprotectableBlock(block) != null;
+        return getTouchingUnprotectableBlock(block) != null;
     }
 
     /**
@@ -40,28 +40,28 @@ public class UnprotectableManager
      */
     public Block getTouchingUnprotectableBlock(Block block)
     {
-	for (int x = -1; x <= 1; x++)
-	{
-	    for (int z = -1; z <= 1; z++)
-	    {
-		for (int y = -1; y <= 1; y++)
-		{
-		    if (x == 0 && y == 0 && z == 0)
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int z = -1; z <= 1; z++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (x == 0 && y == 0 && z == 0)
                     {
-			continue;
+                        continue;
                     }
 
                     int type = block.getWorld().getBlockTypeIdAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-		    if (plugin.settings.isUnprotectableType(type))
+                    if (plugin.settings.isUnprotectableType(type))
                     {
-			return block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
+                        return block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
                     }
-		}
-	    }
-	}
+                }
+            }
+        }
 
-	return null;
+        return null;
     }
 
     /**
@@ -71,32 +71,37 @@ public class UnprotectableManager
      */
     public Block existsUnprotectableBlock(Block fieldblock)
     {
-	FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
+        FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
 
-	int minx = fieldblock.getX() - fieldsettings.radius;
-	int maxx = fieldblock.getX() + fieldsettings.radius;
-	int minz = fieldblock.getZ() - fieldsettings.radius;
-	int maxz = fieldblock.getZ() + fieldsettings.radius;
+        if (fieldsettings == null)
+        {
+            return null;
+        }
 
-	int miny = fieldblock.getY() - (int) Math.floor(((double) fieldsettings.getHeight()) / 2);
-	int maxy = fieldblock.getY() + (int) Math.ceil(((double) fieldsettings.getHeight()) / 2);
+        int minx = fieldblock.getX() - fieldsettings.radius;
+        int maxx = fieldblock.getX() + fieldsettings.radius;
+        int minz = fieldblock.getZ() - fieldsettings.radius;
+        int maxz = fieldblock.getZ() + fieldsettings.radius;
 
-	for (int x = minx; x <= maxx; x++)
-	{
-	    for (int z = minz; z <= maxz; z++)
-	    {
-		for (int y = miny; y <= maxy; y++)
-		{
-		    int type = fieldblock.getWorld().getBlockTypeIdAt(x, y, z);
+        int miny = fieldblock.getY() - (int) Math.floor(((double) fieldsettings.getHeight()) / 2);
+        int maxy = fieldblock.getY() + (int) Math.ceil(((double) fieldsettings.getHeight()) / 2);
 
-		    if (plugin.settings.isUnprotectableType(type))
+        for (int x = minx; x <= maxx; x++)
+        {
+            for (int z = minz; z <= maxz; z++)
+            {
+                for (int y = miny; y <= maxy; y++)
+                {
+                    int type = fieldblock.getWorld().getBlockTypeIdAt(x, y, z);
+
+                    if (plugin.settings.isUnprotectableType(type))
                     {
-			return fieldblock.getWorld().getBlockAt(x, y, z);
+                        return fieldblock.getWorld().getBlockAt(x, y, z);
                     }
-		}
-	    }
-	}
+                }
+            }
+        }
 
-	return null;
+        return null;
     }
 }

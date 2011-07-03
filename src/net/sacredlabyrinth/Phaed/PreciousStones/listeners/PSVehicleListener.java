@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import java.util.LinkedList;
 import java.util.List;
+import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
@@ -11,7 +12,6 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.event.server.PluginEnableEvent;
 
 import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
@@ -46,14 +46,7 @@ public class PSVehicleListener extends VehicleListener
             return;
         }
 
-        // skip areas that don't have pstones
-
-        Chunk chunk = event.getTo().getBlock().getChunk();
-
-        if (!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
-        {
-            return;
-        }
+        DebugTimer dt = new DebugTimer("onVehicleMove");
 
         Vehicle v = event.getVehicle();
         Entity entity = v.getPassenger();
@@ -85,6 +78,12 @@ public class PSVehicleListener extends VehicleListener
 
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+                if (fieldsettings == null)
+                {
+                    plugin.ffm.queueRelease(field);
+                    return;
+                }
+
                 if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
                 {
                     if (fieldsettings.preventEntry)
@@ -108,6 +107,12 @@ public class PSVehicleListener extends VehicleListener
                         if (!plugin.em.containsSameNameOwnedField(player, currentfield))
                         {
                             FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
+
+                            if (fieldsettings == null)
+                            {
+                                plugin.ffm.queueRelease(currentfield);
+                                return;
+                            }
 
                             if (fieldsettings.welcomeMessage)
                             {
@@ -142,6 +147,12 @@ public class PSVehicleListener extends VehicleListener
                     {
                         FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
 
+                        if (fieldsettings == null)
+                        {
+                            plugin.ffm.queueRelease(entryfield);
+                            return;
+                        }
+
                         if (fieldsettings.farewellMessage)
                         {
                             if (entryfield.getName().length() > 0)
@@ -152,6 +163,11 @@ public class PSVehicleListener extends VehicleListener
                     }
                 }
             }
+        }
+
+        if (plugin.settings.debug)
+        {
+            dt.logProcessTime();
         }
     }
 }

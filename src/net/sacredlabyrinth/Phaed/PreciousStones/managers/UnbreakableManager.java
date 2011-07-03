@@ -74,7 +74,7 @@ public class UnbreakableManager
      * Saves unbreakable to database
      * @param ub
      */
-    public void saveUnbreakable(Unbreakable ub)
+    public void saveUnbreakable(Unbreakable ub, boolean replace)
     {
         try
         {
@@ -86,6 +86,7 @@ public class UnbreakableManager
                 }
                 catch (Exception ex)
                 {
+                    ex.printStackTrace();
                 }
 
                 Unbreakable newub = null;
@@ -96,6 +97,7 @@ public class UnbreakableManager
                 }
                 catch (Exception ex)
                 {
+                    ex.printStackTrace();
                 }
 
                 if (newub == null)
@@ -106,6 +108,7 @@ public class UnbreakableManager
                     }
                     catch (Exception ex)
                     {
+                        ex.printStackTrace();
                     }
                 }
 
@@ -118,10 +121,15 @@ public class UnbreakableManager
                     replacementQueue.add(ub);
                 }
 
+                if (replace)
+                {
+                    processReplacementQueue();
+                }
             }
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
         }
     }
 
@@ -130,13 +138,15 @@ public class UnbreakableManager
      */
     public void saveAll()
     {
+        flush();
+
         for (HashMap<ChunkVec, LinkedList<Unbreakable>> w : chunkLists.values())
         {
             for (LinkedList<Unbreakable> ubs : w.values())
             {
                 for (Unbreakable ub : ubs)
                 {
-                    saveUnbreakable(ub);
+                    saveUnbreakable(ub, false);
                 }
             }
         }
@@ -447,6 +457,51 @@ public class UnbreakableManager
     }
 
     /**
+     * Whether the piston could displace a pstone
+     * @param piston
+     * @param placer
+     * @return
+     */
+    public Unbreakable getPistonConflict(Block piston, Player placer)
+    {
+        for (int z = -15; z <= 15; z++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    Block block = piston.getRelative(x, y, z);
+                    Unbreakable ub = getUnbreakable(block);
+
+                    if (ub != null)
+                    {
+                        return ub;
+                    }
+                }
+            }
+        }
+
+        for (int z = -1; z <= 1; z++)
+        {
+            for (int x = -15; x <= 15; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    Block block = piston.getRelative(x, y, z);
+                    Unbreakable ub = getUnbreakable(block);
+
+                    if (ub != null)
+                    {
+                        return ub;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Add stone to the collection
      * @param unbreakableblock
      * @param owner
@@ -460,11 +515,9 @@ public class UnbreakableManager
         }
 
         Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
-        ChunkVec chunkvec = unbreakable.toChunkVec();
 
         addToCollection(unbreakable);
-
-        plugin.tm.tagChunk(unbreakable.toChunkVec());
+        saveUnbreakable(unbreakable, true);
         return true;
     }
 
@@ -599,8 +652,7 @@ public class UnbreakableManager
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
         }
-
-        plugin.tm.untagChunk(ub.toChunkVec());
     }
 }

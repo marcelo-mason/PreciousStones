@@ -5,23 +5,18 @@ import com.avaje.ebean.validation.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import net.sacredlabyrinth.Phaed.PreciousStones.AllowedEntry;
-
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.CloakEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import org.bukkit.Location;
 
 /**
@@ -30,7 +25,7 @@ import org.bukkit.Location;
  */
 @Entity()
 @CacheStrategy
-@Table(name = "ps_fields", uniqueConstraints =
+@Table(name = "pstone_fields", uniqueConstraints =
 @UniqueConstraint(columnNames =
 {
     "x", "y", "z", "world"
@@ -47,14 +42,16 @@ public class Field extends AbstractVec implements Serializable
     private String owner;
     @NotNull
     private String name;
-    @OneToMany(mappedBy = "field", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @NotNull
+    @Column(columnDefinition = "TEXT")
+    private String packedAllowed;
+    @NotNull
+    @Column(columnDefinition = "LONGTEXT")
+    private String packedSnitchList;
+    @Transient
+    private List<String> allowed = new ArrayList<String>();
+    @Transient
     private List<SnitchEntry> snitchList = new ArrayList<SnitchEntry>();
-    @OneToMany(mappedBy = "field", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<AllowedEntry> allowed = new ArrayList<AllowedEntry>();
-    @OneToOne(cascade = CascadeType.ALL)
-    private CloakEntry cloakEntry;
-    private int chunkX;
-    private int chunkZ;
     @Transient
     private boolean dirty;
 
@@ -81,13 +78,13 @@ public class Field extends AbstractVec implements Serializable
     {
         super(x, y, z, world);
 
-        this.chunkX = x >> 4;
-        this.chunkZ = z >> 4;
         this.radius = radius;
         this.height = height;
         this.owner = owner;
         this.name = name;
         this.typeId = typeId;
+        this.packedAllowed = "";
+        this.packedSnitchList = "";
         this.dirty = true;
     }
 
@@ -103,13 +100,13 @@ public class Field extends AbstractVec implements Serializable
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
-        this.chunkX = block.getX() >> 4;
-        this.chunkZ = block.getZ() >> 4;
         this.radius = radius;
         this.height = height;
         this.owner = owner;
         this.name = name;
         this.typeId = block.getTypeId();
+        this.packedAllowed = "";
+        this.packedSnitchList = "";
         this.dirty = true;
     }
 
@@ -123,11 +120,11 @@ public class Field extends AbstractVec implements Serializable
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
-        this.chunkX = block.getX() >> 4;
-        this.chunkZ = block.getZ() >> 4;
         this.radius = radius;
         this.height = height;
         this.typeId = block.getTypeId();
+        this.packedAllowed = "";
+        this.packedSnitchList = "";
         this.dirty = true;
     }
 
@@ -139,9 +136,43 @@ public class Field extends AbstractVec implements Serializable
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
-        this.chunkX = block.getX() >> 4;
-        this.chunkZ = block.getZ() >> 4;
+        this.packedAllowed = "";
+        this.packedSnitchList = "";
         this.dirty = true;
+    }
+
+
+    /**
+     * Pack arrays into string values ready for storage
+     * @param team
+     */
+    public void pack()
+    {
+        String packed = "";
+
+        for(SnitchEntry se : snitchList)
+        {
+            packed += se  + "|";
+        }
+
+        setPackedSnitchList(Helper.stripTrailing(packed, "|"));
+        setPackedAllowed(Helper.toMessage(allowed, "|"));
+    }
+
+    /**
+     * Unpack string values back into objects for use
+     * @param team
+     */
+    public void unpack()
+    {
+        List<String> packedSnitchLists = Helper.fromArray(packedSnitchList.split("[|]"));
+
+        for(String packed : packedSnitchLists)
+        {
+            snitchList.add(new SnitchEntry(packed));
+        }
+
+        setAllowed(Helper.fromArray(getPackedAllowed().split("[|]")));
     }
 
     /**
@@ -160,38 +191,6 @@ public class Field extends AbstractVec implements Serializable
     public void setId(Long id)
     {
         this.id = id;
-    }
-
-    /**
-     * @return the chunk x
-     */
-    public int getChunkX()
-    {
-        return chunkX;
-    }
-
-    /**
-     * @param chunkX
-     */
-    public void setChunkX(int chunkX)
-    {
-        this.chunkX = chunkX;
-    }
-
-    /**
-     * @return the chunk z
-     */
-    public int getChunkZ()
-    {
-        return chunkZ;
-    }
-
-    /**
-     * @param chunkZ
-     */
-    public void setChunkZ(int chunkZ)
-    {
-        this.chunkZ = chunkZ;
     }
 
     /**
@@ -265,7 +264,7 @@ public class Field extends AbstractVec implements Serializable
      */
     public boolean isOwner(String playerName)
     {
-        return playerName.equals(owner);
+        return owner.equalsIgnoreCase(playerName);
     }
 
     /**
@@ -312,30 +311,13 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
-     * @param allowed the allowed to set
-     */
-    public void setAllowed(List<AllowedEntry> allowed)
-    {
-        this.allowed = allowed;
-    }
-
-    /**
      *
      * @return
      */
-    public List<AllowedEntry> getAllowed()
+    public List<String> getAllAllowed()
     {
-        return allowed;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public List<AllowedEntry> getAllAllowed()
-    {
-        List<AllowedEntry> all = new ArrayList<AllowedEntry>();
-        all.add(new AllowedEntry(owner, "all"));
+        List<String> all = new ArrayList<String>();
+        all.add(owner.toLowerCase());
         all.addAll(allowed);
         return all;
     }
@@ -370,25 +352,12 @@ public class Field extends AbstractVec implements Serializable
      */
     public boolean isAllowed(String allowedName)
     {
-        if (allowedName.equals(owner))
+        if (allowedName.equalsIgnoreCase(owner))
         {
             return true;
         }
 
-        for (AllowedEntry ae : allowed)
-        {
-            if (ae.getName().equals("*"))
-            {
-                return true;
-            }
-
-            if (ae.getName().equals(allowedName))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return allowed.contains(allowedName.toLowerCase()) || allowed.contains("*");
     }
 
     /**
@@ -397,14 +366,14 @@ public class Field extends AbstractVec implements Serializable
      * @param perm
      * @return confirmation
      */
-    public boolean addAllowed(String allowedName, String perm)
+    public boolean addAllowed(String allowedName)
     {
         if (isAllowed(allowedName))
         {
             return false;
         }
 
-        allowed.add(new AllowedEntry(allowedName, perm));
+        allowed.add(allowedName.toLowerCase());
         this.dirty = true;
         return true;
     }
@@ -414,24 +383,10 @@ public class Field extends AbstractVec implements Serializable
      * @param allowedName
      * @return confirmation
      */
-    public AllowedEntry removeAllowed(String allowedName)
+    public void removeAllowed(String allowedName)
     {
-        if (!isAllowed(allowedName))
-        {
-            return null;
-        }
-
-        for (AllowedEntry ae : allowed)
-        {
-            if (ae.getName().equals(allowedName))
-            {
-                allowed.remove(ae);
-                this.dirty = true;
-                return ae;
-            }
-        }
-
-        return null;
+        allowed.remove(allowedName.toLowerCase());
+        this.dirty = true;
     }
 
     /**
@@ -490,34 +445,6 @@ public class Field extends AbstractVec implements Serializable
         this.dirty = true;
     }
 
-    /**
-     *
-     * @return the cloak entry
-     */
-    public CloakEntry getCloakEntry()
-    {
-        return cloakEntry;
-    }
-
-    /**
-     * Set the cloak entry value
-     * @param cloakEntry
-     */
-    public void setCloakEntry(CloakEntry cloakEntry)
-    {
-        this.cloakEntry = cloakEntry;
-    }
-
-    /**
-     * Add cloak entry to the field, mark for database save
-     * @param cloakEntry
-     */
-    public void addCloakEntry(CloakEntry cloakEntry)
-    {
-        this.cloakEntry = cloakEntry;
-        this.dirty = true;
-    }
-
     @Override
     public String toString()
     {
@@ -545,7 +472,7 @@ public class Field extends AbstractVec implements Serializable
      */
     public ChunkVec toChunkVec()
     {
-        return new ChunkVec(chunkX, chunkZ, getWorld());
+        return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
     }
 
     /**
@@ -720,5 +647,53 @@ public class Field extends AbstractVec implements Serializable
     public void setVelocity(float velocity)
     {
         this.velocity = velocity;
+    }
+
+    /**
+     * @return the packedAllowed
+     */
+    public String getPackedAllowed()
+    {
+        return packedAllowed;
+    }
+
+    /**
+     * @param packedAllowed the packedAllowed to set
+     */
+    public void setPackedAllowed(String packedAllowed)
+    {
+        this.packedAllowed = packedAllowed;
+    }
+
+    /**
+     * @return the allowed
+     */
+    public List<String> getAllowed()
+    {
+        return allowed;
+    }
+
+    /**
+     * @param allowed the allowed to set
+     */
+    public void setAllowed(List<String> allowed)
+    {
+        this.allowed = allowed;
+    }
+
+    /**
+     * @return the packedSnitchList
+     */
+    public String getPackedSnitchList()
+    {
+        return packedSnitchList;
+    }
+
+    /**
+     * @param packedSnitchList the packedSnitchList to set
+     */
+    public void setPackedSnitchList(String packedSnitchList)
+    {
+        this.packedSnitchList = packedSnitchList;
     }
 }

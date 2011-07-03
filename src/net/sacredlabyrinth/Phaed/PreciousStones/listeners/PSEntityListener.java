@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -10,12 +11,14 @@ import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Painting;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.painting.PaintingBreakEvent;
+import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
+import org.bukkit.event.painting.PaintingPlaceEvent;
 
 /**
  * PreciousStones entity listener
@@ -42,15 +45,6 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
-        // skip areas that don't have pstones
-
-        Chunk chunk = event.getLocation().getBlock().getChunk();
-
-        if (!plugin.tm.isTaggedArea(new ChunkVec(chunk)))
-        {
-            return;
-        }
-
         CreatureType mob = event.getCreatureType();
         Location loc = event.getLocation();
 
@@ -96,6 +90,8 @@ public class PSEntityListener extends EntityListener
             return;
         }
 
+        DebugTimer dt = new DebugTimer("onEntityExplode");
+
         for (Block block : event.blockList())
         {
             // prevent explosion if breaking unbreakable
@@ -124,6 +120,8 @@ public class PSEntityListener extends EntityListener
                 break;
             }
         }
+
+        if (plugin.settings.debug) { dt.logProcessTime(); }
     }
 
     /**
@@ -137,6 +135,8 @@ public class PSEntityListener extends EntityListener
         {
             return;
         }
+
+        DebugTimer dt = new DebugTimer("onEntityDamage");
 
         // prevent fall damage after cannon throws
 
@@ -260,5 +260,7 @@ public class PSEntityListener extends EntityListener
                 }
             }
         }
+
+        if (plugin.settings.debug) { dt.logProcessTime(); }
     }
 }

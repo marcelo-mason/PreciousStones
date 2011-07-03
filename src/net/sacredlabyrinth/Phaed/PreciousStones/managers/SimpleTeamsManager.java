@@ -1,9 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.phaed.simpleteams.SimpleTeams;
 import net.sacredlabyrinth.phaed.simpleteams.Team;
-import net.sacredlabyrinth.phaed.simpleteams.TeamPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -24,6 +25,47 @@ public final class SimpleTeamsManager
     {
         this.plugin = plugin;
         startST();
+    }
+
+    /**
+     * Announce to players team
+     * @param playerName
+     * @param message
+     */
+    public void teamAnnounce(String playerName, String message)
+    {
+        if (st == null)
+        {
+            return;
+        }
+
+        Team team = st.tm.getTeamByPlayerName(playerName);
+
+        if (team != null)
+        {
+            st.tm.teamAnnounce("PreciousStones", team, message);
+        }
+    }
+
+    /**
+     * Announce to players that a rival is in their base
+     * @param playerName
+     * @param message
+     */
+    public void bypassAnnounce(Field field, String rivalName)
+    {
+        if (st == null)
+        {
+            return;
+        }
+
+        Team team = st.tm.getTeamByPlayerName(field.getOwner());
+        Team rivalTeam = st.tm.getTeamByPlayerName(rivalName);
+
+        if (team != null && rivalTeam != null)
+        {
+            st.tm.audioAnnounce("PreciousStones", team, Helper.capitalize(rivalName) + " of rival team " + Helper.stripColors(rivalTeam.getColorTag()) + " has entered one of " + Helper.stripColors(team.getColorTag()) + "'s bases [" + field.getX() + " " + field.getY() + " " + field.getZ() + " " + field.getWorld() + "]");
+        }
     }
 
     /**
@@ -89,7 +131,7 @@ public final class SimpleTeamsManager
 
         if (team != null)
         {
-            if(st.tm.isAnyOnline(team))
+            if (st.tm.isAnyOnline(team))
             {
                 return true;
             }

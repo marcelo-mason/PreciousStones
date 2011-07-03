@@ -1,39 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import com.avaje.ebean.annotation.CacheStrategy;
-import com.avaje.ebean.validation.NotNull;
-import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-
 /**
  *
  * @author phaed
  */
-@Entity()
-@CacheStrategy
-@Table(name = "ps_snitch_entries")
-public class SnitchEntry implements Serializable
+public class SnitchEntry
 {
-    @Id
-    private Long id;
-
-    @NotNull
     private String name;
-
-    @NotNull
     private String reason;
-
-    @NotNull
     private String details;
-
     private int eventCount;
-
-    @ManyToOne
-    private Field field;
 
     /**
      *
@@ -50,28 +26,29 @@ public class SnitchEntry implements Serializable
      */
     public SnitchEntry(String name, String reason, String details)
     {
-	this.name = name;
-	this.reason = reason;
-	this.details = details;
-	this.eventCount = 1;
+        this.name = name;
+        this.reason = reason;
+        this.details = details;
+        this.eventCount = 1;
     }
 
     /**
-     * Table identity column
-     * @return the id
+     *
+     * @param name
+     * @param reason
+     * @param details
      */
-    public Long getId()
+    public SnitchEntry(String packed)
     {
-        return id;
-    }
+        String[] split = packed.split("[#]");
 
-    /**
-     * Set the table identity column
-     * @param id the id
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
+        if (split.length == 4)
+        {
+            this.name = split[0];
+            this.reason = split[1];
+            this.details = split[2];
+            this.eventCount = Integer.parseInt(split[3]);
+        }
     }
 
     /**
@@ -88,7 +65,7 @@ public class SnitchEntry implements Serializable
      */
     public String getName()
     {
-	return this.name;
+        return this.name;
     }
 
     /**
@@ -105,7 +82,7 @@ public class SnitchEntry implements Serializable
      */
     public String getReason()
     {
-	return this.reason;
+        return this.reason;
     }
 
     /**
@@ -114,12 +91,12 @@ public class SnitchEntry implements Serializable
      */
     public String getReasonDisplay()
     {
-	if (getEventCount() > 1)
-	{
-	    return this.getReason() + " (" + getEventCount() + ")";
-	}
+        if (getEventCount() > 1)
+        {
+            return this.getReason() + " (" + getEventCount() + ")";
+        }
 
-	return this.getReason();
+        return this.getReason();
     }
 
     /**
@@ -136,7 +113,7 @@ public class SnitchEntry implements Serializable
      */
     public String getDetails()
     {
-	return this.details;
+        return this.details;
     }
 
     /**
@@ -144,23 +121,7 @@ public class SnitchEntry implements Serializable
      */
     public void addCount()
     {
-	this.setEventCount(this.getEventCount() + 1);
-    }
-
-    /**
-     * @return the field
-     */
-    public Field getField()
-    {
-        return field;
-    }
-
-    /**
-     * @param field the field to set
-     */
-    public void setField(Field field)
-    {
-        this.field = field;
+        this.setEventCount(this.getEventCount() + 1);
     }
 
     /**
@@ -177,5 +138,11 @@ public class SnitchEntry implements Serializable
     public void setEventCount(int eventCount)
     {
         this.eventCount = eventCount;
+    }
+
+    @Override
+    public String toString()
+    {
+        return name + "#" + reason + "#" + details + "#" + eventCount;
     }
 }

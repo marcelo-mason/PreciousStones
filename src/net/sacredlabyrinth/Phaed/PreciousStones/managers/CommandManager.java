@@ -7,7 +7,6 @@ import me.taylorkelly.help.Help;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import net.sacredlabyrinth.Phaed.PreciousStones.AllowedEntry;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.ChatColor;
@@ -74,20 +73,19 @@ public final class CommandManager implements CommandExecutor
         if (helpPlugin != null)
         {
             helpPlugin.registerCommand("ps [on|off] ", " Disable/Enable the placing of pstones", plugin, true, "preciousstones.benefit.onoff");
-            helpPlugin.registerCommand("ps allow [player|*] ", "Add player to overlapping fields", plugin, true, "preciousstones.whitelist.allow");
-            helpPlugin.registerCommand("ps allowall [player|*] ", "Add player to all your fields", plugin, true, "preciousstones.whitelist.allowall");
+            helpPlugin.registerCommand("ps allow [player/*] ", "Add player to overlapping fields", plugin, true, "preciousstones.whitelist.allow");
+            helpPlugin.registerCommand("ps allowall [player/*] ", "Add player to all your fields", plugin, true, "preciousstones.whitelist.allowall");
             helpPlugin.registerCommand("ps allowed ", "List allowed players in overlapping fields", plugin, true, "preciousstones.whitelist.allowed");
-            helpPlugin.registerCommand("ps remove [player|*] ", "Remove player from overlapping fields", plugin, true, "preciousstones.whitelist.remove");
-            helpPlugin.registerCommand("ps removeall [player|*] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
+            helpPlugin.registerCommand("ps remove [player/*] ", "Remove player from overlapping fields", plugin, true, "preciousstones.whitelist.remove");
+            helpPlugin.registerCommand("ps removeall [player/*] ", "Remove player from all your fields", plugin, true, "preciousstones.whitelist.removeall");
             helpPlugin.registerCommand("ps who ", "List all inhabitants inside the overlapping fields", plugin, true, "preciousstones.whitelist.who");
-            helpPlugin.registerCommand("ps setname [name] ", "Set the name of force-fields", plugin, true, "preciousstones.benefit.setname");
+            helpPlugin.registerCommand("ps setname [name] ", "Set the name of fields", plugin, true, "preciousstones.benefit.setname");
             helpPlugin.registerCommand("ps setradius [radius]", "Sets the field's radius", plugin, true, "preciousstones.benefit.setradius");
             helpPlugin.registerCommand("ps setheight [height]", "Sets the field's height", plugin, true, "preciousstones.benefit.setheight");
             helpPlugin.registerCommand("ps setvelocity [.1-5] ", "Sets velocity of launchers/cannons", plugin, true, "preciousstones.benefit.setvelocity");
             helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
+            helpPlugin.registerCommand("ps visualize ", "Visualizes the perimiter of the field", plugin, true, "preciousstones.benefit.visualize");
             helpPlugin.registerCommand("ps snitch <clear> ", "View/clear snitch you're pointing at", plugin, true, "preciousstones.benefit.snitch");
-            helpPlugin.registerCommand("ps cloak <radius>", "Cloaks the block you are looking at", plugin, true, "preciousstones.special.cloak");
-            helpPlugin.registerCommand("ps decloak ", "Decloaks the block you are looking at", plugin, true, "preciousstones.special.cloak");
             helpPlugin.registerCommand("ps delete ", "Delete the field(s) you're standing on", plugin, true, "preciousstones.admin.delete");
             helpPlugin.registerCommand("ps delete [player] ", "Delete all pstones of the player", plugin, true, "preciousstones.admin.delete");
             helpPlugin.registerCommand("ps info ", "Get info for the field youre standing on", plugin, true, "preciousstones.admin.info");
@@ -131,6 +129,11 @@ public final class CommandManager implements CommandExecutor
                     {
                         Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
 
+                        if (split[0].equals("debug") && plugin.pm.hasPermission(player, "preciousstones.admin.debug"))
+                        {
+                            plugin.settings.debug = !plugin.settings.debug;
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Debug output " + (plugin.settings.debug ? "enabled" : "disabled"));
+                        }
                         if (split[0].equals("on") && plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
                         {
                             if (plugin.plm.isDisabled(player))
@@ -166,13 +169,12 @@ public final class CommandManager implements CommandExecutor
                                 if (field != null)
                                 {
                                     String playerName = split[1];
-                                    String perm = split.length == 3 ? split[2] : "all";
 
-                                    int count = plugin.ffm.addAllowed(player, field, playerName, perm);
+                                    int count = plugin.ffm.addAllowed(player, field, playerName);
 
                                     if (count > 0)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " force-field", "s"));
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " field", "s"));
                                     }
                                     else
                                     {
@@ -193,13 +195,13 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                HashSet<AllowedEntry> allowed = plugin.ffm.getAllowed(player, field);
+                                HashSet<String> allowed = plugin.ffm.getAllowed(player, field);
 
                                 if (allowed.size() > 0)
                                 {
                                     String out = "";
 
-                                    for (AllowedEntry ae : allowed)
+                                    for (String ae : allowed)
                                     {
                                         out += ", " + ae;
                                     }
@@ -208,7 +210,7 @@ public final class CommandManager implements CommandExecutor
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.RED + "No players allowed in this force-field");
+                                    ChatBlock.sendMessage(player, ChatColor.RED + "No players allowed in this field");
                                 }
                             }
                             else
@@ -232,7 +234,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (count > 0)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed from " + count + Helper.plural(count, " force-field", "s"));
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed from " + count + Helper.plural(count, " field", "s"));
                                     }
                                     else
                                     {
@@ -254,11 +256,11 @@ public final class CommandManager implements CommandExecutor
                                 String playerName = split[1];
                                 String perm = split.length == 3 ? split[2] : "all";
 
-                                int count = plugin.ffm.allowAll(player, playerName, perm);
+                                int count = plugin.ffm.allowAll(player, playerName);
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " force-field", "s"));
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " field", "s"));
                                 }
                                 else
                                 {
@@ -278,7 +280,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed " + count + Helper.plural(count, " force-field", "s"));
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed " + count + Helper.plural(count, " field", "s"));
                                 }
                                 else
                                 {
@@ -309,7 +311,7 @@ public final class CommandManager implements CommandExecutor
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.RED + "No players found in these overlapped force-fields");
+                                    ChatBlock.sendMessage(player, ChatColor.RED + "No players found in these overlapped fields");
                                 }
                             }
                             else
@@ -341,7 +343,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (count > 0)
                                         {
-                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Renamed " + count + Helper.plural(count, " force-field", "s") + " to " + playerName);
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Renamed " + count + Helper.plural(count, " field", "s") + " to " + playerName);
                                         }
                                         else
                                         {
@@ -368,6 +370,12 @@ public final class CommandManager implements CommandExecutor
                                 if (field != null)
                                 {
                                     FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                                    if (fieldsettings == null)
+                                    {
+                                        plugin.ffm.deleteField(field);
+                                        return true;
+                                    }
 
                                     if (radius >= 0 && radius <= fieldsettings.radius)
                                     {
@@ -399,6 +407,12 @@ public final class CommandManager implements CommandExecutor
                                 if (field != null)
                                 {
                                     FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                                    if (fieldsettings == null)
+                                    {
+                                        plugin.ffm.deleteField(field);
+                                        return true;
+                                    }
 
                                     int maxHeight = (((fieldsettings.radius * 2) + 1) + fieldsettings.height);
 
@@ -433,6 +447,12 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+                                    if (fieldsettings == null)
+                                    {
+                                        plugin.ffm.deleteField(field);
+                                        return true;
+                                    }
+
                                     if (fieldsettings.cannon || fieldsettings.launch)
                                     {
                                         if (velocity < 0 || velocity > 5)
@@ -458,6 +478,29 @@ public final class CommandManager implements CommandExecutor
                                 return true;
                             }
                         }
+                        else if (split[0].equals("visualize") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.benefit.visualize"))
+                        {
+                            if (split.length == 1)
+                            {
+                                Field field = plugin.ffm.getOneAllowedField(block, player);
+                                HashSet<Field> fields = plugin.ffm.getOverlappedFields(player, field);
+
+                                if (fields != null)
+                                {
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
+
+                                    for (Field f : fields)
+                                    {
+                                        plugin.viz.visualize(player, f);
+                                    }
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(player, ChatColor.RED + "You are not pointing at a snitch block");
+                                }
+                                return true;
+                            }
+                        }
                         else if (split[0].equals("snitch") && plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
                         {
                             if (split.length == 1)
@@ -468,8 +511,10 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     plugin.cm.showIntruderList(player, field);
                                 }
-
-                                ChatBlock.sendMessage(player, ChatColor.RED + "You are not pointing at a snitch block");
+                                else
+                                {
+                                    ChatBlock.sendMessage(player, ChatColor.RED + "You are not pointing at a snitch block");
+                                }
 
                                 return true;
                             }
@@ -498,102 +543,6 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     return true;
                                 }
-                            }
-                        }
-                        else if (split[0].equals("cloak") && plugin.pm.hasPermission(player, "preciousstones.special.cloak"))
-                        {
-                            Field field = plugin.ffm.getPointedField(block, player);
-
-                            if (field != null)
-                            {
-                                if (plugin.settings.isCloakableType(field.getTypeId()))
-                                {
-                                    ChatBlock.sendMessage(player, ChatColor.RED + "This " + Helper.friendlyBlockType(field.getType()) + " is already cloaked");
-                                }
-                                else
-                                {
-                                    ChatBlock.sendMessage(player, ChatColor.RED + "You cannot cloak a force-field");
-                                }
-                                return true;
-                            }
-
-                            TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.settings.throughFields);
-
-                            if (tb != null)
-                            {
-                                Block targetblock = tb.getTargetBlock();
-
-                                if (targetblock != null && plugin.settings.isCloakableType(targetblock))
-                                {
-                                    plugin.ffm.add(targetblock, player);
-                                    Field newfield = plugin.ffm.getField(targetblock);
-
-                                    int radius = plugin.settings.cloakDefaultRadius;
-
-                                    if (split.length > 1 && Helper.isInteger(split[1]))
-                                    {
-                                        radius = Integer.parseInt(split[1]);
-
-                                        if (radius >= plugin.settings.cloakMinRadius && radius <= plugin.settings.cloakMaxRadius && radius != 0)
-                                        {
-                                            newfield.setRadius(radius);
-                                        }
-                                        else
-                                        {
-                                            if (radius > plugin.settings.cloakMaxRadius)
-                                            {
-                                                ChatBlock.sendMessage(player, ChatColor.RED + "Maximum cloak field size is " + plugin.settings.cloakMaxRadius + " blocks");
-                                            }
-
-                                            if (radius < plugin.settings.cloakMinRadius)
-                                            {
-                                                ChatBlock.sendMessage(player, ChatColor.RED + "Minimum cloak field size is " + plugin.settings.cloakMinRadius + " blocks");
-                                            }
-
-                                            return true;
-                                        }
-                                    }
-
-                                    plugin.clm.initiate(newfield);
-
-                                    if (tb.getDistanceToBlock() > radius)
-                                    {
-                                        plugin.clm.cloak(newfield);
-                                    }
-
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.friendlyBlockType(targetblock.getType().toString()) + " has been cloaked");
-                                    return true;
-                                }
-                            }
-
-                            ChatBlock.sendMessage(player, ChatColor.RED + "You are not pointing at a cloakable block");
-                            return true;
-                        }
-                        else if (split[0].equals("decloak") && plugin.pm.hasPermission(player, "preciousstones.special.cloak"))
-                        {
-                            if (split.length == 1)
-                            {
-                                Field field = plugin.ffm.getPointedField(block, player);
-
-                                if (field != null)
-                                {
-                                    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-                                    if (fieldsettings.cloak)
-                                    {
-                                        if (!plugin.settings.isCloakableType(block.getTypeId()))
-                                        {
-                                            plugin.clm.decloak(field);
-                                        }
-
-                                        plugin.ffm.silentRelease(field);
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "The block has been decloaked");
-                                        return true;
-                                    }
-                                }
-
-                                ChatBlock.sendMessage(player, ChatColor.RED + "You are not pointing at a cloaked block");
-                                return true;
                             }
                         }
                         else if (split[0].equals("more") && plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
@@ -643,15 +592,15 @@ public final class CommandManager implements CommandExecutor
 
                                 if (sourcefields.size() > 0)
                                 {
-                                    int count = plugin.ffm.deleteFields(null, sourcefields.get(0));
+                                    int count = plugin.ffm.deleteFields(player, sourcefields.get(0));
 
                                     if (count > 0)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Protective field removed from " + count + Helper.plural(count, " force-field", "s"));
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Protective field removed from " + count + Helper.plural(count, " field", "s"));
 
                                         if (plugin.settings.logBypassDelete)
                                         {
-                                            PreciousStones.log(Level.INFO, "Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " force-field", "s"), player.getName(), sourcefields.get(0).toString());
+                                            PreciousStones.log(Level.INFO, "Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " field", "s"), player.getName(), sourcefields.get(0).toString());
                                         }
                                     }
                                     else
@@ -668,7 +617,7 @@ public final class CommandManager implements CommandExecutor
                             }
                             else if (split.length == 2)
                             {
-                                Player badplayer = Helper.matchExactPlayer(plugin, split[1]);
+                                Player badplayer = plugin.helper.matchExactPlayer(split[1]);
 
                                 if (badplayer != null)
                                 {
@@ -737,7 +686,7 @@ public final class CommandManager implements CommandExecutor
                                     }
                                 }
 
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "You are not pointing at a force-field or unbreakable block");
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "You are not pointing at a field or unbreakable block");
                                 return true;
                             }
                         }
@@ -762,7 +711,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (unbreakables.isEmpty() && fields.isEmpty())
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "No force-field or unbreakable blocks found");
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "No field or unbreakable blocks found");
                                     }
                                     return true;
                                 }
@@ -770,7 +719,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (split[0].equals("reload") && plugin.pm.hasPermission(player, "preciousstones.admin.reload"))
                         {
-                            plugin.settings.loadConfiguration();
+                            plugin.settings.load();
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Configuration reloaded");
                             return true;
                         }
@@ -784,14 +733,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (split[0].equals("fields") && plugin.pm.hasPermission(player, "preciousstones.admin.fields"))
                         {
-                            HashMap<Integer, FieldSettings> fieldsettings = plugin.settings.getFieldSettings();
-
-                            for (FieldSettings fs : fieldsettings.values())
-                            {
-                                ChatBlock.sendBlank(player);
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + fs.toString());
-                            }
-
+                            plugin.cm.showConfiguredFields(player);
                             return true;
                         }
                         else if (split[0].equals("clean") && plugin.pm.hasPermission(player, "preciousstones.admin.clean"))
@@ -800,7 +742,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (cleandFF > 0)
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned force-fields");
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned fields");
                             }
 
                             int cleandU = plugin.um.cleanOrphans(player.getWorld().getName());
@@ -838,12 +780,12 @@ public final class CommandManager implements CommandExecutor
 
                     if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allow"))
                     {
-                        cacheBlock.addRow(color + "/ps allow [player|*] " + ChatColor.AQUA + "- Add player to overlapping fields");
+                        cacheBlock.addRow(color + "/ps allow [player/*] " + ChatColor.AQUA + "- Add player to overlapping fields");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allowall"))
                     {
-                        cacheBlock.addRow(color + "/ps allowall [player|*] " + ChatColor.AQUA + "- Add player to all your fields");
+                        cacheBlock.addRow(color + "/ps allowall [player/*] " + ChatColor.AQUA + "- Add player to all your fields");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.whitelist.allowed"))
@@ -853,12 +795,12 @@ public final class CommandManager implements CommandExecutor
 
                     if (plugin.pm.hasPermission(player, "preciousstones.whitelist.remove"))
                     {
-                        cacheBlock.addRow(color + "/ps remove [player|*] " + ChatColor.AQUA + "- Remove player from overlapping fields");
+                        cacheBlock.addRow(color + "/ps remove [player/*] " + ChatColor.AQUA + "- Remove player from overlapping fields");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.whitelist.removeall"))
                     {
-                        cacheBlock.addRow(color + "/ps removeall [player|*] " + ChatColor.AQUA + "- Remove player from all your fields");
+                        cacheBlock.addRow(color + "/ps removeall [player/*] " + ChatColor.AQUA + "- Remove player from all your fields");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.benefit.who"))
@@ -868,7 +810,7 @@ public final class CommandManager implements CommandExecutor
 
                     if (plugin.settings.haveNameable() && plugin.pm.hasPermission(player, "preciousstones.benefit.setname"))
                     {
-                        cacheBlock.addRow(color + "/ps setname [name] " + ChatColor.AQUA + "- Set the name of force-fields");
+                        cacheBlock.addRow(color + "/ps setname [name] " + ChatColor.AQUA + "- Set the name of fields");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.benefit.setradius"))
@@ -881,24 +823,14 @@ public final class CommandManager implements CommandExecutor
                         cacheBlock.addRow(color + "/ps setheight [height] " + ChatColor.AQUA + "- Sets the field's height");
                     }
 
-                    if (plugin.pm.hasPermission(player, "preciousstones.benefit.setvelocity"))
+                    if (plugin.settings.haveVelocity() && plugin.pm.hasPermission(player, "preciousstones.benefit.setvelocity"))
                     {
                         cacheBlock.addRow(color + "/ps setvelocity [.1-5] " + ChatColor.AQUA + "- For launchers and cannons (0=auto)");
                     }
 
-                    if (plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
+                    if (plugin.settings.haveSnitch() && plugin.pm.hasPermission(player, "preciousstones.benefit.snitch"))
                     {
                         cacheBlock.addRow(color + "/ps snitch <clear> " + ChatColor.AQUA + "- View/clear snitch you're pointing at");
-                    }
-
-                    if (plugin.pm.hasPermission(player, "preciousstones.special.cloak"))
-                    {
-                        cacheBlock.addRow(color + "/ps cloak <radius>" + ChatColor.AQUA + "- Cloaks the block you are looking at");
-                    }
-
-                    if (plugin.pm.hasPermission(player, "preciousstones.special.cloak"))
-                    {
-                        cacheBlock.addRow(color + "/ps decloak " + ChatColor.AQUA + "- Decloaks the block you are looking at");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.delete"))

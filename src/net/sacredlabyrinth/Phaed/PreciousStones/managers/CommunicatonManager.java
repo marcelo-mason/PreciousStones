@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
@@ -101,9 +102,15 @@ public class CommunicatonManager
         Field field = plugin.ffm.getField(fieldblock);
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyPlace && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitleCap() + " force-field placed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitleCap() + " field placed");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -113,7 +120,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPlace)
         {
-            PreciousStones.log(Level.INFO, " {0} placed a {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} placed a {1} field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -125,7 +132,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.place") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " placed a " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " placed a " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -140,9 +147,15 @@ public class CommunicatonManager
         Field field = plugin.ffm.getField(fieldblock);
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyPlace && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Breakable " + fieldsettings.getTitle() + " force-field placed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Breakable " + fieldsettings.getTitle() + " field placed");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -152,7 +165,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPlace)
         {
-            PreciousStones.log(Level.INFO, " {0} placed a breakable {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), fieldblock.getType(), fieldblock.getX(), fieldblock.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} placed a breakable {1} field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), fieldblock.getType(), fieldblock.getX(), fieldblock.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -164,7 +177,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.place") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " placed breakable " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " placed breakable " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -215,9 +228,15 @@ public class CommunicatonManager
         Field field = plugin.ffm.getField(fieldblock);
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyDestroy && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitleCap() + " force-field destroyed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitleCap() + " field destroyed");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -227,7 +246,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, " {0} destroyed his {1} force-field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} destroyed his {1} field [{2}|{3} {4} {5}]", player.getName(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -239,7 +258,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.destroy") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destroyed his " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destroyed his " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -254,9 +273,15 @@ public class CommunicatonManager
         Field field = plugin.ffm.getField(fieldblock);
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyDestroy && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitleCap() + " force-field destroyed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitleCap() + " field destroyed");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -266,7 +291,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, " {0} destroyed {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} destroyed {1}''s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -278,7 +303,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.destroy") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destroyed " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destroyed " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -293,9 +318,15 @@ public class CommunicatonManager
         Field field = plugin.ffm.getField(fieldblock);
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyDestroy && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + field.getOwner() + "'s breakable " + fieldsettings.getTitle() + " force-field destroyed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + field.getOwner() + "'s breakable " + fieldsettings.getTitle() + " field destroyed");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -305,7 +336,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, " {0} destroyed {1}''s breakable {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} destroyed {1}''s breakable {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -317,7 +348,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.destroy") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destoyed " + field.getOwner() + "'s breakable " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destoyed " + field.getOwner() + "'s breakable " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -331,9 +362,15 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyBypassPlace && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Block bypass-placed inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Block bypass-placed inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -343,7 +380,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassPlace)
         {
-            PreciousStones.log(Level.INFO, " {0} bypass-placed a block inside {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed a block inside {1}''s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -355,7 +392,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.bypass-place") && canBypassAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-placed a block inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-placed a block inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -369,9 +406,15 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyBypassPlace && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Unbreakable block bypass-placed inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Unbreakable block bypass-placed inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -381,7 +424,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassPlace)
         {
-            PreciousStones.log(Level.INFO, " {0} bypass-placed an unbreakable block inside {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed an unbreakable block inside {1}''s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -393,7 +436,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.bypass-place") && canBypassAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-placed an unbreakable block inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-placed an unbreakable block inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -408,9 +451,15 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyBypassDestroy && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Block bypass-destroyed in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Block bypass-destroyed in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -420,7 +469,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassDestroy)
         {
-            PreciousStones.log(Level.INFO, " {0} bypass-destroyed a block {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-destroyed a block {1} in {2}''s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -432,7 +481,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.bypass-destroy") && canBypassAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-destroyed a block " + (new Vec(block)).toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-destroyed a block " + (new Vec(block)).toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -485,9 +534,15 @@ public class CommunicatonManager
         Field field = plugin.ffm.getField(fieldblock);
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyBypassDestroy && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field bypass-destroyed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + field.getOwner() + "'s " + fieldsettings.getTitle() + " field bypass-destroyed");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log-destroy"))
@@ -497,7 +552,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassDestroy)
         {
-            PreciousStones.log(Level.INFO, " {0} bypass-destroyed {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-destroyed {1}''s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -509,7 +564,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.notify.bypass") && canBypassAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-destroyed a block in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-destroyed a block in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -523,6 +578,12 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnEntry && canWarn(player))
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot enter protected area");
@@ -535,7 +596,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logEntry)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted entry into {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted entry into {1}''s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -552,7 +613,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.entry") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted entry into " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted entry into " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -566,6 +627,12 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnFire && canWarn(player))
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place fires here");
@@ -578,7 +645,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logFire)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted to light fire in {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to light fire in {1}''s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -590,7 +657,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.fire") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to light a fire in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to light a fire in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -605,6 +672,12 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnPlace && canWarn(player))
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place here");
@@ -617,7 +690,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPlace)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted place a block {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted place a block {1} in {2}''s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -629,7 +702,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.place") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a block " + (new Vec(block)).toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a block " + (new Vec(block)).toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -637,12 +710,18 @@ public class CommunicatonManager
     /**
      *
      * @param player
-     * @param block
+     * @param mat
      * @param field
      */
     public void warnEmpty(Player player, Material mat, Field field)
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
 
         if (plugin.settings.warnPlace && canWarn(player))
         {
@@ -656,7 +735,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPlace)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted empty a {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), mat.toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted empty a {1} in {2}''s {3} field [{4}|{5} {6} {7}]", player.getName(), mat.toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -668,7 +747,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.place") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to empty a " + mat.toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to empty a " + mat.toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -721,6 +800,12 @@ public class CommunicatonManager
         Field field = plugin.ffm.getField(fieldblock);
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnDestroy && canWarn(player))
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Only the owner can remove this block");
@@ -733,7 +818,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroy)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted to destroy {1}''s {2} force-field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to destroy {1}''s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -745,7 +830,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.destroy") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to destroy " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to destroy " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -760,6 +845,12 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnDestroyArea && canWarn(player))
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot destroy here");
@@ -772,7 +863,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logDestroyArea)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted to destroy a block {1} inside {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(damagedblock)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to destroy a block {1} inside {2}''s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(damagedblock)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -784,7 +875,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.destroyarea") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to destroy a block " + (new Vec(damagedblock)).toString() + " inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to destroy a block " + (new Vec(damagedblock)).toString() + " inside " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -799,11 +890,17 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (canWarn(player))
         {
             if (plugin.pm.hasPermission(player, "preciousstones.admin.viewconflicting"))
             {
-                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place unbreakable block here. Conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place unbreakable block here. Conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
             }
             else
             {
@@ -817,7 +914,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logConflictPlace)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted to place an unbreakable block {1} conflicting with {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to place an unbreakable block {1} conflicting with {2}''s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -829,7 +926,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.conflict") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place an unbreakable block " + (new Vec(block)).toString() + " conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place an unbreakable block " + (new Vec(block)).toString() + " conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -844,15 +941,21 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (canWarn(player))
         {
             if (plugin.pm.hasPermission(player, "preciousstones.admin.viewconflicting"))
             {
-                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place force-field here. Conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place field here. Conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
             }
             else
             {
-                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place force-field here");
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place field here");
             }
         }
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -862,7 +965,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logConflictPlace)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted to place a force-field {1} conflicting with {2}''s {3} force-field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to place a field {1} conflicting with {2}''s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -874,7 +977,101 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.conflict") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a force-field " + (new Vec(block)).toString() + " conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a field " + (new Vec(block)).toString() + " conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
+            }
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param block
+     * @param ub
+     */
+    public void warnConflictPistonU(Player player, Block block, Unbreakable ub)
+    {
+        if (canWarn(player))
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.admin.viewconflicting"))
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place piston here. Conflicting with " + ub.getOwner() + "'s unbreakable [" + ub.getType() + "|" + ub.getX() + " " + ub.getY() + " " + ub.getZ() + "]");
+            }
+            else
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place piston here.");
+            }
+        }
+        if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.settings.logConflictPlace)
+        {
+            PreciousStones.log(Level.INFO, " {0} attempted to place a piston conflicting with {1}''s unbreakable [{2}|{3} {4} {5}]", player.getName(), ub.getOwner(), ub.getType(), ub.getX(), ub.getY(), ub.getZ());
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.conflict") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place an piston conflicting with " + ub.getOwner() + "'s unbreakable");
+            }
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param block
+     * @param field
+     */
+    public void warnConflictPistonFF(Player player, Block block, Field field)
+    {
+        FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
+        if (canWarn(player))
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.admin.viewconflicting"))
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place a piston here. Conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+            }
+            else
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place a piston here");
+            }
+        }
+        if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.settings.logConflictPlace)
+        {
+            PreciousStones.log(Level.INFO, " {0} attempted to place a piston conflicting with {1}''s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.conflict") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a piston conflicting with " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -889,6 +1086,12 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnPvp && canWarn(attacker))
         {
             attacker.sendMessage(ChatColor.AQUA + "PvP disabled in this area");
@@ -901,7 +1104,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPvp)
         {
-            PreciousStones.log(Level.INFO, " {0} tried to attack {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} tried to attack {1} in {2}''s {3} field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -913,7 +1116,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.pvp") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " tried to attack " + victim.getName() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " tried to attack " + victim.getName() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -928,6 +1131,12 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyBypassPvp && canNotify(attacker))
         {
             attacker.sendMessage(ChatColor.AQUA + "PvP bypass");
@@ -940,7 +1149,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassPvp)
         {
-            PreciousStones.log(Level.INFO, " {0} bypass-attack {1} in {2}''s {3} force-field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-attack {1} in {2}''s {3} field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -952,7 +1161,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.pvp") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " bypass-attack " + victim.getName() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " bypass-attack " + victim.getName() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -966,6 +1175,12 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnPvp && canWarn(attacker))
         {
             attacker.sendMessage(ChatColor.AQUA + "PvP disabled in this area");
@@ -978,7 +1193,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logPvp)
         {
-            PreciousStones.log(Level.INFO, " {0} tried to place lava in {1}''s {2} force-field [{3}|{4} {5} {6}]", attacker.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} tried to place lava in {1}''s {2} field [{3}|{4} {5} {6}]", attacker.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -990,7 +1205,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.pvp") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " tried to palce lava in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " tried to palce lava in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -1004,6 +1219,12 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.notifyBypassPvp && canNotify(attacker))
         {
             attacker.sendMessage(ChatColor.AQUA + "PvP bypass");
@@ -1016,7 +1237,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logBypassPvp)
         {
-            PreciousStones.log(Level.INFO, " {0} bypass-lava-place in {1}''s {2} force-field [{3}|{4} {5} {6}]", attacker.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-lava-place in {1}''s {2} field [{3}|{4} {5} {6}]", attacker.getName(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1028,7 +1249,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.pvp") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " bypass-lava-place in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " force-field");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + attacker.getName() + " bypass-lava-place in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
             }
         }
     }
@@ -1118,9 +1339,15 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnUnprotectable && canWarn(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot protect " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " inside this " + fieldsettings.getTitle() + " force-field");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot protect " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " inside this " + fieldsettings.getTitle() + " field");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -1130,7 +1357,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}] inside a force-field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}] inside a field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1142,7 +1369,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.unprotectable") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to protect an unprotectable block [" + unprotectableblock.getType() + "] inside a force-field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to protect an unprotectable block [" + unprotectableblock.getType() + "] inside a field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
             }
         }
     }
@@ -1157,9 +1384,14 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldtypeblock.getTypeId());
 
+        if (fieldsettings == null)
+        {
+            return;
+        }
+
         if (plugin.settings.warnUnprotectable && canWarn(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place " + fieldsettings.getTitle() + " force-field. A " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " found in the area");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place " + fieldsettings.getTitle() + " field. A " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " found in the area");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -1169,7 +1401,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, " {0} attempted to place a force-field [{1}] but an unprotectable was found in the area [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} attempted to place a field [{1}] but an unprotectable was found in the area [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1181,7 +1413,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.unprotectable") && canAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a force-field [" + fieldtypeblock.getType() + "] but an unprotectable was found in the area [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "]");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a field [" + fieldtypeblock.getType() + "] but an unprotectable was found in the area [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "]");
             }
         }
     }
@@ -1271,9 +1503,15 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
         if (plugin.settings.warnUnprotectable && canWarn(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Unprotectable block " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " bypass-placed in " + fieldsettings.getTitle() + " force-field");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Unprotectable block " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " bypass-placed in " + fieldsettings.getTitle() + " field");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -1283,7 +1521,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, " {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] inside a force-field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] inside a field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1295,7 +1533,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.unprotectable") && canBypassAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-placed an unprotectable block [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "] inside a force-field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-placed an unprotectable block [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "] inside a field [" + field.getType() + "|" + field.getX() + " " + field.getY() + " " + field.getZ() + "]");
             }
         }
     }
@@ -1310,9 +1548,14 @@ public class CommunicatonManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldtypeblock.getTypeId());
 
+        if (fieldsettings == null)
+        {
+            return;
+        }
+
         if (plugin.settings.warnUnprotectable && canWarn(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitle() + " force-field bypass-placed in an area with an " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " unprotectable block");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + fieldsettings.getTitle() + " field bypass-placed in an area with an " + Helper.friendlyBlockType(unprotectableblock.getType().toString()) + " unprotectable block");
         }
 
         if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
@@ -1322,7 +1565,7 @@ public class CommunicatonManager
 
         if (plugin.settings.logUnprotectable)
         {
-            PreciousStones.log(Level.INFO, " {0} bypass-placed a force-field [{1}] in an area with an unprotectable block [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
+            PreciousStones.log(Level.INFO, " {0} bypass-placed a field [{1}] in an area with an unprotectable block [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1334,7 +1577,7 @@ public class CommunicatonManager
 
             if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.unprotectable") && canBypassAlert(pl))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + "bypass-placed a force-field [" + fieldtypeblock.getType() + "] in an area with an unprotectable block [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "]");
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + "bypass-placed a field [" + fieldtypeblock.getType() + "] in an area with an unprotectable block [" + unprotectableblock.getType() + "|" + unprotectableblock.getX() + " " + unprotectableblock.getY() + " " + unprotectableblock.getZ() + "]");
             }
         }
     }
@@ -1365,7 +1608,7 @@ public class CommunicatonManager
      */
     public void showNotFound(Player player)
     {
-        ChatBlock.sendMessage(player, ChatColor.RED + "No force-fields found");
+        ChatBlock.sendMessage(player, ChatColor.RED + "No fields found");
     }
 
     /**
@@ -1509,9 +1752,9 @@ public class CommunicatonManager
      *
      * @param player
      */
-    public void showProtected(Player player)
+    public void showProtected(Player player, Block block)
     {
-        ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected");
+        ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected: " + ChatColor.GRAY + Helper.toLocationString(block.getLocation()));
     }
 
     /**
@@ -1519,10 +1762,10 @@ public class CommunicatonManager
      * @param fields
      * @param player
      */
-    public void showProtectedLocation(List<Field> fields, Player player)
+    public void showProtectedLocation(List<Field> fields, Player player, Block block)
     {
         ChatBlock.sendBlank(player);
-        ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected");
+        ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected: " + ChatColor.GRAY + Helper.toLocationString(block.getLocation()));
         for (Field field : fields)
         {
             ChatBlock.sendMessage(player, ChatColor.YELLOW + "Source: " + ChatColor.AQUA + field.getX() + " " + field.getY() + " " + field.getZ());
@@ -1549,16 +1792,19 @@ public class CommunicatonManager
     {
         ChatBlock chatBlock = plugin.com.getCacheBlock();
 
-        ChatBlock.sendBlank(player);
-        ChatBlock.saySingle(player, ChatColor.WHITE + "Field Info " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
-
         for (Field field : fields)
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
+
             chatBlock.addRow("", "");
 
-            if (fieldsettings.nameable && field.getName().length() > 0)
+            if (fieldsettings.farewellMessage || fieldsettings.welcomeMessage && field.getName().length() > 0)
             {
                 chatBlock.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName());
             }
@@ -1579,22 +1825,76 @@ public class CommunicatonManager
 
             chatBlock.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ());
 
-            String properties = fieldsettings.getProtertiesString();
+            chatBlock.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fieldsettings.getTitle());
+        }
 
-            if (properties.length() > 0)
+        if (chatBlock.size() > 0)
+        {
+            chatBlock.addRow("", "");
+
+            ChatBlock.sendBlank(player);
+            ChatBlock.saySingle(player, ChatColor.WHITE + "Field Info " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
+
+            boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
+
+            if (more)
             {
-                chatBlock.addRow("  " + ChatColor.YELLOW + "Properties: ", ChatColor.AQUA + properties);
+                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
             }
         }
+    }
 
-        chatBlock.addRow("", "");
+    /**
+     * Shows all the configured fields to the player
+     * @param player
+     */
+    public void showConfiguredFields(Player player)
+    {
+        ChatBlock chatBlock = plugin.com.getCacheBlock();
 
-        boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
+        HashMap<Integer, FieldSettings> fieldsettings = plugin.settings.getFieldSettings();
 
-        if (more)
+        for (FieldSettings fs : fieldsettings.values())
         {
-            ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+            chatBlock.addRow(new String[]
+                    {
+                        ChatColor.YELLOW + "Title: ", ChatColor.AQUA + fs.title
+                    });
+            chatBlock.addRow(new String[]
+                    {
+                        ChatColor.YELLOW + "Type: ", ChatColor.AQUA + "" + Material.getMaterial(fs.blockId)
+                    });
+            chatBlock.addRow(new String[]
+                    {
+                        ChatColor.YELLOW + "Radius: ", ChatColor.AQUA + "" + fs.radius
+                    });
+            chatBlock.addRow(new String[]
+                    {
+                        ChatColor.YELLOW + "Height: ", ChatColor.AQUA + "" + fs.height
+                    });
+            chatBlock.addRow(new String[]
+                    {
+                        "", ""
+                    });
         }
+
+        if (chatBlock.size() > 0)
+        {
+            ChatBlock.sendBlank(player);
+            ChatBlock.saySingle(player, ChatColor.WHITE + "Configured Fields" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
+            ChatBlock.sendBlank(player);
+
+            boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
+
+            if (more)
+            {
+                ChatBlock.sendBlank(player);
+                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+            }
+
+            ChatBlock.sendBlank(player);
+        }
+
     }
 
     /**
@@ -1618,7 +1918,7 @@ public class CommunicatonManager
                     ChatBlock.saySingle(player, ChatColor.WHITE + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
                     ChatBlock.sendBlank(player);
 
-                    chatBlock.addRow( "  " + ChatColor.GRAY + "Name", "Reason", "Details" );
+                    chatBlock.addRow("  " + ChatColor.DARK_GRAY + "Name", "Reason", "Details");
 
                     for (SnitchEntry se : snitches)
                     {
@@ -1665,7 +1965,7 @@ public class CommunicatonManager
             {
                 StringBuilder sb = new StringBuilder();
                 sb.append(ChatColor.YELLOW);
-                sb.append( "Owner: " );
+                sb.append("Owner: ");
                 sb.append(ChatColor.AQUA);
                 sb.append(field.getOwner());
                 sb.append(ChatColor.YELLOW);

@@ -7,7 +7,6 @@ import java.util.Queue;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.logging.Level;
-import net.sacredlabyrinth.Phaed.PreciousStones.AllowedEntry;
 
 import org.bukkit.entity.Player;
 import org.bukkit.World;
@@ -17,7 +16,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
@@ -27,7 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
 
 /**
- * Handles force-fields
+ * Handles fields
  *
  * @author Phaed
  */
@@ -67,7 +65,7 @@ public class ForceFieldManager
 
     private int importFromDatabase(String world)
     {
-        PagingList<Field> pages = plugin.getDatabase().find(Field.class).where().ieq("world", world).orderBy("chunk_x").orderBy("chunk_z").findPagingList(999999);
+        PagingList<Field> pages = plugin.getDatabase().find(Field.class).where().ieq("world", world).orderBy("x").orderBy("z").findPagingList(999999);
 
         for (int i = 0; i < pages.getTotalPageCount(); i++)
         {
@@ -75,6 +73,7 @@ public class ForceFieldManager
 
             for (Field field : fields)
             {
+                field.unpack();
                 addToCollection(field);
             }
         }
@@ -85,8 +84,9 @@ public class ForceFieldManager
     /**
      * Save field to database
      * @param field the field to save
+     * @param replace
      */
-    public void saveField(Field field)
+    public void saveField(Field field, boolean replace)
     {
         try
         {
@@ -94,10 +94,12 @@ public class ForceFieldManager
             {
                 try
                 {
+                    field.pack();
                     plugin.getDatabase().save(field);
                 }
                 catch (Exception ex)
                 {
+                    ex.printStackTrace();
                 }
 
                 Field newfield = null;
@@ -105,9 +107,11 @@ public class ForceFieldManager
                 try
                 {
                     newfield = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
+                    newfield.unpack();
                 }
                 catch (Exception ex)
                 {
+                    ex.printStackTrace();
                 }
 
                 if (newfield == null)
@@ -115,9 +119,11 @@ public class ForceFieldManager
                     try
                     {
                         newfield = plugin.getDatabase().find(Field.class).where().eq("x", field.getX()).eq("y", field.getY()).eq("z", field.getZ()).ieq("world", field.getWorld()).findUnique();
+                        newfield.unpack();
                     }
                     catch (Exception ex)
                     {
+                        ex.printStackTrace();
                     }
                 }
 
@@ -128,6 +134,11 @@ public class ForceFieldManager
                 else
                 {
                     replacementQueue.add(field);
+                }
+
+                if (replace)
+                {
+                    processReplacementQueue();
                 }
             }
         }
@@ -142,6 +153,8 @@ public class ForceFieldManager
      */
     public void saveAll()
     {
+        flush();
+
         for (HashMap<ChunkVec, LinkedList<Field>> w : chunkLists.values())
         {
             if (w != null)
@@ -150,7 +163,7 @@ public class ForceFieldManager
                 {
                     for (Field field : fields)
                     {
-                        saveField(field);
+                        saveField(field, false);
                     }
                 }
             }
@@ -355,7 +368,7 @@ public class ForceFieldManager
 
                     int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
-                    if (!plugin.settings.isFieldType(type) && !(plugin.settings.isCloakableType(type) && (plugin.settings.isCloakType(type) || plugin.settings.isCloakableType(type))))
+                    if (!plugin.settings.isFieldType(type))
                     {
                         cleanedCount++;
                         queueRelease(field);
@@ -377,6 +390,7 @@ public class ForceFieldManager
     public boolean isBreakable(Block block)
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(block.getTypeId());
+
         return fieldsettings == null ? false : fieldsettings.breakable;
     }
 
@@ -387,11 +401,11 @@ public class ForceFieldManager
      */
     public boolean allowedAreOnline(Field field)
     {
-        List<AllowedEntry> allowed = field.getAllAllowed();
+        List<String> allowed = field.getAllAllowed();
 
-        for (AllowedEntry ae : allowed)
+        for (String ae : allowed)
         {
-            if (Helper.matchExactPlayer(plugin, ae.getName()) != null)
+            if (plugin.helper.matchExactPlayer(ae) != null)
             {
                 return true;
             }
@@ -596,6 +610,25 @@ public class ForceFieldManager
     }
 
     /**
+     * Returns the fields in the chunk and adjacent chunks
+     * @param field
+     * @return the fields
+     */
+    public List<Field> getFieldsInArea(Field field)
+    {
+        World world = plugin.getServer().getWorld(field.getWorld());
+
+        if (world == null)
+        {
+            return new LinkedList<Field>();
+        }
+
+        Location loc = new Location(world, field.getX(), field.getY(), field.getZ());
+
+        return getFieldsInArea(loc, plugin.settings.chunksInLargestForceFieldArea);
+    }
+
+    /**
      * Returns the blocks that is originating the protective field the block is in and that the player is not allowed in
      * @param loc
      * @param playerName
@@ -687,6 +720,12 @@ public class ForceFieldManager
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
+
             if (fieldsettings.preventEntry)
             {
                 out.add(field);
@@ -712,7 +751,7 @@ public class ForceFieldManager
 
             if (targetblock != null)
             {
-                if ((plugin.settings.isFieldType(targetblock) || plugin.settings.isCloakableType(targetblock)) && plugin.ffm.isField(targetblock))
+                if (plugin.settings.isFieldType(targetblock) && plugin.ffm.isField(targetblock))
                 {
                     Field f = getField(targetblock);
 
@@ -763,7 +802,7 @@ public class ForceFieldManager
 
             if (targetblock != null)
             {
-                if ((plugin.settings.isFieldType(targetblock) || plugin.settings.isCloakableType(targetblock)) && plugin.ffm.isField(targetblock))
+                if (plugin.settings.isFieldType(targetblock) && plugin.ffm.isField(targetblock))
                 {
                     Field f = getField(targetblock);
 
@@ -784,54 +823,7 @@ public class ForceFieldManager
     }
 
     /**
-     * Gets all fields intersecting to the passed fields
-     * @param fields
-     * @param player
-     * @param total
-     * @return the fields
-     */
-    public HashSet<Field> getIntersecting(HashSet<Field> fields, Player player, HashSet<Field> total)
-    {
-        HashSet<Field> touching = new HashSet<Field>();
-
-        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(player.getLocation().getWorld().getName());
-
-        if (w != null)
-        {
-            for (LinkedList<Field> all : w.values())
-            {
-                for (Field otherfield : all)
-                {
-                    for (Field foundfield : fields)
-                    {
-                        if (foundfield.intersects(otherfield))
-                        {
-                            if (player != null && !otherfield.isAllowed(player.getName()))
-                            {
-                                continue;
-                            }
-
-                            if (!plugin.stm.isTeamMate(player.getName(), otherfield.getOwner()))
-                            {
-                                continue;
-                            }
-
-                            if (total.contains(otherfield))
-                            {
-                                continue;
-                            }
-
-                            touching.add(otherfield);
-                        }
-                    }
-                }
-            }
-        }
-        return touching;
-    }
-
-    /**
-     * Returns all overlapped force-fields
+     * Returns overlapped fields the player is allowed on
      * @param player
      * @param field
      * @return the fields
@@ -841,24 +833,105 @@ public class ForceFieldManager
         HashSet<Field> total = new HashSet<Field>();
         total.add(field);
 
-        HashSet<Field> start = new HashSet<Field>();
-        start.add(field);
+        HashSet<Field> newlyfound = new HashSet<Field>();
+        newlyfound.add(field);
 
-        while (start.size() > 0)
+        while (newlyfound.size() > 0)
         {
-            start = getIntersecting(start, player, total);
+            newlyfound = getIntersecting(player, total, field.getTypeId(), true);
 
-            if (start.isEmpty())
+            if (newlyfound.isEmpty())
             {
                 return total;
             }
             else
             {
-                total.addAll(start);
+                total.addAll(newlyfound);
             }
         }
 
         return null;
+    }
+
+    /**
+     * Returns overlapped fields belonging to any player
+     * @param player
+     * @param field
+     * @return the fields
+     */
+    public HashSet<Field> getAllOverlappedFields(Player player, Field field)
+    {
+        HashSet<Field> total = new HashSet<Field>();
+        total.add(field);
+
+        HashSet<Field> newlyfound = new HashSet<Field>();
+        newlyfound.add(field);
+
+        while (newlyfound.size() > 0)
+        {
+            newlyfound = getIntersecting(player, total, field.getTypeId(), false);
+
+            if (newlyfound.isEmpty())
+            {
+                return total;
+            }
+            else
+            {
+                total.addAll(newlyfound);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets all fields intersecting to the passed fields
+     * @param player
+     * @param total
+     * @param fieldType
+     * @param onlyallowed
+     * @return the fields
+     */
+    public HashSet<Field> getIntersecting(Player player, HashSet<Field> total, int fieldType, boolean onlyallowed)
+    {
+        HashSet<Field> newlyfound = new HashSet<Field>();
+        HashSet<Field> near = new HashSet<Field>();
+
+        for (Field tf : total)
+        {
+            near.addAll(getFieldsInArea(tf));
+        }
+
+        for (Field nearfield : near)
+        {
+            if (total.contains(nearfield))
+            {
+                continue;
+            }
+
+            if (onlyallowed)
+            {
+                if (!nearfield.isAllowed(player.getName()))
+                {
+                    continue;
+                }
+
+                if (!plugin.stm.isTeamMate(player.getName(), nearfield.getOwner()))
+                {
+                    continue;
+                }
+            }
+
+            for (Field foundfield : total)
+            {
+                if (foundfield.intersects(nearfield))
+                {
+                    newlyfound.add(nearfield);
+                }
+            }
+        }
+
+        return newlyfound;
     }
 
     /**
@@ -874,6 +947,12 @@ public class ForceFieldManager
         for (Field f : total)
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(f);
+
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(f);
+                continue;
+            }
 
             if (fieldsettings.snitch)
             {
@@ -896,18 +975,6 @@ public class ForceFieldManager
         if (fieldsettings.snitch)
         {
             List<SnitchEntry> ses = field.getSnitchList();
-
-            for (SnitchEntry se : ses)
-            {
-                try
-                {
-                    plugin.snm.deleteSnitchEntry(se);
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-
             field.cleanSnitchList();
             return true;
         }
@@ -932,7 +999,13 @@ public class ForceFieldManager
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(f);
 
-            if (fieldsettings.nameable && !f.getName().equals(name))
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(f);
+                continue;
+            }
+
+            if ((fieldsettings.farewellMessage || fieldsettings.welcomeMessage) && !f.getName().equals(name))
             {
                 f.setFieldName(name);
                 renamedCount++;
@@ -962,14 +1035,14 @@ public class ForceFieldManager
     }
 
     /**
-     * Get allowed players on the overlapped force-fields
+     * Get allowed players on the overlapped fields
      * @param player
      * @param field
      * @return allowed entry object per user
      */
-    public HashSet<AllowedEntry> getAllowed(Player player, Field field)
+    public HashSet<String> getAllowed(Player player, Field field)
     {
-        HashSet<AllowedEntry> allowed = new HashSet<AllowedEntry>();
+        HashSet<String> allowed = new HashSet<String>();
         HashSet<Field> total = getOverlappedFields(player, field);
 
         for (Field f : total)
@@ -981,14 +1054,13 @@ public class ForceFieldManager
     }
 
     /**
-     * Add allowed player to overlapped force-fields
+     * Add allowed player to overlapped fields
      * @param player
      * @param field
      * @param allowedName
-     * @param perm
      * @return count of fields the player was allowed in
      */
-    public int addAllowed(Player player, Field field, String allowedName, String perm)
+    public int addAllowed(Player player, Field field, String allowedName)
     {
         HashSet<Field> total = getOverlappedFields(player, field);
 
@@ -998,7 +1070,7 @@ public class ForceFieldManager
         {
             if (!f.isAllowed(allowedName))
             {
-                f.addAllowed(allowedName, perm);
+                f.addAllowed(allowedName);
                 allowedCount++;
             }
         }
@@ -1037,10 +1109,9 @@ public class ForceFieldManager
      * Add allowed player to all your force fields
      * @param player
      * @param allowedName
-     * @param perm
      * @return count of fields allowed
      */
-    public int allowAll(Player player, String allowedName, String perm)
+    public int allowAll(Player player, String allowedName)
     {
         List<Field> fields = getOwnersFields(player);
 
@@ -1050,7 +1121,7 @@ public class ForceFieldManager
         {
             if (!field.isAllowed(allowedName))
             {
-                field.addAllowed(allowedName, perm);
+                field.addAllowed(allowedName);
                 allowedCount++;
             }
         }
@@ -1059,7 +1130,7 @@ public class ForceFieldManager
     }
 
     /**
-     * Remove allowed player from overlapped force-fields
+     * Remove allowed player from overlapped fields
      * @param player
      * @param allowedName
      * @param field
@@ -1074,19 +1145,7 @@ public class ForceFieldManager
         {
             if (f.isAllowed(allowedName))
             {
-                AllowedEntry ae = f.removeAllowed(allowedName);
-
-                if (ae != null)
-                {
-                    try
-                    {
-                        plugin.getDatabase().delete(AllowedEntry.class, ae.getId());
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-
+                f.removeAllowed(allowedName);
                 removedCount++;
             }
         }
@@ -1110,19 +1169,7 @@ public class ForceFieldManager
         {
             if (field.isAllowed(allowedName))
             {
-                AllowedEntry ae = field.removeAllowed(allowedName);
-
-                if (ae != null)
-                {
-                    try
-                    {
-                        plugin.getDatabase().delete(AllowedEntry.class, ae.getId());
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-
+                field.removeAllowed(allowedName);
                 removedCount++;
             }
         }
@@ -1225,7 +1272,7 @@ public class ForceFieldManager
 
                     Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.settings.isFieldType(surroundingblock) || plugin.settings.isCloakableType(surroundingblock))
+                    if (plugin.settings.isFieldType(surroundingblock))
                     {
                         if (plugin.ffm.isField(surroundingblock))
                         {
@@ -1253,6 +1300,12 @@ public class ForceFieldManager
             if (field.envelops(blockInArea))
             {
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                if (fieldsettings == null)
+                {
+                    plugin.ffm.queueRelease(field);
+                    continue;
+                }
 
                 if (fieldsettings.preventUnprotectable)
                 {
@@ -1284,6 +1337,12 @@ public class ForceFieldManager
                 }
 
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                if (fieldsettings == null)
+                {
+                    plugin.ffm.queueRelease(field);
+                    continue;
+                }
 
                 if (fieldsettings.preventPlace)
                 {
@@ -1321,6 +1380,12 @@ public class ForceFieldManager
 
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+                if (fieldsettings == null)
+                {
+                    deleteField(field);
+                    continue;
+                }
+
                 if (fieldsettings.preventDestroy)
                 {
                     return field;
@@ -1351,6 +1416,12 @@ public class ForceFieldManager
                 }
 
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                if (fieldsettings == null)
+                {
+                    plugin.ffm.queueRelease(field);
+                    continue;
+                }
 
                 if (fieldsettings.preventFire)
                 {
@@ -1389,6 +1460,12 @@ public class ForceFieldManager
 
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+                if (fieldsettings == null)
+                {
+                    plugin.ffm.queueRelease(field);
+                    continue;
+                }
+
                 if (fieldsettings.preventEntry)
                 {
                     return field;
@@ -1412,6 +1489,12 @@ public class ForceFieldManager
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
+
             if (fieldsettings.preventMobDamage)
             {
                 return field;
@@ -1433,6 +1516,12 @@ public class ForceFieldManager
         for (Field field : fields)
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
 
             if (fieldsettings.preventMobSpawn)
             {
@@ -1456,6 +1545,12 @@ public class ForceFieldManager
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
+
             if (fieldsettings.preventAnimalSpawn)
             {
                 return field;
@@ -1477,6 +1572,12 @@ public class ForceFieldManager
         for (Field field : fields)
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
 
             if (fieldsettings.preventPvP)
             {
@@ -1500,6 +1601,12 @@ public class ForceFieldManager
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
+
             if (fieldsettings.preventPvP)
             {
                 return field;
@@ -1520,10 +1627,19 @@ public class ForceFieldManager
 
         for (Field field : fields)
         {
+            PreciousStones.logger.info(field.getCoords());
+
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
 
             if (fieldsettings.preventFlow)
             {
+                PreciousStones.logger.info("1");
                 return field;
             }
         }
@@ -1543,6 +1659,12 @@ public class ForceFieldManager
         for (Field field : fields)
         {
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
 
             if (fieldsettings.preventExplosions)
             {
@@ -1566,6 +1688,12 @@ public class ForceFieldManager
         for (Field field : fieldsinarea)
         {
             FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
+
+            if (fs == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
 
             if (fs.noConflict)
             {
@@ -1601,7 +1729,7 @@ public class ForceFieldManager
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(placedBlock.getTypeId());
 
-        if (fieldsettings.noConflict)
+        if (fieldsettings != null && fieldsettings.noConflict)
         {
             return null;
         }
@@ -1613,6 +1741,12 @@ public class ForceFieldManager
         for (Field field : fieldsinarea)
         {
             FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
+
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
 
             if (fs.noConflict)
             {
@@ -1639,6 +1773,51 @@ public class ForceFieldManager
     }
 
     /**
+     * Whether the piston could displace a pstone
+     * @param piston
+     * @param placer
+     * @return
+     */
+    public Field getPistonConflict(Block piston, Player placer)
+    {
+        for (int x = -15; x <= 15; x++)
+        {
+            for (int z = -1; z <= 1; z++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    Block block = piston.getRelative(x, y, z);
+                    Field field = getField(block);
+
+                    if (field != null)
+                    {
+                        return field;
+                    }
+                }
+            }
+        }
+
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int z = -15; z <= +15; z++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    Block block = piston.getRelative(x, y, z);
+                    Field field = getField(block);
+
+                    if (field != null)
+                    {
+                        return field;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get all touching fields
      * @param scopedBlock
      * @param materialInHand
@@ -1650,6 +1829,11 @@ public class ForceFieldManager
 
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(materialInHand.getId());
 
+        if (fieldsettings == null)
+        {
+            return out;
+        }
+
         Field placedField = new Field(scopedBlock, fieldsettings.radius, fieldsettings.getHeight());
 
         List<Field> fieldsinarea = getFieldsInArea(scopedBlock);
@@ -1657,6 +1841,12 @@ public class ForceFieldManager
         for (Field field : fieldsinarea)
         {
             FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
+
+            if (fs == null)
+            {
+                plugin.ffm.queueRelease(field);
+                continue;
+            }
 
             if (fs.noConflict)
             {
@@ -1686,11 +1876,17 @@ public class ForceFieldManager
         }
 
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
+
+        if (fieldsettings == null)
+        {
+            return false;
+        }
+
         Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), "");
 
         addToCollection(field);
+        saveField(field, true);
 
-        plugin.tm.tagChunk(field.toChunkVec());
         return true;
     }
 
@@ -1863,9 +2059,8 @@ public class ForceFieldManager
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
         }
-
-        plugin.tm.untagChunk(field.toChunkVec());
     }
 
     /**
@@ -1876,7 +2071,7 @@ public class ForceFieldManager
      */
     public int deleteFields(Player player, Field field)
     {
-        HashSet<Field> total = getOverlappedFields(player, field);
+        HashSet<Field> total = getAllOverlappedFields(player, field);
 
         int deletedCount = 0;
 
@@ -1902,7 +2097,7 @@ public class ForceFieldManager
         World world = plugin.getServer().getWorld(field.getWorld());
         Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
 
-        if (plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block))
+        if (plugin.settings.isFieldType(block))
         {
             ItemStack is = new ItemStack(block.getTypeId(), 1);
             block.setType(Material.AIR);
@@ -1911,7 +2106,6 @@ public class ForceFieldManager
     }
 
     /**
-     *
      * Drops a block
      * @param block
      */
@@ -1920,7 +2114,7 @@ public class ForceFieldManager
         World world = block.getWorld();
         ItemStack is = new ItemStack(block.getTypeId(), 1);
 
-        if (plugin.settings.isFieldType(block) || plugin.settings.isCloakableType(block))
+        if (plugin.settings.isFieldType(block))
         {
             block.setType(Material.AIR);
             world.dropItemNaturally(block.getLocation(), is);

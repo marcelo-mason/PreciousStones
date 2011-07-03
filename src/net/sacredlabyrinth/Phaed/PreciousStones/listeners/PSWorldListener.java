@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import org.bukkit.event.world.*;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -30,10 +31,13 @@ public class PSWorldListener extends WorldListener
     @Override
     public void onWorldLoad(WorldLoadEvent event)
     {
+        DebugTimer dt = new DebugTimer("onVehicleMove");
+
         World world = event.getWorld();
 
         plugin.ffm.loadWorld(world.getName());
         plugin.um.loadWorld(world.getName());
-        plugin.tm.tagWorld(world.getName());
+
+        if (plugin.settings.debug) { dt.logProcessTime(); }
     }
 }
