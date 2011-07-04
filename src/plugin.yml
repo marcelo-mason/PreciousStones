@@ -5,4 +5,4 @@ database: true
 commands:
   ps:
     description: All of the PreciousStones commands
-    usage: /ps help - Displays PreciousStones commands
+    usage: Syntax error

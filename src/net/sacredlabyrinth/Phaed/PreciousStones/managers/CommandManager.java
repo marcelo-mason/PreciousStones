@@ -483,20 +483,28 @@ public final class CommandManager implements CommandExecutor
                             if (split.length == 1)
                             {
                                 Field field = plugin.ffm.getOneAllowedField(block, player);
-                                HashSet<Field> fields = plugin.ffm.getOverlappedFields(player, field);
 
-                                if (fields != null)
+                                if (field != null)
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
+                                    HashSet<Field> fields = plugin.ffm.getOverlappedFields(player, field);
 
-                                    for (Field f : fields)
+                                    if (fields != null)
                                     {
-                                        plugin.viz.visualize(player, f);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
+
+                                        for (Field f : fields)
+                                        {
+                                            plugin.viz.visualize(player, f);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "You are not inside of a field");
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.RED + "You are not pointing at a snitch block");
+                                    ChatBlock.sendMessage(player, ChatColor.RED + "You are not inside of a field");
                                 }
                                 return true;
                             }

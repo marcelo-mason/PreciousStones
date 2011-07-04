@@ -15,7 +15,6 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.entity.Player;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
@@ -300,16 +299,8 @@ public class PSBlockListener extends BlockListener
                     return;
                 }
 
-                if (field != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
-                {
-                    plugin.stm.addBB(player, Helper.capitalize(player.getName()) + " has taken " + field.getOwner() + "'s " + fieldsettings.getTitle() + " from " + field.getX() + " " + field.getY() + " " + field.getZ() + " " + field.getWorld());
-                    plugin.ffm.release(brokenBlock);
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.cm.warnDestroyFF(player, brokenBlock);
-                }
+                event.setCancelled(true);
+                plugin.cm.warnDestroyFF(player, brokenBlock);
             }
         }
         else if (plugin.settings.isUnbreakableType(brokenBlock) && plugin.um.isUnbreakable(brokenBlock))
@@ -328,16 +319,8 @@ public class PSBlockListener extends BlockListener
             {
                 Unbreakable ub = plugin.um.getUnbreakable(brokenBlock);
 
-                if (ub != null && plugin.stm.isTeamMate(player.getName(), ub.getOwner()))
-                {
-                    plugin.stm.addBB(player, Helper.capitalize(player.getName()) + " has taken " + ub.getOwner() + "'s " + ub.getType() + " from " + ub.getX() + " " + ub.getY() + " " + ub.getZ() + " " + ub.getWorld());
-                    plugin.ffm.release(brokenBlock);
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.cm.warnDestroyU(player, brokenBlock);
-                }
+                event.setCancelled(true);
+                plugin.cm.warnDestroyU(player, brokenBlock);
             }
         }
         else
@@ -601,19 +584,8 @@ public class PSBlockListener extends BlockListener
             }
             else
             {
-                if (plugin.stm.isTeamMate(player.getName(), field.getOwner()))
-                {
-                    // do nothing
-                }
-                else if (plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
-                {
-                    // do nothing
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.cm.warnPlace(player, placedblock, field);
-                }
+                event.setCancelled(true);
+                plugin.cm.warnPlace(player, placedblock, field);
             }
         }
 

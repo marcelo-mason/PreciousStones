@@ -89,33 +89,6 @@ public final class SimpleTeamsManager
     }
 
     /**
-     * Check if two players are rivals
-     * @param playerOne
-     * @param playerTwo
-     * @return
-     */
-    public boolean isRival(String playerOne, String playerTwo)
-    {
-        if (st == null)
-        {
-            return false;
-        }
-
-        Team team1 = st.tm.getTeamByPlayerName(playerOne);
-        Team team2 = st.tm.getTeamByPlayerName(playerTwo);
-
-        if (team1 != null && team2 != null)
-        {
-            if (team1.isRival(team2.getTag()))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Check whether any of a player's team members are online
      * @param playerName
      * @return

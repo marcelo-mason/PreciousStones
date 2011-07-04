@@ -1856,26 +1856,9 @@ public class CommunicatonManager
 
         for (FieldSettings fs : fieldsettings.values())
         {
-            chatBlock.addRow(new String[]
-                    {
-                        ChatColor.YELLOW + "Title: ", ChatColor.AQUA + fs.title
-                    });
-            chatBlock.addRow(new String[]
-                    {
-                        ChatColor.YELLOW + "Type: ", ChatColor.AQUA + "" + Material.getMaterial(fs.blockId)
-                    });
-            chatBlock.addRow(new String[]
-                    {
-                        ChatColor.YELLOW + "Radius: ", ChatColor.AQUA + "" + fs.radius
-                    });
-            chatBlock.addRow(new String[]
-                    {
-                        ChatColor.YELLOW + "Height: ", ChatColor.AQUA + "" + fs.height
-                    });
-            chatBlock.addRow(new String[]
-                    {
-                        "", ""
-                    });
+            chatBlock.addRow(ChatColor.YELLOW + "Type: "+ ChatColor.AQUA + "" + Material.getMaterial(fs.blockId) + " " + ChatColor.YELLOW + "Title: "+ ChatColor.AQUA + fs.title);
+            chatBlock.addRow(ChatColor.YELLOW + "Radius: "+ ChatColor.AQUA + "" + fs.radius + " " + ChatColor.YELLOW + "Height: "+ ChatColor.AQUA + "" + fs.height);
+            chatBlock.addRow("");
         }
 
         if (chatBlock.size() > 0)

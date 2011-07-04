@@ -20,6 +20,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public final class SettingsManager
 {
+    public double forresterInterval;
     public int visualizeBlock;
     public int visualizeSeconds;
     public boolean visualizeEndOnMove;
@@ -147,9 +148,10 @@ public final class SettingsManager
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
         saveFrequency = config.getInt("settings.saving-frequency-minutes", 30);
+        forresterInterval = config.getDouble("settings.forrester-interval-secs", .5);
         visualizeBlock = config.getInt("visualization.block-type", 20);
         visualizeSeconds = config.getInt("visualization.seconds", 15);
-        visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", false);
+        visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", true);
 
         addForceFieldStones(forceFieldBlocks);
 
@@ -207,6 +209,7 @@ public final class SettingsManager
         config.setProperty("settings.off-by-default", offByDefault);
         config.setProperty("settings.lines-per-page", linesPerPage);
         config.setProperty("settings.saving-frequency-minutes", saveFrequency);
+        config.setProperty("settings.forrester-interval-secs", forresterInterval);
         config.setProperty("visualization.block-type", visualizeBlock);
         config.setProperty("visualization.seconds", visualizeSeconds);
         config.setProperty("visualization.end-on-player-move", visualizeEndOnMove);
@@ -520,6 +523,9 @@ public final class SettingsManager
         public boolean cannon = false;
         public boolean mine = false;
         public boolean lightning = false;
+        public boolean noOwner = false;
+        public boolean forrester = false;
+        public int forresterTrees = 100;
 
         /**
          *
@@ -754,6 +760,21 @@ public final class SettingsManager
             if (map.containsKey("prevent-flow") && Helper.isBoolean(map.get("prevent-flow")))
             {
                 preventFlow = (Boolean) map.get("prevent-flow");
+            }
+
+            if (map.containsKey("no-owner") && Helper.isBoolean(map.get("no-owner")))
+            {
+                noOwner = (Boolean) map.get("no-owner");
+            }
+
+            if (map.containsKey("forrester") && Helper.isBoolean(map.get("forrester")))
+            {
+                forrester = (Boolean) map.get("forrester");
+            }
+
+            if (map.containsKey("forrester-trees") && Helper.isInteger(map.get("forrester-trees")))
+            {
+                forresterTrees = (Integer) map.get("forrester-trees");
             }
         }
     }

@@ -86,7 +86,7 @@ public class UnbreakableManager
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
+                    if(plugin.settings.debug) { ex.printStackTrace(); }
                 }
 
                 Unbreakable newub = null;
@@ -97,7 +97,7 @@ public class UnbreakableManager
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
+                    if(plugin.settings.debug) { ex.printStackTrace(); }
                 }
 
                 if (newub == null)
@@ -108,7 +108,7 @@ public class UnbreakableManager
                     }
                     catch (Exception ex)
                     {
-                        ex.printStackTrace();
+                        if(plugin.settings.debug) { ex.printStackTrace(); }
                     }
                 }
 
@@ -129,7 +129,7 @@ public class UnbreakableManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
+            if(plugin.settings.debug) { ex.printStackTrace(); }
         }
     }
 
@@ -139,6 +139,7 @@ public class UnbreakableManager
     public void saveAll()
     {
         flush();
+        processReplacementQueue();
 
         for (HashMap<ChunkVec, LinkedList<Unbreakable>> w : chunkLists.values())
         {
@@ -652,7 +653,7 @@ public class UnbreakableManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
+            if(plugin.settings.debug) { ex.printStackTrace(); }
         }
     }
 }

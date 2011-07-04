@@ -195,7 +195,7 @@ public class PSPlayerListener extends PlayerListener
         {
             plugin.viz.revertVisualization(player);
         }
-        
+
         // remove player form any entry field he is not currently in
 
         LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
@@ -246,11 +246,6 @@ public class PSPlayerListener extends PlayerListener
                 continue;
             }
 
-            if (plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
-            {
-                continue;
-            }
-
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
             if (fieldsettings == null)
@@ -294,10 +289,7 @@ public class PSPlayerListener extends PlayerListener
                             {
                                 plugin.cm.showWelcomeMessage(player, currentfield.getName());
 
-                                if (plugin.stm.isRival(player.getName(), currentfield.getOwner()))
-                                {
-                                    plugin.stm.bypassAnnounce(currentfield, player.getName());
-                                }
+                                //plugin.stm.bypassAnnounce(currentfield, player.getName());
                             }
                         }
                     }

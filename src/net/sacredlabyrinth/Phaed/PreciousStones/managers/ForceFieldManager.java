@@ -74,9 +74,24 @@ public class ForceFieldManager
             for (Field field : fields)
             {
                 field.unpack();
+
+                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                if (fieldsettings == null)
+                {
+                    continue;
+                }
+
+                if (fieldsettings.forrester)
+                {
+                    queueRelease(field);
+                }
+
                 addToCollection(field);
             }
         }
+
+        flush();
 
         return pages.getTotalRowCount();
     }
@@ -86,8 +101,10 @@ public class ForceFieldManager
      * @param field the field to save
      * @param replace
      */
-    public void saveField(Field field, boolean replace)
+    public Field saveField(Field field, boolean replace)
     {
+        Field out = null;
+
         try
         {
             if (field.isDirty())
@@ -99,7 +116,7 @@ public class ForceFieldManager
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
+                    if(plugin.settings.debug) { ex.printStackTrace(); }
                 }
 
                 Field newfield = null;
@@ -111,7 +128,7 @@ public class ForceFieldManager
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
+                    if(plugin.settings.debug) { ex.printStackTrace(); }
                 }
 
                 if (newfield == null)
@@ -123,16 +140,18 @@ public class ForceFieldManager
                     }
                     catch (Exception ex)
                     {
-                        ex.printStackTrace();
+                        if(plugin.settings.debug) { ex.printStackTrace(); }
                     }
                 }
 
                 if (newfield != null)
                 {
+                    out = newfield;
                     replacementQueue.add(newfield);
                 }
                 else
                 {
+                    out = field;
                     replacementQueue.add(field);
                 }
 
@@ -144,8 +163,10 @@ public class ForceFieldManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
+            if(plugin.settings.debug) { ex.printStackTrace(); }
         }
+
+        return out;
     }
 
     /**
@@ -154,6 +175,7 @@ public class ForceFieldManager
     public void saveAll()
     {
         flush();
+        processReplacementQueue();
 
         for (HashMap<ChunkVec, LinkedList<Field>> w : chunkLists.values())
         {
@@ -1373,11 +1395,6 @@ public class ForceFieldManager
                     continue;
                 }
 
-                if (player != null && plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
-                {
-                    continue;
-                }
-
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
                 if (fieldsettings == null)
@@ -1449,11 +1466,6 @@ public class ForceFieldManager
             if (field.envelops(loc) && (player == null || !field.isAllowed(player.getName())))
             {
                 if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
-                {
-                    continue;
-                }
-
-                if (player != null && plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
                 {
                     continue;
                 }
@@ -1742,7 +1754,7 @@ public class ForceFieldManager
         {
             FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
 
-            if (fieldsettings == null)
+            if (fs == null)
             {
                 plugin.ffm.queueRelease(field);
                 continue;
@@ -1882,11 +1894,18 @@ public class ForceFieldManager
             return false;
         }
 
-        Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), owner.getName(), "");
+        Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), fieldsettings.noOwner ? "" : owner.getName(), "");
 
         addToCollection(field);
-        saveField(field, true);
+        Field out = saveField(field, true);
 
+        if (out != null)
+        {
+            if (fieldsettings.forrester)
+            {
+                plugin.fm.add(out, owner.getName());
+            }
+        }
         return true;
     }
 
@@ -2005,7 +2024,12 @@ public class ForceFieldManager
      */
     public void queueRelease(Block fieldblock)
     {
-        deletionQueue.add(getField(fieldblock));
+        Field field = getField(fieldblock);
+
+        if (!deletionQueue.contains(field))
+        {
+            deletionQueue.add(field);
+        }
     }
 
     /**
@@ -2014,7 +2038,10 @@ public class ForceFieldManager
      */
     public void queueRelease(Field field)
     {
-        deletionQueue.add(field);
+        if (!deletionQueue.contains(field))
+        {
+            deletionQueue.add(field);
+        }
     }
 
     /**
@@ -2053,13 +2080,17 @@ public class ForceFieldManager
             }
         }
 
+        // remove from forrester
+
+        plugin.fm.remove(field);
+
         try
         {
             plugin.getDatabase().delete(Field.class, field.getId());
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
+            if(plugin.settings.debug) { ex.printStackTrace(); }
         }
     }
 

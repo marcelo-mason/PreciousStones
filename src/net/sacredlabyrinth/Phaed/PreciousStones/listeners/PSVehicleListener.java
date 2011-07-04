@@ -71,11 +71,6 @@ public class PSVehicleListener extends VehicleListener
                     continue;
                 }
 
-                if (plugin.stm.isRival(player.getName(), field.getOwner()) && plugin.stm.isAnyOnline(field.getOwner()))
-                {
-                    continue;
-                }
-
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
                 if (fieldsettings == null)
