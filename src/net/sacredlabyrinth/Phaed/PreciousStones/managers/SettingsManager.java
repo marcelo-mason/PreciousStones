@@ -20,7 +20,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public final class SettingsManager
 {
-    public double forresterInterval;
+    public double foresterInterval;
     public int visualizeBlock;
     public int visualizeSeconds;
     public boolean visualizeEndOnMove;
@@ -148,7 +148,7 @@ public final class SettingsManager
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
         saveFrequency = config.getInt("settings.saving-frequency-minutes", 30);
-        forresterInterval = config.getDouble("settings.forrester-interval-secs", .5);
+        foresterInterval = config.getDouble("settings.forester-interval-secs", .5);
         visualizeBlock = config.getInt("visualization.block-type", 20);
         visualizeSeconds = config.getInt("visualization.seconds", 15);
         visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", true);
@@ -209,7 +209,7 @@ public final class SettingsManager
         config.setProperty("settings.off-by-default", offByDefault);
         config.setProperty("settings.lines-per-page", linesPerPage);
         config.setProperty("settings.saving-frequency-minutes", saveFrequency);
-        config.setProperty("settings.forrester-interval-secs", forresterInterval);
+        config.setProperty("settings.forester-interval-secs", foresterInterval);
         config.setProperty("visualization.block-type", visualizeBlock);
         config.setProperty("visualization.seconds", visualizeSeconds);
         config.setProperty("visualization.end-on-player-move", visualizeEndOnMove);
@@ -524,8 +524,8 @@ public final class SettingsManager
         public boolean mine = false;
         public boolean lightning = false;
         public boolean noOwner = false;
-        public boolean forrester = false;
-        public int forresterTrees = 100;
+        public boolean forester = false;
+        public int foresterTrees = 100;
 
         /**
          *
@@ -767,14 +767,14 @@ public final class SettingsManager
                 noOwner = (Boolean) map.get("no-owner");
             }
 
-            if (map.containsKey("forrester") && Helper.isBoolean(map.get("forrester")))
+            if (map.containsKey("forester") && Helper.isBoolean(map.get("forester")))
             {
-                forrester = (Boolean) map.get("forrester");
+                forester = (Boolean) map.get("forester");
             }
 
-            if (map.containsKey("forrester-trees") && Helper.isInteger(map.get("forrester-trees")))
+            if (map.containsKey("forester-trees") && Helper.isInteger(map.get("forester-trees")))
             {
-                forresterTrees = (Integer) map.get("forrester-trees");
+                foresterTrees = (Integer) map.get("forester-trees");
             }
         }
     }

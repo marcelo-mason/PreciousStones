@@ -6,7 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
  *
  * @author phaed
  */
-public class ForresterEntry
+public class ForesterEntry
 {
     private Field field;
     private int count;
@@ -17,7 +17,7 @@ public class ForresterEntry
      * @param field
      * @param count
      */
-    public ForresterEntry(Field field, String playerName)
+    public ForesterEntry(Field field, String playerName)
     {
         this.field = field;
         this.playerName = playerName;
@@ -73,10 +73,10 @@ public class ForresterEntry
     @Override
     public boolean equals(Object obj)
     {
-	if (!(obj instanceof ForresterEntry))
+	if (!(obj instanceof ForesterEntry))
 	    return false;
 
-	ForresterEntry other = (ForresterEntry) obj;
+	ForesterEntry other = (ForesterEntry) obj;
 	return other.field.getX() == field.getX() && other.field.getY() == field.getY() && other.field.getZ() == field.getZ() && other.field.getWorld().equals(field.getWorld());
     }
 

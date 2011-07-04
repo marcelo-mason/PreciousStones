@@ -4,7 +4,6 @@ import java.util.logging.Level;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import me.taylorkelly.help.Help;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -488,18 +487,11 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     HashSet<Field> fields = plugin.ffm.getOverlappedFields(player, field);
 
-                                    if (fields != null)
-                                    {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
 
-                                        for (Field f : fields)
-                                        {
-                                            plugin.viz.visualize(player, f);
-                                        }
-                                    }
-                                    else
+                                    for (Field f : fields)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.RED + "You are not inside of a field");
+                                        plugin.viz.visualize(player, f);
                                     }
                                 }
                                 else

@@ -82,7 +82,7 @@ public class ForceFieldManager
                     continue;
                 }
 
-                if (fieldsettings.forrester)
+                if (fieldsettings.forester)
                 {
                     queueRelease(field);
                 }
@@ -1901,7 +1901,7 @@ public class ForceFieldManager
 
         if (out != null)
         {
-            if (fieldsettings.forrester)
+            if (fieldsettings.forester)
             {
                 plugin.fm.add(out, owner.getName());
             }
@@ -2080,7 +2080,7 @@ public class ForceFieldManager
             }
         }
 
-        // remove from forrester
+        // remove from forester
 
         plugin.fm.remove(field);
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import net.sacredlabyrinth.Phaed.PreciousStones.ForresterEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
@@ -18,37 +18,37 @@ import org.bukkit.entity.Player;
  *
  * @author phaed
  */
-public final class ForresterManager
+public final class ForesterManager
 {
     private PreciousStones plugin;
-    private HashSet<ForresterEntry> forresters = new HashSet<ForresterEntry>();
+    private HashSet<ForesterEntry> foresters = new HashSet<ForesterEntry>();
 
     /**
      *
      * @param plugin
      */
-    public ForresterManager(PreciousStones plugin)
+    public ForesterManager(PreciousStones plugin)
     {
         this.plugin = plugin;
         scheduler();
     }
 
     /**
-     * Add forrester
+     * Add forester
      * @param field
      */
     public void add(Field field, String playerName)
     {
-        forresters.add(new ForresterEntry(field, playerName));
+        foresters.add(new ForesterEntry(field, playerName));
     }
 
     /**
-     * Remove forrester
+     * Remove forester
      * @param field
      */
     public void remove(Field field)
     {
-        forresters.remove(new ForresterEntry(field, ""));
+        foresters.remove(new ForesterEntry(field, ""));
     }
 
     /**
@@ -63,7 +63,7 @@ public final class ForresterManager
             {
                 List<Field> deletion = new ArrayList<Field>();
 
-                for (ForresterEntry fe : forresters)
+                for (ForesterEntry fe : foresters)
                 {
                     Field field = fe.getField();
                     FieldSettings fs = plugin.settings.getFieldSettings(field);
@@ -74,7 +74,7 @@ public final class ForresterManager
                         continue;
                     }
 
-                    int treeCount = ((int) (Math.random() * 4)) + (fs.forresterTrees - 2);
+                    int treeCount = ((int) (Math.random() * 4)) + (fs.foresterTrees - 2);
 
                     World world = plugin.getServer().getWorld(field.getWorld());
                     Player player = plugin.getServer().getPlayer(fe.getPlayerName());
@@ -100,7 +100,7 @@ public final class ForresterManager
                     {
                         int type = world.getBlockTypeIdAt(xr, y, zr);
 
-                        if (type != 0)
+                        if (type != 0 && type != 31 && type != 32 && type != 37 && type != 38)
                         {
                             if (type == 2 || type == 3)
                             {
@@ -148,13 +148,13 @@ public final class ForresterManager
                         block.setType(Material.AIR);
                     }
 
-                    forresters.remove(field);
+                    foresters.remove(field);
                     plugin.ffm.queueRelease(field);
                 }
 
                 plugin.ffm.flush();
             }
-        }, 20L * (long) plugin.settings.forresterInterval, 20L * (long) plugin.settings.forresterInterval);
+        }, 20L * (long) plugin.settings.foresterInterval, 20L * (long) plugin.settings.foresterInterval);
     }
 
     /**
