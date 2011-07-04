@@ -487,11 +487,18 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     HashSet<Field> fields = plugin.ffm.getOverlappedFields(player, field);
 
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
-
-                                    for (Field f : fields)
+                                    if (fields != null)
                                     {
-                                        plugin.viz.visualize(player, f);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
+
+                                        for (Field f : fields)
+                                        {
+                                            plugin.viz.visualize(player, f);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "You are not inside of a field");
                                     }
                                 }
                                 else
