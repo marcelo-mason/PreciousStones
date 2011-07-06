@@ -69,43 +69,65 @@ public final class StorageManager
     {
         if (plugin.settings.useMysql)
         {
-            PreciousStones.log(Level.INFO, "MySQL Initializing");
-
             core = new mysqlCore(PreciousStones.logger, plugin.settings.host, plugin.settings.database, plugin.settings.username, plugin.settings.password);
             core.initialize();
+
+            if (core.checkConnection())
+            {
+                PreciousStones.log(Level.INFO, "MySQL Connection successful");
+
+                if (!core.checkTable("pstone_fields"))
+                {
+                    PreciousStones.log(Level.INFO, "Creating table: pstone_fields");
+
+                    String query = "CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(255) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(255) NOT NULL,  `name` varchar(255) NOT NULL,  `packed_allowed` text NOT NULL,  `packed_snitch_list` longtext NOT NULL,  PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_fields_1` (`x`,`y`,`z`,`world`));";
+                    core.createTable(query);
+                }
+
+                if (!core.checkTable("pstone_unbreakables"))
+                {
+                    PreciousStones.log(Level.INFO, "Creating table: pstone_unbreakables");
+
+                    String query = "CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(255) default NULL,  `owner` varchar(255) NOT NULL,  `type_id` int(11) default NULL,  PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_unbreakables_1` (`x`,`y`,`z`,`world`));";
+                    core.createTable(query);
+                }
+            }
+            else
+            {
+                PreciousStones.log(Level.INFO, "MySQL Connection failed");
+            }
         }
         else
         {
-            PreciousStones.log(Level.INFO, "SQLite Initializing");
-
             core = new sqlCore(PreciousStones.logger, "PreciousStones", plugin.getDataFolder().getPath());
             core.initialize();
-        }
 
-        if (core.checkConnection())
-        {
-            PreciousStones.log(Level.INFO, "Connection successful");
-
-            if (!core.checkTable("pstone_fields"))
+            if (core.checkConnection())
             {
-                PreciousStones.log(Level.INFO, "Creating table: pstone_fields");
+                PreciousStones.log(Level.INFO, "SQLite Connection successful");
 
-                String query = "CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(255) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(255) NOT NULL,  `name` varchar(255) NOT NULL,  `packed_allowed` text NOT NULL,  `packed_snitch_list` longtext NOT NULL,  PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_fields_1` (`x`,`y`,`z`,`world`));";
-                core.createTable(query);
+                if (!core.checkTable("pstone_fields"))
+                {
+                    PreciousStones.log(Level.INFO, "Creating table: pstone_fields");
+
+                    String query = "CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` bigint(20),  `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(255) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(255) NOT NULL,  `name` varchar(255) NOT NULL,  `packed_allowed` text NOT NULL,  `packed_snitch_list` longtext NOT NULL,  PRIMARY KEY  (`id`),  UNIQUE (`x`,`y`,`z`,`world`));";
+                    core.createTable(query);
+                }
+
+                if (!core.checkTable("pstone_unbreakables"))
+                {
+                    PreciousStones.log(Level.INFO, "Creating table: pstone_unbreakables");
+
+                    String query = "CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` bigint(20),  `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(255) default NULL,  `owner` varchar(255) NOT NULL,  `type_id` int(11) default NULL,  PRIMARY KEY  (`id`),  UNIQUE (`x`,`y`,`z`,`world`));";
+                    core.createTable(query);
+                }
             }
-
-            if (!core.checkTable("pstone_unbreakables"))
+            else
             {
-                PreciousStones.log(Level.INFO, "Creating table: pstone_unbreakables");
-
-                String query = "CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(255) default NULL,  `owner` varchar(255) NOT NULL,  `type_id` int(11) default NULL,  PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_unbreakables_1` (`x`,`y`,`z`,`world`));";
-                core.createTable(query);
+                PreciousStones.log(Level.INFO, "SQLite Connection failed");
             }
         }
-        else
-        {
-            PreciousStones.log(Level.INFO, "Connection failed");
-        }
+
     }
 
     /**
@@ -285,6 +307,16 @@ public final class StorageManager
     }
 
     /**
+     * Delete a fields form the database
+     * @param field
+     */
+    public void deleteField(Field field)
+    {
+        String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+        core.deleteQuery(query);
+    }
+
+    /**
      * Insert an unbreakable into the database
      * @param ub
      */
@@ -293,16 +325,6 @@ public final class StorageManager
         String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`) ";
         String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + ub.getWorld() + "','" + ub.getOwner() + "'," + ub.getTypeId() + ");";
         core.insertQuery(query + values);
-    }
-
-    /**
-     * Delete a fields form the database
-     * @param field
-     */
-    public void deleteField(Field field)
-    {
-        String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
-        core.deleteQuery(query);
     }
 
     /**

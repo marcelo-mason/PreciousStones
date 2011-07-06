@@ -169,8 +169,8 @@ public final class SettingsManager
         useMysql = config.getBoolean("mysql.enable", false);
         host = config.getString("mysql.host", "localhost");
         database = config.getString("mysql.database", "minecraft");
-        username = config.getString("mysql.username", username);
-        password = config.getString("mysql.password", password);
+        username = config.getString("mysql.username", "");
+        password = config.getString("mysql.password", "");
 
         addForceFieldStones(forceFieldBlocks);
 

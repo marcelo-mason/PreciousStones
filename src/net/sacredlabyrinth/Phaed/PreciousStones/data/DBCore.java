@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 public interface DBCore
 {

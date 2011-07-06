@@ -2,7 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 /**
  *
- * @author cc_madelg
+ * @author phaed
  */
 
 public class Vector
