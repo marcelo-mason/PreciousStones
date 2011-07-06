@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.avaje.ebean.PagingList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
@@ -23,7 +22,6 @@ public class UnbreakableManager
 {
     private final HashMap<String, HashMap<ChunkVec, LinkedList<Unbreakable>>> chunkLists = new HashMap<String, HashMap<ChunkVec, LinkedList<Unbreakable>>>();
     private Queue<Unbreakable> deletionQueue = new LinkedList<Unbreakable>();
-    private Queue<Unbreakable> replacementQueue = new LinkedList<Unbreakable>();
     private PreciousStones plugin;
 
     /**
@@ -36,135 +34,18 @@ public class UnbreakableManager
     }
 
     /**
-     * Loads all unbreakables for a specific world into memory
-     * @param world
+     * Load pstones for any world that is loaded
      */
-    public void loadWorld(String world)
+    public void cleanWorldOrphans()
     {
-        int orphans = cleanOrphans(world);
+        List<World> worlds = plugin.getServer().getWorlds();
 
-        if (orphans > 0)
+        for (World world : worlds)
         {
-            PreciousStones.log(Level.INFO, "{0} orphan unbreakables: {1}", world, orphans);
-        }
-
-        int ubs = importFromDatabase(world);
-
-        PreciousStones.log(Level.INFO, "{0} unbreakables: {1}", world, ubs);
-    }
-
-    private int importFromDatabase(String world)
-    {
-        PagingList<Unbreakable> pages = plugin.getDatabase().find(Unbreakable.class).where().ieq("world", world).orderBy("x").orderBy("z").findPagingList(999999);
-
-        for (int i = 0; i < pages.getTotalPageCount(); i++)
-        {
-            List<Unbreakable> ubs = pages.getPage(i).getList();
-
-            for (Unbreakable ub : ubs)
-            {
-                addToCollection(ub);
-            }
-        }
-
-        return pages.getTotalRowCount();
-    }
-
-    /**
-     * Saves unbreakable to database
-     * @param ub
-     */
-    public void saveUnbreakable(Unbreakable ub, boolean replace)
-    {
-        try
-        {
-            if (ub.isDirty())
-            {
-                try
-                {
-                    plugin.getDatabase().save(ub);
-                }
-                catch (Exception ex)
-                {
-                    if(plugin.settings.debug) { ex.printStackTrace(); }
-                }
-
-                Unbreakable newub = null;
-
-                try
-                {
-                    newub = plugin.getDatabase().find(Unbreakable.class).where().eq("id", ub.getId()).findUnique();
-                }
-                catch (Exception ex)
-                {
-                    if(plugin.settings.debug) { ex.printStackTrace(); }
-                }
-
-                if (newub == null)
-                {
-                    try
-                    {
-                        newub = plugin.getDatabase().find(Unbreakable.class).where().eq("x", ub.getX()).eq("y", ub.getY()).eq("z", ub.getZ()).ieq("world", ub.getWorld()).findUnique();
-                    }
-                    catch (Exception ex)
-                    {
-                        if(plugin.settings.debug) { ex.printStackTrace(); }
-                    }
-                }
-
-                if (newub != null)
-                {
-                    replacementQueue.add(newub);
-                }
-                else
-                {
-                    replacementQueue.add(ub);
-                }
-
-                if (replace)
-                {
-                    processReplacementQueue();
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            if(plugin.settings.debug) { ex.printStackTrace(); }
+            cleanOrphans(world.getName());
         }
     }
 
-    /**
-     * Saves all unbreakables on DB
-     */
-    public void saveAll()
-    {
-        flush();
-        processReplacementQueue();
-
-        for (HashMap<ChunkVec, LinkedList<Unbreakable>> w : chunkLists.values())
-        {
-            for (LinkedList<Unbreakable> ubs : w.values())
-            {
-                for (Unbreakable ub : ubs)
-                {
-                    saveUnbreakable(ub, false);
-                }
-            }
-        }
-
-        processReplacementQueue();
-    }
-
-    /**
-     * Replaces outdated references in memory with the new db references
-     */
-    public void processReplacementQueue()
-    {
-        for (Unbreakable ub : replacementQueue)
-        {
-            addToCollection(ub);
-        }
-    }
 
     /**
      * Check if a chunk contains an unbreakable
@@ -275,7 +156,7 @@ public class UnbreakableManager
     /**
      * Clean up orphan unbreakables
      * @param worldName the world name
-     * @return count of orphaned unbreakables
+     * @return
      */
     public int cleanOrphans(String worldName)
     {
@@ -339,6 +220,8 @@ public class UnbreakableManager
             }
         }
         flush();
+
+        PreciousStones.log(Level.INFO, "{0} orphan unbreakables: {1}", world, cleanedCount);
 
         return cleanedCount;
     }
@@ -517,8 +400,17 @@ public class UnbreakableManager
 
         Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
 
+        // add unbreakable to memory
+
         addToCollection(unbreakable);
-        saveUnbreakable(unbreakable, true);
+
+        // add unbreakable to database
+
+        plugin.sm.insertUnbreakable(unbreakable);
+
+        // tag the chunk
+
+        plugin.tm.tagChunk(unbreakable.toChunkVec());
         return true;
     }
 
@@ -647,13 +539,12 @@ public class UnbreakableManager
             }
         }
 
-        try
-        {
-            plugin.getDatabase().delete(Unbreakable.class, ub.getId());
-        }
-        catch (Exception ex)
-        {
-            if(plugin.settings.debug) { ex.printStackTrace(); }
-        }
+        // delete unbreakable form database
+
+        plugin.sm.deleteUnbreakable(ub);
+
+        // untag the chunk
+
+        plugin.tm.untagChunk(ub.toChunkVec());
     }
 }

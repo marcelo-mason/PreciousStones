@@ -193,7 +193,7 @@ public final class EntryManager
 
     /**
      *
-     * @param player
+     * @param entity
      * @param field
      */
     public void enterField(Entity entity, Field field)
@@ -266,6 +266,15 @@ public final class EntryManager
         {
             entries.remove(player.getName());
         }
+    }
+
+    /**
+     * Remove a player from all fields (used on death)
+     * @param player
+     */
+    public void leaveAllFields(Player player)
+    {
+        entries.remove(player.getName());
     }
 
     /**

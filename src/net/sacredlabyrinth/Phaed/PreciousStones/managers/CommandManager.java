@@ -133,6 +133,12 @@ public final class CommandManager implements CommandExecutor
                             plugin.settings.debug = !plugin.settings.debug;
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Debug output " + (plugin.settings.debug ? "enabled" : "disabled"));
                         }
+                        if (split[0].equals("retag") && plugin.pm.hasPermission(player, "preciousstones.admin.retag"))
+                        {
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Tagging chunks...");
+                            plugin.tm.tagWorlds();
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Done.");
+                        }
                         if (split[0].equals("on") && plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
                         {
                             if (plugin.plm.isDisabled(player))
@@ -732,8 +738,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (split[0].equals("save") && plugin.pm.hasPermission(player, "preciousstones.admin.save"))
                         {
-                            plugin.um.saveAll();
-                            plugin.ffm.saveAll();
+                            plugin.ffm.updateAll();
 
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Data saved.");
                             return true;
@@ -879,6 +884,11 @@ public final class CommandManager implements CommandExecutor
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.clean"))
                     {
                         cacheBlock.addRow(ChatColor.DARK_RED + "/ps clean " + ChatColor.AQUA + "- Cleans up all orphan fields in the world");
+                    }
+
+                    if (plugin.pm.hasPermission(player, "preciousstones.admin.retag"))
+                    {
+                        cacheBlock.addRow(ChatColor.DARK_RED + "/ps retag " + ChatColor.AQUA + "- Re-tags all chunks that contain pstones");
                     }
 
                     boolean more = cacheBlock.sendBlock(player, plugin.settings.linesPerPage);

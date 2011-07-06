@@ -1,16 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
-import com.avaje.ebean.annotation.CacheStrategy;
-import com.avaje.ebean.validation.NotNull;
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
@@ -23,44 +14,17 @@ import org.bukkit.Location;
  * A field object
  * @author phaed
  */
-@Entity()
-@CacheStrategy
-@Table(name = "pstone_fields", uniqueConstraints =
-@UniqueConstraint(columnNames =
+public class Field extends AbstractVec
 {
-    "x", "y", "z", "world"
-}))
-public class Field extends AbstractVec implements Serializable
-{
-    @Id
-    private Long id;
     private int radius;
     private int height;
     private float velocity;
     private int typeId;
-    @NotNull
     private String owner;
-    @NotNull
     private String name;
-    @NotNull
-    @Column(columnDefinition = "TEXT")
-    private String packedAllowed;
-    @NotNull
-    @Column(columnDefinition = "LONGTEXT")
-    private String packedSnitchList;
-    @Transient
     private List<String> allowed = new ArrayList<String>();
-    @Transient
     private List<SnitchEntry> snitchList = new ArrayList<SnitchEntry>();
-    @Transient
     private boolean dirty;
-
-    /**
-     *
-     */
-    public Field()
-    {
-    }
 
     /**
      *
@@ -74,17 +38,16 @@ public class Field extends AbstractVec implements Serializable
      * @param owner
      * @param name
      */
-    public Field(int x, int y, int z, int radius, int height, String world, int typeId, String owner, String name)
+    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name)
     {
         super(x, y, z, world);
 
         this.radius = radius;
         this.height = height;
+        this.velocity = velocity;
         this.owner = owner;
         this.name = name;
         this.typeId = typeId;
-        this.packedAllowed = "";
-        this.packedSnitchList = "";
         this.dirty = true;
     }
 
@@ -96,17 +59,15 @@ public class Field extends AbstractVec implements Serializable
      * @param owner
      * @param name
      */
-    public Field(Block block, int radius, int height, String owner, String name)
+    public Field(Block block, int radius, int height, String owner)
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
         this.radius = radius;
         this.height = height;
         this.owner = owner;
-        this.name = name;
+        this.name = "";
         this.typeId = block.getTypeId();
-        this.packedAllowed = "";
-        this.packedSnitchList = "";
         this.dirty = true;
     }
 
@@ -122,9 +83,9 @@ public class Field extends AbstractVec implements Serializable
 
         this.radius = radius;
         this.height = height;
+        this.name = "";
+        this.owner = "";
         this.typeId = block.getTypeId();
-        this.packedAllowed = "";
-        this.packedSnitchList = "";
         this.dirty = true;
     }
 
@@ -136,61 +97,7 @@ public class Field extends AbstractVec implements Serializable
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
-        this.packedAllowed = "";
-        this.packedSnitchList = "";
         this.dirty = true;
-    }
-
-
-    /**
-     * Pack arrays into string values ready for storage
-     * @param team
-     */
-    public void pack()
-    {
-        String packed = "";
-
-        for(SnitchEntry se : snitchList)
-        {
-            packed += se  + "|";
-        }
-
-        setPackedSnitchList(Helper.stripTrailing(packed, "|"));
-        setPackedAllowed(Helper.toMessage(allowed, "|"));
-    }
-
-    /**
-     * Unpack string values back into objects for use
-     * @param team
-     */
-    public void unpack()
-    {
-        List<String> packedSnitchLists = Helper.fromArray(packedSnitchList.split("[|]"));
-
-        for(String packed : packedSnitchLists)
-        {
-            snitchList.add(new SnitchEntry(packed));
-        }
-
-        setAllowed(Helper.fromArray(getPackedAllowed().split("[|]")));
-    }
-
-    /**
-     * Table identity column
-     * @return the id
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     * Set the table identity column
-     * @param id the id
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 
     /**
@@ -201,6 +108,7 @@ public class Field extends AbstractVec implements Serializable
     {
         this.radius = radius;
         this.setHeight((this.radius * 2) + 1);
+        this.dirty = true;
     }
 
     /**
@@ -457,6 +365,7 @@ public class Field extends AbstractVec implements Serializable
     public void setHeight(int height)
     {
         this.height = height;
+        this.dirty = true;
     }
 
     /**
@@ -647,22 +556,7 @@ public class Field extends AbstractVec implements Serializable
     public void setVelocity(float velocity)
     {
         this.velocity = velocity;
-    }
-
-    /**
-     * @return the packedAllowed
-     */
-    public String getPackedAllowed()
-    {
-        return packedAllowed;
-    }
-
-    /**
-     * @param packedAllowed the packedAllowed to set
-     */
-    public void setPackedAllowed(String packedAllowed)
-    {
-        this.packedAllowed = packedAllowed;
+        this.dirty = true;
     }
 
     /**
@@ -682,11 +576,34 @@ public class Field extends AbstractVec implements Serializable
     }
 
     /**
+     * @return the packedAllowed
+     */
+    public String getPackedAllowed()
+    {
+        return Helper.toMessage(allowed, "|");
+    }
+
+    /**
      * @return the packedSnitchList
      */
     public String getPackedSnitchList()
     {
-        return packedSnitchList;
+        String packed = "";
+
+        for (SnitchEntry se : snitchList)
+        {
+            packed += se + "|";
+        }
+
+        return Helper.stripTrailing(packed, "|");
+    }
+
+    /**
+     * @param packedAllowed the packedAllowed to set
+     */
+    public void setPackedAllowed(String packedAllowed)
+    {
+        this.allowed = Helper.fromArray(packedAllowed.split("[|]"));
     }
 
     /**
@@ -694,6 +611,11 @@ public class Field extends AbstractVec implements Serializable
      */
     public void setPackedSnitchList(String packedSnitchList)
     {
-        this.packedSnitchList = packedSnitchList;
+        List<String> packedSnitchLists = Helper.fromArray(packedSnitchList.split("[|]"));
+
+        for (String packed : packedSnitchLists)
+        {
+            snitchList.add(new SnitchEntry(packed));
+        }
     }
 }

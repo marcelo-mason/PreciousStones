@@ -1,8 +1,6 @@
- package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,9 +29,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.LightningManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SimpleTeamsManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.TagManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VisualizationManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 
 /**
  * PreciousStones for Bukkit
@@ -62,7 +59,7 @@ public class PreciousStones extends JavaPlugin
     public SimpleTeamsManager stm;
     public VisualizationManager viz;
     public ForesterManager fm;
-
+    public TagManager tm;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
@@ -86,7 +83,6 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onEnable()
     {
-        setupDatabase();
         displayStatusInfo();
 
         settings = new SettingsManager(this);
@@ -106,7 +102,7 @@ public class PreciousStones extends JavaPlugin
         stm = new SimpleTeamsManager(this);
         viz = new VisualizationManager(this);
         fm = new ForesterManager(this);
-
+        tm = new TagManager(this);
         sm = new StorageManager(this);
 
         playerListener = new PSPlayerListener(this);
@@ -127,6 +123,7 @@ public class PreciousStones extends JavaPlugin
     private void registerEvents()
     {
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Event.Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
@@ -151,32 +148,6 @@ public class PreciousStones extends JavaPlugin
         getCommand("ps").setExecutor(com);
     }
 
-    private void setupDatabase()
-    {
-        try
-        {
-            getDatabase().find(Field.class).findRowCount();
-        }
-        catch (Exception ex)
-        {
-            System.out.println("Installing database for " + getDescription().getName() + " due to first time usage");
-            installDDL();
-        }
-    }
-
-    /**
-     * DB Classes registration
-     * @return
-     */
-    @Override
-    public List<Class<?>> getDatabaseClasses()
-    {
-        List<Class<?>> list = new ArrayList<Class<?>>();
-        list.add(Field.class);
-        list.add(Unbreakable.class);
-        return list;
-    }
-
     /**
      *  Runs on plugin disable
      */
@@ -185,8 +156,7 @@ public class PreciousStones extends JavaPlugin
     {
         try
         {
-            um.saveAll();
-            ffm.saveAll();
+            ffm.updateAll();
         }
         catch (Exception ex)
         {
@@ -194,7 +164,5 @@ public class PreciousStones extends JavaPlugin
         }
 
         PreciousStones.log(Level.INFO, "data saved.");
-
-        getDatabase().endTransaction();
     }
 }

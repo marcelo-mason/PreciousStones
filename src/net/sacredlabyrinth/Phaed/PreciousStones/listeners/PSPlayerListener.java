@@ -61,6 +61,11 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getClickedBlock().getChunk())))
+        {
+            return;
+        }
+
         if (event.getAction().equals(Action.PHYSICAL))
         {
             plugin.snm.recordSnitchUsed(player, block);
@@ -161,6 +166,11 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
+        {
+            return;
+        }
+
         handlePlayerMove(event);
     }
 
@@ -172,6 +182,11 @@ public class PSPlayerListener extends PlayerListener
     public void onPlayerMove(PlayerMoveEvent event)
     {
         if (event.isCancelled())
+        {
+            return;
+        }
+
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
         {
             return;
         }
@@ -312,11 +327,26 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         DebugTimer dt = new DebugTimer("onPlayerBucketEmpty");
 
         Player player = event.getPlayer();
         Block block = event.getBlockClicked();
         Material mat = event.getBucket();
+
+        if (block == null)
+        {
+            return;
+        }
+
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlockClicked().getChunk())))
+        {
+            return;
+        }
 
         Field field = plugin.ffm.isPlaceProtected(block, player);
 

@@ -1804,7 +1804,7 @@ public class CommunicatonManager
 
             chatBlock.addRow("", "");
 
-            if (fieldsettings.farewellMessage || fieldsettings.welcomeMessage && field.getName().length() > 0)
+            if ((fieldsettings.farewellMessage || fieldsettings.welcomeMessage) && field.getName().length() > 0)
             {
                 chatBlock.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName());
             }

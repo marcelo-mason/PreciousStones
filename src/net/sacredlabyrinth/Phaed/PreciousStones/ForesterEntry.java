@@ -11,6 +11,8 @@ public class ForesterEntry
     private Field field;
     private int count;
     private String playerName;
+    private boolean landPrepared;
+    private boolean processing;
 
     /**
      *
@@ -94,6 +96,38 @@ public class ForesterEntry
     public void setPlayerName(String playerName)
     {
         this.playerName = playerName;
+    }
+
+    /**
+     * @return the landPrepared
+     */
+    public boolean isLandPrepared()
+    {
+        return landPrepared;
+    }
+
+    /**
+     * @param landPrepared the landPrepared to set
+     */
+    public void setLandPrepared(boolean landPrepared)
+    {
+        this.landPrepared = landPrepared;
+    }
+
+    /**
+     * @return the processing
+     */
+    public boolean isProcessing()
+    {
+        return processing;
+    }
+
+    /**
+     * @param processing the processing to set
+     */
+    public void setProcessing(boolean processing)
+    {
+        this.processing = processing;
     }
 
 }

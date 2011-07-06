@@ -1,12 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
-import com.avaje.ebean.annotation.CacheStrategy;
-import com.avaje.ebean.validation.NotNull;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -14,28 +7,12 @@ import org.bukkit.block.Block;
  *
  * @author phaed
  */
-@Entity()
-@CacheStrategy
-@Table(name = "pstone_unbreakables", uniqueConstraints = @UniqueConstraint(columnNames = { "x", "y", "z", "world" }))
+
 public class Unbreakable extends AbstractVec
 {
-    @NotNull
     private String owner;
-
     private int typeId;
-
-    @Id
-    private Long id;
-
-    @Transient
     private boolean dirty;
-
-    /**
-     *
-     */
-    public Unbreakable()
-    {
-    }
 
     /**
      *
@@ -79,24 +56,6 @@ public class Unbreakable extends AbstractVec
 
 	this.typeId = block.getTypeId();
         this.dirty = true;
-    }
-
-    /**
-     * Table identity column
-     * @return the id
-     */
-    public Long getId()
-    {
-        return id;
-    }
-
-    /**
-     * Set the table identity column
-     * @param id the id
-     */
-    public void setId(Long id)
-    {
-        this.id = id;
     }
 
     /**

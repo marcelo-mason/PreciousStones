@@ -14,11 +14,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.entity.CreatureType;
-import org.bukkit.entity.Painting;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.painting.PaintingBreakEvent;
-import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
-import org.bukkit.event.painting.PaintingPlaceEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 /**
  * PreciousStones entity listener
@@ -121,7 +118,10 @@ public class PSEntityListener extends EntityListener
             }
         }
 
-        if (plugin.settings.debug) { dt.logProcessTime(); }
+        if (plugin.settings.debug)
+        {
+            dt.logProcessTime();
+        }
     }
 
     /**
@@ -261,6 +261,24 @@ public class PSEntityListener extends EntityListener
             }
         }
 
-        if (plugin.settings.debug) { dt.logProcessTime(); }
+        if (plugin.settings.debug)
+        {
+            dt.logProcessTime();
+        }
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onEntityDeath(EntityDeathEvent event)
+    {
+        if (event.getEntity() instanceof Player)
+        {
+            Player player = (Player) event.getEntity();
+
+            plugin.em.leaveAllFields(player);
+        }
     }
 }

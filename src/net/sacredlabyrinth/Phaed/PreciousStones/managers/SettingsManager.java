@@ -20,7 +20,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public final class SettingsManager
 {
-    public double foresterInterval;
+    public List<Integer> foresterFertileBlocks;
+    public int foresterInterval;
     public int visualizeBlock;
     public int visualizeSeconds;
     public boolean visualizeEndOnMove;
@@ -79,6 +80,12 @@ public final class SettingsManager
     };
     public int linesPerPage;
     public long saveFrequency;
+    public boolean useMysql;
+    public String host;
+    public String database;
+    public String username;
+    public String password;
+
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
 
@@ -100,6 +107,12 @@ public final class SettingsManager
     {
         Configuration config = plugin.getConfiguration();
         config.load();
+
+        List<Integer> fblocks = new ArrayList<Integer>();
+        fblocks.add(2);
+        fblocks.add(3);
+        fblocks.add(13);
+        fblocks.add(87);
 
         forceFieldBlocks = (ArrayList) config.getProperty("force-field-blocks");
         unbreakableBlocks = config.getIntList("unbreakable-blocks", new ArrayList<Integer>());
@@ -147,11 +160,17 @@ public final class SettingsManager
         disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
-        saveFrequency = config.getInt("settings.saving-frequency-minutes", 30);
-        foresterInterval = config.getDouble("settings.forester-interval-secs", .5);
+        saveFrequency = config.getInt("saving.frequency-minutes", 15);
         visualizeBlock = config.getInt("visualization.block-type", 20);
         visualizeSeconds = config.getInt("visualization.seconds", 15);
         visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", true);
+        foresterInterval = config.getInt("forester.interval-secs", 1);
+        foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
+        useMysql = config.getBoolean("mysql.enable", false);
+        host = config.getString("mysql.host", "localhost");
+        database = config.getString("mysql.database", "minecraft");
+        username = config.getString("mysql.username", username);
+        password = config.getString("mysql.password", password);
 
         addForceFieldStones(forceFieldBlocks);
 
@@ -208,11 +227,17 @@ public final class SettingsManager
         config.setProperty("settings.disable-bypass-alerts-for-admins", disableBypassAlertsForAdmins);
         config.setProperty("settings.off-by-default", offByDefault);
         config.setProperty("settings.lines-per-page", linesPerPage);
-        config.setProperty("settings.saving-frequency-minutes", saveFrequency);
-        config.setProperty("settings.forester-interval-secs", foresterInterval);
+        config.setProperty("saving.saving-frequency-minutes", saveFrequency);
         config.setProperty("visualization.block-type", visualizeBlock);
         config.setProperty("visualization.seconds", visualizeSeconds);
         config.setProperty("visualization.end-on-player-move", visualizeEndOnMove);
+        config.setProperty("forester.interval-secs", foresterInterval);
+        config.setProperty("forester.fertile-blocks", foresterFertileBlocks);
+        config.setProperty("mysql.enable", useMysql);
+        config.setProperty("mysql.host", host);
+        config.setProperty("mysql.database", database);
+        config.setProperty("mysql.username", username);
+        config.setProperty("mysql.password", password);
 
         config.save();
     }
@@ -323,6 +348,16 @@ public final class SettingsManager
         }
 
         return false;
+    }
+
+    /**
+     * Check if the id is one of forrester fertile types
+     * @param block
+     * @return
+     */
+    public boolean isFertileType(int id)
+    {
+        return foresterFertileBlocks.contains(id);
     }
 
     /**
@@ -525,7 +560,8 @@ public final class SettingsManager
         public boolean lightning = false;
         public boolean noOwner = false;
         public boolean forester = false;
-        public int foresterTrees = 100;
+        public boolean foresterShrubs = false;
+        public int foresterTrees = 0;
 
         /**
          *
@@ -775,6 +811,11 @@ public final class SettingsManager
             if (map.containsKey("forester-trees") && Helper.isInteger(map.get("forester-trees")))
             {
                 foresterTrees = (Integer) map.get("forester-trees");
+            }
+
+            if (map.containsKey("forester-shrubs") && Helper.isBoolean(map.get("forester-shrubs")))
+            {
+                foresterShrubs = (Boolean) map.get("forester-shrubs");
             }
         }
     }

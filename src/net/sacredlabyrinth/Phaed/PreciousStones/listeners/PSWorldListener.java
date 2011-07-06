@@ -31,12 +31,15 @@ public class PSWorldListener extends WorldListener
     @Override
     public void onWorldLoad(WorldLoadEvent event)
     {
-        DebugTimer dt = new DebugTimer("onVehicleMove");
+        DebugTimer dt = new DebugTimer("onWorldLoad");
 
         World world = event.getWorld();
 
-        plugin.ffm.loadWorld(world.getName());
-        plugin.um.loadWorld(world.getName());
+        plugin.sm.loadWorldFields(world.getName());
+        plugin.sm.loadWorldUnbreakables(world.getName());
+
+        plugin.ffm.cleanOrphans(world.getName());
+        plugin.um.cleanOrphans(world.getName());
 
         if (plugin.settings.debug) { dt.logProcessTime(); }
     }

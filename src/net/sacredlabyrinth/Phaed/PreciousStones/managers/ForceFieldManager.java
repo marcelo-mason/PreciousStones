@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.avaje.ebean.PagingList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Queue;
@@ -29,11 +28,10 @@ import org.bukkit.entity.Vehicle;
  *
  * @author Phaed
  */
-public class ForceFieldManager
+public final class ForceFieldManager
 {
     private final HashMap<String, HashMap<ChunkVec, LinkedList<Field>>> chunkLists = new HashMap<String, HashMap<ChunkVec, LinkedList<Field>>>();
     private Queue<Field> deletionQueue = new LinkedList<Field>();
-    private Queue<Field> replacementQueue = new LinkedList<Field>();
     private PreciousStones plugin;
 
     /**
@@ -43,140 +41,27 @@ public class ForceFieldManager
     public ForceFieldManager(PreciousStones plugin)
     {
         this.plugin = plugin;
+        cleanWorldOrphans();
     }
 
     /**
-     * Loads all fields for a specific world into memory
-     * @param world the world to load
+     * Load pstones for any world that is loaded
      */
-    public void loadWorld(String world)
+    public void cleanWorldOrphans()
     {
-        int orphans = cleanOrphans(world);
+        List<World> worlds = plugin.getServer().getWorlds();
 
-        if (orphans > 0)
+        for (World world : worlds)
         {
-            PreciousStones.log(Level.INFO, "{0} orphan fields: {1}", world, orphans);
+            cleanOrphans(world.getName());
         }
-
-        int fields = importFromDatabase(world);
-
-        PreciousStones.log(Level.INFO, "{0} fields: {1}", world, fields);
-    }
-
-    private int importFromDatabase(String world)
-    {
-        PagingList<Field> pages = plugin.getDatabase().find(Field.class).where().ieq("world", world).orderBy("x").orderBy("z").findPagingList(999999);
-
-        for (int i = 0; i < pages.getTotalPageCount(); i++)
-        {
-            List<Field> fields = pages.getPage(i).getList();
-
-            for (Field field : fields)
-            {
-                field.unpack();
-
-                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-                if (fieldsettings == null)
-                {
-                    continue;
-                }
-
-                if (fieldsettings.forester)
-                {
-                    queueRelease(field);
-                }
-
-                addToCollection(field);
-            }
-        }
-
-        flush();
-
-        return pages.getTotalRowCount();
     }
 
     /**
-     * Save field to database
-     * @param field the field to save
-     * @param replace
+     * Updates all new field data to the database
      */
-    public Field saveField(Field field, boolean replace)
+    public void updateAll()
     {
-        Field out = null;
-
-        try
-        {
-            if (field.isDirty())
-            {
-                try
-                {
-                    field.pack();
-                    plugin.getDatabase().save(field);
-                }
-                catch (Exception ex)
-                {
-                    if(plugin.settings.debug) { ex.printStackTrace(); }
-                }
-
-                Field newfield = null;
-
-                try
-                {
-                    newfield = plugin.getDatabase().find(Field.class).where().eq("id", field.getId()).findUnique();
-                    newfield.unpack();
-                }
-                catch (Exception ex)
-                {
-                    if(plugin.settings.debug) { ex.printStackTrace(); }
-                }
-
-                if (newfield == null)
-                {
-                    try
-                    {
-                        newfield = plugin.getDatabase().find(Field.class).where().eq("x", field.getX()).eq("y", field.getY()).eq("z", field.getZ()).ieq("world", field.getWorld()).findUnique();
-                        newfield.unpack();
-                    }
-                    catch (Exception ex)
-                    {
-                        if(plugin.settings.debug) { ex.printStackTrace(); }
-                    }
-                }
-
-                if (newfield != null)
-                {
-                    out = newfield;
-                    replacementQueue.add(newfield);
-                }
-                else
-                {
-                    out = field;
-                    replacementQueue.add(field);
-                }
-
-                if (replace)
-                {
-                    processReplacementQueue();
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            if(plugin.settings.debug) { ex.printStackTrace(); }
-        }
-
-        return out;
-    }
-
-    /**
-     * Saves all fields to the database
-     */
-    public void saveAll()
-    {
-        flush();
-        processReplacementQueue();
-
         for (HashMap<ChunkVec, LinkedList<Field>> w : chunkLists.values())
         {
             if (w != null)
@@ -185,22 +70,13 @@ public class ForceFieldManager
                 {
                     for (Field field : fields)
                     {
-                        saveField(field, false);
+                        if (field.isDirty())
+                        {
+                            plugin.sm.updateField(field);
+                        }
                     }
                 }
             }
-        }
-        processReplacementQueue();
-    }
-
-    /**
-     * Replaces outdated references in memory with the new db references
-     */
-    public void processReplacementQueue()
-    {
-        for (Field field : replacementQueue)
-        {
-            addToCollection(field);
         }
     }
 
@@ -339,7 +215,6 @@ public class ForceFieldManager
     /**
      * Clean up orphan fields
      * @param worldName
-     * @return count of cleaned orphans
      */
     public int cleanOrphans(String worldName)
     {
@@ -400,6 +275,8 @@ public class ForceFieldManager
         }
 
         flush();
+
+        PreciousStones.log(Level.INFO, "{0} orphan fields: {1}", world, cleanedCount);
 
         return cleanedCount;
     }
@@ -1894,18 +1771,26 @@ public class ForceFieldManager
             return false;
         }
 
-        Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), fieldsettings.noOwner ? "" : owner.getName(), "");
+        Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), fieldsettings.noOwner ? "Server" : owner.getName());
+        
+        // add to memory
 
         addToCollection(field);
-        Field out = saveField(field, true);
 
-        if (out != null)
+        // add to database (skip foresters and activate them)
+
+        if (fieldsettings.forester || fieldsettings.foresterShrubs)
         {
-            if (fieldsettings.forester)
-            {
-                plugin.fm.add(out, owner.getName());
-            }
+            plugin.fm.add(field, owner.getName());
         }
+        else
+        {
+            plugin.sm.insertField(field);
+        }
+
+        // tag the chunk
+
+        plugin.tm.tagChunk(field.toChunkVec());
         return true;
     }
 
@@ -2084,14 +1969,13 @@ public class ForceFieldManager
 
         plugin.fm.remove(field);
 
-        try
-        {
-            plugin.getDatabase().delete(Field.class, field.getId());
-        }
-        catch (Exception ex)
-        {
-            if(plugin.settings.debug) { ex.printStackTrace(); }
-        }
+        // delete from database
+
+        plugin.sm.deleteField(field);
+
+        // see if we need to untag chunk
+
+        plugin.tm.untagChunk(field.toChunkVec());
     }
 
     /**

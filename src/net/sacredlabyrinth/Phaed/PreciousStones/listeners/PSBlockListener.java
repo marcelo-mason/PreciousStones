@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import java.util.HashSet;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
@@ -19,6 +20,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockPhysicsEvent;
 
 /**
@@ -48,8 +50,6 @@ public class PSBlockListener extends BlockListener
     {
         Block block = event.getBlock();
         Material changedType = event.getChangedType();
-
-
     }
 
     /**
@@ -64,11 +64,15 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getToBlock().getChunk())))
+        {
+            return;
+        }
+
         if (false)
         {
             Block block = event.getBlock();
             Block toBlock = event.getToBlock();
-            Block blockFace = block.getFace(event.getFace());
 
             DebugTimer dt = new DebugTimer("onBlockFromTo");
 
@@ -130,6 +134,11 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
+        {
+            return;
+        }
+
         DebugTimer dt = new DebugTimer("onBlockIgnite");
 
         Block block = event.getBlock();
@@ -171,6 +180,11 @@ public class PSBlockListener extends BlockListener
     public void onBlockRedstoneChange(BlockRedstoneEvent event)
     {
         Block redstoneblock = event.getBlock();
+
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
+        {
+            return;
+        }
 
         for (int x = -1; x <= 1; x++)
         {
@@ -245,6 +259,11 @@ public class PSBlockListener extends BlockListener
     public void onBlockBreak(BlockBreakEvent event)
     {
         if (event.isCancelled())
+        {
+            return;
+        }
+
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
         {
             return;
         }
@@ -359,6 +378,7 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
+
         DebugTimer dt = new DebugTimer("onBlockPlace");
 
         Block placedblock = event.getBlock();
@@ -367,9 +387,9 @@ public class PSBlockListener extends BlockListener
 
         if (placedblock.getType().equals(Material.PISTON_BASE) || placedblock.getType().equals(Material.PISTON_STICKY_BASE))
         {
-            player.sendMessage(ChatColor.AQUA + "Piston placement disallowed cause of the dupe bug");
-            event.setCancelled(true);
-            return;
+        player.sendMessage(ChatColor.AQUA + "Piston placement disallowed cause of the dupe bug");
+        event.setCancelled(true);
+        return;
         }
 
         if (placedblock == null || player == null)
@@ -488,6 +508,17 @@ public class PSBlockListener extends BlockListener
                             event.setCancelled(true);
                             plugin.cm.warnPlaceFieldInUnprotectable(player, foundblock, placedblock);
                         }
+                        return;
+                    }
+                }
+
+                if (fieldsettings.forester || fieldsettings.foresterShrubs)
+                {
+                    Block floor = placedblock.getRelative(BlockFace.DOWN);
+
+                    if (!plugin.settings.isFertileType(floor.getTypeId()) && floor.getTypeId() != 2)
+                    {
+                        player.sendMessage(ChatColor.AQUA + Helper.capitalize(fieldsettings.title) + " blocks must be placed of fertile land to activate");
                         return;
                     }
                 }
@@ -621,6 +652,11 @@ public class PSBlockListener extends BlockListener
     public void onBlockDamage(BlockDamageEvent event)
     {
         if (event.isCancelled())
+        {
+            return;
+        }
+
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
         {
             return;
         }

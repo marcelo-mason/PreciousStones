@@ -8,7 +8,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSe
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -42,6 +41,11 @@ public class PSVehicleListener extends VehicleListener
     public void onVehicleMove(VehicleMoveEvent event)
     {
         if (new Vec(event.getFrom()).equals(new Vec(event.getTo())))
+        {
+            return;
+        }
+
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
         {
             return;
         }
