@@ -18,7 +18,9 @@ import org.bukkit.Material;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
@@ -53,7 +55,7 @@ public class PSPlayerListener extends PlayerListener
 
         DebugTimer dt = new DebugTimer("onPlayerInteract");
 
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         Block block = event.getClickedBlock();
 
         if (block == null || player == null)
@@ -78,59 +80,85 @@ public class PSPlayerListener extends PlayerListener
                 plugin.snm.recordSnitchShop(player, block);
             }
 
-            if (block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.STONE_BUTTON))
+            if (block.getType().equals(Material.WORKBENCH) || block.getType().equals(Material.BED) || block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.JUKEBOX) || block.getType().equals(Material.STONE_BUTTON))
             {
                 plugin.snm.recordSnitchUsed(player, block);
             }
 
             ItemStack is = player.getItemInHand();
 
-            if (is == null || !plugin.settings.isToolItemType(is.getTypeId()))
+            if (is != null)
             {
-                return;
-            }
+                if (plugin.settings.isToolItemType(is.getTypeId()))
+                {
+                    if (plugin.settings.isBypassBlock(block))
+                    {
+                        return;
+                    }
 
-            if (plugin.settings.isBypassBlock(block))
-            {
-                return;
-            }
+                    if (block.getState() instanceof ContainerBlock)
+                    {
+                        plugin.snm.recordSnitchUsed(player, block);
+                    }
 
-            if (block.getState() instanceof ContainerBlock)
-            {
-                plugin.snm.recordSnitchUsed(player, block);
-            }
+                    if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
+                    {
+                        plugin.cm.showIntruderList(player, plugin.ffm.getField(block));
+                        return;
+                    }
+                    else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
+                    {
+                        if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+                        {
+                            plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
+                        }
+                        else
+                        {
+                            plugin.cm.showUnbreakableOwner(player, block);
+                        }
+                        return;
+                    }
+                    else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
+                    {
+                        Field field = plugin.ffm.getField(block);
+                        FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
-            if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
-            {
-                plugin.cm.showIntruderList(player, plugin.ffm.getField(block));
-            }
-            else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
-            {
-                if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
-                {
-                    plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
+                        if (fieldsettings == null)
+                        {
+                            plugin.ffm.queueRelease(field);
+                            return;
+                        }
+
+                        if ((plugin.ffm.isAllowed(block, player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.undo")) && (fieldsettings.griefUndoInterval || fieldsettings.griefUndoRequest))
+                        {
+                            int size = plugin.gum.undoGrief(field);
+
+                            if (size > 0)
+                            {
+                                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed blocks");
+                            }
+                            else
+                            {
+                                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "No grief recorded");
+                            }
+                        }
+                        else if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+                        {
+                            List<Field> fields = new ArrayList<Field>();
+                            fields.add(plugin.ffm.getField(block));
+                            plugin.cm.showFieldDetails(player, fields);
+                        }
+                        else
+                        {
+                            plugin.cm.showFieldOwner(player, block);
+                        }
+                        return;
+                    }
                 }
-                else
-                {
-                    plugin.cm.showUnbreakableOwner(player, block);
-                }
-            }
-            else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
-            {
-                if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
-                {
-                    List<Field> fields = new ArrayList<Field>();
-                    fields.add(plugin.ffm.getField(block));
-                    plugin.cm.showFieldDetails(player, fields);
-                }
-                else
-                {
-                    plugin.cm.showFieldOwner(player, block);
-                }
-            }
-            else
-            {
-                Field field = plugin.ffm.isDestroyProtected(block, null);
+
+                //----------------------------------------------------------------------
+
+                Field field = plugin.ffm.isDestroyProtected(block.getLocation(), null);
 
                 if (field != null)
                 {
@@ -142,7 +170,18 @@ public class PSPlayerListener extends PlayerListener
                     }
                     else
                     {
-                        plugin.cm.showProtected(player, block);
+                        if (is.getType().equals(Material.BUCKET))
+                        {
+                            event.setCancelled(true);
+                            return;
+                        }
+                        else
+                        {
+                            if (plugin.settings.isToolItemType(is.getTypeId()))
+                            {
+                                plugin.cm.showProtected(player, block);
+                            }
+                        }
                     }
                 }
             }
@@ -239,6 +278,10 @@ public class PSPlayerListener extends PlayerListener
                             {
                                 plugin.cm.showFarewellMessage(player, entryfield.getName());
                             }
+                            else if ((fieldsettings.griefUndoRequest || fieldsettings.griefUndoInterval) && !entryfield.isAllowed(player.getName()))
+                            {
+                                plugin.cm.showWelcomeMessage(player, "Grief revertable area");
+                            }
                         }
                     }
                 }
@@ -306,11 +349,76 @@ public class PSPlayerListener extends PlayerListener
 
                                 //plugin.stm.bypassAnnounce(currentfield, player.getName());
                             }
+                            else if ((fieldsettings.griefUndoRequest || fieldsettings.griefUndoInterval) && !currentfield.isAllowed(player.getName()))
+                            {
+                                plugin.cm.showWelcomeMessage(player, "Grief revertable area");
+                            }
                         }
                     }
 
                     plugin.em.enterField(player, currentfield);
                 }
+            }
+        }
+
+        if (plugin.settings.debug)
+        {
+            dt.logProcessTime();
+        }
+    }
+
+    @Override
+    public void onPlayerBucketFill(PlayerBucketFillEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        DebugTimer dt = new DebugTimer("onPlayerBucketFill");
+
+        Player player = event.getPlayer();
+        Block block = event.getBlockClicked();
+        Material mat = event.getBucket();
+
+        if (block == null)
+        {
+            return;
+        }
+
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlockClicked().getChunk())))
+        {
+            return;
+        }
+
+        Field field = plugin.ffm.isPlaceProtected(block, player);
+
+        if (field != null)
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.bypass.break"))
+            {
+                plugin.cm.notifyBypassPlace(player, field);
+            }
+            else
+            {
+                event.setCancelled(true);
+                plugin.cm.warnDestroyArea(player, block, field);
+            }
+        }
+
+        field = plugin.ffm.isUndoGriefField(block, player);
+
+        if (field != null)
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.bypass.break"))
+            {
+                plugin.cm.notifyBypassPlace(player, field);
+            }
+            else
+            {
+                event.setCancelled(true);
+                plugin.cm.warnDestroyArea(player, block, field);
+                return;
             }
         }
 
@@ -358,15 +466,24 @@ public class PSPlayerListener extends PlayerListener
             }
             else
             {
-                if (plugin.stm.isTeamMate(player.getName(), field.getOwner()))
-                {
-                    // do nothing
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.cm.warnEmpty(player, mat, field);
-                }
+                event.setCancelled(true);
+                plugin.cm.warnEmpty(player, mat, field);
+            }
+        }
+
+        field = plugin.ffm.isUndoGriefField(block, player);
+
+        if (field != null)
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+            {
+                plugin.cm.notifyBypassPlace(player, field);
+            }
+            else
+            {
+                event.setCancelled(true);
+                plugin.cm.warnPlace(player, block, field);
+                return;
             }
         }
 

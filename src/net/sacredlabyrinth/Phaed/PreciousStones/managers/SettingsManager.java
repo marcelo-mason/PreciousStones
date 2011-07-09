@@ -20,8 +20,11 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public final class SettingsManager
 {
+    public List<Integer> griefUndoBlackList;
+    public int griefIntervalSeconds;
     public List<Integer> foresterFertileBlocks;
     public int foresterInterval;
+    public int foresterTrees;
     public int visualizeBlock;
     public int visualizeSeconds;
     public boolean visualizeEndOnMove;
@@ -85,7 +88,6 @@ public final class SettingsManager
     public String database;
     public String username;
     public String password;
-
     private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
 
@@ -113,6 +115,9 @@ public final class SettingsManager
         fblocks.add(3);
         fblocks.add(13);
         fblocks.add(87);
+
+        List<Integer> blacklist = new ArrayList<Integer>();
+        blacklist.add(92);
 
         forceFieldBlocks = (ArrayList) config.getProperty("force-field-blocks");
         unbreakableBlocks = config.getIntList("unbreakable-blocks", new ArrayList<Integer>());
@@ -164,8 +169,11 @@ public final class SettingsManager
         visualizeBlock = config.getInt("visualization.block-type", 20);
         visualizeSeconds = config.getInt("visualization.seconds", 15);
         visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", true);
-        foresterInterval = config.getInt("forester.interval-secs", 1);
+        foresterInterval = config.getInt("forester.interval-seconds", 1);
         foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
+        foresterTrees = config.getInt("forester.trees", 60);
+        griefIntervalSeconds = config.getInt("grief-undo.interval-seconds", 300);
+        griefUndoBlackList = config.getIntList("grief-undo.black-list", blacklist);
         useMysql = config.getBoolean("mysql.enable", false);
         host = config.getString("mysql.host", "localhost");
         database = config.getString("mysql.database", "minecraft");
@@ -231,8 +239,10 @@ public final class SettingsManager
         config.setProperty("visualization.block-type", visualizeBlock);
         config.setProperty("visualization.seconds", visualizeSeconds);
         config.setProperty("visualization.end-on-player-move", visualizeEndOnMove);
-        config.setProperty("forester.interval-secs", foresterInterval);
+        config.setProperty("forester.interval-seconds", foresterInterval);
         config.setProperty("forester.fertile-blocks", foresterFertileBlocks);
+        config.setProperty("grief-undo.interval-seconds", griefIntervalSeconds);
+        config.setProperty("grief-undo.black-list", griefUndoBlackList);
         config.setProperty("mysql.enable", useMysql);
         config.setProperty("mysql.host", host);
         config.setProperty("mysql.database", database);
@@ -339,15 +349,7 @@ public final class SettingsManager
      */
     public boolean isUnprotectableType(int type)
     {
-        for (Integer t : unprotectableBlocks)
-        {
-            if (type == t)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return unprotectableBlocks.contains(type);
     }
 
     /**
@@ -358,6 +360,16 @@ public final class SettingsManager
     public boolean isFertileType(int id)
     {
         return foresterFertileBlocks.contains(id);
+    }
+
+    /**
+     * Check if the id is one of grief undo blacklisted types
+     * @param block
+     * @return
+     */
+    public boolean isGriefUndoBlackListType(int id)
+    {
+        return griefUndoBlackList.contains(id);
     }
 
     /**
@@ -561,7 +573,8 @@ public final class SettingsManager
         public boolean noOwner = false;
         public boolean forester = false;
         public boolean foresterShrubs = false;
-        public int foresterTrees = 0;
+        public boolean griefUndoInterval = false;
+        public boolean griefUndoRequest = false;
 
         /**
          *
@@ -808,14 +821,19 @@ public final class SettingsManager
                 forester = (Boolean) map.get("forester");
             }
 
-            if (map.containsKey("forester-trees") && Helper.isInteger(map.get("forester-trees")))
-            {
-                foresterTrees = (Integer) map.get("forester-trees");
-            }
-
             if (map.containsKey("forester-shrubs") && Helper.isBoolean(map.get("forester-shrubs")))
             {
                 foresterShrubs = (Boolean) map.get("forester-shrubs");
+            }
+
+            if (map.containsKey("grief-undo-request") && Helper.isBoolean(map.get("grief-undo-request")))
+            {
+                griefUndoRequest = (Boolean) map.get("grief-undo-request");
+            }
+
+            if (map.containsKey("grief-undo-interval") && Helper.isBoolean(map.get("grief-undo-interval")))
+            {
+                griefUndoInterval = (Boolean) map.get("grief-undo-interval");
             }
         }
     }

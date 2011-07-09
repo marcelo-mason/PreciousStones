@@ -1078,6 +1078,92 @@ public class CommunicatonManager
 
     /**
      *
+     * @param player
+     * @param block
+     * @param field
+     */
+    public void warnConflictPistonRU(Player player, Block block, Block pistonBlock)
+    {
+        if (canWarn(player))
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.admin.viewconflicting"))
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place a unbreakable block here. Conflicting with piston [" + pistonBlock.getX() + " " + pistonBlock.getY() + " " + pistonBlock.getZ() + "]");
+            }
+            else
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place a unbreakable block here");
+            }
+        }
+        if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.settings.logConflictPlace)
+        {
+            PreciousStones.log(Level.INFO, " {0} attempted to place an unbreakable conflicting with piston [{1} {2} {3}]", player.getName(), pistonBlock.getX(), pistonBlock.getY(), pistonBlock.getZ());
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.conflict") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place an unbreakable conflicting with a piston");
+            }
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param block
+     * @param field
+     */
+    public void warnConflictPistonRFF(Player player, Block block, Block pistonBlock)
+    {
+        if (canWarn(player))
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.admin.viewconflicting"))
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place a field block here. Conflicting with piston [" + pistonBlock.getX() + " " + pistonBlock.getY() + " " + pistonBlock.getZ() + "]");
+            }
+            else
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot place a field block here");
+            }
+        }
+        if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.settings.logConflictPlace)
+        {
+            PreciousStones.log(Level.INFO, " {0} attempted to place a field conflicting with piston [{1} {2} {3}]", player.getName(), pistonBlock.getX(), pistonBlock.getY(), pistonBlock.getZ());
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.conflict") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to place a field block conflicting with a piston");
+            }
+        }
+    }
+
+    /**
+     *
      * @param attacker
      * @param victim
      * @param field
@@ -1856,8 +1942,8 @@ public class CommunicatonManager
 
         for (FieldSettings fs : fieldsettings.values())
         {
-            chatBlock.addRow(ChatColor.YELLOW + "Type: "+ ChatColor.AQUA + "" + Material.getMaterial(fs.blockId) + " " + ChatColor.YELLOW + "Title: "+ ChatColor.AQUA + fs.title);
-            chatBlock.addRow(ChatColor.YELLOW + "Radius: "+ ChatColor.AQUA + "" + fs.radius + " " + ChatColor.YELLOW + "Height: "+ ChatColor.AQUA + "" + fs.height);
+            chatBlock.addRow(ChatColor.YELLOW + "Type: " + ChatColor.AQUA + "" + Material.getMaterial(fs.blockId) + " " + ChatColor.YELLOW + "Title: " + ChatColor.AQUA + fs.title);
+            chatBlock.addRow(ChatColor.YELLOW + "Radius: " + ChatColor.AQUA + "" + fs.radius + " " + ChatColor.YELLOW + "Height: " + ChatColor.AQUA + "" + fs.height);
             chatBlock.addRow("");
         }
 
@@ -1952,7 +2038,7 @@ public class CommunicatonManager
                 sb.append(ChatColor.AQUA);
                 sb.append(field.getOwner());
                 sb.append(ChatColor.YELLOW);
-                sb.append(" Name: ");
+                sb.append("Coords: ");
                 sb.append(ChatColor.AQUA);
                 sb.append(field.getCoords());
 

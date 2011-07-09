@@ -9,6 +9,8 @@ import net.minecraft.server.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Location;
+import org.bukkit.entity.TNTPrimed;
 
 /**
  *
@@ -46,7 +48,7 @@ public class MineManager
                 plugin.ffm.queueRelease(field);
                 return;
             }
-            
+
 	    final int delay = fieldsettings.mineDelaySeconds;
 	    final int leftbehind = fieldsettings.mineReplaceBlock;
 
@@ -63,10 +65,9 @@ public class MineManager
 			plugin.ffm.silentRelease(field);
 
 			CraftWorld world = (CraftWorld)block.getWorld();
-			EntityTNTPrimed tnt = new EntityTNTPrimed(world.getHandle(), block.getX()+0.5F, block.getY()+0.5F, block.getZ()+0.5F);
-			//world.getHandle().a(tnt);
-
 			block.setType(Material.getMaterial(leftbehind));
+                        Location loc = new Location(block.getWorld(), block.getX()+.5, block.getY()+.5, block.getZ()+.5);
+                        block.getWorld().spawn(loc, TNTPrimed.class);
 		    }
 		}, delay * 20L);
 	    }

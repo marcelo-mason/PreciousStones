@@ -41,12 +41,12 @@ public class VisualizationManager
             locs = new ArrayList<Location>();
         }
 
-        int minx = field.getX() - field.getRadius();
-        int maxx = field.getX() + field.getRadius();
-        int minz = field.getZ() - field.getRadius();
-        int maxz = field.getZ() + field.getRadius();
-        int miny = field.getY() - (int) Math.floor(((double) field.getHeight()) / 2);
-        int maxy = field.getY() + (int) Math.ceil(((double) field.getHeight()) / 2);
+        int minx = field.getX() - field.getRadius() - 1;
+        int maxx = field.getX() + field.getRadius() + 1;
+        int minz = field.getZ() - field.getRadius() - 1;
+        int maxz = field.getZ() + field.getRadius() + 1;
+        int miny = field.getY() - (int) Math.floor(((double) field.getHeight()) / 2) - 1;
+        int maxy = field.getY() + (int) Math.ceil(((double) field.getHeight()) / 2) + 1;
 
         for (int y = miny; y <= maxy; y++)
         {

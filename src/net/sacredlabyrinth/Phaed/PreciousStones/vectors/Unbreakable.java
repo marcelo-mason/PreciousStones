@@ -13,6 +13,7 @@ public class Unbreakable extends AbstractVec
     private String owner;
     private int typeId;
     private boolean dirty;
+    private long id;
 
     /**
      *
@@ -23,10 +24,11 @@ public class Unbreakable extends AbstractVec
      * @param typeId
      * @param owner
      */
-    public Unbreakable(int x, int y, int z, String world, int typeId, String owner)
+    public Unbreakable(long id, int x, int y, int z, String world, int typeId, String owner)
     {
 	super(x, y, z, world);
 
+        this.id = id;
 	this.owner = owner;
 	this.typeId = typeId;
         this.dirty = true;
@@ -141,5 +143,21 @@ public class Unbreakable extends AbstractVec
     public void setDirty(boolean dirty)
     {
         this.dirty = dirty;
+    }
+
+    /**
+     * @return the id
+     */
+    public long getId()
+    {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(long id)
+    {
+        this.id = id;
     }
 }

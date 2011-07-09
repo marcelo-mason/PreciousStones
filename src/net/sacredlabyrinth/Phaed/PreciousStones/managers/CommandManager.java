@@ -750,14 +750,13 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (split[0].equals("clean") && plugin.pm.hasPermission(player, "preciousstones.admin.clean"))
                         {
-                            int cleandFF = plugin.ffm.cleanOrphans(player.getWorld().getName());
+                            int cleandFF = plugin.ffm.cleanOrphans(player.getWorld());
 
                             if (cleandFF > 0)
                             {
                                 ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned fields");
                             }
-
-                            int cleandU = plugin.um.cleanOrphans(player.getWorld().getName());
+                            int cleandU = plugin.um.cleanOrphans(player.getWorld());
 
                             if (cleandU > 0)
                             {

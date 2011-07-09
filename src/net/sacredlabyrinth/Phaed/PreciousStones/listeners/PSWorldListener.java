@@ -38,8 +38,8 @@ public class PSWorldListener extends WorldListener
         plugin.sm.loadWorldFields(world.getName());
         plugin.sm.loadWorldUnbreakables(world.getName());
 
-        plugin.ffm.cleanOrphans(world.getName());
-        plugin.um.cleanOrphans(world.getName());
+        plugin.ffm.cleanOrphans(world);
+        plugin.um.cleanOrphans(world);
 
         if (plugin.settings.debug) { dt.logProcessTime(); }
     }

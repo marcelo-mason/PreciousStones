@@ -16,6 +16,7 @@ import org.bukkit.Location;
  */
 public class Field extends AbstractVec
 {
+    private long id;
     private int radius;
     private int height;
     private float velocity;
@@ -38,10 +39,11 @@ public class Field extends AbstractVec
      * @param owner
      * @param name
      */
-    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name)
+    public Field(long id, int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name)
     {
         super(x, y, z, world);
 
+        this.id = id;
         this.radius = radius;
         this.height = height;
         this.velocity = velocity;
@@ -617,5 +619,21 @@ public class Field extends AbstractVec
         {
             snitchList.add(new SnitchEntry(packed));
         }
+    }
+
+    /**
+     * @return the id
+     */
+    public long getId()
+    {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(long id)
+    {
+        this.id = id;
     }
 }

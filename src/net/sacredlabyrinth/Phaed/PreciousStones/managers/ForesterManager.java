@@ -252,7 +252,7 @@ public final class ForesterManager
                     generateTree(field, player, world);
                     fe.addCount();
 
-                    if (fe.getCount() >= fs.foresterTrees)
+                    if (fe.getCount() >= plugin.settings.foresterTrees)
                     {
                         deletion.add(field);
                         break;

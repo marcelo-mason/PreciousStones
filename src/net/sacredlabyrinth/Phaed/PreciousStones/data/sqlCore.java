@@ -3,6 +3,8 @@ package net.sacredlabyrinth.Phaed.PreciousStones.data;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class sqlCore implements DBCore
@@ -22,6 +24,45 @@ public class sqlCore implements DBCore
         this.log = log;
         this.dbName = dbName;
         this.dbLocation = dbLocation;
+    }
+
+    @Override
+    public void openBatch()
+    {
+        try
+        {
+            manageDB.openBatch();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(sqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void addBatch(String sql)
+    {
+        try
+        {
+            manageDB.addBatch(sql);
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(sqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void closeBatch()
+    {
+        try
+        {
+            manageDB.closeBatch();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(sqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override

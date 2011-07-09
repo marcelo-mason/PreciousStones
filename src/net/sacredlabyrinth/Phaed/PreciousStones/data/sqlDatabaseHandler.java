@@ -16,6 +16,7 @@ public class sqlDatabaseHandler
      */
     private sqlCore core;
     private Connection connection;
+    private Statement batchStatement;
     private File SQLFile;
 
     public sqlDatabaseHandler(sqlCore core, File SQLFile)
@@ -67,6 +68,26 @@ public class sqlDatabaseHandler
         return false;
     }
 
+    public void openBatch() throws SQLException
+    {
+        Connection con = getConnection();
+        con.setAutoCommit(false);
+        batchStatement = con.createStatement();
+    }
+
+    public void addBatch(String sql) throws SQLException
+    {
+        batchStatement.addBatch(sql);
+    }
+
+    public void closeBatch() throws SQLException
+    {
+        Connection con = getConnection();
+        batchStatement.executeBatch();
+        con.commit();
+        con.setAutoCommit(true);
+    }
+
     public Boolean createTable(String query)
     {
         try
@@ -93,6 +114,7 @@ public class sqlDatabaseHandler
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             ResultSet result = statement.executeQuery(query);
@@ -119,6 +141,7 @@ public class sqlDatabaseHandler
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             statement.executeQuery(query);
@@ -136,7 +159,7 @@ public class sqlDatabaseHandler
             {
                 if (!ex.toString().contains("not return ResultSet"))
                 {
-                    core.writeError("Error at SQL INSERT Query: " + ex, false);
+                    //core.writeError("Error at SQL INSERT Query: " + ex, false);
                 }
             }
 
@@ -148,6 +171,7 @@ public class sqlDatabaseHandler
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             statement.executeQuery(query);
@@ -175,6 +199,7 @@ public class sqlDatabaseHandler
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             statement.executeQuery(query);
@@ -207,6 +232,7 @@ public class sqlDatabaseHandler
                 return false;
             }
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
             String query = "DELETE FROM " + table + ";";
             statement.executeQuery(query);
@@ -264,6 +290,7 @@ public class sqlDatabaseHandler
             try
             {
                 Connection con = getConnection();
+                con.setAutoCommit(true);
                 Statement statement = con.createStatement();
 
                 ResultSet result = statement.executeQuery(query);
@@ -298,6 +325,7 @@ public class sqlDatabaseHandler
             try
             {
                 Connection con = getConnection();
+                con.setAutoCommit(true);
                 Statement statement = con.createStatement();
 
                 statement.executeQuery(query);

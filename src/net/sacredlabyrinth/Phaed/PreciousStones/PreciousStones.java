@@ -23,6 +23,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.StorageManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommunicatonManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.GriefUndoManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
@@ -47,6 +48,7 @@ public class PreciousStones extends JavaPlugin
     public ForceFieldManager ffm;
     public UnbreakableManager um;
     public UnprotectableManager upm;
+    public GriefUndoManager gum;
     public StorageManager sm;
     public CommunicatonManager cm;
     public EntryManager em;
@@ -60,6 +62,7 @@ public class PreciousStones extends JavaPlugin
     public VisualizationManager viz;
     public ForesterManager fm;
     public TagManager tm;
+
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
@@ -103,6 +106,7 @@ public class PreciousStones extends JavaPlugin
         viz = new VisualizationManager(this);
         fm = new ForesterManager(this);
         tm = new TagManager(this);
+        gum = new GriefUndoManager(this);
         sm = new StorageManager(this);
 
         playerListener = new PSPlayerListener(this);
@@ -125,12 +129,16 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PAINTING_BREAK, entityListener, Event.Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PAINTING_PLACE, entityListener, Event.Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME, entityListener, Event.Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Event.Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_FILL, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FROMTO, blockListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PHYSICS, blockListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.High, this);

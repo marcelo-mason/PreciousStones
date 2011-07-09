@@ -415,4 +415,18 @@ public class Helper
     {
         return loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ();
     }
+
+    /**
+     * Escapes single quotes
+     * @param str
+     * @return
+     */
+    public static String escapeQuotes(String str)
+    {
+        if(str == null)
+        {
+            return "";
+        }
+        return str.replace("'", "''");
+    }
 }

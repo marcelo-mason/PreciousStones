@@ -48,8 +48,6 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockPhysics(BlockPhysicsEvent event)
     {
-        Block block = event.getBlock();
-        Material changedType = event.getChangedType();
     }
 
     /**
@@ -93,8 +91,6 @@ public class PSBlockListener extends BlockListener
 
             if (from == null)
             {
-                PreciousStones.logger.info("** cancelled");
-
                 Block b = block.getFace(event.getFace());
 
                 if (block.getType().equals(Material.WATER))
@@ -321,6 +317,7 @@ public class PSBlockListener extends BlockListener
                 event.setCancelled(true);
                 plugin.cm.warnDestroyFF(player, brokenBlock);
             }
+            return;
         }
         else if (plugin.settings.isUnbreakableType(brokenBlock) && plugin.um.isUnbreakable(brokenBlock))
         {
@@ -336,26 +333,49 @@ public class PSBlockListener extends BlockListener
             }
             else
             {
-                Unbreakable ub = plugin.um.getUnbreakable(brokenBlock);
-
                 event.setCancelled(true);
                 plugin.cm.warnDestroyU(player, brokenBlock);
             }
+            return;
         }
-        else
-        {
-            Field field = plugin.ffm.isDestroyProtected(brokenBlock, player);
 
-            if (field != null)
+        // --------------------------------------------------------------------------------
+
+        Field field = plugin.ffm.isDestroyProtected(brokenBlock.getLocation(), player);
+
+        if (field != null)
+        {
+
+            if (plugin.pm.hasPermission(player, "preciousstones.bypass.destroy"))
             {
-                if (plugin.pm.hasPermission(player, "preciousstones.bypass.destroy"))
-                {
-                    plugin.cm.notifyBypassDestroy(player, brokenBlock, field);
-                }
-                else
+                plugin.cm.notifyBypassDestroy(player, brokenBlock, field);
+                return;
+            }
+            else
+            {
+                event.setCancelled(true);
+                plugin.cm.warnDestroyArea(player, brokenBlock, field);
+                return;
+            }
+        }
+
+        field = plugin.ffm.isUndoGriefField(brokenBlock, player);
+
+        if (field != null)
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.bypass.destroy"))
+            {
+                plugin.cm.notifyBypassDestroy(player, brokenBlock, field);
+                return;
+            }
+            else
+            {
+                if (!plugin.settings.isGriefUndoBlackListType(brokenBlock.getTypeId()))
                 {
                     event.setCancelled(true);
-                    plugin.cm.warnDestroyArea(player, brokenBlock, field);
+                    plugin.sm.recordBlockGrief(field, brokenBlock);
+                    brokenBlock.setType(Material.AIR);
+                    return;
                 }
             }
         }
@@ -383,14 +403,6 @@ public class PSBlockListener extends BlockListener
 
         Block placedblock = event.getBlock();
         Player player = event.getPlayer();
-
-
-        if (placedblock.getType().equals(Material.PISTON_BASE) || placedblock.getType().equals(Material.PISTON_STICKY_BASE))
-        {
-        player.sendMessage(ChatColor.AQUA + "Piston placement disallowed cause of the dupe bug");
-        event.setCancelled(true);
-        return;
-        }
 
         if (placedblock == null || player == null)
         {
@@ -430,6 +442,15 @@ public class PSBlockListener extends BlockListener
             }
             else
             {
+                Block pistonblock = plugin.ffm.getPistonConflictReverse(placedblock, player);
+
+                if (pistonblock != null)
+                {
+                    event.setCancelled(true);
+                    plugin.cm.warnConflictPistonRU(player, pistonblock, placedblock);
+                    return;
+                }
+
                 if (plugin.upm.touchingUnprotectableBlock(placedblock))
                 {
                     if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
@@ -466,6 +487,15 @@ public class PSBlockListener extends BlockListener
             }
             else
             {
+                Block pistonblock = plugin.ffm.getPistonConflictReverse(placedblock, player);
+
+                if (pistonblock != null)
+                {
+                    event.setCancelled(true);
+                    plugin.cm.warnConflictPistonRFF(player, pistonblock, placedblock);
+                    return;
+                }
+
                 if (plugin.upm.touchingUnprotectableBlock(placedblock))
                 {
                     if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
@@ -605,6 +635,8 @@ public class PSBlockListener extends BlockListener
             }
         }
 
+        // -------------------------------------------------------------------------------------------
+
         Field field = plugin.ffm.isPlaceProtected(placedblock, player);
 
         if (field != null)
@@ -620,21 +652,19 @@ public class PSBlockListener extends BlockListener
             }
         }
 
-        if (placedblock.getType().equals(Material.LAVA))
-        {
-            Field nopvpfield = plugin.ffm.isPvPProtected(player);
+        field = plugin.ffm.isUndoGriefField(placedblock, player);
 
-            if (nopvpfield != null)
+        if (field != null)
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
             {
-                if (plugin.pm.hasPermission(player, "preciousstones.bypass.pvp"))
-                {
-                    plugin.cm.warnBypassPvPLavaPlace(player, nopvpfield);
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.cm.warnPvPLavaPlace(player, nopvpfield);
-                }
+                plugin.cm.notifyBypassPlace(player, field);
+            }
+            else
+            {
+                event.setCancelled(true);
+                plugin.cm.warnPlace(player, placedblock, field);
+                return;
             }
         }
 

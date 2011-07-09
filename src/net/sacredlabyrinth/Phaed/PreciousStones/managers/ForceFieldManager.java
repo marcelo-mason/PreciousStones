@@ -45,15 +45,128 @@ public final class ForceFieldManager
     }
 
     /**
-     * Load pstones for any world that is loaded
+     * Add a brand new field
+     * @param fieldblock
+     * @param owner
+     * @return confirmation
      */
-    public void cleanWorldOrphans()
+    public boolean add(Block fieldblock, Player owner)
     {
-        List<World> worlds = plugin.getServer().getWorlds();
-
-        for (World world : worlds)
+        if (plugin.plm.isDisabled(owner))
         {
-            cleanOrphans(world.getName());
+            return false;
+        }
+
+        FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
+
+        if (fieldsettings == null)
+        {
+            return false;
+        }
+
+        Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), fieldsettings.noOwner ? "Server" : owner.getName());
+
+        // add to database (skip foresters and activate them)
+
+        if (fieldsettings.forester || fieldsettings.foresterShrubs)
+        {
+            plugin.fm.add(field, owner.getName());
+        }
+        else
+        {
+            // if interval field then register it
+
+            if (fieldsettings.griefUndoInterval)
+            {
+                plugin.gum.add(field);
+            }
+
+            // insert the field into database
+
+            plugin.sm.insertField(field);
+
+            // add field to memory
+
+            addToCollection(field);
+        }
+
+        // tag the chunk
+
+        plugin.tm.tagChunk(field.toChunkVec());
+        return true;
+    }
+
+    /**
+     * Deletes a field from memory and from the database
+     * @param field the field to delete
+     */
+    public void deleteField(Field field)
+    {
+        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(field.getWorld());
+
+        if (w != null)
+        {
+            LinkedList<Field> c = w.get(field.toChunkVec());
+
+            if (c != null)
+            {
+                c.remove(field.toVec());
+            }
+        }
+
+        // remove from forester
+
+        plugin.fm.remove(field);
+
+        // remove from grief-undo and delete any records on the database
+
+        plugin.gum.remove(field);
+        plugin.sm.deleteBlockGrief(field);
+
+        // delete from database
+
+        plugin.sm.deleteField(field);
+
+        // see if we need to untag chunk
+
+        plugin.tm.untagChunk(field.toChunkVec());
+    }
+
+    /**
+     * Add the field to the collection, used by add()
+     * @param field
+     */
+    public void addToCollection(Field field)
+    {
+        String world = field.getWorld();
+        ChunkVec chunkvec = field.toChunkVec();
+
+        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(world);
+
+        if (w != null)
+        {
+            LinkedList<Field> c = w.get(chunkvec);
+
+            if (c != null)
+            {
+                c.remove(field.toVec());
+                c.add(field);
+            }
+            else
+            {
+                LinkedList<Field> newc = new LinkedList<Field>();
+                newc.add(field);
+                w.put(chunkvec, newc);
+            }
+        }
+        else
+        {
+            HashMap<ChunkVec, LinkedList<Field>> _w = new HashMap<ChunkVec, LinkedList<Field>>();
+            LinkedList<Field> _c = new LinkedList<Field>();
+
+            _c.add(field);
+            _w.put(chunkvec, _c);
+            chunkLists.put(world, _w);
         }
     }
 
@@ -213,23 +326,29 @@ public final class ForceFieldManager
     }
 
     /**
+     * Load pstones for any world that is loaded
+     */
+    public void cleanWorldOrphans()
+    {
+        List<World> worlds = plugin.getServer().getWorlds();
+
+        for (World world : worlds)
+        {
+            cleanOrphans(world);
+        }
+    }
+
+    /**
      * Clean up orphan fields
      * @param worldName
      */
-    public int cleanOrphans(String worldName)
+    public int cleanOrphans(World world)
     {
         int cleanedCount = 0;
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
-        World world = plugin.getServer().getWorld(worldName);
-
-        if (world == null)
-        {
-            return 0;
-        }
-
-        HashMap<ChunkVec, LinkedList<Field>> w = retrieveFields(worldName);
+        HashMap<ChunkVec, LinkedList<Field>> w = retrieveFields(world.getName());
 
         if (w != null)
         {
@@ -261,8 +380,6 @@ public final class ForceFieldManager
                         currentChunk = cv;
                     }
 
-                    // do the deed
-
                     int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
                     if (!plugin.settings.isFieldType(type))
@@ -275,8 +392,7 @@ public final class ForceFieldManager
         }
 
         flush();
-
-        PreciousStones.log(Level.INFO, "{0} orphan fields: {1}", world, cleanedCount);
+        PreciousStones.log(Level.INFO, "{0} orphan fields: {1}", world.getName(), cleanedCount);
 
         return cleanedCount;
     }
@@ -540,7 +656,7 @@ public final class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(loc) && (playerName == null || !field.isAllowed(playerName)))
+            if ((playerName == null || !field.isAllowed(playerName)) && field.envelops(loc))
             {
                 if (plugin.stm.isTeamMate(playerName, field.getOwner()))
                 {
@@ -803,6 +919,11 @@ public final class ForceFieldManager
 
         for (Field nearfield : near)
         {
+            if (nearfield.getTypeId() != fieldType)
+            {
+                continue;
+            }
+
             if (total.contains(nearfield))
             {
                 continue;
@@ -1217,7 +1338,7 @@ public final class ForceFieldManager
     }
 
     /**
-     * Whether the block is in a build protected area owned by someone else, exclude unprotected guarddog fields
+     * Whether the block is in a build protected area owned by someone else
      * @param blockInArea
      * @param player
      * @return the field, null if its not
@@ -1228,7 +1349,7 @@ public final class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
+            if ((player == null || !field.isAllowed(player.getName())) && field.envelops(blockInArea))
             {
                 if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
                 {
@@ -1254,18 +1375,55 @@ public final class ForceFieldManager
     }
 
     /**
-     * Whether the block is in a break protected area belonging to somebody else (not playerName)
+     * Whether the block is a grief protected field that the player is not allowed in
      * @param blockInArea
      * @param player
      * @return the field, null if its not
      */
-    public Field isDestroyProtected(Block blockInArea, Player player)
+    public Field isUndoGriefField(Block blockInArea, Player player)
     {
         List<Field> fieldsinarea = getFieldsInArea(blockInArea);
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
+            if ((player == null || !field.isAllowed(player.getName())) && field.envelops(blockInArea))
+            {
+                if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
+                {
+                    continue;
+                }
+
+                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                if (fieldsettings == null)
+                {
+                    plugin.ffm.queueRelease(field);
+                    continue;
+                }
+
+                if (fieldsettings.griefUndoInterval || fieldsettings.griefUndoRequest)
+                {
+                    return field;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether the block is in a break protected area belonging to somebody else (not playerName)
+     * @param blockInArea
+     * @param player
+     * @return the field, null if its not
+     */
+    public Field isDestroyProtected(Location loc, Player player)
+    {
+        List<Field> fieldsinarea = getFieldsInArea(loc);
+
+        for (Field field : fieldsinarea)
+        {
+            if ((player == null || !field.isAllowed(player.getName())) && field.envelops(loc))
             {
                 if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
                 {
@@ -1302,7 +1460,7 @@ public final class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(blockInArea) && (player == null || !field.isAllowed(player.getName())))
+            if ((player == null || !field.isAllowed(player.getName())) && field.envelops(blockInArea))
             {
                 if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
                 {
@@ -1340,7 +1498,7 @@ public final class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            if (field.envelops(loc) && (player == null || !field.isAllowed(player.getName())))
+            if ((player == null || !field.isAllowed(player.getName())) && field.envelops(loc))
             {
                 if (player != null && plugin.stm.isTeamMate(player.getName(), field.getOwner()))
                 {
@@ -1541,9 +1699,9 @@ public final class ForceFieldManager
      * @param placedBlock
      * @return the field, null if its not
      */
-    public Field isExplosionProtected(Block placedBlock)
+    public Field isExplosionProtected(Location loc)
     {
-        List<Field> fields = getSourceFields(placedBlock);
+        List<Field> fields = getSourceFields(loc);
 
         for (Field field : fields)
         {
@@ -1662,6 +1820,37 @@ public final class ForceFieldManager
     }
 
     /**
+     * Whether the pstone could be displaced by a piston
+     * @param piston
+     * @param placer
+     * @return
+     */
+    public Block getPistonConflictReverse(Block pstone, Player placer)
+    {
+        for (int x = -15; x <= 15; x++)
+        {
+            Block block = pstone.getRelative(x, 0, 0);
+
+            if (block.getType().equals(Material.PISTON_BASE) || block.getType().equals(Material.PISTON_STICKY_BASE))
+            {
+                return block;
+            }
+        }
+
+        for (int z = -15; z <= +15; z++)
+        {
+            Block block = pstone.getRelative(0, 0, z);
+
+            if (block.getType().equals(Material.PISTON_BASE) || block.getType().equals(Material.PISTON_STICKY_BASE))
+            {
+                return block;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Whether the piston could displace a pstone
      * @param piston
      * @param placer
@@ -1671,35 +1860,23 @@ public final class ForceFieldManager
     {
         for (int x = -15; x <= 15; x++)
         {
-            for (int z = -1; z <= 1; z++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    Block block = piston.getRelative(x, y, z);
-                    Field field = getField(block);
+            Block block = piston.getRelative(x, 0, 0);
+            Field field = getField(block);
 
-                    if (field != null)
-                    {
-                        return field;
-                    }
-                }
+            if (field != null)
+            {
+                return field;
             }
         }
 
-        for (int x = -1; x <= 1; x++)
+        for (int z = -15; z <= +15; z++)
         {
-            for (int z = -15; z <= +15; z++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    Block block = piston.getRelative(x, y, z);
-                    Field field = getField(block);
+            Block block = piston.getRelative(0, 0, z);
+            Field field = getField(block);
 
-                    if (field != null)
-                    {
-                        return field;
-                    }
-                }
+            if (field != null)
+            {
+                return field;
             }
         }
 
@@ -1749,87 +1926,6 @@ public final class ForceFieldManager
         }
 
         return out;
-    }
-
-    /**
-     * Add a brand new field
-     * @param fieldblock
-     * @param owner
-     * @return confirmation
-     */
-    public boolean add(Block fieldblock, Player owner)
-    {
-        if (plugin.plm.isDisabled(owner))
-        {
-            return false;
-        }
-
-        FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
-
-        if (fieldsettings == null)
-        {
-            return false;
-        }
-
-        Field field = new Field(fieldblock, fieldsettings.radius, fieldsettings.getHeight(), fieldsettings.noOwner ? "Server" : owner.getName());
-        
-        // add to memory
-
-        addToCollection(field);
-
-        // add to database (skip foresters and activate them)
-
-        if (fieldsettings.forester || fieldsettings.foresterShrubs)
-        {
-            plugin.fm.add(field, owner.getName());
-        }
-        else
-        {
-            plugin.sm.insertField(field);
-        }
-
-        // tag the chunk
-
-        plugin.tm.tagChunk(field.toChunkVec());
-        return true;
-    }
-
-    /**
-     * Add the field to the collection, used by add()
-     * @param field
-     */
-    public void addToCollection(Field field)
-    {
-        String world = field.getWorld();
-        ChunkVec chunkvec = field.toChunkVec();
-
-        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(world);
-
-        if (w != null)
-        {
-            LinkedList<Field> c = w.get(chunkvec);
-
-            if (c != null)
-            {
-                c.remove(field.toVec());
-                c.add(field);
-            }
-            else
-            {
-                LinkedList<Field> newc = new LinkedList<Field>();
-                newc.add(field);
-                w.put(chunkvec, newc);
-            }
-        }
-        else
-        {
-            HashMap<ChunkVec, LinkedList<Field>> _w = new HashMap<ChunkVec, LinkedList<Field>>();
-            LinkedList<Field> _c = new LinkedList<Field>();
-
-            _c.add(field);
-            _w.put(chunkvec, _c);
-            chunkLists.put(world, _w);
-        }
     }
 
     /**
@@ -1945,37 +2041,6 @@ public final class ForceFieldManager
                 dropBlock(pending);
             }
         }
-    }
-
-    /**
-     * Deletes a field from memory and from the database
-     * @param field the field to delete
-     */
-    public void deleteField(Field field)
-    {
-        HashMap<ChunkVec, LinkedList<Field>> w = chunkLists.get(field.getWorld());
-
-        if (w != null)
-        {
-            LinkedList<Field> c = w.get(field.toChunkVec());
-
-            if (c != null)
-            {
-                c.remove(field.toVec());
-            }
-        }
-
-        // remove from forester
-
-        plugin.fm.remove(field);
-
-        // delete from database
-
-        plugin.sm.deleteField(field);
-
-        // see if we need to untag chunk
-
-        plugin.tm.untagChunk(field.toChunkVec());
     }
 
     /**

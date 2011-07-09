@@ -34,20 +34,6 @@ public class UnbreakableManager
     }
 
     /**
-     * Load pstones for any world that is loaded
-     */
-    public void cleanWorldOrphans()
-    {
-        List<World> worlds = plugin.getServer().getWorlds();
-
-        for (World world : worlds)
-        {
-            cleanOrphans(world.getName());
-        }
-    }
-
-
-    /**
      * Check if a chunk contains an unbreakable
      * @param cv the chunk vec
      * @return whether the chunk contains unbreakables
@@ -154,22 +140,28 @@ public class UnbreakableManager
     }
 
     /**
+     * Load pstones for any world that is loaded
+     */
+    public void cleanWorldOrphans()
+    {
+        List<World> worlds = plugin.getServer().getWorlds();
+
+        for (World world : worlds)
+        {
+            cleanOrphans(world);
+        }
+    }
+
+    /**
      * Clean up orphan unbreakables
      * @param worldName the world name
      * @return
      */
-    public int cleanOrphans(String worldName)
+    public int cleanOrphans(World world)
     {
         int cleanedCount = 0;
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
-
-        World world = plugin.getServer().getWorld(worldName);
-
-        if (world == null)
-        {
-            return 0;
-        }
 
         HashMap<ChunkVec, LinkedList<Unbreakable>> w = retrieveUnbreakables(world.getName());
 
@@ -203,14 +195,8 @@ public class UnbreakableManager
                         currentChunk = cv;
                     }
 
-                    if (plugin.getServer().getWorld(unbreakable.getWorld()) == null)
-                    {
-                        cleanedCount++;
-                        queueRelease(unbreakable);
-                    }
-
-                    int type = plugin.getServer().getWorld(unbreakable.getWorld()).getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
-
+                    int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+                    
                     if (!plugin.settings.isUnbreakableType(type))
                     {
                         cleanedCount++;
@@ -221,7 +207,7 @@ public class UnbreakableManager
         }
         flush();
 
-        PreciousStones.log(Level.INFO, "{0} orphan unbreakables: {1}", world, cleanedCount);
+        PreciousStones.log(Level.INFO, "{0} orphan unbreakables: {1}", world.getName(), cleanedCount);
 
         return cleanedCount;
     }

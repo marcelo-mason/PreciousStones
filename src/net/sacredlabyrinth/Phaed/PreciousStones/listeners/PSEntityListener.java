@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -13,9 +14,16 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Painting;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.painting.PaintingBreakEvent;
+import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
+import org.bukkit.event.painting.PaintingPlaceEvent;
 
 /**
  * PreciousStones entity listener
@@ -75,6 +83,24 @@ public class PSEntityListener extends EntityListener
         }
     }
 
+    @Override
+    public void onExplosionPrime(ExplosionPrimeEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        // prevent explosion if explosion protected
+
+        Field field = plugin.ffm.isExplosionProtected(event.getEntity().getLocation());
+
+        if (field != null)
+        {
+            event.setCancelled(true);
+        }
+    }
+
     /**
      *
      * @param event
@@ -89,13 +115,27 @@ public class PSEntityListener extends EntityListener
 
         DebugTimer dt = new DebugTimer("onEntityExplode");
 
-        for (Block block : event.blockList())
+        boolean hasGriefField = false;
+        final List<Block> blockList = event.blockList();
+
+        for (final Block block : blockList)
         {
             // prevent explosion if breaking unbreakable
+            final int type = block.getTypeId();
+            final byte data = block.getData();
 
             if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
             {
-                event.setCancelled(true);
+                block.setTypeIdAndData(0, (byte) 0, false);
+
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        block.setTypeIdAndData(type, data, false);
+                    }
+                }, 2);
                 break;
             }
 
@@ -103,19 +143,78 @@ public class PSEntityListener extends EntityListener
 
             if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
             {
-                event.setCancelled(true);
+                block.setTypeIdAndData(0, (byte) 0, false);
+
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        block.setTypeIdAndData(type, data, false);
+                    }
+                }, 2);
                 break;
             }
 
             // prevent explosion if explosion protected
 
-            Field field = plugin.ffm.isExplosionProtected(block);
+            Field field = plugin.ffm.isExplosionProtected(block.getLocation());
 
             if (field != null)
             {
                 event.setCancelled(true);
                 break;
             }
+
+            // record the blocks that are in undo fields
+
+            field = plugin.ffm.isUndoGriefField(block, null);
+
+            if (field != null)
+            {
+                if (block.getTypeId() == 46)
+                {
+                    // trigger any tnt that exists inside the grief field blast radius
+
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Location loc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
+                            block.getWorld().spawn(loc, TNTPrimed.class);
+                        }
+                    }, 3);
+
+                }
+                else
+                {
+                    // record the block
+
+                    if (!plugin.settings.isGriefUndoBlackListType(block.getTypeId()))
+                    {
+                        plugin.sm.recordBlockGrief(field, block);
+                        hasGriefField = true;
+                    }
+                }
+            }
+        }
+
+        if (hasGriefField)
+        {
+            event.setCancelled(true);
+
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    for (final Block block : blockList)
+                    {
+                        block.setTypeId(0);
+                    }
+                }
+            }, 1);
         }
 
         if (plugin.settings.debug)
@@ -280,5 +379,27 @@ public class PSEntityListener extends EntityListener
 
             plugin.em.leaveAllFields(player);
         }
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onPaintingBreak(PaintingBreakEvent event)
+    {
+        Painting painting = event.getPainting();
+        Location loc = painting.getLocation();
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onPaintingPlace(PaintingPlaceEvent event)
+    {
+        Painting painting = event.getPainting();
+        Location loc = painting.getLocation();
     }
 }

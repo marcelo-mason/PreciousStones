@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.data;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,6 +38,69 @@ public class mysqlCore implements DBCore
         if (toWrite != null)
         {
             log.info(toWrite);
+        }
+    }
+
+    @Override
+    public void openBatch()
+    {
+        try
+        {
+            manageDB.openBatch();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (MalformedURLException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (InstantiationException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IllegalAccessException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void addBatch(String sql)
+    {
+        try
+        {
+            manageDB.addBatch(sql);
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void closeBatch()
+    {
+        try
+        {
+            manageDB.closeBatch();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (MalformedURLException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IllegalAccessException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (InstantiationException ex)
+        {
+            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -15,6 +15,12 @@ public interface DBCore
 
     public void writeError(String toWrite, Boolean severe);
 
+    public void openBatch();
+
+    public void addBatch(String sql);
+
+    public void closeBatch();
+
     public ResultSet sqlQuery(String query);
 
     public Boolean createTable(String query);

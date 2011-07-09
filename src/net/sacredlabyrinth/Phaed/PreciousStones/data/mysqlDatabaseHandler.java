@@ -11,6 +11,7 @@ public class mysqlDatabaseHandler
 {
     private mysqlCore core;
     Connection connection;
+    private Statement batchStatement;
     private String dblocation;
     private String username;
     private String password;
@@ -92,11 +93,32 @@ public class mysqlDatabaseHandler
         return connection;
     }
 
+    public void openBatch() throws SQLException, MalformedURLException, InstantiationException, IllegalAccessException
+    {
+        Connection con = getConnection();
+        con.setAutoCommit(false);
+        batchStatement = con.createStatement();
+    }
+
+    public void addBatch(String sql) throws SQLException
+    {
+        batchStatement.addBatch(sql);
+    }
+
+    public void closeBatch() throws SQLException, MalformedURLException, IllegalAccessException, InstantiationException
+    {
+        Connection con = getConnection();
+        batchStatement.executeBatch();
+        con.commit();
+        con.setAutoCommit(true);
+    }
+
     public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException
     {
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             ResultSet result = statement.executeQuery(query);
@@ -115,6 +137,7 @@ public class mysqlDatabaseHandler
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             statement.executeUpdate(query);
@@ -126,10 +149,8 @@ public class mysqlDatabaseHandler
 
             if (!ex.toString().contains("not return ResultSet"))
             {
-                core.writeError("Error at SQL INSERT Query: " + ex, false);
+                //core.writeError("Error at SQL INSERT Query: " + ex, false);
             }
-
-
         }
     }
 
@@ -138,6 +159,7 @@ public class mysqlDatabaseHandler
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             statement.executeUpdate(query);
@@ -160,6 +182,7 @@ public class mysqlDatabaseHandler
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             statement.executeUpdate(query);
@@ -182,6 +205,7 @@ public class mysqlDatabaseHandler
         try
         {
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
 
             ResultSet result = statement.executeQuery("SELECT * FROM " + table);
@@ -225,6 +249,7 @@ public class mysqlDatabaseHandler
                 return false;
             }
             Connection con = getConnection();
+            con.setAutoCommit(true);
             Statement statement = con.createStatement();
             String query = "DELETE FROM " + table + ";";
             statement.executeUpdate(query);
