@@ -713,6 +713,51 @@ public class CommunicatonManager
      * @param mat
      * @param field
      */
+    public void warnUse(Player player, Material mat, Field field)
+    {
+        FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
+        if (plugin.settings.warnUse && canWarn(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot use this");
+        }
+
+        if (plugin.pm.hasPermission(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.settings.logUse)
+        {
+            PreciousStones.log(Level.INFO, " {0} attempted to use a {1} in {2}''s {3} field [{4}|{5} {6} {7}]", player.getName(), mat.toString(), field.getOwner(), fieldsettings.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.pm.hasPermission(pl, "preciousstones.alert.warn.use") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to use a " + mat.toString() + " in " + field.getOwner() + "'s " + fieldsettings.getTitle() + " field");
+            }
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param mat
+     * @param field
+     */
     public void warnEmpty(Player player, Material mat, Field field)
     {
         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -1973,48 +2018,41 @@ public class CommunicatonManager
      */
     public void showIntruderList(Player player, Field field)
     {
-        if (field.getOwner().equals(player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+        if (field != null)
         {
-            if (field != null)
+            List<SnitchEntry> snitches = field.getSnitchList();
+
+            if (!snitches.isEmpty())
             {
-                List<SnitchEntry> snitches = field.getSnitchList();
+                ChatBlock chatBlock = plugin.com.getCacheBlock();
 
-                if (snitches.size() > 0)
+                ChatBlock.sendBlank(player);
+                ChatBlock.saySingle(player, ChatColor.WHITE + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
+                ChatBlock.sendBlank(player);
+
+                chatBlock.addRow("  " + ChatColor.GRAY + "Name", "Reason", "Details");
+
+                for (SnitchEntry se : snitches)
                 {
-                    ChatBlock chatBlock = plugin.com.getCacheBlock();
-
-                    ChatBlock.sendBlank(player);
-                    ChatBlock.saySingle(player, ChatColor.WHITE + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
-                    ChatBlock.sendBlank(player);
-
-                    chatBlock.addRow("  " + ChatColor.DARK_GRAY + "Name", "Reason", "Details");
-
-                    for (SnitchEntry se : snitches)
-                    {
-                        chatBlock.addRow("  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails().replace("{", "[").replace("}", "]"));
-                    }
-
-                    boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
-
-                    if (more)
-                    {
-                        ChatBlock.sendBlank(player);
-                        ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
-                    }
-
-                    ChatBlock.sendBlank(player);
-                }
-                else
-                {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "There have been no intruders around here");
+                    chatBlock.addRow("  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails().replace("{", "[").replace("}", "]"));
                 }
 
-                return;
+                boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
+
+                if (more)
+                {
+                    ChatBlock.sendBlank(player);
+                    ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+                }
+
+                ChatBlock.sendBlank(player);
             }
-            else
-            {
-                plugin.cm.showNotFound(player);
-            }
+
+            return;
+        }
+        else
+        {
+            plugin.cm.showNotFound(player);
         }
     }
 

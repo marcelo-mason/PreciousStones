@@ -24,6 +24,7 @@ public final class ForesterManager
 {
     private PreciousStones plugin;
     private HashSet<ForesterEntry> foresters = new HashSet<ForesterEntry>();
+    private boolean processing;
 
     /**
      *
@@ -85,7 +86,7 @@ public final class ForesterManager
                                 {
                                     Random r = new Random();
 
-                                    if (r.nextInt(10) == 7)
+                                    if (r.nextInt(36) == 7)
                                     {
                                         Block blockAbove = world.getBlockAt(vec.getBlockX(), vec.getBlockY() + 1, vec.getBlockZ());
                                         setShrub(blockAbove);
@@ -178,7 +179,7 @@ public final class ForesterManager
 
                     // do not place in protected area
 
-                    Field f = plugin.ffm.isPlaceProtected(block, player);
+                    Field f = plugin.ffm.isPlaceProtected(block.getLocation(), player);
 
                     if (f != null)
                     {
@@ -211,10 +212,17 @@ public final class ForesterManager
             @Override
             public void run()
             {
-                if(foresters.isEmpty())
+                if (processing)
                 {
                     return;
                 }
+
+                if (foresters.isEmpty())
+                {
+                    return;
+                }
+
+                processing = true;
 
                 for (ForesterEntry fe : foresters)
                 {
@@ -277,6 +285,7 @@ public final class ForesterManager
                 }
 
                 plugin.ffm.flush();
+                processing = false;
             }
         }, 20L * plugin.settings.foresterInterval, 20L * plugin.settings.foresterInterval);
     }
@@ -312,7 +321,7 @@ public final class ForesterManager
         }
         else
         {
-            switch (r.nextInt(5))
+            switch (r.nextInt(3))
             {
                 case 0:
                     block.setTypeIdAndData(31, (byte) 1, false);
@@ -330,11 +339,21 @@ public final class ForesterManager
                             block.setTypeId(38, false);
                             break;
                         case 2:
-                            block.setTypeId(39, false);
+                            block.setTypeId(37, false);
                             break;
                         case 3:
-                            block.setTypeId(40, false);
+                            block.setTypeId(38, false);
                             break;
+                        case 4:
+                            switch (r.nextInt(2))
+                            {
+                                case 0:
+                                    block.setTypeId(39, false);
+                                    break;
+                                case 1:
+                                    block.setTypeId(40, false);
+                                    break;
+                            }
                     }
             }
         }

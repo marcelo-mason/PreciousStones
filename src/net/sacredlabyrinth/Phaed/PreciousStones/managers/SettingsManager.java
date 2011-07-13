@@ -20,11 +20,16 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public final class SettingsManager
 {
+    public int maxSnitchRecords;
+    public int saveBatchSize;
+    public int saveFrequency;
     public List<Integer> griefUndoBlackList;
     public int griefIntervalSeconds;
     public List<Integer> foresterFertileBlocks;
     public int foresterInterval;
     public int foresterTrees;
+    public int visualizeAdminChunkRadius;
+    public int visualizeMarkBlock;
     public int visualizeBlock;
     public int visualizeSeconds;
     public boolean visualizeEndOnMove;
@@ -37,6 +42,8 @@ public final class SettingsManager
     public boolean logFire;
     public boolean logEntry;
     public boolean logPlace;
+    public boolean logUse;
+    public boolean logEmpty;
     public boolean logDestroy;
     public boolean logDestroyArea;
     public boolean logUnprotectable;
@@ -59,6 +66,8 @@ public final class SettingsManager
     public boolean warnFastDamage;
     public boolean warnGiveAir;
     public boolean warnPlace;
+    public boolean warnUse;
+    public boolean warnEmpty;
     public boolean warnDestroy;
     public boolean warnDestroyArea;
     public boolean warnUnprotectable;
@@ -82,7 +91,6 @@ public final class SettingsManager
         0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94
     };
     public int linesPerPage;
-    public long saveFrequency;
     public boolean useMysql;
     public String host;
     public String database;
@@ -127,6 +135,7 @@ public final class SettingsManager
         logFire = config.getBoolean("log.fire", false);
         logEntry = config.getBoolean("log.entry", false);
         logPlace = config.getBoolean("log.place", false);
+        logUse = config.getBoolean("log.use", false);
         logPvp = config.getBoolean("log.pvp", false);
         logDestroy = config.getBoolean("log.destroy", false);
         logDestroyArea = config.getBoolean("log.destroy-area", false);
@@ -150,6 +159,7 @@ public final class SettingsManager
         warnFire = config.getBoolean("warn.fire", false);
         warnEntry = config.getBoolean("warn.entry", false);
         warnPlace = config.getBoolean("warn.place", false);
+        warnUse = config.getBoolean("warn.use", false);
         warnPvp = config.getBoolean("warn.pvp", false);
         warnDestroy = config.getBoolean("warn.destroy", false);
         warnDestroyArea = config.getBoolean("warn.destroy-area", false);
@@ -165,10 +175,14 @@ public final class SettingsManager
         disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
-        saveFrequency = config.getInt("saving.frequency-minutes", 15);
+        saveFrequency = config.getInt("saving.frequency-seconds", 300);
+        saveBatchSize = config.getInt("saving.batch-size", 100);
+        maxSnitchRecords = config.getInt("saving.max-records-per-snitch", 50);
         visualizeBlock = config.getInt("visualization.block-type", 20);
-        visualizeSeconds = config.getInt("visualization.seconds", 15);
+        visualizeMarkBlock = config.getInt("visualization.mark-block-type", 49);
+        visualizeSeconds = config.getInt("visualization.seconds", 30);
         visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", true);
+        visualizeAdminChunkRadius = config.getInt("visualization.admin-chunk-radius", 15);
         foresterInterval = config.getInt("forester.interval-seconds", 1);
         foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
         foresterTrees = config.getInt("forester.trees", 60);
@@ -197,6 +211,7 @@ public final class SettingsManager
         config.setProperty("log.fire", logFire);
         config.setProperty("log.entry", logEntry);
         config.setProperty("log.place", logPlace);
+        config.setProperty("log.use", logUse);
         config.setProperty("log.pvp", logPvp);
         config.setProperty("log.destroy", logDestroy);
         config.setProperty("log.destroy-area", logDestroyArea);
@@ -220,6 +235,7 @@ public final class SettingsManager
         config.setProperty("warn.fire", warnFire);
         config.setProperty("warn.entry", warnEntry);
         config.setProperty("warn.place", warnPlace);
+        config.setProperty("warn.use", warnUse);
         config.setProperty("warn.pvp", warnPvp);
         config.setProperty("warn.destroy", warnDestroy);
         config.setProperty("warn.destroy-area", warnDestroyArea);
@@ -235,10 +251,14 @@ public final class SettingsManager
         config.setProperty("settings.disable-bypass-alerts-for-admins", disableBypassAlertsForAdmins);
         config.setProperty("settings.off-by-default", offByDefault);
         config.setProperty("settings.lines-per-page", linesPerPage);
-        config.setProperty("saving.saving-frequency-minutes", saveFrequency);
+        config.setProperty("saving.frequency-seconds", saveFrequency);
+        config.setProperty("saving.batch-size", saveBatchSize);
+        config.setProperty("saving.max-records-per-snitch", maxSnitchRecords);
+        config.setProperty("visualization.mark-block-type", visualizeMarkBlock);
         config.setProperty("visualization.block-type", visualizeBlock);
         config.setProperty("visualization.seconds", visualizeSeconds);
         config.setProperty("visualization.end-on-player-move", visualizeEndOnMove);
+        config.setProperty("visualization.admin-chunk-radius", visualizeAdminChunkRadius);
         config.setProperty("forester.interval-seconds", foresterInterval);
         config.setProperty("forester.fertile-blocks", foresterFertileBlocks);
         config.setProperty("grief-undo.interval-seconds", griefIntervalSeconds);
@@ -286,7 +306,7 @@ public final class SettingsManager
             }
         }
 
-        PreciousStones.log(Level.INFO, "configured fields: {1}", maps.size());
+        PreciousStones.log(Level.INFO, "configured fields: {0}", maps.size());
 
         chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(((largestForceField * 2.0) + 1.0) / 16.0), 1);
     }
@@ -534,7 +554,7 @@ public final class SettingsManager
      */
     public class FieldSettings
     {
-        public boolean blockDefined = false;
+        public boolean blockDefined = true;
         public int blockId;
         public int radius = 0;
         public int height = 0;
@@ -556,6 +576,7 @@ public final class SettingsManager
         public boolean preventEntry = false;
         public boolean preventUnprotectable = false;
         public boolean preventFlow = false;
+        public List<Integer> preventUse = new ArrayList<Integer>();
         public boolean instantHeal = false;
         public boolean slowHeal = false;
         public boolean slowDamage = false;
@@ -575,6 +596,7 @@ public final class SettingsManager
         public boolean foresterShrubs = false;
         public boolean griefUndoInterval = false;
         public boolean griefUndoRequest = false;
+        public boolean entryAlert = false;
 
         /**
          *
@@ -621,22 +643,35 @@ public final class SettingsManager
         }
 
         /**
+         * Whether a block type can be used in this field
+         * @return
+         */
+        public boolean canUse(int type)
+        {
+            return !preventUse.contains(type);
+        }
+
+        /**
          *
          * @param map
          */
         @SuppressWarnings("unchecked")
         public FieldSettings(LinkedHashMap map)
         {
-            // if no block specified then skip it its garbage
-            if (!map.containsKey("block") || !Helper.isInteger(map.get("block")))
+            if (map.containsKey("block") && Helper.isInteger(map.get("block")))
             {
+                blockId = (Integer) map.get("block");
+            }
+            else
+            {
+                blockDefined = false;
                 return;
             }
 
-            blockDefined = true;
-
-            blockId = (Integer) map.get("block");
-            title = (String) map.get("title");
+            if (map.containsKey("title") && Helper.isString(map.get("title")))
+            {
+                title = (String) map.get("title");
+            }
 
             if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
             {
@@ -811,6 +846,11 @@ public final class SettingsManager
                 preventFlow = (Boolean) map.get("prevent-flow");
             }
 
+            if (map.containsKey("prevent-use") && Helper.isIntList(map.get("prevent-use")))
+            {
+                preventUse = (List<Integer>) map.get("prevent-use");
+            }
+
             if (map.containsKey("no-owner") && Helper.isBoolean(map.get("no-owner")))
             {
                 noOwner = (Boolean) map.get("no-owner");
@@ -834,6 +874,11 @@ public final class SettingsManager
             if (map.containsKey("grief-undo-interval") && Helper.isBoolean(map.get("grief-undo-interval")))
             {
                 griefUndoInterval = (Boolean) map.get("grief-undo-interval");
+            }
+
+            if (map.containsKey("entry-alert") && Helper.isBoolean(map.get("entry-alert")))
+            {
+                entryAlert = (Boolean) map.get("entry-alert");
             }
         }
     }

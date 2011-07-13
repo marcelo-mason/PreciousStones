@@ -1,30 +1,30 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.io.*;
+import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sacredlabyrinth.Phaed.PreciousStones.GriefBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.data.DBCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import net.sacredlabyrinth.Phaed.PreciousStones.data.mysqlCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.data.sqlCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.block.Sign;
-import java.util.concurrent.*;
 import org.bukkit.block.BlockFace;
-import org.bukkit.material.Door;
 
 /**
  *
@@ -36,11 +36,9 @@ public final class StorageManager
      *
      */
     public DBCore core;
-    private File unbreakable;
-    private File forcefield;
-    private boolean running;
-    private BlockingQueue<String> queue = new LinkedBlockingQueue<String>();
+    private Mutex mutex = new Mutex();
     private PreciousStones plugin;
+    private Map<Vec, Field> pending = new ConcurrentHashMap<Vec, Field>();
 
     /**
      *
@@ -50,25 +48,9 @@ public final class StorageManager
     {
         this.plugin = plugin;
 
-        unbreakable = new File(plugin.getDataFolder().getPath() + File.separator + "unbreakables.txt");
-        forcefield = new File(plugin.getDataFolder().getPath() + File.separator + "forcefields.txt");
-
-        if (unbreakable.exists())
-        {
-            loadUnbreakables();
-            unbreakable.delete();
-        }
-
-        if (forcefield.exists())
-        {
-            loadFields();
-            forcefield.delete();
-        }
-
         initiateDB();
         loadWorldData();
-        saveScheduler();
-        sqlScheduler();
+        saverScheduler();
     }
 
     /**
@@ -186,8 +168,6 @@ public final class StorageManager
                 continue;
             }
 
-            field.setDirty(false);
-
             plugin.ffm.addToCollection(field);
 
             if (fieldsettings.griefUndoInterval)
@@ -196,7 +176,10 @@ public final class StorageManager
             }
         }
 
-        PreciousStones.log(Level.INFO, "{0} fields: {1}", world, fields.size());
+        if (fields.size() > 0)
+        {
+            PreciousStones.log(Level.INFO, "{0} fields: {1}", world, fields.size());
+        }
     }
 
     /**
@@ -212,7 +195,10 @@ public final class StorageManager
             plugin.um.addToCollection(ub);
         }
 
-        PreciousStones.log(Level.INFO, "{0} unbreakables: {1}", world, unbreakables.size());
+        if (unbreakables.size() > 0)
+        {
+            PreciousStones.log(Level.INFO, "{0} unbreakables: {1}", world, unbreakables.size());
+        }
     }
 
     /**
@@ -249,9 +235,9 @@ public final class StorageManager
                         String packed_allowed = res.getString("packed_allowed");
                         String packed_snitch_list = res.getString("packed_snitch_list");
 
-                        Field field = new Field(id, x, y, z, radius, height, velocity, world, type_id, owner, name);
+                        Field field = new Field(x, y, z, radius, height, velocity, world, type_id, owner, name);
                         field.setPackedAllowed(packed_allowed);
-                        field.setPackedSnitchList(packed_snitch_list);
+                        field.setPackedSnitchList(packed_snitch_list, plugin.settings.maxSnitchRecords);
 
                         out.add(field);
                     }
@@ -298,7 +284,7 @@ public final class StorageManager
                         String world = res.getString("world");
                         String owner = res.getString("owner");
 
-                        Unbreakable ub = new Unbreakable(id, x, y, z, world, type_id, owner);
+                        Unbreakable ub = new Unbreakable(x, y, z, world, type_id, owner);
 
                         out.add(ub);
                     }
@@ -318,24 +304,110 @@ public final class StorageManager
     }
 
     /**
+     * Puts the field up for future storage
+     * @param field
+     */
+    public void offerField(Field field)
+    {
+        try
+        {
+            mutex.acquire();
+            pending.put(field.toVec(), field);
+        }
+        catch (InterruptedException ex)
+        {
+            Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally
+        {
+            mutex.release();
+        }
+    }
+
+    private void processField(Field field)
+    {
+        if (field.isDirty(Field.Dirty.DELETE))
+        {
+            deleteField(field);
+            return;
+        }
+
+        String subQuery = "";
+
+        if (field.isDirty(Field.Dirty.OWNER))
+        {
+            subQuery += "owner = " + field.getOwner() + ", ";
+        }
+
+        if (field.isDirty(Field.Dirty.RADIUS))
+        {
+            subQuery += "radius = " + field.getRadius() + ", ";
+        }
+
+        if (field.isDirty(Field.Dirty.HEIGHT))
+        {
+            subQuery += "height = " + field.getHeight() + ", ";
+        }
+
+        if (field.isDirty(Field.Dirty.VELOCITY))
+        {
+            subQuery += "velocity = " + field.getVelocity() + ", ";
+        }
+
+        if (field.isDirty(Field.Dirty.NAME))
+        {
+            subQuery += "name = '" + Helper.escapeQuotes(field.getName()) + "', ";
+        }
+
+        if (field.isDirty(Field.Dirty.ALLOWED))
+        {
+            subQuery += "packed_allowed = '" + Helper.escapeQuotes(field.getPackedAllowed()) + "', ";
+        }
+
+        if (field.isDirty(Field.Dirty.SNITCH))
+        {
+            subQuery += "packed_snitch_list = '" + Helper.escapeQuotes(field.getPackedSnitchList()) + "', ";
+        }
+
+        if (field.isDirty(Field.Dirty.GRIEF_BLOCKS))
+        {
+            List<GriefBlock> grief = field.getGrief();
+
+            for (GriefBlock gb : grief)
+            {
+                recordBlockGrief(field, gb);
+            }
+        }
+
+        if (!subQuery.isEmpty())
+        {
+            String query = "UPDATE `pstone_fields` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+
+            if (plugin.settings.debug)
+            {
+                PreciousStones.logger.info(query);
+            }
+            core.addBatch(query);
+        }
+
+
+        field.clearDirty();
+    }
+
+    /**
      * Insert a field into the database
      * @param field
      */
     public void insertField(Field field)
     {
         String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `packed_snitch_list`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + field.getName() + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getPackedSnitchList()) + "');";
-        queue.add(query + values);
-    }
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getPackedSnitchList()) + "');";
 
-    /**
-     * Update a field from the database
-     * @param field
-     */
-    public void updateField(Field field)
-    {
-        String query = "UPDATE `pstone_fields` SET radius = " + field.getRadius() + ", height = " + field.getHeight() + ", velocity = " + field.getVelocity() + ", owner = '" + field.getOwner() + "', name = '" + field.getName() + "', packed_allowed = '" + Helper.escapeQuotes(field.getPackedAllowed()) + "', packed_snitch_list = '" + Helper.escapeQuotes(field.getPackedSnitchList()) + "' WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
-        queue.add(query);
+        if (plugin.settings.debug)
+        {
+            PreciousStones.logger.info(query + values);
+        }
+        core.insertQuery(query + values);
     }
 
     /**
@@ -345,7 +417,7 @@ public final class StorageManager
     public void deleteField(Field field)
     {
         String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
-        queue.add(query);
+        core.addBatch(query);
     }
 
     /**
@@ -356,7 +428,7 @@ public final class StorageManager
     {
         String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`) ";
         String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + ub.getWorld() + "','" + ub.getOwner() + "'," + ub.getTypeId() + ");";
-        queue.add(query + values);
+        core.addBatch(query + values);
     }
 
     /**
@@ -366,7 +438,7 @@ public final class StorageManager
     public void deleteUnbreakable(Unbreakable ub)
     {
         String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + ub.getWorld() + "';";
-        queue.add(query);
+        core.addBatch(query);
     }
 
     /**
@@ -374,25 +446,66 @@ public final class StorageManager
      * @param field
      * @param block
      */
-    public void recordBlockGrief(Field field, Block block)
+    public void recordBlockGrief(Field field, GriefBlock gb)
     {
+        World world = plugin.getServer().getWorld(gb.getWorld());
+
+        if (world != null)
+        {
+            return;
+        }
+
+        Block block = world.getBlockAt(gb.toLocation(world));
+
+        if (!plugin.gum.isDependentBlock(block.getTypeId()))
+        {
+            BlockFace[] faces =
+            {
+                BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
+            };
+
+            for (BlockFace face : faces)
+            {
+                Block rel = block.getRelative(face);
+
+                if (plugin.gum.isDependentBlock(rel.getTypeId()))
+                {
+                    recordBlockGrief(field, new GriefBlock(rel.getLocation(), rel.getTypeId(), rel.getData()));
+                    rel.setTypeId(0);
+                }
+            }
+        }
+
         if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR))
         {
+            // record wood doors in correct order
+
             if ((block.getData() & 0x8) == 0x8)
             {
                 Block bottom = block.getRelative(BlockFace.DOWN);
+
                 recordBlockGriefClean(field, bottom);
+                recordBlockGriefClean(field, block);
+
+                bottom.setTypeId(0);
+                block.setTypeId(0);
             }
             else
             {
                 Block top = block.getRelative(BlockFace.UP);
+
+                recordBlockGriefClean(field, block);
                 recordBlockGriefClean(field, top);
+
+                block.setTypeId(0);
+                top.setTypeId(0);
             }
         }
-
-        recordBlockGriefClean(field, block);
+        else
+        {
+            recordBlockGriefClean(field, block);
+        }
     }
-
 
     /**
      * Record a single block grief
@@ -417,7 +530,7 @@ public final class StorageManager
 
         String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
         String values = "VALUES ( '" + new Timestamp((new Date()).getTime()) + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + block.getX() + "," + block.getY() + "," + block.getZ() + "," + block.getTypeId() + "," + block.getData() + ",'" + Helper.escapeQuotes(signText) + "');";
-        queue.add(query + values);
+        core.addBatch(query + values);
     }
 
     /**
@@ -427,7 +540,7 @@ public final class StorageManager
      */
     public List<GriefBlock> retrieveBlockGrief(Field field)
     {
-        processQueue();
+        processQueue(Field.Dirty.GRIEF_BLOCKS);
 
         List<GriefBlock> out = new ArrayList<GriefBlock>();
 
@@ -466,9 +579,7 @@ public final class StorageManager
             }
         }
 
-        query = "DELETE FROM `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
-        core.deleteQuery(query);
-
+        deleteBlockGrief(field);
         return out;
     }
 
@@ -479,330 +590,90 @@ public final class StorageManager
     public void deleteBlockGrief(Field field)
     {
         String query = "DELETE FROM `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
-        queue.add(query);
+        core.addBatch(query);
     }
 
     /**
      * Deletes all records form a specific block
-     * @param field
+     * @param block
      */
     public void deleteBlockGrief(Block block)
     {
         String query = "DELETE FROM `pstone_grief_undo` WHERE x = " + block.getX() + " AND y = " + block.getY() + " AND z = " + block.getZ() + " AND world = '" + block.getWorld().getName() + "';";
-        queue.add(query);
+        core.deleteQuery(query);
     }
 
     /**
-     * Imports unbreakables from old save files
+     * Schedules the pending queue on save frequency
      */
-    public void loadUnbreakables()
+    public void saverScheduler()
     {
-        int linecount = 0;
-        int id = 1;
-
-        Scanner scan;
-        try
-        {
-            scan = new Scanner(unbreakable);
-
-            while (scan.hasNextLine())
-            {
-                try
-                {
-                    linecount++;
-
-                    String line = scan.nextLine();
-
-                    if (!line.contains("["))
-                    {
-                        continue;
-                    }
-
-                    String[] u = line.split("\\|");
-
-                    if (u.length < 5)
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt unbreakable: seccount{0} line {1}", u.length, linecount);
-                        continue;
-                    }
-
-                    String sectype = u[0];
-                    String secowner = u[1];
-                    String secworld = u[2];
-                    String secchunk = u[3];
-                    String secvec = u[4];
-
-                    sectype = Helper.removeChar(sectype, '[');
-                    secvec = Helper.removeChar(secvec, ']');
-
-                    if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !plugin.settings.isUnbreakableType(sectype))
-                    {
-                        PreciousStones.log(Level.WARNING, " Corrupt unbreakable: type error {0}", linecount);
-                        continue;
-                    }
-
-                    String type = sectype;
-
-                    if (secowner.trim().length() == 0)
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt unbreakable: owner error {0}", linecount);
-                        continue;
-                    }
-
-                    String owner = secowner;
-
-                    if (secworld.trim().length() == 0)
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt unbreakable: owner error {0}", linecount);
-                        continue;
-                    }
-
-                    String world = secworld;
-
-                    String[] chunk = secchunk.split(",");
-
-                    if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt unbreakable: chunk error {0}", linecount);
-                        continue;
-                    }
-
-                    String[] vec = secvec.split(",");
-
-                    if (vec.length < 3 || !Helper.isInteger(vec[0]) || !Helper.isInteger(vec[1]) || !Helper.isInteger(vec[2]))
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt unbreakable: vec error {0}", linecount);
-                        continue;
-                    }
-
-                    Block block = null;
-
-                    if (plugin.getServer().getWorld(world) != null)
-                    {
-                        block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
-                    }
-
-                    if (block != null && !plugin.settings.isUnbreakableType(block))
-                    {
-                        PreciousStones.log(Level.WARNING, "orphan unbreakable - skipping {0}", new Vec(block).toString());
-                        continue;
-                    }
-
-                    Unbreakable ub = new Unbreakable(id, Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), world, Material.getMaterial(type).getId(), owner);
-                    id++;
-
-                    insertUnbreakable(ub);
-                    plugin.um.addToCollection(ub);
-                }
-                catch (Exception ex)
-                {
-                    PreciousStones.log(Level.WARNING, "Corrupt unbreakable could not be imported");
-                }
-            }
-            PreciousStones.log(Level.INFO, "< imported {0} unbreakables", plugin.um.getCount());
-        }
-        catch (FileNotFoundException e)
-        {
-            PreciousStones.log(Level.SEVERE, "Cannot read file {0}", unbreakable.getName());
-        }
-    }
-
-    /**
-     * Imports fields from old save files
-     */
-    public void loadFields()
-    {
-        int linecount = 0;
-        long id = 0;
-
-        Scanner scan;
-        try
-        {
-            scan = new Scanner(forcefield);
-
-            while (scan.hasNextLine())
-            {
-                try
-                {
-                    linecount++;
-
-                    String line = scan.nextLine();
-
-                    if (!line.contains("["))
-                    {
-                        continue;
-                    }
-
-                    String[] u = line.split("\\|");
-
-                    if (u.length < 7)
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt forcefield: seccount{0} line {1}", u.length, linecount);
-                        continue;
-                    }
-
-                    String sectype = u[0];
-                    String secowner = u[1];
-                    String secallowed = u[2];
-                    String secworld = u[3];
-                    String secchunk = u[4];
-                    String secvec = u[5];
-                    String secname = u[6];
-                    String secsnitch = "";
-                    String seccloak = "";
-
-                    if (u.length > 7)
-                    {
-                        secsnitch = u[7].replace("?", "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â½");
-                    }
-
-                    if (u.length > 8)
-                    {
-                        seccloak = u[8];
-                    }
-
-                    sectype = Helper.removeChar(sectype, '[');
-                    secname = Helper.removeChar(secname, ']');
-                    secsnitch = Helper.removeChar(secsnitch, ']');
-                    seccloak = Helper.removeChar(seccloak, ']');
-
-                    if (sectype.trim().length() == 0 || Material.getMaterial(sectype) == null || !(plugin.settings.isFieldType(sectype)))
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt forcefield : type error {0}", linecount);
-                        continue;
-                    }
-
-                    String type = sectype;
-
-                    if (secowner.trim().length() == 0)
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt forcefield: type error {0}", linecount);
-                        continue;
-                    }
-
-                    String owner = secowner;
-
-                    if (secworld.trim().length() == 0)
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt forcefield : world error {0}", linecount);
-                        continue;
-                    }
-
-                    String world = secworld;
-
-                    String[] chunk = secchunk.split(",");
-
-                    if (chunk.length < 2 || !Helper.isInteger(chunk[0]) || !Helper.isInteger(chunk[1]))
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt forcefield: chunk error {0}", linecount);
-                        continue;
-                    }
-
-                    String[] vec = secvec.split(",");
-
-                    if (vec.length < 5 || !Helper.isInteger(vec[0]) || !Helper.isInteger(vec[1]) || !Helper.isInteger(vec[2]) || !Helper.isInteger(vec[3]) || !Helper.isInteger(vec[4]))
-                    {
-                        PreciousStones.log(Level.WARNING, "Corrupt forcefield: vec error {0}", linecount);
-                        continue;
-                    }
-
-                    String name = secname;
-
-                    Block block = null;
-
-                    if (plugin.getServer().getWorld(world) != null)
-                    {
-                        block = plugin.getServer().getWorld(world).getBlockAt(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
-                    }
-
-                    // if the field is a cloakable field yet the material type is neither a cloaked or clokable material (means its corrupted) then we orphan it
-                    // otherwise if the field is not a field type, then we orphan it as well.
-
-                    if (block != null && !plugin.settings.isFieldType(block))
-                    {
-                        PreciousStones.log(Level.WARNING, "orphan field - skipping {0}", new Vec(block).toString());
-                        continue;
-                    }
-
-                    Field field = new Field(id, Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), 0, world, Material.getMaterial(type).getId(), owner, name);
-                    id++;
-
-                    insertField(field);
-                    plugin.ffm.addToCollection(field);
-                }
-                catch (Exception ex)
-                {
-                    PreciousStones.log(Level.WARNING, "Corrupt field could not be imported");
-                }
-            }
-
-            PreciousStones.log(Level.INFO, "< imported {0} fields", plugin.ffm.getCount());
-        }
-        catch (FileNotFoundException e)
-        {
-            PreciousStones.log(Level.SEVERE, "Cannot read file {0}", forcefield.getName());
-        }
-    }
-
-    private void saveScheduler()
-    {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
+        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
         {
             @Override
             public void run()
             {
-                plugin.ffm.updateAll();
-
-                PreciousStones.log(Level.INFO, "data saved.");
+                processQueue(null);
             }
-        }, 20L * 60 * plugin.settings.saveFrequency, 20L * 60 * plugin.settings.saveFrequency);
+        }, 0, 20L * plugin.settings.saveFrequency);
     }
 
-    private void sqlScheduler()
-    {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                if (running)
-                {
-                    return;
-                }
-
-                running = true;
-                processQueue();
-                running = false;
-            }
-        }, 20L * 5, 20L * 5);
-    }
-
-    private void processQueue()
+    /**
+     * Process entire queue
+     */
+    public void processQueue(Field.Dirty dirtyType)
     {
         try
         {
-            int batchSize = 0;
+            mutex.acquire();
+
+            if (plugin.settings.debug && !pending.isEmpty())
+            {
+                PreciousStones.logger.info("[Queue] processing " + pending.size() + " queries...");
+            }
+
             core.openBatch();
 
-            while (!queue.isEmpty())
-            {
-                String query = queue.take();
-                core.addBatch(query);
-                batchSize++;
+            int count = 0;
 
-                if (batchSize > 100)
+            for (Field field : pending.values())
+            {
+                if (dirtyType != null)
                 {
+                    if (!field.isDirty(dirtyType.GRIEF_BLOCKS))
+                    {
+                        continue;
+                    }
+                }
+
+                processField(field);
+
+                if (count >= plugin.settings.saveBatchSize)
+                {
+                    PreciousStones.logger.info("[Queue] sent batch of " + count);
                     core.closeBatch();
                     core.openBatch();
-                    batchSize = 0;
+                    count = 0;
                 }
+                count++;
             }
 
+            pending.clear();
+
             core.closeBatch();
+
+            if (plugin.settings.debug && !pending.isEmpty())
+            {
+                PreciousStones.logger.info("[Queue] done");
+            }
         }
-        catch (InterruptedException ex)
+        catch (Exception e)
         {
-            Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            e.printStackTrace();
+        }
+        finally
+        {
+            mutex.release();
         }
     }
 }

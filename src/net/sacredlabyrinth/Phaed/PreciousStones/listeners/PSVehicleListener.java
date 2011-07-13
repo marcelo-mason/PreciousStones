@@ -59,22 +59,39 @@ public class PSVehicleListener extends VehicleListener
         {
             Player player = (Player) entity;
 
-            List<Field> currentfields = plugin.ffm.getSourceFields(player);
+            // undo a player's visualization if it exists
 
-            // check if were on a prevent entry field the player is no allowed in
+            if (!plugin.pm.hasPermission(player, "preciousstones.admin.visualize") && plugin.settings.visualizeEndOnMove)
+            {
+                plugin.viz.revertVisualization(player);
+            }
+
+            // remove player form any entry field he is not currently in
+
+            LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
+
+            if (entryfields != null)
+            {
+                for (Field entryfield : entryfields)
+                {
+                    if (!entryfield.envelops(player.getLocation()))
+                    {
+                        plugin.em.leaveField(player, entryfield);
+
+                        if (!plugin.em.containsSameNameOwnedField(player, entryfield))
+                        {
+                            plugin.em.leaveOverlappedArea(player, entryfield);
+                        }
+                    }
+                }
+            }
+
+            // check all fields hes standing on and teleport him if hes in a prevent-entry field
+
+            List<Field> currentfields = plugin.ffm.getSourceFields(player.getLocation());
 
             for (Field field : currentfields)
             {
-                if (field.isAllowed(player.getName()))
-                {
-                    continue;
-                }
-
-                if (plugin.stm.isTeamMate(player.getName(), field.getOwner()))
-                {
-                    continue;
-                }
-
                 FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
                 if (fieldsettings == null)
@@ -87,15 +104,19 @@ public class PSVehicleListener extends VehicleListener
                 {
                     if (fieldsettings.preventEntry)
                     {
-                        v.setVelocity(new Vector(0, 0, 0));
-                        v.teleport(event.getFrom());
-                        plugin.cm.warnEntry(player, field);
-                        break;
+                        if (!plugin.ffm.isAllowed(field, player.getName()))
+                        {
+                            v.setVelocity(new Vector(0, 0, 0));
+                            v.teleport(event.getFrom());
+                            player.teleport(event.getFrom());
+                            plugin.cm.warnEntry(player, field);
+                            return;
+                        }
                     }
                 }
             }
 
-            // loop through all fields the player just moved into
+            // enter all fields hes is not currently entered into yet
 
             if (currentfields != null)
             {
@@ -105,60 +126,10 @@ public class PSVehicleListener extends VehicleListener
                     {
                         if (!plugin.em.containsSameNameOwnedField(player, currentfield))
                         {
-                            FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
-
-                            if (fieldsettings == null)
-                            {
-                                plugin.ffm.queueRelease(currentfield);
-                                return;
-                            }
-
-                            if (fieldsettings.welcomeMessage)
-                            {
-                                if (currentfield.getName().length() > 0)
-                                {
-                                    plugin.cm.showWelcomeMessage(player, currentfield.getName());
-                                }
-                            }
+                            plugin.em.enterOverlappedArea(player, currentfield);
                         }
 
                         plugin.em.enterField(player, currentfield);
-                    }
-                }
-            }
-
-            // remove all stored entry fields that the player is no longer currently in
-
-            LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
-
-            if (entryfields != null)
-            {
-                if (currentfields != null)
-                {
-                    entryfields.removeAll(currentfields);
-                }
-
-                for (Field entryfield : entryfields)
-                {
-                    plugin.em.leaveField(player, entryfield);
-
-                    if (!plugin.em.containsSameNameOwnedField(player, entryfield))
-                    {
-                        FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
-
-                        if (fieldsettings == null)
-                        {
-                            plugin.ffm.queueRelease(entryfield);
-                            return;
-                        }
-
-                        if (fieldsettings.farewellMessage)
-                        {
-                            if (entryfield.getName().length() > 0)
-                            {
-                                plugin.cm.showFarewellMessage(player, entryfield.getName());
-                            }
-                        }
                     }
                 }
             }
@@ -166,7 +137,7 @@ public class PSVehicleListener extends VehicleListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 }

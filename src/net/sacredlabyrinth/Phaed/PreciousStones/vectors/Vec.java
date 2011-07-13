@@ -15,16 +15,16 @@ public class Vec extends AbstractVec
      */
     public Vec(Block block)
     {
-	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+        super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
 
     /**
      *
      * @param field
      */
-    public Vec(Field field)
+    public Vec(AbstractVec av)
     {
-	super(field.getX(), field.getY(), field.getZ(), field.getWorld());
+        super(av.getX(), av.getY(), av.getZ(), av.getWorld());
     }
 
     /**
@@ -33,7 +33,7 @@ public class Vec extends AbstractVec
      */
     public Vec(Location loc)
     {
-	super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
+        super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
     }
 
     /**
@@ -42,6 +42,6 @@ public class Vec extends AbstractVec
      */
     public ChunkVec toChunkVec()
     {
-	return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
+        return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
     }
 }

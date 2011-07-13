@@ -24,6 +24,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommunicatonManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.GriefUndoManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.LegacyManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
@@ -62,6 +63,7 @@ public class PreciousStones extends JavaPlugin
     public VisualizationManager viz;
     public ForesterManager fm;
     public TagManager tm;
+    public LegacyManager legacy;
 
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
@@ -108,6 +110,7 @@ public class PreciousStones extends JavaPlugin
         tm = new TagManager(this);
         gum = new GriefUndoManager(this);
         sm = new StorageManager(this);
+        legacy = new LegacyManager(this);
 
         playerListener = new PSPlayerListener(this);
         blockListener = new PSBlockListener(this);
@@ -162,15 +165,6 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onDisable()
     {
-        try
-        {
-            ffm.updateAll();
-        }
-        catch (Exception ex)
-        {
-            PreciousStones.log(Level.SEVERE, "Error Saving: ", ex.getMessage());
-        }
-
-        PreciousStones.log(Level.INFO, "data saved.");
+        sm.processQueue(null);
     }
 }

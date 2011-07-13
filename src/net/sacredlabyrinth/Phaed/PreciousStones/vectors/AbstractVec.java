@@ -1,19 +1,20 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import org.bukkit.Location;
+import org.bukkit.World;
+
 /**
  *
  * @author phaed
  */
 public abstract class AbstractVec
 {
-
     /**
      *  The world name the vector belongs to
      */
     private int x;
     private int y;
     private int z;
-
     private String world;
 
     /**
@@ -32,10 +33,10 @@ public abstract class AbstractVec
      */
     public AbstractVec(int x, int y, int z, String world)
     {
-	this.x = x;
-	this.y = y;
-	this.z = z;
-	this.world = world;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.world = world;
     }
 
     /**
@@ -52,7 +53,7 @@ public abstract class AbstractVec
      */
     public int getX()
     {
-	return this.x;
+        return this.x;
     }
 
     /**
@@ -69,7 +70,7 @@ public abstract class AbstractVec
      */
     public int getY()
     {
-	return this.y;
+        return this.y;
     }
 
     /**
@@ -86,7 +87,7 @@ public abstract class AbstractVec
      */
     public int getZ()
     {
-	return this.z;
+        return this.z;
     }
 
     /**
@@ -103,28 +104,56 @@ public abstract class AbstractVec
      */
     public String getWorld()
     {
-	return this.world;
+        return this.world;
     }
 
     @Override
     public int hashCode()
     {
-	return ((new Integer(getX())).hashCode() >> 13) ^ ((new Integer(getY())).hashCode() >> 7) ^ ((new Integer(getZ())).hashCode()) ^ ((getWorld()).hashCode());
+        return ((new Integer(getX())).hashCode() >> 13) ^ ((new Integer(getY())).hashCode() >> 7) ^ ((new Integer(getZ())).hashCode()) ^ ((getWorld()).hashCode());
     }
 
     @Override
     public boolean equals(Object obj)
     {
-	if (!(obj instanceof AbstractVec))
-	    return false;
+        if (!(obj instanceof AbstractVec))
+        {
+            return false;
+        }
 
-	AbstractVec other = (AbstractVec) obj;
-	return other.getX() == this.getX() && other.getY() == this.getY() && other.getZ() == this.getZ() && other.getWorld().equals(this.getWorld());
+        AbstractVec other = (AbstractVec) obj;
+        return other.getX() == this.getX() && other.getY() == this.getY() && other.getZ() == this.getZ() && other.getWorld().equals(this.getWorld());
     }
 
     @Override
     public String toString()
     {
-	return "[" + getX() + " " + getY() + " " + getZ() + "]";
+        return "[" + getX() + " " + getY() + " " + getZ() + " " + getWorld() + "]";
+    }
+
+    /**
+     * @return the chunkvec
+     */
+    public ChunkVec toChunkVec()
+    {
+        return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
+    }
+
+    /**
+     * @return the vec
+     */
+    public Vec toVec()
+    {
+        return new Vec(this);
+    }
+
+    /**
+     *
+     * @param world
+     * @return
+     */
+    public Location toLocation(World world)
+    {
+        return new Location(world, getX(), getY(), getZ());
     }
 }

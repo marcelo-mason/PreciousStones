@@ -10,6 +10,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Material;
 import org.bukkit.World;
 
@@ -142,14 +143,14 @@ public class TagManager
     {
         Set<ChunkVec> chunks = new HashSet<ChunkVec>();
 
-        HashMap<ChunkVec, LinkedList<Field>> c = plugin.ffm.retrieveFields(worldName);
+        HashMap<ChunkVec, HashMap<Vec, Field>> c = plugin.ffm.retrieveFields(worldName);
 
         if (c != null)
         {
             chunks.addAll(c.keySet());
         }
 
-        HashMap<ChunkVec, LinkedList<Unbreakable>> u = plugin.um.retrieveUnbreakables(worldName);
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> u = plugin.um.retrieveUnbreakables(worldName);
 
         if (u != null)
         {

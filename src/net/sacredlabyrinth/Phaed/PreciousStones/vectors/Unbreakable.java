@@ -7,13 +7,11 @@ import org.bukkit.block.Block;
  *
  * @author phaed
  */
-
 public class Unbreakable extends AbstractVec
 {
     private String owner;
     private int typeId;
     private boolean dirty;
-    private long id;
 
     /**
      *
@@ -24,13 +22,12 @@ public class Unbreakable extends AbstractVec
      * @param typeId
      * @param owner
      */
-    public Unbreakable(long id, int x, int y, int z, String world, int typeId, String owner)
+    public Unbreakable(int x, int y, int z, String world, int typeId, String owner)
     {
-	super(x, y, z, world);
+        super(x, y, z, world);
 
-        this.id = id;
-	this.owner = owner;
-	this.typeId = typeId;
+        this.owner = owner;
+        this.typeId = typeId;
         this.dirty = true;
     }
 
@@ -41,10 +38,10 @@ public class Unbreakable extends AbstractVec
      */
     public Unbreakable(Block block, String owner)
     {
-	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+        super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
-	this.owner = owner;
-	this.typeId = block.getTypeId();
+        this.owner = owner;
+        this.typeId = block.getTypeId();
         this.dirty = true;
     }
 
@@ -54,9 +51,9 @@ public class Unbreakable extends AbstractVec
      */
     public Unbreakable(Block block)
     {
-	super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+        super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
-	this.typeId = block.getTypeId();
+        this.typeId = block.getTypeId();
         this.dirty = true;
     }
 
@@ -66,7 +63,7 @@ public class Unbreakable extends AbstractVec
      */
     public int getTypeId()
     {
-	return this.typeId;
+        return this.typeId;
     }
 
     /**
@@ -75,16 +72,7 @@ public class Unbreakable extends AbstractVec
      */
     public String getType()
     {
-	return Material.getMaterial(this.getTypeId()).toString();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ChunkVec toChunkVec()
-    {
-	return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
+        return Material.getMaterial(this.getTypeId()).toString();
     }
 
     /**
@@ -93,7 +81,7 @@ public class Unbreakable extends AbstractVec
      */
     public String getOwner()
     {
-	return owner;
+        return owner;
     }
 
     /**
@@ -102,7 +90,7 @@ public class Unbreakable extends AbstractVec
      */
     public void setOwner(String owner)
     {
-	this.owner = owner;
+        this.owner = owner;
     }
 
     /**
@@ -112,13 +100,13 @@ public class Unbreakable extends AbstractVec
      */
     public boolean isOwner(String playerName)
     {
-	return playerName.equals(getOwner());
+        return playerName.equals(getOwner());
     }
 
     @Override
     public String toString()
     {
-	return super.toString() + " [owner:" + getOwner() + "]";
+        return super.toString() + " [owner:" + getOwner() + "]";
     }
 
     /**
@@ -143,21 +131,5 @@ public class Unbreakable extends AbstractVec
     public void setDirty(boolean dirty)
     {
         this.dirty = dirty;
-    }
-
-    /**
-     * @return the id
-     */
-    public long getId()
-    {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(long id)
-    {
-        this.id = id;
     }
 }

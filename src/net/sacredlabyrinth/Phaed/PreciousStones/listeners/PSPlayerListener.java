@@ -1,9 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
+import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -68,6 +72,18 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
+        Field usefield = plugin.ffm.isUseProtected(block.getLocation(), player, block.getTypeId());
+
+        if (usefield != null)
+        {
+            if (!plugin.pm.hasPermission(player, "preciousstones.bypass.use"))
+            {
+                plugin.cm.warnUse(player, block.getType(), usefield);
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (event.getAction().equals(Action.PHYSICAL))
         {
             plugin.snm.recordSnitchUsed(player, block);
@@ -85,6 +101,11 @@ public class PSPlayerListener extends PlayerListener
                 plugin.snm.recordSnitchUsed(player, block);
             }
 
+            if (block.getState() instanceof ContainerBlock)
+            {
+                plugin.snm.recordSnitchUsed(player, block);
+            }
+
             ItemStack is = player.getItemInHand();
 
             if (is != null)
@@ -96,17 +117,24 @@ public class PSPlayerListener extends PlayerListener
                         return;
                     }
 
-                    if (block.getState() instanceof ContainerBlock)
-                    {
-                        plugin.snm.recordSnitchUsed(player, block);
-                    }
-
                     if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
                     {
-                        plugin.cm.showIntruderList(player, plugin.ffm.getField(block));
-                        return;
+                        Field field = plugin.ffm.getField(block);
+
+                        if (field.getOwner().equals(player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+                        {
+                            if (!field.getSnitchList().isEmpty())
+                            {
+                                plugin.cm.showIntruderList(player, plugin.ffm.getField(block));
+                            }
+                            else
+                            {
+                                showInfo(block, player);
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "There have been no intruders around here");
+                            }
+                        }
                     }
-                    else if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
+                    else if (plugin.um.isUnbreakable(block))
                     {
                         if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
                         {
@@ -116,9 +144,8 @@ public class PSPlayerListener extends PlayerListener
                         {
                             plugin.cm.showUnbreakableOwner(player, block);
                         }
-                        return;
                     }
-                    else if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
+                    else if (plugin.ffm.isField(block))
                     {
                         Field field = plugin.ffm.getField(block);
                         FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
@@ -131,53 +158,59 @@ public class PSPlayerListener extends PlayerListener
 
                         if ((plugin.ffm.isAllowed(block, player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.undo")) && (fieldsettings.griefUndoInterval || fieldsettings.griefUndoRequest))
                         {
-                            int size = plugin.gum.undoGrief(field);
+                            HashSet<Field> overlapped = plugin.ffm.getOverlappedFields(player, field);
 
-                            if (size > 0)
+                            if (overlapped.size() == 1)
                             {
-                                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed blocks");
+                                int size = plugin.gum.undoGrief(field);
+
+                                if (size > 0)
+                                {
+                                    player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed " + Helper.plural(size, "block", "s"));
+                                }
+                                else
+                                {
+                                    showInfo(block, player);
+                                    player.sendMessage(ChatColor.AQUA + "No grief recorded");
+                                }
                             }
                             else
                             {
-                                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "No grief recorded");
+                                int size = 0;
+
+                                for (Field o : overlapped)
+                                {
+                                    size += plugin.gum.undoGrief(field);
+                                }
+
+                                if (size > 0)
+                                {
+                                    player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed " + Helper.plural(size, "block", "s") + " on " + overlapped.size() + " overlapped fields");
+                                }
+                                else
+                                {
+                                    showInfo(block, player);
+                                    player.sendMessage(ChatColor.AQUA + "No grief recorded on any of the " + overlapped.size() + " overlapped fields");
+                                }
                             }
-                        }
-                        else if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
-                        {
-                            List<Field> fields = new ArrayList<Field>();
-                            fields.add(plugin.ffm.getField(block));
-                            plugin.cm.showFieldDetails(player, fields);
                         }
                         else
                         {
-                            plugin.cm.showFieldOwner(player, block);
+                            showInfo(block, player);
                         }
-                        return;
-                    }
-                }
-
-                //----------------------------------------------------------------------
-
-                Field field = plugin.ffm.isDestroyProtected(block.getLocation(), null);
-
-                if (field != null)
-                {
-                    if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails)
-                    {
-                        List<Field> fields = plugin.ffm.getSourceFields(block);
-
-                        plugin.cm.showProtectedLocation(fields, player, block);
                     }
                     else
                     {
-                        if (is.getType().equals(Material.BUCKET))
+                        Field field = plugin.ffm.isDestroyProtected(block.getLocation());
+
+                        if (field != null)
                         {
-                            event.setCancelled(true);
-                            return;
-                        }
-                        else
-                        {
-                            if (plugin.settings.isToolItemType(is.getTypeId()))
+                            if (plugin.ffm.isAllowed(field, player.getName()) || plugin.settings.publicBlockDetails)
+                            {
+                                List<Field> fields = plugin.ffm.getSourceFields(block.getLocation());
+                                plugin.cm.showProtectedLocation(fields, player, block);
+                            }
+                            else
                             {
                                 plugin.cm.showProtected(player, block);
                             }
@@ -189,7 +222,20 @@ public class PSPlayerListener extends PlayerListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
+        }
+    }
+
+    private void showInfo(Block block, Player player)
+    {
+        if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+        {
+            List<Field> fields = Arrays.asList(plugin.ffm.getField(block));
+            plugin.cm.showFieldDetails(player, fields);
+        }
+        else
+        {
+            plugin.cm.showFieldOwner(player, block);
         }
     }
 
@@ -245,12 +291,12 @@ public class PSPlayerListener extends PlayerListener
 
         // undo a player's visualization if it exists
 
-        if (plugin.settings.visualizeEndOnMove)
+        if (!plugin.pm.hasPermission(player, "preciousstones.admin.visualize") && plugin.settings.visualizeEndOnMove)
         {
             plugin.viz.revertVisualization(player);
         }
 
-        // remove player form any entry field he is not currently in
+        // remove player from any entry field he is not currently in
 
         LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
 
@@ -264,46 +310,18 @@ public class PSPlayerListener extends PlayerListener
 
                     if (!plugin.em.containsSameNameOwnedField(player, entryfield))
                     {
-                        FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryfield);
-
-                        if (fieldsettings == null)
-                        {
-                            plugin.ffm.queueRelease(entryfield);
-                            return;
-                        }
-
-                        if (fieldsettings.farewellMessage)
-                        {
-                            if (entryfield.getName().length() > 0)
-                            {
-                                plugin.cm.showFarewellMessage(player, entryfield.getName());
-                            }
-                            else if ((fieldsettings.griefUndoRequest || fieldsettings.griefUndoInterval) && !entryfield.isAllowed(player.getName()))
-                            {
-                                plugin.cm.showWelcomeMessage(player, "Grief revertable area");
-                            }
-                        }
+                        plugin.em.leaveOverlappedArea(player, entryfield);
                     }
                 }
             }
         }
 
-        List<Field> currentfields = plugin.ffm.getSourceFields(player);
+        // check all fields hes standing on and teleport him if hes in a prevent-entry field
 
-        // check if were on a prevent entry field the player is no allowed in
+        List<Field> currentfields = plugin.ffm.getSourceFields(player.getLocation());
 
         for (Field field : currentfields)
         {
-            if (field.isAllowed(player.getName()))
-            {
-                continue;
-            }
-
-            if (plugin.stm.isTeamMate(player.getName(), field.getOwner()))
-            {
-                continue;
-            }
-
             FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
             if (fieldsettings == null)
@@ -316,14 +334,17 @@ public class PSPlayerListener extends PlayerListener
             {
                 if (fieldsettings.preventEntry)
                 {
-                    event.setTo(event.getFrom());
-                    plugin.cm.warnEntry(player, field);
-                    return;
+                    if (!plugin.ffm.isAllowed(field, player.getName()))
+                    {
+                        event.setTo(event.getFrom());
+                        plugin.cm.warnEntry(player, field);
+                        return;
+                    }
                 }
             }
         }
 
-        // enter all fields the player just moved into
+        // enter all fields hes is not currently entered into yet
 
         if (currentfields != null)
         {
@@ -333,29 +354,8 @@ public class PSPlayerListener extends PlayerListener
                 {
                     if (!plugin.em.containsSameNameOwnedField(player, currentfield))
                     {
-                        FieldSettings fieldsettings = plugin.settings.getFieldSettings(currentfield);
-
-                        if (fieldsettings == null)
-                        {
-                            plugin.ffm.queueRelease(currentfield);
-                            return;
-                        }
-
-                        if (fieldsettings.welcomeMessage)
-                        {
-                            if (currentfield.getName().length() > 0)
-                            {
-                                plugin.cm.showWelcomeMessage(player, currentfield.getName());
-
-                                //plugin.stm.bypassAnnounce(currentfield, player.getName());
-                            }
-                            else if ((fieldsettings.griefUndoRequest || fieldsettings.griefUndoInterval) && !currentfield.isAllowed(player.getName()))
-                            {
-                                plugin.cm.showWelcomeMessage(player, "Grief revertable area");
-                            }
-                        }
+                        plugin.em.enterOverlappedArea(player, currentfield);
                     }
-
                     plugin.em.enterField(player, currentfield);
                 }
             }
@@ -363,7 +363,7 @@ public class PSPlayerListener extends PlayerListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 
@@ -391,7 +391,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        Field field = plugin.ffm.isPlaceProtected(block, player);
+        Field field = plugin.ffm.isPlaceProtected(block.getLocation(), player);
 
         if (field != null)
         {
@@ -406,7 +406,7 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        field = plugin.ffm.isUndoGriefField(block, player);
+        field = plugin.ffm.isGriefProtected(block.getLocation(), player);
 
         if (field != null)
         {
@@ -424,7 +424,7 @@ public class PSPlayerListener extends PlayerListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 
@@ -456,7 +456,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        Field field = plugin.ffm.isPlaceProtected(block, player);
+        Field field = plugin.ffm.isPlaceProtected(block.getLocation(), player);
 
         if (field != null)
         {
@@ -471,7 +471,7 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        field = plugin.ffm.isUndoGriefField(block, player);
+        field = plugin.ffm.isGriefProtected(block.getLocation(), player);
 
         if (field != null)
         {
@@ -489,7 +489,7 @@ public class PSPlayerListener extends PlayerListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 }

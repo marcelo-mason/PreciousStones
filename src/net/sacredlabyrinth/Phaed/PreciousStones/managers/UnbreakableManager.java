@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
@@ -18,9 +19,9 @@ import org.bukkit.World;
  *
  * @author Phaed
  */
-public class UnbreakableManager
+public final class UnbreakableManager
 {
-    private final HashMap<String, HashMap<ChunkVec, LinkedList<Unbreakable>>> chunkLists = new HashMap<String, HashMap<ChunkVec, LinkedList<Unbreakable>>>();
+    private final HashMap<String, HashMap<ChunkVec, HashMap<Vec, Unbreakable>>> chunkLists = new HashMap<String, HashMap<ChunkVec, HashMap<Vec, Unbreakable>>>();
     private Queue<Unbreakable> deletionQueue = new LinkedList<Unbreakable>();
     private PreciousStones plugin;
 
@@ -40,13 +41,13 @@ public class UnbreakableManager
      */
     public boolean hasUnbreakable(ChunkVec cv)
     {
-        HashMap<ChunkVec, LinkedList<Unbreakable>> w = chunkLists.get(cv.getWorld());
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(cv.getWorld());
 
         if (w != null)
         {
             if (w.containsKey(cv))
             {
-                LinkedList<Unbreakable> c = w.get(cv);
+                HashMap<Vec, Unbreakable> c = w.get(cv);
 
                 if (!c.isEmpty())
                 {
@@ -62,14 +63,19 @@ public class UnbreakableManager
      * @param cv the chunk vec
      * @return all unbreakables from database that match the chunkvec
      */
-    public List<Unbreakable> retrieveUnbreakables(ChunkVec cv)
+    public Collection<Unbreakable> retrieveUnbreakables(ChunkVec cv)
     {
         if (chunkLists.get(cv.getWorld()) == null)
         {
             return null;
         }
 
-        return chunkLists.get(cv.getWorld()).get(cv);
+        if (chunkLists.get(cv.getWorld()).get(cv) == null)
+        {
+            return null;
+        }
+
+        return chunkLists.get(cv.getWorld()).get(cv).values();
     }
 
     /**
@@ -77,7 +83,7 @@ public class UnbreakableManager
      * @param world the world you want the unbreakables from
      * @return all the chunks that match the world
      */
-    public HashMap<ChunkVec, LinkedList<Unbreakable>> retrieveUnbreakables(String world)
+    public HashMap<ChunkVec, HashMap<Vec, Unbreakable>> retrieveUnbreakables(String world)
     {
         return chunkLists.get(world);
     }
@@ -89,20 +95,26 @@ public class UnbreakableManager
      */
     public Unbreakable getUnbreakable(Block block)
     {
-        HashMap<ChunkVec, LinkedList<Unbreakable>> w = chunkLists.get(block.getLocation().getWorld().getName());
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(block.getLocation().getWorld().getName());
 
         if (w != null)
         {
-            LinkedList<Unbreakable> c = w.get(new ChunkVec(block));
+            HashMap<Vec, Unbreakable> c = w.get(new ChunkVec(block));
 
             if (c != null)
             {
-                int index = c.indexOf(new Vec(block));
+                Unbreakable ub = c.get(new Vec(block));
 
-                if (index > -1)
+                if (ub != null)
                 {
-                    return (c.get(index));
+                    if (ub.getTypeId() != block.getTypeId())
+                    {
+                        deleteUnbreakable(ub);
+                        return null;
+                    }
                 }
+
+                return ub;
             }
         }
         return null;
@@ -126,30 +138,17 @@ public class UnbreakableManager
     {
         int size = 0;
 
-        for (HashMap<ChunkVec, LinkedList<Unbreakable>> w : chunkLists.values())
+        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values())
         {
             if (w != null)
             {
-                for (LinkedList<Unbreakable> c : w.values())
+                for (HashMap<Vec, Unbreakable> c : w.values())
                 {
                     size += c.size();
                 }
             }
         }
         return size;
-    }
-
-    /**
-     * Load pstones for any world that is loaded
-     */
-    public void cleanWorldOrphans()
-    {
-        List<World> worlds = plugin.getServer().getWorlds();
-
-        for (World world : worlds)
-        {
-            cleanOrphans(world);
-        }
     }
 
     /**
@@ -163,13 +162,13 @@ public class UnbreakableManager
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
-        HashMap<ChunkVec, LinkedList<Unbreakable>> w = retrieveUnbreakables(world.getName());
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = retrieveUnbreakables(world.getName());
 
         if (w != null)
         {
-            for (LinkedList<Unbreakable> ubs : w.values())
+            for (HashMap<Vec, Unbreakable> ubs : w.values())
             {
-                for (Unbreakable unbreakable : ubs)
+                for (Unbreakable unbreakable : ubs.values())
                 {
                     // ensure chunk is loaded prior to polling
 
@@ -196,7 +195,7 @@ public class UnbreakableManager
                     }
 
                     int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
-                    
+
                     if (!plugin.settings.isUnbreakableType(type))
                     {
                         cleanedCount++;
@@ -207,8 +206,10 @@ public class UnbreakableManager
         }
         flush();
 
-        PreciousStones.log(Level.INFO, "{0} orphan unbreakables: {1}", world.getName(), cleanedCount);
-
+        if (cleanedCount != 0)
+        {
+            PreciousStones.log(Level.INFO, "{0} orphan-unbreakables: {1}", world.getName(), cleanedCount);
+        }
         return cleanedCount;
     }
 
@@ -264,7 +265,7 @@ public class UnbreakableManager
         {
             for (int z = zlow; z <= zhigh; z++)
             {
-                List<Unbreakable> ubs = retrieveUnbreakables(new ChunkVec(x, z, vec.getWorld()));
+                Collection<Unbreakable> ubs = retrieveUnbreakables(new ChunkVec(x, z, vec.getWorld()));
 
                 if (ubs != null)
                 {
@@ -409,30 +410,29 @@ public class UnbreakableManager
         String world = ub.getWorld();
         ChunkVec chunkvec = ub.toChunkVec();
 
-        HashMap<ChunkVec, LinkedList<Unbreakable>> w = chunkLists.get(world);
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(world);
 
         if (w != null)
         {
-            LinkedList<Unbreakable> c = w.get(chunkvec);
+            HashMap<Vec, Unbreakable> c = w.get(chunkvec);
 
             if (c != null)
             {
-                c.remove(ub);
-                c.add(ub);
+                c.put(ub.toVec(), ub);
             }
             else
             {
-                LinkedList<Unbreakable> newc = new LinkedList<Unbreakable>();
-                newc.add(ub);
+                HashMap<Vec, Unbreakable> newc = new HashMap<Vec, Unbreakable>();
+                newc.put(ub.toVec(), ub);
                 w.put(chunkvec, newc);
             }
         }
         else
         {
-            HashMap<ChunkVec, LinkedList<Unbreakable>> _w = new HashMap<ChunkVec, LinkedList<Unbreakable>>();
-            LinkedList<Unbreakable> _c = new LinkedList<Unbreakable>();
+            HashMap<ChunkVec, HashMap<Vec, Unbreakable>> _w = new HashMap<ChunkVec, HashMap<Vec, Unbreakable>>();
+            HashMap<Vec, Unbreakable> _c = new HashMap<Vec, Unbreakable>();
 
-            _c.add(ub);
+            _c.put(ub.toVec(), ub);
             _w.put(chunkvec, _c);
             chunkLists.put(world, _w);
         }
@@ -447,11 +447,11 @@ public class UnbreakableManager
     {
         int deletedUbs = 0;
 
-        for (HashMap<ChunkVec, LinkedList<Unbreakable>> w : chunkLists.values())
+        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values())
         {
-            for (LinkedList<Unbreakable> ubs : w.values())
+            for (HashMap<Vec, Unbreakable> ubs : w.values())
             {
-                for (Unbreakable ub : ubs)
+                for (Unbreakable ub : ubs.values())
                 {
                     if (ub.getOwner().equalsIgnoreCase(playerName))
                     {
@@ -513,11 +513,11 @@ public class UnbreakableManager
      */
     public void deleteUnbreakable(Unbreakable ub)
     {
-        HashMap<ChunkVec, LinkedList<Unbreakable>> w = chunkLists.get(ub.getWorld());
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(ub.getWorld());
 
         if (w != null)
         {
-            LinkedList<Unbreakable> c = w.get(ub.toChunkVec());
+            HashMap<Vec, Unbreakable> c = w.get(ub.toChunkVec());
 
             if (c != null)
             {

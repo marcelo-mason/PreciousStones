@@ -26,7 +26,7 @@ public class MineManager
      */
     public MineManager(PreciousStones plugin)
     {
-	this.plugin = plugin;
+        this.plugin = plugin;
     }
 
     /**
@@ -36,12 +36,14 @@ public class MineManager
      */
     public void enterMine(final Player player, final Field field)
     {
-	if (plugin.pm.hasPermission(player, "preciousstones.bypass.mine")){
-		return;
-	}
-	if (!field.isAllowed(player.getName()) && !plugin.stm.isTeamMate(player.getName(), field.getOwner()))
-	{
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+        if (plugin.pm.hasPermission(player, "preciousstones.bypass.mine"))
+        {
+            return;
+        }
+        
+        if (!plugin.ffm.isAllowed(field, player.getName()))
+        {
+            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
 
             if (fieldsettings == null)
             {
@@ -49,28 +51,28 @@ public class MineManager
                 return;
             }
 
-	    final int delay = fieldsettings.mineDelaySeconds;
-	    final int leftbehind = fieldsettings.mineReplaceBlock;
+            final int delay = fieldsettings.mineDelaySeconds;
+            final int leftbehind = fieldsettings.mineReplaceBlock;
 
-	    if (fieldsettings.mine)
-	    {
-		plugin.cm.showMine(player);
+            if (fieldsettings.mine)
+            {
+                plugin.cm.showMine(player);
 
-		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-		{
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                {
                     @Override
-		    public void run()
-		    {
-			Block block = plugin.ffm.getBlock(field);
-			plugin.ffm.silentRelease(field);
+                    public void run()
+                    {
+                        Block block = plugin.ffm.getBlock(field);
+                        plugin.ffm.silentRelease(field);
 
-			CraftWorld world = (CraftWorld)block.getWorld();
-			block.setType(Material.getMaterial(leftbehind));
-                        Location loc = new Location(block.getWorld(), block.getX()+.5, block.getY()+.5, block.getZ()+.5);
+                        CraftWorld world = (CraftWorld) block.getWorld();
+                        block.setType(Material.getMaterial(leftbehind));
+                        Location loc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
                         block.getWorld().spawn(loc, TNTPrimed.class);
-		    }
-		}, delay * 20L);
-	    }
-	}
+                    }
+                }, delay * 20L);
+            }
+        }
     }
 }

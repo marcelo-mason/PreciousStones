@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
@@ -16,7 +17,6 @@ import org.bukkit.Location;
  */
 public class Field extends AbstractVec
 {
-    private long id;
     private int radius;
     private int height;
     private float velocity;
@@ -24,8 +24,9 @@ public class Field extends AbstractVec
     private String owner;
     private String name;
     private List<String> allowed = new ArrayList<String>();
-    private List<SnitchEntry> snitchList = new ArrayList<SnitchEntry>();
-    private boolean dirty;
+    private List<SnitchEntry> snitchList = new LinkedList<SnitchEntry>();
+    private List<Dirty> dirty = new ArrayList<Dirty>();
+    private List<GriefBlock> grief = new ArrayList<GriefBlock>();
 
     /**
      *
@@ -34,23 +35,22 @@ public class Field extends AbstractVec
      * @param z
      * @param radius
      * @param height
+     * @param velocity
      * @param world
      * @param typeId
      * @param owner
      * @param name
      */
-    public Field(long id, int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name)
+    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name)
     {
         super(x, y, z, world);
 
-        this.id = id;
         this.radius = radius;
         this.height = height;
         this.velocity = velocity;
         this.owner = owner;
         this.name = name;
         this.typeId = typeId;
-        this.dirty = true;
     }
 
     /**
@@ -59,7 +59,6 @@ public class Field extends AbstractVec
      * @param radius
      * @param height
      * @param owner
-     * @param name
      */
     public Field(Block block, int radius, int height, String owner)
     {
@@ -70,7 +69,6 @@ public class Field extends AbstractVec
         this.owner = owner;
         this.name = "";
         this.typeId = block.getTypeId();
-        this.dirty = true;
     }
 
     /**
@@ -88,7 +86,6 @@ public class Field extends AbstractVec
         this.name = "";
         this.owner = "";
         this.typeId = block.getTypeId();
-        this.dirty = true;
     }
 
     /**
@@ -98,8 +95,6 @@ public class Field extends AbstractVec
     public Field(Block block)
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-
-        this.dirty = true;
     }
 
     /**
@@ -110,7 +105,7 @@ public class Field extends AbstractVec
     {
         this.radius = radius;
         this.setHeight((this.radius * 2) + 1);
-        this.dirty = true;
+        dirty.add(Dirty.RADIUS);
     }
 
     /**
@@ -165,6 +160,7 @@ public class Field extends AbstractVec
     public void setOwner(String owner)
     {
         this.owner = owner;
+        dirty.add(Dirty.OWNER);
     }
 
     /**
@@ -184,16 +180,7 @@ public class Field extends AbstractVec
     public void setName(String name)
     {
         this.name = name;
-    }
-
-    /**
-     * Set the name of the field, mark for database save
-     * @param name
-     */
-    public void setFieldName(String name)
-    {
-        this.name = name;
-        this.dirty = true;
+        dirty.add(Dirty.NAME);
     }
 
     /**
@@ -273,7 +260,6 @@ public class Field extends AbstractVec
     /**
      * Whether the player was allowed
      * @param allowedName
-     * @param perm
      * @return confirmation
      */
     public boolean addAllowed(String allowedName)
@@ -284,19 +270,18 @@ public class Field extends AbstractVec
         }
 
         allowed.add(allowedName.toLowerCase());
-        this.dirty = true;
+        dirty.add(Dirty.ALLOWED);
         return true;
     }
 
     /**
      * Whether the player was removed
      * @param allowedName
-     * @return confirmation
      */
     public void removeAllowed(String allowedName)
     {
         allowed.remove(allowedName.toLowerCase());
-        this.dirty = true;
+        dirty.add(Dirty.ALLOWED);
     }
 
     /**
@@ -314,19 +299,25 @@ public class Field extends AbstractVec
      * @param reason
      * @param details
      */
-    public void addIntruder(String name, String reason, String details)
+    public void addIntruder(String name, String reason, String details, int max)
     {
+        if (snitchList.size() > max)
+        {
+            snitchList.remove(0);
+        }
+
         for (SnitchEntry se : snitchList)
         {
             if (se.getName().equals(name) && se.getReason().equals(reason) && se.getDetails().equals(details))
             {
                 se.addCount();
+                dirty.add(Dirty.SNITCH);
                 return;
             }
         }
 
         snitchList.add(new SnitchEntry(name, reason, details));
-        this.dirty = true;
+        dirty.add(Dirty.SNITCH);
     }
 
     /**
@@ -352,7 +343,41 @@ public class Field extends AbstractVec
     public void cleanSnitchList()
     {
         snitchList.clear();
-        this.dirty = true;
+        dirty.add(Dirty.SNITCH);
+    }
+
+    /**
+     * @return the packedSnitchList
+     */
+    public String getPackedSnitchList()
+    {
+        String packed = "";
+
+        for (SnitchEntry se : snitchList)
+        {
+            packed += se + "|";
+        }
+
+        return Helper.stripTrailing(packed, "|");
+    }
+
+    /**
+     * @param packedSnitchList the packedSnitchList to set
+     */
+    public void setPackedSnitchList(String packedSnitchList, int max)
+    {
+        List<String> packedSnitchLists = Helper.fromArray(packedSnitchList.split("[|]"));
+
+        if (packedSnitchLists.size() > max)
+        {
+            int first = packedSnitchLists.size() - max;
+            packedSnitchLists = packedSnitchLists.subList(max, packedSnitchLists.size());
+        }
+
+        for (String packed : packedSnitchLists)
+        {
+            snitchList.add(new SnitchEntry(packed));
+        }
     }
 
     @Override
@@ -367,7 +392,7 @@ public class Field extends AbstractVec
     public void setHeight(int height)
     {
         this.height = height;
-        this.dirty = true;
+        dirty.add(Dirty.HEIGHT);
     }
 
     /**
@@ -376,22 +401,6 @@ public class Field extends AbstractVec
     public void setTypeId(int typeId)
     {
         this.typeId = typeId;
-    }
-
-    /**
-     * @return the chunkvec
-     */
-    public ChunkVec toChunkVec()
-    {
-        return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
-    }
-
-    /**
-     * @return the vec
-     */
-    public Vec toVec()
-    {
-        return new Vec(this);
     }
 
     /**
@@ -529,22 +538,6 @@ public class Field extends AbstractVec
     }
 
     /**
-     * @return the dirty
-     */
-    public boolean isDirty()
-    {
-        return dirty;
-    }
-
-    /**
-     * @param dirty the dirty to set
-     */
-    public void setDirty(boolean dirty)
-    {
-        this.dirty = dirty;
-    }
-
-    /**
      * @return the velocity
      */
     public float getVelocity()
@@ -558,7 +551,15 @@ public class Field extends AbstractVec
     public void setVelocity(float velocity)
     {
         this.velocity = velocity;
-        this.dirty = true;
+        dirty.add(Dirty.VELOCITY);
+    }
+
+    /**
+     * Mark for deletion
+     */
+    public void markForDeletion()
+    {
+        dirty.add(Dirty.DELETE);
     }
 
     /**
@@ -586,21 +587,6 @@ public class Field extends AbstractVec
     }
 
     /**
-     * @return the packedSnitchList
-     */
-    public String getPackedSnitchList()
-    {
-        String packed = "";
-
-        for (SnitchEntry se : snitchList)
-        {
-            packed += se + "|";
-        }
-
-        return Helper.stripTrailing(packed, "|");
-    }
-
-    /**
      * @param packedAllowed the packedAllowed to set
      */
     public void setPackedAllowed(String packedAllowed)
@@ -609,31 +595,54 @@ public class Field extends AbstractVec
     }
 
     /**
-     * @param packedSnitchList the packedSnitchList to set
+     * ADd a grief block to the collection
+     * @param block
      */
-    public void setPackedSnitchList(String packedSnitchList)
+    public void addGriefBlock(Block block)
     {
-        List<String> packedSnitchLists = Helper.fromArray(packedSnitchList.split("[|]"));
-
-        for (String packed : packedSnitchLists)
-        {
-            snitchList.add(new SnitchEntry(packed));
-        }
+        getGrief().add(new GriefBlock(block.getLocation(), block.getTypeId(), block.getData()));
+        dirty.add(Dirty.GRIEF_BLOCKS);
     }
 
     /**
-     * @return the id
+     * Clear grief blocks
      */
-    public long getId()
+    public void clearGrief()
     {
-        return id;
+        grief.clear();
     }
 
     /**
-     * @param id the id to set
+     * @return the grief
      */
-    public void setId(long id)
+    public List<GriefBlock> getGrief()
     {
-        this.id = id;
+        return grief;
+    }
+
+    /**
+     * Enumeration of dirty type
+     */
+    public enum Dirty
+    {
+        OWNER, NAME, RADIUS, HEIGHT, VELOCITY, ALLOWED, SNITCH, GRIEF_BLOCKS, DELETE
+    }
+
+    /**
+     * Whether the item is dirty
+     * @param dirtyType
+     * @return
+     */
+    public boolean isDirty(Dirty dirtyType)
+    {
+        return dirty.contains(dirtyType);
+    }
+
+    /**
+     * Clear dirty items
+     */
+    public void clearDirty()
+    {
+        dirty.clear();
     }
 }

@@ -54,7 +54,8 @@ public class SnitchManager
                 if (!field.isOwner(player.getName()))
                 {
                     DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
-                    field.addIntruder(player.getName(), ChatColor.BLUE + "Entry", dateFormat.format(new Date()));
+                    field.addIntruder(player.getName(), ChatColor.BLUE + "Entry", dateFormat.format(new Date()), plugin.settings.maxSnitchRecords);
+                    plugin.sm.offerField(field);
                 }
             }
         }
@@ -70,13 +71,14 @@ public class SnitchManager
     {
         if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Break", toBlockDetails(block));
+                    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Break", toBlockDetails(block), plugin.settings.maxSnitchRecords);
+                    plugin.sm.offerField(field);
                 }
             }
         }
@@ -91,13 +93,14 @@ public class SnitchManager
     {
         if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Place", toBlockDetails(block));
+                    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Place", toBlockDetails(block), plugin.settings.maxSnitchRecords);
+                    plugin.sm.offerField(field);
                 }
             }
         }
@@ -112,13 +115,14 @@ public class SnitchManager
     {
         if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.GREEN + "Used", toBlockDetails(block));
+                    field.addIntruder(player.getName(), ChatColor.GREEN + "Used", toBlockDetails(block), plugin.settings.maxSnitchRecords);
+                    plugin.sm.offerField(field);
                 }
             }
         }
@@ -135,13 +139,14 @@ public class SnitchManager
 
         if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.GREEN + "Shopped", sign.getLines().length == 0 ? "empty" : sign.getLine(0));
+                    field.addIntruder(player.getName(), ChatColor.GREEN + "Shopped", sign.getLines().length == 0 ? "empty" : sign.getLine(0), plugin.settings.maxSnitchRecords);
+                    plugin.sm.offerField(field);
                 }
             }
         }
@@ -156,13 +161,14 @@ public class SnitchManager
     {
         if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block);
+            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.RED + "Ignite", toBlockDetails(block));
+                    field.addIntruder(player.getName(), ChatColor.RED + "Ignite", toBlockDetails(block), plugin.settings.maxSnitchRecords);
+                    plugin.sm.offerField(field);
                 }
             }
         }

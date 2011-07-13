@@ -11,6 +11,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.EntryFields;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Vehicle;
 
@@ -23,6 +25,7 @@ public final class EntryManager
 {
     private PreciousStones plugin;
     private final HashMap<String, EntryFields> entries = new HashMap<String, EntryFields>();
+    private boolean processing;
 
     /**
      *
@@ -55,6 +58,13 @@ public final class EntryManager
             @Override
             public void run()
             {
+                if (processing)
+                {
+                    return;
+                }
+
+                processing = true;
+
                 for (String playername : entries.keySet())
                 {
                     EntryFields ef = entries.get(playername);
@@ -70,7 +80,7 @@ public final class EntryManager
                             continue;
                         }
 
-                        Player player = plugin.helper.matchExactPlayer(playername);
+                        Player player = plugin.helper.matchSinglePlayer(playername);
 
                         if (player == null)
                         {
@@ -118,7 +128,7 @@ public final class EntryManager
                         {
                             if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
                             {
-                                if (!field.isAllowed(playername) && !plugin.stm.isTeamMate(playername, field.getOwner()))
+                                if (!plugin.ffm.isAllowed(field, playername))
                                 {
                                     if (fieldsettings.slowDamage)
                                     {
@@ -144,6 +154,8 @@ public final class EntryManager
                         }
                     }
                 }
+
+                processing = false;
             }
         }, 0, 20L);
     }
@@ -189,6 +201,52 @@ public final class EntryManager
         }
 
         return null;
+    }
+
+    /**
+     * Runs when a player enters an overlapped area
+     */
+    public void enterOverlappedArea(Player player, Field entryField)
+    {
+        FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryField);
+
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(entryField);
+            return;
+        }
+
+        if (fieldsettings.welcomeMessage && entryField.getName().length() > 0)
+        {
+            plugin.cm.showWelcomeMessage(player, entryField.getName());
+        }
+
+        if (fieldsettings.entryAlert)
+        {
+            if (!plugin.ffm.isAllowed(entryField, player.getName()))
+            {
+                plugin.ffm.announceAllowedPlayers(entryField, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + ChatColor.DARK_GRAY + entryField.getCoords());
+            }
+        }
+    }
+
+    /**
+     * Runs when a player leaves an overlapped area
+     */
+    public void leaveOverlappedArea(Player player, Field entryField)
+    {
+        FieldSettings fieldsettings = plugin.settings.getFieldSettings(entryField);
+
+        if (fieldsettings == null)
+        {
+            plugin.ffm.queueRelease(entryField);
+            return;
+        }
+
+        if (fieldsettings.welcomeMessage && entryField.getName().length() > 0)
+        {
+            plugin.cm.showFarewellMessage(player, entryField.getName());
+        }
     }
 
     /**

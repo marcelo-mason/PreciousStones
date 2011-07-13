@@ -91,6 +91,25 @@ public class Helper
     }
 
     /**
+     * Helper function to check for integer list
+     * @param input
+     * @return
+     */
+    public static boolean isIntList(Object obj)
+    {
+        try
+        {
+            List<Integer> list = (List<Integer>)obj;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+
+    /**
      * Helper function to check for float
      * @param input
      * @return
@@ -192,7 +211,7 @@ public class Helper
      * @param playername
      * @return
      */
-    public Player matchExactPlayer(String playername)
+    public Player matchSinglePlayer(String playername)
     {
         List<Player> players = plugin.getServer().matchPlayer(playername);
 

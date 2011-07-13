@@ -81,8 +81,8 @@ public class PSBlockListener extends BlockListener
                 return;
             }
 
-            Field to = plugin.ffm.isFlowProtected(toBlock);
-            Field from = plugin.ffm.isFlowProtected(block);
+            Field to = plugin.ffm.isFlowProtected(toBlock.getLocation());
+            Field from = plugin.ffm.isFlowProtected(block.getLocation());
 
             if (to == null)
             {
@@ -113,7 +113,7 @@ public class PSBlockListener extends BlockListener
 
             if (plugin.settings.debug)
             {
-                dt.logProcessTime();
+                //dt.logProcessTime();
             }
         }
     }
@@ -150,21 +150,24 @@ public class PSBlockListener extends BlockListener
             plugin.snm.recordSnitchIgnite(player, block);
         }
 
-        Field field = plugin.ffm.isFireProtected(block, player);
+        Field field = plugin.ffm.isFireProtected(block.getLocation());
 
         if (field != null)
         {
-            event.setCancelled(true);
-
-            if (player != null)
+            if (player == null || !plugin.ffm.isAllowed(field, player.getName()))
             {
-                plugin.cm.warnFire(player, field);
+                event.setCancelled(true);
+
+                if (player != null)
+                {
+                    plugin.cm.warnFire(player, field);
+                }
             }
         }
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 
@@ -175,6 +178,11 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockRedstoneChange(BlockRedstoneEvent event)
     {
+        if (event.getNewCurrent() <= event.getOldCurrent())
+        {
+            return;
+        }
+
         Block redstoneblock = event.getBlock();
 
         if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
@@ -182,64 +190,52 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        for (int x = -1; x <= 1; x++)
+        BlockFace[] faces =
         {
-            for (int y = -1; y <= 1; y++)
+            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
+        };
+
+        for (BlockFace face : faces)
+        {
+            Block fieldblock = redstoneblock.getRelative(face);
+
+            if (plugin.settings.isFieldType(fieldblock) && plugin.ffm.isField(fieldblock))
             {
-                for (int z = -1; z <= 1; z++)
+                Field field = plugin.ffm.getField(fieldblock);
+                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+                if (fieldsettings == null)
                 {
-                    if (x == 0 && y == 0 && z == 0)
-                    {
-                        continue;
-                    }
+                    plugin.ffm.queueRelease(field);
+                    return;
+                }
 
-                    Block fieldblock = redstoneblock.getRelative(x, y, z);
+                if (fieldsettings.cannon)
+                {
+                    HashSet<String> players = plugin.em.getInhabitants(field);
 
-                    if (plugin.settings.isFieldType(fieldblock))
+                    for (String pl : players)
                     {
-                        if (plugin.ffm.isField(fieldblock))
+                        Player player = plugin.helper.matchSinglePlayer(pl);
+
+                        if (player != null)
                         {
-                            if (event.getNewCurrent() > event.getOldCurrent())
-                            {
-                                Field field = plugin.ffm.getField(fieldblock);
-                                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+                            plugin.vm.shootPlayer(player, field);
+                        }
+                    }
+                }
 
-                                if (fieldsettings == null)
-                                {
-                                    plugin.ffm.queueRelease(field);
-                                    return;
-                                }
+                if (fieldsettings.launch)
+                {
+                    HashSet<String> players = plugin.em.getInhabitants(field);
 
-                                if (fieldsettings.cannon)
-                                {
-                                    HashSet<String> players = plugin.em.getInhabitants(field);
+                    for (String pl : players)
+                    {
+                        Player player = plugin.helper.matchSinglePlayer(pl);
 
-                                    for (String pl : players)
-                                    {
-                                        Player player = plugin.helper.matchExactPlayer(pl);
-
-                                        if (player != null)
-                                        {
-                                            plugin.vm.shootPlayer(player, field);
-                                        }
-                                    }
-                                }
-
-                                if (fieldsettings.launch)
-                                {
-                                    HashSet<String> players = plugin.em.getInhabitants(field);
-
-                                    for (String pl : players)
-                                    {
-                                        Player player = plugin.helper.matchExactPlayer(pl);
-
-                                        if (player != null)
-                                        {
-                                            plugin.vm.launchPlayer(player, field);
-                                        }
-                                    }
-                                }
-                            }
+                        if (player != null)
+                        {
+                            plugin.vm.launchPlayer(player, field);
                         }
                     }
                 }
@@ -281,7 +277,7 @@ public class PSBlockListener extends BlockListener
 
         plugin.snm.recordSnitchBlockBreak(player, brokenBlock);
 
-        if (plugin.settings.isFieldType(brokenBlock) && plugin.ffm.isField(brokenBlock))
+        if (plugin.ffm.isField(brokenBlock))
         {
             if (plugin.ffm.isBreakable(brokenBlock))
             {
@@ -319,7 +315,7 @@ public class PSBlockListener extends BlockListener
             }
             return;
         }
-        else if (plugin.settings.isUnbreakableType(brokenBlock) && plugin.um.isUnbreakable(brokenBlock))
+        else if (plugin.um.isUnbreakable(brokenBlock))
         {
             if (plugin.um.isOwner(brokenBlock, player.getName()))
             {
@@ -359,7 +355,7 @@ public class PSBlockListener extends BlockListener
             }
         }
 
-        field = plugin.ffm.isUndoGriefField(brokenBlock, player);
+        field = plugin.ffm.isGriefProtected(brokenBlock.getLocation(), player);
 
         if (field != null)
         {
@@ -373,7 +369,8 @@ public class PSBlockListener extends BlockListener
                 if (!plugin.settings.isGriefUndoBlackListType(brokenBlock.getTypeId()))
                 {
                     event.setCancelled(true);
-                    plugin.sm.recordBlockGrief(field, brokenBlock);
+                    field.addGriefBlock(brokenBlock);
+                    plugin.sm.offerField(field);
                     brokenBlock.setType(Material.AIR);
                     return;
                 }
@@ -382,7 +379,7 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 
@@ -397,7 +394,6 @@ public class PSBlockListener extends BlockListener
         {
             return;
         }
-
 
         DebugTimer dt = new DebugTimer("onBlockPlace");
 
@@ -601,7 +597,7 @@ public class PSBlockListener extends BlockListener
                 }
             }
 
-            Field field = plugin.ffm.isUprotectableBlockField(placedblock);
+            Field field = plugin.ffm.isUprotectableBlockField(placedblock.getLocation());
 
             if (field != null)
             {
@@ -637,7 +633,7 @@ public class PSBlockListener extends BlockListener
 
         // -------------------------------------------------------------------------------------------
 
-        Field field = plugin.ffm.isPlaceProtected(placedblock, player);
+        Field field = plugin.ffm.isPlaceProtected(placedblock.getLocation(), player);
 
         if (field != null)
         {
@@ -652,25 +648,32 @@ public class PSBlockListener extends BlockListener
             }
         }
 
-        field = plugin.ffm.isUndoGriefField(placedblock, player);
+        field = plugin.ffm.isGriefProtected(placedblock.getLocation());
 
         if (field != null)
         {
-            if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+            if (plugin.ffm.isAllowed(field, player.getName()))
             {
-                plugin.cm.notifyBypassPlace(player, field);
+                plugin.sm.deleteBlockGrief(placedblock);
             }
             else
             {
-                event.setCancelled(true);
-                plugin.cm.warnPlace(player, placedblock, field);
-                return;
+                if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+                {
+                    plugin.cm.notifyBypassPlace(player, field);
+                }
+                else
+                {
+                    event.setCancelled(true);
+                    plugin.cm.warnPlace(player, placedblock, field);
+                    return;
+                }
             }
         }
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 
@@ -715,7 +718,7 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 }

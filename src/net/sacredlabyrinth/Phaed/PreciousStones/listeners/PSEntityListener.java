@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import org.bukkit.block.Block;
@@ -14,7 +15,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.TNTPrimed;
@@ -22,8 +22,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
-import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * PreciousStones entity listener
@@ -115,8 +115,8 @@ public class PSEntityListener extends EntityListener
 
         DebugTimer dt = new DebugTimer("onEntityExplode");
 
-        boolean hasGriefField = false;
         final List<Block> blockList = event.blockList();
+        final List<Block> griefedBlocks = new ArrayList<Block>();
 
         for (final Block block : blockList)
         {
@@ -141,7 +141,7 @@ public class PSEntityListener extends EntityListener
 
             // prevent explosion if breaking field
 
-            if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
+            if (plugin.ffm.isField(block))
             {
                 block.setTypeIdAndData(0, (byte) 0, false);
 
@@ -168,7 +168,7 @@ public class PSEntityListener extends EntityListener
 
             // record the blocks that are in undo fields
 
-            field = plugin.ffm.isUndoGriefField(block, null);
+            field = plugin.ffm.isGriefProtected(block.getLocation());
 
             if (field != null)
             {
@@ -193,14 +193,15 @@ public class PSEntityListener extends EntityListener
 
                     if (!plugin.settings.isGriefUndoBlackListType(block.getTypeId()))
                     {
-                        plugin.sm.recordBlockGrief(field, block);
-                        hasGriefField = true;
+                        field.addGriefBlock(block);
+                        plugin.sm.offerField(field);
+                        griefedBlocks.add(block);
                     }
                 }
             }
         }
 
-        if (hasGriefField)
+        if (griefedBlocks.size() > 0)
         {
             event.setCancelled(true);
 
@@ -209,9 +210,23 @@ public class PSEntityListener extends EntityListener
                 @Override
                 public void run()
                 {
-                    for (final Block block : blockList)
+                    // then remove the rest of the blocks in the field
+
+                    for (Block block : griefedBlocks)
                     {
                         block.setTypeId(0);
+                    }
+
+                    // then remove nad simulate drops for the blocks not in the field
+
+                    for (final Block block : blockList)
+                    {
+                        if (!griefedBlocks.contains(block))
+                        {
+                            ItemStack is = new ItemStack(block.getTypeId(), 1);
+                            block.setTypeId(0);
+                            block.getWorld().dropItemNaturally(block.getLocation(), is);
+                        }
                     }
                 }
             }, 1);
@@ -219,7 +234,7 @@ public class PSEntityListener extends EntityListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 
@@ -264,7 +279,7 @@ public class PSEntityListener extends EntityListener
                 Player attacker = (Player) sub.getDamager();
                 Player victim = (Player) sub.getEntity();
 
-                Field field = plugin.ffm.isPvPProtected(victim);
+                Field field = plugin.ffm.isPvPProtected(victim.getLocation());
 
                 if (field != null)
                 {
@@ -280,7 +295,7 @@ public class PSEntityListener extends EntityListener
                 }
                 else
                 {
-                    field = plugin.ffm.isPvPProtected(attacker);
+                    field = plugin.ffm.isPvPProtected(attacker.getLocation());
 
                     if (field != null)
                     {
@@ -309,7 +324,7 @@ public class PSEntityListener extends EntityListener
                 Player attacker = (Player) sub.getDamager();
                 Player victim = (Player) sub.getEntity();
 
-                Field field = plugin.ffm.isPvPProtected(victim);
+                Field field = plugin.ffm.isPvPProtected(victim.getLocation());
 
                 if (field != null)
                 {
@@ -325,7 +340,7 @@ public class PSEntityListener extends EntityListener
                 }
                 else
                 {
-                    field = plugin.ffm.isPvPProtected(attacker);
+                    field = plugin.ffm.isPvPProtected(attacker.getLocation());
 
                     if (field != null)
                     {
@@ -351,7 +366,7 @@ public class PSEntityListener extends EntityListener
             {
                 Player player = (Player) event.getEntity();
 
-                Field field = plugin.ffm.isMobDamageProtected(player);
+                Field field = plugin.ffm.isMobDamageProtected(player.getLocation());
 
                 if (field != null)
                 {
@@ -362,7 +377,7 @@ public class PSEntityListener extends EntityListener
 
         if (plugin.settings.debug)
         {
-            dt.logProcessTime();
+            //dt.logProcessTime();
         }
     }
 
