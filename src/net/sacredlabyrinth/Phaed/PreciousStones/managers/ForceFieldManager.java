@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.nijikokun.register.payment.Method.MethodAccount;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,7 +18,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
@@ -114,14 +114,30 @@ public final class ForceFieldManager
             }
         }
 
+        FieldSettings fs = plugin.settings.getFieldSettings(field);
+
         // remove from forester
 
-        plugin.fm.remove(field);
+        if (fs != null && (fs.forester || fs.foresterShrubs))
+        {
+            plugin.fm.remove(field);
+        }
+
+
+        // delete any snitch entries
+
+        if (fs != null && fs.snitch)
+        {
+            plugin.sm.deleteSnitchEntires(field);
+        }
 
         // remove from grief-undo and delete any records on the database
 
-        plugin.gum.remove(field);
-        plugin.sm.deleteBlockGrief(field);
+        if (fs != null && (fs.griefUndoRequest || fs.griefUndoInterval))
+        {
+            plugin.gum.remove(field);
+            plugin.sm.deleteBlockGrief(field);
+        }
 
         // delete from database
 
@@ -345,7 +361,7 @@ public final class ForceFieldManager
 
         if (cleanedCount != 0)
         {
-            PreciousStones.log(Level.INFO, "{0} orphan-fields: {1}", world.getName(), cleanedCount);
+            PreciousStones.log(Level.INFO, "({0}) orphan-fields: {1}", world.getName(), cleanedCount);
         }
         return cleanedCount;
     }
@@ -550,8 +566,8 @@ public final class ForceFieldManager
 
         if (fieldsettings.snitch)
         {
-            field.cleanSnitchList();
-            plugin.sm.offerField(field);
+            field.clearSnitch();
+            plugin.sm.deleteSnitchEntires(field);
             return true;
         }
 
@@ -613,7 +629,7 @@ public final class ForceFieldManager
 
     /**
      * Whether the player is allowed in the field
-     * @param fields
+     * @param field
      * @param playerName
      * @return
      */
@@ -1414,7 +1430,6 @@ public final class ForceFieldManager
     /**
      * Whether the location is in a fire protected area
      * @param loc
-     * @param player
      * @return the field, null if its not
      */
     public Field isFireProtected(Location loc)
@@ -2013,6 +2028,48 @@ public final class ForceFieldManager
         {
             block.setType(Material.AIR);
             world.dropItemNaturally(block.getLocation(), is);
+        }
+    }
+
+    /**
+     * Removes money from player's account
+     * @param player
+     * @param price
+     * @return
+     */
+    public boolean purchase(Player player, int price)
+    {
+        if (plugin.Method != null)
+        {
+            MethodAccount account = plugin.Method.getAccount(player.getName());
+
+            if (account.hasEnough(price))
+            {
+                account.subtract(price);
+            }
+            else
+            {
+                player.sendMessage(ChatColor.RED + "You do not have sufficient money in your account");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Credits money back to player's account
+     * @param player
+     * @param price
+     */
+    public void refund(Player player, int price)
+    {
+        if (plugin.Method != null)
+        {
+            MethodAccount account = plugin.Method.getAccount(player.getName());
+            account.add(price);
+            player.sendMessage(ChatColor.AQUA + "Your account has been credited");
+
         }
     }
 }

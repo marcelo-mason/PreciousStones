@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sacredlabyrinth.Phaed.PreciousStones.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
@@ -24,7 +26,7 @@ public final class ForesterManager
 {
     private PreciousStones plugin;
     private HashSet<ForesterEntry> foresters = new HashSet<ForesterEntry>();
-    private boolean processing;
+    private boolean processing = false;
 
     /**
      *
@@ -217,12 +219,12 @@ public final class ForesterManager
                     return;
                 }
 
+                processing = true;
+
                 if (foresters.isEmpty())
                 {
                     return;
                 }
-
-                processing = true;
 
                 for (ForesterEntry fe : foresters)
                 {

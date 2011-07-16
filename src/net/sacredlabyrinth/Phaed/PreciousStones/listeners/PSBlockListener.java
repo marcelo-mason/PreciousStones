@@ -62,13 +62,13 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getToBlock().getChunk())))
-        {
-            return;
-        }
-
         if (false)
         {
+            if (!plugin.tm.isTaggedArea(new ChunkVec(event.getToBlock().getChunk())))
+            {
+                return;
+            }
+
             Block block = event.getBlock();
             Block toBlock = event.getToBlock();
 
@@ -113,7 +113,7 @@ public class PSBlockListener extends BlockListener
 
             if (plugin.settings.debug)
             {
-                //dt.logProcessTime();
+                dt.logProcessTime();
             }
         }
     }
@@ -167,7 +167,7 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 
@@ -279,20 +279,43 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.ffm.isField(brokenBlock))
         {
+            FieldSettings fieldsettings = plugin.settings.getFieldSettings(brokenBlock.getTypeId());
+
+            if (fieldsettings == null)
+            {
+                plugin.ffm.queueRelease(brokenBlock);
+                return;
+            }
+
             if (plugin.ffm.isBreakable(brokenBlock))
             {
                 plugin.cm.notifyDestroyBreakableFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
+
+                if (fieldsettings.price > 0)
+                {
+                    plugin.ffm.refund(player, fieldsettings.price);
+                }
             }
             else if (plugin.ffm.isOwner(brokenBlock, player.getName()))
             {
                 plugin.cm.notifyDestroyFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
+
+                if (fieldsettings.price > 0)
+                {
+                    plugin.ffm.refund(player, fieldsettings.price);
+                }
             }
             else if (plugin.settings.allowedCanBreakPstones && plugin.ffm.isAllowed(brokenBlock, player.getName()))
             {
                 plugin.cm.notifyDestroyOthersFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
+
+                if (fieldsettings.price > 0)
+                {
+                    plugin.ffm.refund(player, fieldsettings.price);
+                }
             }
             else if (plugin.pm.hasPermission(player, "preciousstones.bypass.forcefield"))
             {
@@ -301,15 +324,6 @@ public class PSBlockListener extends BlockListener
             }
             else
             {
-                Field field = plugin.ffm.getField(brokenBlock);
-                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
-
-                if (fieldsettings == null)
-                {
-                    plugin.ffm.queueRelease(field);
-                    return;
-                }
-
                 event.setCancelled(true);
                 plugin.cm.warnDestroyFF(player, brokenBlock);
             }
@@ -369,9 +383,9 @@ public class PSBlockListener extends BlockListener
                 if (!plugin.settings.isGriefUndoBlackListType(brokenBlock.getTypeId()))
                 {
                     event.setCancelled(true);
-                    field.addGriefBlock(brokenBlock);
-                    plugin.sm.offerField(field);
-                    brokenBlock.setType(Material.AIR);
+                    plugin.gum.addBlock(field, brokenBlock);
+                    plugin.sm.offerGrief(field);
+                    brokenBlock.setTypeId(0);
                     return;
                 }
             }
@@ -379,7 +393,7 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 
@@ -549,15 +563,18 @@ public class PSBlockListener extends BlockListener
                     }
                 }
 
-                if (plugin.ffm.add(placedblock, player))
+                if (fieldsettings.price == 0 || plugin.ffm.purchase(player, fieldsettings.price))
                 {
-                    if (plugin.ffm.isBreakable(placedblock))
+                    if (plugin.ffm.add(placedblock, player))
                     {
-                        plugin.cm.notifyPlaceBreakableFF(player, placedblock);
-                    }
-                    else
-                    {
-                        plugin.cm.notifyPlaceFF(player, placedblock);
+                        if (plugin.ffm.isBreakable(placedblock))
+                        {
+                            plugin.cm.notifyPlaceBreakableFF(player, placedblock);
+                        }
+                        else
+                        {
+                            plugin.cm.notifyPlaceFF(player, placedblock);
+                        }
                     }
                 }
             }
@@ -673,7 +690,7 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 
@@ -718,7 +735,7 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 }

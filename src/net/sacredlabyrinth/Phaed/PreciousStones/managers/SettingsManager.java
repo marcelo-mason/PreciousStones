@@ -20,6 +20,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public final class SettingsManager
 {
+    public int purgeSnitchAfterDays;
+    public int purgeAfterDays;
     public int maxSnitchRecords;
     public int saveBatchSize;
     public int saveFrequency;
@@ -34,6 +36,8 @@ public final class SettingsManager
     public int visualizeSeconds;
     public boolean visualizeEndOnMove;
     public boolean debug;
+    public boolean debugdb;
+    public boolean debugsql;
     public ArrayList<LinkedHashMap> forceFieldBlocks;
     public List<Integer> unbreakableBlocks;
     public List<Integer> bypassBlocks;
@@ -175,6 +179,8 @@ public final class SettingsManager
         disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
+        purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days", 45);
+        purgeSnitchAfterDays = config.getInt("cleanup.snitch-unused-purge-days", 60);
         saveFrequency = config.getInt("saving.frequency-seconds", 300);
         saveBatchSize = config.getInt("saving.batch-size", 100);
         maxSnitchRecords = config.getInt("saving.max-records-per-snitch", 50);
@@ -251,6 +257,8 @@ public final class SettingsManager
         config.setProperty("settings.disable-bypass-alerts-for-admins", disableBypassAlertsForAdmins);
         config.setProperty("settings.off-by-default", offByDefault);
         config.setProperty("settings.lines-per-page", linesPerPage);
+        config.setProperty("cleanup.player-inactivity-purge-days", purgeAfterDays);
+        config.setProperty("cleanup.snitch-unused-purge-days", purgeSnitchAfterDays);
         config.setProperty("saving.frequency-seconds", saveFrequency);
         config.setProperty("saving.batch-size", saveBatchSize);
         config.setProperty("saving.max-records-per-snitch", maxSnitchRecords);
@@ -305,8 +313,6 @@ public final class SettingsManager
                 }
             }
         }
-
-        PreciousStones.log(Level.INFO, "configured fields: {0}", maps.size());
 
         chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(((largestForceField * 2.0) + 1.0) / 16.0), 1);
     }
@@ -597,6 +603,7 @@ public final class SettingsManager
         public boolean griefUndoInterval = false;
         public boolean griefUndoRequest = false;
         public boolean entryAlert = false;
+        public int price = 0;
 
         /**
          *
@@ -879,6 +886,11 @@ public final class SettingsManager
             if (map.containsKey("entry-alert") && Helper.isBoolean(map.get("entry-alert")))
             {
                 entryAlert = (Boolean) map.get("entry-alert");
+            }
+
+            if (map.containsKey("price") && Helper.isInteger(map.get("price")))
+            {
+                price = (Integer) map.get("price");
             }
         }
     }

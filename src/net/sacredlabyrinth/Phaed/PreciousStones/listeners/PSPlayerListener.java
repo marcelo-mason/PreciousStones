@@ -25,6 +25,9 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
@@ -43,6 +46,36 @@ public class PSPlayerListener extends PlayerListener
     public PSPlayerListener(PreciousStones plugin)
     {
         this.plugin = plugin;
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onPlayerLogin(PlayerLoginEvent event)
+    {
+        plugin.sm.offerPlayer(event.getPlayer());
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onPlayerQuit(PlayerQuitEvent event)
+    {
+        plugin.sm.offerPlayer(event.getPlayer());
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onPlayerKick(PlayerKickEvent event)
+    {
+        plugin.sm.offerPlayer(event.getPlayer());
     }
 
     /**
@@ -123,14 +156,11 @@ public class PSPlayerListener extends PlayerListener
 
                         if (field.getOwner().equals(player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
                         {
-                            if (!field.getSnitchList().isEmpty())
-                            {
-                                plugin.cm.showIntruderList(player, plugin.ffm.getField(block));
-                            }
-                            else
+                            if (!plugin.cm.showSnitchList(player, plugin.ffm.getField(block)))
                             {
                                 showInfo(block, player);
                                 ChatBlock.sendMessage(player, ChatColor.AQUA + "There have been no intruders around here");
+                                ChatBlock.sendBlank(player);
                             }
                         }
                     }
@@ -172,6 +202,7 @@ public class PSPlayerListener extends PlayerListener
                                 {
                                     showInfo(block, player);
                                     player.sendMessage(ChatColor.AQUA + "No grief recorded");
+                                    ChatBlock.sendBlank(player);
                                 }
                             }
                             else
@@ -191,6 +222,7 @@ public class PSPlayerListener extends PlayerListener
                                 {
                                     showInfo(block, player);
                                     player.sendMessage(ChatColor.AQUA + "No grief recorded on any of the " + overlapped.size() + " overlapped fields");
+                                    ChatBlock.sendBlank(player);
                                 }
                             }
                         }
@@ -222,7 +254,7 @@ public class PSPlayerListener extends PlayerListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 
@@ -271,12 +303,12 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
+        if (new Vec(event.getFrom()).equals(new Vec(event.getTo())))
         {
             return;
         }
 
-        if (new Vec(event.getFrom()).equals(new Vec(event.getTo())))
+        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
         {
             return;
         }
@@ -363,7 +395,7 @@ public class PSPlayerListener extends PlayerListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 
@@ -379,7 +411,6 @@ public class PSPlayerListener extends PlayerListener
 
         Player player = event.getPlayer();
         Block block = event.getBlockClicked();
-        Material mat = event.getBucket();
 
         if (block == null)
         {
@@ -424,7 +455,7 @@ public class PSPlayerListener extends PlayerListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 
@@ -489,7 +520,7 @@ public class PSPlayerListener extends PlayerListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 }

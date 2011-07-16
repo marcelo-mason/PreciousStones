@@ -1,5 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.ChatColor;
+
 /**
  *
  * @author phaed
@@ -10,6 +17,8 @@ public class SnitchEntry
     private String reason;
     private String details;
     private int eventCount;
+    private Field field;
+    private Timestamp age;
 
     /**
      *
@@ -30,25 +39,25 @@ public class SnitchEntry
         this.reason = reason;
         this.details = details;
         this.eventCount = 1;
+        this.age = (new Timestamp((new Date()).getTime()));
     }
 
     /**
      *
+     * @param field
      * @param name
      * @param reason
      * @param details
+     * @param eventCount
      */
-    public SnitchEntry(String packed)
+    public SnitchEntry(Field field, String name, String reason, String details, int eventCount)
     {
-        String[] split = packed.split("[#]");
-
-        if (split.length == 4)
-        {
-            this.name = split[0];
-            this.reason = split[1];
-            this.details = split[2];
-            this.eventCount = Integer.parseInt(split[3]);
-        }
+        this.field = field;
+        this.name = name;
+        this.reason = reason;
+        this.details = details;
+        this.eventCount = eventCount;
+        this.age = (new Timestamp((new Date()).getTime()));
     }
 
     /**
@@ -91,12 +100,39 @@ public class SnitchEntry
      */
     public String getReasonDisplay()
     {
-        if (getEventCount() > 1)
+        String out = reason;
+
+        if (reason.equals("Block Break"))
         {
-            return this.getReason() + " (" + getEventCount() + ")";
+            out = ChatColor.DARK_RED + reason;
+        }
+        if (reason.equals("Block Place"))
+        {
+            out = ChatColor.DARK_RED + reason;
+        }
+        if (reason.equals("Entry"))
+        {
+            out = ChatColor.BLUE + reason;
+        }
+        if (reason.equals("Used"))
+        {
+            out = ChatColor.GREEN + reason;
+        }
+        if (reason.equals("Shopped"))
+        {
+            out = ChatColor.GREEN + reason;
+        }
+        if (reason.equals("Ignite"))
+        {
+            out = ChatColor.DARK_RED + reason;
         }
 
-        return this.getReason();
+        if (getEventCount() > 1)
+        {
+            return out + " (" + getEventCount() + ")";
+        }
+
+        return out;
     }
 
     /**
@@ -113,7 +149,7 @@ public class SnitchEntry
      */
     public String getDetails()
     {
-        return this.details;
+        return details;
     }
 
     /**
@@ -121,7 +157,7 @@ public class SnitchEntry
      */
     public void addCount()
     {
-        this.setEventCount(this.getEventCount() + 1);
+        setEventCount(getEventCount() + 1);
     }
 
     /**
@@ -140,9 +176,28 @@ public class SnitchEntry
         this.eventCount = eventCount;
     }
 
-    @Override
-    public String toString()
+    /**
+     * @return the field
+     */
+    public Field getField()
     {
-        return name + "#" + reason + "#" + details + "#" + eventCount;
+        return field;
+    }
+
+    /**
+     * @param field the field to set
+     */
+    public void setField(Field field)
+    {
+        this.field = field;
+    }
+
+    /**
+     * Returns the number of minutes of age
+     * @return
+     */
+    public int getAgeInSeconds()
+    {
+        return (int) Dates.differenceInSeconds((new Timestamp((new Date()).getTime())), age);
     }
 }

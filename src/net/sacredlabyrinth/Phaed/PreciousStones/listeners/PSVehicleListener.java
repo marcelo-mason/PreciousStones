@@ -137,7 +137,7 @@ public class PSVehicleListener extends VehicleListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+           dt.logProcessTime();
         }
     }
 }

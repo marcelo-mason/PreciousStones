@@ -1,15 +1,20 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
+import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
+import org.bukkit.block.Sign;
 
 /**
  * A field object
@@ -24,9 +29,10 @@ public class Field extends AbstractVec
     private String owner;
     private String name;
     private List<String> allowed = new ArrayList<String>();
-    private List<SnitchEntry> snitchList = new LinkedList<SnitchEntry>();
     private List<Dirty> dirty = new ArrayList<Dirty>();
     private List<GriefBlock> grief = new ArrayList<GriefBlock>();
+    private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
+    private Timestamp lastUsed;
 
     /**
      *
@@ -41,7 +47,7 @@ public class Field extends AbstractVec
      * @param owner
      * @param name
      */
-    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name)
+    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name, Timestamp lastUsed)
     {
         super(x, y, z, world);
 
@@ -51,6 +57,7 @@ public class Field extends AbstractVec
         this.owner = owner;
         this.name = name;
         this.typeId = typeId;
+        this.lastUsed = lastUsed;
     }
 
     /**
@@ -293,93 +300,6 @@ public class Field extends AbstractVec
         return super.toString();
     }
 
-    /**
-     *
-     * @param name
-     * @param reason
-     * @param details
-     */
-    public void addIntruder(String name, String reason, String details, int max)
-    {
-        if (snitchList.size() > max)
-        {
-            snitchList.remove(0);
-        }
-
-        for (SnitchEntry se : snitchList)
-        {
-            if (se.getName().equals(name) && se.getReason().equals(reason) && se.getDetails().equals(details))
-            {
-                se.addCount();
-                dirty.add(Dirty.SNITCH);
-                return;
-            }
-        }
-
-        snitchList.add(new SnitchEntry(name, reason, details));
-        dirty.add(Dirty.SNITCH);
-    }
-
-    /**
-     * @param snitchList the snitchList to set
-     */
-    public void setSnitchList(List<SnitchEntry> snitchList)
-    {
-        this.snitchList = snitchList;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public List<SnitchEntry> getSnitchList()
-    {
-        return snitchList;
-    }
-
-    /**
-     *
-     */
-    public void cleanSnitchList()
-    {
-        snitchList.clear();
-        dirty.add(Dirty.SNITCH);
-    }
-
-    /**
-     * @return the packedSnitchList
-     */
-    public String getPackedSnitchList()
-    {
-        String packed = "";
-
-        for (SnitchEntry se : snitchList)
-        {
-            packed += se + "|";
-        }
-
-        return Helper.stripTrailing(packed, "|");
-    }
-
-    /**
-     * @param packedSnitchList the packedSnitchList to set
-     */
-    public void setPackedSnitchList(String packedSnitchList, int max)
-    {
-        List<String> packedSnitchLists = Helper.fromArray(packedSnitchList.split("[|]"));
-
-        if (packedSnitchLists.size() > max)
-        {
-            int first = packedSnitchLists.size() - max;
-            packedSnitchLists = packedSnitchLists.subList(max, packedSnitchLists.size());
-        }
-
-        for (String packed : packedSnitchLists)
-        {
-            snitchList.add(new SnitchEntry(packed));
-        }
-    }
-
     @Override
     public String toString()
     {
@@ -598,9 +518,9 @@ public class Field extends AbstractVec
      * ADd a grief block to the collection
      * @param block
      */
-    public void addGriefBlock(Block block)
+    public void addGriefBlock(GriefBlock gb)
     {
-        getGrief().add(new GriefBlock(block.getLocation(), block.getTypeId(), block.getData()));
+        grief.add(gb);
         dirty.add(Dirty.GRIEF_BLOCKS);
     }
 
@@ -621,11 +541,58 @@ public class Field extends AbstractVec
     }
 
     /**
+     * Clear snitch list
+     */
+    public void clearSnitch()
+    {
+        snitches.clear();
+    }
+
+    /**
+     * @return the snitches
+     */
+    public List<SnitchEntry> getSnitches()
+    {
+        return snitches;
+    }
+
+    /**
+     * @param snitches the snitches to set
+     */
+    public void setSnitches(List<SnitchEntry> snitches)
+    {
+        this.snitches = snitches;
+    }
+
+    /**
+     *
+     */
+    public void updateLastUsed()
+    {
+        lastUsed = (new Timestamp((new Date()).getTime()));
+        dirty.add(Dirty.LASTUSED);
+    }
+
+    /**
+     * Returns the number of days last used
+     * @return
+     */
+    public int getAgeInDays()
+    {
+        if (lastUsed == null)
+        {
+            return 0;
+        }
+
+        return (int) Dates.differenceInDays((new Timestamp((new Date()).getTime())), lastUsed);
+    }
+
+    /**
      * Enumeration of dirty type
      */
     public enum Dirty
     {
-        OWNER, NAME, RADIUS, HEIGHT, VELOCITY, ALLOWED, SNITCH, GRIEF_BLOCKS, DELETE
+        OWNER, NAME, RADIUS, HEIGHT, VELOCITY, ALLOWED, GRIEF_BLOCKS, DELETE, LASTUSED
     }
 
     /**

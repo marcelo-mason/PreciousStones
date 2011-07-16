@@ -2016,25 +2016,42 @@ public class CommunicatonManager
      * @param player
      * @param field
      */
-    public void showIntruderList(Player player, Field field)
+    public boolean showSnitchList(Player player, Field field)
     {
         if (field != null)
         {
-            List<SnitchEntry> snitches = field.getSnitchList();
+            List<SnitchEntry> snitches = field.getSnitches();
+
+            if (snitches.isEmpty() || snitches.get(0).getAgeInSeconds() > 10)
+            {
+                snitches = plugin.sm.getSnitchEntries(field);
+                field.setSnitches(snitches);
+                field.updateLastUsed();
+                plugin.sm.offerField(field);
+            }
+
+            String title = "Intruder log ";
+
+            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+
+            if (fieldsettings != null)
+            {
+                title = fieldsettings.getTitle();
+            }
 
             if (!snitches.isEmpty())
             {
                 ChatBlock chatBlock = plugin.com.getCacheBlock();
 
                 ChatBlock.sendBlank(player);
-                ChatBlock.saySingle(player, ChatColor.WHITE + "Intruder log " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
+                ChatBlock.saySingle(player, ChatColor.WHITE + title + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
                 ChatBlock.sendBlank(player);
 
                 chatBlock.addRow("  " + ChatColor.GRAY + "Name", "Reason", "Details");
 
                 for (SnitchEntry se : snitches)
                 {
-                    chatBlock.addRow("  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails().replace("{", "[").replace("}", "]"));
+                    chatBlock.addRow("  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails());
                 }
 
                 boolean more = chatBlock.sendBlock(player, plugin.settings.linesPerPage);
@@ -2048,12 +2065,14 @@ public class CommunicatonManager
                 ChatBlock.sendBlank(player);
             }
 
-            return;
+            return !snitches.isEmpty();
         }
         else
         {
             plugin.cm.showNotFound(player);
         }
+
+        return false;
     }
 
     /**
@@ -2071,14 +2090,14 @@ public class CommunicatonManager
             for (Field field : scoped)
             {
                 StringBuilder sb = new StringBuilder();
+                sb.append(ChatColor.AQUA);
+                sb.append(field.getCoords());
+                sb.append(" ");
                 sb.append(ChatColor.YELLOW);
                 sb.append("Owner: ");
                 sb.append(ChatColor.AQUA);
                 sb.append(field.getOwner());
                 sb.append(ChatColor.YELLOW);
-                sb.append("Coords: ");
-                sb.append(ChatColor.AQUA);
-                sb.append(field.getCoords());
 
                 ChatBlock.sendMessage(player, sb.toString());
             }

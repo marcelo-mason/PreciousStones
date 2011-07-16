@@ -91,11 +91,6 @@ public final class PermissionsManager
 
 	    if (test != null)
 	    {
-		if (!plugin.getServer().getPluginManager().isPluginEnabled(test))
-		{
-		    plugin.getServer().getPluginManager().enablePlugin(test);
-		}
-
 		PermissionsManager.Permissions = ((Permissions) test).getHandler();
 	    }
 	}

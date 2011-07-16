@@ -135,6 +135,18 @@ public final class CommandManager implements CommandExecutor
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Debug output " + (plugin.settings.debug ? "enabled" : "disabled"));
                             return true;
                         }
+                        if (cmd.equals("debugdb") && plugin.pm.hasPermission(player, "preciousstones.admin.debug"))
+                        {
+                            plugin.settings.debugdb = !plugin.settings.debugdb;
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Debug db output " + (plugin.settings.debugdb ? "enabled" : "disabled"));
+                            return true;
+                        }
+                        if (cmd.equals("debugsql") && plugin.pm.hasPermission(player, "preciousstones.admin.debug"))
+                        {
+                            plugin.settings.debugsql = !plugin.settings.debugsql;
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Debug sql output " + (plugin.settings.debugsql ? "enabled" : "disabled"));
+                            return true;
+                        }
                         if (cmd.equals("retag") && plugin.pm.hasPermission(player, "preciousstones.admin.retag"))
                         {
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Tagging chunks...");
@@ -498,7 +510,7 @@ public final class CommandManager implements CommandExecutor
                                         plugin.viz.addVisualizationField(player, f);
                                     }
 
-                                    plugin.viz.displayVisualization(player, true);
+                                    plugin.viz.displayVisualization(player);
                                 }
                             }
                             else
@@ -518,7 +530,7 @@ public final class CommandManager implements CommandExecutor
                                             plugin.viz.addVisualizationField(player, f);
                                         }
 
-                                        plugin.viz.displayVisualization(player, true);
+                                        plugin.viz.displayVisualization(player);
                                     }
                                     else
                                     {
@@ -562,7 +574,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    plugin.cm.showIntruderList(player, field);
+                                    plugin.cm.showSnitchList(player, field);
                                 }
                                 else
                                 {
@@ -876,6 +888,11 @@ public final class CommandManager implements CommandExecutor
                         cacheBlock.addRow(color + "  /ps snitch <clear> " + ChatColor.AQUA + "- View/clear snitch you're pointing at");
                     }
 
+                    if (plugin.pm.hasPermission(player, "preciousstones.benefit.visualize") || plugin.pm.hasPermission(player, "preciousstones.admin.visualize"))
+                    {
+                        cacheBlock.addRow(color + "  /ps visualize" + ChatColor.AQUA + "- Visualizes the perimiter of the field");
+                    }
+
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.delete"))
                     {
                         cacheBlock.addRow(ChatColor.DARK_RED + "  /ps delete " + ChatColor.AQUA + "- Delete the field(s) you're standing on");
@@ -895,11 +912,6 @@ public final class CommandManager implements CommandExecutor
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.setowner"))
                     {
                         cacheBlock.addRow(ChatColor.DARK_RED + "  /ps setowner [player] " + ChatColor.AQUA + "- Of the block you're pointing at");
-                    }
-
-                    if (plugin.pm.hasPermission(player, "preciousstones.benefit.visualize") || plugin.pm.hasPermission(player, "preciousstones.admin.visualize"))
-                    {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps visualize" + ChatColor.AQUA + "- Visualizes the perimiter of the field");
                     }
 
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.mark"))

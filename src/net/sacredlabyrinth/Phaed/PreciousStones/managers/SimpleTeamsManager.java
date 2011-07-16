@@ -151,11 +151,6 @@ public final class SimpleTeamsManager
 
             if (test != null)
             {
-                if (!plugin.getServer().getPluginManager().isPluginEnabled(test))
-                {
-                    plugin.getServer().getPluginManager().enablePlugin(test);
-                }
-
                 this.st = (SimpleTeams) test;
             }
         }

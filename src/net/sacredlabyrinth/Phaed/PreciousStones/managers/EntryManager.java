@@ -3,6 +3,8 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -25,7 +27,7 @@ public final class EntryManager
 {
     private PreciousStones plugin;
     private final HashMap<String, EntryFields> entries = new HashMap<String, EntryFields>();
-    private boolean processing;
+    private boolean processing = false;
 
     /**
      *

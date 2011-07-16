@@ -40,7 +40,7 @@ public class PSWorldListener extends WorldListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+           dt.logProcessTime();
         }
     }
 }

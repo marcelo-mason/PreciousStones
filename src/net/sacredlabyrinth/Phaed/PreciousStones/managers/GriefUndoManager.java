@@ -2,11 +2,14 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
 /**
@@ -17,7 +20,7 @@ public final class GriefUndoManager
 {
     private PreciousStones plugin;
     private List<Field> intervalFields = new ArrayList<Field>();
-    private boolean processing;
+    private boolean processing = false;
 
     /**
      *
@@ -45,6 +48,79 @@ public final class GriefUndoManager
     public void remove(Field field)
     {
         intervalFields.remove(field);
+    }
+
+    /**
+     * Add grief block to field, accounts for dependents and signs
+     * @param field
+     * @param block
+     */
+    public void addBlock(Field field, Block block)
+    {
+        if (!plugin.gum.isDependentBlock(block.getTypeId()))
+        {
+            BlockFace[] faces =
+            {
+                BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
+            };
+
+            for (BlockFace face : faces)
+            {
+                Block rel = block.getRelative(face);
+
+                if (plugin.gum.isDependentBlock(rel.getTypeId()))
+                {
+                    field.addGriefBlock(new GriefBlock(rel.getLocation(), rel.getTypeId(), rel.getData()));
+                    rel.setTypeId(0);
+                }
+            }
+        }
+
+        if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR))
+        {
+            // record wood doors in correct order
+
+            if ((block.getData() & 0x8) == 0x8)
+            {
+                Block bottom = block.getRelative(BlockFace.DOWN);
+
+                field.addGriefBlock(new GriefBlock(bottom));
+                field.addGriefBlock(new GriefBlock(block));
+
+                bottom.setTypeId(0);
+                block.setTypeId(0);
+            }
+            else
+            {
+                Block top = block.getRelative(BlockFace.UP);
+
+                field.addGriefBlock(new GriefBlock(block));
+                field.addGriefBlock(new GriefBlock(top));
+
+                block.setTypeId(0);
+                top.setTypeId(0);
+            }
+        }
+        else
+        {
+            GriefBlock gb = new GriefBlock(block);
+
+            if (block.getState() instanceof Sign)
+            {
+                String signText = "";
+                Sign sign = (Sign) block.getState();
+
+                for (String line : sign.getLines())
+                {
+                    signText += line + "°";
+                }
+
+                signText = Helper.stripTrailing(signText, "°");
+                gb.setSignText(signText);
+            }
+
+            field.addGriefBlock(gb);
+        }
     }
 
     /**
@@ -137,6 +213,7 @@ public final class GriefUndoManager
             }
         }
     }
+//
 
     private void startInterval()
     {
@@ -151,10 +228,12 @@ public final class GriefUndoManager
                 }
 
                 processing = true;
+
                 for (Field field : intervalFields)
                 {
                     undoGrief(field);
                 }
+
                 processing = false;
             }
         }, 20L * 60 * plugin.settings.griefIntervalSeconds, 20L * 60 * plugin.settings.griefIntervalSeconds);
@@ -167,7 +246,7 @@ public final class GriefUndoManager
      */
     public boolean isDependentBlock(int type)
     {
-        if (type == 26 || type == 27 || type == 28 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68|| type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 85 || type == 96)
+        if (type == 26 || type == 27 || type == 28 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 85 || type == 96)
         {
             return true;
         }

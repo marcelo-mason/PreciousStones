@@ -1,4 +1,4 @@
-package net.sacredlabyrinth.phaed.simpleteams;
+package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.sql.Timestamp;
 import java.util.Calendar;

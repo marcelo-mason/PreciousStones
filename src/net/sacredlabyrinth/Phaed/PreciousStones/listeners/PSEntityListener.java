@@ -21,7 +21,9 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
+import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -193,9 +195,10 @@ public class PSEntityListener extends EntityListener
 
                     if (!plugin.settings.isGriefUndoBlackListType(block.getTypeId()))
                     {
-                        field.addGriefBlock(block);
-                        plugin.sm.offerField(field);
+                        plugin.gum.addBlock(field, block);
+                        plugin.sm.offerGrief(field);
                         griefedBlocks.add(block);
+                        block.setTypeId(0);
                     }
                 }
             }
@@ -234,7 +237,7 @@ public class PSEntityListener extends EntityListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 
@@ -377,7 +380,7 @@ public class PSEntityListener extends EntityListener
 
         if (plugin.settings.debug)
         {
-            //dt.logProcessTime();
+            dt.logProcessTime();
         }
     }
 
@@ -404,7 +407,32 @@ public class PSEntityListener extends EntityListener
     public void onPaintingBreak(PaintingBreakEvent event)
     {
         Painting painting = event.getPainting();
-        Location loc = painting.getLocation();
+        RemoveCause cause = event.getCause();
+
+        if (cause.equals(RemoveCause.ENTITY))
+        {
+            PaintingBreakByEntityEvent pre = (PaintingBreakByEntityEvent) event;
+
+            if (pre.getRemover() instanceof Player)
+            {
+                Player player = (Player) pre.getRemover();
+
+                Field field = plugin.ffm.isDestroyProtected(painting.getLocation(), player);
+
+                if (field != null)
+                {
+                    if (plugin.pm.hasPermission(player, "preciousstones.bypass.destroy"))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -415,6 +443,20 @@ public class PSEntityListener extends EntityListener
     public void onPaintingPlace(PaintingPlaceEvent event)
     {
         Painting painting = event.getPainting();
-        Location loc = painting.getLocation();
+        Player player = event.getPlayer();
+
+        Field field = plugin.ffm.isPlaceProtected(painting.getLocation(), player);
+
+        if (field != null)
+        {
+            if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+            {
+                plugin.cm.notifyBypassPlace(player, field);
+            }
+            else
+            {
+                event.setCancelled(true);
+            }
+        }
     }
 }

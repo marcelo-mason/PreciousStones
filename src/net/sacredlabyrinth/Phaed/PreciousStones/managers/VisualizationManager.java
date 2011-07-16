@@ -44,12 +44,12 @@ public class VisualizationManager
 
         vis.addField(field);
 
-        int minx = field.getX() - field.getRadius();
-        int maxx = field.getX() + field.getRadius();
-        int minz = field.getZ() - field.getRadius();
-        int maxz = field.getZ() + field.getRadius();
-        int miny = field.getY() - (int) Math.floor(((double) field.getHeight()) / 2);
-        int maxy = field.getY() + (int) Math.ceil(((double) field.getHeight()) / 2);
+        int minx = field.getX() - field.getRadius() - 1;
+        int maxx = field.getX() + field.getRadius() + 1;
+        int minz = field.getZ() - field.getRadius() - 1;
+        int maxz = field.getZ() + field.getRadius() + 1;
+        int miny = field.getY() - ((int) Math.floor(((double) field.getHeight()) / 2)) - 1;
+        int maxy = field.getY() + ((int) Math.ceil(((double) field.getHeight()) / 2)) + 1;
 
         for (int y = miny; y <= maxy; y++)
         {
@@ -124,7 +124,7 @@ public class VisualizationManager
      * Displays contents of a player's visualization buffer to the player
      * @param player
      */
-    public void displayVisualization(final Player player, boolean skipinner)
+    public void displayVisualization(final Player player)
     {
         Visualization vis = visualizations.get(player.getName());
 
@@ -137,15 +137,12 @@ public class VisualizationManager
         {
             boolean skip = false;
 
-            if (skipinner)
+            for (Field field : vis.getFields())
             {
-                for (Field field : vis.getFields())
+                if (field.envelops(loc))
                 {
-                    if (field.envelops(loc))
-                    {
-                        skip = true;
-                        break;
-                    }
+                    skip = true;
+                    break;
                 }
             }
 

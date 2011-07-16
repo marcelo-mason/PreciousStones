@@ -1,8 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.AbstractVec;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.block.Block;
 
 /**
  *
@@ -19,6 +18,7 @@ public class GriefBlock extends AbstractVec
         super(x, y, z, world);
         this.typeId = typeId;
         this.data = data;
+        this.signText = "";
     }
 
     public GriefBlock(Location loc, int typeId, byte data)
@@ -26,6 +26,15 @@ public class GriefBlock extends AbstractVec
         super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
         this.typeId = typeId;
         this.data = data;
+        this.signText = "";
+    }
+
+    public GriefBlock(Block block)
+    {
+        super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+        this.typeId = block.getTypeId();
+        this.data = block.getData();
+        this.signText = "";
     }
 
     /**

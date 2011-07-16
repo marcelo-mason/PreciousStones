@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import com.nijikokun.register.payment.Method;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSBlockListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSEntityListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSPlayerListener;
+import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSServerListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSWorldListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSVehicleListener;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
@@ -42,7 +44,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.VisualizationManager;
 public class PreciousStones extends JavaPlugin
 {
     public static final Logger logger = Logger.getLogger("Minecraft");
-
     public SettingsManager settings;
     public Helper helper;
     public CommandManager com;
@@ -64,12 +65,14 @@ public class PreciousStones extends JavaPlugin
     public ForesterManager fm;
     public TagManager tm;
     public LegacyManager legacy;
+    public Method Method;
 
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
     private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
+    private PSServerListener serverListener;
 
     /**
      * Parameterized logger
@@ -117,6 +120,7 @@ public class PreciousStones extends JavaPlugin
         entityListener = new PSEntityListener(this);
         vehicleListener = new PSVehicleListener(this);
         worldListener = new PSWorldListener(this);
+        serverListener = new PSServerListener(this);
 
         registerEvents();
         registerCommands();
@@ -137,11 +141,15 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME, entityListener, Event.Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Event.Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_FILL, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_DISABLE, serverListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FROMTO, blockListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PHYSICS, blockListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.High, this);
@@ -165,6 +173,6 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onDisable()
     {
-        sm.processQueue(null);
+        sm.processQueue();
     }
 }

@@ -8,10 +8,10 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.ChatColor;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
@@ -54,8 +54,7 @@ public class SnitchManager
                 if (!field.isOwner(player.getName()))
                 {
                     DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
-                    field.addIntruder(player.getName(), ChatColor.BLUE + "Entry", dateFormat.format(new Date()), plugin.settings.maxSnitchRecords);
-                    plugin.sm.offerField(field);
+                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Entry", dateFormat.format(new Date()), 1));
                 }
             }
         }
@@ -77,8 +76,7 @@ public class SnitchManager
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Break", toBlockDetails(block), plugin.settings.maxSnitchRecords);
-                    plugin.sm.offerField(field);
+                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Break", toBlockDetails(block), 1));
                 }
             }
         }
@@ -99,8 +97,7 @@ public class SnitchManager
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.DARK_RED + "Block Place", toBlockDetails(block), plugin.settings.maxSnitchRecords);
-                    plugin.sm.offerField(field);
+                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Place", toBlockDetails(block), 1));
                 }
             }
         }
@@ -121,8 +118,7 @@ public class SnitchManager
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.GREEN + "Used", toBlockDetails(block), plugin.settings.maxSnitchRecords);
-                    plugin.sm.offerField(field);
+                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Used", toBlockDetails(block), 1));
                 }
             }
         }
@@ -137,6 +133,11 @@ public class SnitchManager
     {
         Sign sign = (Sign) block.getState();
 
+        if (sign.getLines().length == 0)
+        {
+            return;
+        }
+
         if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
@@ -145,8 +146,7 @@ public class SnitchManager
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.GREEN + "Shopped", sign.getLines().length == 0 ? "empty" : sign.getLine(0), plugin.settings.maxSnitchRecords);
-                    plugin.sm.offerField(field);
+                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Shopped", toBlockDetails(block), 1));
                 }
             }
         }
@@ -167,8 +167,7 @@ public class SnitchManager
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    field.addIntruder(player.getName(), ChatColor.RED + "Ignite", toBlockDetails(block), plugin.settings.maxSnitchRecords);
-                    plugin.sm.offerField(field);
+                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Ignite", toBlockDetails(block), 1));
                 }
             }
         }
