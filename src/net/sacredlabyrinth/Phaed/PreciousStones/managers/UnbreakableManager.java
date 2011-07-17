@@ -393,7 +393,7 @@ public final class UnbreakableManager
 
         // add unbreakable to database
 
-        plugin.sm.insertUnbreakable(unbreakable);
+        plugin.sm.offerUnbreakable(unbreakable, true);
 
         // tag the chunk
 
@@ -527,7 +527,7 @@ public final class UnbreakableManager
 
         // delete unbreakable form database
 
-        plugin.sm.deleteUnbreakable(ub);
+        plugin.sm.offerUnbreakable(ub, false);
 
         // untag the chunk
 

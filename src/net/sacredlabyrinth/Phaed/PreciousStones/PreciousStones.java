@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import com.nijikokun.register.payment.Method;
+import net.sacredlabyrinth.register.payment.Method;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;

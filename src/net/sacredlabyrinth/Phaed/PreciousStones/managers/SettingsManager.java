@@ -179,6 +179,7 @@ public final class SettingsManager
         disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
+        debugdb = config.getBoolean("settings.debug-on", false);
         purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days", 45);
         purgeSnitchAfterDays = config.getInt("cleanup.snitch-unused-purge-days", 60);
         saveFrequency = config.getInt("saving.frequency-seconds", 300);

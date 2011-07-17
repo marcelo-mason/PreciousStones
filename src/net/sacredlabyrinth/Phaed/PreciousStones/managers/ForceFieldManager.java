@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.nijikokun.register.payment.Method.MethodAccount;
+import net.sacredlabyrinth.register.payment.Method.MethodAccount;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;

@@ -55,7 +55,7 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerLogin(PlayerLoginEvent event)
     {
-        plugin.sm.offerPlayer(event.getPlayer());
+        plugin.sm.offerPlayer(event.getPlayer().getName(), true);
     }
 
     /**
@@ -65,7 +65,7 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-        plugin.sm.offerPlayer(event.getPlayer());
+        plugin.sm.offerPlayer(event.getPlayer().getName(), true);
     }
 
     /**
@@ -75,7 +75,7 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerKick(PlayerKickEvent event)
     {
-        plugin.sm.offerPlayer(event.getPlayer());
+        plugin.sm.offerPlayer(event.getPlayer().getName(), true);
     }
 
     /**
@@ -211,7 +211,7 @@ public class PSPlayerListener extends PlayerListener
 
                                 for (Field o : overlapped)
                                 {
-                                    size += plugin.gum.undoGrief(field);
+                                    size += plugin.gum.undoGrief(o);
                                 }
 
                                 if (size > 0)

@@ -3,7 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.event.server.ServerListener;
 
-import com.nijikokun.register.payment.Methods;
+import net.sacredlabyrinth.register.payment.Methods;
 import java.util.logging.Level;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
@@ -15,7 +15,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 public class PSServerListener extends ServerListener
 {
     private final PreciousStones plugin;
-    private Methods Methods = new Methods();
+    private Methods Methods;
 
     /**
      *
@@ -24,6 +24,7 @@ public class PSServerListener extends ServerListener
     public PSServerListener(PreciousStones plugin)
     {
         this.plugin = plugin;
+        Methods = new Methods();
     }
 
     @Override

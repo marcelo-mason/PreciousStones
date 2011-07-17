@@ -12,9 +12,7 @@ import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
-import org.bukkit.block.Sign;
 
 /**
  * A field object
@@ -32,7 +30,7 @@ public class Field extends AbstractVec
     private List<Dirty> dirty = new ArrayList<Dirty>();
     private List<GriefBlock> grief = new ArrayList<GriefBlock>();
     private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
-    private Timestamp lastUsed;
+    private long lastUsed;
 
     /**
      *
@@ -47,7 +45,7 @@ public class Field extends AbstractVec
      * @param owner
      * @param name
      */
-    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name, Timestamp lastUsed)
+    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name, long lastUsed)
     {
         super(x, y, z, world);
 
@@ -569,7 +567,7 @@ public class Field extends AbstractVec
      */
     public void updateLastUsed()
     {
-        lastUsed = (new Timestamp((new Date()).getTime()));
+        lastUsed = (new Date()).getTime();
         dirty.add(Dirty.LASTUSED);
     }
 
@@ -579,12 +577,12 @@ public class Field extends AbstractVec
      */
     public int getAgeInDays()
     {
-        if (lastUsed == null)
+        if (lastUsed <= 0)
         {
             return 0;
         }
 
-        return (int) Dates.differenceInDays((new Timestamp((new Date()).getTime())), lastUsed);
+        return (int) Dates.differenceInDays(new Date(), new Date(lastUsed));
     }
 
     /**

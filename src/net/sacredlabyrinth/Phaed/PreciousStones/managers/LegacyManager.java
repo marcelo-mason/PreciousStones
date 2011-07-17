@@ -143,7 +143,7 @@ public class LegacyManager
 
                     Unbreakable ub = new Unbreakable(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), world, Material.getMaterial(type).getId(), owner);
 
-                    plugin.sm.insertUnbreakable(ub);
+                    plugin.sm.offerUnbreakable(ub, true);
                     plugin.um.addToCollection(ub);
                 }
                 catch (Exception ex)
@@ -275,9 +275,9 @@ public class LegacyManager
                         continue;
                     }
 
-                    Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), 0, world, Material.getMaterial(type).getId(), owner, name, null);
+                    Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), 0, world, Material.getMaterial(type).getId(), owner, name, 0);
 
-                    plugin.sm.insertField(field);
+                    plugin.sm.offerField(field);
                     plugin.ffm.addToCollection(field);
                 }
                 catch (Exception ex)
