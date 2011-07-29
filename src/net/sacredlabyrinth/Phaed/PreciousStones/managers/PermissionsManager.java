@@ -7,6 +7,9 @@ import com.nijiko.permissions.PermissionHandler;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.PluginManager;
 
 /**
  *
@@ -26,9 +29,8 @@ public final class PermissionsManager
      */
     public PermissionsManager(PreciousStones plugin)
     {
-	this.plugin = plugin;
-
-	startPermissions();
+        this.plugin = plugin;
+        startPermissions();
     }
 
     /**
@@ -39,45 +41,45 @@ public final class PermissionsManager
      */
     public boolean hasPermission(Player player, String permission)
     {
-	if (player == null)
-	{
-	    return false;
-	}
+        if (player == null)
+        {
+            return false;
+        }
 
-	if (hasPermissionPlugin())
-	{
+        if (hasPermissionPlugin())
+        {
             if (Permissions.has(player, "preciousstones.blacklist") && !Permissions.has(player, "preciousstones.admintest"))
             {
                 return false;
             }
 
-	    return Permissions.has(player, permission);
-	}
-	else
-	{
-	    if (player.isOp())
-	    {
-		return true;
-	    }
-	    else
-	    {
-		if (permission.contains("benefit"))
-		{
-		    return true;
-		}
-		else if (permission.contains("whitelist"))
-		{
-		    return true;
-		}
+            return Permissions.has(player, permission);
+        }
+        else
+        {
+            if (player.isOp())
+            {
+                return true;
+            }
+            else
+            {
+                if (permission.contains("benefit"))
+                {
+                    return true;
+                }
+                else if (permission.contains("whitelist"))
+                {
+                    return true;
+                }
 
-		return false;
-	    }
-	}
+                return false;
+            }
+        }
     }
 
     private boolean hasPermissionPlugin()
     {
-	return Permissions != null;
+        return Permissions != null;
     }
 
     /**
@@ -85,14 +87,14 @@ public final class PermissionsManager
      */
     public void startPermissions()
     {
-	if (PermissionsManager.Permissions == null)
-	{
-	    Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
+        if (PermissionsManager.Permissions == null)
+        {
+            Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
 
-	    if (test != null)
-	    {
-		PermissionsManager.Permissions = ((Permissions) test).getHandler();
-	    }
-	}
+            if (test != null)
+            {
+                PermissionsManager.Permissions = ((Permissions) test).getHandler();
+            }
+        }
     }
 }

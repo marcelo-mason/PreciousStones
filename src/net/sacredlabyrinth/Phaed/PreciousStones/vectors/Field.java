@@ -333,8 +333,8 @@ public class Field extends AbstractVec
         int maxx = getX() + getRadius();
         int minz = getZ() - getRadius();
         int maxz = getZ() + getRadius();
-        int miny = getY() - (int) Math.floor(((double) getHeight()) / 2);
-        int maxy = getY() + (int) Math.ceil(((double) getHeight()) / 2);
+        int miny = getY() - (int) Math.floor(((double) Math.max(getHeight() - 1, 0)) / 2);
+        int maxy = getY() + (int) Math.ceil(((double) Math.max(getHeight() - 1, 0)) / 2);
 
         corners.add(new Vector(minx, miny, minz));
         corners.add(new Vector(minx, miny, maxz));
@@ -398,8 +398,8 @@ public class Field extends AbstractVec
         int maxx = getX() + getRadius();
         int minz = getZ() - getRadius();
         int maxz = getZ() + getRadius();
-        int miny = getY() - (int) Math.floor(((double) getHeight()) / 2);
-        int maxy = getY() + (int) Math.ceil(((double) getHeight()) / 2);
+        int miny = getY() - (int) Math.floor(((double) Math.max(getHeight() - 1, 0)) / 2);
+        int maxy = getY() + (int) Math.ceil(((double) Math.max(getHeight() - 1, 0)) / 2);
 
         if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
         {
@@ -424,8 +424,8 @@ public class Field extends AbstractVec
         int maxx = getX() + getRadius();
         int minz = getZ() - getRadius();
         int maxz = getZ() + getRadius();
-        int miny = getY() - (int) Math.floor(((double) getHeight()) / 2);
-        int maxy = getY() + (int) Math.ceil(((double) getHeight()) / 2);
+        int miny = getY() - (int) Math.floor(((double) Math.max(getHeight() - 1, 0)) / 2);
+        int maxy = getY() + (int) Math.ceil(((double) Math.max(getHeight() - 1, 0)) / 2);
 
         if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
         {

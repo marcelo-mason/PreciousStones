@@ -2,7 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -214,6 +213,64 @@ public final class UnbreakableManager
     }
 
     /**
+     * Revert orphan unbreakables
+     * @param worldName the world name
+     * @return
+     */
+    public int revertOrphans(World world)
+    {
+        int revertedCount = 0;
+        boolean currentChunkLoaded = false;
+        ChunkVec currentChunk = null;
+
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = retrieveUnbreakables(world.getName());
+
+        if (w != null)
+        {
+            for (HashMap<Vec, Unbreakable> ubs : w.values())
+            {
+                for (Unbreakable unbreakable : ubs.values())
+                {
+                    // ensure chunk is loaded prior to polling
+
+                    ChunkVec cv = unbreakable.toChunkVec();
+
+                    if (!cv.equals(currentChunk))
+                    {
+                        if (!currentChunkLoaded)
+                        {
+                            if (currentChunk != null)
+                            {
+                                world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                            }
+                        }
+
+                        currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                        if (!currentChunkLoaded)
+                        {
+                            world.loadChunk(cv.getX(), cv.getZ());
+                        }
+
+                        currentChunk = cv;
+                    }
+
+                    int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+
+                    if (!plugin.settings.isUnbreakableType(type))
+                    {
+                        revertedCount++;
+                        Block block = world.getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+                        block.setTypeId(unbreakable.getTypeId());
+                    }
+                }
+            }
+        }
+
+        return revertedCount;
+    }
+
+    /**
      * Determine whether a player is the owner of the stone
      * @param unbreakableblock
      * @param playerName
@@ -319,51 +376,6 @@ public final class UnbreakableManager
                         {
                             return surroundingblock;
                         }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the piston could displace a pstone
-     * @param piston
-     * @param placer
-     * @return
-     */
-    public Unbreakable getPistonConflict(Block piston, Player placer)
-    {
-        for (int z = -15; z <= 15; z++)
-        {
-            for (int x = -1; x <= 1; x++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    Block block = piston.getRelative(x, y, z);
-                    Unbreakable ub = getUnbreakable(block);
-
-                    if (ub != null)
-                    {
-                        return ub;
-                    }
-                }
-            }
-        }
-
-        for (int z = -1; z <= 1; z++)
-        {
-            for (int x = -15; x <= 15; x++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    Block block = piston.getRelative(x, y, z);
-                    Unbreakable ub = getUnbreakable(block);
-
-                    if (ub != null)
-                    {
-                        return ub;
                     }
                 }
             }

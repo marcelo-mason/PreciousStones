@@ -108,12 +108,6 @@ public abstract class AbstractVec
     }
 
     @Override
-    public int hashCode()
-    {
-        return ((new Integer(getX())).hashCode() >> 13) ^ ((new Integer(getY())).hashCode() >> 7) ^ ((new Integer(getZ())).hashCode()) ^ ((getWorld()).hashCode());
-    }
-
-    @Override
     public boolean equals(Object obj)
     {
         if (!(obj instanceof AbstractVec))
@@ -123,6 +117,17 @@ public abstract class AbstractVec
 
         AbstractVec other = (AbstractVec) obj;
         return other.getX() == this.getX() && other.getY() == this.getY() && other.getZ() == this.getZ() && other.getWorld().equals(this.getWorld());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 47 * hash + this.x;
+        hash = 47 * hash + this.y;
+        hash = 47 * hash + this.z;
+        hash = 47 * hash + (this.world != null ? this.world.hashCode() : 0);
+        return hash;
     }
 
     @Override

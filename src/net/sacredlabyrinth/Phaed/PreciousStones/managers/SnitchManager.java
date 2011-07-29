@@ -41,15 +41,15 @@ public class SnitchManager
     {
         if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-            if (fieldsettings == null)
+            if (fs == null)
             {
                 plugin.ffm.queueRelease(field);
                 return;
             }
 
-            if (fieldsettings.snitch)
+            if (fs.snitch)
             {
                 if (!field.isOwner(player.getName()))
                 {

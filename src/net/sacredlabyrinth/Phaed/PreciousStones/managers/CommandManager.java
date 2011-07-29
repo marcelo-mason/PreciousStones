@@ -6,6 +6,7 @@ import me.taylorkelly.help.Help;
 
 import java.util.HashSet;
 import java.util.List;
+import org.bukkit.World;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.ChatColor;
@@ -93,6 +94,7 @@ public final class CommandManager implements CommandExecutor
             helpPlugin.registerCommand("ps reload ", "Reload configuraton file", plugin, true, "preciousstones.admin.reload");
             helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
             helpPlugin.registerCommand("ps clean ", "Cleans up all orphan fields in the world", plugin, true, "preciousstones.admin.clean");
+            helpPlugin.registerCommand("ps clean ", "Reverts all orphan fields in the world", plugin, true, "preciousstones.admin.revert");
 
             PreciousStones.log(Level.INFO, "Help plugin support enabled");
         }
@@ -116,11 +118,6 @@ public final class CommandManager implements CommandExecutor
                 if (command.getName().equals("ps"))
                 {
                     Player player = (Player) sender;
-
-                    if (!plugin.pm.hasPermission(player, "preciousstones.benefit.ps"))
-                    {
-                        return false;
-                    }
 
                     if (args.length > 0)
                     {
@@ -364,7 +361,7 @@ public final class CommandManager implements CommandExecutor
                                         }
                                         else
                                         {
-                                            plugin.cm.showNotFound(player);
+                                            ChatBlock.sendMessage(player, ChatColor.RED + "No nameable fields found");
                                         }
                                         return true;
                                     }
@@ -386,15 +383,15 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+                                    FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-                                    if (fieldsettings == null)
+                                    if (fs == null)
                                     {
                                         plugin.ffm.deleteField(field);
                                         return true;
                                     }
 
-                                    if (radius >= 0 && radius <= fieldsettings.radius)
+                                    if (radius >= 0 && radius <= fs.radius)
                                     {
                                         field.setRadius(radius);
                                         plugin.sm.offerField(field);
@@ -402,7 +399,7 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.RED + "Radius must be less than or equal to " + fieldsettings.radius);
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "Radius must be less than or equal to " + fs.radius);
                                     }
                                     return true;
                                 }
@@ -423,15 +420,15 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+                                    FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-                                    if (fieldsettings == null)
+                                    if (fs == null)
                                     {
                                         plugin.ffm.deleteField(field);
                                         return true;
                                     }
 
-                                    int maxHeight = (((fieldsettings.radius * 2) + 1) + fieldsettings.height);
+                                    int maxHeight = (((fs.radius * 2) + 1) + fs.height);
 
                                     if (height >= 0 && height <= maxHeight)
                                     {
@@ -462,15 +459,15 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+                                    FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-                                    if (fieldsettings == null)
+                                    if (fs == null)
                                     {
                                         plugin.ffm.deleteField(field);
                                         return true;
                                     }
 
-                                    if (fieldsettings.cannon || fieldsettings.launch)
+                                    if (fs.cannon || fs.launch)
                                     {
                                         if (velocity < 0 || velocity > 5)
                                         {
@@ -499,6 +496,8 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (plugin.pm.hasPermission(player, "preciousstones.admin.visualize"))
                             {
+                                plugin.viz.revertVisualization(player);
+
                                 List<Field> fieldsInArea = plugin.ffm.getFieldsInCustomArea(player.getLocation(), plugin.settings.visualizeAdminChunkRadius);
 
                                 if (fieldsInArea.size() > 0)
@@ -515,6 +514,8 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
+                                plugin.viz.revertVisualization(player);
+
                                 Field field = plugin.ffm.getOneAllowedField(block, player);
 
                                 if (field != null)
@@ -794,17 +795,51 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (cmd.equals("clean") && plugin.pm.hasPermission(player, "preciousstones.admin.clean"))
                         {
-                            int cleandFF = plugin.ffm.cleanOrphans(player.getWorld());
+                            List<World> worlds = plugin.getServer().getWorlds();
+
+                            int cleandFF = 0;
+                            int cleandU = 0;
+
+                            for (World world : worlds)
+                            {
+                                cleandFF += plugin.ffm.cleanOrphans(world);
+                                cleandU += plugin.um.cleanOrphans(world);
+                            }
 
                             if (cleandFF > 0)
                             {
                                 ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned fields");
                             }
-                            int cleandU = plugin.um.cleanOrphans(player.getWorld());
-
                             if (cleandU > 0)
                             {
                                 ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned unbreakable blocks");
+                            }
+                            if (cleandFF == 0 && cleandU == 0)
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "No orphan fields/unbreakables found");
+                            }
+                            return true;
+                        }
+                        else if (cmd.equals("revert") && plugin.pm.hasPermission(player, "preciousstones.admin.revert"))
+                        {
+                            List<World> worlds = plugin.getServer().getWorlds();
+
+                            int cleandFF = 0;
+                            int cleandU = 0;
+
+                            for (World world : worlds)
+                            {
+                                cleandFF = plugin.ffm.revertOrphans(world);
+                                cleandU = plugin.um.revertOrphans(world);
+                            }
+
+                            if (cleandFF > 0)
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Reverted " + cleandFF + " orphaned fields");
+                            }
+                            if (cleandU > 0)
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Reverted " + cleandFF + " orphaned unbreakable blocks");
                             }
 
                             if (cleandFF == 0 && cleandU == 0)
@@ -814,7 +849,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
 
-                        ChatBlock.sendMessage(player, ChatColor.RED + "Not a valid command or syntax error.  Try agian.");
+                        ChatBlock.sendMessage(player, ChatColor.RED + "Not a valid command or insufficient permissions");
 
                         return true;
                     }
@@ -823,10 +858,6 @@ public final class CommandManager implements CommandExecutor
                     String status = plugin.plm.isDisabled(player) ? ChatColor.GRAY + " - disabled" : "";
 
                     cacheBlock = new ChatBlock();
-
-                    ChatBlock.sendBlank(player);
-                    ChatBlock.saySingle(player, ChatColor.WHITE + plugin.getDescription().getName() + " " + plugin.getDescription().getVersion() + status + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
-                    ChatBlock.sendBlank(player);
 
                     if (plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
                     {
@@ -934,20 +965,32 @@ public final class CommandManager implements CommandExecutor
                         cacheBlock.addRow(ChatColor.DARK_RED + "  /ps clean " + ChatColor.AQUA + "- Cleans up all orphan fields in the world");
                     }
 
+                    if (plugin.pm.hasPermission(player, "preciousstones.admin.revert"))
+                    {
+                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps revert " + ChatColor.AQUA + "- Reverts all orphan fields in the world");
+                    }
+
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.retag"))
                     {
                         cacheBlock.addRow(ChatColor.DARK_RED + "  /ps retag " + ChatColor.AQUA + "- Re-tags all chunks that contain pstones");
                     }
 
-                    boolean more = cacheBlock.sendBlock(player, plugin.settings.linesPerPage);
-
-                    if (more)
+                    if (cacheBlock.size() > 0)
                     {
                         ChatBlock.sendBlank(player);
-                        ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
-                    }
+                        ChatBlock.saySingle(player, ChatColor.WHITE + plugin.getDescription().getName() + " " + plugin.getDescription().getVersion() + status + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
+                        ChatBlock.sendBlank(player);
 
-                    ChatBlock.sendBlank(player);
+                        boolean more = cacheBlock.sendBlock(player, plugin.settings.linesPerPage);
+
+                        if (more)
+                        {
+                            ChatBlock.sendBlank(player);
+                            ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+                        }
+
+                        ChatBlock.sendBlank(player);
+                    }
                     return true;
                 }
             }

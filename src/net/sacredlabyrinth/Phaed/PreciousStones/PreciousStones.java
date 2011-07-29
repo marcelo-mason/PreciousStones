@@ -156,6 +156,8 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PISTON_EXTEND, blockListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PISTON_RETRACT, blockListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.High, this);
@@ -173,6 +175,7 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onDisable()
     {
+        getServer().getScheduler().cancelAllTasks();
         sm.processQueue();
     }
 }

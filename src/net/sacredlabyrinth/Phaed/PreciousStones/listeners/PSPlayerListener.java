@@ -105,7 +105,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        Field usefield = plugin.ffm.isUseProtected(block.getLocation(), player, block.getTypeId());
+        Field usefield = plugin.ffm.findUseProtected(block.getLocation(), player, block.getTypeId());
 
         if (usefield != null)
         {
@@ -178,15 +178,15 @@ public class PSPlayerListener extends PlayerListener
                     else if (plugin.ffm.isField(block))
                     {
                         Field field = plugin.ffm.getField(block);
-                        FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+                        FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-                        if (fieldsettings == null)
+                        if (fs == null)
                         {
                             plugin.ffm.queueRelease(field);
                             return;
                         }
 
-                        if ((plugin.ffm.isAllowed(block, player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.undo")) && (fieldsettings.griefUndoInterval || fieldsettings.griefUndoRequest))
+                        if ((plugin.ffm.isAllowed(block, player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.undo")) && (fs.griefUndoInterval || fs.griefUndoRequest))
                         {
                             HashSet<Field> overlapped = plugin.ffm.getOverlappedFields(player, field);
 
@@ -233,7 +233,7 @@ public class PSPlayerListener extends PlayerListener
                     }
                     else
                     {
-                        Field field = plugin.ffm.isDestroyProtected(block.getLocation());
+                        Field field = plugin.ffm.findDestroyProtected(block.getLocation());
 
                         if (field != null)
                         {
@@ -303,11 +303,6 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (new Vec(event.getFrom()).equals(new Vec(event.getTo())))
-        {
-            return;
-        }
-
         if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
         {
             return;
@@ -323,9 +318,12 @@ public class PSPlayerListener extends PlayerListener
 
         // undo a player's visualization if it exists
 
-        if (!plugin.pm.hasPermission(player, "preciousstones.admin.visualize") && plugin.settings.visualizeEndOnMove)
+        if (plugin.settings.visualizeEndOnMove)
         {
-            plugin.viz.revertVisualization(player);
+            if (!plugin.pm.hasPermission(player, "preciousstones.admin.visualize"))
+            {
+                plugin.viz.revertVisualization(player);
+            }
         }
 
         // remove player from any entry field he is not currently in
@@ -354,21 +352,22 @@ public class PSPlayerListener extends PlayerListener
 
         for (Field field : currentfields)
         {
-            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-            if (fieldsettings == null)
+            if (fs == null)
             {
                 plugin.ffm.queueRelease(field);
                 return;
             }
 
-            if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
+            if (fs.preventEntry)
             {
-                if (fieldsettings.preventEntry)
+                if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
                 {
                     if (!plugin.ffm.isAllowed(field, player.getName()))
                     {
                         event.setTo(event.getFrom());
+                        event.setCancelled(true);
                         plugin.cm.warnEntry(player, field);
                         return;
                     }
@@ -378,18 +377,15 @@ public class PSPlayerListener extends PlayerListener
 
         // enter all fields hes is not currently entered into yet
 
-        if (currentfields != null)
+        for (Field currentfield : currentfields)
         {
-            for (Field currentfield : currentfields)
+            if (!plugin.em.enteredField(player, currentfield))
             {
-                if (!plugin.em.isInsideField(player, currentfield))
+                if (!plugin.em.containsSameNameOwnedField(player, currentfield))
                 {
-                    if (!plugin.em.containsSameNameOwnedField(player, currentfield))
-                    {
-                        plugin.em.enterOverlappedArea(player, currentfield);
-                    }
-                    plugin.em.enterField(player, currentfield);
+                    plugin.em.enterOverlappedArea(player, currentfield);
                 }
+                plugin.em.enterField(player, currentfield);
             }
         }
 
@@ -422,7 +418,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        Field field = plugin.ffm.isPlaceProtected(block.getLocation(), player);
+        Field field = plugin.ffm.findPlaceProtected(block.getLocation(), player);
 
         if (field != null)
         {
@@ -437,7 +433,7 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        field = plugin.ffm.isGriefProtected(block.getLocation(), player);
+        field = plugin.ffm.findGriefProtected(block.getLocation(), player);
 
         if (field != null)
         {
@@ -487,7 +483,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        Field field = plugin.ffm.isPlaceProtected(block.getLocation(), player);
+        Field field = plugin.ffm.findPlaceProtected(block.getLocation(), player);
 
         if (field != null)
         {
@@ -502,7 +498,7 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        field = plugin.ffm.isGriefProtected(block.getLocation(), player);
+        field = plugin.ffm.findGriefProtected(block.getLocation(), player);
 
         if (field != null)
         {

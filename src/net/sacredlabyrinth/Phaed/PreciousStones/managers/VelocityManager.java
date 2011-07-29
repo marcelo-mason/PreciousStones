@@ -67,15 +67,15 @@ public class VelocityManager
         {
             if (plugin.ffm.isAllowed(field, player.getName()))
             {
-                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+                FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-                if (fieldsettings == null)
+                if (fs == null)
                 {
                     plugin.ffm.queueRelease(field);
                     return;
                 }
 
-                final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.launchHeight;
+                final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : fs.launchHeight;
                 double speed = 8;
 
                 Vector loc = player.getLocation().toVector();
@@ -85,7 +85,7 @@ public class VelocityManager
                 velocity.multiply(speed / velocity.length());
                 velocity.setY(launchheight > 0 ? launchheight : (((player.getLocation().getPitch() * -1) + 90) / 35));
 
-                if (fieldsettings.launch)
+                if (fs.launch)
                 {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
@@ -147,18 +147,18 @@ public class VelocityManager
         {
             if (plugin.ffm.isAllowed(field, player.getName()))
             {
-                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+                FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-                if (fieldsettings == null)
+                if (fs == null)
                 {
                     plugin.ffm.queueRelease(field);
                     return;
                 }
 
-                final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fieldsettings.cannonHeight;
+                final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fs.cannonHeight;
                 final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
 
-                if (fieldsettings.cannon)
+                if (fs.cannon)
                 {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {

@@ -71,20 +71,20 @@ public class UnprotectableManager
      */
     public Block existsUnprotectableBlock(Block fieldblock)
     {
-        FieldSettings fieldsettings = plugin.settings.getFieldSettings(fieldblock.getTypeId());
+        FieldSettings fs = plugin.settings.getFieldSettings(fieldblock.getTypeId());
 
-        if (fieldsettings == null)
+        if (fs == null)
         {
             return null;
         }
 
-        int minx = fieldblock.getX() - fieldsettings.radius;
-        int maxx = fieldblock.getX() + fieldsettings.radius;
-        int minz = fieldblock.getZ() - fieldsettings.radius;
-        int maxz = fieldblock.getZ() + fieldsettings.radius;
+        int minx = fieldblock.getX() - fs.radius;
+        int maxx = fieldblock.getX() + fs.radius;
+        int minz = fieldblock.getZ() - fs.radius;
+        int maxz = fieldblock.getZ() + fs.radius;
 
-        int miny = fieldblock.getY() - (int) Math.floor(((double) fieldsettings.getHeight()) / 2);
-        int maxy = fieldblock.getY() + (int) Math.ceil(((double) fieldsettings.getHeight()) / 2);
+        int miny = fieldblock.getY() - (int) Math.floor(((double) Math.max(fs.getHeight() - 1, 0)) / 2);
+        int maxy = fieldblock.getY() + (int) Math.ceil(((double) Math.max(fs.getHeight() - 1, 0)) / 2);
 
         for (int x = minx; x <= maxx; x++)
         {

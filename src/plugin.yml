@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 5.3.1
+version: 5.4
 softdepend: [Permissions, Help, SimpleTeams]
 commands:
   ps:

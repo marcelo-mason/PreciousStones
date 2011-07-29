@@ -211,22 +211,30 @@ public final class StorageManager
      */
     public void loadWorldFields(String world)
     {
-        List<Field> fields = getFields(world);
+        List<Field> fields;
 
-        for (Field field : fields)
+        synchronized (this)
         {
-            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+            fields = getFields(world);
+        }
 
-            if (fieldsettings == null)
+        if (fields != null)
+        {
+            for (Field field : fields)
             {
-                continue;
-            }
+                FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-            plugin.ffm.addToCollection(field);
+                if (fs == null)
+                {
+                    continue;
+                }
 
-            if (fieldsettings.griefUndoInterval)
-            {
-                plugin.gum.add(field);
+                plugin.ffm.addToCollection(field);
+
+                if (fs.griefUndoInterval)
+                {
+                    plugin.gum.add(field);
+                }
             }
         }
 
@@ -242,11 +250,19 @@ public final class StorageManager
      */
     public void loadWorldUnbreakables(String world)
     {
-        List<Unbreakable> unbreakables = getUnbreakables(world);
+        List<Unbreakable> unbreakables;
 
-        for (Unbreakable ub : unbreakables)
+        synchronized (this)
         {
-            plugin.um.addToCollection(ub);
+            unbreakables = getUnbreakables(world);
+        }
+
+        if (unbreakables != null)
+        {
+            for (Unbreakable ub : unbreakables)
+            {
+                plugin.um.addToCollection(ub);
+            }
         }
 
         if (unbreakables.size() > 0)
@@ -269,7 +285,8 @@ public final class StorageManager
 
     /**
      * Puts the unbreakable up for future storage
-     * @param field
+     * @param ub
+     * @param insert
      */
     public void offerUnbreakable(Unbreakable ub, boolean insert)
     {
@@ -293,7 +310,8 @@ public final class StorageManager
 
     /**
      * Puts the player up for future storage
-     * @param player
+     * @param playerName
+     * @param update
      */
     public void offerPlayer(String playerName, boolean update)
     {
@@ -326,6 +344,7 @@ public final class StorageManager
         int purged = 0;
 
         String query = "SELECT * FROM  pstone_fields LEFT JOIN pstone_players ON pstone_fields.owner = pstone_players.player_name WHERE world = '" + worldName + "';";
+
         ResultSet res = core.sqlQuery(query);
 
         if (res != null)
@@ -412,6 +431,7 @@ public final class StorageManager
 
 
         String query = "SELECT * FROM  `pstone_unbreakables` LEFT JOIN pstone_players ON pstone_unbreakables.owner = pstone_players.player_name WHERE world = '" + worldName + "';";
+
         ResultSet res = core.sqlQuery(query);
 
         if (res != null)
@@ -552,7 +572,11 @@ public final class StorageManager
         {
             PreciousStones.logger.info(query + values);
         }
-        core.insertQuery(query + values);
+
+        synchronized (this)
+        {
+            core.insertQuery(query + values);
+        }
     }
 
     /**
@@ -641,7 +665,10 @@ public final class StorageManager
         {
             PreciousStones.logger.info(query);
         }
-        core.deleteQuery(query);
+        synchronized (this)
+        {
+            core.deleteQuery(query);
+        }
     }
 
     /**
@@ -659,12 +686,23 @@ public final class StorageManager
             pendingSnitchEntries.clear();
         }
 
-        processSnitches(workingSnitchEntries);
+        synchronized (this)
+        {
+            core.openBatch();
+            processSnitches(workingSnitchEntries);
+            core.closeBatch();
+        }
 
         List<SnitchEntry> out = new ArrayList<SnitchEntry>();
 
         String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + snitch.getWorld() + "' ORDER BY `id` DESC;";
-        ResultSet res = core.sqlQuery(query);
+
+        ResultSet res;
+
+        synchronized (this)
+        {
+            res = core.sqlQuery(query);
+        }
 
         if (res != null)
         {
@@ -831,7 +869,7 @@ public final class StorageManager
     /**
      * Record a single block grief
      * @param field
-     * @param block
+     * @param gb
      */
     public void recordBlockGriefClean(Field field, GriefBlock gb)
     {
@@ -855,7 +893,12 @@ public final class StorageManager
             pendingGrief.clear();
         }
 
-        processGrief(workingGrief);
+        synchronized (this)
+        {
+            core.openBatch();
+            processGrief(workingGrief);
+            core.closeBatch();
+        }
 
         List<GriefBlock> out = new ArrayList<GriefBlock>();
 
@@ -866,7 +909,12 @@ public final class StorageManager
             PreciousStones.logger.info(query);
         }
 
-        ResultSet res = core.sqlQuery(query);
+        ResultSet res;
+
+        synchronized (this)
+        {
+            res = core.sqlQuery(query);
+        }
 
         if (res != null)
         {
@@ -917,8 +965,10 @@ public final class StorageManager
         {
             PreciousStones.logger.info(query);
         }
-
-        core.deleteQuery(query);
+        synchronized (this)
+        {
+            core.deleteQuery(query);
+        }
     }
 
     /**
@@ -933,20 +983,26 @@ public final class StorageManager
         {
             PreciousStones.logger.info(query);
         }
-
-        core.deleteQuery(query);
+        synchronized (this)
+        {
+            core.deleteQuery(query);
+        }
     }
 
     /**
      * Schedules the pending queue on save frequency
      */
-    public void saverScheduler()
+    public int saverScheduler()
     {
-        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
+        return plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
         {
             @Override
             public void run()
             {
+                if (plugin.settings.debugsql)
+                {
+                    PreciousStones.logger.info("[Queue] processing queue...");
+                }
                 processQueue();
             }
         }, 0, 20L * plugin.settings.saveFrequency);
@@ -954,7 +1010,6 @@ public final class StorageManager
 
     /**
      * Process entire queue
-     * @param dirtyType
      */
     public void processQueue()
     {
@@ -990,15 +1045,18 @@ public final class StorageManager
             pendingSnitchEntries.clear();
         }
 
-        core.openBatch();
+        synchronized (this)
+        {
+            core.openBatch();
 
-        processFields(working);
-        processUnbreakable(workingUb);
-        processGrief(workingGrief);
-        processPlayers(workingPlayers);
-        processSnitches(workingSnitchEntries);
+            processFields(working);
+            processUnbreakable(workingUb);
+            processGrief(workingGrief);
+            processPlayers(workingPlayers);
+            processSnitches(workingSnitchEntries);
 
-        core.closeBatch();
+            core.closeBatch();
+        }
 
         if (plugin.settings.debugdb && !pending.isEmpty())
         {
@@ -1009,7 +1067,7 @@ public final class StorageManager
 
     /**
      * Process pending pstones
-     * @param dirtyType
+     * @param working
      */
     public void processFields(Map<Vec, Field> working)
     {
@@ -1045,6 +1103,7 @@ public final class StorageManager
 
     /**
      * Process pending grief
+     * @param workingUb
      */
     public void processUnbreakable(Map<Unbreakable, Boolean> workingUb)
     {
@@ -1087,6 +1146,7 @@ public final class StorageManager
 
     /**
      * Process pending players
+     * @param workingPlayers
      */
     public void processPlayers(Map<String, Boolean> workingPlayers)
     {
@@ -1129,6 +1189,7 @@ public final class StorageManager
 
     /**
      * Process pending snitches
+     * @param workingSnitchEntries
      */
     public void processSnitches(List<SnitchEntry> workingSnitchEntries)
     {
@@ -1164,6 +1225,7 @@ public final class StorageManager
 
     /**
      * Process pending grief
+     * @param workingGrief
      */
     public void processGrief(Set<Field> workingGrief)
     {

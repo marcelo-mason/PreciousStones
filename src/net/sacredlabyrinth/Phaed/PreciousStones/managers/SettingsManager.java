@@ -100,7 +100,7 @@ public final class SettingsManager
     public String database;
     public String username;
     public String password;
-    private final HashMap<Integer, FieldSettings> fieldsettings = new HashMap<Integer, FieldSettings>();
+    private final HashMap<Integer, FieldSettings> fs = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
 
     /**
@@ -302,7 +302,7 @@ public final class SettingsManager
             if (pstone.blockDefined)
             {
                 // add stone to our collection
-                fieldsettings.put(pstone.blockId, pstone);
+                fs.put(pstone.blockId, pstone);
 
                 // add the values to our reference lists
                 ffBlocks.add(pstone.blockId);
@@ -324,7 +324,7 @@ public final class SettingsManager
      */
     public boolean haveNameable()
     {
-        for (FieldSettings setting : fieldsettings.values())
+        for (FieldSettings setting : fs.values())
         {
             if (setting.welcomeMessage || setting.farewellMessage)
             {
@@ -341,7 +341,7 @@ public final class SettingsManager
      */
     public boolean haveVelocity()
     {
-        for (FieldSettings setting : fieldsettings.values())
+        for (FieldSettings setting : fs.values())
         {
             if (setting.cannon || setting.launch)
             {
@@ -358,7 +358,7 @@ public final class SettingsManager
      */
     public boolean haveSnitch()
     {
-        for (FieldSettings setting : fieldsettings.values())
+        for (FieldSettings setting : fs.values())
         {
             if (setting.snitch)
             {
@@ -436,7 +436,7 @@ public final class SettingsManager
      */
     public boolean isSnitchType(Block block)
     {
-        for (FieldSettings setting : fieldsettings.values())
+        for (FieldSettings setting : fs.values())
         {
             if (setting.snitch && setting.blockId == block.getTypeId())
             {
@@ -544,7 +544,7 @@ public final class SettingsManager
      */
     public FieldSettings getFieldSettings(int typeId)
     {
-        return fieldsettings.get(typeId);
+        return fs.get(typeId);
     }
 
     /**
@@ -553,7 +553,7 @@ public final class SettingsManager
      */
     public HashMap<Integer, FieldSettings> getFieldSettings()
     {
-        return fieldsettings;
+        return fs;
     }
 
     /**
@@ -656,6 +656,11 @@ public final class SettingsManager
          */
         public boolean canUse(int type)
         {
+            if (preventUse == null)
+            {
+                return true;
+            }
+
             return !preventUse.contains(type);
         }
 

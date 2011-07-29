@@ -39,18 +39,18 @@ public class LightningManager
 
 	if (!plugin.ffm.isAllowed(field, player.getName()))
 	{
-	    FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+	    FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-            if (fieldsettings == null)
+            if (fs == null)
             {
                 plugin.ffm.queueRelease(field);
                 return;
             }
 
-	    final int delay = fieldsettings.lightningDelaySeconds;
-	    final int leftbehind = fieldsettings.lightningReplaceBlock;
+	    final int delay = fs.lightningDelaySeconds;
+	    final int leftbehind = fs.lightningReplaceBlock;
 
-	    if (fieldsettings.lightning)
+	    if (fs.lightning)
 	    {
 		plugin.cm.showLightning(player);
 

@@ -1,6 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 
@@ -22,6 +24,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 
 /**
  * PreciousStones block listener
@@ -81,15 +85,12 @@ public class PSBlockListener extends BlockListener
                 return;
             }
 
-            Field to = plugin.ffm.isFlowProtected(toBlock.getLocation());
-            Field from = plugin.ffm.isFlowProtected(block.getLocation());
-
-            if (to == null)
+            if (plugin.ffm.isFlowProtected(toBlock.getLocation()))
             {
                 return;
             }
 
-            if (from == null)
+            if (plugin.ffm.isFlowProtected(block.getLocation()))
             {
                 Block b = block.getFace(event.getFace());
 
@@ -150,7 +151,7 @@ public class PSBlockListener extends BlockListener
             plugin.snm.recordSnitchIgnite(player, block);
         }
 
-        Field field = plugin.ffm.isFireProtected(block.getLocation());
+        Field field = plugin.ffm.findFireProtected(block.getLocation());
 
         if (field != null)
         {
@@ -183,61 +184,30 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        Block redstoneblock = event.getBlock();
-
         if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
         {
             return;
         }
 
-        BlockFace[] faces =
-        {
-            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
-        };
+        Map<String, Field> players = plugin.em.getTriggerableEntryPlayers(event.getBlock());
 
-        for (BlockFace face : faces)
+        for (String playerName : players.keySet())
         {
-            Block fieldblock = redstoneblock.getRelative(face);
+            Player player = plugin.helper.matchSinglePlayer(playerName);
 
-            if (plugin.settings.isFieldType(fieldblock) && plugin.ffm.isField(fieldblock))
+            if (player != null)
             {
-                Field field = plugin.ffm.getField(fieldblock);
-                FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+                Field field = players.get(playerName);
+                FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-                if (fieldsettings == null)
+                if (fs.cannon)
                 {
-                    plugin.ffm.queueRelease(field);
-                    return;
+                    plugin.vm.shootPlayer(player, field);
                 }
 
-                if (fieldsettings.cannon)
+                if (fs.launch)
                 {
-                    HashSet<String> players = plugin.em.getInhabitants(field);
-
-                    for (String pl : players)
-                    {
-                        Player player = plugin.helper.matchSinglePlayer(pl);
-
-                        if (player != null)
-                        {
-                            plugin.vm.shootPlayer(player, field);
-                        }
-                    }
-                }
-
-                if (fieldsettings.launch)
-                {
-                    HashSet<String> players = plugin.em.getInhabitants(field);
-
-                    for (String pl : players)
-                    {
-                        Player player = plugin.helper.matchSinglePlayer(pl);
-
-                        if (player != null)
-                        {
-                            plugin.vm.launchPlayer(player, field);
-                        }
-                    }
+                    plugin.vm.launchPlayer(player, field);
                 }
             }
         }
@@ -279,9 +249,9 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.ffm.isField(brokenBlock))
         {
-            FieldSettings fieldsettings = plugin.settings.getFieldSettings(brokenBlock.getTypeId());
+            FieldSettings fs = plugin.settings.getFieldSettings(brokenBlock.getTypeId());
 
-            if (fieldsettings == null)
+            if (fs == null)
             {
                 plugin.ffm.queueRelease(brokenBlock);
                 return;
@@ -292,9 +262,9 @@ public class PSBlockListener extends BlockListener
                 plugin.cm.notifyDestroyBreakableFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
 
-                if (fieldsettings.price > 0)
+                if (fs.price > 0)
                 {
-                    plugin.ffm.refund(player, fieldsettings.price);
+                    plugin.ffm.refund(player, fs.price);
                 }
             }
             else if (plugin.ffm.isOwner(brokenBlock, player.getName()))
@@ -302,9 +272,9 @@ public class PSBlockListener extends BlockListener
                 plugin.cm.notifyDestroyFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
 
-                if (fieldsettings.price > 0)
+                if (fs.price > 0)
                 {
-                    plugin.ffm.refund(player, fieldsettings.price);
+                    plugin.ffm.refund(player, fs.price);
                 }
             }
             else if (plugin.settings.allowedCanBreakPstones && plugin.ffm.isAllowed(brokenBlock, player.getName()))
@@ -312,9 +282,9 @@ public class PSBlockListener extends BlockListener
                 plugin.cm.notifyDestroyOthersFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
 
-                if (fieldsettings.price > 0)
+                if (fs.price > 0)
                 {
-                    plugin.ffm.refund(player, fieldsettings.price);
+                    plugin.ffm.refund(player, fs.price);
                 }
             }
             else if (plugin.pm.hasPermission(player, "preciousstones.bypass.forcefield"))
@@ -351,7 +321,7 @@ public class PSBlockListener extends BlockListener
 
         // --------------------------------------------------------------------------------
 
-        Field field = plugin.ffm.isDestroyProtected(brokenBlock.getLocation(), player);
+        Field field = plugin.ffm.findDestroyProtected(brokenBlock.getLocation(), player);
 
         if (field != null)
         {
@@ -369,7 +339,7 @@ public class PSBlockListener extends BlockListener
             }
         }
 
-        field = plugin.ffm.isGriefProtected(brokenBlock.getLocation(), player);
+        field = plugin.ffm.findGriefProtected(brokenBlock.getLocation(), player);
 
         if (field != null)
         {
@@ -452,15 +422,6 @@ public class PSBlockListener extends BlockListener
             }
             else
             {
-                Block pistonblock = plugin.ffm.getPistonConflictReverse(placedblock, player);
-
-                if (pistonblock != null)
-                {
-                    event.setCancelled(true);
-                    plugin.cm.warnConflictPistonRU(player, pistonblock, placedblock);
-                    return;
-                }
-
                 if (plugin.upm.touchingUnprotectableBlock(placedblock))
                 {
                     if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
@@ -497,15 +458,6 @@ public class PSBlockListener extends BlockListener
             }
             else
             {
-                Block pistonblock = plugin.ffm.getPistonConflictReverse(placedblock, player);
-
-                if (pistonblock != null)
-                {
-                    event.setCancelled(true);
-                    plugin.cm.warnConflictPistonRFF(player, pistonblock, placedblock);
-                    return;
-                }
-
                 if (plugin.upm.touchingUnprotectableBlock(placedblock))
                 {
                     if (plugin.pm.hasPermission(player, "preciousstones.bypass.unprotectable"))
@@ -523,14 +475,14 @@ public class PSBlockListener extends BlockListener
                     return;
                 }
 
-                FieldSettings fieldsettings = plugin.settings.getFieldSettings(placedblock.getTypeId());
+                FieldSettings fs = plugin.settings.getFieldSettings(placedblock.getTypeId());
 
-                if (fieldsettings == null)
+                if (fs == null)
                 {
                     return;
                 }
 
-                if (fieldsettings.preventUnprotectable)
+                if (fs.preventUnprotectable)
                 {
                     Block foundblock = plugin.upm.existsUnprotectableBlock(placedblock);
 
@@ -552,18 +504,18 @@ public class PSBlockListener extends BlockListener
                     }
                 }
 
-                if (fieldsettings.forester || fieldsettings.foresterShrubs)
+                if (fs.forester || fs.foresterShrubs)
                 {
                     Block floor = placedblock.getRelative(BlockFace.DOWN);
 
                     if (!plugin.settings.isFertileType(floor.getTypeId()) && floor.getTypeId() != 2)
                     {
-                        player.sendMessage(ChatColor.AQUA + Helper.capitalize(fieldsettings.title) + " blocks must be placed of fertile land to activate");
+                        player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.title) + " blocks must be placed of fertile land to activate");
                         return;
                     }
                 }
 
-                if (fieldsettings.price == 0 || plugin.ffm.purchase(player, fieldsettings.price))
+                if (fs.price == 0 || plugin.ffm.purchase(player, fs.price))
                 {
                     if (plugin.ffm.add(placedblock, player))
                     {
@@ -614,7 +566,7 @@ public class PSBlockListener extends BlockListener
                 }
             }
 
-            Field field = plugin.ffm.isUprotectableBlockField(placedblock.getLocation());
+            Field field = plugin.ffm.findUprotectableBlockField(placedblock.getLocation());
 
             if (field != null)
             {
@@ -629,28 +581,10 @@ public class PSBlockListener extends BlockListener
                 }
             }
         }
-        else if (placedblock.getType().equals(Material.PISTON_BASE) || placedblock.getType().equals(Material.PISTON_STICKY_BASE))
-        {
-            Field field = plugin.ffm.getPistonConflict(placedblock, player);
-
-            if (field != null)
-            {
-                event.setCancelled(true);
-                plugin.cm.warnConflictPistonFF(player, placedblock, field);
-            }
-
-            Unbreakable ub = plugin.um.getPistonConflict(placedblock, player);
-
-            if (ub != null)
-            {
-                event.setCancelled(true);
-                plugin.cm.warnConflictPistonU(player, placedblock, ub);
-            }
-        }
 
         // -------------------------------------------------------------------------------------------
 
-        Field field = plugin.ffm.isPlaceProtected(placedblock.getLocation(), player);
+        Field field = plugin.ffm.findPlaceProtected(placedblock.getLocation(), player);
 
         if (field != null)
         {
@@ -665,7 +599,7 @@ public class PSBlockListener extends BlockListener
             }
         }
 
-        field = plugin.ffm.isGriefProtected(placedblock.getLocation());
+        field = plugin.ffm.findGriefProtected(placedblock.getLocation());
 
         if (field != null)
         {
@@ -736,6 +670,88 @@ public class PSBlockListener extends BlockListener
         if (plugin.settings.debug)
         {
             dt.logProcessTime();
+        }
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onBlockPistonExtend(BlockPistonExtendEvent event)
+    {
+        boolean unprotected = false;
+
+        Block piston = event.getBlock();
+
+        Field field = plugin.ffm.findDestroyProtected(piston.getLocation());
+
+        if (field == null)
+        {
+            unprotected = true;
+        }
+
+        List<Block> blocks = event.getBlocks();
+
+        for (Block block : blocks)
+        {
+            if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
+            {
+                event.setCancelled(true);
+            }
+            if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
+            {
+                event.setCancelled(true);
+            }
+            if (unprotected)
+            {
+                field = plugin.ffm.findDestroyProtected(block.getLocation());
+
+                if (field != null)
+                {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void onBlockPistonRetract(BlockPistonRetractEvent event)
+    {
+        boolean unprotected = false;
+
+        Block piston = event.getBlock();
+
+        Field field = plugin.ffm.findDestroyProtected(piston.getLocation());
+
+        if (field == null)
+        {
+            unprotected = true;
+        }
+
+        Block block = piston.getRelative(event.getDirection()).getRelative(event.getDirection());
+
+        if (plugin.settings.isFieldType(block) && plugin.ffm.isField(block))
+        {
+            event.setCancelled(true);
+        }
+        if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
+        {
+            event.setCancelled(true);
+        }
+
+        if (unprotected)
+        {
+            field = plugin.ffm.findDestroyProtected(block.getLocation());
+
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
         }
     }
 }

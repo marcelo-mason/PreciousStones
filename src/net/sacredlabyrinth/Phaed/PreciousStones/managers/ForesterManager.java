@@ -117,8 +117,8 @@ public final class ForesterManager
         int maxx = field.getX() + field.getRadius();
         int minz = field.getZ() - field.getRadius();
         int maxz = field.getZ() + field.getRadius();
-        int miny = field.getY() - (int) Math.floor(((double) field.getHeight()) / 2);
-        int maxy = field.getY() + (int) Math.ceil(((double) field.getHeight()) / 2);
+        int miny = field.getY() - (int) Math.floor(((double) Math.max(field.getHeight() - 1, 0)) / 2);
+        int maxy = field.getY() + (int) Math.ceil(((double) Math.max(field.getHeight() - 1, 0)) / 2);
 
         for (int x = minx; x < maxx; x = x + 4)
         {
@@ -181,7 +181,7 @@ public final class ForesterManager
 
                     // do not place in protected area
 
-                    Field f = plugin.ffm.isPlaceProtected(block.getLocation(), player);
+                    Field f = plugin.ffm.findPlaceProtected(block.getLocation(), player);
 
                     if (f != null)
                     {

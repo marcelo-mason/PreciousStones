@@ -3,14 +3,10 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.craftbukkit.CraftWorld;
-import net.minecraft.server.*;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.Location;
-import org.bukkit.entity.TNTPrimed;
 
 /**
  *
@@ -40,39 +36,40 @@ public class MineManager
         {
             return;
         }
-        
+
+        FieldSettings fs = plugin.settings.getFieldSettings(field);
+
+        if (fs == null)
+        {
+            plugin.ffm.queueRelease(field);
+            return;
+        }
+
+        if (!fs.mine)
+        {
+            return;
+        }
+
         if (!plugin.ffm.isAllowed(field, player.getName()))
         {
-            FieldSettings fieldsettings = plugin.settings.getFieldSettings(field);
+            final int delay = fs.mineDelaySeconds;
+            final int leftbehind = fs.mineReplaceBlock;
+            final Block block = plugin.ffm.getBlock(field);
+            block.setType(Material.getMaterial(leftbehind));
 
-            if (fieldsettings == null)
+            plugin.cm.showMine(player);
+
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
-                plugin.ffm.queueRelease(field);
-                return;
-            }
-
-            final int delay = fieldsettings.mineDelaySeconds;
-            final int leftbehind = fieldsettings.mineReplaceBlock;
-
-            if (fieldsettings.mine)
-            {
-                plugin.cm.showMine(player);
-
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                @Override
+                public void run()
                 {
-                    @Override
-                    public void run()
-                    {
-                        Block block = plugin.ffm.getBlock(field);
-                        plugin.ffm.silentRelease(field);
+                    plugin.ffm.silentRelease(field);
 
-                        CraftWorld world = (CraftWorld) block.getWorld();
-                        block.setType(Material.getMaterial(leftbehind));
-                        Location loc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
-                        block.getWorld().spawn(loc, TNTPrimed.class);
-                    }
-                }, delay * 20L);
-            }
+                    block.getWorld().createExplosion(block.getLocation(), 4, false);
+                    block.getWorld().createExplosion(block.getLocation(), 6, true);
+                }
+            }, delay * 20L);
         }
     }
 }
