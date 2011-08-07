@@ -400,6 +400,24 @@ public final class SettingsManager
     }
 
     /**
+     * Check if a type is a see through block
+     * @param block
+     * @return
+     */
+    public boolean isThroughType(int type)
+    {
+        for(int i = 0; i < throughFields.length; i++)
+        {
+            if(throughFields[i] == type)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Check if a block is one of the tool item types
      * @param block
      * @return

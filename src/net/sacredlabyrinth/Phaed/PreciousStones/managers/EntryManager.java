@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
@@ -27,7 +27,7 @@ import org.bukkit.entity.Vehicle;
 public final class EntryManager
 {
     private PreciousStones plugin;
-    private final HashMap<String, EntryFields> entries = new HashMap<String, EntryFields>();
+    private final ConcurrentHashMap<String, EntryFields> entries = new ConcurrentHashMap<String, EntryFields>();
     private boolean processing = false;
 
     /**
@@ -39,19 +39,6 @@ public final class EntryManager
         this.plugin = plugin;
 
         startScheduler();
-    }
-
-    /**
-     *
-     * @param name
-     * @return
-     */
-    public EntryFields getEntryFields(String name)
-    {
-        synchronized (entries)
-        {
-            return entries.get(name);
-        }
     }
 
     /**
@@ -71,91 +58,95 @@ public final class EntryManager
 
                 processing = true;
 
+                HashMap<String, EntryFields> e = new HashMap<String, EntryFields>();
+
                 synchronized (entries)
                 {
-                    for (String playername : entries.keySet())
+                    e.putAll(entries);
+                }
+
+                for (String playername : e.keySet())
+                {
+                    EntryFields ef = e.get(playername);
+                    LinkedList<Field> fields = ef.getFields();
+
+                    for (Field field : fields)
                     {
-                        EntryFields ef = entries.get(playername);
-                        LinkedList<Field> fields = ef.getFields();
+                        FieldSettings fs = plugin.settings.getFieldSettings(field);
 
-                        for (Field field : fields)
+                        if (fs == null)
                         {
-                            FieldSettings fs = plugin.settings.getFieldSettings(field);
+                            plugin.ffm.queueRelease(field);
+                            continue;
+                        }
 
-                            if (fs == null)
+                        Player player = plugin.helper.matchSinglePlayer(playername);
+
+                        if (player == null)
+                        {
+                            continue;
+                        }
+
+                        if (plugin.pm.hasPermission(player, "preciousstones.benefit.giveair"))
+                        {
+                            if (fs.giveAir)
                             {
-                                plugin.ffm.queueRelease(field);
-                                continue;
-                            }
-
-                            Player player = plugin.helper.matchSinglePlayer(playername);
-
-                            if (player == null)
-                            {
-                                continue;
-                            }
-
-                            if (plugin.pm.hasPermission(player, "preciousstones.benefit.giveair"))
-                            {
-                                if (fs.giveAir)
+                                if (player.getRemainingAir() < 300)
                                 {
-                                    if (player.getRemainingAir() < 300)
-                                    {
-                                        player.setRemainingAir(600);
-                                        plugin.cm.showGiveAir(player);
-                                        continue;
-                                    }
+                                    player.setRemainingAir(600);
+                                    plugin.cm.showGiveAir(player);
+                                    continue;
+                                }
+                            }
+                        }
+
+                        if (plugin.pm.hasPermission(player, "preciousstones.benefit.heal"))
+                        {
+                            if (fs.instantHeal)
+                            {
+                                if (player.getHealth() < 20)
+                                {
+                                    player.setHealth(20);
+                                    plugin.cm.showInstantHeal(player);
+                                    continue;
                                 }
                             }
 
-                            if (plugin.pm.hasPermission(player, "preciousstones.benefit.heal"))
+                            if (fs.slowHeal)
                             {
-                                if (fs.instantHeal)
+                                if (player.getHealth() < 20)
                                 {
-                                    if (player.getHealth() < 20)
-                                    {
-                                        player.setHealth(20);
-                                        plugin.cm.showInstantHeal(player);
-                                        continue;
-                                    }
+                                    player.setHealth(healthCheck(player.getHealth() + 1));
+                                    plugin.cm.showSlowHeal(player);
+                                    continue;
                                 }
 
-                                if (fs.slowHeal)
-                                {
-                                    if (player.getHealth() < 20)
-                                    {
-                                        player.setHealth(healthCheck(player.getHealth() + 1));
-                                        plugin.cm.showSlowHeal(player);
-                                        continue;
-                                    }
-
-                                }
                             }
+                        }
 
-                            if (!plugin.pm.hasPermission(player, "preciousstones.bypass.damage"))
+                        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.damage"))
+                        {
+                            if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
                             {
-                                if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
+                                if (!plugin.ffm.isAllowed(field, playername))
                                 {
-                                    if (!plugin.ffm.isAllowed(field, playername))
+                                    if (fs.slowDamage)
                                     {
-                                        if (fs.slowDamage)
+                                        if (player.getHealth() > 0)
                                         {
-                                            if (player.getHealth() > 0)
-                                            {
-                                                player.setHealth(healthCheck(player.getHealth() - 1));
-                                                plugin.cm.showSlowDamage(player);
-                                                continue;
-                                            }
+                                            player.setHealth(healthCheck(player.getHealth() - 1));
+                                            plugin.cm.showSlowDamage(player);
+                                            continue;
                                         }
+                                    }
 
-                                        if (fs.fastDamage)
+                                    if (fs.fastDamage)
+                                    {
+                                        if (player.getHealth() > 0)
                                         {
-                                            if (player.getHealth() > 0)
-                                            {
-                                                player.setHealth(healthCheck(player.getHealth() - 4));
-                                                plugin.cm.showFastDamage(player);
-                                                continue;
-                                            }
+                                            player.setHealth(healthCheck(player.getHealth() - 4));
+                                            plugin.cm.showFastDamage(player);
+                                            continue;
                                         }
                                     }
                                 }
@@ -171,42 +162,14 @@ public final class EntryManager
 
     /**
      *
-     * @param Pos
-     * @param Ang
-     * @param Hyp
-     * @param y
-     * @return
-     */
-    public static Vector Reposition(Vector Pos, float Ang, float Hyp, float y)
-    {
-        float r = Ang * (float) Math.PI / 180.0f;
-        float a = (float) (Math.sin(r)) * Hyp;
-        float b = (float) (Math.cos(r)) * Hyp;
-        return new Vector((double) (Pos.getX() + b), y, (double) (Pos.getZ() + a));
-    }
-
-    /**
-     *
-     * @param Origin
-     * @param Dest
-     * @return
-     */
-    public static float Heading(Vector Origin, Vector Dest)
-    {
-        double ang = (double) Math.atan2((Dest.getZ() - Origin.getZ()), (Dest.getX() - Origin.getX()));
-        return (float) Math.toDegrees(ang);
-    }
-
-    /**
-     *
      * @param player
      * @return
      */
     public LinkedList<Field> getPlayerEntryFields(Player player)
     {
-        if (entries.containsKey(player.getName()))
+        synchronized (entries)
         {
-            synchronized (entries)
+            if (entries.containsKey(player.getName()))
             {
                 return entries.get(player.getName()).getFields();
             }

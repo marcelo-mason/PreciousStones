@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
@@ -16,8 +15,12 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Painting;
+import org.bukkit.entity.Slime;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -53,18 +56,11 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
-        CreatureType mob = event.getCreatureType();
+        Entity entity = event.getEntity();
         Location loc = event.getLocation();
 
-        if (mob.equals(CreatureType.CREEPER)
-                || mob.equals(CreatureType.GHAST)
-                || mob.equals(CreatureType.GIANT)
-                || mob.equals(CreatureType.MONSTER)
-                || mob.equals(CreatureType.PIG_ZOMBIE)
-                || mob.equals(CreatureType.SKELETON)
-                || mob.equals(CreatureType.SLIME)
-                || mob.equals(CreatureType.SPIDER)
-                || mob.equals(CreatureType.ZOMBIE))
+        if (entity instanceof Monster
+                || entity instanceof Slime)
         {
             if (plugin.ffm.isMobSpawnProtected(loc))
             {
@@ -72,12 +68,7 @@ public class PSEntityListener extends EntityListener
             }
         }
 
-        if (mob.equals(CreatureType.CHICKEN)
-                || mob.equals(CreatureType.COW)
-                || mob.equals(CreatureType.PIG)
-                || mob.equals(CreatureType.SHEEP)
-                || mob.equals(CreatureType.SQUID)
-                || mob.equals(CreatureType.WOLF))
+        if (entity instanceof Animals)
         {
             if (plugin.ffm.isAnimalSpawnProtected(loc))
             {

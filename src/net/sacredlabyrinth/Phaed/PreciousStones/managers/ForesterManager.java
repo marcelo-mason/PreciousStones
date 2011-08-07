@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sacredlabyrinth.Phaed.PreciousStones.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
@@ -56,7 +54,7 @@ public final class ForesterManager
         foresters.remove(new ForesterEntry(field, ""));
     }
 
-    private int prepareSpot(World world, int xx, int yy, int zz, int radius, boolean shrubs)
+    private int prepareSpot(Field field, World world, int xx, int yy, int zz, int radius, boolean shrubs)
     {
         Vector pos = new Vector(xx, yy, zz);
 
@@ -70,6 +68,11 @@ public final class ForesterManager
                 {
                     Vector vec = pos.add(x, y, z);
                     double d = vec.distance(pos);
+
+                    if (vec.equals(field))
+                    {
+                        continue;
+                    }
 
                     if (d <= radius + 0.5D)
                     {
@@ -130,7 +133,7 @@ public final class ForesterManager
 
                     if (!isSeeThrough(type))
                     {
-                        prepareSpot(world, x, y, z, 4, fs.foresterShrubs);
+                        prepareSpot(field, world, x, y, z, 4, fs.foresterShrubs);
                     }
                 }
             }
@@ -219,12 +222,12 @@ public final class ForesterManager
                     return;
                 }
 
-                processing = true;
-
                 if (foresters.isEmpty())
                 {
                     return;
                 }
+
+                processing = true;
 
                 for (ForesterEntry fe : foresters)
                 {

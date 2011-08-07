@@ -726,23 +726,12 @@ public final class CommandManager implements CommandExecutor
 
                                     if (targetblock != null)
                                     {
-                                        if (plugin.settings.isUnbreakableType(targetblock))
-                                        {
-                                            Unbreakable unbreakable = plugin.um.getUnbreakable(targetblock);
-
-                                            if (unbreakable != null)
-                                            {
-                                                unbreakable.setOwner(owner);
-                                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner set to " + owner);
-                                                return true;
-                                            }
-                                        }
-
                                         Field field = plugin.ffm.getField(targetblock);
 
                                         if (field != null)
                                         {
                                             field.setOwner(owner);
+                                            plugin.sm.offerField(field);
                                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner set to " + owner);
                                             return true;
                                         }

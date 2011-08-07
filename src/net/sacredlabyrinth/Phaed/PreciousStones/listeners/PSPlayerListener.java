@@ -23,6 +23,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -66,6 +67,7 @@ public class PSPlayerListener extends PlayerListener
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         plugin.sm.offerPlayer(event.getPlayer().getName(), true);
+        plugin.plm.cleanOutsideLocation(event.getPlayer());
     }
 
     /**
@@ -76,6 +78,7 @@ public class PSPlayerListener extends PlayerListener
     public void onPlayerKick(PlayerKickEvent event)
     {
         plugin.sm.offerPlayer(event.getPlayer().getName(), true);
+        plugin.plm.cleanOutsideLocation(event.getPlayer());
     }
 
     /**
@@ -357,7 +360,7 @@ public class PSPlayerListener extends PlayerListener
             if (fs == null)
             {
                 plugin.ffm.queueRelease(field);
-                return;
+                continue;
             }
 
             if (fs.preventEntry)
@@ -366,14 +369,28 @@ public class PSPlayerListener extends PlayerListener
                 {
                     if (!plugin.ffm.isAllowed(field, player.getName()))
                     {
-                        event.setTo(event.getFrom());
-                        event.setCancelled(true);
+                        Location loc = plugin.plm.getOutsideFieldLocation(field, player);
+                        Location outside = plugin.plm.getOutsideLocation(player);
+
+                        if (outside != null)
+                        {
+                            if (!plugin.ffm.isEntryProtected(outside, player))
+                            {
+                                loc = outside;
+                            }
+                        }
+
+                        event.setTo(loc);
                         plugin.cm.warnEntry(player, field);
                         return;
                     }
                 }
             }
         }
+
+        // he is not inside a prevent entry field so we update his location
+
+        plugin.plm.updateOutsideLocation(player);
 
         // enter all fields hes is not currently entered into yet
 

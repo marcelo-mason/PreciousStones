@@ -92,6 +92,11 @@ public class UnprotectableManager
             {
                 for (int y = miny; y <= maxy; y++)
                 {
+                    if (x == 0 && y == 0 && z == 0)
+                    {
+                        continue;
+                    }
+
                     int type = fieldblock.getWorld().getBlockTypeIdAt(x, y, z);
 
                     if (plugin.settings.isUnprotectableType(type))

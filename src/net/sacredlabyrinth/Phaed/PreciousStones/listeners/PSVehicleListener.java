@@ -7,6 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -94,7 +95,7 @@ public class PSVehicleListener extends VehicleListener
                 if (fs == null)
                 {
                     plugin.ffm.queueRelease(field);
-                    return;
+                    continue;
                 }
 
                 if (fs.preventEntry)
@@ -103,15 +104,27 @@ public class PSVehicleListener extends VehicleListener
                     {
                         if (!plugin.ffm.isAllowed(field, player.getName()))
                         {
+                            Location loc = plugin.plm.getOutsideFieldLocation(field, player);
+                            Location outside = plugin.plm.getOutsideLocation(player);
+
+                            if (outside != null)
+                            {
+                                loc = outside;
+                            }
+
                             v.setVelocity(new Vector(0, 0, 0));
-                            v.teleport(event.getFrom());
-                            player.teleport(event.getFrom());
+                            v.teleport(loc);
+                            player.teleport(loc);
                             plugin.cm.warnEntry(player, field);
                             return;
                         }
                     }
                 }
             }
+
+            // he is not inside a prevent entry field so we update his location
+
+            plugin.plm.updateOutsideLocation(player);
 
             // enter all fields hes is not currently entered into yet
 
