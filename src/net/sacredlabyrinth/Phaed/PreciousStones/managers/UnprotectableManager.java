@@ -3,7 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import org.bukkit.block.Block;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 
 /**
  * Handles unprotectable blocks
@@ -78,10 +78,10 @@ public class UnprotectableManager
             return null;
         }
 
-        int minx = fieldblock.getX() - fs.radius;
-        int maxx = fieldblock.getX() + fs.radius;
-        int minz = fieldblock.getZ() - fs.radius;
-        int maxz = fieldblock.getZ() + fs.radius;
+        int minx = fieldblock.getX() - fs.getRadius();
+        int maxx = fieldblock.getX() + fs.getRadius();
+        int minz = fieldblock.getZ() - fs.getRadius();
+        int maxz = fieldblock.getZ() + fs.getRadius();
 
         int miny = fieldblock.getY() - (int) Math.floor(((double) Math.max(fs.getHeight() - 1, 0)) / 2);
         int maxy = fieldblock.getY() + (int) Math.ceil(((double) Math.max(fs.getHeight() - 1, 0)) / 2);

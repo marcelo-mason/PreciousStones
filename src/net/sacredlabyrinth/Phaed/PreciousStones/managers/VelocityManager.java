@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Vehicle;
@@ -67,15 +67,9 @@ public class VelocityManager
         {
             if (plugin.ffm.isAllowed(field, player.getName()))
             {
-                FieldSettings fs = plugin.settings.getFieldSettings(field);
+                FieldSettings fs = field.getSettings();
 
-                if (fs == null)
-                {
-                    plugin.ffm.queueRelease(field);
-                    return;
-                }
-
-                final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : fs.launchHeight;
+                final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : fs.getLaunchHeight();
                 double speed = 8;
 
                 Vector loc = player.getLocation().toVector();
@@ -85,7 +79,7 @@ public class VelocityManager
                 velocity.multiply(speed / velocity.length());
                 velocity.setY(launchheight > 0 ? launchheight : (((player.getLocation().getPitch() * -1) + 90) / 35));
 
-                if (fs.launch)
+                if (fs.isLaunch())
                 {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
@@ -147,18 +141,12 @@ public class VelocityManager
         {
             if (plugin.ffm.isAllowed(field, player.getName()))
             {
-                FieldSettings fs = plugin.settings.getFieldSettings(field);
+                FieldSettings fs = field.getSettings();
 
-                if (fs == null)
-                {
-                    plugin.ffm.queueRelease(field);
-                    return;
-                }
-
-                final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fs.cannonHeight;
+                final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fs.getCannonHeight();
                 final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
 
-                if (fs.cannon)
+                if (fs.isCannon())
                 {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {

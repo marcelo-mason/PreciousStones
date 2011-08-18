@@ -34,26 +34,102 @@ public final class UnbreakableManager
     }
 
     /**
-     * Check if a chunk contains an unbreakable
-     * @param cv the chunk vec
-     * @return whether the chunk contains unbreakables
+     * Clear out the unbreakables in memory
      */
-    public boolean hasUnbreakable(ChunkVec cv)
+    public void clearChunkLists()
+    {
+        chunkLists.clear();
+    }
+
+    /**
+     * Add stone to the collection
+     * @param unbreakableblock
+     * @param owner
+     * @return
+     */
+    public boolean add(Block unbreakableblock, Player owner)
+    {
+        if (plugin.plm.isDisabled(owner))
+        {
+            return false;
+        }
+        // deny if world is blacklisted
+
+        if (plugin.settings.isBlacklistedWorld(unbreakableblock.getWorld()))
+        {
+            return false;
+        }
+
+        Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
+
+        // add unbreakable to memory
+
+        addToCollection(unbreakable);
+
+        // add unbreakable to database
+
+        plugin.sm.offerUnbreakable(unbreakable, true);
+        return true;
+    }
+
+    /**
+     * Add the unbreakable to the collection held in memory
+     * @param ub the unbreakable
+     */
+    public void addToCollection(Unbreakable ub)
+    {
+        String world = ub.getWorld();
+        ChunkVec chunkvec = ub.toChunkVec();
+
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(world);
+
+        if (w != null)
+        {
+            HashMap<Vec, Unbreakable> c = w.get(chunkvec);
+
+            if (c != null)
+            {
+                c.put(ub.toVec(), ub);
+            }
+            else
+            {
+                HashMap<Vec, Unbreakable> newc = new HashMap<Vec, Unbreakable>();
+                newc.put(ub.toVec(), ub);
+                w.put(chunkvec, newc);
+            }
+        }
+        else
+        {
+            HashMap<ChunkVec, HashMap<Vec, Unbreakable>> _w = new HashMap<ChunkVec, HashMap<Vec, Unbreakable>>();
+            HashMap<Vec, Unbreakable> _c = new HashMap<Vec, Unbreakable>();
+
+            _c.put(ub.toVec(), ub);
+            _w.put(chunkvec, _c);
+            chunkLists.put(world, _w);
+        }
+    }
+
+    /**
+     * Check whether a chunk has unbreakables
+     * @param cv
+     * @return
+     */
+    public boolean hasUnbreakables(ChunkVec cv)
     {
         HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(cv.getWorld());
 
         if (w != null)
         {
-            if (w.containsKey(cv))
-            {
-                HashMap<Vec, Unbreakable> c = w.get(cv);
+            HashMap<Vec, Unbreakable> c = w.get(cv);
 
-                if (!c.isEmpty())
-                {
-                    return true;
-                }
+            if (c != null)
+            {
+                return !c.isEmpty();
             }
+
+            return false;
         }
+
         return false;
     }
 
@@ -195,7 +271,7 @@ public final class UnbreakableManager
 
                     int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 
-                    if (!plugin.settings.isUnbreakableType(type))
+                    if (type != unbreakable.getTypeId())
                     {
                         cleanedCount++;
                         queueRelease(unbreakable);
@@ -382,72 +458,6 @@ public final class UnbreakableManager
         }
 
         return null;
-    }
-
-    /**
-     * Add stone to the collection
-     * @param unbreakableblock
-     * @param owner
-     * @return
-     */
-    public boolean add(Block unbreakableblock, Player owner)
-    {
-        if (plugin.plm.isDisabled(owner))
-        {
-            return false;
-        }
-
-        Unbreakable unbreakable = new Unbreakable(unbreakableblock, owner.getName());
-
-        // add unbreakable to memory
-
-        addToCollection(unbreakable);
-
-        // add unbreakable to database
-
-        plugin.sm.offerUnbreakable(unbreakable, true);
-
-        // tag the chunk
-
-        plugin.tm.tagChunk(unbreakable.toChunkVec());
-        return true;
-    }
-
-    /**
-     * Add the unbreakable to the collection held in memory
-     * @param ub the unbreakable
-     */
-    public void addToCollection(Unbreakable ub)
-    {
-        String world = ub.getWorld();
-        ChunkVec chunkvec = ub.toChunkVec();
-
-        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(world);
-
-        if (w != null)
-        {
-            HashMap<Vec, Unbreakable> c = w.get(chunkvec);
-
-            if (c != null)
-            {
-                c.put(ub.toVec(), ub);
-            }
-            else
-            {
-                HashMap<Vec, Unbreakable> newc = new HashMap<Vec, Unbreakable>();
-                newc.put(ub.toVec(), ub);
-                w.put(chunkvec, newc);
-            }
-        }
-        else
-        {
-            HashMap<ChunkVec, HashMap<Vec, Unbreakable>> _w = new HashMap<ChunkVec, HashMap<Vec, Unbreakable>>();
-            HashMap<Vec, Unbreakable> _c = new HashMap<Vec, Unbreakable>();
-
-            _c.put(ub.toVec(), ub);
-            _w.put(chunkvec, _c);
-            chunkLists.put(world, _w);
-        }
     }
 
     /**

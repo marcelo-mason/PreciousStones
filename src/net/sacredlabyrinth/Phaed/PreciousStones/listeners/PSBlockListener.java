@@ -19,9 +19,10 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -68,15 +69,13 @@ public class PSBlockListener extends BlockListener
 
         if (false)
         {
-            if (!plugin.tm.isTaggedArea(new ChunkVec(event.getToBlock().getChunk())))
-            {
-                return;
-            }
-
             Block block = event.getBlock();
             Block toBlock = event.getToBlock();
 
-            DebugTimer dt = new DebugTimer("onBlockFromTo");
+            if (plugin.settings.isBlacklistedWorld(block.getWorld()))
+            {
+                return;
+            }
 
             // only capture water and lava movement
 
@@ -89,6 +88,8 @@ public class PSBlockListener extends BlockListener
             {
                 return;
             }
+
+            DebugTimer dt = new DebugTimer("onBlockFromTo");
 
             if (plugin.ffm.isFlowProtected(block.getLocation()))
             {
@@ -131,13 +132,6 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
-        {
-            return;
-        }
-
-        DebugTimer dt = new DebugTimer("onBlockIgnite");
-
         Block block = event.getBlock();
         Player player = event.getPlayer();
 
@@ -145,6 +139,8 @@ public class PSBlockListener extends BlockListener
         {
             return;
         }
+
+        DebugTimer dt = new DebugTimer("onBlockIgnite");
 
         if (player != null)
         {
@@ -184,11 +180,6 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
-        {
-            return;
-        }
-
         Map<String, Field> players = plugin.em.getTriggerableEntryPlayers(event.getBlock());
 
         for (String playerName : players.keySet())
@@ -198,14 +189,9 @@ public class PSBlockListener extends BlockListener
             if (player != null)
             {
                 Field field = players.get(playerName);
-                FieldSettings fs = plugin.settings.getFieldSettings(field);
+                FieldSettings fs = field.getSettings();
 
-                if (fs.cannon)
-                {
-                    plugin.vm.shootPlayer(player, field);
-                }
-
-                if (fs.launch)
+                if (fs.isLaunch())
                 {
                     plugin.vm.launchPlayer(player, field);
                 }
@@ -225,13 +211,6 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
-        {
-            return;
-        }
-
-        DebugTimer dt = new DebugTimer("onBlockBreak");
-
         Block brokenBlock = event.getBlock();
         Player player = event.getPlayer();
 
@@ -240,10 +219,17 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
+        if (plugin.settings.isBlacklistedWorld(brokenBlock.getWorld()))
+        {
+            return;
+        }
+
         if (plugin.settings.isBypassBlock(brokenBlock))
         {
             return;
         }
+
+        DebugTimer dt = new DebugTimer("onBlockBreak");
 
         plugin.snm.recordSnitchBlockBreak(player, brokenBlock);
 
@@ -262,9 +248,9 @@ public class PSBlockListener extends BlockListener
                 plugin.cm.notifyDestroyBreakableFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
 
-                if (fs.price > 0)
+                if (fs.getPrice() > 0)
                 {
-                    plugin.ffm.refund(player, fs.price);
+                    plugin.ffm.refund(player, fs.getPrice());
                 }
             }
             else if (plugin.ffm.isOwner(brokenBlock, player.getName()))
@@ -272,9 +258,9 @@ public class PSBlockListener extends BlockListener
                 plugin.cm.notifyDestroyFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
 
-                if (fs.price > 0)
+                if (fs.getPrice() > 0)
                 {
-                    plugin.ffm.refund(player, fs.price);
+                    plugin.ffm.refund(player, fs.getPrice());
                 }
             }
             else if (plugin.settings.allowedCanBreakPstones && plugin.ffm.isAllowed(brokenBlock, player.getName()))
@@ -282,9 +268,9 @@ public class PSBlockListener extends BlockListener
                 plugin.cm.notifyDestroyOthersFF(player, brokenBlock);
                 plugin.ffm.release(brokenBlock);
 
-                if (fs.price > 0)
+                if (fs.getPrice() > 0)
                 {
-                    plugin.ffm.refund(player, fs.price);
+                    plugin.ffm.refund(player, fs.getPrice());
                 }
             }
             else if (plugin.pm.hasPermission(player, "preciousstones.bypass.forcefield"))
@@ -325,7 +311,6 @@ public class PSBlockListener extends BlockListener
 
         if (field != null)
         {
-
             if (plugin.pm.hasPermission(player, "preciousstones.bypass.destroy"))
             {
                 plugin.cm.notifyBypassDestroy(player, brokenBlock, field);
@@ -379,8 +364,6 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        DebugTimer dt = new DebugTimer("onBlockPlace");
-
         Block placedblock = event.getBlock();
         Player player = event.getPlayer();
 
@@ -389,10 +372,17 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
+        if (plugin.settings.isBlacklistedWorld(placedblock.getWorld()))
+        {
+            return;
+        }
+
         if (plugin.settings.isBypassBlock(placedblock))
         {
             return;
         }
+
+        DebugTimer dt = new DebugTimer("onBlockPlace");
 
         plugin.snm.recordSnitchBlockPlace(player, placedblock);
 
@@ -482,7 +472,7 @@ public class PSBlockListener extends BlockListener
                     return;
                 }
 
-                if (fs.preventUnprotectable)
+                if (fs.isPreventUnprotectable())
                 {
                     Block foundblock = plugin.upm.existsUnprotectableBlock(placedblock);
 
@@ -504,29 +494,26 @@ public class PSBlockListener extends BlockListener
                     }
                 }
 
-                if (fs.forester || fs.foresterShrubs)
+                if (fs.isForester() || fs.isForesterShrubs())
                 {
                     Block floor = placedblock.getRelative(BlockFace.DOWN);
 
                     if (!plugin.settings.isFertileType(floor.getTypeId()) && floor.getTypeId() != 2)
                     {
-                        player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.title) + " blocks must be placed of fertile land to activate");
+                        player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " blocks must be placed of fertile land to activate");
                         return;
                     }
                 }
 
-                if (fs.price == 0 || plugin.ffm.purchase(player, fs.price))
+                if (plugin.ffm.add(placedblock, player))
                 {
-                    if (plugin.ffm.add(placedblock, player))
+                    if (plugin.ffm.isBreakable(placedblock))
                     {
-                        if (plugin.ffm.isBreakable(placedblock))
-                        {
-                            plugin.cm.notifyPlaceBreakableFF(player, placedblock);
-                        }
-                        else
-                        {
-                            plugin.cm.notifyPlaceFF(player, placedblock);
-                        }
+                        plugin.cm.notifyPlaceBreakableFF(player, placedblock);
+                    }
+                    else
+                    {
+                        plugin.cm.notifyPlaceFF(player, placedblock);
                     }
                 }
             }
@@ -640,11 +627,6 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlock().getChunk())))
-        {
-            return;
-        }
-
         DebugTimer dt = new DebugTimer("onBlockDamage");
 
         Block scopedBlock = event.getBlock();
@@ -652,6 +634,11 @@ public class PSBlockListener extends BlockListener
         ItemStack is = player.getItemInHand();
 
         if (scopedBlock == null || is == null || player == null)
+        {
+            return;
+        }
+
+        if (plugin.settings.isBlacklistedWorld(scopedBlock.getWorld()))
         {
             return;
         }
@@ -683,6 +670,11 @@ public class PSBlockListener extends BlockListener
         boolean unprotected = false;
 
         Block piston = event.getBlock();
+
+        if (plugin.settings.isBlacklistedWorld(piston.getWorld()))
+        {
+            return;
+        }
 
         Field field = plugin.ffm.findDestroyProtected(piston.getLocation());
 
@@ -725,6 +717,11 @@ public class PSBlockListener extends BlockListener
         boolean unprotected = false;
 
         Block piston = event.getBlock();
+
+        if (plugin.settings.isBlacklistedWorld(piston.getWorld()))
+        {
+            return;
+        }
 
         Field field = plugin.ffm.findDestroyProtected(piston.getLocation());
 

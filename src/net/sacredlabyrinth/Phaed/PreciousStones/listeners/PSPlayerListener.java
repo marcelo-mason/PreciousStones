@@ -20,7 +20,7 @@ import org.bukkit.block.Block;
 import org.bukkit.Material;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -56,6 +56,11 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerLogin(PlayerLoginEvent event)
     {
+        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
+        {
+            return;
+        }
+
         plugin.sm.offerPlayer(event.getPlayer().getName(), true);
     }
 
@@ -66,6 +71,11 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerQuit(PlayerQuitEvent event)
     {
+        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
+        {
+            return;
+        }
+
         plugin.sm.offerPlayer(event.getPlayer().getName(), true);
         plugin.plm.cleanOutsideLocation(event.getPlayer());
     }
@@ -77,6 +87,16 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerKick(PlayerKickEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
+        {
+            return;
+        }
+
         plugin.sm.offerPlayer(event.getPlayer().getName(), true);
         plugin.plm.cleanOutsideLocation(event.getPlayer());
     }
@@ -93,17 +113,16 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        DebugTimer dt = new DebugTimer("onPlayerInteract");
-
-        final Player player = event.getPlayer();
-        Block block = event.getClickedBlock();
-
-        if (block == null || player == null)
+        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
         {
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getClickedBlock().getChunk())))
+        final Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
+        DebugTimer dt = new DebugTimer("onPlayerInteract");
+
+        if (block == null || player == null)
         {
             return;
         }
@@ -181,15 +200,9 @@ public class PSPlayerListener extends PlayerListener
                     else if (plugin.ffm.isField(block))
                     {
                         Field field = plugin.ffm.getField(block);
-                        FieldSettings fs = plugin.settings.getFieldSettings(field);
+                        FieldSettings fs = field.getSettings();
 
-                        if (fs == null)
-                        {
-                            plugin.ffm.queueRelease(field);
-                            return;
-                        }
-
-                        if ((plugin.ffm.isAllowed(block, player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.undo")) && (fs.griefUndoInterval || fs.griefUndoRequest))
+                        if ((plugin.ffm.isAllowed(block, player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.undo")) && (fs.isGriefUndoInterval() || fs.isGriefUndoRequest()))
                         {
                             HashSet<Field> overlapped = plugin.ffm.getOverlappedFields(player, field);
 
@@ -236,14 +249,13 @@ public class PSPlayerListener extends PlayerListener
                     }
                     else
                     {
-                        Field field = plugin.ffm.findDestroyProtected(block.getLocation());
+                        Field field = plugin.ffm.findProtected(block.getLocation());
 
                         if (field != null)
                         {
                             if (plugin.ffm.isAllowed(field, player.getName()) || plugin.settings.publicBlockDetails)
                             {
-                                List<Field> fields = plugin.ffm.getSourceFields(block.getLocation());
-                                plugin.cm.showProtectedLocation(fields, player, block);
+                                plugin.cm.showProtectedLocation(player, block);
                             }
                             else
                             {
@@ -286,11 +298,6 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
-        {
-            return;
-        }
-
         handlePlayerMove(event);
     }
 
@@ -306,7 +313,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
+        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
         {
             return;
         }
@@ -349,23 +356,17 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        // check all fields hes standing on and teleport him if hes in a prevent-entry field
+        // get all the fields the player is currently standing in
 
         List<Field> currentfields = plugin.ffm.getSourceFields(player.getLocation());
 
-        for (Field field : currentfields)
+        // check for prevent-entry fields and teleport him away if hes not allowed in it
+
+        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-            if (fs == null)
+            for (Field field : currentfields)
             {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventEntry)
-            {
-                if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
+                if (field.getSettings().isPreventEntry())
                 {
                     if (!plugin.ffm.isAllowed(field, player.getName()))
                     {
@@ -388,7 +389,7 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        // he is not inside a prevent entry field so we update his location
+        // did not get teleported out so now we update his last known outside location
 
         plugin.plm.updateOutsideLocation(player);
 
@@ -420,8 +421,6 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        DebugTimer dt = new DebugTimer("onPlayerBucketFill");
-
         Player player = event.getPlayer();
         Block block = event.getBlockClicked();
 
@@ -430,10 +429,12 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlockClicked().getChunk())))
+        if (plugin.settings.isBlacklistedWorld(player.getLocation().getWorld()))
         {
             return;
         }
+
+        DebugTimer dt = new DebugTimer("onPlayerBucketFill");
 
         Field field = plugin.ffm.findPlaceProtected(block.getLocation(), player);
 
@@ -484,8 +485,6 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        DebugTimer dt = new DebugTimer("onPlayerBucketEmpty");
-
         Player player = event.getPlayer();
         Block block = event.getBlockClicked();
         Material mat = event.getBucket();
@@ -495,10 +494,12 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getBlockClicked().getChunk())))
+        if (plugin.settings.isBlacklistedWorld(player.getLocation().getWorld()))
         {
             return;
         }
+
+        DebugTimer dt = new DebugTimer("onPlayerBucketEmpty");
 
         Field field = plugin.ffm.findPlaceProtected(block.getLocation(), player);
 

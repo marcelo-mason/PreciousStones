@@ -99,7 +99,7 @@ public class Helper
     {
         try
         {
-            List<Integer> list = (List<Integer>)obj;
+            List<Integer> list = (List<Integer>) obj;
             return true;
         }
         catch (Exception ex)
@@ -107,7 +107,6 @@ public class Helper
             return false;
         }
     }
-
 
     /**
      * Helper function to check for float
@@ -442,10 +441,19 @@ public class Helper
      */
     public static String escapeQuotes(String str)
     {
-        if(str == null)
+        if (str == null)
         {
             return "";
         }
         return str.replace("'", "''");
+    }
+
+    public static boolean sameBlock(Location loc, Location loc2)
+    {
+        if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ())
+        {
+            return true;
+        }
+        return false;
     }
 }

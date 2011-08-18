@@ -4,8 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -40,15 +39,15 @@ public class PSVehicleListener extends VehicleListener
     @Override
     public void onVehicleMove(VehicleMoveEvent event)
     {
-        if (!plugin.tm.isTaggedArea(new ChunkVec(event.getTo().getBlock().getChunk())))
-        {
-            return;
-        }
-
         DebugTimer dt = new DebugTimer("onVehicleMove");
 
         Vehicle v = event.getVehicle();
         Entity entity = v.getPassenger();
+
+        if (plugin.settings.isBlacklistedWorld(v.getLocation().getWorld()))
+        {
+            return;
+        }
 
         if (entity instanceof Player)
         {
@@ -90,15 +89,9 @@ public class PSVehicleListener extends VehicleListener
 
             for (Field field : currentfields)
             {
-                FieldSettings fs = plugin.settings.getFieldSettings(field);
+                FieldSettings fs = field.getSettings();
 
-                if (fs == null)
-                {
-                    plugin.ffm.queueRelease(field);
-                    continue;
-                }
-
-                if (fs.preventEntry)
+                if (fs.isPreventEntry())
                 {
                     if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
                     {

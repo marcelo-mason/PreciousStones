@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
@@ -29,6 +30,7 @@ public final class GriefUndoManager
     public GriefUndoManager(PreciousStones plugin)
     {
         this.plugin = plugin;
+
         startInterval();
     }
 
@@ -138,12 +140,31 @@ public final class GriefUndoManager
 
             // undo base blocks first
 
+            List<GriefBlock> batch = new LinkedList<GriefBlock>();
+            int delay = 0;
+
             for (GriefBlock gb : gbs)
             {
                 if (!isDependentBlock(gb.getTypeId()))
                 {
                     undoGriefBlock(gb, world);
+
+                    if (batch.size() >= plugin.settings.griefUndoBatchSize)
+                    {
+                        sendBatch(batch, world, delay);
+
+                        batch = new LinkedList<GriefBlock>();
+                        delay += plugin.settings.griefUndoBatchDelayTicks;
+                    }
                 }
+            }
+
+            if (!batch.isEmpty())
+            {
+                sendBatch(batch, world, delay);
+
+                batch = new LinkedList<GriefBlock>();
+                delay += plugin.settings.griefUndoBatchDelayTicks;
             }
 
             // undo dependent blocks second
@@ -153,13 +174,41 @@ public final class GriefUndoManager
                 if (isDependentBlock(gb.getTypeId()))
                 {
                     undoGriefBlock(gb, world);
+
+                    if (batch.size() >= plugin.settings.griefUndoBatchSize)
+                    {
+                        sendBatch(batch, world, delay);
+
+                        batch = new LinkedList<GriefBlock>();
+                        delay += plugin.settings.griefUndoBatchDelayTicks;
+                    }
                 }
+            }
+
+            if (!batch.isEmpty())
+            {
+                sendBatch(batch, world, delay);
             }
 
             return gbs.size();
         }
 
         return 0;
+    }
+
+    private void sendBatch(final List<GriefBlock> gbs, final World world, int delay)
+    {
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for (GriefBlock gb : gbs)
+                {
+                    undoGriefBlock(gb, world);
+                }
+            }
+        }, delay);
     }
 
     private void undoGriefBlock(GriefBlock gb, World world)
@@ -213,7 +262,6 @@ public final class GriefUndoManager
             }
         }
     }
-//
 
     private void startInterval()
     {

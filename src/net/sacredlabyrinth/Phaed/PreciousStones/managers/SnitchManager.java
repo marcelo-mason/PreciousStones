@@ -12,7 +12,7 @@ import org.bukkit.block.Sign;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
@@ -41,15 +41,9 @@ public class SnitchManager
     {
         if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                return;
-            }
-
-            if (fs.snitch)
+            if (fs.isSnitch())
             {
                 if (!field.isOwner(player.getName()))
                 {

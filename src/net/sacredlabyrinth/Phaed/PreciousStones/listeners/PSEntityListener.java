@@ -1,7 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import net.sacredlabyrinth.Phaed.PreciousStones.BlockData;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,7 +18,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Painting;
@@ -59,6 +60,11 @@ public class PSEntityListener extends EntityListener
         Entity entity = event.getEntity();
         Location loc = event.getLocation();
 
+        if (plugin.settings.isBlacklistedWorld(loc.getWorld()))
+        {
+            return;
+        }
+
         if (entity instanceof Monster
                 || entity instanceof Slime)
         {
@@ -85,6 +91,11 @@ public class PSEntityListener extends EntityListener
             return;
         }
 
+        if (plugin.settings.isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
+        {
+            return;
+        }
+
         // prevent explosion if explosion protected
 
         if (plugin.ffm.isExplosionProtected(event.getEntity().getLocation()))
@@ -107,29 +118,30 @@ public class PSEntityListener extends EntityListener
 
         DebugTimer dt = new DebugTimer("onEntityExplode");
 
-        final List<Block> blockList = event.blockList();
-        final List<Block> griefedBlocks = new LinkedList<Block>();
+        final List<BlockData> griefed = new LinkedList<BlockData>();
+        final List<BlockData> nonGriefed = new LinkedList<BlockData>();
+        final List<BlockData> revert = new LinkedList<BlockData>();
+        final List<BlockData> tnts = new LinkedList<BlockData>();
 
-        for (final Block block : blockList)
+        if (plugin.settings.isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
+        {
+            return;
+        }
+
+        for (final Block block : event.blockList())
         {
             // prevent block break if breaking unbreakable
 
-            final int type = block.getTypeId();
-            final byte data = block.getData();
+            if (block.getTypeId() == 0)
+            {
+                continue;
+            }
 
             if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
             {
                 block.setTypeIdAndData(0, (byte) 0, false);
-
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        block.setTypeIdAndData(type, data, false);
-                    }
-                }, 4);
-                break;
+                revert.add(new BlockData(block));
+                continue;
             }
 
             // prevent block break if breaking field
@@ -137,16 +149,8 @@ public class PSEntityListener extends EntityListener
             if (plugin.ffm.isField(block))
             {
                 block.setTypeIdAndData(0, (byte) 0, false);
-
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        block.setTypeIdAndData(type, data, false);
-                    }
-                }, 4);
-                break;
+                revert.add(new BlockData(block));
+                continue;
             }
 
             // prevent explosion if explosion protected
@@ -167,37 +171,63 @@ public class PSEntityListener extends EntityListener
                 {
                     // trigger any tnt that exists inside the grief field blast radius
 
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            Location loc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
-                            block.getWorld().spawn(loc, TNTPrimed.class);
-                        }
-                    }, 3);
-
+                    tnts.add(new BlockData(block));
                 }
                 else
                 {
-                    // record the block
+                    // record the griefed block
 
                     if (!plugin.settings.isGriefUndoBlackListType(block.getTypeId()))
                     {
                         plugin.gum.addBlock(field, block);
-                        griefedBlocks.add(block);
+                        griefed.add(new BlockData(block));
                         block.setTypeId(0);
                     }
                 }
 
-                if (griefedBlocks.size() > 0)
+                if (griefed.size() > 0)
                 {
                     plugin.sm.offerGrief(field);
                 }
             }
+            else
+            {
+                // record the non-griefed block
+
+                if (block.getTypeId() != 46)
+                {
+                    nonGriefed.add(new BlockData(block));
+                }
+            }
         }
 
-        if (griefedBlocks.size() > 0)
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for (BlockData db : revert)
+                {
+                    Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
+
+                    block.setTypeIdAndData(db.getTypeId(), db.getData(), false);
+                }
+                revert.clear();
+
+                for (BlockData db : tnts)
+                {
+                    Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
+
+                    Location midloc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
+                    block.getWorld().spawn(midloc, TNTPrimed.class);
+                }
+                tnts.clear();
+            }
+        }, 4);
+
+        // if some blocks were anti-grief then fake the explosion of the rest
+
+        if (griefed.size() > 0)
         {
             event.setCancelled(true);
 
@@ -208,17 +238,15 @@ public class PSEntityListener extends EntityListener
                 {
                     // remove all blocks and simulate drops for the blocks not in the field
 
-                    for (Block block : blockList)
+                    for (BlockData db : nonGriefed)
                     {
-                        if (!griefedBlocks.contains(block))
-                        {
-                            block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(block.getTypeId(), 1));
-                        }
+                        Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
+                        block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(block.getTypeId(), 1));
                         block.setTypeId(0);
                     }
                 }
-            }, 1);
+            }, 2);
         }
 
         if (plugin.settings.debug)
@@ -235,6 +263,11 @@ public class PSEntityListener extends EntityListener
     public void onEntityDamage(EntityDamageEvent event)
     {
         if (event.isCancelled())
+        {
+            return;
+        }
+
+        if (plugin.settings.isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
         {
             return;
         }
@@ -377,6 +410,11 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onEntityDeath(EntityDeathEvent event)
     {
+        if (plugin.settings.isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
+        {
+            return;
+        }
+
         if (event.getEntity() instanceof Player)
         {
             Player player = (Player) event.getEntity();
@@ -394,6 +432,11 @@ public class PSEntityListener extends EntityListener
     {
         Painting painting = event.getPainting();
         RemoveCause cause = event.getCause();
+
+        if (plugin.settings.isBlacklistedWorld(painting.getLocation().getWorld()))
+        {
+            return;
+        }
 
         if (cause.equals(RemoveCause.ENTITY))
         {
@@ -430,6 +473,11 @@ public class PSEntityListener extends EntityListener
     {
         Painting painting = event.getPainting();
         Player player = event.getPlayer();
+
+        if (plugin.settings.isBlacklistedWorld(painting.getLocation().getWorld()))
+        {
+            return;
+        }
 
         Field field = plugin.ffm.findPlaceProtected(painting.getLocation(), player);
 

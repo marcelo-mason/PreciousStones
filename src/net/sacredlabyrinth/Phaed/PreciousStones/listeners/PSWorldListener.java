@@ -35,8 +35,16 @@ public class PSWorldListener extends WorldListener
 
         World world = event.getWorld();
 
+        if (plugin.settings.isBlacklistedWorld(world))
+        {
+            return;
+        }
+
         plugin.sm.loadWorldFields(world.getName());
         plugin.sm.loadWorldUnbreakables(world.getName());
+
+        // remove in version 6
+        plugin.tm.untagWorld(world.getName());
 
         if (plugin.settings.debug)
         {

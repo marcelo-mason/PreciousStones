@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.logging.Level;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.util.config.Configuration;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.World;
 
 /**
  *
@@ -20,20 +20,25 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
  */
 public final class SettingsManager
 {
+    public List<String> blacklistedWorlds;
     public int purgeSnitchAfterDays;
     public int purgeAfterDays;
     public int maxSnitchRecords;
-    public int saveBatchSize;
     public int saveFrequency;
     public List<Integer> griefUndoBlackList;
     public int griefIntervalSeconds;
+    public int griefUndoBatchSize;
+    public int griefUndoBatchDelayTicks;
     public List<Integer> foresterFertileBlocks;
     public int foresterInterval;
     public int foresterTrees;
     public int visualizeAdminChunkRadius;
     public int visualizeMarkBlock;
+    public int visualizeMarkChunkRadius;
     public int visualizeBlock;
     public int visualizeSeconds;
+    public int visualizeBatchSize;
+    public int visualizeBatchDelayTicks;
     public boolean visualizeEndOnMove;
     public boolean debug;
     public boolean debugdb;
@@ -180,21 +185,26 @@ public final class SettingsManager
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
         debugdb = config.getBoolean("settings.debug-on", false);
+        blacklistedWorlds = config.getStringList("settings.blacklisted-worlds", new ArrayList<String>());
         purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days", 45);
         purgeSnitchAfterDays = config.getInt("cleanup.snitch-unused-purge-days", 60);
         saveFrequency = config.getInt("saving.frequency-seconds", 300);
-        saveBatchSize = config.getInt("saving.batch-size", 100);
         maxSnitchRecords = config.getInt("saving.max-records-per-snitch", 50);
         visualizeBlock = config.getInt("visualization.block-type", 20);
-        visualizeMarkBlock = config.getInt("visualization.mark-block-type", 49);
         visualizeSeconds = config.getInt("visualization.seconds", 30);
         visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", true);
-        visualizeAdminChunkRadius = config.getInt("visualization.admin-chunk-radius", 15);
+        visualizeAdminChunkRadius = config.getInt("visualization.admin-chunk-radius", 10);
+        visualizeMarkBlock = config.getInt("visualization.mark-block-type", 20);
+        visualizeMarkChunkRadius = config.getInt("visualization.mark-chunk-radius", 10);
+        visualizeBatchSize = config.getInt("visualization.batch-size", 1000);
+        visualizeBatchDelayTicks = config.getInt("visualization.batch-delay-ticks", 10);
         foresterInterval = config.getInt("forester.interval-seconds", 1);
         foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
         foresterTrees = config.getInt("forester.trees", 60);
         griefIntervalSeconds = config.getInt("grief-undo.interval-seconds", 300);
         griefUndoBlackList = config.getIntList("grief-undo.black-list", blacklist);
+        griefUndoBatchSize = config.getInt("grief-undo.batch-size", 1000);
+        griefUndoBatchDelayTicks = config.getInt("grief-undo.batch-delay-ticks", 10);
         useMysql = config.getBoolean("mysql.enable", false);
         host = config.getString("mysql.host", "localhost");
         database = config.getString("mysql.database", "minecraft");
@@ -258,20 +268,25 @@ public final class SettingsManager
         config.setProperty("settings.disable-bypass-alerts-for-admins", disableBypassAlertsForAdmins);
         config.setProperty("settings.off-by-default", offByDefault);
         config.setProperty("settings.lines-per-page", linesPerPage);
+        config.setProperty("settings.blacklisted-worlds", blacklistedWorlds);
         config.setProperty("cleanup.player-inactivity-purge-days", purgeAfterDays);
         config.setProperty("cleanup.snitch-unused-purge-days", purgeSnitchAfterDays);
         config.setProperty("saving.frequency-seconds", saveFrequency);
-        config.setProperty("saving.batch-size", saveBatchSize);
         config.setProperty("saving.max-records-per-snitch", maxSnitchRecords);
-        config.setProperty("visualization.mark-block-type", visualizeMarkBlock);
         config.setProperty("visualization.block-type", visualizeBlock);
         config.setProperty("visualization.seconds", visualizeSeconds);
         config.setProperty("visualization.end-on-player-move", visualizeEndOnMove);
         config.setProperty("visualization.admin-chunk-radius", visualizeAdminChunkRadius);
+        config.setProperty("visualization.mark-block-type", visualizeMarkBlock);
+        config.setProperty("visualization.mark-chunk-radius", visualizeMarkChunkRadius);
+        config.setProperty("visualization.batch-size", visualizeBatchSize);
+        config.setProperty("visualization.batch-delay-ticks", visualizeBatchDelayTicks);
         config.setProperty("forester.interval-seconds", foresterInterval);
         config.setProperty("forester.fertile-blocks", foresterFertileBlocks);
         config.setProperty("grief-undo.interval-seconds", griefIntervalSeconds);
         config.setProperty("grief-undo.black-list", griefUndoBlackList);
+        config.setProperty("grief-undo.batch-size", griefUndoBatchSize);
+        config.setProperty("grief-undo.batch-delay-ticks", griefUndoBatchDelayTicks);
         config.setProperty("mysql.enable", useMysql);
         config.setProperty("mysql.host", host);
         config.setProperty("mysql.database", database);
@@ -299,23 +314,23 @@ public final class SettingsManager
         {
             FieldSettings pstone = new FieldSettings(map);
 
-            if (pstone.blockDefined)
+            if (pstone.isBlockDefined())
             {
                 // add stone to our collection
-                fs.put(pstone.blockId, pstone);
+                fs.put(pstone.getBlockId(), pstone);
 
                 // add the values to our reference lists
-                ffBlocks.add(pstone.blockId);
+                ffBlocks.add(pstone.getBlockId());
 
                 // see if the radius is the largest
-                if (pstone.radius > largestForceField)
+                if (pstone.getRadius() > largestForceField)
                 {
-                    largestForceField = pstone.radius;
+                    largestForceField = pstone.getRadius();
                 }
             }
         }
 
-        chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(((largestForceField * 2.0) + 1.0) / 16.0), 1);
+        chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(largestForceField / 16.0), 1);
     }
 
     /**
@@ -326,7 +341,7 @@ public final class SettingsManager
     {
         for (FieldSettings setting : fs.values())
         {
-            if (setting.welcomeMessage || setting.farewellMessage)
+            if (setting.isWelcomeMessage() || setting.isFarewellMessage())
             {
                 return true;
             }
@@ -343,7 +358,7 @@ public final class SettingsManager
     {
         for (FieldSettings setting : fs.values())
         {
-            if (setting.cannon || setting.launch)
+            if (setting.isCannon() || setting.isLaunch())
             {
                 return true;
             }
@@ -360,13 +375,23 @@ public final class SettingsManager
     {
         for (FieldSettings setting : fs.values())
         {
-            if (setting.snitch)
+            if (setting.isSnitch())
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Check if a world is blacklisted
+     * @param placedblock
+     * @return
+     */
+    public boolean isBlacklistedWorld(World world)
+    {
+        return blacklistedWorlds.contains(world.getName());
     }
 
     /**
@@ -456,7 +481,7 @@ public final class SettingsManager
     {
         for (FieldSettings setting : fs.values())
         {
-            if (setting.snitch && setting.blockId == block.getTypeId())
+            if (setting.isSnitch() && setting.getBlockId() == block.getTypeId())
             {
                 return true;
             }
@@ -572,350 +597,5 @@ public final class SettingsManager
     public HashMap<Integer, FieldSettings> getFieldSettings()
     {
         return fs;
-    }
-
-    /**
-     *
-     */
-    public class FieldSettings
-    {
-        public boolean blockDefined = true;
-        public int blockId;
-        public int radius = 0;
-        public int height = 0;
-        public int launchHeight = 0;
-        public int cannonHeight = 0;
-        public int mineDelaySeconds = 0;
-        public int mineReplaceBlock = 0;
-        public int lightningDelaySeconds = 0;
-        public int lightningReplaceBlock = 0;
-        public String title;
-        public boolean preventFire = false;
-        public boolean preventPlace = false;
-        public boolean preventDestroy = false;
-        public boolean preventExplosions = false;
-        public boolean preventPvP = false;
-        public boolean preventMobDamage = false;
-        public boolean preventMobSpawn = false;
-        public boolean preventAnimalSpawn = false;
-        public boolean preventEntry = false;
-        public boolean preventUnprotectable = false;
-        public boolean preventFlow = false;
-        public List<Integer> preventUse = new ArrayList<Integer>();
-        public boolean instantHeal = false;
-        public boolean slowHeal = false;
-        public boolean slowDamage = false;
-        public boolean fastDamage = false;
-        public boolean breakable = false;
-        public boolean welcomeMessage = false;
-        public boolean farewellMessage = false;
-        public boolean giveAir = false;
-        public boolean snitch = false;
-        public boolean noConflict = false;
-        public boolean launch = false;
-        public boolean cannon = false;
-        public boolean mine = false;
-        public boolean lightning = false;
-        public boolean noOwner = false;
-        public boolean forester = false;
-        public boolean foresterShrubs = false;
-        public boolean griefUndoInterval = false;
-        public boolean griefUndoRequest = false;
-        public boolean entryAlert = false;
-        public int price = 0;
-
-        /**
-         *
-         * @return
-         */
-        public String getTitle()
-        {
-            if (title == null)
-            {
-                return "";
-            }
-
-            return title;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getTitleCap()
-        {
-            if (title == null)
-            {
-                return "";
-            }
-
-            return Helper.capitalize(title);
-        }
-
-        /**
-         *
-         * @return
-         */
-        public int getHeight()
-        {
-            if (this.height == 0)
-            {
-                return (this.radius * 2) + 1;
-            }
-            else
-            {
-                return this.height;
-            }
-        }
-
-        /**
-         * Whether a block type can be used in this field
-         * @return
-         */
-        public boolean canUse(int type)
-        {
-            if (preventUse == null)
-            {
-                return true;
-            }
-
-            return !preventUse.contains(type);
-        }
-
-        /**
-         *
-         * @param map
-         */
-        @SuppressWarnings("unchecked")
-        public FieldSettings(LinkedHashMap map)
-        {
-            if (map.containsKey("block") && Helper.isInteger(map.get("block")))
-            {
-                blockId = (Integer) map.get("block");
-            }
-            else
-            {
-                blockDefined = false;
-                return;
-            }
-
-            if (map.containsKey("title") && Helper.isString(map.get("title")))
-            {
-                title = (String) map.get("title");
-            }
-
-            if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
-            {
-                radius = (Integer) map.get("radius");
-            }
-
-            if (map.containsKey("custom-height"))
-            {
-                if (Helper.isInteger(map.get("custom-height")))
-                {
-                    height = (Integer) map.get("custom-height");
-
-                }
-                if (height == 0)
-                {
-                    height = radius;
-                }
-            }
-
-            if (map.containsKey("prevent-fire") && Helper.isBoolean(map.get("prevent-fire")))
-            {
-                preventFire = (Boolean) map.get("prevent-fire");
-            }
-
-            if (map.containsKey("prevent-place") && Helper.isBoolean(map.get("prevent-place")))
-            {
-                preventPlace = (Boolean) map.get("prevent-place");
-            }
-
-            if (map.containsKey("prevent-destroy") && Helper.isBoolean(map.get("prevent-destroy")))
-            {
-                preventDestroy = (Boolean) map.get("prevent-destroy");
-            }
-
-            if (map.containsKey("prevent-explosions") && Helper.isBoolean(map.get("prevent-explosions")))
-            {
-                preventExplosions = (Boolean) map.get("prevent-explosions");
-            }
-
-            if (map.containsKey("prevent-pvp") && Helper.isBoolean(map.get("prevent-pvp")))
-            {
-                preventPvP = (Boolean) map.get("prevent-pvp");
-            }
-
-            if (map.containsKey("prevent-mob-damage") && Helper.isBoolean(map.get("prevent-mob-damage")))
-            {
-                preventMobDamage = (Boolean) map.get("prevent-mob-damage");
-            }
-
-            if (map.containsKey("prevent-mob-spawn") && Helper.isBoolean(map.get("prevent-mob-spawn")))
-            {
-                preventMobSpawn = (Boolean) map.get("prevent-mob-spawn");
-            }
-
-            if (map.containsKey("prevent-animal-spawn") && Helper.isBoolean(map.get("prevent-animal-spawn")))
-            {
-                preventAnimalSpawn = (Boolean) map.get("prevent-animal-spawn");
-            }
-
-            if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
-            {
-                preventEntry = (Boolean) map.get("prevent-entry");
-            }
-
-            if (map.containsKey("prevent-unprotectable") && Helper.isBoolean(map.get("prevent-unprotectable")))
-            {
-                preventUnprotectable = (Boolean) map.get("prevent-unprotectable");
-            }
-
-            if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
-            {
-                instantHeal = (Boolean) map.get("instant-heal");
-            }
-
-            if (map.containsKey("slow-heal") && Helper.isBoolean(map.get("slow-heal")))
-            {
-                slowHeal = (Boolean) map.get("slow-heal");
-            }
-
-            if (map.containsKey("slow-damage") && Helper.isBoolean(map.get("slow-damage")))
-            {
-                slowDamage = (Boolean) map.get("slow-damage");
-            }
-
-            if (map.containsKey("fast-damage") && Helper.isBoolean(map.get("fast-damage")))
-            {
-                fastDamage = (Boolean) map.get("fast-damage");
-            }
-
-            if (map.containsKey("breakable") && Helper.isBoolean(map.get("breakable")))
-            {
-                breakable = (Boolean) map.get("breakable");
-            }
-
-            if (map.containsKey("welcome-message") && Helper.isBoolean(map.get("welcome-message")))
-            {
-                welcomeMessage = (Boolean) map.get("welcome-message");
-            }
-
-            if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
-            {
-                farewellMessage = (Boolean) map.get("farewell-message");
-            }
-
-            if (map.containsKey("give-air") && Helper.isBoolean(map.get("give-air")))
-            {
-                giveAir = (Boolean) map.get("give-air");
-            }
-
-            if (map.containsKey("snitch") && Helper.isBoolean(map.get("snitch")))
-            {
-                snitch = (Boolean) map.get("snitch");
-            }
-
-            if (map.containsKey("no-conflict") && Helper.isBoolean(map.get("no-conflict")))
-            {
-                noConflict = (Boolean) map.get("no-conflict");
-            }
-
-            if (map.containsKey("launch") && Helper.isBoolean(map.get("launch")))
-            {
-                launch = (Boolean) map.get("launch");
-            }
-
-            if (map.containsKey("launch-height") && Helper.isInteger(map.get("launch-height")))
-            {
-                launchHeight = (Integer) map.get("launch-height");
-            }
-
-            if (map.containsKey("cannon") && Helper.isBoolean(map.get("cannon")))
-            {
-                cannon = (Boolean) map.get("cannon");
-            }
-
-            if (map.containsKey("cannon-height") && Helper.isInteger(map.get("cannon-height")))
-            {
-                cannonHeight = (Integer) map.get("cannon-height");
-            }
-
-            if (map.containsKey("mine") && Helper.isBoolean(map.get("mine")))
-            {
-                mine = (Boolean) map.get("mine");
-            }
-
-            if (map.containsKey("mine-replace-block") && Helper.isInteger(map.get("mine-replace-block")))
-            {
-                mineReplaceBlock = (Integer) map.get("mine-replace-block");
-            }
-
-            if (map.containsKey("mine-delay-seconds") && Helper.isInteger(map.get("mine-delay-seconds")))
-            {
-                mineDelaySeconds = (Integer) map.get("mine-delay-seconds");
-            }
-
-            if (map.containsKey("lightning") && Helper.isBoolean(map.get("lightning")))
-            {
-                lightning = (Boolean) map.get("lightning");
-            }
-
-            if (map.containsKey("lightning-replace-block") && Helper.isInteger(map.get("lightning-replace-block")))
-            {
-                lightningReplaceBlock = (Integer) map.get("lightning-replace-block");
-            }
-
-            if (map.containsKey("lightning-delay-seconds") && Helper.isInteger(map.get("lightning-delay-seconds")))
-            {
-                lightningDelaySeconds = (Integer) map.get("lightning-delay-seconds");
-            }
-
-            if (map.containsKey("prevent-flow") && Helper.isBoolean(map.get("prevent-flow")))
-            {
-                preventFlow = (Boolean) map.get("prevent-flow");
-            }
-
-            if (map.containsKey("prevent-use") && Helper.isIntList(map.get("prevent-use")))
-            {
-                preventUse = (List<Integer>) map.get("prevent-use");
-            }
-
-            if (map.containsKey("no-owner") && Helper.isBoolean(map.get("no-owner")))
-            {
-                noOwner = (Boolean) map.get("no-owner");
-            }
-
-            if (map.containsKey("forester") && Helper.isBoolean(map.get("forester")))
-            {
-                forester = (Boolean) map.get("forester");
-            }
-
-            if (map.containsKey("forester-shrubs") && Helper.isBoolean(map.get("forester-shrubs")))
-            {
-                foresterShrubs = (Boolean) map.get("forester-shrubs");
-            }
-
-            if (map.containsKey("grief-undo-request") && Helper.isBoolean(map.get("grief-undo-request")))
-            {
-                griefUndoRequest = (Boolean) map.get("grief-undo-request");
-            }
-
-            if (map.containsKey("grief-undo-interval") && Helper.isBoolean(map.get("grief-undo-interval")))
-            {
-                griefUndoInterval = (Boolean) map.get("grief-undo-interval");
-            }
-
-            if (map.containsKey("entry-alert") && Helper.isBoolean(map.get("entry-alert")))
-            {
-                entryAlert = (Boolean) map.get("entry-alert");
-            }
-
-            if (map.containsKey("price") && Helper.isInteger(map.get("price")))
-            {
-                price = (Integer) map.get("price");
-            }
-        }
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 import net.sacredlabyrinth.Phaed.PreciousStones.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vector;
 import org.bukkit.Material;
@@ -109,12 +109,7 @@ public final class ForesterManager
 
     private void prepareLand(Field field, World world)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         int minx = field.getX() - field.getRadius();
         int maxx = field.getX() + field.getRadius();
@@ -133,7 +128,7 @@ public final class ForesterManager
 
                     if (!isSeeThrough(type))
                     {
-                        prepareSpot(field, world, x, y, z, 4, fs.foresterShrubs);
+                        prepareSpot(field, world, x, y, z, 4, fs.isForesterShrubs());
                     }
                 }
             }
@@ -205,10 +200,7 @@ public final class ForesterManager
         }
     }
 
-    /**
-     *
-     */
-    public void scheduler()
+    private void scheduler()
     {
         final List<Field> deletion = new ArrayList<Field>();
 
@@ -239,13 +231,7 @@ public final class ForesterManager
                     Field field = fe.getField();
                     fe.setProcessing(true);
 
-                    FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-                    if (fs == null)
-                    {
-                        plugin.ffm.queueRelease(field);
-                        continue;
-                    }
+                    FieldSettings fs = field.getSettings();
 
                     World world = plugin.getServer().getWorld(field.getWorld());
                     Player player = plugin.getServer().getPlayer(fe.getPlayerName());
@@ -289,6 +275,7 @@ public final class ForesterManager
                     plugin.ffm.queueRelease(field);
                 }
 
+                deletion.clear();
                 plugin.ffm.flush();
                 processing = false;
             }

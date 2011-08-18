@@ -5,7 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
@@ -39,18 +39,12 @@ public class LightningManager
 
 	if (!plugin.ffm.isAllowed(field, player.getName()))
 	{
-	    FieldSettings fs = plugin.settings.getFieldSettings(field);
+	    FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                return;
-            }
+	    final int delay = fs.getLightningDelaySeconds();
+	    final int leftbehind = fs.getLightningReplaceBlock();
 
-	    final int delay = fs.lightningDelaySeconds;
-	    final int leftbehind = fs.lightningReplaceBlock;
-
-	    if (fs.lightning)
+	    if (fs.isLightning())
 	    {
 		plugin.cm.showLightning(player);
 

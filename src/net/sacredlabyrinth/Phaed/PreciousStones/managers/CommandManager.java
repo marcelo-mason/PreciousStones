@@ -20,7 +20,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 
 /**
  *
@@ -119,6 +119,12 @@ public final class CommandManager implements CommandExecutor
                 {
                     Player player = (Player) sender;
 
+                    if (plugin.settings.isBlacklistedWorld(player.getWorld()))
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.RED + "PreciousStones disabled in this world");
+                        return true;
+                    }
+
                     if (args.length > 0)
                     {
                         String cmd = args[0];
@@ -142,13 +148,6 @@ public final class CommandManager implements CommandExecutor
                         {
                             plugin.settings.debugsql = !plugin.settings.debugsql;
                             ChatBlock.sendMessage(player, ChatColor.AQUA + "Debug sql output " + (plugin.settings.debugsql ? "enabled" : "disabled"));
-                            return true;
-                        }
-                        if (cmd.equals("retag") && plugin.pm.hasPermission(player, "preciousstones.admin.retag"))
-                        {
-                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Tagging chunks...");
-                            plugin.tm.tagWorlds();
-                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Done.");
                             return true;
                         }
                         if (cmd.equals("on") && plugin.pm.hasPermission(player, "preciousstones.benefit.onoff"))
@@ -383,15 +382,9 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSettings fs = plugin.settings.getFieldSettings(field);
+                                    FieldSettings fs = field.getSettings();
 
-                                    if (fs == null)
-                                    {
-                                        plugin.ffm.deleteField(field);
-                                        return true;
-                                    }
-
-                                    if (radius >= 0 && radius <= fs.radius)
+                                    if (radius >= 0 && radius <= fs.getRadius())
                                     {
                                         field.setRadius(radius);
                                         plugin.sm.offerField(field);
@@ -399,7 +392,7 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.RED + "Radius must be less than or equal to " + fs.radius);
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "Radius must be less than or equal to " + fs.getRadius());
                                     }
                                     return true;
                                 }
@@ -420,15 +413,9 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSettings fs = plugin.settings.getFieldSettings(field);
+                                    FieldSettings fs = field.getSettings();
 
-                                    if (fs == null)
-                                    {
-                                        plugin.ffm.deleteField(field);
-                                        return true;
-                                    }
-
-                                    int maxHeight = (((fs.radius * 2) + 1) + fs.height);
+                                    int maxHeight = (((fs.getRadius() * 2) + 1) + fs.getHeight());
 
                                     if (height >= 0 && height <= maxHeight)
                                     {
@@ -459,15 +446,9 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSettings fs = plugin.settings.getFieldSettings(field);
+                                    FieldSettings fs = field.getSettings();
 
-                                    if (fs == null)
-                                    {
-                                        plugin.ffm.deleteField(field);
-                                        return true;
-                                    }
-
-                                    if (fs.cannon || fs.launch)
+                                    if (fs.isCannon() || fs.isLaunch())
                                     {
                                         if (velocity < 0 || velocity > 5)
                                         {
@@ -509,7 +490,7 @@ public final class CommandManager implements CommandExecutor
                                         plugin.viz.addVisualizationField(player, f);
                                     }
 
-                                    plugin.viz.displayVisualization(player);
+                                    plugin.viz.displayVisualization(player, true);
                                 }
                             }
                             else
@@ -531,7 +512,7 @@ public final class CommandManager implements CommandExecutor
                                             plugin.viz.addVisualizationField(player, f);
                                         }
 
-                                        plugin.viz.displayVisualization(player);
+                                        plugin.viz.displayVisualization(player, true);
                                     }
                                     else
                                     {
@@ -547,7 +528,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (cmd.equals("mark") && !plugin.plm.isDisabled(player) && plugin.pm.hasPermission(player, "preciousstones.admin.mark"))
                         {
-                            List<Field> fieldsInArea = plugin.ffm.getFieldsInCustomArea(player.getLocation(), plugin.settings.visualizeAdminChunkRadius);
+                            List<Field> fieldsInArea = plugin.ffm.getFieldsInCustomArea(player.getLocation(), plugin.settings.visualizeMarkChunkRadius);
 
                             if (fieldsInArea.size() > 0)
                             {
@@ -558,7 +539,7 @@ public final class CommandManager implements CommandExecutor
                                     plugin.viz.addFieldMark(player, f);
                                 }
 
-                                plugin.viz.displayMarkVisualization(player);
+                                plugin.viz.displayVisualization(player, false);
                             }
                             else
                             {
@@ -818,8 +799,8 @@ public final class CommandManager implements CommandExecutor
 
                             for (World world : worlds)
                             {
-                                cleandFF = plugin.ffm.revertOrphans(world);
-                                cleandU = plugin.um.revertOrphans(world);
+                                cleandFF =+ plugin.ffm.revertOrphans(world);
+                                cleandU =+ plugin.um.revertOrphans(world);
                             }
 
                             if (cleandFF > 0)
@@ -957,11 +938,6 @@ public final class CommandManager implements CommandExecutor
                     if (plugin.pm.hasPermission(player, "preciousstones.admin.revert"))
                     {
                         cacheBlock.addRow(ChatColor.DARK_RED + "  /ps revert " + ChatColor.AQUA + "- Reverts all orphan fields in the world");
-                    }
-
-                    if (plugin.pm.hasPermission(player, "preciousstones.admin.retag"))
-                    {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps retag " + ChatColor.AQUA + "- Re-tags all chunks that contain pstones");
                     }
 
                     if (cacheBlock.size() > 0)

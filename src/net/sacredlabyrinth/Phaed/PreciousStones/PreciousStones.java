@@ -43,7 +43,9 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.VisualizationManager;
  */
 public class PreciousStones extends JavaPlugin
 {
+    private static PreciousStones instance;
     public static final Logger logger = Logger.getLogger("Minecraft");
+
     public SettingsManager settings;
     public Helper helper;
     public CommandManager com;
@@ -75,6 +77,14 @@ public class PreciousStones extends JavaPlugin
     private PSServerListener serverListener;
 
     /**
+     * @return the instance
+     */
+    public static PreciousStones getInstance()
+    {
+        return instance;
+    }
+
+    /**
      * Parameterized logger
      * @param level
      * @param msg the message
@@ -91,6 +101,8 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onEnable()
     {
+        instance = this;
+
         displayStatusInfo();
 
         settings = new SettingsManager(this);
@@ -175,7 +187,7 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onDisable()
     {
-        getServer().getScheduler().cancelAllTasks();
+        getServer().getScheduler().cancelTasks(this);
         sm.processQueue();
     }
 }

@@ -1,9 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Visualization;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -120,69 +124,6 @@ public class VisualizationManager
         visualizations.put(player.getName(), vis);
     }
 
-    /**
-     * Displays contents of a player's visualization buffer to the player
-     * @param player
-     */
-    public void displayVisualization(final Player player)
-    {
-        Visualization vis = visualizations.get(player.getName());
-
-        if (vis == null)
-        {
-            return;
-        }
-
-        for (Location loc : vis.getLocs())
-        {
-            boolean skip = false;
-
-            for (Field field : vis.getFields())
-            {
-                if (field.envelops(loc))
-                {
-                    skip = true;
-                    break;
-                }
-            }
-
-            if (!skip)
-            {
-                player.sendBlockChange(loc, Material.getMaterial(plugin.settings.visualizeBlock), (byte) 0);
-            }
-        }
-
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                revertVisualization(player);
-            }
-        }, 20L * plugin.settings.visualizeSeconds);
-    }
-
-    /**
-     * Undo the visualization
-     * @param player
-     */
-    public void revertVisualization(Player player)
-    {
-        Visualization vis = visualizations.get(player.getName());
-
-        if (vis == null)
-        {
-            return;
-        }
-
-        for (Location loc : vis.getLocs())
-        {
-            player.sendBlockChange(loc, Material.AIR, (byte) 0);
-        }
-
-        visualizations.remove(player.getName());
-    }
-
     public void addFieldMark(Player player, Field field)
     {
         Visualization vis = visualizations.get(player.getName());
@@ -198,27 +139,25 @@ public class VisualizationManager
 
         if (world != null)
         {
-            int y = field.getY() + 1;
-
-            Block block = world.getBlockAt(field.getX(), y, field.getZ());
-
-            while (y < 128)
+            for (int y = 0; y < 128; y++)
             {
-                if (block.getTypeId() == 0)
+                int typeid = world.getBlockTypeIdAt(field.getX(), y, field.getZ());
+
+                if (typeid == 0)
                 {
-                    vis.addLocation(block.getLocation());
+                    vis.addLocation(new Location(world, field.getX(), y, field.getZ()));
                 }
-                block = world.getBlockAt(field.getX(), y, field.getZ());
-                y++;
             }
         }
+
+        visualizations.put(player.getName(), vis);
     }
 
     /**
-     * Displays contents of a player's mark visualization buffer to the player
+     * Displays contents of a player's visualization buffer to the player
      * @param player
      */
-    public void displayMarkVisualization(final Player player)
+    public void displayVisualization(final Player player, boolean minusOverlap)
     {
         Visualization vis = visualizations.get(player.getName());
 
@@ -227,9 +166,42 @@ public class VisualizationManager
             return;
         }
 
+        List<Location> batch = new LinkedList<Location>();
+        int delay = 0;
+
         for (Location loc : vis.getLocs())
         {
-            player.sendBlockChange(loc, Material.getMaterial(plugin.settings.visualizeMarkBlock), (byte) 0);
+            boolean skip = false;
+
+            if (minusOverlap)
+            {
+                for (Field field : vis.getFields())
+                {
+                    if (field.envelops(loc))
+                    {
+                        skip = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!skip)
+            {
+                batch.add(loc);
+            }
+
+            if (batch.size() >= plugin.settings.visualizeBatchSize)
+            {
+                sendBatch(batch, player, Material.getMaterial(plugin.settings.visualizeBlock), delay);
+
+                batch = new LinkedList<Location>();
+                delay += plugin.settings.visualizeBatchDelayTicks;
+            }
+        }
+
+        if (!batch.isEmpty())
+        {
+            sendBatch(batch, player, Material.getMaterial(plugin.settings.visualizeBlock), delay);
         }
 
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
@@ -239,6 +211,60 @@ public class VisualizationManager
             {
                 revertVisualization(player);
             }
-        }, 20L * plugin.settings.visualizeSeconds);
+        }, 20L * plugin.settings.visualizeSeconds + delay);
+    }
+
+    /**
+     * Undo the visualization
+     * @param player
+     */
+    public void revertVisualization(Player player)
+    {
+        Visualization vis = visualizations.get(player.getName());
+
+        if (vis == null)
+        {
+            return;
+        }
+
+        ChatBlock.sendMessage(player, ChatColor.AQUA + "Reverting visualization...");
+
+        List<Location> batch = new LinkedList<Location>();
+        int delay = 0;
+
+        for (Location loc : vis.getLocs())
+        {
+            batch.add(loc);
+
+            if (batch.size() >= plugin.settings.visualizeBatchSize)
+            {
+                sendBatch(batch, player, Material.AIR, delay);
+
+                batch = new LinkedList<Location>();
+                delay += plugin.settings.visualizeBatchDelayTicks;
+            }
+        }
+
+        if (!batch.isEmpty())
+        {
+            sendBatch(batch, player, Material.AIR, delay);
+        }
+
+        visualizations.remove(player.getName());
+    }
+
+    private void sendBatch(final List<Location> locs, final Player player, final Material mat, int delay)
+    {
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for (Location loc : locs)
+                {
+                    player.sendBlockChange(loc, mat, (byte) 0);
+                }
+            }
+        }, delay);
     }
 }

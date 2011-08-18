@@ -17,7 +17,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import net.sacredlabyrinth.Phaed.PreciousStones.data.mysqlCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.data.sqlCore;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
 import org.bukkit.block.BlockFace;
@@ -57,6 +57,11 @@ public final class StorageManager
      */
     public void initiateDB()
     {
+        if (core != null && core.checkConnection())
+        {
+            return;
+        }
+
         if (plugin.settings.useMysql)
         {
             core = new mysqlCore(PreciousStones.logger, plugin.settings.host, plugin.settings.database, plugin.settings.username, plugin.settings.password);
@@ -180,10 +185,8 @@ public final class StorageManager
         {
             if (plugin.settings.useMysql)
             {
-                String query = "UPDATE pstone_fields SET packed_snitch_list = '';";
-                core.sqlQuery(query);
-                //String query = "ALTER TABLE pstone_fields DROP COLUMN packed_snitch_list;";
-                //core.updateQuery(query);
+                String query = "ALTER TABLE pstone_fields DROP COLUMN packed_snitch_list;";
+                core.updateQuery(query);
             }
 
             String query = "ALTER TABLE pstone_fields ADD COLUMN last_used bigint(20);";
@@ -196,6 +199,9 @@ public final class StorageManager
      */
     public void loadWorldData()
     {
+        plugin.ffm.clearChunkLists();
+        plugin.um.clearChunkLists();
+
         List<World> worlds = plugin.getServer().getWorlds();
 
         for (World world : worlds)
@@ -222,16 +228,11 @@ public final class StorageManager
         {
             for (Field field : fields)
             {
-                FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-                if (fs == null)
-                {
-                    continue;
-                }
+                FieldSettings fs = field.getSettings();
 
                 plugin.ffm.addToCollection(field);
 
-                if (fs.griefUndoInterval)
+                if (fs.isGriefUndoInterval())
                 {
                     plugin.gum.add(field);
                 }
@@ -384,11 +385,11 @@ public final class StorageManager
                             }
                         }
 
+                        FieldSettings fs = plugin.settings.getFieldSettings(field);
+
                         if (field.getAgeInDays() > plugin.settings.purgeSnitchAfterDays)
                         {
-                            FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-                            if (fs != null && fs.snitch)
+                            if (fs != null && fs.isSnitch())
                             {
                                 deleteSnitchEntires(field);
                                 field.markForDeletion();
@@ -398,7 +399,11 @@ public final class StorageManager
                             }
                         }
 
-                        out.add(field);
+                        if (fs != null)
+                        {
+                            field.setSettings(fs);
+                            out.add(field);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -502,17 +507,11 @@ public final class StorageManager
 
     private void updateField(Field field)
     {
-        if (field.isDirty(Field.Dirty.DELETE))
-        {
-            deleteField(field);
-            return;
-        }
-
         String subQuery = "";
 
         if (field.isDirty(Field.Dirty.OWNER))
         {
-            subQuery += "owner = " + field.getOwner() + ", ";
+            subQuery += "owner = '" + field.getOwner() + "', ";
         }
 
         if (field.isDirty(Field.Dirty.RADIUS))
@@ -553,7 +552,7 @@ public final class StorageManager
             {
                 PreciousStones.logger.info(query);
             }
-            core.addBatch(query);
+            core.updateQuery(query);
         }
 
         field.clearDirty();
@@ -586,7 +585,7 @@ public final class StorageManager
     public void deleteField(Field field)
     {
         String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
-        core.addBatch(query);
+        core.deleteQuery(query);
     }
 
     /**
@@ -596,7 +595,7 @@ public final class StorageManager
     public void deleteFields(String playerName)
     {
         String query = "DELETE FROM `pstone_fields` WHERE owner = '" + playerName + "';";
-        core.addBatch(query);
+        core.deleteQuery(query);
     }
 
     /**
@@ -607,7 +606,7 @@ public final class StorageManager
     {
         String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`) ";
         String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + ub.getWorld() + "','" + ub.getOwner() + "'," + ub.getTypeId() + ");";
-        core.addBatch(query + values);
+        core.insertQuery(query + values);
     }
 
     /**
@@ -617,7 +616,7 @@ public final class StorageManager
     public void deleteUnbreakable(Unbreakable ub)
     {
         String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + ub.getWorld() + "';";
-        core.addBatch(query);
+        core.deleteQuery(query);
     }
 
     /**
@@ -627,7 +626,7 @@ public final class StorageManager
     public void deleteUnbreakables(String playerName)
     {
         String query = "DELETE FROM `pstone_unbreakables` WHERE owner = '" + playerName + "';";
-        core.addBatch(query);
+        core.deleteQuery(query);
     }
 
     /**
@@ -640,16 +639,16 @@ public final class StorageManager
         if (plugin.settings.useMysql)
         {
             String query = "INSERT INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`) ";
-            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + snitch.getWorld() + "','" + se.getName() + "','" + se.getReason() + "','" + se.getDetails() + "',1) ";
+            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + snitch.getWorld() + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1) ";
             String update = "ON DUPLICATE KEY UPDATE count = count+1;";
-            core.addBatch(query + values + update);
+            core.insertQuery(query + values + update);
         }
         else
         {
             String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`) ";
-            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + snitch.getWorld() + "','" + se.getName() + "','" + se.getReason() + "','" + se.getDetails() + "',1) ";
+            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + snitch.getWorld() + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1) ";
             String update = "UPDATE `pstone_snitches` SET count = count+1;";
-            core.addBatch(query + values + update);
+            core.insertQuery(query + values + update);
         }
     }
 
@@ -665,6 +664,7 @@ public final class StorageManager
         {
             PreciousStones.logger.info(query);
         }
+
         synchronized (this)
         {
             core.deleteQuery(query);
@@ -688,9 +688,7 @@ public final class StorageManager
 
         synchronized (this)
         {
-            core.openBatch();
             processSnitches(workingSnitchEntries);
-            core.closeBatch();
         }
 
         List<SnitchEntry> out = new ArrayList<SnitchEntry>();
@@ -743,7 +741,7 @@ public final class StorageManager
     public void deletePlayer(String playerName)
     {
         String query = "DELETE FROM `pstone_players` WHERE player_name = '" + playerName + "';";
-        core.addBatch(query);
+        core.deleteQuery(query);
     }
 
     /**
@@ -759,14 +757,14 @@ public final class StorageManager
             String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`) ";
             String values = "VALUES ( '" + playerName + "', " + time + ") ";
             String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ";";
-            core.addBatch(query + values + update);
+            core.insertQuery(query + values + update);
         }
         else
         {
             String query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`) ";
             String values = "VALUES ( '" + playerName + "'," + time + ");";
             String update = "UPDATE `pstone_players` SET last_seen = " + time + ";";
-            core.addBatch(query + values + update);
+            core.insertQuery(query + values + update);
         }
     }
 
@@ -774,29 +772,26 @@ public final class StorageManager
     {
         long time = (new Date()).getTime();
 
-        core.openBatch();
-
         if (plugin.settings.useMysql)
         {
             String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`) ";
             String values = "SELECT DISTINCT `owner`, " + time + " as last_seen FROM pstone_fields ";
-            core.addBatch(query + values);
+            core.insertQuery(query + values);
 
             query = "INSERT IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`) ";
             values = "SELECT DISTINCT `owner`, " + time + " as last_seen FROM pstone_unbreakables ";
-            core.addBatch(query + values);
+            core.insertQuery(query + values);
         }
         else
         {
             String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`) ";
             String values = "SELECT DISTINCT `owner`, " + time + " as last_seen FROM pstone_fields ";
-            core.addBatch(query + values);
+            core.insertQuery(query + values);
 
             query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`) ";
             values = "SELECT DISTINCT `owner`, " + time + " as last_seen FROM pstone_unbreakables ";
-            core.addBatch(query + values);
+            core.insertQuery(query + values);
         }
-        core.closeBatch();
     }
 
     /**
@@ -875,7 +870,7 @@ public final class StorageManager
     {
         String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
         String values = "VALUES ( '" + new Timestamp((new Date()).getTime()) + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
-        core.addBatch(query + values);
+        core.insertQuery(query + values);
     }
 
     /**
@@ -895,9 +890,7 @@ public final class StorageManager
 
         synchronized (this)
         {
-            core.openBatch();
             processGrief(workingGrief);
-            core.closeBatch();
         }
 
         List<GriefBlock> out = new ArrayList<GriefBlock>();
@@ -1047,22 +1040,17 @@ public final class StorageManager
 
         synchronized (this)
         {
-            core.openBatch();
-
             processFields(working);
             processUnbreakable(workingUb);
             processGrief(workingGrief);
             processPlayers(workingPlayers);
             processSnitches(workingSnitchEntries);
-
-            core.closeBatch();
         }
 
-        if (plugin.settings.debugdb && !pending.isEmpty())
+        if (plugin.settings.debugdb)
         {
             PreciousStones.logger.info("[Queue] done");
         }
-
     }
 
     /**
@@ -1071,8 +1059,6 @@ public final class StorageManager
      */
     public void processFields(Map<Vec, Field> working)
     {
-        int count = 0;
-
         if (plugin.settings.debugdb && !working.isEmpty())
         {
             PreciousStones.logger.info("[Queue] processing " + working.size() + " pstone queries...");
@@ -1080,24 +1066,14 @@ public final class StorageManager
 
         for (Field field : working.values())
         {
-            updateField(field);
-
-            if (count >= plugin.settings.saveBatchSize)
+            if (field.isDirty(Field.Dirty.DELETE))
             {
-                if (plugin.settings.debugdb)
-                {
-                    PreciousStones.logger.info("[Queue] sent batch of " + count + " pstone queries");
-                }
-                core.closeBatch();
-                core.openBatch();
-                count = 0;
+                deleteField(field);
             }
-            count++;
-        }
-
-        if (plugin.settings.debugdb && count > 0)
-        {
-            PreciousStones.logger.info("[Queue] sent batch of " + count + " pstone queries");
+            else
+            {
+                updateField(field);
+            }
         }
     }
 
@@ -1107,8 +1083,6 @@ public final class StorageManager
      */
     public void processUnbreakable(Map<Unbreakable, Boolean> workingUb)
     {
-        int count = 0;
-
         if (plugin.settings.debugdb && !workingUb.isEmpty())
         {
             PreciousStones.logger.info("[Queue] processing " + workingUb.size() + " unbreakable queries...");
@@ -1124,23 +1098,6 @@ public final class StorageManager
             {
                 deleteUnbreakable(ub);
             }
-
-            if (count >= plugin.settings.saveBatchSize)
-            {
-                if (plugin.settings.debugdb)
-                {
-                    PreciousStones.logger.info("[Queue] sent batch of " + count + " unbreakable queries");
-                }
-                core.closeBatch();
-                core.openBatch();
-                count = 0;
-            }
-            count++;
-        }
-
-        if (plugin.settings.debugdb && count > 0)
-        {
-            PreciousStones.logger.info("[Queue] sent batch of " + count + " unbreakable queries");
         }
     }
 
@@ -1150,8 +1107,6 @@ public final class StorageManager
      */
     public void processPlayers(Map<String, Boolean> workingPlayers)
     {
-        int count = 0;
-
         if (plugin.settings.debugdb && !workingPlayers.isEmpty())
         {
             PreciousStones.logger.info("[Queue] processing " + workingPlayers.size() + " player queries...");
@@ -1167,23 +1122,6 @@ public final class StorageManager
             {
                 deletePlayer(playerName);
             }
-
-            if (count >= plugin.settings.saveBatchSize)
-            {
-                if (plugin.settings.debugdb)
-                {
-                    PreciousStones.logger.info("[Queue] sent batch of " + count + " player queries");
-                }
-                core.closeBatch();
-                core.openBatch();
-                count = 0;
-            }
-            count++;
-        }
-
-        if (plugin.settings.debugdb && count > 0)
-        {
-            PreciousStones.logger.info("[Queue] sent batch of " + count + " player queries");
         }
     }
 
@@ -1193,8 +1131,6 @@ public final class StorageManager
      */
     public void processSnitches(List<SnitchEntry> workingSnitchEntries)
     {
-        int count = 0;
-
         if (plugin.settings.debugdb && !workingSnitchEntries.isEmpty())
         {
             PreciousStones.logger.info("[Queue] sending " + workingSnitchEntries.size() + " snitch queries...");
@@ -1203,23 +1139,6 @@ public final class StorageManager
         for (SnitchEntry se : workingSnitchEntries)
         {
             insertSnitchEntry(se.getField(), se);
-
-            if (count >= plugin.settings.saveBatchSize)
-            {
-                if (plugin.settings.debugdb)
-                {
-                    PreciousStones.logger.info("[Queue] sent batch of " + count + " snitch queries");
-                }
-                core.closeBatch();
-                core.openBatch();
-                count = 0;
-            }
-            count++;
-        }
-
-        if (plugin.settings.debugdb && count > 0)
-        {
-            PreciousStones.logger.info("[Queue] sent batch of " + count + " snitch queries");
         }
     }
 
@@ -1229,8 +1148,6 @@ public final class StorageManager
      */
     public void processGrief(Set<Field> workingGrief)
     {
-        int count = 0;
-
         if (plugin.settings.debugdb && !workingGrief.isEmpty())
         {
             PreciousStones.logger.info("[Queue] processing " + workingGrief.size() + " grief queries...");
@@ -1239,23 +1156,6 @@ public final class StorageManager
         for (Field field : workingGrief)
         {
             updateGrief(field);
-
-            if (count >= plugin.settings.saveBatchSize)
-            {
-                if (plugin.settings.debugdb)
-                {
-                    PreciousStones.logger.info("[Queue] sent batch of " + count + " grief queries");
-                }
-                core.closeBatch();
-                core.openBatch();
-                count = 0;
-            }
-            count++;
-        }
-
-        if (plugin.settings.debugdb && count > 0)
-        {
-            PreciousStones.logger.info("[Queue] sent batch of " + count + " grief queries");
         }
     }
 }

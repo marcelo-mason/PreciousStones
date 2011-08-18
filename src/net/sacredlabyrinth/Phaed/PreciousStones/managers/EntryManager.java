@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.EntryFields;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
@@ -41,10 +41,7 @@ public final class EntryManager
         startScheduler();
     }
 
-    /**
-     *
-     */
-    public void startScheduler()
+    private void startScheduler()
     {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
         {
@@ -72,13 +69,7 @@ public final class EntryManager
 
                     for (Field field : fields)
                     {
-                        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-                        if (fs == null)
-                        {
-                            plugin.ffm.queueRelease(field);
-                            continue;
-                        }
+                        FieldSettings fs = field.getSettings();
 
                         Player player = plugin.helper.matchSinglePlayer(playername);
 
@@ -89,7 +80,7 @@ public final class EntryManager
 
                         if (plugin.pm.hasPermission(player, "preciousstones.benefit.giveair"))
                         {
-                            if (fs.giveAir)
+                            if (fs.isGiveAir())
                             {
                                 if (player.getRemainingAir() < 300)
                                 {
@@ -102,7 +93,7 @@ public final class EntryManager
 
                         if (plugin.pm.hasPermission(player, "preciousstones.benefit.heal"))
                         {
-                            if (fs.instantHeal)
+                            if (fs.isInstantHeal())
                             {
                                 if (player.getHealth() < 20)
                                 {
@@ -112,7 +103,7 @@ public final class EntryManager
                                 }
                             }
 
-                            if (fs.slowHeal)
+                            if (fs.isSlowHeal())
                             {
                                 if (player.getHealth() < 20)
                                 {
@@ -130,7 +121,7 @@ public final class EntryManager
                             {
                                 if (!plugin.ffm.isAllowed(field, playername))
                                 {
-                                    if (fs.slowDamage)
+                                    if (fs.isSlowDamage())
                                     {
                                         if (player.getHealth() > 0)
                                         {
@@ -140,7 +131,7 @@ public final class EntryManager
                                         }
                                     }
 
-                                    if (fs.fastDamage)
+                                    if (fs.isFastDamage())
                                     {
                                         if (player.getHealth() > 0)
                                         {
@@ -181,28 +172,22 @@ public final class EntryManager
     /**
      * Runs when a player enters an overlapped area
      * @param player
-     * @param entryField
+     * @param field
      */
-    public void enterOverlappedArea(Player player, Field entryField)
+    public void enterOverlappedArea(Player player, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(entryField);
+        FieldSettings fs = field.getSettings();
 
-        if (fs == null)
+        if (fs.isWelcomeMessage() && field.getName().length() > 0)
         {
-            plugin.ffm.queueRelease(entryField);
-            return;
+            plugin.cm.showWelcomeMessage(player, field.getName());
         }
 
-        if (fs.welcomeMessage && entryField.getName().length() > 0)
+        if (fs.isEntryAlert())
         {
-            plugin.cm.showWelcomeMessage(player, entryField.getName());
-        }
-
-        if (fs.entryAlert)
-        {
-            if (!plugin.ffm.isAllowed(entryField, player.getName()))
+            if (!plugin.ffm.isAllowed(field, player.getName()))
             {
-                plugin.ffm.announceAllowedPlayers(entryField, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + ChatColor.DARK_GRAY + entryField.getCoords());
+                plugin.ffm.announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
             }
         }
     }
@@ -214,15 +199,9 @@ public final class EntryManager
      */
     public void leaveOverlappedArea(Player player, Field entryField)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(entryField);
+        FieldSettings fs = entryField.getSettings();
 
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(entryField);
-            return;
-        }
-
-        if (fs.welcomeMessage && entryField.getName().length() > 0)
+        if (fs.isWelcomeMessage() && entryField.getName().length() > 0)
         {
             plugin.cm.showFarewellMessage(player, entryField.getName());
         }
@@ -436,15 +415,9 @@ public final class EntryManager
 
                 for (Field field : fields)
                 {
-                    FieldSettings fs = plugin.settings.getFieldSettings(field);
+                    FieldSettings fs = field.getSettings();
 
-                    if (fs == null)
-                    {
-                        plugin.ffm.queueRelease(field);
-                        continue;
-                    }
-
-                    if (!fs.cannon && !fs.launch)
+                    if (!fs.isCannon() && !fs.isLaunch())
                     {
                         continue;
                     }

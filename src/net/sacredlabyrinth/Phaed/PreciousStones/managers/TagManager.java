@@ -2,7 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -11,8 +10,9 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 /**
  *
@@ -29,29 +29,17 @@ public class TagManager
     public TagManager(PreciousStones plugin)
     {
         this.plugin = plugin;
+        untagWorlds();
     }
 
-    /**
-     * Tags all the chunks containing pstones in all your worlds
-     */
-    public void tagWorlds()
+    public void untagWorlds()
     {
         List<World> worlds = plugin.getServer().getWorlds();
 
         for (World world : worlds)
         {
-            tagWorld(world.getName());
+            untagWorld(world.getName());
         }
-    }
-
-    /**
-     * Tags the chunk, used when a pstone is placed on the chunk
-     * @param cv
-     */
-    public void tagChunk(ChunkVec cv)
-    {
-        plugin.getServer().getWorld(cv.getWorld()).getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4).setType(Material.OBSIDIAN);
-        plugin.getServer().getWorld(cv.getWorld()).getBlockAt(cv.getX() << 4, 1, cv.getZ() << 4).setType(Material.BEDROCK);
     }
 
     /**
@@ -60,60 +48,34 @@ public class TagManager
      */
     public void untagChunk(ChunkVec cv)
     {
-        if (!containsPStones(cv))
+        World world = plugin.getServer().getWorld(cv.getWorld());
+
+        if (inAir(world.getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4)))
         {
-            plugin.getServer().getWorld(cv.getWorld()).getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4).setType(Material.BEDROCK);
+            world.getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4).setTypeId(0);
+        }
+        else
+        {
+            world.getBlockAt(cv.getX() << 4, 0, cv.getZ() << 4).setTypeId(7);
+        }
+
+        if (inAir(world.getBlockAt(cv.getX() << 4, 1, cv.getZ() << 4)))
+        {
+            world.getBlockAt(cv.getX() << 4, 1, cv.getZ() << 4).setTypeId(0);
+        }
+        else
+        {
+            world.getBlockAt(cv.getX() << 4, 1, cv.getZ() << 4).setTypeId(7);
         }
     }
 
-    /**
-     * Whether the chunk contains any pstones
-     * @param cv
-     * @return Whether the chunk contains any pstones
-     */
-    public boolean containsPStones(ChunkVec cv)
+    private boolean inAir(Block block)
     {
-        return plugin.ffm.hasField(cv) || plugin.um.hasUnbreakable(cv);
-    }
-
-    /**
-     * Check if the area around the chunk contains a tagged chunk
-     * @param cv
-     * @return whether the area around the chunk contains a tagged chunk
-     */
-    public boolean isTaggedArea(ChunkVec cv)
-    {
-        World world = plugin.getServer().getWorld(cv.getWorld());
-
-        int type = world.getBlockTypeIdAt(cv.getX() << 4, 0, cv.getZ() << 4);
-
-        if (type == 49)
+        if (block.getRelative(BlockFace.EAST).getTypeId() == 0 || block.getRelative(BlockFace.WEST).getTypeId() == 0 || block.getRelative(BlockFace.NORTH).getTypeId() == 0 || block.getRelative(BlockFace.SOUTH).getTypeId() == 0)
         {
             return true;
         }
 
-        int xlow = cv.getX() - plugin.settings.chunksInLargestForceFieldArea;
-        int xhigh = cv.getX() + plugin.settings.chunksInLargestForceFieldArea;
-        int zlow = cv.getZ() - plugin.settings.chunksInLargestForceFieldArea;
-        int zhigh = cv.getZ() + plugin.settings.chunksInLargestForceFieldArea;
-
-        for (int x = xlow; x <= xhigh; x++)
-        {
-            for (int z = zlow; z <= zhigh; z++)
-            {
-                if (x == cv.getX() && z == cv.getZ())
-                {
-                    continue;
-                }
-
-                type = world.getBlockTypeIdAt(x << 4, 0, z << 4);
-
-                if (type == 49)
-                {
-                    return true;
-                }
-            }
-        }
         return false;
     }
 
@@ -139,8 +101,13 @@ public class TagManager
      * Tags all of the worlds pstone chunks
      * @param worldName
      */
-    public void tagWorld(String worldName)
+    public void untagWorld(String worldName)
     {
+        if (!isTaggedWorld(worldName))
+        {
+            return;
+        }
+
         Set<ChunkVec> chunks = new HashSet<ChunkVec>();
 
         HashMap<ChunkVec, HashMap<Vec, Field>> c = plugin.ffm.retrieveFields(worldName);
@@ -157,7 +124,10 @@ public class TagManager
             chunks.addAll(u.keySet());
         }
 
-        PreciousStones.log(Level.INFO, "tagging {0} chunks", chunks.size());
+        if (chunks.size() > 0)
+        {
+            PreciousStones.log(Level.INFO, "untagging {0} chunks", chunks.size());
+        }
 
         World world = plugin.getServer().getWorld(worldName);
 
@@ -186,12 +156,27 @@ public class TagManager
                 currentChunk = cv;
             }
 
-            tagChunk(cv);
+            untagChunk(cv);
         }
 
-        // tag world
+        // untag world
 
-        world.getBlockAt(8, 0, 8).setType(Material.OBSIDIAN);
-        world.getBlockAt(8, 1, 8).setType(Material.BEDROCK);
+        if (inAir(world.getBlockAt(8, 0, 8)))
+        {
+            world.getBlockAt(8, 0, 8).setTypeId(0);
+        }
+        else
+        {
+            world.getBlockAt(8, 0, 8).setTypeId(7);
+        }
+
+        if (inAir(world.getBlockAt(8, 1, 8)))
+        {
+            world.getBlockAt(8, 1, 8).setTypeId(0);
+        }
+        else
+        {
+            world.getBlockAt(8, 1, 8).setTypeId(7);
+        }
     }
 }

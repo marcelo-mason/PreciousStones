@@ -9,7 +9,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 import org.bukkit.ChatColor;
@@ -100,13 +100,7 @@ public class CommunicatonManager
     public void notifyPlaceFF(Player player, Block fieldblock)
     {
         Field field = plugin.ffm.getField(fieldblock);
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyPlace && canNotify(player))
         {
@@ -145,13 +139,7 @@ public class CommunicatonManager
     public void notifyPlaceBreakableFF(Player player, Block fieldblock)
     {
         Field field = plugin.ffm.getField(fieldblock);
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyPlace && canNotify(player))
         {
@@ -226,13 +214,7 @@ public class CommunicatonManager
     public void notifyDestroyFF(Player player, Block fieldblock)
     {
         Field field = plugin.ffm.getField(fieldblock);
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyDestroy && canNotify(player))
         {
@@ -271,13 +253,7 @@ public class CommunicatonManager
     public void notifyDestroyOthersFF(Player player, Block fieldblock)
     {
         Field field = plugin.ffm.getField(fieldblock);
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyDestroy && canNotify(player))
         {
@@ -316,13 +292,7 @@ public class CommunicatonManager
     public void notifyDestroyBreakableFF(Player player, Block fieldblock)
     {
         Field field = plugin.ffm.getField(fieldblock);
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyDestroy && canNotify(player))
         {
@@ -360,13 +330,7 @@ public class CommunicatonManager
      */
     public void notifyBypassPlace(Player player, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyBypassPlace && canNotify(player))
         {
@@ -404,13 +368,7 @@ public class CommunicatonManager
      */
     public void notifyBypassPlaceU(Player player, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyBypassPlace && canNotify(player))
         {
@@ -449,13 +407,7 @@ public class CommunicatonManager
      */
     public void notifyBypassDestroy(Player player, Block block, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyBypassDestroy && canNotify(player))
         {
@@ -532,13 +484,7 @@ public class CommunicatonManager
     public void notifyBypassDestroyFF(Player player, Block fieldblock)
     {
         Field field = plugin.ffm.getField(fieldblock);
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyBypassDestroy && canNotify(player))
         {
@@ -576,13 +522,7 @@ public class CommunicatonManager
      */
     public void warnEntry(Player player, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnEntry && canWarn(player))
         {
@@ -625,13 +565,7 @@ public class CommunicatonManager
      */
     public void warnFire(Player player, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnFire && canWarn(player))
         {
@@ -670,13 +604,7 @@ public class CommunicatonManager
      */
     public void warnPlace(Player player, Block block, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnPlace && canWarn(player))
         {
@@ -715,13 +643,7 @@ public class CommunicatonManager
      */
     public void warnUse(Player player, Material mat, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnUse && canWarn(player))
         {
@@ -760,13 +682,7 @@ public class CommunicatonManager
      */
     public void warnEmpty(Player player, Material mat, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnPlace && canWarn(player))
         {
@@ -843,13 +759,7 @@ public class CommunicatonManager
     public void warnDestroyFF(Player player, Block fieldblock)
     {
         Field field = plugin.ffm.getField(fieldblock);
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnDestroy && canWarn(player))
         {
@@ -888,13 +798,7 @@ public class CommunicatonManager
      */
     public void warnDestroyArea(Player player, Block damagedblock, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnDestroyArea && canWarn(player))
         {
@@ -933,13 +837,7 @@ public class CommunicatonManager
      */
     public void warnConflictU(Player player, Block block, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (canWarn(player))
         {
@@ -984,13 +882,7 @@ public class CommunicatonManager
      */
     public void warnConflictFF(Player player, Block block, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (canWarn(player))
         {
@@ -1078,13 +970,7 @@ public class CommunicatonManager
      */
     public void warnConflictPistonFF(Player player, Block block, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (canWarn(player))
         {
@@ -1215,13 +1101,7 @@ public class CommunicatonManager
      */
     public void warnPvP(Player attacker, Player victim, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnPvp && canWarn(attacker))
         {
@@ -1260,13 +1140,7 @@ public class CommunicatonManager
      */
     public void warnBypassPvP(Player attacker, Player victim, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyBypassPvp && canNotify(attacker))
         {
@@ -1304,13 +1178,7 @@ public class CommunicatonManager
      */
     public void warnPvPLavaPlace(Player attacker, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnPvp && canWarn(attacker))
         {
@@ -1348,13 +1216,7 @@ public class CommunicatonManager
      */
     public void warnBypassPvPLavaPlace(Player attacker, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.notifyBypassPvp && canNotify(attacker))
         {
@@ -1468,13 +1330,7 @@ public class CommunicatonManager
      */
     public void warnPlaceUnprotectableInField(Player player, Block unprotectableblock, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnUnprotectable && canWarn(player))
         {
@@ -1632,13 +1488,7 @@ public class CommunicatonManager
      */
     public void notifyBypassPlaceUnprotectableInField(Player player, Block unprotectableblock, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-        if (fs == null)
-        {
-            plugin.ffm.queueRelease(field);
-            return;
-        }
+        FieldSettings fs = field.getSettings();
 
         if (plugin.settings.warnUnprotectable && canWarn(player))
         {
@@ -1893,13 +1743,15 @@ public class CommunicatonManager
      * @param fields
      * @param player
      */
-    public void showProtectedLocation(List<Field> fields, Player player, Block block)
+    public void showProtectedLocation(Player player, Block block)
     {
+        List<Field> fields = plugin.ffm.getSourceFields(block.getLocation());
+
         ChatBlock.sendBlank(player);
         ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected: " + ChatColor.GRAY + Helper.toLocationString(block.getLocation()));
         for (Field field : fields)
         {
-            ChatBlock.sendMessage(player, ChatColor.YELLOW + "Source: " + ChatColor.AQUA + field.getX() + " " + field.getY() + " " + field.getZ());
+            ChatBlock.sendMessage(player, ChatColor.YELLOW + field.getSettings().getTitle() + ": " + ChatColor.AQUA + field.getX() + " " + field.getY() + " " + field.getZ());
         }
     }
 
@@ -1925,17 +1777,11 @@ public class CommunicatonManager
 
         for (Field field : fields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
+            FieldSettings fs = field.getSettings();
 
             chatBlock.addRow("", "");
 
-            if ((fs.farewellMessage || fs.welcomeMessage) && field.getName().length() > 0)
+            if ((fs.isFarewellMessage() || fs.isWelcomeMessage()) && field.getName().length() > 0)
             {
                 chatBlock.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName());
             }
@@ -1987,8 +1833,8 @@ public class CommunicatonManager
 
         for (FieldSettings fs : fss.values())
         {
-            chatBlock.addRow(ChatColor.YELLOW + "Type: " + ChatColor.AQUA + "" + Material.getMaterial(fs.blockId) + " " + ChatColor.YELLOW + "Title: " + ChatColor.AQUA + fs.title);
-            chatBlock.addRow(ChatColor.YELLOW + "Radius: " + ChatColor.AQUA + "" + fs.radius + " " + ChatColor.YELLOW + "Height: " + ChatColor.AQUA + "" + fs.height);
+            chatBlock.addRow(ChatColor.YELLOW + "Type: " + ChatColor.AQUA + "" + Material.getMaterial(fs.getBlockId()) + " " + ChatColor.YELLOW + "Title: " + ChatColor.AQUA + fs.getTitle());
+            chatBlock.addRow(ChatColor.YELLOW + "Radius: " + ChatColor.AQUA + "" + fs.getRadius() + " " + ChatColor.YELLOW + "Height: " + ChatColor.AQUA + "" + fs.getHeight());
             chatBlock.addRow("");
         }
 
@@ -2032,12 +1878,7 @@ public class CommunicatonManager
 
             String title = "Intruder log ";
 
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-            if (fs != null)
-            {
-                title = fs.getTitle();
-            }
+            FieldSettings fs = field.getSettings();
 
             if (!snitches.isEmpty())
             {

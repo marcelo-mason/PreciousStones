@@ -19,7 +19,7 @@ import org.bukkit.block.BlockFace;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -45,6 +45,38 @@ public final class ForceFieldManager
     }
 
     /**
+     * Clear out the fields in memory
+     */
+    public void clearChunkLists()
+    {
+        chunkLists.clear();
+    }
+
+    /**
+     * Check whether a chunk has fields
+     * @param cv
+     * @return
+     */
+    public boolean hasFields(ChunkVec cv)
+    {
+        HashMap<ChunkVec, HashMap<Vec, Field>> w = chunkLists.get(cv.getWorld());
+
+        if (w != null)
+        {
+            HashMap<Vec, Field> c = w.get(cv);
+
+            if (c != null)
+            {
+                return !c.isEmpty();
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
      * Add a brand new field
      * @param fieldblock
      * @param owner
@@ -64,11 +96,29 @@ public final class ForceFieldManager
             return false;
         }
 
-        Field field = new Field(fieldblock, fs.radius, fs.getHeight(), fs.noOwner ? "Server" : owner.getName());
+        // deny if world is blacklisted
+
+        if (plugin.settings.isBlacklistedWorld(fieldblock.getWorld()))
+        {
+            return false;
+        }
+
+        // purchase pstone
+
+        if (!plugin.pm.hasPermission(owner, "preciousstones.bypass.purchase"))
+        {
+            if (fs.getPrice() != 0 && !plugin.ffm.purchase(owner, fs.getPrice()))
+            {
+                return false;
+            }
+        }
+
+        Field field = new Field(fieldblock, fs.getRadius(), fs.getHeight(), fs.isNoOwner() ? "Server" : owner.getName());
+        field.setSettings(fs);
 
         // add to database (skip foresters and activate them)
 
-        if (fs.forester || fs.foresterShrubs)
+        if (fs.isForester() || fs.isForesterShrubs())
         {
             plugin.fm.add(field, owner.getName());
         }
@@ -76,7 +126,7 @@ public final class ForceFieldManager
         {
             // if interval field then register it
 
-            if (fs.griefUndoInterval)
+            if (fs.isGriefUndoInterval())
             {
                 plugin.gum.add(field);
             }
@@ -89,10 +139,6 @@ public final class ForceFieldManager
         }
 
         addToCollection(field);
-
-        // tag the chunk
-
-        plugin.tm.tagChunk(field.toChunkVec());
         return true;
     }
 
@@ -132,30 +178,6 @@ public final class ForceFieldManager
             _w.put(chunkvec, _c);
             chunkLists.put(world, _w);
         }
-    }
-
-    /**
-     * Check if a chunk contains a field
-     * @param cv the chunk vec
-     * @return whether the chunk contains fields
-     */
-    public boolean hasField(ChunkVec cv)
-    {
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = chunkLists.get(cv.getWorld());
-
-        if (w != null)
-        {
-            if (w.containsKey(cv))
-            {
-                HashMap<Vec, Field> c = w.get(cv);
-
-                if (!c.isEmpty())
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -296,7 +318,7 @@ public final class ForceFieldManager
 
                     int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
-                    if (!plugin.settings.isFieldType(type))
+                    if (type != field.getTypeId())
                     {
                         cleanedCount++;
                         queueRelease(field);
@@ -380,7 +402,7 @@ public final class ForceFieldManager
     {
         FieldSettings fs = plugin.settings.getFieldSettings(block.getTypeId());
 
-        return fs == null ? false : fs.breakable;
+        return fs == null ? false : fs.isBreakable();
     }
 
     /**
@@ -608,9 +630,9 @@ public final class ForceFieldManager
      */
     public boolean cleanSnitchList(Player player, Field field)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
+        FieldSettings fs = field.getSettings();
 
-        if (fs.snitch)
+        if (fs.isSnitch())
         {
             field.clearSnitch();
             plugin.sm.deleteSnitchEntires(field);
@@ -635,15 +657,9 @@ public final class ForceFieldManager
 
         for (Field f : total)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(f);
+            FieldSettings fs = f.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(f);
-                continue;
-            }
-
-            if ((fs.farewellMessage || fs.welcomeMessage) && !f.getName().equals(name))
+            if ((fs.isFarewellMessage() || fs.isWelcomeMessage() || fs.isEntryAlert()) && !f.getName().equals(name))
             {
                 f.setName(name);
                 plugin.sm.offerField(f);
@@ -873,9 +889,9 @@ public final class ForceFieldManager
     {
         List<Field> sourcefields = getSourceFields(blockInArea.getLocation());
 
-        for (Field field : sourcefields)
+        if (!sourcefields.isEmpty())
         {
-            return field.getOwner();
+            return sourcefields.get(0).getOwner();
         }
 
         return "";
@@ -999,11 +1015,11 @@ public final class ForceFieldManager
     public List<Field> getAllowedSourceFields(Location loc, String playerName)
     {
         List<Field> fields = new LinkedList<Field>();
-        List<Field> sourcefields = getSourceFields(loc);
+        List<Field> fieldsinarea = getFieldsInArea(loc);
 
-        for (Field field : sourcefields)
+        for (Field field : fieldsinarea)
         {
-            if (isAllowed(field, playerName))
+            if (field.envelops(loc) && isAllowed(field, playerName))
             {
                 fields.add(field);
             }
@@ -1021,11 +1037,11 @@ public final class ForceFieldManager
     public List<Field> getNotAllowedSourceFields(Location loc, String playerName)
     {
         List<Field> fields = new LinkedList<Field>();
-        List<Field> sourcefields = getSourceFields(loc);
+        List<Field> fieldsinarea = getFieldsInArea(loc);
 
-        for (Field field : sourcefields)
+        for (Field field : fieldsinarea)
         {
-            if (!isAllowed(field, playerName))
+            if (field.envelops(loc) && !isAllowed(field, playerName))
             {
                 fields.add(field);
             }
@@ -1046,59 +1062,15 @@ public final class ForceFieldManager
 
         for (Field field : fields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventEntry)
+            if (fs.isPreventEntry())
             {
                 out.add(field);
             }
         }
 
         return out;
-    }
-
-    /**
-     * Returns the field if he's standing in at least one allowed field
-     * @param blockInArea
-     * @param player
-     * @return the field
-     */
-    public Field getOneAllowedField(Block blockInArea, Player player)
-    {
-        TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.settings.throughFields);
-
-        if (tb != null)
-        {
-            Block targetblock = tb.getTargetBlock();
-
-            if (targetblock != null)
-            {
-                if (plugin.ffm.isField(targetblock))
-                {
-                    Field f = getField(targetblock);
-
-                    if (isAllowed(f, player.getName()))
-                    {
-                        return f;
-                    }
-                }
-            }
-        }
-
-        List<Field> sourcefields = getAllowedSourceFields(blockInArea.getLocation(), player.getName());
-
-        if (!sourcefields.isEmpty())
-        {
-            return sourcefields.get(0);
-        }
-
-        return null;
     }
 
     /**
@@ -1127,6 +1099,31 @@ public final class ForceFieldManager
                     }
                 }
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the field if he's standing in at least one allowed field
+     * @param blockInArea
+     * @param player
+     * @return the field
+     */
+    public Field getOneAllowedField(Block blockInArea, Player player)
+    {
+        Field pointed = getPointedField(blockInArea, player);
+
+        if (pointed != null)
+        {
+            return pointed;
+        }
+
+        List<Field> sourcefields = getAllowedSourceFields(blockInArea.getLocation(), player.getName());
+
+        if (!sourcefields.isEmpty())
+        {
+            return sourcefields.get(0);
         }
 
         return null;
@@ -1256,15 +1253,9 @@ public final class ForceFieldManager
 
         for (Field f : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(f);
+            FieldSettings fs = f.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(f);
-                continue;
-            }
-
-            if (fs.snitch)
+            if (fs.isSnitch())
             {
                 out.add(f);
             }
@@ -1283,15 +1274,77 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
+            if (fs.isPreventUnprotectable())
             {
-                plugin.ffm.queueRelease(field);
-                continue;
+                return field;
             }
+        }
 
-            if (fs.preventUnprotectable)
+        return null;
+    }
+
+    /**
+     * Whether the location is a (grief/place/destroy/explosion) protected field
+     * @param loc
+     * @param player
+     * @return the field, null if its not
+     */
+    public boolean isProtected(Location loc)
+    {
+        return findProtected(loc) != null;
+    }
+
+    /**
+     * Find a (grief/place/destroy/explosion) protected field in the location
+     * @param loc
+     * @param player
+     * @return the field, null if its not
+     */
+    public Field findProtected(Location loc)
+    {
+        List<Field> sourcefields = getSourceFields(loc);
+
+        for (Field field : sourcefields)
+        {
+            FieldSettings fs = field.getSettings();
+
+            if (fs.isGriefUndoInterval() || fs.isGriefUndoRequest() || fs.isPreventPlace() || fs.isPreventDestroy() || fs.isPreventExplosions())
+            {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether the location is a (grief/place/destroy/explosion) protected field that the player is not allowed in
+     * @param loc
+     * @param player
+     * @return the field, null if its not
+     */
+    public boolean isProtected(Location loc, Player player)
+    {
+        return findProtected(loc, player) != null;
+    }
+
+    /**
+     * Find a (grief/place/destroy/explosion) protected field in the location that the player is not allowed in
+     * @param loc
+     * @param player
+     * @return the field, null if its not
+     */
+    public Field findProtected(Location loc, Player player)
+    {
+        List<Field> sourcefields = getNotAllowedSourceFields(loc, player.getName());
+
+        for (Field field : sourcefields)
+        {
+            FieldSettings fs = field.getSettings();
+
+            if (fs.isGriefUndoInterval() || fs.isGriefUndoRequest() || fs.isPreventPlace() || fs.isPreventDestroy() || fs.isPreventExplosions())
             {
                 return field;
             }
@@ -1323,15 +1376,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.griefUndoInterval || fs.griefUndoRequest)
+            if (fs.isGriefUndoInterval() || fs.isGriefUndoRequest())
             {
                 return field;
             }
@@ -1361,15 +1408,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.griefUndoInterval || fs.griefUndoRequest)
+            if (fs.isGriefUndoInterval() || fs.isGriefUndoRequest())
             {
                 return field;
             }
@@ -1401,15 +1442,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventPlace)
+            if (fs.isPreventPlace())
             {
                 return field;
             }
@@ -1441,15 +1476,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                deleteField(field);
-                continue;
-            }
-
-            if (fs.preventDestroy)
+            if (fs.isPreventDestroy())
             {
                 return field;
             }
@@ -1479,15 +1508,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                deleteField(field);
-                continue;
-            }
-
-            if (fs.preventDestroy)
+            if (fs.isPreventDestroy())
             {
                 return field;
             }
@@ -1521,13 +1544,7 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
-
-            if (fs == null)
-            {
-                deleteField(field);
-                continue;
-            }
+            FieldSettings fs = field.getSettings();
 
             if (!fs.canUse(type_id))
             {
@@ -1559,15 +1576,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventFire)
+            if (fs.isPreventFire())
             {
                 return field;
             }
@@ -1601,15 +1612,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventEntry)
+            if (fs.isPreventEntry())
             {
                 return field;
             }
@@ -1639,15 +1644,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventMobDamage)
+            if (fs.isPreventMobDamage())
             {
                 return field;
             }
@@ -1677,15 +1676,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventMobSpawn)
+            if (fs.isPreventMobSpawn())
             {
                 return field;
             }
@@ -1715,15 +1708,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventAnimalSpawn)
+            if (fs.isPreventAnimalSpawn())
             {
                 return field;
             }
@@ -1754,15 +1741,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventPvP)
+            if (fs.isPreventPvP())
             {
                 return field;
             }
@@ -1792,15 +1773,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventFlow)
+            if (fs.isPreventFlow())
             {
                 return field;
             }
@@ -1830,15 +1805,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.preventExplosions)
+            if (fs.isPreventExplosions())
             {
                 return field;
             }
@@ -1859,15 +1828,9 @@ public final class ForceFieldManager
 
         for (Field field : sourcefields)
         {
-            FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fs.noConflict)
+            if (fs.isNoConflict())
             {
                 continue;
             }
@@ -1901,28 +1864,22 @@ public final class ForceFieldManager
             return null;
         }
 
-        if (fs.noConflict)
+        if (fs.isNoConflict())
         {
             return null;
         }
 
         // create throwaway field to test intersection
 
-        Field placedField = new Field(placedBlock, fs.radius, fs.getHeight());
+        Field placedField = new Field(placedBlock, fs.getRadius(), fs.getHeight());
 
         List<Field> fieldsinarea = getFieldsInArea(placedBlock.getLocation());
 
         for (Field field : fieldsinarea)
         {
-            FieldSettings fsarea = plugin.settings.getFieldSettings(field.getTypeId());
+            FieldSettings fsarea = field.getSettings();
 
-            if (fsarea == null)
-            {
-                plugin.ffm.queueRelease(field);
-                continue;
-            }
-
-            if (fsarea.noConflict)
+            if (fsarea.isNoConflict())
             {
                 continue;
             }
@@ -1960,7 +1917,7 @@ public final class ForceFieldManager
 
         // create throwaway field to test intersection
 
-        Field placedField = new Field(scopedBlock, fs.radius, fs.getHeight());
+        Field placedField = new Field(scopedBlock, fs.getRadius(), fs.getHeight());
 
         List<Field> fieldsinarea = getFieldsInArea(scopedBlock.getLocation());
 
@@ -1974,7 +1931,7 @@ public final class ForceFieldManager
                 continue;
             }
 
-            if (fsarea.noConflict)
+            if (fsarea.isNoConflict())
             {
                 continue;
             }
@@ -2006,25 +1963,25 @@ public final class ForceFieldManager
             }
         }
 
-        FieldSettings fs = plugin.settings.getFieldSettings(field);
+        FieldSettings fs = field.getSettings();
 
         // remove from forester
 
-        if (fs != null && (fs.forester || fs.foresterShrubs))
+        if (fs != null && (fs.isForester() || fs.isForesterShrubs()))
         {
             plugin.fm.remove(field);
         }
 
         // delete any snitch entries
 
-        if (fs != null && fs.snitch)
+        if (fs != null && fs.isSnitch())
         {
             plugin.sm.deleteSnitchEntires(field);
         }
 
         // remove from grief-undo and delete any records on the database
 
-        if (fs != null && (fs.griefUndoRequest || fs.griefUndoInterval))
+        if (fs != null && (fs.isGriefUndoRequest() || fs.isGriefUndoInterval()))
         {
             plugin.gum.remove(field);
             plugin.sm.deleteBlockGrief(field);

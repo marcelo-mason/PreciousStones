@@ -1,11 +1,11 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
@@ -20,6 +20,7 @@ import org.bukkit.Location;
  */
 public class Field extends AbstractVec
 {
+    private FieldSettings settings;
     private int radius;
     private int height;
     private float velocity;
@@ -583,6 +584,22 @@ public class Field extends AbstractVec
         }
 
         return (int) Dates.differenceInDays(new Date(), new Date(lastUsed));
+    }
+
+    /**
+     * @return the settings
+     */
+    public FieldSettings getSettings()
+    {
+        return settings;
+    }
+
+    /**
+     * @param settings the settings to set
+     */
+    public void setSettings(FieldSettings settings)
+    {
+        this.settings = settings;
     }
 
     /**

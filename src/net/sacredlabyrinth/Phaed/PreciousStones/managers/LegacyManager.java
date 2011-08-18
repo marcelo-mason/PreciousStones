@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -276,6 +277,16 @@ public class LegacyManager
                     }
 
                     Field field = new Field(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]), Integer.parseInt(vec[3]), Integer.parseInt(vec[4]), 0, world, Material.getMaterial(type).getId(), owner, name, 0);
+
+
+                    FieldSettings fs = plugin.settings.getFieldSettings(field.getTypeId());
+
+                    if (fs == null)
+                    {
+                        continue;
+                    }
+
+                    field.setSettings(fs);
 
                     plugin.sm.offerField(field);
                     plugin.ffm.addToCollection(field);
