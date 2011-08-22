@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
@@ -20,9 +21,9 @@ public class LightningManager
      *
      * @param plugin
      */
-    public LightningManager(PreciousStones plugin)
+    public LightningManager()
     {
-	this.plugin = plugin;
+	plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -32,34 +33,34 @@ public class LightningManager
      */
     public void enterLightning(final Player player, final Field field)
     {
-	if (plugin.pm.hasPermission(player, "preciousstones.bypass.lightning"))
+	if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.lightning"))
         {
             return;
 	}
 
-	if (!plugin.ffm.isAllowed(field, player.getName()))
+	if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
 	{
 	    FieldSettings fs = field.getSettings();
 
 	    final int delay = fs.getLightningDelaySeconds();
 	    final int leftbehind = fs.getLightningReplaceBlock();
 
-	    if (fs.isLightning())
+	    if (fs.hasFlag(FieldFlag.LIGHTNING))
 	    {
-		plugin.cm.showLightning(player);
+		plugin.getCommunicationManager().showLightning(player);
 
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 		{
                     @Override
 		    public void run()
 		    {
-			Block block = plugin.ffm.getBlock(field);
+			Block block = plugin.getForceFieldManager().getBlock(field);
 
 			player.getWorld().strikeLightning(player.getLocation());
 
 			if(leftbehind >= 0)
                         {
-                            plugin.ffm.silentRelease(field);
+                            plugin.getForceFieldManager().silentRelease(field);
                             block.setType(Material.getMaterial(leftbehind));
 			}
 

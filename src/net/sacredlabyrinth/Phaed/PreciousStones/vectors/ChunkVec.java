@@ -18,9 +18,6 @@ public class ChunkVec extends AbstractVec
 	super(chunk.getX(), 0, chunk.getZ(), chunk.getWorld().getName());
     }
 
-    {
-
-    }
     /**
      *
      * @param block

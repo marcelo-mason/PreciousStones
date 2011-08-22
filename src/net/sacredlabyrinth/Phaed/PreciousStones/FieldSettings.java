@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class FieldSettings
 {
-    private boolean blockDefined = true;
-    private int blockId;
+    private boolean validField = true;
+    private int typeId;
     private int radius = 0;
     private int height = 0;
     private int launchHeight = 0;
@@ -21,39 +21,48 @@ public class FieldSettings
     private int lightningDelaySeconds = 0;
     private int lightningReplaceBlock = 0;
     private String title;
-    private boolean preventFire = false;
-    private boolean preventPlace = false;
-    private boolean preventDestroy = false;
-    private boolean preventExplosions = false;
-    private boolean preventPvP = false;
-    private boolean preventMobDamage = false;
-    private boolean preventMobSpawn = false;
-    private boolean preventAnimalSpawn = false;
-    private boolean preventEntry = false;
-    private boolean preventUnprotectable = false;
-    private boolean preventFlow = false;
-    private List<Integer> preventUse = new ArrayList<Integer>();
-    private boolean instantHeal = false;
-    private boolean slowHeal = false;
-    private boolean slowDamage = false;
-    private boolean fastDamage = false;
-    private boolean breakable = false;
-    private boolean welcomeMessage = false;
-    private boolean farewellMessage = false;
-    private boolean giveAir = false;
-    private boolean snitch = false;
-    private boolean noConflict = false;
-    private boolean launch = false;
-    private boolean cannon = false;
-    private boolean mine = false;
-    private boolean lightning = false;
-    private boolean noOwner = false;
-    private boolean forester = false;
-    private boolean foresterShrubs = false;
-    private boolean griefUndoInterval = false;
-    private boolean griefUndoRequest = false;
-    private boolean entryAlert = false;
     private int price = 0;
+    private List<Integer> limits = new ArrayList<Integer>();
+    private List<Integer> preventUse = new ArrayList<Integer>();
+    private List<FieldFlag> flags = new ArrayList<FieldFlag>();
+
+    /**
+     *
+     */
+    public enum FieldFlag
+    {
+        PREVENT_FIRE,
+        PREVENT_PLACE,
+        PREVENT_DESTROY,
+        PREVENT_EXPLOSIONS,
+        PREVENT_PVP,
+        PREVENT_MOB_DAMAGE,
+        PREVENT_MOB_SPAWN,
+        PREVENT_ANIMAL_SPAWN,
+        PREVENT_ENTRY,
+        PREVENT_UNPROTECTABLE,
+        PREVENT_FLOW,
+        INSTANT_HEAL,
+        SLOW_HEAL,
+        SLOW_DAMAGE,
+        FAST_DAMAGE,
+        BREAKABLE,
+        WELCOME_MESSAGE,
+        FAREWELL_MESSAGE,
+        GIVE_AIR,
+        SNITCH,
+        NO_CONFLICT,
+        LAUNCH,
+        CANNON,
+        MINE,
+        LIGHTNING,
+        NO_OWNER,
+        FORESTER,
+        FORESTER_SHRUBS,
+        GRIEF_UNDO_INTERVAL,
+        GRIEF_UNDO_REQUEST,
+        ENTRY_ALERT
+    }
 
     /**
      *
@@ -64,17 +73,22 @@ public class FieldSettings
     {
         if (map.containsKey("block") && Helper.isInteger(map.get("block")))
         {
-            blockId = (Integer) map.get("block");
+            typeId = (Integer) map.get("block");
         }
         else
         {
-            blockDefined = false;
+            validField = false;
             return;
         }
 
         if (map.containsKey("title") && Helper.isString(map.get("title")))
         {
             title = (String) map.get("title");
+        }
+        else
+        {
+            validField = false;
+            return;
         }
 
         if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
@@ -95,129 +109,14 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("prevent-fire") && Helper.isBoolean(map.get("prevent-fire")))
-        {
-            preventFire = (Boolean) map.get("prevent-fire");
-        }
-
-        if (map.containsKey("prevent-place") && Helper.isBoolean(map.get("prevent-place")))
-        {
-            preventPlace = (Boolean) map.get("prevent-place");
-        }
-
-        if (map.containsKey("prevent-destroy") && Helper.isBoolean(map.get("prevent-destroy")))
-        {
-            preventDestroy = (Boolean) map.get("prevent-destroy");
-        }
-
-        if (map.containsKey("prevent-explosions") && Helper.isBoolean(map.get("prevent-explosions")))
-        {
-            preventExplosions = (Boolean) map.get("prevent-explosions");
-        }
-
-        if (map.containsKey("prevent-pvp") && Helper.isBoolean(map.get("prevent-pvp")))
-        {
-            preventPvP = (Boolean) map.get("prevent-pvp");
-        }
-
-        if (map.containsKey("prevent-mob-damage") && Helper.isBoolean(map.get("prevent-mob-damage")))
-        {
-            preventMobDamage = (Boolean) map.get("prevent-mob-damage");
-        }
-
-        if (map.containsKey("prevent-mob-spawn") && Helper.isBoolean(map.get("prevent-mob-spawn")))
-        {
-            preventMobSpawn = (Boolean) map.get("prevent-mob-spawn");
-        }
-
-        if (map.containsKey("prevent-animal-spawn") && Helper.isBoolean(map.get("prevent-animal-spawn")))
-        {
-            preventAnimalSpawn = (Boolean) map.get("prevent-animal-spawn");
-        }
-
-        if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
-        {
-            preventEntry = (Boolean) map.get("prevent-entry");
-        }
-
-        if (map.containsKey("prevent-unprotectable") && Helper.isBoolean(map.get("prevent-unprotectable")))
-        {
-            preventUnprotectable = (Boolean) map.get("prevent-unprotectable");
-        }
-
-        if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
-        {
-            instantHeal = (Boolean) map.get("instant-heal");
-        }
-
-        if (map.containsKey("slow-heal") && Helper.isBoolean(map.get("slow-heal")))
-        {
-            slowHeal = (Boolean) map.get("slow-heal");
-        }
-
-        if (map.containsKey("slow-damage") && Helper.isBoolean(map.get("slow-damage")))
-        {
-            slowDamage = (Boolean) map.get("slow-damage");
-        }
-
-        if (map.containsKey("fast-damage") && Helper.isBoolean(map.get("fast-damage")))
-        {
-            fastDamage = (Boolean) map.get("fast-damage");
-        }
-
-        if (map.containsKey("breakable") && Helper.isBoolean(map.get("breakable")))
-        {
-            breakable = (Boolean) map.get("breakable");
-        }
-
-        if (map.containsKey("welcome-message") && Helper.isBoolean(map.get("welcome-message")))
-        {
-            welcomeMessage = (Boolean) map.get("welcome-message");
-        }
-
-        if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
-        {
-            farewellMessage = (Boolean) map.get("farewell-message");
-        }
-
-        if (map.containsKey("give-air") && Helper.isBoolean(map.get("give-air")))
-        {
-            giveAir = (Boolean) map.get("give-air");
-        }
-
-        if (map.containsKey("snitch") && Helper.isBoolean(map.get("snitch")))
-        {
-            snitch = (Boolean) map.get("snitch");
-        }
-
-        if (map.containsKey("no-conflict") && Helper.isBoolean(map.get("no-conflict")))
-        {
-            noConflict = (Boolean) map.get("no-conflict");
-        }
-
-        if (map.containsKey("launch") && Helper.isBoolean(map.get("launch")))
-        {
-            launch = (Boolean) map.get("launch");
-        }
-
         if (map.containsKey("launch-height") && Helper.isInteger(map.get("launch-height")))
         {
             launchHeight = (Integer) map.get("launch-height");
         }
 
-        if (map.containsKey("cannon") && Helper.isBoolean(map.get("cannon")))
-        {
-            cannon = (Boolean) map.get("cannon");
-        }
-
         if (map.containsKey("cannon-height") && Helper.isInteger(map.get("cannon-height")))
         {
             cannonHeight = (Integer) map.get("cannon-height");
-        }
-
-        if (map.containsKey("mine") && Helper.isBoolean(map.get("mine")))
-        {
-            mine = (Boolean) map.get("mine");
         }
 
         if (map.containsKey("mine-replace-block") && Helper.isInteger(map.get("mine-replace-block")))
@@ -230,11 +129,6 @@ public class FieldSettings
             mineDelaySeconds = (Integer) map.get("mine-delay-seconds");
         }
 
-        if (map.containsKey("lightning") && Helper.isBoolean(map.get("lightning")))
-        {
-            lightning = (Boolean) map.get("lightning");
-        }
-
         if (map.containsKey("lightning-replace-block") && Helper.isInteger(map.get("lightning-replace-block")))
         {
             lightningReplaceBlock = (Integer) map.get("lightning-replace-block");
@@ -245,50 +139,323 @@ public class FieldSettings
             lightningDelaySeconds = (Integer) map.get("lightning-delay-seconds");
         }
 
-        if (map.containsKey("prevent-flow") && Helper.isBoolean(map.get("prevent-flow")))
-        {
-            preventFlow = (Boolean) map.get("prevent-flow");
-        }
-
         if (map.containsKey("prevent-use") && Helper.isIntList(map.get("prevent-use")))
         {
             preventUse = (List<Integer>) map.get("prevent-use");
-        }
-
-        if (map.containsKey("no-owner") && Helper.isBoolean(map.get("no-owner")))
-        {
-            noOwner = (Boolean) map.get("no-owner");
-        }
-
-        if (map.containsKey("forester") && Helper.isBoolean(map.get("forester")))
-        {
-            forester = (Boolean) map.get("forester");
-        }
-
-        if (map.containsKey("forester-shrubs") && Helper.isBoolean(map.get("forester-shrubs")))
-        {
-            foresterShrubs = (Boolean) map.get("forester-shrubs");
-        }
-
-        if (map.containsKey("grief-undo-request") && Helper.isBoolean(map.get("grief-undo-request")))
-        {
-            griefUndoRequest = (Boolean) map.get("grief-undo-request");
-        }
-
-        if (map.containsKey("grief-undo-interval") && Helper.isBoolean(map.get("grief-undo-interval")))
-        {
-            griefUndoInterval = (Boolean) map.get("grief-undo-interval");
-        }
-
-        if (map.containsKey("entry-alert") && Helper.isBoolean(map.get("entry-alert")))
-        {
-            entryAlert = (Boolean) map.get("entry-alert");
         }
 
         if (map.containsKey("price") && Helper.isInteger(map.get("price")))
         {
             price = (Integer) map.get("price");
         }
+
+        if (map.containsKey("limits") && Helper.isIntList(map.get("limits")))
+        {
+            limits = (List<Integer>) map.get("limits");
+        }
+
+        if (map.containsKey("prevent-fire") && Helper.isBoolean(map.get("prevent-fire")))
+        {
+            if ((Boolean) map.get("prevent-fire"))
+            {
+                flags.add(FieldFlag.PREVENT_FIRE);
+            }
+        }
+
+        if (map.containsKey("prevent-place") && Helper.isBoolean(map.get("prevent-place")))
+        {
+            if ((Boolean) map.get("prevent-place"))
+            {
+                flags.add(FieldFlag.PREVENT_PLACE);
+            }
+        }
+
+        if (map.containsKey("prevent-destroy") && Helper.isBoolean(map.get("prevent-destroy")))
+        {
+            if ((Boolean) map.get("prevent-destroy"))
+            {
+                flags.add(FieldFlag.PREVENT_DESTROY);
+            }
+        }
+
+        if (map.containsKey("prevent-explosions") && Helper.isBoolean(map.get("prevent-explosions")))
+        {
+            if ((Boolean) map.get("prevent-explosions"))
+            {
+                flags.add(FieldFlag.PREVENT_EXPLOSIONS);
+            }
+        }
+
+        if (map.containsKey("prevent-pvp") && Helper.isBoolean(map.get("prevent-pvp")))
+        {
+            if ((Boolean) map.get("prevent-pvp"))
+            {
+                flags.add(FieldFlag.PREVENT_PVP);
+            }
+        }
+
+        if (map.containsKey("prevent-mob-damage") && Helper.isBoolean(map.get("prevent-mob-damage")))
+        {
+            if ((Boolean) map.get("prevent-mob-damage"))
+            {
+                flags.add(FieldFlag.PREVENT_MOB_DAMAGE);
+            }
+        }
+
+        if (map.containsKey("prevent-mob-spawn") && Helper.isBoolean(map.get("prevent-mob-spawn")))
+        {
+            if ((Boolean) map.get("prevent-mob-spawn"))
+            {
+                flags.add(FieldFlag.PREVENT_MOB_SPAWN);
+            }
+        }
+
+        if (map.containsKey("prevent-animal-spawn") && Helper.isBoolean(map.get("prevent-animal-spawn")))
+        {
+            if ((Boolean) map.get("prevent-animal-spawn"))
+            {
+                flags.add(FieldFlag.PREVENT_ANIMAL_SPAWN);
+            }
+        }
+
+        if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
+        {
+            if ((Boolean) map.get("prevent-entry"))
+            {
+                flags.add(FieldFlag.PREVENT_ENTRY);
+            }
+        }
+
+        if (map.containsKey("prevent-unprotectable") && Helper.isBoolean(map.get("prevent-unprotectable")))
+        {
+            if ((Boolean) map.get("prevent-unprotectable"))
+            {
+                flags.add(FieldFlag.PREVENT_UNPROTECTABLE);
+            }
+        }
+
+        if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
+        {
+            if ((Boolean) map.get("instant-heal"))
+            {
+                flags.add(FieldFlag.INSTANT_HEAL);
+            }
+        }
+
+        if (map.containsKey("slow-heal") && Helper.isBoolean(map.get("slow-heal")))
+        {
+            if ((Boolean) map.get("slow-heal"))
+            {
+                flags.add(FieldFlag.SLOW_HEAL);
+            }
+        }
+
+        if (map.containsKey("slow-damage") && Helper.isBoolean(map.get("slow-damage")))
+        {
+            if ((Boolean) map.get("slow-damage"))
+            {
+                flags.add(FieldFlag.SLOW_DAMAGE);
+            }
+        }
+
+        if (map.containsKey("fast-damage") && Helper.isBoolean(map.get("fast-damage")))
+        {
+            if ((Boolean) map.get("fast-damage"))
+            {
+                flags.add(FieldFlag.FAST_DAMAGE);
+            }
+        }
+
+        if (map.containsKey("breakable") && Helper.isBoolean(map.get("breakable")))
+        {
+            if ((Boolean) map.get("breakable"))
+            {
+                flags.add(FieldFlag.BREAKABLE);
+            }
+        }
+
+        if (map.containsKey("welcome-message") && Helper.isBoolean(map.get("welcome-message")))
+        {
+            if ((Boolean) map.get("welcome-message"))
+            {
+                flags.add(FieldFlag.WELCOME_MESSAGE);
+            }
+        }
+
+        if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
+        {
+            if ((Boolean) map.get("farewell-message"))
+            {
+                flags.add(FieldFlag.FAREWELL_MESSAGE);
+            }
+        }
+
+        if (map.containsKey("give-air") && Helper.isBoolean(map.get("give-air")))
+        {
+            if ((Boolean) map.get("give-air"))
+            {
+                flags.add(FieldFlag.GIVE_AIR);
+            }
+        }
+
+        if (map.containsKey("snitch") && Helper.isBoolean(map.get("snitch")))
+        {
+            if ((Boolean) map.get("snitch"))
+            {
+                flags.add(FieldFlag.SNITCH);
+            }
+        }
+
+        if (map.containsKey("no-conflict") && Helper.isBoolean(map.get("no-conflict")))
+        {
+            if ((Boolean) map.get("no-conflict"))
+            {
+                flags.add(FieldFlag.NO_CONFLICT);
+            }
+        }
+
+        if (map.containsKey("no-owner") && Helper.isBoolean(map.get("no-owner")))
+        {
+            if ((Boolean) map.get("no-owner"))
+            {
+                flags.add(FieldFlag.NO_OWNER);
+            }
+        }
+
+        if (map.containsKey("launch") && Helper.isBoolean(map.get("launch")))
+        {
+            if ((Boolean) map.get("launch"))
+            {
+                flags.add(FieldFlag.LAUNCH);
+            }
+        }
+
+        if (map.containsKey("cannon") && Helper.isBoolean(map.get("cannon")))
+        {
+            if ((Boolean) map.get("cannon"))
+            {
+                flags.add(FieldFlag.CANNON);
+            }
+        }
+
+        if (map.containsKey("mine") && Helper.isBoolean(map.get("mine")))
+        {
+            if ((Boolean) map.get("mine"))
+            {
+                flags.add(FieldFlag.MINE);
+            }
+        }
+
+        if (map.containsKey("lightning") && Helper.isBoolean(map.get("lightning")))
+        {
+            if ((Boolean) map.get("lightning"))
+            {
+                flags.add(FieldFlag.LIGHTNING);
+            }
+        }
+
+        if (map.containsKey("prevent-flow") && Helper.isBoolean(map.get("prevent-flow")))
+        {
+            if ((Boolean) map.get("prevent-flow"))
+            {
+                flags.add(FieldFlag.PREVENT_FLOW);
+            }
+        }
+
+        if (map.containsKey("forester") && Helper.isBoolean(map.get("forester")))
+        {
+            if ((Boolean) map.get("forester"))
+            {
+                flags.add(FieldFlag.FORESTER);
+            }
+        }
+
+        if (map.containsKey("forester-shrubs") && Helper.isBoolean(map.get("forester-shrubs")))
+        {
+            if ((Boolean) map.get("forester-shrubs"))
+            {
+                flags.add(FieldFlag.FORESTER_SHRUBS);
+            }
+        }
+
+        if (map.containsKey("grief-undo-request") && Helper.isBoolean(map.get("grief-undo-request")))
+        {
+            if ((Boolean) map.get("grief-undo-request"))
+            {
+                flags.add(FieldFlag.GRIEF_UNDO_REQUEST);
+            }
+        }
+
+        if (map.containsKey("grief-undo-interval") && Helper.isBoolean(map.get("grief-undo-interval")))
+        {
+            if ((Boolean) map.get("grief-undo-interval"))
+            {
+                flags.add(FieldFlag.GRIEF_UNDO_INTERVAL);
+            }
+        }
+
+        if (map.containsKey("entry-alert") && Helper.isBoolean(map.get("entry-alert")))
+        {
+            if ((Boolean) map.get("entry-alert"))
+            {
+                flags.add(FieldFlag.ENTRY_ALERT);
+            }
+        }
+    }
+
+    /**
+     * Check if the field has a flag
+     * @param flag
+     * @return
+     */
+    public boolean hasFlag(FieldFlag flag)
+    {
+        return flags.contains(flag);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean hasNameableFlag()
+    {
+        return flags.contains(FieldFlag.WELCOME_MESSAGE) || flags.contains(FieldFlag.FAREWELL_MESSAGE) || flags.contains(FieldFlag.ENTRY_ALERT);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean hasGriefUndoFlag()
+    {
+        return flags.contains(FieldFlag.GRIEF_UNDO_INTERVAL) || flags.contains(FieldFlag.GRIEF_UNDO_REQUEST);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean hasVeocityFlag()
+    {
+        return flags.contains(FieldFlag.CANNON) || flags.contains(FieldFlag.LAUNCH);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean hasForesterFlag()
+    {
+        return flags.contains(FieldFlag.FORESTER) || flags.contains(FieldFlag.FORESTER_SHRUBS);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public boolean hasLimit()
+    {
+        return !limits.isEmpty();
     }
 
     /**
@@ -309,20 +476,6 @@ public class FieldSettings
      *
      * @return
      */
-    public String getTitleCap()
-    {
-        if (getTitle() == null)
-        {
-            return "";
-        }
-
-        return Helper.capitalize(getTitle());
-    }
-
-    /**
-     *
-     * @return
-     */
     public int getHeight()
     {
         if (this.height == 0)
@@ -337,11 +490,12 @@ public class FieldSettings
 
     /**
      * Whether a block type can be used in this field
+     * @param type
      * @return
      */
     public boolean canUse(int type)
     {
-        if (getPreventUse() == null)
+        if (preventUse == null)
         {
             return true;
         }
@@ -350,27 +504,11 @@ public class FieldSettings
     }
 
     /**
-     * @return the blockDefined
+     * @return the typeId
      */
-    public boolean isBlockDefined()
+    public int getTypeId()
     {
-        return blockDefined;
-    }
-
-    /**
-     * @param blockDefined the blockDefined to set
-     */
-    public void setBlockDefined(boolean blockDefined)
-    {
-        this.blockDefined = blockDefined;
-    }
-
-    /**
-     * @return the blockId
-     */
-    public int getBlockId()
-    {
-        return blockId;
+        return typeId;
     }
 
     /**
@@ -430,266 +568,30 @@ public class FieldSettings
     }
 
     /**
-     * @return the preventFire
-     */
-    public boolean isPreventFire()
-    {
-        return preventFire;
-    }
-
-    /**
-     * @return the preventPlace
-     */
-    public boolean isPreventPlace()
-    {
-        return preventPlace;
-    }
-
-    /**
-     * @return the preventDestroy
-     */
-    public boolean isPreventDestroy()
-    {
-        return preventDestroy;
-    }
-
-    /**
-     * @return the preventExplosions
-     */
-    public boolean isPreventExplosions()
-    {
-        return preventExplosions;
-    }
-
-    /**
-     * @return the preventPvP
-     */
-    public boolean isPreventPvP()
-    {
-        return preventPvP;
-    }
-
-    /**
-     * @return the preventMobDamage
-     */
-    public boolean isPreventMobDamage()
-    {
-        return preventMobDamage;
-    }
-
-    /**
-     * @return the preventMobSpawn
-     */
-    public boolean isPreventMobSpawn()
-    {
-        return preventMobSpawn;
-    }
-
-    /**
-     * @return the preventAnimalSpawn
-     */
-    public boolean isPreventAnimalSpawn()
-    {
-        return preventAnimalSpawn;
-    }
-
-    /**
-     * @return the preventEntry
-     */
-    public boolean isPreventEntry()
-    {
-        return preventEntry;
-    }
-
-    /**
-     * @return the preventUnprotectable
-     */
-    public boolean isPreventUnprotectable()
-    {
-        return preventUnprotectable;
-    }
-
-    /**
-     * @return the preventFlow
-     */
-    public boolean isPreventFlow()
-    {
-        return preventFlow;
-    }
-
-    /**
-     * @return the preventUse
-     */
-    public List<Integer> getPreventUse()
-    {
-        return preventUse;
-    }
-
-    /**
-     * @return the instantHeal
-     */
-    public boolean isInstantHeal()
-    {
-        return instantHeal;
-    }
-
-    /**
-     * @return the slowHeal
-     */
-    public boolean isSlowHeal()
-    {
-        return slowHeal;
-    }
-
-    /**
-     * @return the slowDamage
-     */
-    public boolean isSlowDamage()
-    {
-        return slowDamage;
-    }
-
-    /**
-     * @return the fastDamage
-     */
-    public boolean isFastDamage()
-    {
-        return fastDamage;
-    }
-
-    /**
-     * @return the breakable
-     */
-    public boolean isBreakable()
-    {
-        return breakable;
-    }
-
-    /**
-     * @return the welcomeMessage
-     */
-    public boolean isWelcomeMessage()
-    {
-        return welcomeMessage;
-    }
-
-    /**
-     * @return the farewellMessage
-     */
-    public boolean isFarewellMessage()
-    {
-        return farewellMessage;
-    }
-
-    /**
-     * @return the giveAir
-     */
-    public boolean isGiveAir()
-    {
-        return giveAir;
-    }
-
-    /**
-     * @return the snitch
-     */
-    public boolean isSnitch()
-    {
-        return snitch;
-    }
-
-    /**
-     * @return the noConflict
-     */
-    public boolean isNoConflict()
-    {
-        return noConflict;
-    }
-
-    /**
-     * @return the launch
-     */
-    public boolean isLaunch()
-    {
-        return launch;
-    }
-
-    /**
-     * @return the cannon
-     */
-    public boolean isCannon()
-    {
-        return cannon;
-    }
-
-    /**
-     * @return the mine
-     */
-    public boolean isMine()
-    {
-        return mine;
-    }
-
-    /**
-     * @return the lightning
-     */
-    public boolean isLightning()
-    {
-        return lightning;
-    }
-
-    /**
-     * @return the noOwner
-     */
-    public boolean isNoOwner()
-    {
-        return noOwner;
-    }
-
-    /**
-     * @return the forester
-     */
-    public boolean isForester()
-    {
-        return forester;
-    }
-
-    /**
-     * @return the foresterShrubs
-     */
-    public boolean isForesterShrubs()
-    {
-        return foresterShrubs;
-    }
-
-    /**
-     * @return the griefUndoInterval
-     */
-    public boolean isGriefUndoInterval()
-    {
-        return griefUndoInterval;
-    }
-
-    /**
-     * @return the griefUndoRequest
-     */
-    public boolean isGriefUndoRequest()
-    {
-        return griefUndoRequest;
-    }
-
-    /**
-     * @return the entryAlert
-     */
-    public boolean isEntryAlert()
-    {
-        return entryAlert;
-    }
-
-    /**
      * @return the price
      */
     public int getPrice()
     {
         return price;
+    }
+
+    /**
+     * @return the validField
+     */
+    public boolean isValidField()
+    {
+        return validField;
+    }
+
+    /**
+     * @return the limits
+     */
+    public List<Integer> getLimits()
+    {
+        if (limits == null)
+        {
+            return new ArrayList<Integer>();
+        }
+        return limits;
     }
 }

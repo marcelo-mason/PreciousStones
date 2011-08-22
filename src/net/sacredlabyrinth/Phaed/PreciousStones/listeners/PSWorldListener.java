@@ -19,9 +19,9 @@ public class PSWorldListener extends WorldListener
      *
      * @param plugin
      */
-    public PSWorldListener(PreciousStones plugin)
+    public PSWorldListener()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -35,18 +35,18 @@ public class PSWorldListener extends WorldListener
 
         World world = event.getWorld();
 
-        if (plugin.settings.isBlacklistedWorld(world))
+        if (plugin.getSettingsManager().isBlacklistedWorld(world))
         {
             return;
         }
 
-        plugin.sm.loadWorldFields(world.getName());
-        plugin.sm.loadWorldUnbreakables(world.getName());
+        plugin.getStorageManager().loadWorldFields(world.getName());
+        plugin.getStorageManager().loadWorldUnbreakables(world.getName());
 
         // remove in version 6
-        plugin.tm.untagWorld(world.getName());
+        plugin.getTagManager().untagWorld(world.getName());
 
-        if (plugin.settings.debug)
+        if (plugin.getSettingsManager().isDebug())
         {
            dt.logProcessTime();
         }

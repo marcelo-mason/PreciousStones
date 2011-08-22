@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -157,8 +158,8 @@ public abstract class AbstractVec
      * @param world
      * @return
      */
-    public Location toLocation(World world)
+    public Location getLocation()
     {
-        return new Location(world, getX(), getY(), getZ());
+        return new Location(PreciousStones.getInstance().getServer().getWorld(world), getX(), getY(), getZ());
     }
 }

@@ -12,6 +12,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.EntryFields;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -34,9 +35,9 @@ public final class EntryManager
      *
      * @param plugin
      */
-    public EntryManager(PreciousStones plugin)
+    public EntryManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
 
         startScheduler();
     }
@@ -71,72 +72,72 @@ public final class EntryManager
                     {
                         FieldSettings fs = field.getSettings();
 
-                        Player player = plugin.helper.matchSinglePlayer(playername);
+                        Player player = Helper.matchSinglePlayer(playername);
 
                         if (player == null)
                         {
                             continue;
                         }
 
-                        if (plugin.pm.hasPermission(player, "preciousstones.benefit.giveair"))
+                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.giveair"))
                         {
-                            if (fs.isGiveAir())
+                            if (fs.hasFlag(FieldFlag.GIVE_AIR))
                             {
                                 if (player.getRemainingAir() < 300)
                                 {
                                     player.setRemainingAir(600);
-                                    plugin.cm.showGiveAir(player);
+                                    plugin.getCommunicationManager().showGiveAir(player);
                                     continue;
                                 }
                             }
                         }
 
-                        if (plugin.pm.hasPermission(player, "preciousstones.benefit.heal"))
+                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.heal"))
                         {
-                            if (fs.isInstantHeal())
+                            if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
                             {
                                 if (player.getHealth() < 20)
                                 {
                                     player.setHealth(20);
-                                    plugin.cm.showInstantHeal(player);
+                                    plugin.getCommunicationManager().showInstantHeal(player);
                                     continue;
                                 }
                             }
 
-                            if (fs.isSlowHeal())
+                            if (fs.hasFlag(FieldFlag.SLOW_HEAL))
                             {
                                 if (player.getHealth() < 20)
                                 {
                                     player.setHealth(healthCheck(player.getHealth() + 1));
-                                    plugin.cm.showSlowHeal(player);
+                                    plugin.getCommunicationManager().showSlowHeal(player);
                                     continue;
                                 }
 
                             }
                         }
 
-                        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.damage"))
+                        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.damage"))
                         {
-                            if (!(plugin.settings.sneakingBypassesDamage && player.isSneaking()))
+                            if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
                             {
-                                if (!plugin.ffm.isAllowed(field, playername))
+                                if (!plugin.getForceFieldManager().isAllowed(field, playername))
                                 {
-                                    if (fs.isSlowDamage())
+                                    if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
                                     {
                                         if (player.getHealth() > 0)
                                         {
                                             player.setHealth(healthCheck(player.getHealth() - 1));
-                                            plugin.cm.showSlowDamage(player);
+                                            plugin.getCommunicationManager().showSlowDamage(player);
                                             continue;
                                         }
                                     }
 
-                                    if (fs.isFastDamage())
+                                    if (fs.hasFlag(FieldFlag.FAST_DAMAGE))
                                     {
                                         if (player.getHealth() > 0)
                                         {
                                             player.setHealth(healthCheck(player.getHealth() - 4));
-                                            plugin.cm.showFastDamage(player);
+                                            plugin.getCommunicationManager().showFastDamage(player);
                                             continue;
                                         }
                                     }
@@ -178,16 +179,16 @@ public final class EntryManager
     {
         FieldSettings fs = field.getSettings();
 
-        if (fs.isWelcomeMessage() && field.getName().length() > 0)
+        if (fs.hasFlag(FieldFlag.WELCOME_MESSAGE) && field.getName().length() > 0)
         {
-            plugin.cm.showWelcomeMessage(player, field.getName());
+            plugin.getCommunicationManager().showWelcomeMessage(player, field.getName());
         }
 
-        if (fs.isEntryAlert())
+        if (fs.hasFlag(FieldFlag.ENTRY_ALERT))
         {
-            if (!plugin.ffm.isAllowed(field, player.getName()))
+            if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
             {
-                plugin.ffm.announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
+                plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
             }
         }
     }
@@ -201,9 +202,9 @@ public final class EntryManager
     {
         FieldSettings fs = entryField.getSettings();
 
-        if (fs.isWelcomeMessage() && entryField.getName().length() > 0)
+        if (fs.hasFlag(FieldFlag.WELCOME_MESSAGE) && entryField.getName().length() > 0)
         {
-            plugin.cm.showFarewellMessage(player, entryField.getName());
+            plugin.getCommunicationManager().showFarewellMessage(player, entryField.getName());
         }
     }
 
@@ -253,24 +254,24 @@ public final class EntryManager
 
         // entry actions
 
-        plugin.snm.recordSnitchEntry(player, field);
+        plugin.getSnitchManager().recordSnitchEntry(player, field);
 
-        if (!plugin.ffm.isRedstoneHookedDisabled(field))
+        if (!plugin.getForceFieldManager().isRedstoneHookedDisabled(field))
         {
             if (vehicle != null)
             {
-                plugin.vm.launchPlayer(vehicle, field);
-                plugin.vm.shootPlayer(vehicle, field);
+                plugin.getVelocityManager().launchPlayer(vehicle, field);
+                plugin.getVelocityManager().shootPlayer(vehicle, field);
             }
             else
             {
-                plugin.vm.launchPlayer(player, field);
-                plugin.vm.shootPlayer(player, field);
+                plugin.getVelocityManager().launchPlayer(player, field);
+                plugin.getVelocityManager().shootPlayer(player, field);
             }
         }
 
-        plugin.mm.enterMine(player, field);
-        plugin.lm.enterLightning(player, field);
+        plugin.getMineManager().enterMine(player, field);
+        plugin.getLightningManager().enterLightning(player, field);
     }
 
     /**
@@ -417,7 +418,7 @@ public final class EntryManager
                 {
                     FieldSettings fs = field.getSettings();
 
-                    if (!fs.isCannon() && !fs.isLaunch())
+                    if (fs.hasVeocityFlag())
                     {
                         continue;
                     }

@@ -20,9 +20,13 @@ import org.bukkit.block.BlockFace;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
  * Handles fields
@@ -39,9 +43,9 @@ public final class ForceFieldManager
      *
      * @param plugin
      */
-    public ForceFieldManager(PreciousStones plugin)
+    public ForceFieldManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -82,14 +86,14 @@ public final class ForceFieldManager
      * @param owner
      * @return confirmation
      */
-    public boolean add(Block fieldblock, Player owner)
+    public boolean add(Block fieldblock, Player owner, BlockPlaceEvent event)
     {
-        if (plugin.plm.isDisabled(owner))
+        if (plugin.getPlayerManager().getPlayerData(owner.getName()).isDisabled())
         {
             return false;
         }
 
-        FieldSettings fs = plugin.settings.getFieldSettings(fieldblock.getTypeId());
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(fieldblock.getTypeId());
 
         if (fs == null)
         {
@@ -98,42 +102,55 @@ public final class ForceFieldManager
 
         // deny if world is blacklisted
 
-        if (plugin.settings.isBlacklistedWorld(fieldblock.getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(fieldblock.getWorld()))
         {
+            return false;
+        }
+
+        // check if the pstone limit has been reached by the player
+
+        if (plugin.getLimitManager().reachedLimit(owner, fs))
+        {
+            event.setCancelled(true);
             return false;
         }
 
         // purchase pstone
 
-        if (!plugin.pm.hasPermission(owner, "preciousstones.bypass.purchase"))
+        if (!plugin.getPermissionsManager().hasPermission(owner, "preciousstones.bypass.purchase"))
         {
-            if (fs.getPrice() != 0 && !plugin.ffm.purchase(owner, fs.getPrice()))
+            if (fs.getPrice() != 0 && !plugin.getForceFieldManager().purchase(owner, fs.getPrice()))
             {
                 return false;
             }
         }
 
-        Field field = new Field(fieldblock, fs.getRadius(), fs.getHeight(), fs.isNoOwner() ? "Server" : owner.getName());
+        Field field = new Field(fieldblock, fs.getRadius(), fs.getHeight(), fs.hasFlag(FieldFlag.NO_OWNER) ? "Server" : owner.getName());
         field.setSettings(fs);
 
         // add to database (skip foresters and activate them)
 
-        if (fs.isForester() || fs.isForesterShrubs())
+        if (fs.hasFlag(FieldFlag.FORESTER) || fs.hasFlag(FieldFlag.FORESTER_SHRUBS))
         {
-            plugin.fm.add(field, owner.getName());
+            plugin.getForesterManager().add(field, owner.getName());
         }
         else
         {
+            // add count to player data
+
+            PlayerData data = plugin.getPlayerManager().getPlayerData(owner.getName());
+            data.incrementFieldCount(fieldblock.getTypeId());
+
             // if interval field then register it
 
-            if (fs.isGriefUndoInterval())
+            if (fs.hasFlag(FieldFlag.GRIEF_UNDO_INTERVAL))
             {
-                plugin.gum.add(field);
+                plugin.getGriefUndoManager().add(field);
             }
 
             // insert the field into database
 
-            plugin.sm.insertField(field);
+            plugin.getStorageManager().insertField(field);
 
             // add field to memory
         }
@@ -141,6 +158,7 @@ public final class ForceFieldManager
         addToCollection(field);
         return true;
     }
+
 
     /**
      * Add the field to the collection, used by add()
@@ -380,7 +398,7 @@ public final class ForceFieldManager
 
                     int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
-                    if (!plugin.settings.isFieldType(type))
+                    if (!plugin.getSettingsManager().isFieldType(type))
                     {
                         revertedCount++;
                         Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
@@ -400,29 +418,9 @@ public final class ForceFieldManager
      */
     public boolean isBreakable(Block block)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(block.getTypeId());
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block.getTypeId());
 
-        return fs == null ? false : fs.isBreakable();
-    }
-
-    /**
-     * Whether any of the allowed players are online
-     * @param field
-     * @return confirmation
-     */
-    public boolean allowedAreOnline(Field field)
-    {
-        List<String> allowed = field.getAllAllowed();
-
-        for (String ae : allowed)
-        {
-            if (plugin.helper.matchSinglePlayer(ae) != null)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return fs == null ? false : fs.hasFlag(FieldFlag.BREAKABLE);
     }
 
     /**
@@ -449,7 +447,7 @@ public final class ForceFieldManager
      */
     public boolean isRedstoneHookedDisabled(Field field)
     {
-        Block block = plugin.ffm.getBlock(field);
+        Block block = plugin.getForceFieldManager().getBlock(field);
 
         if (isAnywayPowered(block))
         {
@@ -577,7 +575,7 @@ public final class ForceFieldManager
 
         for (String playerName : allowed)
         {
-            Player pl = plugin.helper.matchSinglePlayer(playerName);
+            Player pl = Helper.matchSinglePlayer(playerName);
 
             if (pl != null)
             {
@@ -611,7 +609,7 @@ public final class ForceFieldManager
 
                     Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.ffm.isField(surroundingblock))
+                    if (plugin.getForceFieldManager().isField(surroundingblock))
                     {
                         return surroundingblock;
                     }
@@ -632,10 +630,10 @@ public final class ForceFieldManager
     {
         FieldSettings fs = field.getSettings();
 
-        if (fs.isSnitch())
+        if (fs.hasFlag(FieldFlag.SNITCH))
         {
             field.clearSnitch();
-            plugin.sm.deleteSnitchEntires(field);
+            plugin.getStorageManager().deleteSnitchEntires(field);
             return true;
         }
 
@@ -659,10 +657,10 @@ public final class ForceFieldManager
         {
             FieldSettings fs = f.getSettings();
 
-            if ((fs.isFarewellMessage() || fs.isWelcomeMessage() || fs.isEntryAlert()) && !f.getName().equals(name))
+            if ((fs.hasNameableFlag()) && !f.getName().equals(name))
             {
                 f.setName(name);
-                plugin.sm.offerField(f);
+                plugin.getStorageManager().offerField(f);
                 renamedCount++;
             }
         }
@@ -682,7 +680,7 @@ public final class ForceFieldManager
 
         for (Field f : total)
         {
-            HashSet<String> someInhabitants = plugin.em.getInhabitants(f);
+            HashSet<String> someInhabitants = plugin.getEntryManager().getInhabitants(f);
             inhabitants.addAll(someInhabitants);
         }
 
@@ -697,17 +695,17 @@ public final class ForceFieldManager
      */
     public boolean isAllowed(Field field, String playerName)
     {
-        Player player = plugin.helper.matchSinglePlayer(playerName);
+        Player player = Helper.matchSinglePlayer(playerName);
 
         if (player != null)
         {
-            if (plugin.pm.hasPermission(player, "preciousstones.admin.allowed"))
+            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.allowed"))
             {
                 return true;
             }
         }
 
-        return field.isAllowed(playerName) || plugin.stm.isTeamMate(playerName, field.getOwner());
+        return field.isAllowed(playerName);
     }
 
     /**
@@ -767,7 +765,7 @@ public final class ForceFieldManager
                 f.addAllowed(allowedName);
                 allowedCount++;
             }
-            plugin.sm.offerField(field);
+            plugin.getStorageManager().offerField(field);
         }
         return allowedCount;
     }
@@ -791,7 +789,7 @@ public final class ForceFieldManager
                 field.addAllowed(allowedName);
                 allowedCount++;
             }
-            plugin.sm.offerField(field);
+            plugin.getStorageManager().offerField(field);
         }
 
         return allowedCount;
@@ -816,7 +814,7 @@ public final class ForceFieldManager
                 f.removeAllowed(allowedName);
                 removedCount++;
             }
-            plugin.sm.offerField(f);
+            plugin.getStorageManager().offerField(f);
         }
 
         return removedCount;
@@ -841,7 +839,7 @@ public final class ForceFieldManager
                 field.removeAllowed(allowedName);
                 removedCount++;
             }
-            plugin.sm.offerField(field);
+            plugin.getStorageManager().offerField(field);
         }
 
         return removedCount;
@@ -932,26 +930,7 @@ public final class ForceFieldManager
      */
     public List<Field> getFieldsInArea(Location loc)
     {
-        return getFieldsInCustomArea(loc, plugin.settings.chunksInLargestForceFieldArea);
-    }
-
-    /**
-     * Returns the fields in the chunk and adjacent chunks
-     * @param field
-     * @return the fields
-     */
-    public List<Field> getFieldsInArea(Field field)
-    {
-        World world = plugin.getServer().getWorld(field.getWorld());
-
-        if (world == null)
-        {
-            return new LinkedList<Field>();
-        }
-
-        Location loc = new Location(world, field.getX(), field.getY(), field.getZ());
-
-        return getFieldsInCustomArea(loc, plugin.settings.chunksInLargestForceFieldArea);
+        return getFieldsInCustomArea(loc, plugin.getSettingsManager().getChunksInLargestForceFieldArea());
     }
 
     /**
@@ -1007,6 +986,60 @@ public final class ForceFieldManager
     }
 
     /**
+     * Returns a field in the location that matches the field flag(s)
+     * @param loc
+     * @return the fields
+     */
+    public Field getSourceField(Location loc, FieldFlag... flags)
+    {
+        List<Field> fieldsinarea = getFieldsInArea(loc);
+
+        for (Field field : fieldsinarea)
+        {
+            if (field.envelops(loc))
+            {
+                for (FieldFlag flag : flags)
+                {
+                    if (field.getSettings().hasFlag(flag))
+                    {
+                        return field;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the fields that the location is in match the field flag(s)
+     * @param loc
+     * @return the fields
+     */
+    public List<Field> getSourceFields(Location loc, FieldFlag... flags)
+    {
+        List<Field> fields = new LinkedList<Field>();
+        List<Field> fieldsinarea = getFieldsInArea(loc);
+
+        for (Field field : fieldsinarea)
+        {
+            if (field.envelops(loc))
+            {
+                for (FieldFlag flag : flags)
+                {
+                    if (field.getSettings().hasFlag(flag))
+                    {
+                        fields.add(field);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return fields;
+    }
+
+    /**
      * Returns the fields that the location is in and that the player is allowed in
      * @param loc
      * @param playerName
@@ -1022,6 +1055,34 @@ public final class ForceFieldManager
             if (field.envelops(loc) && isAllowed(field, playerName))
             {
                 fields.add(field);
+            }
+        }
+
+        return fields;
+    }
+
+    /**
+     * Returns a fields in the location that the player is allowed in that matches the field flag(s)
+     * @param loc
+     * @param playerName
+     * @return the fields
+     */
+    public List<Field> getAllowedSourceField(Location loc, String playerName, FieldFlag... flags)
+    {
+        List<Field> fields = new LinkedList<Field>();
+        List<Field> fieldsinarea = getFieldsInArea(loc);
+
+        for (Field field : fieldsinarea)
+        {
+            if (field.envelops(loc) && isAllowed(field, playerName))
+            {
+                for (FieldFlag flag : flags)
+                {
+                    if (field.getSettings().hasFlag(flag))
+                    {
+                        fields.add(field);
+                    }
+                }
             }
         }
 
@@ -1051,26 +1112,30 @@ public final class ForceFieldManager
     }
 
     /**
-     * Returns the prevent-entry fields that the location is in
-     * @param player
-     * @return
+     * Returns a fields in the location that the player is not allowed in that matches the field flag(s)
+     * @param loc
+     * @param playerName
+     * @return the fields
      */
-    public List<Field> getNotAllowedEntryFields(Player player)
+    public Field getNotAllowedSourceField(Location loc, String playerName, FieldFlag... flags)
     {
-        List<Field> out = new LinkedList<Field>();
-        List<Field> fields = plugin.ffm.getNotAllowedSourceFields(player.getLocation(), player.getName());
+        List<Field> fieldsinarea = getFieldsInArea(loc);
 
-        for (Field field : fields)
+        for (Field field : fieldsinarea)
         {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventEntry())
+            if (field.envelops(loc) && !isAllowed(field, playerName))
             {
-                out.add(field);
+                for (FieldFlag flag : flags)
+                {
+                    if (field.getSettings().hasFlag(flag))
+                    {
+                        return field;
+                    }
+                }
             }
         }
 
-        return out;
+        return null;
     }
 
     /**
@@ -1081,7 +1146,7 @@ public final class ForceFieldManager
      */
     public Field getPointedField(Block blockInArea, Player player)
     {
-        TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.settings.throughFields);
+        TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.getSettingsManager().getThroughFields());
 
         if (tb != null)
         {
@@ -1089,7 +1154,7 @@ public final class ForceFieldManager
 
             if (targetblock != null)
             {
-                if (plugin.ffm.isField(targetblock))
+                if (plugin.getForceFieldManager().isField(targetblock))
                 {
                     Field f = getField(targetblock);
 
@@ -1206,7 +1271,7 @@ public final class ForceFieldManager
 
         for (Field tf : total)
         {
-            near.addAll(getFieldsInArea(tf));
+            near.addAll(getFieldsInArea(tf.getLocation()));
         }
 
         for (Field nearfield : near)
@@ -1239,284 +1304,6 @@ public final class ForceFieldManager
         }
 
         return newlyfound;
-    }
-
-    /**
-     * Gets snitch fields you're in
-     * @param loc
-     * @return the fields
-     */
-    public List<Field> getSnitchFields(Location loc)
-    {
-        List<Field> out = new LinkedList<Field>();
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field f : sourcefields)
-        {
-            FieldSettings fs = f.getSettings();
-
-            if (fs.isSnitch())
-            {
-                out.add(f);
-            }
-        }
-        return out;
-    }
-
-    /**
-     * Find an unprotectable prevention field in the location
-     * @param loc
-     * @return the unprotectable field, null if not near a prevent unprotectable field
-     */
-    public Field findUprotectableBlockField(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventUnprotectable())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is a (grief/place/destroy/explosion) protected field
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public boolean isProtected(Location loc)
-    {
-        return findProtected(loc) != null;
-    }
-
-    /**
-     * Find a (grief/place/destroy/explosion) protected field in the location
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public Field findProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isGriefUndoInterval() || fs.isGriefUndoRequest() || fs.isPreventPlace() || fs.isPreventDestroy() || fs.isPreventExplosions())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is a (grief/place/destroy/explosion) protected field that the player is not allowed in
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public boolean isProtected(Location loc, Player player)
-    {
-        return findProtected(loc, player) != null;
-    }
-
-    /**
-     * Find a (grief/place/destroy/explosion) protected field in the location that the player is not allowed in
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public Field findProtected(Location loc, Player player)
-    {
-        List<Field> sourcefields = getNotAllowedSourceFields(loc, player.getName());
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isGriefUndoInterval() || fs.isGriefUndoRequest() || fs.isPreventPlace() || fs.isPreventDestroy() || fs.isPreventExplosions())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is a grief protected field that the player is not allowed in
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public boolean isGriefProtected(Location loc, Player player)
-    {
-        return findGriefProtected(loc, player) != null;
-    }
-
-    /**
-     * Find a grief protected field in the location that the player is not allowed in
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public Field findGriefProtected(Location loc, Player player)
-    {
-        List<Field> sourcefields = getNotAllowedSourceFields(loc, player.getName());
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isGriefUndoInterval() || fs.isGriefUndoRequest())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is a grief protected field
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isGriefProtected(Location loc)
-    {
-        return findGriefProtected(loc) != null;
-    }
-
-    /**
-     * Whether the location is a grief protected field
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findGriefProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isGriefUndoInterval() || fs.isGriefUndoRequest())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a build protected area that the player is not allowed on
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public boolean isPlaceProtected(Location loc, Player player)
-    {
-        return findPlaceProtected(loc, player) != null;
-    }
-
-    /**
-     * Find a build protected area in the location that the player is not allowed on
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public Field findPlaceProtected(Location loc, Player player)
-    {
-        List<Field> sourcefields = getNotAllowedSourceFields(loc, player.getName());
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventPlace())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a break protected area that the player is not allowed in
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public boolean isDestroyProtected(Location loc, Player player)
-    {
-        return findDestroyProtected(loc, player) != null;
-    }
-
-    /**
-     * Find a break protected area in the location that the player is not allowed in
-     * @param loc
-     * @param player
-     * @return the field, null if its not
-     */
-    public Field findDestroyProtected(Location loc, Player player)
-    {
-        List<Field> sourcefields = getNotAllowedSourceFields(loc, player.getName());
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventDestroy())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a break protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isDestroyProtected(Location loc)
-    {
-        return findDestroyProtected(loc) != null;
-    }
-
-    /**
-     * Whether the location is in a break protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findDestroyProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventDestroy())
-            {
-                return field;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -1556,267 +1343,6 @@ public final class ForceFieldManager
     }
 
     /**
-     * Whether the location is in a fire protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isFireProtected(Location loc)
-    {
-        return findFireProtected(loc) != null;
-    }
-
-    /**
-     * Find a fire protected area in the location
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findFireProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventFire())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a entry protected area that the player is not allowed in
-     * @param loc
-     * @param player
-     * @return
-     * @returnthe field, null if its not
-     */
-    public boolean isEntryProtected(Location loc, Player player)
-    {
-        return findEntryProtected(loc, player) != null;
-    }
-
-    /**
-     * Find a entry protected area in the location that the player is not allowed in
-     * @param loc
-     * @param player
-     * @return
-     * @returnthe field, null if its not
-     */
-    public Field findEntryProtected(Location loc, Player player)
-    {
-        List<Field> sourcefields = getNotAllowedSourceFields(loc, player.getName());
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventEntry())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a mob damage protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isMobDamageProtected(Location loc)
-    {
-        return findMobDamageProtected(loc) != null;
-    }
-
-    /**
-     * Find a mob damage protected area in the location
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findMobDamageProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventMobDamage())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a mob spawn protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isMobSpawnProtected(Location loc)
-    {
-        return findMobSpawnProtected(loc) != null;
-    }
-
-    /**
-     * Find a mob spawn protected area in the location
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findMobSpawnProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventMobSpawn())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a animal spawn protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isAnimalSpawnProtected(Location loc)
-    {
-        return findAnimalSpawnProtected(loc) != null;
-    }
-
-    /**
-     * Find a animal spawn protected area in the location
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findAnimalSpawnProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventAnimalSpawn())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a pvp protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isPvPProtected(Location loc)
-    {
-        return findPvPProtected(loc) != null;
-
-    }
-
-    /**
-     * Find a pvp protected area in the location
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findPvPProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventPvP())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the location is in a flow protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isFlowProtected(Location loc)
-    {
-        return findFlowProtected(loc) != null;
-    }
-
-    /**
-     * Find a flow protected area in the location
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findFlowProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventFlow())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Whether the block is in an explosion protected area
-     * @param loc
-     * @return the field, null if its not
-     */
-    public boolean isExplosionProtected(Location loc)
-    {
-        return findExplosionProtected(loc) != null;
-    }
-
-    /**
-     * Find an explosion protected area in the location
-     * @param loc
-     * @return the field, null if its not
-     */
-    public Field findExplosionProtected(Location loc)
-    {
-        List<Field> sourcefields = getSourceFields(loc);
-
-        for (Field field : sourcefields)
-        {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.isPreventExplosions())
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Return the first field that conflicts with the unbreakable
      * @param placedBlock
      * @param placer
@@ -1830,7 +1356,7 @@ public final class ForceFieldManager
         {
             FieldSettings fs = field.getSettings();
 
-            if (fs.isNoConflict())
+            if (fs.hasFlag(FieldFlag.NO_CONFLICT))
             {
                 continue;
             }
@@ -1857,14 +1383,14 @@ public final class ForceFieldManager
      */
     public Field fieldConflicts(Block placedBlock, Player placer)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(placedBlock.getTypeId());
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(placedBlock.getTypeId());
 
         if (fs == null)
         {
             return null;
         }
 
-        if (fs.isNoConflict())
+        if (fs.hasFlag(FieldFlag.NO_CONFLICT))
         {
             return null;
         }
@@ -1879,7 +1405,7 @@ public final class ForceFieldManager
         {
             FieldSettings fsarea = field.getSettings();
 
-            if (fsarea.isNoConflict())
+            if (fs.hasFlag(FieldFlag.NO_CONFLICT))
             {
                 continue;
             }
@@ -1908,7 +1434,7 @@ public final class ForceFieldManager
     {
         HashSet<Field> out = new HashSet<Field>();
 
-        FieldSettings fs = plugin.settings.getFieldSettings(materialInHand.getId());
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(materialInHand.getId());
 
         if (fs == null)
         {
@@ -1923,15 +1449,15 @@ public final class ForceFieldManager
 
         for (Field field : fieldsinarea)
         {
-            FieldSettings fsarea = plugin.settings.getFieldSettings(field.getTypeId());
+            FieldSettings fsarea = plugin.getSettingsManager().getFieldSettings(field.getTypeId());
 
             if (fsarea == null)
             {
-                plugin.ffm.queueRelease(field);
+                plugin.getForceFieldManager().queueRelease(field);
                 continue;
             }
 
-            if (fsarea.isNoConflict())
+            if (fs.hasFlag(FieldFlag.NO_CONFLICT))
             {
                 continue;
             }
@@ -1967,34 +1493,35 @@ public final class ForceFieldManager
 
         // remove from forester
 
-        if (fs != null && (fs.isForester() || fs.isForesterShrubs()))
+        if (fs.hasFlag(FieldFlag.FORESTER) || fs.hasFlag(FieldFlag.FORESTER_SHRUBS))
         {
-            plugin.fm.remove(field);
+            plugin.getForesterManager().remove(field);
         }
 
         // delete any snitch entries
 
-        if (fs != null && fs.isSnitch())
+        if (fs.hasFlag(FieldFlag.SNITCH))
         {
-            plugin.sm.deleteSnitchEntires(field);
+            plugin.getStorageManager().deleteSnitchEntires(field);
         }
 
         // remove from grief-undo and delete any records on the database
 
-        if (fs != null && (fs.isGriefUndoRequest() || fs.isGriefUndoInterval()))
+        if (fs.hasGriefUndoFlag())
         {
-            plugin.gum.remove(field);
-            plugin.sm.deleteBlockGrief(field);
+            plugin.getGriefUndoManager().remove(field);
+            plugin.getStorageManager().deleteBlockGrief(field);
         }
+
+        // remove the count from the owner
+
+        PlayerData data = plugin.getPlayerManager().getPlayerData(field.getOwner());
+        data.decrementFieldCount(field.getTypeId());
 
         // delete from database
 
         field.markForDeletion();
-        plugin.sm.offerField(field);
-
-        // see if we need to untag chunk
-
-        plugin.tm.untagChunk(field.toChunkVec());
+        plugin.getStorageManager().offerField(field);
     }
 
     /**
@@ -2039,7 +1566,7 @@ public final class ForceFieldManager
 
         deleteField(field);
 
-        if (plugin.settings.dropOnDelete)
+        if (plugin.getSettingsManager().isDropOnDelete())
         {
             dropBlock(block);
         }
@@ -2053,7 +1580,7 @@ public final class ForceFieldManager
     {
         deleteField(field);
 
-        if (plugin.settings.dropOnDelete)
+        if (plugin.getSettingsManager().isDropOnDelete())
         {
             dropBlock(field);
         }
@@ -2105,7 +1632,7 @@ public final class ForceFieldManager
 
             deleteField(pending);
 
-            if (plugin.settings.dropOnDelete)
+            if (plugin.getSettingsManager().isDropOnDelete())
             {
                 dropBlock(pending);
             }
@@ -2126,7 +1653,7 @@ public final class ForceFieldManager
 
         for (Field f : total)
         {
-            plugin.ffm.queueRelease(f);
+            plugin.getForceFieldManager().queueRelease(f);
             deletedCount++;
         }
 
@@ -2146,7 +1673,7 @@ public final class ForceFieldManager
         World world = plugin.getServer().getWorld(field.getWorld());
         Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
 
-        if (plugin.settings.isFieldType(block))
+        if (plugin.getSettingsManager().isFieldType(block))
         {
             ItemStack is = new ItemStack(block.getTypeId(), 1);
             block.setType(Material.AIR);
@@ -2163,7 +1690,7 @@ public final class ForceFieldManager
         World world = block.getWorld();
         ItemStack is = new ItemStack(block.getTypeId(), 1);
 
-        if (plugin.settings.isFieldType(block))
+        if (plugin.getSettingsManager().isFieldType(block))
         {
             block.setType(Material.AIR);
             world.dropItemNaturally(block.getLocation(), is);
@@ -2178,9 +1705,9 @@ public final class ForceFieldManager
      */
     public boolean purchase(Player player, int price)
     {
-        if (plugin.Method != null)
+        if (plugin.getMethod() != null)
         {
-            MethodAccount account = plugin.Method.getAccount(player.getName());
+            MethodAccount account = plugin.getMethod().getAccount(player.getName());
 
             if (account.hasEnough(price))
             {
@@ -2203,9 +1730,9 @@ public final class ForceFieldManager
      */
     public void refund(Player player, int price)
     {
-        if (plugin.Method != null)
+        if (plugin.getMethod() != null)
         {
-            MethodAccount account = plugin.Method.getAccount(player.getName());
+            MethodAccount account = plugin.getMethod().getAccount(player.getName());
             account.add(price);
             player.sendMessage(ChatColor.AQUA + "Your account has been credited");
 

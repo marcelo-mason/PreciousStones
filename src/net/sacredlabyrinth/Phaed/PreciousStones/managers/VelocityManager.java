@@ -7,6 +7,7 @@ import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Vehicle;
@@ -24,9 +25,9 @@ public class VelocityManager
      *
      * @param plugin
      */
-    public VelocityManager(PreciousStones plugin)
+    public VelocityManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -63,9 +64,9 @@ public class VelocityManager
         final Player player = p;
         final Vehicle vehicle = v;
 
-        if (plugin.pm.hasPermission(player, "preciousstones.benefit.launch"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.launch"))
         {
-            if (plugin.ffm.isAllowed(field, player.getName()))
+            if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
             {
                 FieldSettings fs = field.getSettings();
 
@@ -79,7 +80,7 @@ public class VelocityManager
                 velocity.multiply(speed / velocity.length());
                 velocity.setY(launchheight > 0 ? launchheight : (((player.getLocation().getPitch() * -1) + 90) / 35));
 
-                if (fs.isLaunch())
+                if (fs.hasFlag(FieldFlag.LAUNCH))
                 {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
@@ -94,7 +95,7 @@ public class VelocityManager
                             {
                                 player.setVelocity(velocity);
                             }
-                            plugin.cm.showLaunch(player);
+                            plugin.getCommunicationManager().showLaunch(player);
                             startFallImmunity(player);
                         }
                     }, 0L);
@@ -137,16 +138,16 @@ public class VelocityManager
         final Player player = p;
         final Vehicle vehicle = v;
 
-        if (plugin.pm.hasPermission(player, "preciousstones.benefit.bounce"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.bounce"))
         {
-            if (plugin.ffm.isAllowed(field, player.getName()))
+            if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
             {
                 FieldSettings fs = field.getSettings();
 
                 final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fs.getCannonHeight();
                 final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
 
-                if (fs.isCannon())
+                if (fs.hasFlag(FieldFlag.CANNON))
                 {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
@@ -161,7 +162,7 @@ public class VelocityManager
                             {
                                 player.setVelocity(new Vector(0, height, 0));
                             }
-                            plugin.cm.showCannon(player);
+                            plugin.getCommunicationManager().showCannon(player);
                             startFallImmunity(player);
                         }
                     }, 0L);

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
@@ -20,9 +21,9 @@ public class MineManager
      *
      * @param plugin
      */
-    public MineManager(PreciousStones plugin)
+    public MineManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -32,33 +33,33 @@ public class MineManager
      */
     public void enterMine(final Player player, final Field field)
     {
-        if (plugin.pm.hasPermission(player, "preciousstones.bypass.mine"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.mine"))
         {
             return;
         }
 
         FieldSettings fs = field.getSettings();
 
-        if (!fs.isMine())
+        if (!fs.hasFlag(FieldFlag.MINE))
         {
             return;
         }
 
-        if (!plugin.ffm.isAllowed(field, player.getName()))
+        if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
         {
             final int delay = fs.getMineDelaySeconds();
             final int leftbehind = fs.getMineReplaceBlock();
-            final Block block = plugin.ffm.getBlock(field);
+            final Block block = plugin.getForceFieldManager().getBlock(field);
             block.setType(Material.getMaterial(leftbehind));
 
-            plugin.cm.showMine(player);
+            plugin.getCommunicationManager().showMine(player);
 
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 @Override
                 public void run()
                 {
-                    plugin.ffm.silentRelease(field);
+                    plugin.getForceFieldManager().silentRelease(field);
 
                     block.getWorld().createExplosion(block.getLocation(), 4, false);
                     block.getWorld().createExplosion(block.getLocation(), 6, true);

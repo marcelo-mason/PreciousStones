@@ -1,10 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.HashMap;
+import java.util.TreeMap;
+import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.ItemStack;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
@@ -18,16 +17,63 @@ import org.bukkit.World;
 public class PlayerManager
 {
     private PreciousStones plugin;
-    private HashMap<String, PlayerStatus> players = new HashMap<String, PlayerStatus>();
-    private HashMap<String, Location> outsideLocation = new HashMap<String, Location>();
+    private TreeMap<String, PlayerData> players = new TreeMap<String, PlayerData>();
 
     /**
      *
      * @param plugin
      */
-    public PlayerManager(PreciousStones plugin)
+    public PlayerManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
+    }
+
+    /**
+     * @return the players
+     */
+    public TreeMap<String, PlayerData> getPlayers()
+    {
+        return players;
+    }
+
+    /**
+     * Get a player's data file
+     * @param playerName
+     * @return
+     */
+    public PlayerData getPlayerData(String playerName)
+    {
+        PlayerData data = getPlayers().get(playerName.toLowerCase());
+
+        if (data == null)
+        {
+            data = new PlayerData(plugin.getSettingsManager().isOffByDefault());
+            data.setName(playerName);
+            players.put(playerName.toLowerCase(), data);
+        }
+
+        return data;
+    }
+
+    /**
+     * Set player as online
+     * @param player
+     */
+    public void playerLogin(Player player)
+    {
+        PlayerData data = getPlayerData(player.getName().toLowerCase());
+        data.setOnline(true);
+    }
+
+    /**
+     * Set player as offline
+     * @param player
+     */
+    public void playerLogoff(Player player)
+    {
+        PlayerData data = getPlayerData(player.getName().toLowerCase());
+        data.setOnline(false);
+        data.setOutsideLocation(null);
     }
 
     /**
@@ -36,16 +82,8 @@ public class PlayerManager
      */
     public void updateOutsideLocation(Player player)
     {
-        outsideLocation.put(player.getName(), player.getLocation());
-    }
-
-    /**
-     * Remove player from list
-     * @param player
-     */
-    public void cleanOutsideLocation(Player player)
-    {
-        outsideLocation.remove(player.getName());
+        PlayerData data = getPlayerData(player.getName().toLowerCase());
+        data.setOutsideLocation(player.getLocation());
     }
 
     /**
@@ -55,7 +93,8 @@ public class PlayerManager
      */
     public Location getOutsideLocation(Player player)
     {
-        Location loc = outsideLocation.get(player.getName());
+        PlayerData data = getPlayerData(player.getName().toLowerCase());
+        Location loc = data.getOutsideLocation();
 
         if (loc != null)
         {
@@ -111,100 +150,11 @@ public class PlayerManager
         int type1 = world.getBlockTypeIdAt(x, y, z);
         int type2 = world.getBlockTypeIdAt(x, y, z);
 
-        if (plugin.settings.isThroughType(type1) && plugin.settings.isThroughType(type2))
+        if (plugin.getSettingsManager().isThroughType(type1) && plugin.getSettingsManager().isThroughType(type2))
         {
             return true;
         }
 
         return false;
-    }
-
-    /**
-     *
-     * @param player
-     * @return
-     */
-    public boolean isDisabled(Player player)
-    {
-        PlayerStatus ps = players.get(player.getName());
-
-        if (ps == null)
-        {
-            return plugin.settings.offByDefault;
-        }
-        else
-        {
-            return ps.getDisabled();
-        }
-    }
-
-    /**
-     *
-     * @param player
-     * @param disabled
-     */
-    public void setDisabled(Player player, boolean disabled)
-    {
-        PlayerStatus ps = players.get(player.getName());
-
-        if (ps == null)
-        {
-            ps = new PlayerStatus();
-            ps.setDisabled(disabled);
-
-            players.put(player.getName(), ps);
-        }
-        else
-        {
-            ps.setDisabled(disabled);
-        }
-    }
-
-    /**
-     *
-     */
-    public class PlayerStatus
-    {
-        boolean disabled = false;
-
-        /**
-         *
-         * @return
-         */
-        public boolean getDisabled()
-        {
-            return this.disabled;
-        }
-
-        /**
-         *
-         * @param disabled
-         */
-        public void setDisabled(boolean disabled)
-        {
-            this.disabled = disabled;
-        }
-    }
-
-    /**
-     *
-     * @param player
-     */
-    public void dropInventory(Player player)
-    {
-        PlayerInventory inv = player.getInventory();
-
-        if (inv != null)
-        {
-            for (int i = 0; i < inv.getSize(); i++)
-            {
-                ItemStack stack = inv.getItem(i);
-
-                if (stack != null)
-                {
-                    player.getWorld().dropItemNaturally(player.getLocation(), stack);
-                }
-            }
-        }
     }
 }

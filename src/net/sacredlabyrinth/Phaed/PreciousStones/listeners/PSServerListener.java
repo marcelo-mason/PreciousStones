@@ -21,9 +21,9 @@ public class PSServerListener extends ServerListener
      *
      * @param plugin
      */
-    public PSServerListener(PreciousStones plugin)
+    public PSServerListener()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
         Methods = new Methods();
     }
 
@@ -36,7 +36,7 @@ public class PSServerListener extends ServerListener
 
             if (check)
             {
-                plugin.Method = null;
+                plugin.setMethod(null);
             }
         }
     }
@@ -44,12 +44,12 @@ public class PSServerListener extends ServerListener
     @Override
     public void onPluginEnable(PluginEnableEvent event)
     {
-        if (!Methods.hasMethod())
+        if (Methods != null && !Methods.hasMethod())
         {
             if (Methods.setMethod(event.getPlugin()))
             {
-                plugin.Method = Methods.getMethod();
-                PreciousStones.log(Level.INFO, "Payment method: {0} v{1}", plugin.Method.getName(), plugin.Method.getVersion());
+                plugin.setMethod(Methods.getMethod());
+                PreciousStones.log(Level.INFO, "Payment method: {0} v{1}", plugin.getMethod().getName(), plugin.getMethod().getVersion());
             }
         }
     }

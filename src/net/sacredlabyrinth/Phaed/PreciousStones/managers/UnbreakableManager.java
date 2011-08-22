@@ -28,9 +28,9 @@ public final class UnbreakableManager
      *
      * @param plugin all unbreakables from the database
      */
-    public UnbreakableManager(PreciousStones plugin)
+    public UnbreakableManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -49,13 +49,14 @@ public final class UnbreakableManager
      */
     public boolean add(Block unbreakableblock, Player owner)
     {
-        if (plugin.plm.isDisabled(owner))
+        if (plugin.getPlayerManager().getPlayerData(owner.getName()).isDisabled())
         {
             return false;
         }
+        
         // deny if world is blacklisted
 
-        if (plugin.settings.isBlacklistedWorld(unbreakableblock.getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(unbreakableblock.getWorld()))
         {
             return false;
         }
@@ -68,7 +69,7 @@ public final class UnbreakableManager
 
         // add unbreakable to database
 
-        plugin.sm.offerUnbreakable(unbreakable, true);
+        plugin.getStorageManager().offerUnbreakable(unbreakable, true);
         return true;
     }
 
@@ -333,7 +334,7 @@ public final class UnbreakableManager
 
                     int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 
-                    if (!plugin.settings.isUnbreakableType(type))
+                    if (!plugin.getSettingsManager().isUnbreakableType(type))
                     {
                         revertedCount++;
                         Block block = world.getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
@@ -446,9 +447,9 @@ public final class UnbreakableManager
 
                     Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.settings.isUnbreakableType(surroundingblock))
+                    if (plugin.getSettingsManager().isUnbreakableType(surroundingblock))
                     {
-                        if (plugin.um.isUnbreakable(surroundingblock))
+                        if (plugin.getUnbreakableManager().isUnbreakable(surroundingblock))
                         {
                             return surroundingblock;
                         }
@@ -549,10 +550,10 @@ public final class UnbreakableManager
 
         // delete unbreakable form database
 
-        plugin.sm.offerUnbreakable(ub, false);
+        plugin.getStorageManager().offerUnbreakable(ub, false);
 
         // untag the chunk
 
-        plugin.tm.untagChunk(ub.toChunkVec());
+        plugin.getTagManager().untagChunk(ub.toChunkVec());
     }
 }

@@ -31,8 +31,9 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.LightningManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.LimitManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SimpleTeamsManager;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SimpleClansManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.TagManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VisualizationManager;
 
@@ -44,30 +45,30 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.VisualizationManager;
 public class PreciousStones extends JavaPlugin
 {
     private static PreciousStones instance;
-    public static final Logger logger = Logger.getLogger("Minecraft");
+    private static Logger logger = Logger.getLogger("Minecraft");
 
-    public SettingsManager settings;
-    public Helper helper;
-    public CommandManager com;
-    public ForceFieldManager ffm;
-    public UnbreakableManager um;
-    public UnprotectableManager upm;
-    public GriefUndoManager gum;
-    public StorageManager sm;
-    public CommunicatonManager cm;
-    public EntryManager em;
-    public PlayerManager plm;
-    public SnitchManager snm;
-    public MineManager mm;
-    public LightningManager lm;
-    public VelocityManager vm;
-    public PermissionsManager pm;
-    public SimpleTeamsManager stm;
-    public VisualizationManager viz;
-    public ForesterManager fm;
-    public TagManager tm;
-    public LegacyManager legacy;
-    public Method Method;
+    private Method Method;
+    private SettingsManager settingsManager;
+    private SimpleClansManager simpleTeamsManager;
+    private CommandManager commandManager;
+    private LimitManager limitManager;
+    private ForceFieldManager forceFieldManager;
+    private UnbreakableManager unbreakableManager;
+    private UnprotectableManager unprotectableManager;
+    private GriefUndoManager griefUndoManager;
+    private StorageManager storageManager;
+    private CommunicatonManager communicationManager;
+    private EntryManager entryManager;
+    private PlayerManager playerManager;
+    private SnitchManager snitchManager;
+    private MineManager mineManager;
+    private LightningManager lightningManager;
+    private VelocityManager velocityManager;
+    private PermissionsManager permissionsManager;
+    private VisualizationManager visualizationManager;
+    private ForesterManager foresterManager;
+    private TagManager tagManager;
+    private LegacyManager legacyManager;
 
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
@@ -82,6 +83,14 @@ public class PreciousStones extends JavaPlugin
     public static PreciousStones getInstance()
     {
         return instance;
+    }
+
+    /**
+     * @return the logger
+     */
+    public static Logger getLogger()
+    {
+        return logger;
     }
 
     /**
@@ -101,38 +110,38 @@ public class PreciousStones extends JavaPlugin
     @Override
     public void onEnable()
     {
-        instance = this;
-
         displayStatusInfo();
 
-        settings = new SettingsManager(this);
-        helper = new Helper(this);
-        com = new CommandManager(this);
-        ffm = new ForceFieldManager(this);
-        um = new UnbreakableManager(this);
-        upm = new UnprotectableManager(this);
-        cm = new CommunicatonManager(this);
-        em = new EntryManager(this);
-        plm = new PlayerManager(this);
-        snm = new SnitchManager(this);
-        mm = new MineManager(this);
-        lm = new LightningManager(this);
-        vm = new VelocityManager(this);
-        pm = new PermissionsManager(this);
-        stm = new SimpleTeamsManager(this);
-        viz = new VisualizationManager(this);
-        fm = new ForesterManager(this);
-        tm = new TagManager(this);
-        gum = new GriefUndoManager(this);
-        sm = new StorageManager(this);
-        legacy = new LegacyManager(this);
+        instance = this;
 
-        playerListener = new PSPlayerListener(this);
-        blockListener = new PSBlockListener(this);
-        entityListener = new PSEntityListener(this);
-        vehicleListener = new PSVehicleListener(this);
-        worldListener = new PSWorldListener(this);
-        serverListener = new PSServerListener(this);
+        settingsManager = new SettingsManager();
+        simpleTeamsManager = new SimpleClansManager();
+        commandManager = new CommandManager();
+        limitManager = new LimitManager();
+        forceFieldManager = new ForceFieldManager();
+        unbreakableManager = new UnbreakableManager();
+        unprotectableManager = new UnprotectableManager();
+        communicationManager = new CommunicatonManager();
+        entryManager = new EntryManager();
+        playerManager = new PlayerManager();
+        snitchManager = new SnitchManager();
+        mineManager = new MineManager();
+        lightningManager = new LightningManager();
+        velocityManager = new VelocityManager();
+        permissionsManager = new PermissionsManager();
+        visualizationManager = new VisualizationManager();
+        foresterManager = new ForesterManager();
+        tagManager = new TagManager();
+        griefUndoManager = new GriefUndoManager();
+        storageManager = new StorageManager();
+        legacyManager = new LegacyManager();
+
+        playerListener = new PSPlayerListener();
+        blockListener = new PSBlockListener();
+        entityListener = new PSEntityListener();
+        vehicleListener = new PSVehicleListener();
+        worldListener = new PSWorldListener();
+        serverListener = new PSServerListener();
 
         registerEvents();
         registerCommands();
@@ -140,7 +149,7 @@ public class PreciousStones extends JavaPlugin
 
     private void displayStatusInfo()
     {
-        log(Level.INFO, "version {0} loaded", this.getDescription().getVersion());
+        log(Level.INFO, "version {0} loaded", getDescription().getVersion());
     }
 
     private void registerEvents()
@@ -178,7 +187,7 @@ public class PreciousStones extends JavaPlugin
 
     private void registerCommands()
     {
-        getCommand("ps").setExecutor(com);
+        getCommand("ps").setExecutor(getCommandManager());
     }
 
     /**
@@ -188,6 +197,191 @@ public class PreciousStones extends JavaPlugin
     public void onDisable()
     {
         getServer().getScheduler().cancelTasks(this);
-        sm.processQueue();
+        getStorageManager().processQueue();
+        getStorageManager().closeConnection();
+    }
+
+    /**
+     * @param Method the Method to set
+     */
+    public void setMethod(Method Method)
+    {
+        this.Method = Method;
+    }
+
+    /**
+     * @return the Method
+     */
+    public Method getMethod()
+    {
+        return Method;
+    }
+
+    /**
+     * @return the settingsManager
+     */
+    public SettingsManager getSettingsManager()
+    {
+        return settingsManager;
+    }
+
+    /**
+     * @return the commandManager
+     */
+    public CommandManager getCommandManager()
+    {
+        return commandManager;
+    }
+
+    /**
+     * @return the forceFieldManager
+     */
+    public ForceFieldManager getForceFieldManager()
+    {
+        return forceFieldManager;
+    }
+
+    /**
+     * @return the unbreakableManager
+     */
+    public UnbreakableManager getUnbreakableManager()
+    {
+        return unbreakableManager;
+    }
+
+    /**
+     * @return the unprotectableManager
+     */
+    public UnprotectableManager getUnprotectableManager()
+    {
+        return unprotectableManager;
+    }
+
+    /**
+     * @return the griefUndoManager
+     */
+    public GriefUndoManager getGriefUndoManager()
+    {
+        return griefUndoManager;
+    }
+
+    /**
+     * @return the storageManager
+     */
+    public StorageManager getStorageManager()
+    {
+        return storageManager;
+    }
+
+    /**
+     * @return the communicationManager
+     */
+    public CommunicatonManager getCommunicationManager()
+    {
+        return communicationManager;
+    }
+
+    /**
+     * @return the entryManager
+     */
+    public EntryManager getEntryManager()
+    {
+        return entryManager;
+    }
+
+    /**
+     * @return the playerManager
+     */
+    public PlayerManager getPlayerManager()
+    {
+        return playerManager;
+    }
+
+    /**
+     * @return the snitchManager
+     */
+    public SnitchManager getSnitchManager()
+    {
+        return snitchManager;
+    }
+
+    /**
+     * @return the mineManager
+     */
+    public MineManager getMineManager()
+    {
+        return mineManager;
+    }
+
+    /**
+     * @return the lightningManager
+     */
+    public LightningManager getLightningManager()
+    {
+        return lightningManager;
+    }
+
+    /**
+     * @return the velocityManager
+     */
+    public VelocityManager getVelocityManager()
+    {
+        return velocityManager;
+    }
+
+    /**
+     * @return the permissionsManager
+     */
+    public PermissionsManager getPermissionsManager()
+    {
+        return permissionsManager;
+    }
+
+    /**
+     * @return the simpleTeamsManager
+     */
+    public SimpleClansManager getSimpleClansManager()
+    {
+        return simpleTeamsManager;
+    }
+
+    /**
+     * @return the visualizationManager
+     */
+    public VisualizationManager getVisualizationManager()
+    {
+        return visualizationManager;
+    }
+
+    /**
+     * @return the foresterManager
+     */
+    public ForesterManager getForesterManager()
+    {
+        return foresterManager;
+    }
+
+    /**
+     * @return the tagManager
+     */
+    public TagManager getTagManager()
+    {
+        return tagManager;
+    }
+
+    /**
+     * @return the legacyManager
+     */
+    public LegacyManager getLegacyManager()
+    {
+        return legacyManager;
+    }
+
+    /**
+     * @return the limitManager
+     */
+    public LimitManager getLimitManager()
+    {
+        return limitManager;
     }
 }

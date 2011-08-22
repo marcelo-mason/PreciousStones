@@ -13,6 +13,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**
@@ -27,9 +28,9 @@ public class SnitchManager
      *
      * @param plugin
      */
-    public SnitchManager(PreciousStones plugin)
+    public SnitchManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -39,16 +40,16 @@ public class SnitchManager
      */
     public void recordSnitchEntry(Player player, Field field)
     {
-        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
+        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.snitch"))
         {
             FieldSettings fs = field.getSettings();
 
-            if (fs.isSnitch())
+            if (fs.hasFlag(FieldFlag.SNITCH))
             {
                 if (!field.isOwner(player.getName()))
                 {
                     DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
-                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Entry", dateFormat.format(new Date()), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Entry", dateFormat.format(new Date()), 1));
                 }
             }
         }
@@ -62,15 +63,15 @@ public class SnitchManager
      */
     public void recordSnitchBlockBreak(Player player, Block block)
     {
-        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
+        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
+            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Break", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Break", toBlockDetails(block), 1));
                 }
             }
         }
@@ -83,15 +84,15 @@ public class SnitchManager
      */
     public void recordSnitchBlockPlace(Player player, Block block)
     {
-        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
+        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
+            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Place", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Place", toBlockDetails(block), 1));
                 }
             }
         }
@@ -104,15 +105,15 @@ public class SnitchManager
      */
     public void recordSnitchUsed(Player player, Block block)
     {
-        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
+        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
+            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Used", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Used", toBlockDetails(block), 1));
                 }
             }
         }
@@ -132,15 +133,15 @@ public class SnitchManager
             return;
         }
 
-        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
+        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
+            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Shopped", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Shopped", toBlockDetails(block), 1));
                 }
             }
         }
@@ -153,15 +154,15 @@ public class SnitchManager
      */
     public void recordSnitchIgnite(Player player, Block block)
     {
-        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.snitch"))
+        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.ffm.getSnitchFields(block.getLocation());
+            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
                 if (!field.isOwner(player.getName()))
                 {
-                    plugin.sm.offerSnitchEntry(new SnitchEntry(field, player.getName(), "Ignite", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Ignite", toBlockDetails(block), 1));
                 }
             }
         }

@@ -15,17 +15,6 @@ import org.bukkit.entity.Player;
  */
 public class Helper
 {
-    private PreciousStones plugin;
-
-    /**
-     *
-     * @param plugin
-     */
-    public Helper(PreciousStones plugin)
-    {
-        this.plugin = plugin;
-    }
-
     /**
      * Helper function to check for integer
      * @param o
@@ -100,6 +89,24 @@ public class Helper
         try
         {
             List<Integer> list = (List<Integer>) obj;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Helper function to check for string list
+     * @param input
+     * @return
+     */
+    public static boolean isStringList(Object obj)
+    {
+        try
+        {
+            List<String> list = (List<String>) obj;
             return true;
         }
         catch (Exception ex)
@@ -210,9 +217,9 @@ public class Helper
      * @param playername
      * @return
      */
-    public Player matchSinglePlayer(String playername)
+    public static Player matchSinglePlayer(String playername)
     {
-        List<Player> players = plugin.getServer().matchPlayer(playername);
+        List<Player> players = PreciousStones.getInstance().getServer().matchPlayer(playername);
 
         if (players.size() == 1)
         {

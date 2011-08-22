@@ -7,6 +7,7 @@ import java.util.Random;
 import net.sacredlabyrinth.Phaed.PreciousStones.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vector;
 import org.bukkit.Material;
@@ -30,9 +31,9 @@ public final class ForesterManager
      *
      * @param plugin
      */
-    public ForesterManager(PreciousStones plugin)
+    public ForesterManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
         scheduler();
     }
 
@@ -78,7 +79,7 @@ public final class ForesterManager
                     {
                         int type = world.getBlockTypeIdAt(vec.getBlockX(), vec.getBlockY(), vec.getBlockZ());
 
-                        if (plugin.settings.isFertileType(type))
+                        if (plugin.getSettingsManager().isFertileType(type))
                         {
                             Block fertile = world.getBlockAt(vec.getBlockX(), vec.getBlockY(), vec.getBlockZ());
                             fertile.setType(Material.GRASS);
@@ -128,7 +129,7 @@ public final class ForesterManager
 
                     if (!isSeeThrough(type))
                     {
-                        prepareSpot(field, world, x, y, z, 4, fs.isForesterShrubs());
+                        prepareSpot(field, world, x, y, z, 4, fs.hasFlag(FieldFlag.FORESTER_SHRUBS));
                     }
                 }
             }
@@ -179,11 +180,11 @@ public final class ForesterManager
 
                     // do not place in protected area
 
-                    Field f = plugin.ffm.findPlaceProtected(block.getLocation(), player);
+                    Field f = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.PREVENT_PLACE);
 
                     if (f != null)
                     {
-                        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+                        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.place"))
                         {
                             return;
                         }
@@ -251,7 +252,7 @@ public final class ForesterManager
                     generateTree(field, player, world);
                     fe.addCount();
 
-                    if (fe.getCount() >= plugin.settings.foresterTrees)
+                    if (fe.getCount() >= plugin.getSettingsManager().getForesterTrees())
                     {
                         deletion.add(field);
                         break;
@@ -272,14 +273,14 @@ public final class ForesterManager
                     }
 
                     foresters.remove(field);
-                    plugin.ffm.queueRelease(field);
+                    plugin.getForceFieldManager().queueRelease(field);
                 }
 
                 deletion.clear();
-                plugin.ffm.flush();
+                plugin.getForceFieldManager().flush();
                 processing = false;
             }
-        }, 20L * plugin.settings.foresterInterval, 20L * plugin.settings.foresterInterval);
+        }, 20L * plugin.getSettingsManager().getForesterInterval(), 20L * plugin.getSettingsManager().getForesterInterval());
     }
 
     private static TreeType getTree()

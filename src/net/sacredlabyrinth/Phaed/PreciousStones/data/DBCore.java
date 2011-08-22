@@ -9,35 +9,22 @@ import java.sql.ResultSet;
  */
 public interface DBCore
 {
-    public Boolean initialize();
-
-    public void writeInfo(String toWrite);
-
-    public void writeError(String toWrite, Boolean severe);
-
-    public void openBatch();
-
-    public void addBatch(String sql);
-
-    public void closeBatch();
-
-    public ResultSet sqlQuery(String query);
-
-    public Boolean createTable(String query);
-
-    public void insertQuery(String query);
-
-    public void updateQuery(String query);
-
-    public void deleteQuery(String query);
-
-    public Boolean checkTable(String table);
-
-    public Boolean wipeTable(String table);
-
     public Connection getConnection();
+
+    public Boolean checkConnection();
 
     public void close();
 
-    public Boolean checkConnection();
+    public ResultSet select(String query);
+
+    public void insert(String query);
+
+    public void update(String query);
+
+    public void delete(String query);
+
+    public Boolean execute(String query);
+
+    public Boolean existsTable(String table);
+
 }

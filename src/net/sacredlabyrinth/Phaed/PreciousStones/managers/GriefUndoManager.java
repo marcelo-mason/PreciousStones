@@ -27,9 +27,9 @@ public final class GriefUndoManager
      *
      * @param plugin
      */
-    public GriefUndoManager(PreciousStones plugin)
+    public GriefUndoManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
 
         startInterval();
     }
@@ -59,7 +59,7 @@ public final class GriefUndoManager
      */
     public void addBlock(Field field, Block block)
     {
-        if (!plugin.gum.isDependentBlock(block.getTypeId()))
+        if (!plugin.getGriefUndoManager().isDependentBlock(block.getTypeId()))
         {
             BlockFace[] faces =
             {
@@ -70,7 +70,7 @@ public final class GriefUndoManager
             {
                 Block rel = block.getRelative(face);
 
-                if (plugin.gum.isDependentBlock(rel.getTypeId()))
+                if (plugin.getGriefUndoManager().isDependentBlock(rel.getTypeId()))
                 {
                     field.addGriefBlock(new GriefBlock(rel.getLocation(), rel.getTypeId(), rel.getData()));
                     rel.setTypeId(0);
@@ -114,10 +114,10 @@ public final class GriefUndoManager
 
                 for (String line : sign.getLines())
                 {
-                    signText += line + "°";
+                    signText += line + "ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°";
                 }
 
-                signText = Helper.stripTrailing(signText, "°");
+                signText = Helper.stripTrailing(signText, "ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°");
                 gb.setSignText(signText);
             }
 
@@ -136,7 +136,7 @@ public final class GriefUndoManager
 
         if (world != null)
         {
-            List<GriefBlock> gbs = plugin.sm.retrieveBlockGrief(field);
+            List<GriefBlock> gbs = plugin.getStorageManager().retrieveBlockGrief(field);
 
             // undo base blocks first
 
@@ -149,12 +149,12 @@ public final class GriefUndoManager
                 {
                     undoGriefBlock(gb, world);
 
-                    if (batch.size() >= plugin.settings.griefUndoBatchSize)
+                    if (batch.size() >= plugin.getSettingsManager().getGriefUndoBatchSize())
                     {
                         sendBatch(batch, world, delay);
 
                         batch = new LinkedList<GriefBlock>();
-                        delay += plugin.settings.griefUndoBatchDelayTicks;
+                        delay += plugin.getSettingsManager().getGriefUndoBatchDelayTicks();
                     }
                 }
             }
@@ -164,7 +164,7 @@ public final class GriefUndoManager
                 sendBatch(batch, world, delay);
 
                 batch = new LinkedList<GriefBlock>();
-                delay += plugin.settings.griefUndoBatchDelayTicks;
+                delay += plugin.getSettingsManager().getGriefUndoBatchDelayTicks();
             }
 
             // undo dependent blocks second
@@ -175,12 +175,12 @@ public final class GriefUndoManager
                 {
                     undoGriefBlock(gb, world);
 
-                    if (batch.size() >= plugin.settings.griefUndoBatchSize)
+                    if (batch.size() >= plugin.getSettingsManager().getGriefUndoBatchSize())
                     {
                         sendBatch(batch, world, delay);
 
                         batch = new LinkedList<GriefBlock>();
-                        delay += plugin.settings.griefUndoBatchDelayTicks;
+                        delay += plugin.getSettingsManager().getGriefUndoBatchDelayTicks();
                     }
                 }
             }
@@ -253,7 +253,7 @@ public final class GriefUndoManager
             if (block.getState() instanceof Sign && gb.getSignText().length() > 0)
             {
                 Sign sign = (Sign) block.getState();
-                String[] lines = gb.getSignText().split("[°]");
+                String[] lines = gb.getSignText().split("[ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°]");
 
                 for (int i = 0; i < lines.length; i++)
                 {
@@ -284,7 +284,7 @@ public final class GriefUndoManager
 
                 processing = false;
             }
-        }, 20L * 60 * plugin.settings.griefIntervalSeconds, 20L * 60 * plugin.settings.griefIntervalSeconds);
+        }, 20L * 60 * plugin.getSettingsManager().getGriefIntervalSeconds(), 20L * 60 * plugin.getSettingsManager().getGriefIntervalSeconds());
     }
 
     /**

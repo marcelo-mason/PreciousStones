@@ -21,6 +21,7 @@ import org.bukkit.Material;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -44,9 +45,9 @@ public class PSPlayerListener extends PlayerListener
      *
      * @param plugin
      */
-    public PSPlayerListener(PreciousStones plugin)
+    public PSPlayerListener()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -56,12 +57,8 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerLogin(PlayerLoginEvent event)
     {
-        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
-        {
-            return;
-        }
-
-        plugin.sm.offerPlayer(event.getPlayer().getName(), true);
+        plugin.getPlayerManager().playerLogin(event.getPlayer());
+        plugin.getStorageManager().offerPlayer(event.getPlayer().getName(), true);
     }
 
     /**
@@ -71,13 +68,8 @@ public class PSPlayerListener extends PlayerListener
     @Override
     public void onPlayerQuit(PlayerQuitEvent event)
     {
-        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
-        {
-            return;
-        }
-
-        plugin.sm.offerPlayer(event.getPlayer().getName(), true);
-        plugin.plm.cleanOutsideLocation(event.getPlayer());
+        plugin.getPlayerManager().playerLogoff(event.getPlayer());
+        plugin.getStorageManager().offerPlayer(event.getPlayer().getName(), true);
     }
 
     /**
@@ -92,13 +84,8 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
-        {
-            return;
-        }
-
-        plugin.sm.offerPlayer(event.getPlayer().getName(), true);
-        plugin.plm.cleanOutsideLocation(event.getPlayer());
+        plugin.getPlayerManager().playerLogoff(event.getPlayer());
+        plugin.getStorageManager().offerPlayer(event.getPlayer().getName(), true);
     }
 
     /**
@@ -113,7 +100,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
         {
             return;
         }
@@ -127,13 +114,13 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        Field usefield = plugin.ffm.findUseProtected(block.getLocation(), player, block.getTypeId());
+        Field usefield = plugin.getForceFieldManager().findUseProtected(block.getLocation(), player, block.getTypeId());
 
         if (usefield != null)
         {
-            if (!plugin.pm.hasPermission(player, "preciousstones.bypass.use"))
+            if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.use"))
             {
-                plugin.cm.warnUse(player, block.getType(), usefield);
+                plugin.getCommunicationManager().warnUse(player, block, usefield);
                 event.setCancelled(true);
                 return;
             }
@@ -141,44 +128,44 @@ public class PSPlayerListener extends PlayerListener
 
         if (event.getAction().equals(Action.PHYSICAL))
         {
-            plugin.snm.recordSnitchUsed(player, block);
+            plugin.getSnitchManager().recordSnitchUsed(player, block);
         }
 
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
         {
             if (block.getType().equals(Material.WALL_SIGN))
             {
-                plugin.snm.recordSnitchShop(player, block);
+                plugin.getSnitchManager().recordSnitchShop(player, block);
             }
 
             if (block.getType().equals(Material.WORKBENCH) || block.getType().equals(Material.BED) || block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.JUKEBOX) || block.getType().equals(Material.STONE_BUTTON))
             {
-                plugin.snm.recordSnitchUsed(player, block);
+                plugin.getSnitchManager().recordSnitchUsed(player, block);
             }
 
             if (block.getState() instanceof ContainerBlock)
             {
-                plugin.snm.recordSnitchUsed(player, block);
+                plugin.getSnitchManager().recordSnitchUsed(player, block);
             }
 
             ItemStack is = player.getItemInHand();
 
             if (is != null)
             {
-                if (plugin.settings.isToolItemType(is.getTypeId()))
+                if (plugin.getSettingsManager().isToolItemType(is.getTypeId()))
                 {
-                    if (plugin.settings.isBypassBlock(block))
+                    if (plugin.getSettingsManager().isBypassBlock(block))
                     {
                         return;
                     }
 
-                    if (plugin.settings.isSnitchType(block) && plugin.ffm.isField(block))
+                    if (plugin.getSettingsManager().isSnitchType(block) && plugin.getForceFieldManager().isField(block))
                     {
-                        Field field = plugin.ffm.getField(block);
+                        Field field = plugin.getForceFieldManager().getField(block);
 
-                        if (field.getOwner().equals(player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+                        if (field.getOwner().equals(player.getName()) || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.details"))
                         {
-                            if (!plugin.cm.showSnitchList(player, plugin.ffm.getField(block)))
+                            if (!plugin.getCommunicationManager().showSnitchList(player, plugin.getForceFieldManager().getField(block)))
                             {
                                 showInfo(block, player);
                                 ChatBlock.sendMessage(player, ChatColor.AQUA + "There have been no intruders around here");
@@ -186,29 +173,29 @@ public class PSPlayerListener extends PlayerListener
                             }
                         }
                     }
-                    else if (plugin.um.isUnbreakable(block))
+                    else if (plugin.getUnbreakableManager().isUnbreakable(block))
                     {
-                        if (plugin.um.isOwner(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+                        if (plugin.getUnbreakableManager().isOwner(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.details"))
                         {
-                            plugin.cm.showUnbreakableDetails(plugin.um.getUnbreakable(block), player);
+                            plugin.getCommunicationManager().showUnbreakableDetails(plugin.getUnbreakableManager().getUnbreakable(block), player);
                         }
                         else
                         {
-                            plugin.cm.showUnbreakableOwner(player, block);
+                            plugin.getCommunicationManager().showUnbreakableOwner(player, block);
                         }
                     }
-                    else if (plugin.ffm.isField(block))
+                    else if (plugin.getForceFieldManager().isField(block))
                     {
-                        Field field = plugin.ffm.getField(block);
+                        Field field = plugin.getForceFieldManager().getField(block);
                         FieldSettings fs = field.getSettings();
 
-                        if ((plugin.ffm.isAllowed(block, player.getName()) || plugin.pm.hasPermission(player, "preciousstones.admin.undo")) && (fs.isGriefUndoInterval() || fs.isGriefUndoRequest()))
+                        if ((plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.undo")) && (fs.hasGriefUndoFlag()))
                         {
-                            HashSet<Field> overlapped = plugin.ffm.getOverlappedFields(player, field);
+                            HashSet<Field> overlapped = plugin.getForceFieldManager().getOverlappedFields(player, field);
 
                             if (overlapped.size() == 1)
                             {
-                                int size = plugin.gum.undoGrief(field);
+                                int size = plugin.getGriefUndoManager().undoGrief(field);
 
                                 if (size > 0)
                                 {
@@ -227,7 +214,7 @@ public class PSPlayerListener extends PlayerListener
 
                                 for (Field o : overlapped)
                                 {
-                                    size += plugin.gum.undoGrief(o);
+                                    size += plugin.getGriefUndoManager().undoGrief(o);
                                 }
 
                                 if (size > 0)
@@ -249,17 +236,17 @@ public class PSPlayerListener extends PlayerListener
                     }
                     else
                     {
-                        Field field = plugin.ffm.findProtected(block.getLocation());
+                        Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
 
                         if (field != null)
                         {
-                            if (plugin.ffm.isAllowed(field, player.getName()) || plugin.settings.publicBlockDetails)
+                            if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails())
                             {
-                                plugin.cm.showProtectedLocation(player, block);
+                                plugin.getCommunicationManager().showProtectedLocation(player, block);
                             }
                             else
                             {
-                                plugin.cm.showProtected(player, block);
+                                plugin.getCommunicationManager().showProtected(player, block);
                             }
                         }
                     }
@@ -267,7 +254,7 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        if (plugin.settings.debug)
+        if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
         }
@@ -275,14 +262,14 @@ public class PSPlayerListener extends PlayerListener
 
     private void showInfo(Block block, Player player)
     {
-        if (plugin.ffm.isAllowed(block, player.getName()) || plugin.settings.publicBlockDetails || plugin.pm.hasPermission(player, "preciousstones.admin.details"))
+        if (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.details"))
         {
-            List<Field> fields = Arrays.asList(plugin.ffm.getField(block));
-            plugin.cm.showFieldDetails(player, fields);
+            List<Field> fields = Arrays.asList(plugin.getForceFieldManager().getField(block));
+            plugin.getCommunicationManager().showFieldDetails(player, fields);
         }
         else
         {
-            plugin.cm.showFieldOwner(player, block);
+            plugin.getCommunicationManager().showFieldOwner(player, block);
         }
     }
 
@@ -313,7 +300,7 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (plugin.settings.isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
         {
             return;
         }
@@ -328,17 +315,17 @@ public class PSPlayerListener extends PlayerListener
 
         // undo a player's visualization if it exists
 
-        if (plugin.settings.visualizeEndOnMove)
+        if (plugin.getSettingsManager().isVisualizeEndOnMove())
         {
-            if (!plugin.pm.hasPermission(player, "preciousstones.admin.visualize"))
+            if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
             {
-                plugin.viz.revertVisualization(player);
+                plugin.getVisualizationManager().revertVisualization(player);
             }
         }
 
         // remove player from any entry field he is not currently in
 
-        LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
+        LinkedList<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
 
         if (entryfields != null)
         {
@@ -346,11 +333,11 @@ public class PSPlayerListener extends PlayerListener
             {
                 if (!entryfield.envelops(player.getLocation()))
                 {
-                    plugin.em.leaveField(player, entryfield);
+                    plugin.getEntryManager().leaveField(player, entryfield);
 
-                    if (!plugin.em.containsSameNameOwnedField(player, entryfield))
+                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryfield))
                     {
-                        plugin.em.leaveOverlappedArea(player, entryfield);
+                        plugin.getEntryManager().leaveOverlappedArea(player, entryfield);
                     }
                 }
             }
@@ -358,31 +345,35 @@ public class PSPlayerListener extends PlayerListener
 
         // get all the fields the player is currently standing in
 
-        List<Field> currentfields = plugin.ffm.getSourceFields(player.getLocation());
+        List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation());
 
         // check for prevent-entry fields and teleport him away if hes not allowed in it
 
-        if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
+        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.entry"))
         {
             for (Field field : currentfields)
             {
-                if (field.getSettings().isPreventEntry())
+                FieldSettings fs = field.getSettings();
+
+                if (fs.hasFlag(FieldFlag.PREVENT_ENTRY))
                 {
-                    if (!plugin.ffm.isAllowed(field, player.getName()))
+                    if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
                     {
-                        Location loc = plugin.plm.getOutsideFieldLocation(field, player);
-                        Location outside = plugin.plm.getOutsideLocation(player);
+                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
 
                         if (outside != null)
                         {
-                            if (!plugin.ffm.isEntryProtected(outside, player))
+                            Field f = plugin.getForceFieldManager().getNotAllowedSourceField(outside, player.getName(), FieldFlag.PREVENT_ENTRY);
+
+                            if (f != null)
                             {
                                 loc = outside;
                             }
                         }
 
                         event.setTo(loc);
-                        plugin.cm.warnEntry(player, field);
+                        plugin.getCommunicationManager().warnEntry(player, field);
                         return;
                     }
                 }
@@ -391,23 +382,23 @@ public class PSPlayerListener extends PlayerListener
 
         // did not get teleported out so now we update his last known outside location
 
-        plugin.plm.updateOutsideLocation(player);
+        plugin.getPlayerManager().updateOutsideLocation(player);
 
         // enter all fields hes is not currently entered into yet
 
         for (Field currentfield : currentfields)
         {
-            if (!plugin.em.enteredField(player, currentfield))
+            if (!plugin.getEntryManager().enteredField(player, currentfield))
             {
-                if (!plugin.em.containsSameNameOwnedField(player, currentfield))
+                if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentfield))
                 {
-                    plugin.em.enterOverlappedArea(player, currentfield);
+                    plugin.getEntryManager().enterOverlappedArea(player, currentfield);
                 }
-                plugin.em.enterField(player, currentfield);
+                plugin.getEntryManager().enterField(player, currentfield);
             }
         }
 
-        if (plugin.settings.debug)
+        if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
         }
@@ -429,45 +420,45 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (plugin.settings.isBlacklistedWorld(player.getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(player.getLocation().getWorld()))
         {
             return;
         }
 
         DebugTimer dt = new DebugTimer("onPlayerBucketFill");
 
-        Field field = plugin.ffm.findPlaceProtected(block.getLocation(), player);
+        Field field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.PREVENT_PLACE);
 
         if (field != null)
         {
-            if (plugin.pm.hasPermission(player, "preciousstones.bypass.break"))
+            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.break"))
             {
-                plugin.cm.notifyBypassPlace(player, field);
+                plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
             }
             else
             {
                 event.setCancelled(true);
-                plugin.cm.warnDestroyArea(player, block, field);
+                plugin.getCommunicationManager().warnDestroyArea(player, block, field);
             }
         }
 
-        field = plugin.ffm.findGriefProtected(block.getLocation(), player);
+        field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL, FieldFlag.GRIEF_UNDO_REQUEST);
 
         if (field != null)
         {
-            if (plugin.pm.hasPermission(player, "preciousstones.bypass.break"))
+            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.break"))
             {
-                plugin.cm.notifyBypassPlace(player, field);
+                plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
             }
             else
             {
                 event.setCancelled(true);
-                plugin.cm.warnDestroyArea(player, block, field);
+                plugin.getCommunicationManager().warnDestroyArea(player, block, field);
                 return;
             }
         }
 
-        if (plugin.settings.debug)
+        if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
         }
@@ -494,45 +485,45 @@ public class PSPlayerListener extends PlayerListener
             return;
         }
 
-        if (plugin.settings.isBlacklistedWorld(player.getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(player.getLocation().getWorld()))
         {
             return;
         }
 
         DebugTimer dt = new DebugTimer("onPlayerBucketEmpty");
 
-        Field field = plugin.ffm.findPlaceProtected(block.getLocation(), player);
+        Field field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.PREVENT_PLACE);
 
         if (field != null)
         {
-            if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.place"))
             {
-                plugin.cm.notifyBypassPlace(player, field);
+                plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
             }
             else
             {
                 event.setCancelled(true);
-                plugin.cm.warnEmpty(player, mat, field);
+                plugin.getCommunicationManager().warnEmpty(player, block, field);
             }
         }
 
-        field = plugin.ffm.findGriefProtected(block.getLocation(), player);
+        field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL, FieldFlag.GRIEF_UNDO_REQUEST);
 
         if (field != null)
         {
-            if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.place"))
             {
-                plugin.cm.notifyBypassPlace(player, field);
+                plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
             }
             else
             {
                 event.setCancelled(true);
-                plugin.cm.warnPlace(player, block, field);
+                plugin.getCommunicationManager().warnPlace(player, block, field);
                 return;
             }
         }
 
-        if (plugin.settings.debug)
+        if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
         }

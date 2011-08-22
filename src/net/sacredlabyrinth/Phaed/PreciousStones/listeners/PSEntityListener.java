@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.BlockData;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -45,9 +46,9 @@ public class PSEntityListener extends EntityListener
      *
      * @param plugin
      */
-    public PSEntityListener(PreciousStones plugin)
+    public PSEntityListener()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -60,7 +61,7 @@ public class PSEntityListener extends EntityListener
         Entity entity = event.getEntity();
         Location loc = event.getLocation();
 
-        if (plugin.settings.isBlacklistedWorld(loc.getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(loc.getWorld()))
         {
             return;
         }
@@ -68,7 +69,7 @@ public class PSEntityListener extends EntityListener
         if (entity instanceof Monster
                 || entity instanceof Slime)
         {
-            if (plugin.ffm.isMobSpawnProtected(loc))
+            if (plugin.getForceFieldManager().getSourceField(loc, FieldFlag.PREVENT_MOB_SPAWN) != null)
             {
                 event.setCancelled(true);
             }
@@ -76,7 +77,7 @@ public class PSEntityListener extends EntityListener
 
         if (entity instanceof Animals)
         {
-            if (plugin.ffm.isAnimalSpawnProtected(loc))
+            if (plugin.getForceFieldManager().getSourceField(loc, FieldFlag.PREVENT_ANIMAL_SPAWN) != null)
             {
                 event.setCancelled(true);
             }
@@ -91,14 +92,14 @@ public class PSEntityListener extends EntityListener
             return;
         }
 
-        if (plugin.settings.isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
         {
             return;
         }
 
         // prevent explosion if explosion protected
 
-        if (plugin.ffm.isExplosionProtected(event.getEntity().getLocation()))
+        if (plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_EXPLOSIONS) != null)
         {
             event.setCancelled(true);
         }
@@ -123,7 +124,7 @@ public class PSEntityListener extends EntityListener
         final List<BlockData> revert = new LinkedList<BlockData>();
         final List<BlockData> tnts = new LinkedList<BlockData>();
 
-        if (plugin.settings.isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getLocation().getWorld()))
         {
             return;
         }
@@ -137,7 +138,7 @@ public class PSEntityListener extends EntityListener
                 continue;
             }
 
-            if (plugin.settings.isUnbreakableType(block) && plugin.um.isUnbreakable(block))
+            if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
             {
                 block.setTypeIdAndData(0, (byte) 0, false);
                 revert.add(new BlockData(block));
@@ -146,7 +147,7 @@ public class PSEntityListener extends EntityListener
 
             // prevent block break if breaking field
 
-            if (plugin.ffm.isField(block))
+            if (plugin.getForceFieldManager().isField(block))
             {
                 block.setTypeIdAndData(0, (byte) 0, false);
                 revert.add(new BlockData(block));
@@ -155,7 +156,7 @@ public class PSEntityListener extends EntityListener
 
             // prevent explosion if explosion protected
 
-            if (plugin.ffm.isExplosionProtected(block.getLocation()))
+            if (plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_EXPLOSIONS) != null)
             {
                 event.setCancelled(true);
                 break;
@@ -163,7 +164,7 @@ public class PSEntityListener extends EntityListener
 
             // record the blocks that are in undo fields
 
-            Field field = plugin.ffm.findGriefProtected(block.getLocation());
+            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_UNDO_INTERVAL, FieldFlag.GRIEF_UNDO_REQUEST);
 
             if (field != null)
             {
@@ -177,9 +178,9 @@ public class PSEntityListener extends EntityListener
                 {
                     // record the griefed block
 
-                    if (!plugin.settings.isGriefUndoBlackListType(block.getTypeId()))
+                    if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                     {
-                        plugin.gum.addBlock(field, block);
+                        plugin.getGriefUndoManager().addBlock(field, block);
                         griefed.add(new BlockData(block));
                         block.setTypeId(0);
                     }
@@ -187,7 +188,7 @@ public class PSEntityListener extends EntityListener
 
                 if (griefed.size() > 0)
                 {
-                    plugin.sm.offerGrief(field);
+                    plugin.getStorageManager().offerGrief(field);
                 }
             }
             else
@@ -249,7 +250,7 @@ public class PSEntityListener extends EntityListener
             }, 2);
         }
 
-        if (plugin.settings.debug)
+        if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
         }
@@ -267,7 +268,7 @@ public class PSEntityListener extends EntityListener
             return;
         }
 
-        if (plugin.settings.isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
         {
             return;
         }
@@ -282,10 +283,10 @@ public class PSEntityListener extends EntityListener
             {
                 Player player = (Player) event.getEntity();
 
-                if (plugin.vm.isFallDamageImmune(player))
+                if (plugin.getVelocityManager().isFallDamageImmune(player))
                 {
                     event.setCancelled(true);
-                    plugin.cm.showThump(player);
+                    plugin.getCommunicationManager().showThump(player);
                 }
             }
         }
@@ -301,34 +302,34 @@ public class PSEntityListener extends EntityListener
                 Player attacker = (Player) sub.getDamager();
                 Player victim = (Player) sub.getEntity();
 
-                Field field = plugin.ffm.findPvPProtected(victim.getLocation());
+                Field field = plugin.getForceFieldManager().getSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
 
                 if (field != null)
                 {
-                    if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
+                    if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
                     {
-                        plugin.cm.warnBypassPvP(attacker, victim, field);
+                        plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
                     }
                     else
                     {
                         sub.setCancelled(true);
-                        plugin.cm.warnPvP(attacker, victim, field);
+                        plugin.getCommunicationManager().warnPvP(attacker, victim, field);
                     }
                 }
                 else
                 {
-                    field = plugin.ffm.findPvPProtected(attacker.getLocation());
+                    field = plugin.getForceFieldManager().getSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
 
                     if (field != null)
                     {
-                        if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
+                        if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
                         {
-                            plugin.cm.warnBypassPvP(attacker, victim, field);
+                            plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
                         }
                         else
                         {
                             sub.setCancelled(true);
-                            plugin.cm.warnPvP(attacker, victim, field);
+                            plugin.getCommunicationManager().warnPvP(attacker, victim, field);
                         }
                     }
                 }
@@ -346,34 +347,34 @@ public class PSEntityListener extends EntityListener
                 Player attacker = (Player) sub.getDamager();
                 Player victim = (Player) sub.getEntity();
 
-                Field field = plugin.ffm.findPvPProtected(victim.getLocation());
+                Field field = plugin.getForceFieldManager().getSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
 
                 if (field != null)
                 {
-                    if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
+                    if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
                     {
-                        plugin.cm.warnBypassPvP(attacker, victim, field);
+                        plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
                     }
                     else
                     {
                         sub.setCancelled(true);
-                        plugin.cm.warnPvP(attacker, victim, field);
+                        plugin.getCommunicationManager().warnPvP(attacker, victim, field);
                     }
                 }
                 else
                 {
-                    field = plugin.ffm.findPvPProtected(attacker.getLocation());
+                    field = plugin.getForceFieldManager().getSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
 
                     if (field != null)
                     {
-                        if (plugin.pm.hasPermission(attacker, "preciousstones.bypass.pvp"))
+                        if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
                         {
-                            plugin.cm.warnBypassPvP(attacker, victim, field);
+                            plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
                         }
                         else
                         {
                             sub.setCancelled(true);
-                            plugin.cm.warnPvP(attacker, victim, field);
+                            plugin.getCommunicationManager().warnPvP(attacker, victim, field);
                         }
                     }
                 }
@@ -388,7 +389,7 @@ public class PSEntityListener extends EntityListener
             {
                 Player player = (Player) event.getEntity();
 
-                Field field = plugin.ffm.findMobDamageProtected(player.getLocation());
+                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE);
 
                 if (field != null)
                 {
@@ -397,7 +398,7 @@ public class PSEntityListener extends EntityListener
             }
         }
 
-        if (plugin.settings.debug)
+        if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
         }
@@ -410,7 +411,7 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onEntityDeath(EntityDeathEvent event)
     {
-        if (plugin.settings.isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
         {
             return;
         }
@@ -419,7 +420,7 @@ public class PSEntityListener extends EntityListener
         {
             Player player = (Player) event.getEntity();
 
-            plugin.em.leaveAllFields(player);
+            plugin.getEntryManager().leaveAllFields(player);
         }
     }
 
@@ -433,7 +434,7 @@ public class PSEntityListener extends EntityListener
         Painting painting = event.getPainting();
         RemoveCause cause = event.getCause();
 
-        if (plugin.settings.isBlacklistedWorld(painting.getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(painting.getLocation().getWorld()))
         {
             return;
         }
@@ -446,11 +447,11 @@ public class PSEntityListener extends EntityListener
             {
                 Player player = (Player) pre.getRemover();
 
-                Field field = plugin.ffm.findDestroyProtected(painting.getLocation(), player);
+                Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_DESTROY);
 
                 if (field != null)
                 {
-                    if (plugin.pm.hasPermission(player, "preciousstones.bypass.destroy"))
+                    if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.destroy"))
                     {
                         return;
                     }
@@ -474,18 +475,17 @@ public class PSEntityListener extends EntityListener
         Painting painting = event.getPainting();
         Player player = event.getPlayer();
 
-        if (plugin.settings.isBlacklistedWorld(painting.getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(painting.getLocation().getWorld()))
         {
             return;
         }
-
-        Field field = plugin.ffm.findPlaceProtected(painting.getLocation(), player);
+        Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_PLACE);
 
         if (field != null)
         {
-            if (plugin.pm.hasPermission(player, "preciousstones.bypass.place"))
+            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.place"))
             {
-                plugin.cm.notifyBypassPlace(player, field);
+                plugin.getCommunicationManager().notifyPaintingBypassPlace(player, painting.getLocation(), field);
             }
             else
             {

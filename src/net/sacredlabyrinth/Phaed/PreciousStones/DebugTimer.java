@@ -20,6 +20,6 @@ public class DebugTimer
 
     public void logProcessTime()
     {
-        PreciousStones.logger.info("Process Time " + (name != null ? "(for " + name + ") " : "") + "took " + (System.currentTimeMillis() - start) + " ms");
+        PreciousStones.getLogger().info("Process Time " + (name != null ? "(for " + name + ") " : "") + "took " + (System.currentTimeMillis() - start) + " ms");
     }
 }

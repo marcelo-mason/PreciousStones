@@ -27,9 +27,9 @@ public class VisualizationManager
      *
      * @param plugin
      */
-    public VisualizationManager(PreciousStones plugin)
+    public VisualizationManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -190,18 +190,18 @@ public class VisualizationManager
                 batch.add(loc);
             }
 
-            if (batch.size() >= plugin.settings.visualizeBatchSize)
+            if (batch.size() >= plugin.getSettingsManager().getVisualizeBatchSize())
             {
-                sendBatch(batch, player, Material.getMaterial(plugin.settings.visualizeBlock), delay);
+                sendBatch(batch, player, Material.getMaterial(plugin.getSettingsManager().getVisualizeBlock()), delay);
 
                 batch = new LinkedList<Location>();
-                delay += plugin.settings.visualizeBatchDelayTicks;
+                delay += plugin.getSettingsManager().getVisualizeBatchDelayTicks();
             }
         }
 
         if (!batch.isEmpty())
         {
-            sendBatch(batch, player, Material.getMaterial(plugin.settings.visualizeBlock), delay);
+            sendBatch(batch, player, Material.getMaterial(plugin.getSettingsManager().getVisualizeBlock()), delay);
         }
 
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
@@ -211,7 +211,7 @@ public class VisualizationManager
             {
                 revertVisualization(player);
             }
-        }, 20L * plugin.settings.visualizeSeconds + delay);
+        }, 20L * plugin.getSettingsManager().getVisualizeSeconds() + delay);
     }
 
     /**
@@ -236,12 +236,12 @@ public class VisualizationManager
         {
             batch.add(loc);
 
-            if (batch.size() >= plugin.settings.visualizeBatchSize)
+            if (batch.size() >= plugin.getSettingsManager().getVisualizeBatchSize())
             {
                 sendBatch(batch, player, Material.AIR, delay);
 
                 batch = new LinkedList<Location>();
-                delay += plugin.settings.visualizeBatchDelayTicks;
+                delay += plugin.getSettingsManager().getVisualizeBatchDelayTicks();
             }
         }
 

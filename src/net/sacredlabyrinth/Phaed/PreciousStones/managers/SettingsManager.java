@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,101 +21,102 @@ import org.bukkit.World;
  */
 public final class SettingsManager
 {
-    public List<String> blacklistedWorlds;
-    public int purgeSnitchAfterDays;
-    public int purgeAfterDays;
-    public int maxSnitchRecords;
-    public int saveFrequency;
-    public List<Integer> griefUndoBlackList;
-    public int griefIntervalSeconds;
-    public int griefUndoBatchSize;
-    public int griefUndoBatchDelayTicks;
-    public List<Integer> foresterFertileBlocks;
-    public int foresterInterval;
-    public int foresterTrees;
-    public int visualizeAdminChunkRadius;
-    public int visualizeMarkBlock;
-    public int visualizeMarkChunkRadius;
-    public int visualizeBlock;
-    public int visualizeSeconds;
-    public int visualizeBatchSize;
-    public int visualizeBatchDelayTicks;
-    public boolean visualizeEndOnMove;
-    public boolean debug;
-    public boolean debugdb;
-    public boolean debugsql;
-    public ArrayList<LinkedHashMap> forceFieldBlocks;
-    public List<Integer> unbreakableBlocks;
-    public List<Integer> bypassBlocks;
-    public List<Integer> unprotectableBlocks;
-    public List<Integer> toolItems;
-    public boolean logFire;
-    public boolean logEntry;
-    public boolean logPlace;
-    public boolean logUse;
-    public boolean logEmpty;
-    public boolean logDestroy;
-    public boolean logDestroyArea;
-    public boolean logUnprotectable;
-    public boolean logPvp;
-    public boolean logBypassPvp;
-    public boolean logBypassDelete;
-    public boolean logBypassPlace;
-    public boolean logBypassDestroy;
-    public boolean logBypassUnprotectable;
-    public boolean logConflictPlace;
-    public boolean notifyPlace;
-    public boolean notifyDestroy;
-    public boolean notifyBypassPvp;
-    public boolean notifyBypassPlace;
-    public boolean notifyBypassDestroy;
-    public boolean notifyBypassUnprotectable;
-    public boolean warnInstantHeal;
-    public boolean warnSlowHeal;
-    public boolean warnSlowDamage;
-    public boolean warnFastDamage;
-    public boolean warnGiveAir;
-    public boolean warnPlace;
-    public boolean warnUse;
-    public boolean warnEmpty;
-    public boolean warnDestroy;
-    public boolean warnDestroyArea;
-    public boolean warnUnprotectable;
-    public boolean warnEntry;
-    public boolean warnPvp;
-    public boolean warnFire;
-    public boolean warnLaunch;
-    public boolean warnCannon;
-    public boolean warnMine;
-    public boolean publicBlockDetails;
-    public boolean sneakingBypassesDamage;
-    public boolean allowedCanBreakPstones;
-    public boolean dropOnDelete;
-    public boolean disableAlertsForAdmins;
-    public boolean disableBypassAlertsForAdmins;
-    public boolean offByDefault;
-    public int chunksInLargestForceFieldArea;
-    public List<Integer> ffBlocks = new ArrayList<Integer>();
-    public int[] throughFields = new int[]
+    private boolean logToHawkEye;
+    private List<String> blacklistedWorlds;
+    private int purgeSnitchAfterDays;
+    private int purgeAfterDays;
+    private int maxSnitchRecords;
+    private int saveFrequency;
+    private List<Integer> griefUndoBlackList;
+    private int griefIntervalSeconds;
+    private int griefUndoBatchSize;
+    private int griefUndoBatchDelayTicks;
+    private List<Integer> foresterFertileBlocks;
+    private int foresterInterval;
+    private int foresterTrees;
+    private int visualizeAdminChunkRadius;
+    private int visualizeMarkBlock;
+    private int visualizeMarkChunkRadius;
+    private int visualizeBlock;
+    private int visualizeSeconds;
+    private int visualizeBatchSize;
+    private int visualizeBatchDelayTicks;
+    private boolean visualizeEndOnMove;
+    private boolean debug;
+    private boolean debugdb;
+    private boolean debugsql;
+    private ArrayList<LinkedHashMap> forceFieldBlocks;
+    private List<Integer> unbreakableBlocks;
+    private List<Integer> bypassBlocks;
+    private List<Integer> unprotectableBlocks;
+    private List<Integer> toolItems;
+    private boolean logFire;
+    private boolean logEntry;
+    private boolean logPlace;
+    private boolean logUse;
+    private boolean logEmpty;
+    private boolean logDestroy;
+    private boolean logDestroyArea;
+    private boolean logUnprotectable;
+    private boolean logPvp;
+    private boolean logBypassPvp;
+    private boolean logBypassDelete;
+    private boolean logBypassPlace;
+    private boolean logBypassDestroy;
+    private boolean logBypassUnprotectable;
+    private boolean logConflictPlace;
+    private boolean notifyPlace;
+    private boolean notifyDestroy;
+    private boolean notifyBypassPvp;
+    private boolean notifyBypassPlace;
+    private boolean notifyBypassDestroy;
+    private boolean notifyBypassUnprotectable;
+    private boolean warnInstantHeal;
+    private boolean warnSlowHeal;
+    private boolean warnSlowDamage;
+    private boolean warnFastDamage;
+    private boolean warnGiveAir;
+    private boolean warnPlace;
+    private boolean warnUse;
+    private boolean warnEmpty;
+    private boolean warnDestroy;
+    private boolean warnDestroyArea;
+    private boolean warnUnprotectable;
+    private boolean warnEntry;
+    private boolean warnPvp;
+    private boolean warnFire;
+    private boolean warnLaunch;
+    private boolean warnCannon;
+    private boolean warnMine;
+    private boolean publicBlockDetails;
+    private boolean sneakingBypassesDamage;
+    private boolean allowedCanBreakPstones;
+    private boolean dropOnDelete;
+    private boolean disableAlertsForAdmins;
+    private boolean disableBypassAlertsForAdmins;
+    private boolean offByDefault;
+    private int chunksInLargestForceFieldArea;
+    private int[] throughFields = new int[]
     {
         0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94
     };
-    public int linesPerPage;
-    public boolean useMysql;
-    public String host;
-    public String database;
-    public String username;
-    public String password;
-    private final HashMap<Integer, FieldSettings> fs = new HashMap<Integer, FieldSettings>();
+    private int linesPerPage;
+    private boolean useMysql;
+    private String host;
+    private String database;
+    private String username;
+    private String password;
+    private List<Integer> ffBlocks = new ArrayList<Integer>();
+    private final HashMap<Integer, FieldSettings> fieldDefinitions = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
 
     /**
      *
      * @param plugin
      */
-    public SettingsManager(PreciousStones plugin)
+    public SettingsManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
         load();
     }
 
@@ -184,6 +186,7 @@ public final class SettingsManager
         disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
+        logToHawkEye = config.getBoolean("settings.log-to-hawkeye", false);
         debugdb = config.getBoolean("settings.debug-on", false);
         blacklistedWorlds = config.getStringList("settings.blacklisted-worlds", new ArrayList<String>());
         purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days", 45);
@@ -211,7 +214,7 @@ public final class SettingsManager
         username = config.getString("mysql.username", "");
         password = config.getString("mysql.password", "");
 
-        addForceFieldStones(forceFieldBlocks);
+        addForceFieldStones(getForceFieldBlocks());
 
         save();
     }
@@ -220,78 +223,79 @@ public final class SettingsManager
     {
         Configuration config = plugin.getConfiguration();
 
-        config.setProperty("force-field-blocks", forceFieldBlocks);
-        config.setProperty("unbreakable-blocks", unbreakableBlocks);
-        config.setProperty("bypass-blocks", bypassBlocks);
-        config.setProperty("unprotectable-blocks", unprotectableBlocks);
-        config.setProperty("tool-items", toolItems);
-        config.setProperty("log.fire", logFire);
-        config.setProperty("log.entry", logEntry);
-        config.setProperty("log.place", logPlace);
-        config.setProperty("log.use", logUse);
-        config.setProperty("log.pvp", logPvp);
-        config.setProperty("log.destroy", logDestroy);
-        config.setProperty("log.destroy-area", logDestroyArea);
-        config.setProperty("log.unprotectable", logUnprotectable);
-        config.setProperty("log.bypass-pvp", logBypassPvp);
-        config.setProperty("log.bypass-delete", logBypassDelete);
-        config.setProperty("log.bypass-place", logBypassPlace);
-        config.setProperty("log.bypass-destroy", logBypassDestroy);
-        config.setProperty("log.conflict-place", logConflictPlace);
-        config.setProperty("notify.place", notifyPlace);
-        config.setProperty("notify.destroy", notifyDestroy);
-        config.setProperty("notify.bypass-unprotectable", notifyBypassUnprotectable);
-        config.setProperty("notify.bypass-pvp", notifyBypassPvp);
-        config.setProperty("notify.bypass-place", notifyBypassPlace);
-        config.setProperty("notify.bypass-destroy", notifyBypassDestroy);
-        config.setProperty("warn.instant-heal", warnInstantHeal);
-        config.setProperty("warn.slow-heal", warnSlowHeal);
-        config.setProperty("warn.slow-damage", warnSlowDamage);
-        config.setProperty("warn.fast-damage", warnFastDamage);
-        config.setProperty("warn.give-air", warnGiveAir);
-        config.setProperty("warn.fire", warnFire);
-        config.setProperty("warn.entry", warnEntry);
-        config.setProperty("warn.place", warnPlace);
-        config.setProperty("warn.use", warnUse);
-        config.setProperty("warn.pvp", warnPvp);
-        config.setProperty("warn.destroy", warnDestroy);
-        config.setProperty("warn.destroy-area", warnDestroyArea);
-        config.setProperty("warn.unprotectable", warnUnprotectable);
-        config.setProperty("warn.launch", warnLaunch);
-        config.setProperty("warn.cannon", warnCannon);
-        config.setProperty("warn.mine", warnMine);
-        config.setProperty("settings.public-block-details", publicBlockDetails);
-        config.setProperty("settings.sneaking-bypasses-damage", sneakingBypassesDamage);
-        config.setProperty("settings.allowed-can-break-pstones", allowedCanBreakPstones);
-        config.setProperty("settings.drop-on-delete", dropOnDelete);
-        config.setProperty("settings.disable-alerts-for-admins", disableAlertsForAdmins);
-        config.setProperty("settings.disable-bypass-alerts-for-admins", disableBypassAlertsForAdmins);
-        config.setProperty("settings.off-by-default", offByDefault);
-        config.setProperty("settings.lines-per-page", linesPerPage);
-        config.setProperty("settings.blacklisted-worlds", blacklistedWorlds);
-        config.setProperty("cleanup.player-inactivity-purge-days", purgeAfterDays);
-        config.setProperty("cleanup.snitch-unused-purge-days", purgeSnitchAfterDays);
-        config.setProperty("saving.frequency-seconds", saveFrequency);
-        config.setProperty("saving.max-records-per-snitch", maxSnitchRecords);
-        config.setProperty("visualization.block-type", visualizeBlock);
-        config.setProperty("visualization.seconds", visualizeSeconds);
-        config.setProperty("visualization.end-on-player-move", visualizeEndOnMove);
-        config.setProperty("visualization.admin-chunk-radius", visualizeAdminChunkRadius);
-        config.setProperty("visualization.mark-block-type", visualizeMarkBlock);
-        config.setProperty("visualization.mark-chunk-radius", visualizeMarkChunkRadius);
-        config.setProperty("visualization.batch-size", visualizeBatchSize);
-        config.setProperty("visualization.batch-delay-ticks", visualizeBatchDelayTicks);
-        config.setProperty("forester.interval-seconds", foresterInterval);
-        config.setProperty("forester.fertile-blocks", foresterFertileBlocks);
-        config.setProperty("grief-undo.interval-seconds", griefIntervalSeconds);
-        config.setProperty("grief-undo.black-list", griefUndoBlackList);
-        config.setProperty("grief-undo.batch-size", griefUndoBatchSize);
-        config.setProperty("grief-undo.batch-delay-ticks", griefUndoBatchDelayTicks);
-        config.setProperty("mysql.enable", useMysql);
-        config.setProperty("mysql.host", host);
-        config.setProperty("mysql.database", database);
-        config.setProperty("mysql.username", username);
-        config.setProperty("mysql.password", password);
+        config.setProperty("force-field-blocks", getForceFieldBlocks());
+        config.setProperty("unbreakable-blocks", getUnbreakableBlocks());
+        config.setProperty("bypass-blocks", getBypassBlocks());
+        config.setProperty("unprotectable-blocks", getUnprotectableBlocks());
+        config.setProperty("tool-items", getToolItems());
+        config.setProperty("log.fire", isLogFire());
+        config.setProperty("log.entry", isLogEntry());
+        config.setProperty("log.place", isLogPlace());
+        config.setProperty("log.use", isLogUse());
+        config.setProperty("log.pvp", isLogPvp());
+        config.setProperty("log.destroy", isLogDestroy());
+        config.setProperty("log.destroy-area", isLogDestroyArea());
+        config.setProperty("log.unprotectable", isLogUnprotectable());
+        config.setProperty("log.bypass-pvp", isLogBypassPvp());
+        config.setProperty("log.bypass-delete", isLogBypassDelete());
+        config.setProperty("log.bypass-place", isLogBypassPlace());
+        config.setProperty("log.bypass-destroy", isLogBypassDestroy());
+        config.setProperty("log.conflict-place", isLogConflictPlace());
+        config.setProperty("notify.place", isNotifyPlace());
+        config.setProperty("notify.destroy", isNotifyDestroy());
+        config.setProperty("notify.bypass-unprotectable", isNotifyBypassUnprotectable());
+        config.setProperty("notify.bypass-pvp", isNotifyBypassPvp());
+        config.setProperty("notify.bypass-place", isNotifyBypassPlace());
+        config.setProperty("notify.bypass-destroy", isNotifyBypassDestroy());
+        config.setProperty("warn.instant-heal", isWarnInstantHeal());
+        config.setProperty("warn.slow-heal", isWarnSlowHeal());
+        config.setProperty("warn.slow-damage", isWarnSlowDamage());
+        config.setProperty("warn.fast-damage", isWarnFastDamage());
+        config.setProperty("warn.give-air", isWarnGiveAir());
+        config.setProperty("warn.fire", isWarnFire());
+        config.setProperty("warn.entry", isWarnEntry());
+        config.setProperty("warn.place", isWarnPlace());
+        config.setProperty("warn.use", isWarnUse());
+        config.setProperty("warn.pvp", isWarnPvp());
+        config.setProperty("warn.destroy", isWarnDestroy());
+        config.setProperty("warn.destroy-area", isWarnDestroyArea());
+        config.setProperty("warn.unprotectable", isWarnUnprotectable());
+        config.setProperty("warn.launch", isWarnLaunch());
+        config.setProperty("warn.cannon", isWarnCannon());
+        config.setProperty("warn.mine", isWarnMine());
+        config.setProperty("settings.public-block-details", isPublicBlockDetails());
+        config.setProperty("settings.sneaking-bypasses-damage", isSneakingBypassesDamage());
+        config.setProperty("settings.allowed-can-break-pstones", isAllowedCanBreakPstones());
+        config.setProperty("settings.drop-on-delete", isDropOnDelete());
+        config.setProperty("settings.disable-alerts-for-admins", isDisableAlertsForAdmins());
+        config.setProperty("settings.disable-bypass-alerts-for-admins", isDisableBypassAlertsForAdmins());
+        config.setProperty("settings.off-by-default", isOffByDefault());
+        config.setProperty("settings.lines-per-page", getLinesPerPage());
+        config.setProperty("settings.blacklisted-worlds", getBlacklistedWorlds());
+        config.setProperty("settings.log-to-hawkeye", isLogToHawkEye());
+        config.setProperty("cleanup.player-inactivity-purge-days", getPurgeAfterDays());
+        config.setProperty("cleanup.snitch-unused-purge-days", getPurgeSnitchAfterDays());
+        config.setProperty("saving.frequency-seconds", getSaveFrequency());
+        config.setProperty("saving.max-records-per-snitch", getMaxSnitchRecords());
+        config.setProperty("visualization.block-type", getVisualizeBlock());
+        config.setProperty("visualization.seconds", getVisualizeSeconds());
+        config.setProperty("visualization.end-on-player-move", isVisualizeEndOnMove());
+        config.setProperty("visualization.admin-chunk-radius", getVisualizeAdminChunkRadius());
+        config.setProperty("visualization.mark-block-type", getVisualizeMarkBlock());
+        config.setProperty("visualization.mark-chunk-radius", getVisualizeMarkChunkRadius());
+        config.setProperty("visualization.batch-size", getVisualizeBatchSize());
+        config.setProperty("visualization.batch-delay-ticks", getVisualizeBatchDelayTicks());
+        config.setProperty("forester.interval-seconds", getForesterInterval());
+        config.setProperty("forester.fertile-blocks", getForesterFertileBlocks());
+        config.setProperty("grief-undo.interval-seconds", getGriefIntervalSeconds());
+        config.setProperty("grief-undo.black-list", getGriefUndoBlackList());
+        config.setProperty("grief-undo.batch-size", getGriefUndoBatchSize());
+        config.setProperty("grief-undo.batch-delay-ticks", getGriefUndoBatchDelayTicks());
+        config.setProperty("mysql.enable", isUseMysql());
+        config.setProperty("mysql.host", getHost());
+        config.setProperty("mysql.database", getDatabase());
+        config.setProperty("mysql.username", getUsername());
+        config.setProperty("mysql.password", getPassword());
 
         config.save();
     }
@@ -312,20 +316,23 @@ public final class SettingsManager
 
         for (LinkedHashMap map : maps)
         {
-            FieldSettings pstone = new FieldSettings(map);
+            FieldSettings fs = new FieldSettings(map);
 
-            if (pstone.isBlockDefined())
+            if (fs.isValidField())
             {
-                // add stone to our collection
-                fs.put(pstone.getBlockId(), pstone);
+                // add field definition to our collection
 
-                // add the values to our reference lists
-                ffBlocks.add(pstone.getBlockId());
+                getFieldDefinitions().put(fs.getTypeId(), fs);
+
+                // add the type id to our reference list
+
+                getFfBlocks().add(fs.getTypeId());
 
                 // see if the radius is the largest
-                if (pstone.getRadius() > largestForceField)
+
+                if (fs.getRadius() > largestForceField)
                 {
-                    largestForceField = pstone.getRadius();
+                    largestForceField = fs.getRadius();
                 }
             }
         }
@@ -339,9 +346,9 @@ public final class SettingsManager
      */
     public boolean haveNameable()
     {
-        for (FieldSettings setting : fs.values())
+        for (FieldSettings fs : getFieldDefinitions().values())
         {
-            if (setting.isWelcomeMessage() || setting.isFarewellMessage())
+            if (fs.hasNameableFlag())
             {
                 return true;
             }
@@ -356,9 +363,9 @@ public final class SettingsManager
      */
     public boolean haveVelocity()
     {
-        for (FieldSettings setting : fs.values())
+        for (FieldSettings fs : getFieldDefinitions().values())
         {
-            if (setting.isCannon() || setting.isLaunch())
+            if (fs.hasVeocityFlag())
             {
                 return true;
             }
@@ -373,9 +380,26 @@ public final class SettingsManager
      */
     public boolean haveSnitch()
     {
-        for (FieldSettings setting : fs.values())
+        for (FieldSettings fs : getFieldDefinitions().values())
         {
-            if (setting.isSnitch())
+            if (fs.hasFlag(FieldFlag.SNITCH))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether any pstones have limits
+     * @return
+     */
+    public boolean haveLimits()
+    {
+        for (FieldSettings fs : getFieldDefinitions().values())
+        {
+            if (fs.hasLimit())
             {
                 return true;
             }
@@ -391,7 +415,7 @@ public final class SettingsManager
      */
     public boolean isBlacklistedWorld(World world)
     {
-        return blacklistedWorlds.contains(world.getName());
+        return getBlacklistedWorlds().contains(world.getName());
     }
 
     /**
@@ -401,7 +425,7 @@ public final class SettingsManager
      */
     public boolean isUnprotectableType(int type)
     {
-        return unprotectableBlocks.contains(type);
+        return getUnprotectableBlocks().contains(type);
     }
 
     /**
@@ -411,7 +435,7 @@ public final class SettingsManager
      */
     public boolean isFertileType(int id)
     {
-        return foresterFertileBlocks.contains(id);
+        return getForesterFertileBlocks().contains(id);
     }
 
     /**
@@ -421,7 +445,7 @@ public final class SettingsManager
      */
     public boolean isGriefUndoBlackListType(int id)
     {
-        return griefUndoBlackList.contains(id);
+        return getGriefUndoBlackList().contains(id);
     }
 
     /**
@@ -431,9 +455,9 @@ public final class SettingsManager
      */
     public boolean isThroughType(int type)
     {
-        for(int i = 0; i < throughFields.length; i++)
+        for (int i = 0; i < getThroughFields().length; i++)
         {
-            if(throughFields[i] == type)
+            if (getThroughFields()[i] == type)
             {
                 return true;
             }
@@ -449,7 +473,7 @@ public final class SettingsManager
      */
     public boolean isToolItemType(Block block)
     {
-        return toolItems.contains(block.getTypeId());
+        return getToolItems().contains(block.getTypeId());
     }
 
     /**
@@ -459,7 +483,7 @@ public final class SettingsManager
      */
     public boolean isToolItemType(int typeId)
     {
-        return toolItems.contains(typeId);
+        return getToolItems().contains(typeId);
     }
 
     /**
@@ -469,7 +493,7 @@ public final class SettingsManager
      */
     public boolean isToolItemType(String type)
     {
-        return toolItems.contains(Material.getMaterial(type).getId());
+        return getToolItems().contains(Material.getMaterial(type).getId());
     }
 
     /**
@@ -479,9 +503,9 @@ public final class SettingsManager
      */
     public boolean isSnitchType(Block block)
     {
-        for (FieldSettings setting : fs.values())
+        for (FieldSettings fs : getFieldDefinitions().values())
         {
-            if (setting.isSnitch() && setting.getBlockId() == block.getTypeId())
+            if (fs.hasFlag(FieldFlag.SNITCH) && fs.getTypeId() == block.getTypeId())
             {
                 return true;
             }
@@ -497,7 +521,7 @@ public final class SettingsManager
      */
     public boolean isUnbreakableType(Block unbreakableblock)
     {
-        return unbreakableBlocks.contains(unbreakableblock.getTypeId());
+        return getUnbreakableBlocks().contains(unbreakableblock.getTypeId());
     }
 
     /**
@@ -507,7 +531,7 @@ public final class SettingsManager
      */
     public boolean isUnbreakableType(int typeId)
     {
-        return unbreakableBlocks.contains(typeId);
+        return getUnbreakableBlocks().contains(typeId);
     }
 
     /**
@@ -517,7 +541,7 @@ public final class SettingsManager
      */
     public boolean isUnbreakableType(String type)
     {
-        return unbreakableBlocks.contains(Material.getMaterial(type).getId());
+        return getUnbreakableBlocks().contains(Material.getMaterial(type).getId());
     }
 
     /**
@@ -527,7 +551,7 @@ public final class SettingsManager
      */
     public boolean isFieldType(Block block)
     {
-        return ffBlocks.contains(block.getTypeId());
+        return getFfBlocks().contains(block.getTypeId());
     }
 
     /**
@@ -537,7 +561,7 @@ public final class SettingsManager
      */
     public boolean isFieldType(String type)
     {
-        return ffBlocks.contains(Material.getMaterial(type).getId());
+        return getFfBlocks().contains(Material.getMaterial(type).getId());
     }
 
     /**
@@ -547,7 +571,7 @@ public final class SettingsManager
      */
     public boolean isFieldType(Material material)
     {
-        return ffBlocks.contains(material.getId());
+        return getFfBlocks().contains(material.getId());
     }
 
     /**
@@ -557,7 +581,7 @@ public final class SettingsManager
      */
     public boolean isFieldType(int typeId)
     {
-        return ffBlocks.contains(typeId);
+        return getFfBlocks().contains(typeId);
     }
 
     /**
@@ -567,7 +591,7 @@ public final class SettingsManager
      */
     public boolean isBypassBlock(Block block)
     {
-        return bypassBlocks.contains(block.getTypeId());
+        return getBypassBlocks().contains(block.getTypeId());
     }
 
     /**
@@ -587,7 +611,7 @@ public final class SettingsManager
      */
     public FieldSettings getFieldSettings(int typeId)
     {
-        return fs.get(typeId);
+        return getFieldDefinitions().get(typeId);
     }
 
     /**
@@ -596,6 +620,702 @@ public final class SettingsManager
      */
     public HashMap<Integer, FieldSettings> getFieldSettings()
     {
-        return fs;
+        return getFieldDefinitions();
+    }
+
+    /**
+     * @return the logToHawkEye
+     */
+    public boolean isLogToHawkEye()
+    {
+        return logToHawkEye;
+    }
+
+    /**
+     * @return the blacklistedWorlds
+     */
+    public List<String> getBlacklistedWorlds()
+    {
+        return blacklistedWorlds;
+    }
+
+    /**
+     * @return the purgeSnitchAfterDays
+     */
+    public int getPurgeSnitchAfterDays()
+    {
+        return purgeSnitchAfterDays;
+    }
+
+    /**
+     * @return the purgeAfterDays
+     */
+    public int getPurgeAfterDays()
+    {
+        return purgeAfterDays;
+    }
+
+    /**
+     * @return the maxSnitchRecords
+     */
+    public int getMaxSnitchRecords()
+    {
+        return maxSnitchRecords;
+    }
+
+    /**
+     * @return the saveFrequency
+     */
+    public int getSaveFrequency()
+    {
+        return saveFrequency;
+    }
+
+    /**
+     * @return the griefUndoBlackList
+     */
+    public List<Integer> getGriefUndoBlackList()
+    {
+        return griefUndoBlackList;
+    }
+
+    /**
+     * @return the griefIntervalSeconds
+     */
+    public int getGriefIntervalSeconds()
+    {
+        return griefIntervalSeconds;
+    }
+
+    /**
+     * @return the griefUndoBatchSize
+     */
+    public int getGriefUndoBatchSize()
+    {
+        return griefUndoBatchSize;
+    }
+
+    /**
+     * @return the griefUndoBatchDelayTicks
+     */
+    public int getGriefUndoBatchDelayTicks()
+    {
+        return griefUndoBatchDelayTicks;
+    }
+
+    /**
+     * @return the foresterFertileBlocks
+     */
+    public List<Integer> getForesterFertileBlocks()
+    {
+        return foresterFertileBlocks;
+    }
+
+    /**
+     * @return the foresterInterval
+     */
+    public int getForesterInterval()
+    {
+        return foresterInterval;
+    }
+
+    /**
+     * @return the foresterTrees
+     */
+    public int getForesterTrees()
+    {
+        return foresterTrees;
+    }
+
+    /**
+     * @return the visualizeAdminChunkRadius
+     */
+    public int getVisualizeAdminChunkRadius()
+    {
+        return visualizeAdminChunkRadius;
+    }
+
+    /**
+     * @return the visualizeMarkBlock
+     */
+    public int getVisualizeMarkBlock()
+    {
+        return visualizeMarkBlock;
+    }
+
+    /**
+     * @return the visualizeMarkChunkRadius
+     */
+    public int getVisualizeMarkChunkRadius()
+    {
+        return visualizeMarkChunkRadius;
+    }
+
+    /**
+     * @return the visualizeBlock
+     */
+    public int getVisualizeBlock()
+    {
+        return visualizeBlock;
+    }
+
+    /**
+     * @return the visualizeSeconds
+     */
+    public int getVisualizeSeconds()
+    {
+        return visualizeSeconds;
+    }
+
+    /**
+     * @return the visualizeBatchSize
+     */
+    public int getVisualizeBatchSize()
+    {
+        return visualizeBatchSize;
+    }
+
+    /**
+     * @return the visualizeBatchDelayTicks
+     */
+    public int getVisualizeBatchDelayTicks()
+    {
+        return visualizeBatchDelayTicks;
+    }
+
+    /**
+     * @return the visualizeEndOnMove
+     */
+    public boolean isVisualizeEndOnMove()
+    {
+        return visualizeEndOnMove;
+    }
+
+    /**
+     * @return the debug
+     */
+    public boolean isDebug()
+    {
+        return debug;
+    }
+
+    /**
+     * @return the debugdb
+     */
+    public boolean isDebugdb()
+    {
+        return debugdb;
+    }
+
+    /**
+     * @return the debugsql
+     */
+    public boolean isDebugsql()
+    {
+        return debugsql;
+    }
+
+    /**
+     * @return the forceFieldBlocks
+     */
+    public ArrayList<LinkedHashMap> getForceFieldBlocks()
+    {
+        return forceFieldBlocks;
+    }
+
+    /**
+     * @return the unbreakableBlocks
+     */
+    public List<Integer> getUnbreakableBlocks()
+    {
+        return unbreakableBlocks;
+    }
+
+    /**
+     * @return the bypassBlocks
+     */
+    public List<Integer> getBypassBlocks()
+    {
+        return bypassBlocks;
+    }
+
+    /**
+     * @return the unprotectableBlocks
+     */
+    public List<Integer> getUnprotectableBlocks()
+    {
+        return unprotectableBlocks;
+    }
+
+    /**
+     * @return the toolItems
+     */
+    public List<Integer> getToolItems()
+    {
+        return toolItems;
+    }
+
+    /**
+     * @return the logFire
+     */
+    public boolean isLogFire()
+    {
+        return logFire;
+    }
+
+    /**
+     * @return the logEntry
+     */
+    public boolean isLogEntry()
+    {
+        return logEntry;
+    }
+
+    /**
+     * @return the logPlace
+     */
+    public boolean isLogPlace()
+    {
+        return logPlace;
+    }
+
+    /**
+     * @return the logUse
+     */
+    public boolean isLogUse()
+    {
+        return logUse;
+    }
+
+    /**
+     * @return the logEmpty
+     */
+    public boolean isLogEmpty()
+    {
+        return logEmpty;
+    }
+
+    /**
+     * @return the logDestroy
+     */
+    public boolean isLogDestroy()
+    {
+        return logDestroy;
+    }
+
+    /**
+     * @return the logDestroyArea
+     */
+    public boolean isLogDestroyArea()
+    {
+        return logDestroyArea;
+    }
+
+    /**
+     * @return the logUnprotectable
+     */
+    public boolean isLogUnprotectable()
+    {
+        return logUnprotectable;
+    }
+
+    /**
+     * @return the logPvp
+     */
+    public boolean isLogPvp()
+    {
+        return logPvp;
+    }
+
+    /**
+     * @return the logBypassPvp
+     */
+    public boolean isLogBypassPvp()
+    {
+        return logBypassPvp;
+    }
+
+    /**
+     * @return the logBypassDelete
+     */
+    public boolean isLogBypassDelete()
+    {
+        return logBypassDelete;
+    }
+
+    /**
+     * @return the logBypassPlace
+     */
+    public boolean isLogBypassPlace()
+    {
+        return logBypassPlace;
+    }
+
+    /**
+     * @return the logBypassDestroy
+     */
+    public boolean isLogBypassDestroy()
+    {
+        return logBypassDestroy;
+    }
+
+    /**
+     * @return the logBypassUnprotectable
+     */
+    public boolean isLogBypassUnprotectable()
+    {
+        return logBypassUnprotectable;
+    }
+
+    /**
+     * @return the logConflictPlace
+     */
+    public boolean isLogConflictPlace()
+    {
+        return logConflictPlace;
+    }
+
+    /**
+     * @return the notifyPlace
+     */
+    public boolean isNotifyPlace()
+    {
+        return notifyPlace;
+    }
+
+    /**
+     * @return the notifyDestroy
+     */
+    public boolean isNotifyDestroy()
+    {
+        return notifyDestroy;
+    }
+
+    /**
+     * @return the notifyBypassPvp
+     */
+    public boolean isNotifyBypassPvp()
+    {
+        return notifyBypassPvp;
+    }
+
+    /**
+     * @return the notifyBypassPlace
+     */
+    public boolean isNotifyBypassPlace()
+    {
+        return notifyBypassPlace;
+    }
+
+    /**
+     * @return the notifyBypassDestroy
+     */
+    public boolean isNotifyBypassDestroy()
+    {
+        return notifyBypassDestroy;
+    }
+
+    /**
+     * @return the notifyBypassUnprotectable
+     */
+    public boolean isNotifyBypassUnprotectable()
+    {
+        return notifyBypassUnprotectable;
+    }
+
+    /**
+     * @return the warnInstantHeal
+     */
+    public boolean isWarnInstantHeal()
+    {
+        return warnInstantHeal;
+    }
+
+    /**
+     * @return the warnSlowHeal
+     */
+    public boolean isWarnSlowHeal()
+    {
+        return warnSlowHeal;
+    }
+
+    /**
+     * @return the warnSlowDamage
+     */
+    public boolean isWarnSlowDamage()
+    {
+        return warnSlowDamage;
+    }
+
+    /**
+     * @return the warnFastDamage
+     */
+    public boolean isWarnFastDamage()
+    {
+        return warnFastDamage;
+    }
+
+    /**
+     * @return the warnGiveAir
+     */
+    public boolean isWarnGiveAir()
+    {
+        return warnGiveAir;
+    }
+
+    /**
+     * @return the warnPlace
+     */
+    public boolean isWarnPlace()
+    {
+        return warnPlace;
+    }
+
+    /**
+     * @return the warnUse
+     */
+    public boolean isWarnUse()
+    {
+        return warnUse;
+    }
+
+    /**
+     * @return the warnEmpty
+     */
+    public boolean isWarnEmpty()
+    {
+        return warnEmpty;
+    }
+
+    /**
+     * @return the warnDestroy
+     */
+    public boolean isWarnDestroy()
+    {
+        return warnDestroy;
+    }
+
+    /**
+     * @return the warnDestroyArea
+     */
+    public boolean isWarnDestroyArea()
+    {
+        return warnDestroyArea;
+    }
+
+    /**
+     * @return the warnUnprotectable
+     */
+    public boolean isWarnUnprotectable()
+    {
+        return warnUnprotectable;
+    }
+
+    /**
+     * @return the warnEntry
+     */
+    public boolean isWarnEntry()
+    {
+        return warnEntry;
+    }
+
+    /**
+     * @return the warnPvp
+     */
+    public boolean isWarnPvp()
+    {
+        return warnPvp;
+    }
+
+    /**
+     * @return the warnFire
+     */
+    public boolean isWarnFire()
+    {
+        return warnFire;
+    }
+
+    /**
+     * @return the warnLaunch
+     */
+    public boolean isWarnLaunch()
+    {
+        return warnLaunch;
+    }
+
+    /**
+     * @return the warnCannon
+     */
+    public boolean isWarnCannon()
+    {
+        return warnCannon;
+    }
+
+    /**
+     * @return the warnMine
+     */
+    public boolean isWarnMine()
+    {
+        return warnMine;
+    }
+
+    /**
+     * @return the publicBlockDetails
+     */
+    public boolean isPublicBlockDetails()
+    {
+        return publicBlockDetails;
+    }
+
+    /**
+     * @return the sneakingBypassesDamage
+     */
+    public boolean isSneakingBypassesDamage()
+    {
+        return sneakingBypassesDamage;
+    }
+
+    /**
+     * @return the allowedCanBreakPstones
+     */
+    public boolean isAllowedCanBreakPstones()
+    {
+        return allowedCanBreakPstones;
+    }
+
+    /**
+     * @return the dropOnDelete
+     */
+    public boolean isDropOnDelete()
+    {
+        return dropOnDelete;
+    }
+
+    /**
+     * @return the disableAlertsForAdmins
+     */
+    public boolean isDisableAlertsForAdmins()
+    {
+        return disableAlertsForAdmins;
+    }
+
+    /**
+     * @return the disableBypassAlertsForAdmins
+     */
+    public boolean isDisableBypassAlertsForAdmins()
+    {
+        return disableBypassAlertsForAdmins;
+    }
+
+    /**
+     * @return the offByDefault
+     */
+    public boolean isOffByDefault()
+    {
+        return offByDefault;
+    }
+
+    /**
+     * @return the chunksInLargestForceFieldArea
+     */
+    public int getChunksInLargestForceFieldArea()
+    {
+        return chunksInLargestForceFieldArea;
+    }
+
+    /**
+     * @return the ffBlocks
+     */
+    public List<Integer> getFfBlocks()
+    {
+        return ffBlocks;
+    }
+
+    /**
+     * @return the throughFields
+     */
+    public int[] getThroughFields()
+    {
+        return throughFields;
+    }
+
+    /**
+     * @return the linesPerPage
+     */
+    public int getLinesPerPage()
+    {
+        return linesPerPage;
+    }
+
+    /**
+     * @return the useMysql
+     */
+    public boolean isUseMysql()
+    {
+        return useMysql;
+    }
+
+    /**
+     * @return the host
+     */
+    public String getHost()
+    {
+        return host;
+    }
+
+    /**
+     * @return the database
+     */
+    public String getDatabase()
+    {
+        return database;
+    }
+
+    /**
+     * @return the username
+     */
+    public String getUsername()
+    {
+        return username;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword()
+    {
+        return password;
+    }
+
+    /**
+     * @return the fs
+     */
+    public HashMap<Integer, FieldSettings> getFieldDefinitions()
+    {
+        return fieldDefinitions;
+    }
+
+    /**
+     * @param debug the debug to set
+     */
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
+
+    /**
+     * @param debugdb the debugdb to set
+     */
+    public void setDebugdb(boolean debugdb)
+    {
+        this.debugdb = debugdb;
+    }
+
+    /**
+     * @param debugsql the debugsql to set
+     */
+    public void setDebugsql(boolean debugsql)
+    {
+        this.debugsql = debugsql;
     }
 }

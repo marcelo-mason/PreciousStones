@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
 
 /**
@@ -260,7 +261,37 @@ public class Field extends AbstractVec
             return true;
         }
 
-        return allowed.contains(allowedName.toLowerCase()) || allowed.contains("*");
+        if (allowed.contains("*"))
+        {
+            return true;
+        }
+
+        if (allowed.contains(allowedName.toLowerCase()))
+        {
+            return true;
+        }
+
+        List<String> groups = PreciousStones.getInstance().getPermissionsManager().getGroups(getWorld(), allowedName);
+
+        for (String group : groups)
+        {
+            if (allowed.contains("g:" + group))
+            {
+                return true;
+            }
+        }
+
+        String clan = PreciousStones.getInstance().getSimpleClansManager().getClan(allowedName);
+
+        if (clan != null)
+        {
+            if (allowed.contains("c:" + clan))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

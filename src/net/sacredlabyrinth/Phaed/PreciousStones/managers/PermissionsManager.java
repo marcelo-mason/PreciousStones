@@ -1,15 +1,16 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.platymuus.bukkit.permissions.Group;
+import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.nijiko.permissions.PermissionHandler;
+import com.platymuus.bukkit.permissions.PermissionsPlugin;
+import java.util.LinkedList;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.PluginManager;
 
 /**
  *
@@ -17,24 +18,23 @@ import org.bukkit.plugin.PluginManager;
  */
 public final class PermissionsManager
 {
-    /**
-     *
-     */
-    public static PermissionHandler Permissions = null;
+    public PermissionHandler handler;
+    public PermissionsPlugin handler2;
     private PreciousStones plugin;
 
     /**
      *
      * @param plugin
      */
-    public PermissionsManager(PreciousStones plugin)
+    public PermissionsManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
+        startPermissionsBukkit();
         startPermissions();
     }
 
     /**
-     *
+     * Check whether a player has a permission
      * @param player
      * @param permission
      * @return
@@ -46,54 +46,109 @@ public final class PermissionsManager
             return false;
         }
 
-        if (hasPermissionPlugin())
+        if (handler != null)
         {
-            if (Permissions.has(player, "preciousstones.blacklist") && !Permissions.has(player, "preciousstones.admintest"))
+            if (handler.has(player, "preciousstones.blacklist") && !handler.has(player, "preciousstones.admintest"))
             {
                 return false;
             }
 
-            return Permissions.has(player, permission);
+            return handler.has(player, permission);
         }
         else
         {
-            if (player.isOp())
-            {
-                return true;
-            }
-            else
-            {
-                if (permission.contains("benefit"))
-                {
-                    return true;
-                }
-                else if (permission.contains("whitelist"))
-                {
-                    return true;
-                }
-
-                return false;
-            }
+            return player.hasPermission(permission);
         }
     }
 
-    private boolean hasPermissionPlugin()
+    /**
+     * Check whether a player belongs to a group
+     * @param player
+     * @param group
+     * @return
+     */
+    public boolean inGroup(Player player, String group)
     {
-        return Permissions != null;
+        if (handler2 != null)
+        {
+            List<Group> groups = handler2.getGroups(player.getName());
+
+            for (Group g : groups)
+            {
+                if (g.getName().equalsIgnoreCase(group))
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (handler != null)
+        {
+            if (handler.getGroup(player.getWorld().getName(), player.getName()).equalsIgnoreCase(group))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
-     *
+     * Get a player's groups
+     * @param player
+     * @param group
+     * @return
      */
-    public void startPermissions()
+    public List<String> getGroups(String worldName, String playerName)
     {
-        if (PermissionsManager.Permissions == null)
+        List<String> groups = new LinkedList<String>();
+
+        if (handler2 != null)
+        {
+            List<Group> gs = handler2.getGroups(playerName);
+
+            for (Group group : gs)
+            {
+                groups.add(group.getName().toLowerCase());
+            }
+            return groups;
+        }
+
+        if (handler != null)
+        {
+            String group = handler.getGroup(worldName, playerName);
+
+            if (group != null)
+            {
+                groups.add(group.toLowerCase());
+            }
+        }
+
+        return groups;
+    }
+
+    private void startPermissions()
+    {
+        if (handler == null)
         {
             Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
 
             if (test != null)
             {
-                PermissionsManager.Permissions = ((Permissions) test).getHandler();
+                handler = ((Permissions) test).getHandler();
+            }
+        }
+    }
+
+    private void startPermissionsBukkit()
+    {
+        if (handler2 == null)
+        {
+            Plugin test = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit");
+
+            if (test != null)
+            {
+                handler2 = ((PermissionsPlugin) test);
             }
         }
     }

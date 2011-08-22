@@ -18,9 +18,9 @@ public class UnprotectableManager
      *
      * @param plugin
      */
-    public UnprotectableManager(PreciousStones plugin)
+    public UnprotectableManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -53,7 +53,7 @@ public class UnprotectableManager
 
                     int type = block.getWorld().getBlockTypeIdAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.settings.isUnprotectableType(type))
+                    if (plugin.getSettingsManager().isUnprotectableType(type))
                     {
                         return block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
                     }
@@ -71,7 +71,7 @@ public class UnprotectableManager
      */
     public Block existsUnprotectableBlock(Block fieldblock)
     {
-        FieldSettings fs = plugin.settings.getFieldSettings(fieldblock.getTypeId());
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(fieldblock.getTypeId());
 
         if (fs == null)
         {
@@ -99,7 +99,7 @@ public class UnprotectableManager
 
                     int type = fieldblock.getWorld().getBlockTypeIdAt(x, y, z);
 
-                    if (plugin.settings.isUnprotectableType(type))
+                    if (plugin.getSettingsManager().isUnprotectableType(type))
                     {
                         return fieldblock.getWorld().getBlockAt(x, y, z);
                     }

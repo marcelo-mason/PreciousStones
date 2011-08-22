@@ -26,9 +26,9 @@ public class TagManager
      *
      * @param plugin
      */
-    public TagManager(PreciousStones plugin)
+    public TagManager()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
         untagWorlds();
     }
 
@@ -110,14 +110,14 @@ public class TagManager
 
         Set<ChunkVec> chunks = new HashSet<ChunkVec>();
 
-        HashMap<ChunkVec, HashMap<Vec, Field>> c = plugin.ffm.retrieveFields(worldName);
+        HashMap<ChunkVec, HashMap<Vec, Field>> c = plugin.getForceFieldManager().retrieveFields(worldName);
 
         if (c != null)
         {
             chunks.addAll(c.keySet());
         }
 
-        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> u = plugin.um.retrieveUnbreakables(worldName);
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> u = plugin.getUnbreakableManager().retrieveUnbreakables(worldName);
 
         if (u != null)
         {

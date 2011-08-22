@@ -1,298 +1,226 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.data;
 
-import java.net.MalformedURLException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
-public class mysqlCore implements DBCore
+/**
+ *
+ * @author cc_madelg
+ */
+public class MySQLCore implements DBCore
 {
     private Logger log;
-    public String host;
-    private mysqlDatabaseHandler manageDB;
-    public String username;
-    public String password;
-    public String database;
+    private Connection connection;
+    private String host;
+    private String username;
+    private String password;
+    private String database;
 
-    public mysqlCore(Logger log, String host, String database, String username, String password)
+    /**
+     *
+     * @param host
+     * @param database
+     * @param username
+     * @param password
+     */
+    public MySQLCore(String host, String database, String username, String password)
     {
-        this.log = log;
         this.database = database;
         this.host = host;
         this.username = username;
         this.password = password;
+        this.log = PreciousStones.getLogger();
+
+        initialize();
     }
 
-    @Override
-    public Boolean initialize()
-    {
-        manageDB = new mysqlDatabaseHandler(this, host, database, username, password);
-        return false;
-    }
-
-    @Override
-    public void writeInfo(String toWrite)
-    {
-        if (toWrite != null)
-        {
-            log.info(toWrite);
-        }
-    }
-
-    @Override
-    public void openBatch()
+    private void initialize()
     {
         try
         {
-            manageDB.openBatch();
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database, username, password);
         }
-        catch (SQLException ex)
+        catch (ClassNotFoundException e)
         {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+            log.severe("ClassNotFoundException! " + e.getMessage());
         }
-        catch (MalformedURLException ex)
+        catch (SQLException e)
         {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+            log.severe("SQLException! " + e.getMessage());
         }
     }
 
-    @Override
-    public void addBatch(String sql)
-    {
-        try
-        {
-            manageDB.addBatch(sql);
-        }
-        catch (SQLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void closeBatch()
-    {
-        try
-        {
-            manageDB.closeBatch();
-        }
-        catch (SQLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (MalformedURLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void writeError(String toWrite, Boolean severe)
-    {
-        if (severe)
-        {
-            if (toWrite != null)
-            {
-                log.severe(toWrite);
-            }
-        }
-        else
-        {
-            if (toWrite != null)
-            {
-                log.warning(toWrite);
-            }
-        }
-    }
-
-    @Override
-    public ResultSet sqlQuery(String query)
-    {
-        try
-        {
-            return manageDB.sqlQuery(query);
-        }
-        catch (MalformedURLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return null;
-    }
-
-    @Override
-    public Boolean createTable(String query)
-    {
-        return manageDB.createTable(query);
-    }
-
-    @Override
-    public void insertQuery(String query)
-    {
-        try
-        {
-            manageDB.insertQuery(query);
-        }
-        catch (MalformedURLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void updateQuery(String query)
-    {
-        try
-        {
-            manageDB.updateQuery(query);
-        }
-        catch (MalformedURLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void deleteQuery(String query)
-    {
-        try
-        {
-            manageDB.deleteQuery(query);
-        }
-        catch (MalformedURLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public Boolean checkTable(String table)
-    {
-        try
-        {
-            return manageDB.checkTable(table);
-        }
-        catch (MalformedURLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return false;
-    }
-
-    @Override
-    public Boolean wipeTable(String table)
-    {
-        try
-        {
-            return manageDB.wipeTable(table);
-        }
-        catch (MalformedURLException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return false;
-    }
-
+    /**
+     * @return connection
+     */
     @Override
     public Connection getConnection()
     {
+        if (connection == null)
+        {
+            initialize();
+        }
+
+        return connection;
+    }
+
+    /**
+     * @return whether connection can be established
+     */
+    @Override
+    public Boolean checkConnection()
+    {
+        return getConnection() != null;
+    }
+
+    /**
+     * Close connection
+     */
+    @Override
+    public void close()
+    {
         try
         {
-            return manageDB.getConnection();
+            if (connection != null)
+            {
+                connection.close();
+            }
         }
-        catch (MalformedURLException ex)
+        catch (Exception e)
         {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+            log.severe("Failed to close database connection! " + e.getMessage());
         }
-        catch (InstantiationException ex)
+    }
+
+    /**
+     * Execute a select statement
+     * @param query
+     * @return
+     */
+    @Override
+    public ResultSet select(String query)
+    {
+        try
         {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+            return getConnection().createStatement().executeQuery(query);
         }
-        catch (IllegalAccessException ex)
+        catch (SQLException ex)
         {
-            Logger.getLogger(mysqlCore.class.getName()).log(Level.SEVERE, null, ex);
+            log.severe("Error at SQL Query: " + ex.getMessage());
         }
 
         return null;
     }
 
+    /**
+     * Execute an insert statement
+     * @param query
+     */
     @Override
-    public void close()
+    public void insert(String query)
     {
-        manageDB.closeConnection();
+        try
+        {
+             getConnection().createStatement().executeUpdate(query);
+        }
+        catch (SQLException ex)
+        {
+            if (!ex.toString().contains("not return ResultSet"))
+            {
+                log.severe("Error at SQL INSERT Query: " + ex);
+            }
+        }
     }
 
+    /**
+     * Execute an update statement
+     * @param query
+     */
     @Override
-    public Boolean checkConnection()
+    public void update(String query)
     {
-        return manageDB.checkConnection();
+        try
+        {
+            getConnection().createStatement().executeUpdate(query);
+        }
+        catch (SQLException ex)
+        {
+            if (!ex.toString().contains("not return ResultSet"))
+            {
+                log.severe("Error at SQL UPDATE Query: " + ex);
+            }
+        }
+    }
+
+    /**
+     * Execute a delete statement
+     * @param query
+     */
+    @Override
+    public void delete(String query)
+    {
+        try
+        {
+            getConnection().createStatement().executeUpdate(query);
+        }
+        catch (SQLException ex)
+        {
+            if (!ex.toString().contains("not return ResultSet"))
+            {
+                log.severe("Error at SQL DELETE Query: " + ex);
+            }
+        }
+    }
+
+    /**
+     * Execute a statement
+     * @param query
+     * @return
+     */
+    @Override
+    public Boolean execute(String query)
+    {
+        try
+        {
+            getConnection().createStatement().execute(query);
+            return true;
+        }
+        catch (SQLException ex)
+        {
+            log.severe(ex.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Check whether a table exists
+     * @param table
+     * @return
+     */
+    @Override
+    public Boolean existsTable(String table)
+    {
+        try
+        {
+            ResultSet result = getConnection().createStatement().executeQuery("SELECT * FROM " + table);
+            return result != null;
+        }
+        catch (SQLException ex)
+        {
+            if (ex.getMessage().contains("exist"))
+            {
+                return false;
+            }
+            else
+            {
+                log.warning("Error at SQL Query: " + ex.getMessage());
+            }
+        }
+        return false;
     }
 }

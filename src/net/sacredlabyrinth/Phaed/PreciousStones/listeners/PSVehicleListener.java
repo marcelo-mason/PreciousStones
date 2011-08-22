@@ -5,6 +5,7 @@ import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -27,9 +28,9 @@ public class PSVehicleListener extends VehicleListener
      *
      * @param plugin
      */
-    public PSVehicleListener(PreciousStones plugin)
+    public PSVehicleListener()
     {
-        this.plugin = plugin;
+        plugin = PreciousStones.getInstance();
     }
 
     /**
@@ -44,7 +45,7 @@ public class PSVehicleListener extends VehicleListener
         Vehicle v = event.getVehicle();
         Entity entity = v.getPassenger();
 
-        if (plugin.settings.isBlacklistedWorld(v.getLocation().getWorld()))
+        if (plugin.getSettingsManager().isBlacklistedWorld(v.getLocation().getWorld()))
         {
             return;
         }
@@ -55,17 +56,17 @@ public class PSVehicleListener extends VehicleListener
 
             // undo a player's visualization if it exists
 
-            if (plugin.settings.visualizeEndOnMove)
+            if (plugin.getSettingsManager().isVisualizeEndOnMove())
             {
-                if (!plugin.pm.hasPermission(player, "preciousstones.admin.visualize"))
+                if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
                 {
-                    plugin.viz.revertVisualization(player);
+                    plugin.getVisualizationManager().revertVisualization(player);
                 }
             }
 
             // remove player form any entry field he is not currently in
 
-            LinkedList<Field> entryfields = plugin.em.getPlayerEntryFields(player);
+            LinkedList<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
 
             if (entryfields != null)
             {
@@ -73,11 +74,11 @@ public class PSVehicleListener extends VehicleListener
                 {
                     if (!entryfield.envelops(player.getLocation()))
                     {
-                        plugin.em.leaveField(player, entryfield);
+                        plugin.getEntryManager().leaveField(player, entryfield);
 
-                        if (!plugin.em.containsSameNameOwnedField(player, entryfield))
+                        if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryfield))
                         {
-                            plugin.em.leaveOverlappedArea(player, entryfield);
+                            plugin.getEntryManager().leaveOverlappedArea(player, entryfield);
                         }
                     }
                 }
@@ -85,20 +86,20 @@ public class PSVehicleListener extends VehicleListener
 
             // check all fields hes standing on and teleport him if hes in a prevent-entry field
 
-            List<Field> currentfields = plugin.ffm.getSourceFields(player.getLocation());
+            List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation());
 
             for (Field field : currentfields)
             {
                 FieldSettings fs = field.getSettings();
 
-                if (fs.isPreventEntry())
+                if (fs.hasFlag(FieldFlag.PREVENT_ENTRY))
                 {
-                    if (!plugin.pm.hasPermission(player, "preciousstones.bypass.entry"))
+                    if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.entry"))
                     {
-                        if (!plugin.ffm.isAllowed(field, player.getName()))
+                        if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
                         {
-                            Location loc = plugin.plm.getOutsideFieldLocation(field, player);
-                            Location outside = plugin.plm.getOutsideLocation(player);
+                            Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                            Location outside = plugin.getPlayerManager().getOutsideLocation(player);
 
                             if (outside != null)
                             {
@@ -108,7 +109,7 @@ public class PSVehicleListener extends VehicleListener
                             v.setVelocity(new Vector(0, 0, 0));
                             v.teleport(loc);
                             player.teleport(loc);
-                            plugin.cm.warnEntry(player, field);
+                            plugin.getCommunicationManager().warnEntry(player, field);
                             return;
                         }
                     }
@@ -117,25 +118,25 @@ public class PSVehicleListener extends VehicleListener
 
             // he is not inside a prevent entry field so we update his location
 
-            plugin.plm.updateOutsideLocation(player);
+            plugin.getPlayerManager().updateOutsideLocation(player);
 
             // enter all fields hes is not currently entered into yet
 
             for (Field currentfield : currentfields)
             {
-                if (!plugin.em.enteredField(player, currentfield))
+                if (!plugin.getEntryManager().enteredField(player, currentfield))
                 {
-                    if (!plugin.em.containsSameNameOwnedField(player, currentfield))
+                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentfield))
                     {
-                        plugin.em.enterOverlappedArea(player, currentfield);
+                        plugin.getEntryManager().enterOverlappedArea(player, currentfield);
                     }
 
-                    plugin.em.enterField(player, currentfield);
+                    plugin.getEntryManager().enterField(player, currentfield);
                 }
             }
         }
 
-        if (plugin.settings.debug)
+        if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
         }
