@@ -310,7 +310,11 @@ public class PSEntityListener extends EntityListener
             if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Arrow)
             {
                 Arrow arrow = (Arrow) sub.getDamager();
-                attacker = (Player) arrow.getShooter();
+                
+                if (arrow.getShooter() instanceof Player)
+                {
+                    attacker = (Player) arrow.getShooter();
+                }
             }
 
             if (attacker != null)
