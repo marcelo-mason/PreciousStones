@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**

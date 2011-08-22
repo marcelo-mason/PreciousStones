@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.BlockData;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -19,6 +19,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Painting;
@@ -287,6 +288,7 @@ public class PSEntityListener extends EntityListener
                 {
                     event.setCancelled(true);
                     plugin.getCommunicationManager().showThump(player);
+                    return;
                 }
             }
         }
@@ -297,11 +299,22 @@ public class PSEntityListener extends EntityListener
         {
             EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
 
+            Player victim = (Player) sub.getEntity();
+            Player attacker = null;
+
             if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Player)
             {
-                Player attacker = (Player) sub.getDamager();
-                Player victim = (Player) sub.getEntity();
+                attacker = (Player) sub.getDamager();
+            }
 
+            if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Arrow)
+            {
+                Arrow arrow = (Arrow) sub.getDamager();
+                attacker = (Player) arrow.getShooter();
+            }
+
+            if (attacker != null)
+            {
                 Field field = plugin.getForceFieldManager().getSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
 
                 if (field != null)
@@ -314,6 +327,7 @@ public class PSEntityListener extends EntityListener
                     {
                         sub.setCancelled(true);
                         plugin.getCommunicationManager().warnPvP(attacker, victim, field);
+                        return;
                     }
                 }
                 else
@@ -330,71 +344,22 @@ public class PSEntityListener extends EntityListener
                         {
                             sub.setCancelled(true);
                             plugin.getCommunicationManager().warnPvP(attacker, victim, field);
+                            return;
                         }
                     }
                 }
             }
         }
 
-        // pvp protect against projectile
-
-        if (event instanceof EntityDamageByProjectileEvent)
-        {
-            EntityDamageByProjectileEvent sub = (EntityDamageByProjectileEvent) event;
-
-            if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Player)
-            {
-                Player attacker = (Player) sub.getDamager();
-                Player victim = (Player) sub.getEntity();
-
-                Field field = plugin.getForceFieldManager().getSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
-
-                if (field != null)
-                {
-                    if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
-                    {
-                        plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
-                    }
-                    else
-                    {
-                        sub.setCancelled(true);
-                        plugin.getCommunicationManager().warnPvP(attacker, victim, field);
-                    }
-                }
-                else
-                {
-                    field = plugin.getForceFieldManager().getSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
-
-                    if (field != null)
-                    {
-                        if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
-                        {
-                            plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
-                        }
-                        else
-                        {
-                            sub.setCancelled(true);
-                            plugin.getCommunicationManager().warnPvP(attacker, victim, field);
-                        }
-                    }
-                }
-            }
-        }
-
-        // pvp protect against any other player attack
+        // pvp protect against entity attacks
 
         if (event.getCause().equals(DamageCause.ENTITY_ATTACK))
         {
-            if (event.getEntity() instanceof Player)
+            Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_MOB_DAMAGE);
+
+            if (field != null)
             {
-                Player player = (Player) event.getEntity();
-
-                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE);
-
-                if (field != null)
-                {
-                    event.setCancelled(true);
-                }
+                event.setCancelled(true);
             }
         }
 

@@ -483,7 +483,7 @@ public class ChatBlock
     }
 
     /**
-     * Padds right til the string is a certain size
+     * Pads right til the string is a certain size
      * @param msg
      * @param length
      * @return
@@ -497,7 +497,7 @@ public class ChatBlock
 
         while (msgLength(msg) < length)
         {
-            msg = msg + " ";
+            msg += " ";
         }
 
         return msg;
@@ -850,7 +850,7 @@ public class ChatBlock
                     if (msg.codePointAt(x) == charcode)
                     {
                         // advance x to the next character
-                        x = x + 1;
+                        x += 1;
 
                         lastColor = ChatColor.getByCode(Integer.parseInt(msg.charAt(x) + "", 16)) + "";
                     }

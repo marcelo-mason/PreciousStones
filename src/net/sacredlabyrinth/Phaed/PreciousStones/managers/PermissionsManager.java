@@ -18,8 +18,8 @@ import org.bukkit.entity.Player;
  */
 public final class PermissionsManager
 {
-    public PermissionHandler handler;
-    public PermissionsPlugin handler2;
+    private PermissionHandler handler;
+    private PermissionsPlugin handler2;
     private PreciousStones plugin;
 
     /**
@@ -67,6 +67,7 @@ public final class PermissionsManager
      * @param group
      * @return
      */
+    @SuppressWarnings("deprecation")
     public boolean inGroup(Player player, String group)
     {
         if (handler2 != null)
@@ -116,6 +117,7 @@ public final class PermissionsManager
 
         if (handler != null)
         {
+            @SuppressWarnings("deprecation")
             String group = handler.getGroup(worldName, playerName);
 
             if (group != null)

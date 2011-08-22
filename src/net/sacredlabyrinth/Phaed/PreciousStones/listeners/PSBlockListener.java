@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockFace;
@@ -93,7 +93,7 @@ public class PSBlockListener extends BlockListener
 
             if (plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.PREVENT_FLOW) != null)
             {
-                Block b = block.getFace(event.getFace());
+                Block b = block.getRelative(event.getFace());
 
                 if (block.getType().equals(Material.WATER))
                 {

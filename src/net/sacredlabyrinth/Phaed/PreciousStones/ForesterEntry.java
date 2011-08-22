@@ -63,7 +63,7 @@ public class ForesterEntry
      */
     public void addCount()
     {
-        count = count + 1 ;
+        count += 1 ;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ForesterEntry
 	    return false;
 
 	ForesterEntry other = (ForesterEntry) obj;
-	return other.field.getX() == field.getX() && other.field.getY() == field.getY() && other.field.getZ() == field.getZ() && other.field.getWorld().equals(field.getWorld());
+	return other.getField().getX() == getField().getX() && other.getField().getY() == getField().getY() && other.getField().getZ() == getField().getZ() && other.getField().getWorld().equals(getField().getWorld());
     }
 
     /**

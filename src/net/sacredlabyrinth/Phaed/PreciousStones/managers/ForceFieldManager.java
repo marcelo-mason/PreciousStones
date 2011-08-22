@@ -18,9 +18,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
@@ -158,7 +157,6 @@ public final class ForceFieldManager
         addToCollection(field);
         return true;
     }
-
 
     /**
      * Add the field to the collection, used by add()
@@ -1146,22 +1144,17 @@ public final class ForceFieldManager
      */
     public Field getPointedField(Block blockInArea, Player player)
     {
-        TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.getSettingsManager().getThroughFields());
+        Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 100);
 
-        if (tb != null)
+        if (targetBlock != null)
         {
-            Block targetblock = tb.getTargetBlock();
-
-            if (targetblock != null)
+            if (plugin.getForceFieldManager().isField(targetBlock))
             {
-                if (plugin.getForceFieldManager().isField(targetblock))
-                {
-                    Field f = getField(targetblock);
+                Field f = getField(targetBlock);
 
-                    if (isAllowed(f, player.getName()))
-                    {
-                        return f;
-                    }
+                if (isAllowed(f, player.getName()))
+                {
+                    return f;
                 }
             }
         }

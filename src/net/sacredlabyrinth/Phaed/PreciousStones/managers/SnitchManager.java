@@ -13,7 +13,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
 /**

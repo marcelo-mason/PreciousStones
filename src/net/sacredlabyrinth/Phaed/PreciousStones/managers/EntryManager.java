@@ -1,8 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,7 +12,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.EntryFields;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -66,7 +66,7 @@ public final class EntryManager
                 for (String playername : e.keySet())
                 {
                     EntryFields ef = e.get(playername);
-                    LinkedList<Field> fields = ef.getFields();
+                    List<Field> fields = ef.getFields();
 
                     for (Field field : fields)
                     {
@@ -157,13 +157,15 @@ public final class EntryManager
      * @param player
      * @return
      */
-    public LinkedList<Field> getPlayerEntryFields(Player player)
+    public List<Field> getPlayerEntryFields(Player player)
     {
         synchronized (entries)
         {
-            if (entries.containsKey(player.getName()))
+            EntryFields ef = entries.get(player.getName());
+
+            if (ef != null)
             {
-                return entries.get(player.getName()).getFields();
+                return ef.getFields();
             }
         }
 
@@ -241,9 +243,10 @@ public final class EntryManager
 
         synchronized (entries)
         {
-            if (entries.containsKey(player.getName()))
+            EntryFields ef = entries.get(player.getName());
+
+            if (ef != null)
             {
-                EntryFields ef = entries.get(player.getName());
                 ef.addField(field);
             }
             else
@@ -336,10 +339,11 @@ public final class EntryManager
     {
         synchronized (entries)
         {
-            if (entries.containsKey(player.getName()))
+            EntryFields ef = entries.get(player.getName());
+
+            if(ef != null)
             {
-                EntryFields ef = entries.get(player.getName());
-                LinkedList<Field> entryfields = ef.getFields();
+                List<Field> entryfields = ef.getFields();
 
                 for (Field entryfield : entryfields)
                 {
@@ -383,7 +387,7 @@ public final class EntryManager
             for (String playername : entries.keySet())
             {
                 EntryFields ef = entries.get(playername);
-                LinkedList<Field> fields = ef.getFields();
+                List<Field> fields = ef.getFields();
 
                 for (Field testfield : fields)
                 {
@@ -403,7 +407,7 @@ public final class EntryManager
      * @param player
      * @return
      */
-    public Map getTriggerableEntryPlayers(Block block)
+    public Map<String, Field> getTriggerableEntryPlayers(Block block)
     {
         Map<String, Field> players = new HashMap<String, Field>();
 
@@ -412,7 +416,7 @@ public final class EntryManager
             for (String playername : entries.keySet())
             {
                 EntryFields ef = entries.get(playername);
-                LinkedList<Field> fields = ef.getFields();
+                List<Field> fields = ef.getFields();
 
                 for (Field field : fields)
                 {

@@ -7,9 +7,9 @@ import java.util.Random;
 import net.sacredlabyrinth.Phaed.PreciousStones.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vector;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.World;
@@ -57,7 +57,7 @@ public final class ForesterManager
 
     private int prepareSpot(Field field, World world, int xx, int yy, int zz, int radius, boolean shrubs)
     {
-        Vector pos = new Vector(xx, yy, zz);
+        Vec pos = new Vec(xx, yy, zz, world.getName());
 
         int affected = 0;
 
@@ -67,26 +67,26 @@ public final class ForesterManager
             {
                 for (int z = 0; z <= radius; z++)
                 {
-                    Vector vec = pos.add(x, y, z);
+                    Vec vec = pos.add(x, y, z);
                     double d = vec.distance(pos);
 
-                    if (vec.equals(field))
+                    if (vec.getX() == field.getX() && vec.getY() == field.getY() && vec.getZ() == field.getZ())
                     {
                         continue;
                     }
 
                     if (d <= radius + 0.5D)
                     {
-                        int type = world.getBlockTypeIdAt(vec.getBlockX(), vec.getBlockY(), vec.getBlockZ());
+                        int type = world.getBlockTypeIdAt(vec.getX(), vec.getY(), vec.getZ());
 
                         if (plugin.getSettingsManager().isFertileType(type))
                         {
-                            Block fertile = world.getBlockAt(vec.getBlockX(), vec.getBlockY(), vec.getBlockZ());
+                            Block fertile = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
                             fertile.setType(Material.GRASS);
 
                             if (shrubs)
                             {
-                                int typeabove = world.getBlockTypeIdAt(vec.getBlockX(), vec.getBlockY() + 1, vec.getBlockZ());
+                                int typeabove = world.getBlockTypeIdAt(vec.getX(), vec.getY() + 1, vec.getZ());
 
                                 if (typeabove == 0)
                                 {
@@ -94,7 +94,7 @@ public final class ForesterManager
 
                                     if (r.nextInt(36) == 7)
                                     {
-                                        Block blockAbove = world.getBlockAt(vec.getBlockX(), vec.getBlockY() + 1, vec.getBlockZ());
+                                        Block blockAbove = world.getBlockAt(vec.getX(), vec.getY() + 1, vec.getZ());
                                         setShrub(blockAbove);
                                     }
                                 }
@@ -119,9 +119,9 @@ public final class ForesterManager
         int miny = field.getY() - (int) Math.floor(((double) Math.max(field.getHeight() - 1, 0)) / 2);
         int maxy = field.getY() + (int) Math.ceil(((double) Math.max(field.getHeight() - 1, 0)) / 2);
 
-        for (int x = minx; x < maxx; x = x + 4)
+        for (int x = minx; x < maxx; x += 4)
         {
-            for (int z = minz; z <= maxz; z = z + 4)
+            for (int z = minz; z <= maxz; z += 4)
             {
                 for (int y = maxy; y > miny; y--)
                 {

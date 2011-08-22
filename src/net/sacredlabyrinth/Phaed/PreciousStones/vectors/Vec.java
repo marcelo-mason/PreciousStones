@@ -11,6 +11,15 @@ public class Vec extends AbstractVec
 {
     /**
      *
+     * @param loc
+     */
+    public Vec(int x, int y, int z, String world)
+    {
+        super(x, y, z, world);
+    }
+
+    /**
+     *
      * @param block
      */
     public Vec(Block block)
@@ -36,12 +45,18 @@ public class Vec extends AbstractVec
         super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
     }
 
-    /**
-     *
-     * @return
-     */
-    public ChunkVec toChunkVec()
+    public double distance(Vec pt)
     {
-        return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
+        return Math.sqrt(Math.pow(pt.getX() - getX(), 2.0D) + Math.pow(pt.getY() - getY(), 2.0D) + Math.pow(pt.getZ() - getZ(), 2.0D));
+    }
+
+    public Vec add(int x, int y, int z)
+    {
+        return new Vec(this.getX() + x, this.getY() + y, this.getZ() + z, this.getWorld());
+    }
+
+    public Vec subtract(int x, int y, int z)
+    {
+        return new Vec(this.getX() - x, this.getY() - y, this.getZ() - z, this.getWorld());
     }
 }

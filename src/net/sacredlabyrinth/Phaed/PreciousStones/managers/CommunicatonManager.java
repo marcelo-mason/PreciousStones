@@ -30,10 +30,10 @@ public class CommunicatonManager
 {
     private PreciousStones plugin;
     private boolean useHawkEye;
+    private HashMap<String, ChatBlock> chatBlocks = new HashMap<String, ChatBlock>();
 
     /**
      *
-     * @param plugin
      */
     public CommunicatonManager()
     {
@@ -53,6 +53,24 @@ public class CommunicatonManager
             }
         }
         return false;
+    }
+
+    /**
+     * Return a player's chat block, contains his pending chat messages
+     * @param player
+     * @return
+     */
+    public ChatBlock getChatBlock(Player player)
+    {
+        ChatBlock cb = chatBlocks.get(player.getName());
+
+        if (cb == null)
+        {
+            cb = new ChatBlock();
+            chatBlocks.put(player.getName(), cb);
+        }
+
+        return cb;
     }
 
     private boolean canNotify(Player player)
@@ -394,6 +412,7 @@ public class CommunicatonManager
     /**
      *
      * @param player
+     * @param block
      * @param field
      */
     public void notifyBypassPlace(Player player, Block block, Field field)
@@ -439,6 +458,7 @@ public class CommunicatonManager
     /**
      *
      * @param player
+     * @param loc
      * @param field
      */
     public void notifyPaintingBypassPlace(Player player, Location loc, Field field)
@@ -484,6 +504,7 @@ public class CommunicatonManager
     /**
      *
      * @param player
+     * @param block
      * @param field
      */
     public void notifyBypassPlaceU(Player player, Block block, Field field)
@@ -575,7 +596,7 @@ public class CommunicatonManager
     /**
      *
      * @param player
-     * @param fieldblock
+     * @param unbreakableblock
      */
     public void notifyBypassDestroyU(Player player, Block unbreakableblock)
     {
@@ -716,6 +737,7 @@ public class CommunicatonManager
     /**
      *
      * @param player
+     * @param block
      * @param field
      */
     public void warnFire(Player player, Block block, Field field)
@@ -807,7 +829,7 @@ public class CommunicatonManager
     /**
      *
      * @param player
-     * @param mat
+     * @param block
      * @param field
      */
     public void warnUse(Player player, Block block, Field field)
@@ -853,7 +875,7 @@ public class CommunicatonManager
     /**
      *
      * @param player
-     * @param mat
+     * @param block
      * @param field
      */
     public void warnEmpty(Player player, Block block, Field field)
@@ -1253,7 +1275,7 @@ public class CommunicatonManager
      *
      * @param player
      * @param block
-     * @param field
+     * @param pistonBlock
      */
     public void warnConflictPistonRU(Player player, Block block, Block pistonBlock)
     {
@@ -1304,7 +1326,7 @@ public class CommunicatonManager
      *
      * @param player
      * @param block
-     * @param field
+     * @param pistonBlock
      */
     public void warnConflictPistonRFF(Player player, Block block, Block pistonBlock)
     {
@@ -2145,6 +2167,7 @@ public class CommunicatonManager
     /**
      *
      * @param player
+     * @param block
      */
     public void showProtected(Player player, Block block)
     {
@@ -2153,7 +2176,7 @@ public class CommunicatonManager
 
     /**
      *
-     * @param fields
+     * @param block
      * @param player
      */
     public void showProtectedLocation(Player player, Block block)
@@ -2186,46 +2209,46 @@ public class CommunicatonManager
      */
     public void showFieldDetails(Player player, List<Field> fields)
     {
-        ChatBlock chatBlock = plugin.getCommandManager().getCacheBlock();
+        ChatBlock cb = getChatBlock(player);
 
         for (Field field : fields)
         {
             FieldSettings fs = field.getSettings();
 
-            chatBlock.addRow("", "");
+            cb.addRow("", "");
 
             if (fs.hasNameableFlag() && field.getName().length() > 0)
             {
-                chatBlock.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName());
+                cb.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName());
             }
 
-            chatBlock.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner());
+            cb.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner());
 
             if (field.getAllowedList() != null)
             {
-                chatBlock.addRow("  " + ChatColor.YELLOW + "Allowed: ", ChatColor.AQUA + field.getAllowedList());
+                cb.addRow("  " + ChatColor.YELLOW + "Allowed: ", ChatColor.AQUA + field.getAllowedList());
             }
 
-            chatBlock.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1));
+            cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1));
 
             if (field.getVelocity() > 0)
             {
-                chatBlock.addRow("  " + ChatColor.YELLOW + "Velocity: ", ChatColor.AQUA + "" + field.getVelocity());
+                cb.addRow("  " + ChatColor.YELLOW + "Velocity: ", ChatColor.AQUA + "" + field.getVelocity());
             }
 
-            chatBlock.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ());
+            cb.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ());
 
-            chatBlock.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fs.getTitle());
+            cb.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fs.getTitle());
         }
 
-        if (chatBlock.size() > 0)
+        if (cb.size() > 0)
         {
-            chatBlock.addRow("", "");
+            cb.addRow("", "");
 
             ChatBlock.sendBlank(player);
             ChatBlock.saySingle(player, ChatColor.WHITE + "Field Info " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
 
-            boolean more = chatBlock.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
 
             if (more)
             {
@@ -2240,24 +2263,24 @@ public class CommunicatonManager
      */
     public void showConfiguredFields(Player player)
     {
-        ChatBlock chatBlock = plugin.getCommandManager().getCacheBlock();
+        ChatBlock cb = getChatBlock(player);
 
         HashMap<Integer, FieldSettings> fss = plugin.getSettingsManager().getFieldSettings();
 
         for (FieldSettings fs : fss.values())
         {
-            chatBlock.addRow(ChatColor.YELLOW + "Type: " + ChatColor.AQUA + "" + Material.getMaterial(fs.getTypeId()) + " " + ChatColor.YELLOW + "Title: " + ChatColor.AQUA + fs.getTitle());
-            chatBlock.addRow(ChatColor.YELLOW + "Radius: " + ChatColor.AQUA + "" + fs.getRadius() + " " + ChatColor.YELLOW + "Height: " + ChatColor.AQUA + "" + fs.getHeight());
-            chatBlock.addRow("");
+            cb.addRow(ChatColor.YELLOW + "Type: " + ChatColor.AQUA + "" + Material.getMaterial(fs.getTypeId()) + " " + ChatColor.YELLOW + "Title: " + ChatColor.AQUA + fs.getTitle());
+            cb.addRow(ChatColor.YELLOW + "Radius: " + ChatColor.AQUA + "" + fs.getRadius() + " " + ChatColor.YELLOW + "Height: " + ChatColor.AQUA + "" + fs.getHeight());
+            cb.addRow("");
         }
 
-        if (chatBlock.size() > 0)
+        if (cb.size() > 0)
         {
             ChatBlock.sendBlank(player);
             ChatBlock.saySingle(player, ChatColor.WHITE + "Configured Fields" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
             ChatBlock.sendBlank(player);
 
-            boolean more = chatBlock.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
 
             if (more)
             {
@@ -2269,9 +2292,15 @@ public class CommunicatonManager
         }
     }
 
+    /**
+     *
+     * @param player
+     * @param type
+     * @return
+     */
     public boolean showCounts(Player player, int type)
     {
-        ChatBlock chatBlock = plugin.getCommandManager().getCacheBlock();
+        ChatBlock cb = getChatBlock(player);
 
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(type);
 
@@ -2282,9 +2311,9 @@ public class CommunicatonManager
 
         TreeMap<String, PlayerData> players = plugin.getPlayerManager().getPlayers();
 
-        chatBlock.setAlignment("l", "c");
+        cb.setAlignment("l", "c");
 
-        chatBlock.addRow("  " + ChatColor.GRAY + "Name", "Count");
+        cb.addRow("  " + ChatColor.GRAY + "Name", "Count");
 
         for (String playerName : players.keySet())
         {
@@ -2294,17 +2323,17 @@ public class CommunicatonManager
 
             if (count > 0)
             {
-                chatBlock.addRow("  " + ChatColor.GOLD + data.getName(), ChatColor.WHITE + " " + count);
+                cb.addRow("  " + ChatColor.GOLD + data.getName(), ChatColor.WHITE + " " + count);
             }
         }
 
-        if (chatBlock.size() > 0)
+        if (cb.size() > 0)
         {
             ChatBlock.sendBlank(player);
             ChatBlock.saySingle(player, ChatColor.WHITE + Helper.capitalize(fs.getTitle()) + " Counts" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
             ChatBlock.sendBlank(player);
 
-            boolean more = chatBlock.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
 
             if (more)
             {
@@ -2318,19 +2347,25 @@ public class CommunicatonManager
         return true;
     }
 
+    /**
+     *
+     * @param player
+     * @param targetName
+     * @return
+     */
     public boolean showPlayerCounts(Player player, String targetName)
     {
-        ChatBlock chatBlock = plugin.getCommandManager().getCacheBlock();
+        ChatBlock cb = getChatBlock(player);
 
-        chatBlock.setAlignment("l", "c");
+        cb.setAlignment("l", "c");
 
         if (plugin.getSettingsManager().haveLimits())
         {
-            chatBlock.addRow("  " + ChatColor.GRAY + "Field", "Count", "Limit");
+            cb.addRow("  " + ChatColor.GRAY + "Field", "Count", "Limit");
         }
         else
         {
-            chatBlock.addRow("  " + ChatColor.GRAY + "Field", "Count");
+            cb.addRow("  " + ChatColor.GRAY + "Field", "Count");
         }
 
         PlayerData data = plugin.getPlayerManager().getPlayerData(targetName);
@@ -2359,21 +2394,21 @@ public class CommunicatonManager
 
             if (plugin.getSettingsManager().haveLimits())
             {
-                chatBlock.addRow("  " + ChatColor.GOLD + fs.getTitle(), color + " " + count, color + " " + limit);
+                cb.addRow("  " + ChatColor.GOLD + fs.getTitle(), color + " " + count, color + " " + limit);
             }
             else
             {
-                chatBlock.addRow("  " + ChatColor.GOLD + fs.getTitle(), ChatColor.WHITE + " " + count);
+                cb.addRow("  " + ChatColor.GOLD + fs.getTitle(), ChatColor.WHITE + " " + count);
             }
         }
 
-        if (chatBlock.size() > 1)
+        if (cb.size() > 1)
         {
             ChatBlock.sendBlank(player);
             ChatBlock.saySingle(player, ChatColor.WHITE + Helper.capitalize(data.getName()) + "'s Field Counts" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
             ChatBlock.sendBlank(player);
 
-            boolean more = chatBlock.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
 
             if (more)
             {
@@ -2395,6 +2430,7 @@ public class CommunicatonManager
      *
      * @param player
      * @param field
+     * @return
      */
     public boolean showSnitchList(Player player, Field field)
     {
@@ -2405,31 +2441,28 @@ public class CommunicatonManager
             if (snitches.isEmpty() || snitches.get(0).getAgeInSeconds() > 10)
             {
                 snitches = plugin.getStorageManager().getSnitchEntries(field);
-                field.setSnitches(snitches);
                 field.updateLastUsed();
                 plugin.getStorageManager().offerField(field);
             }
 
             String title = "Intruder log ";
 
-            FieldSettings fs = field.getSettings();
-
             if (!snitches.isEmpty())
             {
-                ChatBlock chatBlock = plugin.getCommandManager().getCacheBlock();
+                ChatBlock cb = getChatBlock(player);
 
                 ChatBlock.sendBlank(player);
                 ChatBlock.saySingle(player, ChatColor.WHITE + title + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
                 ChatBlock.sendBlank(player);
 
-                chatBlock.addRow("  " + ChatColor.GRAY + "Name", "Reason", "Details");
+                cb.addRow("  " + ChatColor.GRAY + "Name", "Reason", "Details");
 
                 for (SnitchEntry se : snitches)
                 {
-                    chatBlock.addRow("  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails());
+                    cb.addRow("  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails());
                 }
 
-                boolean more = chatBlock.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+                boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
 
                 if (more)
                 {

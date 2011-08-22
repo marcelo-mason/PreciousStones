@@ -1,10 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.LinkedList;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
@@ -21,7 +19,7 @@ import org.bukkit.Material;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -325,7 +323,7 @@ public class PSPlayerListener extends PlayerListener
 
         // remove player from any entry field he is not currently in
 
-        LinkedList<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
+        List<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
 
         if (entryfields != null)
         {

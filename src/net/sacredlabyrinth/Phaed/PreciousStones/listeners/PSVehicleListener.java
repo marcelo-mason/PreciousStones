@@ -1,11 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import java.util.LinkedList;
 import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -66,7 +65,7 @@ public class PSVehicleListener extends VehicleListener
 
             // remove player form any entry field he is not currently in
 
-            LinkedList<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
+            List<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
 
             if (entryfields != null)
             {

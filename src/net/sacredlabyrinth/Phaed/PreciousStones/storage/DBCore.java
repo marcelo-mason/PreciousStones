@@ -1,4 +1,4 @@
-package net.sacredlabyrinth.Phaed.PreciousStones.data;
+package net.sacredlabyrinth.Phaed.PreciousStones.storage;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

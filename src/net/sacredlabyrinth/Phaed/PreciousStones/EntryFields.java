@@ -1,6 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 
 /**
@@ -61,10 +63,8 @@ public class EntryFields
      *
      * @return
      */
-    public LinkedList<Field> getFields()
+    public List<Field> getFields()
     {
-	LinkedList<Field> out = new LinkedList<Field>();
-	out.addAll(fields);
-	return out;
+	return Collections.unmodifiableList(fields);
     }
 }

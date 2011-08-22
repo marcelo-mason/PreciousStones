@@ -33,7 +33,9 @@ public class PlayerManager
      */
     public TreeMap<String, PlayerData> getPlayers()
     {
-        return players;
+        TreeMap<String, PlayerData> p = new TreeMap<String, PlayerData>();
+        p.putAll(players);
+        return p;
     }
 
     /**

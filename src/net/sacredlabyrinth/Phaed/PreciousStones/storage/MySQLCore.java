@@ -1,64 +1,63 @@
-package net.sacredlabyrinth.Phaed.PreciousStones.data;
+package net.sacredlabyrinth.Phaed.PreciousStones.storage;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
-public class SQLiteCore implements DBCore
+/**
+ *
+ * @author cc_madelg
+ */
+public class MySQLCore implements DBCore
 {
     private Logger log;
     private Connection connection;
-    private String dbLocation;
-    private String dbName;
-    private File file;
+    private String host;
+    private String username;
+    private String password;
+    private String database;
 
-    public SQLiteCore(Logger log, String dbName, String dbLocation)
+    /**
+     *
+     * @param host
+     * @param database
+     * @param username
+     * @param password
+     */
+    public MySQLCore(String host, String database, String username, String password)
     {
-        this.log = log;
-        this.dbName = dbName;
-        this.dbLocation = dbLocation;
+        this.database = database;
+        this.host = host;
+        this.username = username;
+        this.password = password;
+        this.log = PreciousStones.getLogger();
 
         initialize();
     }
 
     private void initialize()
     {
-        if (file == null)
-        {
-            File dbFolder = new File(dbLocation);
-
-            if (dbName.contains("/") || dbName.contains("\\") || dbName.endsWith(".db"))
-            {
-                log.severe("The database name can not contain: /, \\, or .db");
-                return;
-            }
-            if (!dbFolder.exists())
-            {
-                dbFolder.mkdir();
-            }
-
-            file = new File(dbFolder.getAbsolutePath() + File.separator + dbName + ".db");
-        }
-
         try
         {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
-            return;
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database, username, password);
         }
-        catch (SQLException ex)
+        catch (ClassNotFoundException e)
         {
-            log.severe("SQLite exception on initialize " + ex);
+            log.severe("ClassNotFoundException! " + e.getMessage());
         }
-        catch (ClassNotFoundException ex)
+        catch (SQLException e)
         {
-            log.severe("You need the SQLite library " + ex);
+            log.severe("SQLException! " + e.getMessage());
         }
     }
 
+    /**
+     * @return connection
+     */
     @Override
     public Connection getConnection()
     {
@@ -70,12 +69,18 @@ public class SQLiteCore implements DBCore
         return connection;
     }
 
+    /**
+     * @return whether connection can be established
+     */
     @Override
     public Boolean checkConnection()
     {
         return getConnection() != null;
     }
 
+    /**
+     * Close connection
+     */
     @Override
     public void close()
     {
@@ -92,28 +97,36 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Execute a select statement
+     * @param query
+     * @return
+     */
     @Override
     public ResultSet select(String query)
     {
         try
         {
-            ResultSet result = getConnection().createStatement().executeQuery(query);
-
-            return result;
+            return getConnection().createStatement().executeQuery(query);
         }
         catch (SQLException ex)
         {
             log.severe("Error at SQL Query: " + ex.getMessage());
         }
+
         return null;
     }
 
+    /**
+     * Execute an insert statement
+     * @param query
+     */
     @Override
     public void insert(String query)
     {
         try
         {
-            getConnection().createStatement().executeQuery(query);
+             getConnection().createStatement().executeUpdate(query);
         }
         catch (SQLException ex)
         {
@@ -124,12 +137,16 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Execute an update statement
+     * @param query
+     */
     @Override
     public void update(String query)
     {
         try
         {
-            getConnection().createStatement().executeQuery(query);
+            getConnection().createStatement().executeUpdate(query);
         }
         catch (SQLException ex)
         {
@@ -140,12 +157,16 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Execute a delete statement
+     * @param query
+     */
     @Override
     public void delete(String query)
     {
         try
         {
-            getConnection().createStatement().executeQuery(query);
+            getConnection().createStatement().executeUpdate(query);
         }
         catch (SQLException ex)
         {
@@ -156,6 +177,11 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Execute a statement
+     * @param query
+     * @return
+     */
     @Override
     public Boolean execute(String query)
     {
@@ -171,18 +197,30 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Check whether a table exists
+     * @param table
+     * @return
+     */
     @Override
     public Boolean existsTable(String table)
     {
-       try
+        try
         {
-            ResultSet tables = getConnection().getMetaData().getTables(null, null, table, null);
-            return tables.next();
+            ResultSet result = getConnection().createStatement().executeQuery("SELECT * FROM " + table);
+            return result != null;
         }
-        catch (SQLException e)
+        catch (SQLException ex)
         {
-            log.severe("Failed to check if table \"" + table + "\" exists: " + e.getMessage());
-            return false;
+            if (ex.getMessage().contains("exist"))
+            {
+                return false;
+            }
+            else
+            {
+                log.warning("Error at SQL Query: " + ex.getMessage());
+            }
         }
+        return false;
     }
 }

@@ -26,11 +26,14 @@ public class Visualization
     }
 
     /**
-     * @return the locs
+     * @return the locations
      */
     public List<Location> getLocs()
     {
-        return locs;
+        List<Location> l = new LinkedList<Location>();
+        l.addAll(locs);
+
+        return l;
     }
 
     /**
@@ -38,6 +41,9 @@ public class Visualization
      */
     public List<Field> getFields()
     {
-        return fields;
+        List<Field> f = new LinkedList<Field>();
+        f.addAll(fields);
+
+        return f;
     }
 }

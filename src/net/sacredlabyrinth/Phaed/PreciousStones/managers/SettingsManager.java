@@ -1,11 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -45,7 +47,7 @@ public final class SettingsManager
     private boolean debug;
     private boolean debugdb;
     private boolean debugsql;
-    private ArrayList<LinkedHashMap> forceFieldBlocks;
+    private List<LinkedHashMap<String, Object>> forceFieldBlocks;
     private List<Integer> unbreakableBlocks;
     private List<Integer> bypassBlocks;
     private List<Integer> unprotectableBlocks;
@@ -96,10 +98,11 @@ public final class SettingsManager
     private boolean disableBypassAlertsForAdmins;
     private boolean offByDefault;
     private int chunksInLargestForceFieldArea;
-    private int[] throughFields = new int[]
+    private byte[] throughFields = new byte[]
     {
         0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94
     };
+    private HashSet<Byte> throughFieldsSet = new HashSet<Byte>();
     private int linesPerPage;
     private boolean useMysql;
     private String host;
@@ -126,6 +129,11 @@ public final class SettingsManager
     @SuppressWarnings("unchecked")
     public void load()
     {
+        for (int i = 0; i < throughFields.length; i++)
+        {
+            getThroughFieldsSet().add(throughFields[i]);
+        }
+
         Configuration config = plugin.getConfiguration();
         config.load();
 
@@ -305,7 +313,7 @@ public final class SettingsManager
      * @param maps
      */
     @SuppressWarnings("unchecked")
-    public void addForceFieldStones(ArrayList<LinkedHashMap> maps)
+    public void addForceFieldStones(List<LinkedHashMap<String, Object>> maps)
     {
         if (maps == null)
         {
@@ -314,7 +322,7 @@ public final class SettingsManager
 
         double largestForceField = 0;
 
-        for (LinkedHashMap map : maps)
+        for (LinkedHashMap<String, Object> map : maps)
         {
             FieldSettings fs = new FieldSettings(map);
 
@@ -455,9 +463,9 @@ public final class SettingsManager
      */
     public boolean isThroughType(int type)
     {
-        for (int i = 0; i < getThroughFields().length; i++)
+        for (int i = 0; i < throughFields.length; i++)
         {
-            if (getThroughFields()[i] == type)
+            if (throughFields[i] == type)
             {
                 return true;
             }
@@ -636,7 +644,7 @@ public final class SettingsManager
      */
     public List<String> getBlacklistedWorlds()
     {
-        return blacklistedWorlds;
+        return Collections.unmodifiableList(blacklistedWorlds);
     }
 
     /**
@@ -676,7 +684,7 @@ public final class SettingsManager
      */
     public List<Integer> getGriefUndoBlackList()
     {
-        return griefUndoBlackList;
+        return Collections.unmodifiableList(griefUndoBlackList);
     }
 
     /**
@@ -708,7 +716,7 @@ public final class SettingsManager
      */
     public List<Integer> getForesterFertileBlocks()
     {
-        return foresterFertileBlocks;
+        return Collections.unmodifiableList(foresterFertileBlocks);
     }
 
     /**
@@ -818,9 +826,9 @@ public final class SettingsManager
     /**
      * @return the forceFieldBlocks
      */
-    public ArrayList<LinkedHashMap> getForceFieldBlocks()
+    public List<LinkedHashMap<String, Object>> getForceFieldBlocks()
     {
-        return forceFieldBlocks;
+        return Collections.unmodifiableList(forceFieldBlocks);
     }
 
     /**
@@ -828,7 +836,7 @@ public final class SettingsManager
      */
     public List<Integer> getUnbreakableBlocks()
     {
-        return unbreakableBlocks;
+        return Collections.unmodifiableList(unbreakableBlocks);
     }
 
     /**
@@ -836,7 +844,7 @@ public final class SettingsManager
      */
     public List<Integer> getBypassBlocks()
     {
-        return bypassBlocks;
+        return Collections.unmodifiableList(bypassBlocks);
     }
 
     /**
@@ -844,7 +852,7 @@ public final class SettingsManager
      */
     public List<Integer> getUnprotectableBlocks()
     {
-        return unprotectableBlocks;
+        return Collections.unmodifiableList(unprotectableBlocks);
     }
 
     /**
@@ -852,7 +860,7 @@ public final class SettingsManager
      */
     public List<Integer> getToolItems()
     {
-        return toolItems;
+        return Collections.unmodifiableList(toolItems);
     }
 
     /**
@@ -1228,15 +1236,7 @@ public final class SettingsManager
      */
     public List<Integer> getFfBlocks()
     {
-        return ffBlocks;
-    }
-
-    /**
-     * @return the throughFields
-     */
-    public int[] getThroughFields()
-    {
-        return throughFields;
+        return Collections.unmodifiableList(ffBlocks);
     }
 
     /**
@@ -1288,11 +1288,13 @@ public final class SettingsManager
     }
 
     /**
-     * @return the fs
+     * @return the field definitions
      */
     public HashMap<Integer, FieldSettings> getFieldDefinitions()
     {
-        return fieldDefinitions;
+        HashMap<Integer, FieldSettings> fd = new HashMap<Integer, FieldSettings>();
+        fd.putAll(fieldDefinitions);
+        return fd;
     }
 
     /**
@@ -1317,5 +1319,15 @@ public final class SettingsManager
     public void setDebugsql(boolean debugsql)
     {
         this.debugsql = debugsql;
+    }
+
+    /**
+     * @return the throughFieldsSet
+     */
+    public HashSet<Byte> getThroughFieldsSet()
+    {
+        HashSet<Byte> tfs = new HashSet<Byte>();
+        tfs.addAll(throughFieldsSet);
+        return tfs;
     }
 }

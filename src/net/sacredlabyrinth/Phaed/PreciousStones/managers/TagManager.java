@@ -18,7 +18,7 @@ import org.bukkit.block.BlockFace;
  *
  * @author phaed
  */
-public class TagManager
+public final class TagManager
 {
     private PreciousStones plugin;
 

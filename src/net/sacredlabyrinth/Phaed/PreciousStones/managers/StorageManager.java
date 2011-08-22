@@ -10,18 +10,19 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.data.DBCore;
+import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import net.sacredlabyrinth.Phaed.PreciousStones.data.SQLiteCore;
+import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
-import net.sacredlabyrinth.Phaed.PreciousStones.data.MySQLCore;
+import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
+import net.sacredlabyrinth.Phaed.PreciousStones.DirtyFieldReason;
 import org.bukkit.block.BlockFace;
 
 /**
@@ -33,7 +34,7 @@ public final class StorageManager
     /**
      *
      */
-    public DBCore core;
+    private DBCore core;
     private PreciousStones plugin;
     private final Map<Vec, Field> pending = new HashMap<Vec, Field>();
     private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
@@ -412,7 +413,7 @@ public final class StorageManager
                     }
                     catch (Exception ex)
                     {
-                        ex.printStackTrace();
+                        PreciousStones.getLogger().info(ex.getMessage());
                     }
                 }
             }
@@ -479,7 +480,7 @@ public final class StorageManager
                     }
                     catch (Exception ex)
                     {
-                        ex.printStackTrace();
+                        PreciousStones.getLogger().info(ex.getMessage());
                     }
                 }
             }
@@ -499,7 +500,7 @@ public final class StorageManager
 
     private void updateGrief(Field field)
     {
-        if (field.isDirty(Field.Dirty.GRIEF_BLOCKS))
+        if (field.isDirty(DirtyFieldReason.GRIEF_BLOCKS))
         {
             List<GriefBlock> grief = field.getGrief();
 
@@ -514,37 +515,37 @@ public final class StorageManager
     {
         String subQuery = "";
 
-        if (field.isDirty(Field.Dirty.OWNER))
+        if (field.isDirty(DirtyFieldReason.OWNER))
         {
             subQuery += "owner = '" + field.getOwner() + "', ";
         }
 
-        if (field.isDirty(Field.Dirty.RADIUS))
+        if (field.isDirty(DirtyFieldReason.RADIUS))
         {
             subQuery += "radius = " + field.getRadius() + ", ";
         }
 
-        if (field.isDirty(Field.Dirty.HEIGHT))
+        if (field.isDirty(DirtyFieldReason.HEIGHT))
         {
             subQuery += "height = " + field.getHeight() + ", ";
         }
 
-        if (field.isDirty(Field.Dirty.VELOCITY))
+        if (field.isDirty(DirtyFieldReason.VELOCITY))
         {
             subQuery += "velocity = " + field.getVelocity() + ", ";
         }
 
-        if (field.isDirty(Field.Dirty.NAME))
+        if (field.isDirty(DirtyFieldReason.NAME))
         {
             subQuery += "name = '" + Helper.escapeQuotes(field.getName()) + "', ";
         }
 
-        if (field.isDirty(Field.Dirty.ALLOWED))
+        if (field.isDirty(DirtyFieldReason.ALLOWED))
         {
             subQuery += "packed_allowed = '" + Helper.escapeQuotes(field.getPackedAllowed()) + "', ";
         }
 
-        if (field.isDirty(Field.Dirty.LASTUSED))
+        if (field.isDirty(DirtyFieldReason.LASTUSED))
         {
             subQuery += "last_used = " + (new Date()).getTime() + ", ";
         }
@@ -726,7 +727,7 @@ public final class StorageManager
                     }
                     catch (Exception ex)
                     {
-                        ex.printStackTrace();
+                        PreciousStones.getLogger().info(ex.getMessage());
                     }
                 }
             }
@@ -936,7 +937,7 @@ public final class StorageManager
                     }
                     catch (Exception ex)
                     {
-                        ex.printStackTrace();
+                        PreciousStones.getLogger().info(ex.getMessage());
                     }
                 }
             }
@@ -1072,7 +1073,7 @@ public final class StorageManager
 
         for (Field field : working.values())
         {
-            if (field.isDirty(Field.Dirty.DELETE))
+            if (field.isDirty(DirtyFieldReason.DELETE))
             {
                 deleteField(field);
             }

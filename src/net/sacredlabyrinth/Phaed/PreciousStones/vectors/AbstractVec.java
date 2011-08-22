@@ -2,7 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
-import org.bukkit.World;
 
 /**
  *
@@ -124,10 +123,10 @@ public abstract class AbstractVec
     public int hashCode()
     {
         int hash = 7;
-        hash = 47 * hash + this.x;
-        hash = 47 * hash + this.y;
-        hash = 47 * hash + this.z;
-        hash = 47 * hash + (this.world != null ? this.world.hashCode() : 0);
+        hash = 47 * hash + this.getX();
+        hash = 47 * hash + this.getY();
+        hash = 47 * hash + this.getZ();
+        hash = 47 * hash + (this.getWorld() != null ? this.getWorld().hashCode() : 0);
         return hash;
     }
 
@@ -160,6 +159,6 @@ public abstract class AbstractVec
      */
     public Location getLocation()
     {
-        return new Location(PreciousStones.getInstance().getServer().getWorld(world), getX(), getY(), getZ());
+        return new Location(PreciousStones.getInstance().getServer().getWorld(getWorld()), getX(), getY(), getZ());
     }
 }

@@ -2,13 +2,11 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.logging.Level;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import me.taylorkelly.help.Help;
 
 import java.util.HashSet;
 import java.util.List;
 import org.bukkit.World;
 
-import org.bukkit.plugin.Plugin;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
@@ -17,7 +15,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
@@ -30,8 +27,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
 public final class CommandManager implements CommandExecutor
 {
     private PreciousStones plugin;
-    public Help helpPlugin;
-    private ChatBlock cacheBlock = new ChatBlock();
 
     /**
      *
@@ -40,64 +35,6 @@ public final class CommandManager implements CommandExecutor
     public CommandManager()
     {
         plugin = PreciousStones.getInstance();
-        registerHelpCommands();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ChatBlock getCacheBlock()
-    {
-        cacheBlock = new ChatBlock();
-        return cacheBlock;
-    }
-
-    /**
-     *
-     */
-    public void registerHelpCommands()
-    {
-        Plugin test = plugin.getServer().getPluginManager().getPlugin("Help");
-
-        if (helpPlugin == null)
-        {
-            if (test != null)
-            {
-                helpPlugin = ((Help) test);
-            }
-        }
-
-        if (helpPlugin != null)
-        {
-            helpPlugin.registerCommand("ps on/off ", " Disable/Enable the placing of pstones", plugin, true, "preciousstones.benefit.onoff");
-            helpPlugin.registerCommand("ps allow [player/g:group/t:team/*] ", "To overlapped fields", plugin, true, "preciousstones.whitelist.allow");
-            helpPlugin.registerCommand("ps allowall [player/g:group/t:team/*] ", "To all your fields", plugin, true, "preciousstones.whitelist.allowall");
-            helpPlugin.registerCommand("ps remove [player/g:group/t:team/*] ", "From overlapped fields", plugin, true, "preciousstones.whitelist.remove");
-            helpPlugin.registerCommand("ps removeall [player/g:group/t:team/*] ", "From all your fields", plugin, true, "preciousstones.whitelist.removeall");
-            helpPlugin.registerCommand("ps allowed ", "List allowed players in overlapped fields", plugin, true, "preciousstones.whitelist.allowed");
-            helpPlugin.registerCommand("ps who ", "List all inhabitants inside the overlapping fields", plugin, true, "preciousstones.whitelist.who");
-            helpPlugin.registerCommand("ps setname [name] ", "Set the name of fields", plugin, true, "preciousstones.benefit.setname");
-            helpPlugin.registerCommand("ps setradius [radius]", "Sets the field's radius", plugin, true, "preciousstones.benefit.setradius");
-            helpPlugin.registerCommand("ps setheight [height]", "Sets the field's height", plugin, true, "preciousstones.benefit.setheight");
-            helpPlugin.registerCommand("ps setvelocity [.1-5] ", "Sets velocity of launchers/cannons", plugin, true, "preciousstones.benefit.setvelocity");
-            helpPlugin.registerCommand("ps setowner [player] ", "Of the block you're pointing at", plugin, true, "preciousstones.admin.setowner");
-            helpPlugin.registerCommand("ps visualize ", "Visualizes the perimiter of the field", plugin, true, "preciousstones.benefit.visualize");
-            helpPlugin.registerCommand("ps mark ", "Marks the location of fields", plugin, true, "preciousstones.benefit.mark");
-            helpPlugin.registerCommand("ps snitch <clear> ", "View/clear snitch you're pointing at", plugin, true, "preciousstones.benefit.snitch");
-            helpPlugin.registerCommand("ps delete ", "Delete the field(s) you're standing on", plugin, true, "preciousstones.admin.delete");
-            helpPlugin.registerCommand("ps delete [player] ", "Delete all pstones of the player", plugin, true, "preciousstones.admin.delete");
-            helpPlugin.registerCommand("ps info ", "Get info for the field youre standing on", plugin, true, "preciousstones.admin.info");
-            helpPlugin.registerCommand("ps counts ", "View your field counts", plugin, true, "preciousstones.benefit.counts");
-            helpPlugin.registerCommand("ps counts [typeid/player] ", "View player field counts list", plugin, true, "preciousstones.admin.counts");
-            helpPlugin.registerCommand("ps list [chunks-in-radius]", "Lists all pstones in area", plugin, true, "preciousstones.admin.list");
-            helpPlugin.registerCommand("ps reload ", "Reload configuraton file", plugin, true, "preciousstones.admin.reload");
-            helpPlugin.registerCommand("ps fields ", "List the configured field types", plugin, true, "preciousstones.admin.fields");
-            helpPlugin.registerCommand("ps clean ", "Cleans up all orphan fields in the world", plugin, true, "preciousstones.admin.clean");
-            helpPlugin.registerCommand("ps clean ", "Reverts all orphan fields in the world", plugin, true, "preciousstones.admin.revert");
-
-            PreciousStones.log(Level.INFO, "Help plugin support enabled");
-        }
     }
 
     /**
@@ -628,13 +565,15 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (cmd.equals("more") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.snitch"))
                         {
-                            if (cacheBlock.size() > 0)
+                            ChatBlock cb = plugin.getCommunicationManager().getChatBlock(player);
+
+                            if (cb.size() > 0)
                             {
                                 ChatBlock.sendBlank(player);
 
-                                cacheBlock.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+                                cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
 
-                                if (cacheBlock.size() > 0)
+                                if (cb.size() > 0)
                                 {
                                     ChatBlock.sendBlank(player);
                                     ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
@@ -774,33 +713,28 @@ public final class CommandManager implements CommandExecutor
                                     return true;
                                 }
 
-                                TargetBlock tb = new TargetBlock(player, 100, 0.2, plugin.getSettingsManager().getThroughFields());
+                                Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 100);
 
-                                if (tb != null)
+                                if (targetBlock != null)
                                 {
-                                    Block targetblock = tb.getTargetBlock();
+                                    Field field = plugin.getForceFieldManager().getField(targetBlock);
 
-                                    if (targetblock != null)
+                                    if (field != null)
                                     {
-                                        Field field = plugin.getForceFieldManager().getField(targetblock);
+                                        // transfer the count over to the new owner
 
-                                        if (field != null)
-                                        {
-                                            // transfer the count over to the new owner
+                                        PlayerData oldData = plugin.getPlayerManager().getPlayerData(field.getOwner());
+                                        oldData.decrementFieldCount(field.getTypeId());
 
-                                            PlayerData oldData = plugin.getPlayerManager().getPlayerData(field.getOwner());
-                                            oldData.decrementFieldCount(field.getTypeId());
+                                        PlayerData newData = plugin.getPlayerManager().getPlayerData(owner);
+                                        newData.incrementFieldCount(field.getTypeId());
 
-                                            PlayerData newData = plugin.getPlayerManager().getPlayerData(owner);
-                                            newData.incrementFieldCount(field.getTypeId());
+                                        // change the owner
 
-                                            // change the owner
-
-                                            field.setOwner(owner);
-                                            plugin.getStorageManager().offerField(field);
-                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner set to " + owner);
-                                            return true;
-                                        }
+                                        field.setOwner(owner);
+                                        plugin.getStorageManager().offerField(field);
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Owner set to " + owner);
+                                        return true;
                                     }
                                 }
 
@@ -912,136 +846,136 @@ public final class CommandManager implements CommandExecutor
                     ChatColor color = plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() ? ChatColor.DARK_GRAY : ChatColor.YELLOW;
                     String status = plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() ? ChatColor.GRAY + " - disabled" : "";
 
-                    cacheBlock = new ChatBlock();
+                    ChatBlock cb = plugin.getCommunicationManager().getChatBlock(player);
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.onoff"))
                     {
-                        cacheBlock.addRow(ChatColor.YELLOW + "  /ps on/off " + ChatColor.AQUA + "- Disable/Enable the placing of pstones");
+                        cb.addRow(ChatColor.YELLOW + "  /ps on/off " + ChatColor.AQUA + "- Disable/Enable the placing of pstones");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allow"))
                     {
-                        cacheBlock.addRow(color + "  /ps allow [player/g:group/t:team/*] " + ChatColor.AQUA + "- To overlapped fields");
+                        cb.addRow(color + "  /ps allow [player/g:group/t:team/*] " + ChatColor.AQUA + "- To overlapped fields");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowall"))
                     {
-                        cacheBlock.addRow(color + "  /ps allowall [player/g:group/t:team/*] " + ChatColor.AQUA + "- To all your fields");
+                        cb.addRow(color + "  /ps allowall [player/g:group/t:team/*] " + ChatColor.AQUA + "- To all your fields");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.remove"))
                     {
-                        cacheBlock.addRow(color + "  /ps remove [player/g:group/t:team/*] " + ChatColor.AQUA + "- From overlapped fields");
+                        cb.addRow(color + "  /ps remove [player/g:group/t:team/*] " + ChatColor.AQUA + "- From overlapped fields");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.removeall"))
                     {
-                        cacheBlock.addRow(color + "  /ps removeall [player/g:group/t:team/*] " + ChatColor.AQUA + "- From all your fields");
+                        cb.addRow(color + "  /ps removeall [player/g:group/t:team/*] " + ChatColor.AQUA + "- From all your fields");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowed"))
                     {
-                        cacheBlock.addRow(color + "  /ps allowed " + ChatColor.AQUA + "- List all allowed players in overlapped fields");
+                        cb.addRow(color + "  /ps allowed " + ChatColor.AQUA + "- List all allowed players in overlapped fields");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.who"))
                     {
-                        cacheBlock.addRow(color + "  /ps who " + ChatColor.AQUA + "- List all inhabitants inside the overlapped fields");
+                        cb.addRow(color + "  /ps who " + ChatColor.AQUA + "- List all inhabitants inside the overlapped fields");
                     }
 
                     if (plugin.getSettingsManager().haveLimits() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.counts"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps counts " + ChatColor.AQUA + "- View your field counts");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps counts " + ChatColor.AQUA + "- View your field counts");
                     }
 
                     if (plugin.getSettingsManager().haveNameable() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setname"))
                     {
-                        cacheBlock.addRow(color + "  /ps setname [name] " + ChatColor.AQUA + "- Set the name of fields");
+                        cb.addRow(color + "  /ps setname [name] " + ChatColor.AQUA + "- Set the name of fields");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setradius"))
                     {
-                        cacheBlock.addRow(color + "  /ps setradius [radius] " + ChatColor.AQUA + "- Sets the field's radius");
+                        cb.addRow(color + "  /ps setradius [radius] " + ChatColor.AQUA + "- Sets the field's radius");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setheight"))
                     {
-                        cacheBlock.addRow(color + "  /ps setheight [height] " + ChatColor.AQUA + "- Sets the field's height");
+                        cb.addRow(color + "  /ps setheight [height] " + ChatColor.AQUA + "- Sets the field's height");
                     }
 
                     if (plugin.getSettingsManager().haveVelocity() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setvelocity"))
                     {
-                        cacheBlock.addRow(color + "  /ps setvelocity [.1-5] " + ChatColor.AQUA + "- For launchers/cannons (0=auto)");
+                        cb.addRow(color + "  /ps setvelocity [.1-5] " + ChatColor.AQUA + "- For launchers/cannons (0=auto)");
                     }
 
                     if (plugin.getSettingsManager().haveSnitch() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.snitch"))
                     {
-                        cacheBlock.addRow(color + "  /ps snitch <clear> " + ChatColor.AQUA + "- View/clear snitch you're pointing at");
+                        cb.addRow(color + "  /ps snitch <clear> " + ChatColor.AQUA + "- View/clear snitch you're pointing at");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize") || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
                     {
-                        cacheBlock.addRow(color + "  /ps visualize" + ChatColor.AQUA + "- Visualizes the perimiter of the field");
+                        cb.addRow(color + "  /ps visualize" + ChatColor.AQUA + "- Visualizes the perimiter of the field");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.mark") || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.mark"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps mark" + ChatColor.AQUA + "- Marks the location of fields");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps mark" + ChatColor.AQUA + "- Marks the location of fields");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.delete"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps delete " + ChatColor.AQUA + "- Delete the field(s) you're standing on");
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps delete [player] " + ChatColor.AQUA + "- Delete all pstones of the player");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps delete " + ChatColor.AQUA + "- Delete the field(s) you're standing on");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps delete [player] " + ChatColor.AQUA + "- Delete all pstones of the player");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.info"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps info " + ChatColor.AQUA + "- Get info for the field youre standing on");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps info " + ChatColor.AQUA + "- Get info for the field youre standing on");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.counts"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps counts [typeid/player] " + ChatColor.AQUA + "- View player field counts list");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps counts [typeid/player] " + ChatColor.AQUA + "- View player field counts list");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.list"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps list [chunks-in-radius]" + ChatColor.AQUA + "- Lists all pstones in area");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps list [chunks-in-radius]" + ChatColor.AQUA + "- Lists all pstones in area");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.setowner"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps setowner [player] " + ChatColor.AQUA + "- Of the block you're pointing at");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps setowner [player] " + ChatColor.AQUA + "- Of the block you're pointing at");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.reload"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps reload " + ChatColor.AQUA + "- Reloads configuraton file");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps reload " + ChatColor.AQUA + "- Reloads configuraton file");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.fields"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps fields " + ChatColor.AQUA + "- List the configured field types");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps fields " + ChatColor.AQUA + "- List the configured field types");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.clean"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps clean " + ChatColor.AQUA + "- Cleans up all orphan fields in the world");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps clean " + ChatColor.AQUA + "- Cleans up all orphan fields in the world");
                     }
 
                     if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.revert"))
                     {
-                        cacheBlock.addRow(ChatColor.DARK_RED + "  /ps revert " + ChatColor.AQUA + "- Reverts all orphan fields in the world");
+                        cb.addRow(ChatColor.DARK_RED + "  /ps revert " + ChatColor.AQUA + "- Reverts all orphan fields in the world");
                     }
 
-                    if (cacheBlock.size() > 0)
+                    if (cb.size() > 0)
                     {
                         ChatBlock.sendBlank(player);
                         ChatBlock.saySingle(player, ChatColor.WHITE + plugin.getDescription().getName() + " " + plugin.getDescription().getVersion() + status + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
                         ChatBlock.sendBlank(player);
 
-                        boolean more = cacheBlock.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+                        boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
 
                         if (more)
                         {

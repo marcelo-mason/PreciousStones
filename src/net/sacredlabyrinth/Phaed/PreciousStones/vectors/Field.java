@@ -1,5 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.DirtyFieldReason;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +31,7 @@ public class Field extends AbstractVec
     private String owner;
     private String name;
     private List<String> allowed = new ArrayList<String>();
-    private List<Dirty> dirty = new ArrayList<Dirty>();
+    private List<DirtyFieldReason> dirty = new ArrayList<DirtyFieldReason>();
     private List<GriefBlock> grief = new ArrayList<GriefBlock>();
     private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
     private long lastUsed;
@@ -112,7 +114,7 @@ public class Field extends AbstractVec
     {
         this.radius = radius;
         this.setHeight((this.radius * 2) + 1);
-        dirty.add(Dirty.RADIUS);
+        dirty.add(DirtyFieldReason.RADIUS);
     }
 
     /**
@@ -167,7 +169,7 @@ public class Field extends AbstractVec
     public void setOwner(String owner)
     {
         this.owner = owner;
-        dirty.add(Dirty.OWNER);
+        dirty.add(DirtyFieldReason.OWNER);
     }
 
     /**
@@ -187,7 +189,7 @@ public class Field extends AbstractVec
     public void setName(String name)
     {
         this.name = name;
-        dirty.add(Dirty.NAME);
+        dirty.add(DirtyFieldReason.NAME);
     }
 
     /**
@@ -307,7 +309,7 @@ public class Field extends AbstractVec
         }
 
         allowed.add(allowedName.toLowerCase());
-        dirty.add(Dirty.ALLOWED);
+        dirty.add(DirtyFieldReason.ALLOWED);
         return true;
     }
 
@@ -318,7 +320,7 @@ public class Field extends AbstractVec
     public void removeAllowed(String allowedName)
     {
         allowed.remove(allowedName.toLowerCase());
-        dirty.add(Dirty.ALLOWED);
+        dirty.add(DirtyFieldReason.ALLOWED);
     }
 
     /**
@@ -342,7 +344,7 @@ public class Field extends AbstractVec
     public void setHeight(int height)
     {
         this.height = height;
-        dirty.add(Dirty.HEIGHT);
+        dirty.add(DirtyFieldReason.HEIGHT);
     }
 
     /**
@@ -501,7 +503,7 @@ public class Field extends AbstractVec
     public void setVelocity(float velocity)
     {
         this.velocity = velocity;
-        dirty.add(Dirty.VELOCITY);
+        dirty.add(DirtyFieldReason.VELOCITY);
     }
 
     /**
@@ -509,7 +511,7 @@ public class Field extends AbstractVec
      */
     public void markForDeletion()
     {
-        dirty.add(Dirty.DELETE);
+        dirty.add(DirtyFieldReason.DELETE);
     }
 
     /**
@@ -517,15 +519,7 @@ public class Field extends AbstractVec
      */
     public List<String> getAllowed()
     {
-        return allowed;
-    }
-
-    /**
-     * @param allowed the allowed to set
-     */
-    public void setAllowed(List<String> allowed)
-    {
-        this.allowed = allowed;
+        return Collections.unmodifiableList(allowed);
     }
 
     /**
@@ -551,7 +545,7 @@ public class Field extends AbstractVec
     public void addGriefBlock(GriefBlock gb)
     {
         grief.add(gb);
-        dirty.add(Dirty.GRIEF_BLOCKS);
+        dirty.add(DirtyFieldReason.GRIEF_BLOCKS);
     }
 
     /**
@@ -567,7 +561,7 @@ public class Field extends AbstractVec
      */
     public List<GriefBlock> getGrief()
     {
-        return grief;
+        return Collections.unmodifiableList(grief);
     }
 
     /**
@@ -583,7 +577,7 @@ public class Field extends AbstractVec
      */
     public List<SnitchEntry> getSnitches()
     {
-        return snitches;
+        return Collections.unmodifiableList(snitches);
     }
 
     /**
@@ -591,7 +585,8 @@ public class Field extends AbstractVec
      */
     public void setSnitches(List<SnitchEntry> snitches)
     {
-        this.snitches = snitches;
+        this.snitches.clear();
+        this.snitches.addAll(snitches);
     }
 
     /**
@@ -600,7 +595,7 @@ public class Field extends AbstractVec
     public void updateLastUsed()
     {
         lastUsed = (new Date()).getTime();
-        dirty.add(Dirty.LASTUSED);
+        dirty.add(DirtyFieldReason.LASTUSED);
     }
 
     /**
@@ -634,19 +629,11 @@ public class Field extends AbstractVec
     }
 
     /**
-     * Enumeration of dirty type
-     */
-    public enum Dirty
-    {
-        OWNER, NAME, RADIUS, HEIGHT, VELOCITY, ALLOWED, GRIEF_BLOCKS, DELETE, LASTUSED
-    }
-
-    /**
      * Whether the item is dirty
      * @param dirtyType
      * @return
      */
-    public boolean isDirty(Dirty dirtyType)
+    public boolean isDirty(DirtyFieldReason dirtyType)
     {
         return dirty.contains(dirtyType);
     }

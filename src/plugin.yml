@@ -1,7 +1,7 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
 version: 5.5.4
-softdepend: [Permissions, PermissionsBukkit, Help, SimpleClans, HawkEye]
+softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye]
 commands:
   ps:
     description: All of the PreciousStones commands
@@ -175,100 +175,6 @@ permissions:
     description: Limit 14
   preciousstones.limit15:
     description: Limit 15
-  preciousstones.benefit:
-    description: Can use PreciousStones
-    default: true
-    children:
-      preciousstones.benefit.ps: true
-      preciousstones.benefit.create.forcefield : true
-      preciousstones.benefit.create.unbreakable: true
-      preciousstones.benefit.create.protection: true
-      preciousstones.benefit.heal: true
-      preciousstones.benefit.giveair: true
-      preciousstones.benefit.launch: true
-      preciousstones.benefit.bounce: true
-      preciousstones.benefit.setname: true
-      preciousstones.benefit.setradius: true
-      preciousstones.benefit.setheight: true
-      preciousstones.benefit.setvelocity: true
-      preciousstones.benefit.mark: true
-      preciousstones.benefit.visualize: true
-      preciousstones.benefit.who: true
-      preciousstones.benefit.onoff: true
-      preciousstones.benefit.scoping: true
-      preciousstones.benefit.snitch: true
-  preciousstones.whitelist:
-    description: Can whitelist others into fields
-    default: true
-    children:
-      preciousstones.whitelist.allow: true
-      preciousstones.whitelist.allowed: true
-      preciousstones.whitelist.allowall: true
-      preciousstones.whitelist.remove: true
-      preciousstones.whitelist.removeall: true
-  preciousstones.bypass:
-    description: Permissions for moderators
-    default: op
-    children:
-      preciousstones.bypass.purchase: true
-      preciousstones.bypass.entry: true
-      preciousstones.bypass.pvp: true
-      preciousstones.bypass.place: true
-      preciousstones.bypass.use: true
-      preciousstones.bypass.destroy: true
-      preciousstones.bypass.protection: true
-      preciousstones.bypass.unbreakable: true
-      preciousstones.bypass.unprotectable: true
-      preciousstones.bypass.snitch: true
-      preciousstones.bypass.mine: true
-      preciousstones.bypass.lightning: true
-      preciousstones.bypass.limits: true
-  preciousstones.alert:
-    description: Receives in-game alert on notifys and warnings (mods)
-    default: false
-    children:
-      preciousstones.alert.notify.place: true
-      preciousstones.alert.notify.destroy: true
-      preciousstones.alert.notify.bypass-place: true
-      preciousstones.alert.notify.bypass-destroy: true
-      preciousstones.alert.warn.entry: true
-      preciousstones.alert.warn.fire: true
-      preciousstones.alert.warn.pvp: true
-      preciousstones.alert.warn.use: true
-      preciousstones.alert.warn.place: true
-      preciousstones.alert.warn.destroy: true
-      preciousstones.alert.warn.noplace: true
-      preciousstones.alert.warn.destroyarea: true
-      preciousstones.alert.warn.conflict: true
-      preciousstones.alert.warn.unprotectable: true
-  preciousstones.admin:
-    description: Permissions for admins
-    default: op
-    children:
-      preciousstones.admin.mark: true
-      preciousstones.admin.visualize: true
-      preciousstones.admin.allowed: true
-      preciousstones.admin.undo: true
-      preciousstones.admin.delete: true
-      preciousstones.admin.info: true
-      preciousstones.admin.list: true
-      preciousstones.admin.reload: true
-      preciousstones.admin.setowner: true
-      preciousstones.admin.fields: true
-      preciousstones.admin.clean: true
-      preciousstones.admin.revert: true
-      preciousstones.admin.details: true
-      preciousstones.admin.bypass.log: true
-      preciousstones.admin.viewconflicting: true
-      preciousstones.admin.retag: true
-      preciousstones.admin.isadmin: true
-      preciousstones.admin.counts: true
-  preciousstones.override:
-    description: These players will receive no warnings or notifications
-    default: false
-    children:
-      preciousstones.override.notify: true
-      preciousstones.override.warn: true
   preciousstones.benefit.*:
     default: true
     description: Can use PreciousStones

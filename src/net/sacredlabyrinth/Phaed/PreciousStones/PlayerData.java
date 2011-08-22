@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Location;
 
 /**
@@ -13,7 +14,7 @@ public class PlayerData
     private boolean disabled;
     private boolean online;
     private Location outsideLocation;
-    private HashMap<Integer, Integer> fieldCount = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> fieldCount = new HashMap<Integer, Integer>();
 
     /**
      *
@@ -30,13 +31,13 @@ public class PlayerData
      */
     public void incrementFieldCount(int typeid)
     {
-        if (getFieldCount().containsKey(typeid))
+        if (fieldCount.containsKey(typeid))
         {
-            getFieldCount().put(typeid, getFieldCount().get(typeid) + 1);
+            fieldCount.put(typeid, fieldCount.get(typeid) + 1);
         }
         else
         {
-            getFieldCount().put(typeid, 1);
+            fieldCount.put(typeid, 1);
         }
     }
 
@@ -46,9 +47,9 @@ public class PlayerData
      */
     public void decrementFieldCount(int typeid)
     {
-        if (getFieldCount().containsKey(typeid))
+        if (fieldCount.containsKey(typeid))
         {
-            getFieldCount().put(typeid, Math.max(getFieldCount().get(typeid) - 1, 0));
+            fieldCount.put(typeid, Math.max(fieldCount.get(typeid) - 1, 0));
         }
     }
 
@@ -57,7 +58,10 @@ public class PlayerData
      */
     public HashMap<Integer, Integer> getFieldCount()
     {
-        return fieldCount;
+        HashMap<Integer, Integer> counts = new HashMap<Integer, Integer>();
+        counts.putAll(fieldCount);
+
+        return counts;
     }
 
     /**
@@ -67,9 +71,9 @@ public class PlayerData
      */
     public int getFieldCount(int typeid)
     {
-        if (getFieldCount().containsKey(typeid))
+        if (fieldCount.containsKey(typeid))
         {
-            return getFieldCount().get(typeid);
+            return fieldCount.get(typeid);
         }
 
         return 0;

@@ -1,0 +1,40 @@
+package net.sacredlabyrinth.Phaed.PreciousStones;
+
+/**
+ *
+ * @author phaed
+ */
+public enum FieldFlag
+{
+    PREVENT_FIRE,
+    PREVENT_PLACE,
+    PREVENT_DESTROY,
+    PREVENT_EXPLOSIONS,
+    PREVENT_PVP,
+    PREVENT_MOB_DAMAGE,
+    PREVENT_MOB_SPAWN,
+    PREVENT_ANIMAL_SPAWN,
+    PREVENT_ENTRY,
+    PREVENT_UNPROTECTABLE,
+    PREVENT_FLOW,
+    INSTANT_HEAL,
+    SLOW_HEAL,
+    SLOW_DAMAGE,
+    FAST_DAMAGE, 
+    BREAKABLE,
+    WELCOME_MESSAGE,
+    FAREWELL_MESSAGE,
+    GIVE_AIR,
+    SNITCH,
+    NO_CONFLICT,
+    LAUNCH, CANNON,
+    MINE,
+    LIGHTNING,
+    NO_OWNER,
+    FORESTER,
+    FORESTER_SHRUBS,
+    GRIEF_UNDO_INTERVAL,
+    GRIEF_UNDO_REQUEST,
+    ENTRY_ALERT
+
+}

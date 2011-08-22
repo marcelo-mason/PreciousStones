@@ -88,6 +88,7 @@ public class Helper
     {
         try
         {
+            @SuppressWarnings("unchecked")
             List<Integer> list = (List<Integer>) obj;
             return true;
         }
@@ -106,6 +107,7 @@ public class Helper
     {
         try
         {
+            @SuppressWarnings("unchecked")
             List<String> list = (List<String>) obj;
             return true;
         }
@@ -353,13 +355,14 @@ public class Helper
     }
 
     /**
-     * Converts ArrayList<String> to string array
+     * Converts List<String> to string array
      * @param list
      * @return
      */
-    public static String[] toArray(List list)
+    @SuppressWarnings("unchecked")
+    public static String[] toArray(List<String> list)
     {
-        return (String[]) list.toArray(new String[0]);
+        return list.toArray(new String[0]);
     }
 
     /**
@@ -455,7 +458,7 @@ public class Helper
         return str.replace("'", "''");
     }
 
-    public static boolean sameBlock(Location loc, Location loc2)
+    public static boolean isSameBlock(Location loc, Location loc2)
     {
         if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ())
         {
