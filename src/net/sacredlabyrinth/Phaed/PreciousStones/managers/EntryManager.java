@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +29,7 @@ import org.bukkit.entity.Vehicle;
 public final class EntryManager
 {
     private PreciousStones plugin;
-    private final ConcurrentHashMap<String, EntryFields> entries = new ConcurrentHashMap<String, EntryFields>();
+    private final HashMap<String, EntryFields> entries = new HashMap<String, EntryFields>();
     private boolean processing = false;
 
     /**
@@ -56,89 +57,85 @@ public final class EntryManager
 
                 processing = true;
 
-                HashMap<String, EntryFields> e = new HashMap<String, EntryFields>();
-
                 synchronized (entries)
                 {
-                    e.putAll(entries);
-                }
-
-                for (String playername : e.keySet())
-                {
-                    EntryFields ef = e.get(playername);
-                    List<Field> fields = ef.getFields();
-
-                    for (Field field : fields)
+                    for (String playername : entries.keySet())
                     {
-                        FieldSettings fs = field.getSettings();
+                        EntryFields ef = entries.get(playername);
+                        List<Field> fields = ef.getFields();
 
-                        Player player = Helper.matchSinglePlayer(playername);
-
-                        if (player == null)
+                        for (Field field : fields)
                         {
-                            continue;
-                        }
+                            FieldSettings fs = field.getSettings();
 
-                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.giveair"))
-                        {
-                            if (fs.hasFlag(FieldFlag.GIVE_AIR))
+                            Player player = Helper.matchSinglePlayer(playername);
+
+                            if (player == null)
                             {
-                                if (player.getRemainingAir() < 300)
-                                {
-                                    player.setRemainingAir(600);
-                                    plugin.getCommunicationManager().showGiveAir(player);
-                                    continue;
-                                }
-                            }
-                        }
-
-                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.heal"))
-                        {
-                            if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
-                            {
-                                if (player.getHealth() < 20)
-                                {
-                                    player.setHealth(20);
-                                    plugin.getCommunicationManager().showInstantHeal(player);
-                                    continue;
-                                }
+                                continue;
                             }
 
-                            if (fs.hasFlag(FieldFlag.SLOW_HEAL))
+                            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.giveair"))
                             {
-                                if (player.getHealth() < 20)
+                                if (fs.hasFlag(FieldFlag.GIVE_AIR))
                                 {
-                                    player.setHealth(healthCheck(player.getHealth() + 1));
-                                    plugin.getCommunicationManager().showSlowHeal(player);
-                                    continue;
-                                }
-
-                            }
-                        }
-
-                        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.damage"))
-                        {
-                            if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
-                            {
-                                if (!plugin.getForceFieldManager().isAllowed(field, playername))
-                                {
-                                    if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
+                                    if (player.getRemainingAir() < 300)
                                     {
-                                        if (player.getHealth() > 0)
-                                        {
-                                            player.setHealth(healthCheck(player.getHealth() - 1));
-                                            plugin.getCommunicationManager().showSlowDamage(player);
-                                            continue;
-                                        }
+                                        player.setRemainingAir(600);
+                                        plugin.getCommunicationManager().showGiveAir(player);
+                                        continue;
+                                    }
+                                }
+                            }
+
+                            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.heal"))
+                            {
+                                if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
+                                {
+                                    if (player.getHealth() < 20)
+                                    {
+                                        player.setHealth(20);
+                                        plugin.getCommunicationManager().showInstantHeal(player);
+                                        continue;
+                                    }
+                                }
+
+                                if (fs.hasFlag(FieldFlag.SLOW_HEAL))
+                                {
+                                    if (player.getHealth() < 20)
+                                    {
+                                        player.setHealth(healthCheck(player.getHealth() + 1));
+                                        plugin.getCommunicationManager().showSlowHeal(player);
+                                        continue;
                                     }
 
-                                    if (fs.hasFlag(FieldFlag.FAST_DAMAGE))
+                                }
+                            }
+
+                            if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.damage"))
+                            {
+                                if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
+                                {
+                                    if (!plugin.getForceFieldManager().isAllowed(field, playername))
                                     {
-                                        if (player.getHealth() > 0)
+                                        if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
                                         {
-                                            player.setHealth(healthCheck(player.getHealth() - 4));
-                                            plugin.getCommunicationManager().showFastDamage(player);
-                                            continue;
+                                            if (player.getHealth() > 0)
+                                            {
+                                                player.setHealth(healthCheck(player.getHealth() - 1));
+                                                plugin.getCommunicationManager().showSlowDamage(player);
+                                                continue;
+                                            }
+                                        }
+
+                                        if (fs.hasFlag(FieldFlag.FAST_DAMAGE))
+                                        {
+                                            if (player.getHealth() > 0)
+                                            {
+                                                player.setHealth(healthCheck(player.getHealth() - 4));
+                                                plugin.getCommunicationManager().showFastDamage(player);
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -165,7 +162,9 @@ public final class EntryManager
 
             if (ef != null)
             {
-                return ef.getFields();
+                List<Field> e = new ArrayList<Field>();
+                e.addAll(ef.getFields());
+                return e;
             }
         }
 
@@ -341,7 +340,7 @@ public final class EntryManager
         {
             EntryFields ef = entries.get(player.getName());
 
-            if(ef != null)
+            if (ef != null)
             {
                 List<Field> entryfields = ef.getFields();
 
