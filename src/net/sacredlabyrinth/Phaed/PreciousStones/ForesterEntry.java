@@ -67,12 +67,6 @@ public class ForesterEntry
     }
 
     @Override
-    public int hashCode()
-    {
-	return ((new Integer(field.getX())).hashCode() >> 13) ^ ((new Integer(field.getY())).hashCode() >> 7) ^ ((new Integer(field.getZ())).hashCode()) ^ ((field.getWorld()).hashCode());
-    }
-
-    @Override
     public boolean equals(Object obj)
     {
 	if (!(obj instanceof ForesterEntry))
@@ -80,6 +74,14 @@ public class ForesterEntry
 
 	ForesterEntry other = (ForesterEntry) obj;
 	return other.getField().getX() == getField().getX() && other.getField().getY() == getField().getY() && other.getField().getZ() == getField().getZ() && other.getField().getWorld().equals(getField().getWorld());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 3;
+        hash = 23 * hash + (this.field != null ? this.field.hashCode() : 0);
+        return hash;
     }
 
     /**

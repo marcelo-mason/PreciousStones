@@ -330,11 +330,11 @@ public final class SettingsManager
             {
                 // add field definition to our collection
 
-                getFieldDefinitions().put(fs.getTypeId(), fs);
+                fieldDefinitions.put(fs.getTypeId(), fs);
 
                 // add the type id to our reference list
 
-                getFfBlocks().add(fs.getTypeId());
+                ffBlocks.add(fs.getTypeId());
 
                 // see if the radius is the largest
 
@@ -354,7 +354,7 @@ public final class SettingsManager
      */
     public boolean haveNameable()
     {
-        for (FieldSettings fs : getFieldDefinitions().values())
+        for (FieldSettings fs : fieldDefinitions.values())
         {
             if (fs.hasNameableFlag())
             {
@@ -371,7 +371,7 @@ public final class SettingsManager
      */
     public boolean haveVelocity()
     {
-        for (FieldSettings fs : getFieldDefinitions().values())
+        for (FieldSettings fs : fieldDefinitions.values())
         {
             if (fs.hasVeocityFlag())
             {
@@ -388,7 +388,7 @@ public final class SettingsManager
      */
     public boolean haveSnitch()
     {
-        for (FieldSettings fs : getFieldDefinitions().values())
+        for (FieldSettings fs : fieldDefinitions.values())
         {
             if (fs.hasFlag(FieldFlag.SNITCH))
             {
@@ -405,7 +405,7 @@ public final class SettingsManager
      */
     public boolean haveLimits()
     {
-        for (FieldSettings fs : getFieldDefinitions().values())
+        for (FieldSettings fs : fieldDefinitions.values())
         {
             if (fs.hasLimit())
             {
@@ -511,7 +511,7 @@ public final class SettingsManager
      */
     public boolean isSnitchType(Block block)
     {
-        for (FieldSettings fs : getFieldDefinitions().values())
+        for (FieldSettings fs : fieldDefinitions.values())
         {
             if (fs.hasFlag(FieldFlag.SNITCH) && fs.getTypeId() == block.getTypeId())
             {
@@ -619,7 +619,7 @@ public final class SettingsManager
      */
     public FieldSettings getFieldSettings(int typeId)
     {
-        return getFieldDefinitions().get(typeId);
+        return fieldDefinitions.get(typeId);
     }
 
     /**
@@ -628,7 +628,7 @@ public final class SettingsManager
      */
     public HashMap<Integer, FieldSettings> getFieldSettings()
     {
-        return getFieldDefinitions();
+        return fieldDefinitions;
     }
 
     /**

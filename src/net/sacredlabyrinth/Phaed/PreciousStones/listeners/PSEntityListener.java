@@ -299,44 +299,29 @@ public class PSEntityListener extends EntityListener
         {
             EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
 
-            Player victim = (Player) sub.getEntity();
-            Player attacker = null;
-
-            if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Player)
+            if (sub.getEntity() instanceof Player)
             {
-                attacker = (Player) sub.getDamager();
-            }
+                Player victim = (Player) sub.getEntity();
+                Player attacker = null;
 
-            if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Arrow)
-            {
-                Arrow arrow = (Arrow) sub.getDamager();
-                
-                if (arrow.getShooter() instanceof Player)
+                if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Player)
                 {
-                    attacker = (Player) arrow.getShooter();
+                    attacker = (Player) sub.getDamager();
                 }
-            }
 
-            if (attacker != null)
-            {
-                Field field = plugin.getForceFieldManager().getSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
-
-                if (field != null)
+                if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Arrow)
                 {
-                    if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
+                    Arrow arrow = (Arrow) sub.getDamager();
+
+                    if (arrow.getShooter() instanceof Player)
                     {
-                        plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
-                    }
-                    else
-                    {
-                        sub.setCancelled(true);
-                        plugin.getCommunicationManager().warnPvP(attacker, victim, field);
-                        return;
+                        attacker = (Player) arrow.getShooter();
                     }
                 }
-                else
+
+                if (attacker != null)
                 {
-                    field = plugin.getForceFieldManager().getSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
+                    Field field = plugin.getForceFieldManager().getSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
 
                     if (field != null)
                     {
@@ -349,6 +334,24 @@ public class PSEntityListener extends EntityListener
                             sub.setCancelled(true);
                             plugin.getCommunicationManager().warnPvP(attacker, victim, field);
                             return;
+                        }
+                    }
+                    else
+                    {
+                        field = plugin.getForceFieldManager().getSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
+
+                        if (field != null)
+                        {
+                            if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
+                            {
+                                plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
+                            }
+                            else
+                            {
+                                sub.setCancelled(true);
+                                plugin.getCommunicationManager().warnPvP(attacker, victim, field);
+                                return;
+                            }
                         }
                     }
                 }
