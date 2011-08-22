@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -30,8 +31,9 @@ public class FieldSettings
      *
      * @param map
      */
+
     @SuppressWarnings("unchecked")
-    public FieldSettings(LinkedHashMap map)
+    public FieldSettings(LinkedHashMap<String, Object> map)
     {
         if (map.containsKey("block") && Helper.isInteger(map.get("block")))
         {
@@ -554,6 +556,6 @@ public class FieldSettings
         {
             return new ArrayList<Integer>();
         }
-        return limits;
+        return Collections.unmodifiableList(limits);
     }
 }
