@@ -1,11 +1,11 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 5.5.4
+version: 5.5.5
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye]
 commands:
   ps:
     description: All of the PreciousStones commands
-    usage: Syntax error
+    usage: Syntax error, verify the command usage and try again
 permissions:
   preciousstones.benefit.create.forcefield :
     description: Can create forcefield blocks
@@ -39,6 +39,10 @@ permissions:
     description: Can use /ps on and /ps off
   preciousstones.benefit.scoping:
     description: Can scope the ground with a field block in hand
+  preciousstones.benefit.counts:
+    description: Can use /ps counts
+  preciousstones.benefit.locations:
+    description: Can use /ps locations
   preciousstones.benefit.snitch:
     description: Can use /ps snitch list/clean
   preciousstones.whitelist.allow:
@@ -141,6 +145,8 @@ permissions:
     description: Can used internally to detect admins
   preciousstones.admin.counts:
     description: Gives you the counts of pstones each player hass
+  preciousstones.admin.locations:
+    description: Gives you the locations of pstones each player hass
   preciousstones.override.notify:
     description: Can users will not be shown any notifications
   preciousstones.override.warn:
@@ -193,6 +199,8 @@ permissions:
       preciousstones.benefit.setvelocity: true
       preciousstones.benefit.mark: true
       preciousstones.benefit.visualize: true
+      preciousstones.benefit.counts: true
+      preciousstones.benefit.locations: true
       preciousstones.benefit.who: true
       preciousstones.benefit.onoff: true
       preciousstones.benefit.scoping: true
@@ -262,6 +270,7 @@ permissions:
       preciousstones.admin.retag: true
       preciousstones.admin.isadmin: true
       preciousstones.admin.counts: true
+      preciousstones.admin.locations: true
   preciousstones.override.*:
     description: These players will receive no warnings or notifications
     default: false

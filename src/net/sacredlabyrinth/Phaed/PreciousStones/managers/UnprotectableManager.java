@@ -16,7 +16,6 @@ public class UnprotectableManager
 
     /**
      *
-     * @param plugin
      */
     public UnprotectableManager()
     {

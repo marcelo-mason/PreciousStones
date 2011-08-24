@@ -8,6 +8,7 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 import com.nijiko.permissions.PermissionHandler;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import java.util.LinkedList;
+import org.bukkit.World;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
@@ -24,7 +25,6 @@ public final class PermissionsManager
 
     /**
      *
-     * @param plugin
      */
     public PermissionsManager()
     {
@@ -63,16 +63,20 @@ public final class PermissionsManager
 
     /**
      * Check whether a player belongs to a group
-     * @param player
+     * @param playerName
      * @param group
+     * @param world
      * @return
      */
-    @SuppressWarnings("deprecation")
-    public boolean inGroup(Player player, String group)
+    @SuppressWarnings(
+    {
+        "deprecation", "deprecation"
+    })
+    public boolean inGroup(String playerName, World world, String group)
     {
         if (handler2 != null)
         {
-            List<Group> groups = handler2.getGroups(player.getName());
+            List<Group> groups = handler2.getGroups(playerName);
 
             for (Group g : groups)
             {
@@ -81,23 +85,24 @@ public final class PermissionsManager
                     return true;
                 }
             }
+            return false;
         }
 
         if (handler != null)
         {
-            if (handler.getGroup(player.getWorld().getName(), player.getName()).equalsIgnoreCase(group))
+            if (handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group))
             {
                 return true;
             }
+            return false;
         }
-
         return false;
     }
 
     /**
      * Get a player's groups
-     * @param player
-     * @param group
+     * @param worldName
+     * @param playerName
      * @return
      */
     public List<String> getGroups(String worldName, String playerName)

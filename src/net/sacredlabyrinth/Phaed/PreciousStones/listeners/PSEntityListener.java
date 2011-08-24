@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.BlockData;
@@ -11,8 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -26,6 +23,7 @@ import org.bukkit.entity.Painting;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
@@ -45,7 +43,6 @@ public class PSEntityListener extends EntityListener
 
     /**
      *
-     * @param plugin
      */
     public PSEntityListener()
     {
@@ -85,6 +82,10 @@ public class PSEntityListener extends EntityListener
         }
     }
 
+    /**
+     *
+     * @param event
+     */
     @Override
     public void onExplosionPrime(ExplosionPrimeEvent event)
     {
@@ -132,17 +133,17 @@ public class PSEntityListener extends EntityListener
 
         for (final Block block : event.blockList())
         {
-            // prevent block break if breaking unbreakable
-
             if (block.getTypeId() == 0)
             {
                 continue;
             }
 
+            // prevent block break if breaking unbreakable
+
             if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
             {
-                block.setTypeIdAndData(0, (byte) 0, false);
                 revert.add(new BlockData(block));
+                block.setTypeIdAndData(0, (byte) 0, false);
                 continue;
             }
 
@@ -150,8 +151,8 @@ public class PSEntityListener extends EntityListener
 
             if (plugin.getForceFieldManager().isField(block))
             {
-                block.setTypeIdAndData(0, (byte) 0, false);
                 revert.add(new BlockData(block));
+                block.setTypeIdAndData(0, (byte) 0, false);
                 continue;
             }
 
@@ -203,33 +204,52 @@ public class PSEntityListener extends EntityListener
             }
         }
 
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        // trigger any tnts in the field
+
+        if (!tnts.isEmpty())
         {
-            @Override
-            public void run()
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
-                for (BlockData db : revert)
+                @Override
+                public void run()
                 {
-                    Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
+                    for (BlockData db : tnts)
+                    {
+                        Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
-                    block.setTypeIdAndData(db.getTypeId(), db.getData(), false);
+                        if (block != null)
+                        {
+                            Location midloc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
+                            block.getWorld().spawn(midloc, TNTPrimed.class);
+                        }
+                    }
+                    tnts.clear();
                 }
-                revert.clear();
+            }, 10);
+        }
 
-                for (BlockData db : tnts)
+        // revert any blocks that need reversion
+
+        if (!revert.isEmpty())
+        {
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            {
+                @Override
+                public void run()
                 {
-                    Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
-
-                    Location midloc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
-                    block.getWorld().spawn(midloc, TNTPrimed.class);
+                    for (BlockData db : revert)
+                    {
+                        Block block = db.getLocation().getBlock();
+                        block.setTypeIdAndData(db.getTypeId(), db.getData(), true);
+                    }
+                    revert.clear();
                 }
-                tnts.clear();
-            }
-        }, 4);
+            }, 2);
+        }
 
         // if some blocks were anti-grief then fake the explosion of the rest
 
-        if (griefed.size() > 0)
+        if (!griefed.isEmpty() && !nonGriefed.isEmpty())
         {
             event.setCancelled(true);
 
@@ -244,11 +264,20 @@ public class PSEntityListener extends EntityListener
                     {
                         Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
-                        block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(block.getTypeId(), 1));
-                        block.setTypeId(0);
+                        if (block != null)
+                        {
+                            Location loc = block.getLocation();
+                            ItemStack is = new ItemStack(block.getTypeId());
+
+                            if (is != null && loc != null)
+                            {
+                                block.getWorld().dropItemNaturally(loc, is);
+                                block.setTypeId(0);
+                            }
+                        }
                     }
                 }
-            }, 2);
+            }, 1);
         }
 
         if (plugin.getSettingsManager().isDebug())
@@ -293,7 +322,7 @@ public class PSEntityListener extends EntityListener
             }
         }
 
-        // pvp protect against player
+        // pvp protect against player/mobs
 
         if (event instanceof EntityDamageByEntityEvent)
         {
@@ -308,14 +337,22 @@ public class PSEntityListener extends EntityListener
                 {
                     attacker = (Player) sub.getDamager();
                 }
-
-                if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Arrow)
+                else if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Arrow)
                 {
                     Arrow arrow = (Arrow) sub.getDamager();
 
                     if (arrow.getShooter() instanceof Player)
                     {
                         attacker = (Player) arrow.getShooter();
+                    }
+                    else
+                    {
+                        Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_MOB_DAMAGE);
+
+                        if (field != null)
+                        {
+                            event.setCancelled(true);
+                        }
                     }
                 }
 
@@ -356,17 +393,14 @@ public class PSEntityListener extends EntityListener
                     }
                 }
             }
-        }
-
-        // pvp protect against entity attacks
-
-        if (event.getCause().equals(DamageCause.ENTITY_ATTACK))
-        {
-            Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_MOB_DAMAGE);
-
-            if (field != null)
+            else
             {
-                event.setCancelled(true);
+                Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_MOB_DAMAGE);
+
+                if (field != null)
+                {
+                    event.setCancelled(true);
+                }
             }
         }
 

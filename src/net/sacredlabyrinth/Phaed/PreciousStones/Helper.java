@@ -2,8 +2,12 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -81,7 +85,7 @@ public class Helper
 
     /**
      * Helper function to check for integer list
-     * @param input
+     * @param obj
      * @return
      */
     public static boolean isIntList(Object obj)
@@ -100,7 +104,7 @@ public class Helper
 
     /**
      * Helper function to check for string list
-     * @param input
+     * @param obj
      * @return
      */
     public static boolean isStringList(Object obj)
@@ -262,6 +266,23 @@ public class Helper
     public static String plural(int count, String word, String ending)
     {
         return count == 1 ? word : word + ending;
+    }
+
+    /**
+     * Return plural word if count is bigger than one
+     * @param word
+     * @return
+     */
+    public static String posessive(String word)
+    {
+        if (word.substring(word.length() - 1).equalsIgnoreCase("s"))
+        {
+            return word + "'";
+        }
+        else
+        {
+            return word + "'s";
+        }
     }
 
     /**
@@ -458,6 +479,12 @@ public class Helper
         return str.replace("'", "''");
     }
 
+    /**
+     * Whether the two locations refer to the same block
+     * @param loc
+     * @param loc2
+     * @return
+     */
     public static boolean isSameBlock(Location loc, Location loc2)
     {
         if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ())
@@ -465,5 +492,27 @@ public class Helper
             return true;
         }
         return false;
+    }
+
+    /**
+     * Sorts a Map by its values
+     * @param <K>
+     * @param <V>
+     * @param map
+     * @return
+     */
+    public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> sortByValues(Map<K, V> map)
+    {
+        SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<Map.Entry<K, V>>(
+                new Comparator<Map.Entry<K, V>>()
+                {
+                    @Override
+                    public int compare(Map.Entry<K, V> e1, Map.Entry<K, V> e2)
+                    {
+                        return e1.getValue().compareTo(e2.getValue());
+                    }
+                });
+        sortedEntries.addAll(map.entrySet());
+        return sortedEntries;
     }
 }

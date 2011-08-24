@@ -154,7 +154,6 @@ public abstract class AbstractVec
 
     /**
      *
-     * @param world
      * @return
      */
     public Location getLocation()

@@ -19,7 +19,6 @@ public class LightningManager
 
     /**
      *
-     * @param plugin
      */
     public LightningManager()
     {

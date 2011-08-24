@@ -25,7 +25,6 @@ public class PSVehicleListener extends VehicleListener
 
     /**
      *
-     * @param plugin
      */
     public PSVehicleListener()
     {

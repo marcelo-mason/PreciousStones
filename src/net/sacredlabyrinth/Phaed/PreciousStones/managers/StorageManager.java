@@ -44,7 +44,6 @@ public final class StorageManager
 
     /**
      *
-     * @param plugin
      */
     public StorageManager()
     {
@@ -118,7 +117,7 @@ public final class StorageManager
         }
         else
         {
-            core = new SQLiteCore(PreciousStones.getLogger(), "PreciousStones", plugin.getDataFolder().getPath());
+            core = new SQLiteCore("PreciousStones", plugin.getDataFolder().getPath());
 
             if (core.checkConnection())
             {
@@ -884,7 +883,7 @@ public final class StorageManager
      * @param field
      * @return
      */
-    public List<GriefBlock> retrieveBlockGrief(Field field)
+    public Queue<GriefBlock> retrieveBlockGrief(Field field)
     {
         Set<Field> workingGrief = new HashSet<Field>();
 
@@ -899,7 +898,7 @@ public final class StorageManager
             processGrief(workingGrief);
         }
 
-        List<GriefBlock> out = new ArrayList<GriefBlock>();
+        Queue<GriefBlock> out = new LinkedList<GriefBlock>();
 
         String query = "SELECT * FROM  `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + field.getWorld() + "' ORDER BY y ASC;";
 

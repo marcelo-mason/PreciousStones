@@ -19,7 +19,6 @@ public class MineManager
 
     /**
      *
-     * @param plugin
      */
     public MineManager()
     {

@@ -11,7 +11,10 @@ public class Vec extends AbstractVec
 {
     /**
      *
-     * @param loc
+     * @param x
+     * @param y
+     * @param world
+     * @param z
      */
     public Vec(int x, int y, int z, String world)
     {
@@ -29,7 +32,7 @@ public class Vec extends AbstractVec
 
     /**
      *
-     * @param field
+     * @param av
      */
     public Vec(AbstractVec av)
     {
@@ -45,16 +48,35 @@ public class Vec extends AbstractVec
         super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
     }
 
-    public double distance(Vec pt)
+    /**
+     *
+     * @param vec
+     * @return
+     */
+    public double distance(Vec vec)
     {
-        return Math.sqrt(Math.pow(pt.getX() - getX(), 2.0D) + Math.pow(pt.getY() - getY(), 2.0D) + Math.pow(pt.getZ() - getZ(), 2.0D));
+        return Math.sqrt(Math.pow(vec.getX() - getX(), 2.0D) + Math.pow(vec.getY() - getY(), 2.0D) + Math.pow(vec.getZ() - getZ(), 2.0D));
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     public Vec add(int x, int y, int z)
     {
         return new Vec(this.getX() + x, this.getY() + y, this.getZ() + z, this.getWorld());
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     public Vec subtract(int x, int y, int z)
     {
         return new Vec(this.getX() - x, this.getY() - y, this.getZ() - z, this.getWorld());

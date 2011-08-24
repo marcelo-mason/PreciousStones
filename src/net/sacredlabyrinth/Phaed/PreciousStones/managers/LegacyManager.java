@@ -25,7 +25,6 @@ public class LegacyManager
 
     /**
      *
-     * @param plugin
      */
     public LegacyManager()
     {

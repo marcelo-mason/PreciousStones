@@ -11,31 +11,67 @@ import java.util.Date;
 
 public class Dates
 {
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInMonths(Timestamp date1, Timestamp date2)
     {
 	return differenceInMonths(new Date(date1.getTime()), new Date(date2.getTime()));
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInYears(Timestamp date1, Timestamp date2)
     {
 	return differenceInYears(new Date(date1.getTime()), new Date(date2.getTime()));
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInDays(Timestamp date1, Timestamp date2)
     {
 	return differenceInDays(new Date(date1.getTime()), new Date(date2.getTime()));
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInHours(Timestamp date1, Timestamp date2)
     {
 	return differenceInHours(new Date(date1.getTime()), new Date(date2.getTime()));
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInMinutes(Timestamp date1, Timestamp date2)
     {
 	return differenceInMinutes(new Date(date1.getTime()), new Date(date2.getTime()));
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInSeconds(Timestamp date1, Timestamp date2)
     {
 	return differenceInSeconds(new Date(date1.getTime()), new Date(date2.getTime()));
@@ -46,32 +82,68 @@ public class Dates
 	return differenceInMilliseconds(new Date(date1.getTime()), new Date(date2.getTime()));
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInMonths(Date date1, Date date2)
     {
 	return differenceInYears(date1, date2) * 12;
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInYears(Date date1, Date date2)
     {
 	double days = differenceInDays(date1, date2);
 	return  days / 365.2425;
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInDays(Date date1, Date date2)
     {
 	return differenceInHours(date1, date2) / 24.0;
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInHours(Date date1, Date date2)
     {
 	return differenceInMinutes(date1, date2) / 60.0;
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInMinutes(Date date1, Date date2)
     {
 	return differenceInSeconds(date1, date2) / 60.0;
     }
 
+    /**
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static double differenceInSeconds(Date date1, Date date2)
     {
 	return differenceInMilliseconds(date1, date2) / 1000.0;

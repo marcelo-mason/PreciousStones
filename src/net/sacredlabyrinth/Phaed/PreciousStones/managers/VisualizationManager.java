@@ -2,10 +2,11 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Queue;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Visualization;
+import net.sacredlabyrinth.Phaed.PreciousStones.Visualize;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,7 +25,6 @@ public class VisualizationManager
 
     /**
      *
-     * @param plugin
      */
     public VisualizationManager()
     {
@@ -123,6 +123,11 @@ public class VisualizationManager
         visualizations.put(player.getName(), vis);
     }
 
+    /**
+     *
+     * @param player
+     * @param field
+     */
     public void addFieldMark(Player player, Field field)
     {
         Visualization vis = visualizations.get(player.getName());
@@ -155,62 +160,50 @@ public class VisualizationManager
     /**
      * Displays contents of a player's visualization buffer to the player
      * @param player
+     * @param minusOverlap
      */
     public void displayVisualization(final Player player, boolean minusOverlap)
     {
         Visualization vis = visualizations.get(player.getName());
+        Material material = Material.getMaterial(plugin.getSettingsManager().getVisualizeBlock());
 
-        if (vis == null)
+        if (vis != null && !vis.isRunning())
         {
-            return;
-        }
-
-        List<Location> batch = new LinkedList<Location>();
-        int delay = 0;
-
-        for (Location loc : vis.getLocs())
-        {
-            boolean skip = false;
+            vis.setRunning(true);
 
             if (minusOverlap)
             {
-                for (Field field : vis.getFields())
+                Queue<Location> subset = new LinkedList<Location>();
+
+                for (Location loc : vis.getLocs())
                 {
-                    if (field.envelops(loc))
+                    boolean skip = false;
+
+                    if (minusOverlap)
                     {
-                        skip = true;
-                        break;
+                        for (Field field : vis.getFields())
+                        {
+                            if (field.envelops(loc))
+                            {
+                                skip = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!skip)
+                    {
+                        subset.add(loc);
                     }
                 }
+
+                Visualize visualize = new Visualize(vis, subset, material, player, false);
             }
-
-            if (!skip)
+            else
             {
-                batch.add(loc);
-            }
-
-            if (batch.size() >= plugin.getSettingsManager().getVisualizeBatchSize())
-            {
-                sendBatch(batch, player, Material.getMaterial(plugin.getSettingsManager().getVisualizeBlock()), delay);
-
-                batch = new LinkedList<Location>();
-                delay += plugin.getSettingsManager().getVisualizeBatchDelayTicks();
+                Visualize visualize = new Visualize(vis, vis.getLocs(), material, player, false);
             }
         }
-
-        if (!batch.isEmpty())
-        {
-            sendBatch(batch, player, Material.getMaterial(plugin.getSettingsManager().getVisualizeBlock()), delay);
-        }
-
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                revertVisualization(player);
-            }
-        }, 20L * plugin.getSettingsManager().getVisualizeSeconds() + delay);
     }
 
     /**
@@ -221,49 +214,13 @@ public class VisualizationManager
     {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis == null)
+        if (vis != null)
         {
-            return;
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Reverting visualization...");
+
+            Visualize visualize = new Visualize(vis, vis.getLocs(), Material.AIR, player, true);
+
+            visualizations.remove(player.getName());
         }
-
-        ChatBlock.sendMessage(player, ChatColor.AQUA + "Reverting visualization...");
-
-        List<Location> batch = new LinkedList<Location>();
-        int delay = 0;
-
-        for (Location loc : vis.getLocs())
-        {
-            batch.add(loc);
-
-            if (batch.size() >= plugin.getSettingsManager().getVisualizeBatchSize())
-            {
-                sendBatch(batch, player, Material.AIR, delay);
-
-                batch = new LinkedList<Location>();
-                delay += plugin.getSettingsManager().getVisualizeBatchDelayTicks();
-            }
-        }
-
-        if (!batch.isEmpty())
-        {
-            sendBatch(batch, player, Material.AIR, delay);
-        }
-
-        visualizations.remove(player.getName());
-    }
-
-    private void sendBatch(final List<Location> locs, final Player player, final Material mat, int delay)
-    {
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                for (Location loc : locs)
-                {
-                    player.sendBlockChange(loc, mat, (byte) 0);
-                }
-            }
-        }, delay);
     }
 }

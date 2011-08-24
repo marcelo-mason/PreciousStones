@@ -21,7 +21,6 @@ public class PlayerManager
 
     /**
      *
-     * @param plugin
      */
     public PlayerManager()
     {

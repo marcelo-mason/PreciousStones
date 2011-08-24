@@ -40,7 +40,6 @@ public final class ForceFieldManager
 
     /**
      *
-     * @param plugin
      */
     public ForceFieldManager()
     {
@@ -56,33 +55,10 @@ public final class ForceFieldManager
     }
 
     /**
-     * Check whether a chunk has fields
-     * @param cv
-     * @return
-     */
-    public boolean hasFields(ChunkVec cv)
-    {
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = chunkLists.get(cv.getWorld());
-
-        if (w != null)
-        {
-            HashMap<Vec, Field> c = w.get(cv);
-
-            if (c != null)
-            {
-                return !c.isEmpty();
-            }
-
-            return false;
-        }
-
-        return false;
-    }
-
-    /**
      * Add a brand new field
      * @param fieldblock
      * @param owner
+     * @param event
      * @return confirmation
      */
     public boolean add(Block fieldblock, Player owner, BlockPlaceEvent event)
@@ -197,11 +173,94 @@ public final class ForceFieldManager
     }
 
     /**
-     * Retrieve all fields in a chunk
+     * Check whether a chunk has fields
+     * @param cv
+     * @return
+     */
+    public boolean hasFields(ChunkVec cv)
+    {
+        HashMap<ChunkVec, HashMap<Vec, Field>> w = chunkLists.get(cv.getWorld());
+
+        if (w != null)
+        {
+            HashMap<Vec, Field> c = w.get(cv);
+
+            if (c != null)
+            {
+                return !c.isEmpty();
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all fields a player/g:group/c:clan/* is allowed in for a world
+     * @param target
+     * @param world
+     * @return
+     */
+    public List<Field> getFields(String target, World world)
+    {
+        List<Field> out = new LinkedList<Field>();
+
+        HashMap<ChunkVec, HashMap<Vec, Field>> w = chunkLists.get(world.getName());
+
+        if (w != null)
+        {
+            for (ChunkVec cv : w.keySet())
+            {
+                HashMap<Vec, Field> c = w.get(cv);
+
+                for (Field field : c.values())
+                {
+                    if (target.equals("*"))
+                    {
+                        out.add(field);
+                        continue;
+                    }
+
+                    if (target.contains("g:"))
+                    {
+                        String group = target.substring(2);
+
+                        if (plugin.getPermissionsManager().inGroup(field.getOwner(), world, group))
+                        {
+                            out.add(field);
+                        }
+                        continue;
+                    }
+
+                    if (target.contains("c:"))
+                    {
+                        String clan = target.substring(2);
+
+                        if (plugin.getSimpleClansManager().isInClan(field.getOwner(), clan))
+                        {
+                            out.add(field);
+                        }
+                        continue;
+                    }
+
+                    if (field.isOwner(target))
+                    {
+                        out.add(field);
+                    }
+                }
+            }
+        }
+
+        return out;
+    }
+
+    /**
+     * Get all fields in a chunk
      * @param cv the chunk vector you want the fields from
      * @return all fields from database that match the chunkvec
      */
-    public Collection<Field> retrieveFields(ChunkVec cv)
+    public Collection<Field> getFields(ChunkVec cv)
     {
         if (chunkLists.get(cv.getWorld()) == null)
         {
@@ -217,13 +276,13 @@ public final class ForceFieldManager
     }
 
     /**
-     * Retrieve all fields on a world
-     * @param world the world you want the fields from
+     * Get all fields on a world
+     * @param worldName
      * @return all fields from the database that match the world
      */
-    public HashMap<ChunkVec, HashMap<Vec, Field>> retrieveFields(String world)
+    public HashMap<ChunkVec, HashMap<Vec, Field>> getFields(String worldName)
     {
-        return chunkLists.get(world);
+        return chunkLists.get(worldName);
     }
 
     /**
@@ -290,6 +349,36 @@ public final class ForceFieldManager
     }
 
     /**
+     * Gets field counts for player/g:group/c:clan/*
+     * @param target
+     * @return
+     */
+    public HashMap<Integer, Integer> getFieldCounts(String target)
+    {
+        HashMap<Integer, Integer> counts = new HashMap<Integer, Integer>();
+        List<World> worlds = plugin.getServer().getWorlds();
+
+        for (World world : worlds)
+        {
+            List<Field> fields = getFields(target, world);
+
+            for (Field field : fields)
+            {
+                if (counts.containsKey(field.getTypeId()))
+                {
+                    counts.put(field.getTypeId(), counts.get(field.getTypeId()) + 1);
+                }
+                else
+                {
+                    counts.put(field.getTypeId(), 1);
+                }
+            }
+        }
+
+        return counts;
+    }
+
+    /**
      * Clean up orphan fields
      * @param world
      * @return
@@ -300,7 +389,7 @@ public final class ForceFieldManager
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = retrieveFields(world.getName());
+        HashMap<ChunkVec, HashMap<Vec, Field>> w = getFields(world.getName());
 
         if (w != null)
         {
@@ -362,7 +451,7 @@ public final class ForceFieldManager
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = retrieveFields(world.getName());
+        HashMap<ChunkVec, HashMap<Vec, Field>> w = getFields(world.getName());
 
         if (w != null)
         {
@@ -950,7 +1039,7 @@ public final class ForceFieldManager
         {
             for (int z = zlow; z <= zhigh; z++)
             {
-                Collection<Field> fields = retrieveFields(new ChunkVec(x, z, loc.getWorld().getName()));
+                Collection<Field> fields = getFields(new ChunkVec(x, z, loc.getWorld().getName()));
 
                 if (fields != null)
                 {
@@ -986,6 +1075,7 @@ public final class ForceFieldManager
     /**
      * Returns a field in the location that matches the field flag(s)
      * @param loc
+     * @param flags
      * @return the fields
      */
     public Field getSourceField(Location loc, FieldFlag... flags)
@@ -1012,6 +1102,7 @@ public final class ForceFieldManager
     /**
      * Returns the fields that the location is in match the field flag(s)
      * @param loc
+     * @param flags
      * @return the fields
      */
     public List<Field> getSourceFields(Location loc, FieldFlag... flags)
@@ -1063,6 +1154,7 @@ public final class ForceFieldManager
      * Returns a fields in the location that the player is allowed in that matches the field flag(s)
      * @param loc
      * @param playerName
+     * @param flags
      * @return the fields
      */
     public List<Field> getAllowedSourceField(Location loc, String playerName, FieldFlag... flags)
@@ -1113,6 +1205,7 @@ public final class ForceFieldManager
      * Returns a fields in the location that the player is not allowed in that matches the field flag(s)
      * @param loc
      * @param playerName
+     * @param flags
      * @return the fields
      */
     public Field getNotAllowedSourceField(Location loc, String playerName, FieldFlag... flags)

@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 
@@ -12,14 +13,23 @@ import org.bukkit.Location;
  */
 public class Visualization
 {
-    private List<Location> locs = new LinkedList<Location>();
+    private Queue<Location> locs = new LinkedList<Location>();
     private List<Field> fields = new LinkedList<Field>();
+    private boolean running;
 
+    /**
+     *
+     * @param loc
+     */
     public void addLocation(Location loc)
     {
         locs.add(loc);
     }
 
+    /**
+     *
+     * @param field
+     */
     public void addField(Field field)
     {
         fields.add(field);
@@ -28,11 +38,10 @@ public class Visualization
     /**
      * @return the locations
      */
-    public List<Location> getLocs()
+    public Queue<Location> getLocs()
     {
-        List<Location> l = new LinkedList<Location>();
+        Queue<Location> l = new LinkedList<Location>();
         l.addAll(locs);
-
         return l;
     }
 
@@ -43,7 +52,22 @@ public class Visualization
     {
         List<Field> f = new LinkedList<Field>();
         f.addAll(fields);
-
         return f;
+    }
+
+    /**
+     * @return the running
+     */
+    public boolean isRunning()
+    {
+        return running;
+    }
+
+    /**
+     * @param running the running to set
+     */
+    public void setRunning(boolean running)
+    {
+        this.running = running;
     }
 }

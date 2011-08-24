@@ -39,7 +39,6 @@ public class PSBlockListener extends BlockListener
 
     /**
      *
-     * @param plugin
      */
     public PSBlockListener()
     {

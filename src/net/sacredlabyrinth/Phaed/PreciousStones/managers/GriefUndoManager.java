@@ -3,9 +3,11 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.Rollback;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -25,7 +27,6 @@ public final class GriefUndoManager
 
     /**
      *
-     * @param plugin
      */
     public GriefUndoManager()
     {
@@ -126,6 +127,21 @@ public final class GriefUndoManager
     }
 
     /**
+     * Whether the block depends on an adjacent block to be placed
+     * @param type
+     * @return
+     */
+    public boolean isDependentBlock(int type)
+    {
+        if (type == 26 || type == 27 || type == 28 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 85 || type == 96)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Undo the grief recorded in one field
      * @param field
      * @return
@@ -136,59 +152,9 @@ public final class GriefUndoManager
 
         if (world != null)
         {
-            List<GriefBlock> gbs = plugin.getStorageManager().retrieveBlockGrief(field);
+            Queue<GriefBlock> gbs = plugin.getStorageManager().retrieveBlockGrief(field);
 
-            // undo base blocks first
-
-            List<GriefBlock> batch = new LinkedList<GriefBlock>();
-            int delay = 0;
-
-            for (GriefBlock gb : gbs)
-            {
-                if (!isDependentBlock(gb.getTypeId()))
-                {
-                    undoGriefBlock(gb, world);
-
-                    if (batch.size() >= plugin.getSettingsManager().getGriefUndoBatchSize())
-                    {
-                        sendBatch(batch, world, delay);
-
-                        batch = new LinkedList<GriefBlock>();
-                        delay += plugin.getSettingsManager().getGriefUndoBatchDelayTicks();
-                    }
-                }
-            }
-
-            if (!batch.isEmpty())
-            {
-                sendBatch(batch, world, delay);
-
-                batch = new LinkedList<GriefBlock>();
-                delay += plugin.getSettingsManager().getGriefUndoBatchDelayTicks();
-            }
-
-            // undo dependent blocks second
-
-            for (GriefBlock gb : gbs)
-            {
-                if (isDependentBlock(gb.getTypeId()))
-                {
-                    undoGriefBlock(gb, world);
-
-                    if (batch.size() >= plugin.getSettingsManager().getGriefUndoBatchSize())
-                    {
-                        sendBatch(batch, world, delay);
-
-                        batch = new LinkedList<GriefBlock>();
-                        delay += plugin.getSettingsManager().getGriefUndoBatchDelayTicks();
-                    }
-                }
-            }
-
-            if (!batch.isEmpty())
-            {
-                sendBatch(batch, world, delay);
-            }
+            Rollback rollback = new Rollback(gbs, world);
 
             return gbs.size();
         }
@@ -196,24 +162,24 @@ public final class GriefUndoManager
         return 0;
     }
 
-    private void sendBatch(final List<GriefBlock> gbs, final World world, int delay)
+    /**
+     *
+     * @param gb
+     * @param world
+     */
+    public void undoGriefBlock(GriefBlock gb, World world)
     {
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        if (gb == null)
         {
-            @Override
-            public void run()
-            {
-                for (GriefBlock gb : gbs)
-                {
-                    undoGriefBlock(gb, world);
-                }
-            }
-        }, delay);
-    }
+            return;
+        }
 
-    private void undoGriefBlock(GriefBlock gb, World world)
-    {
         Block block = world.getBlockAt(gb.getX(), gb.getY(), gb.getZ());
+
+        if (block == null)
+        {
+            return;
+        }
 
         boolean noConflict = false;
 
@@ -286,19 +252,9 @@ public final class GriefUndoManager
             }
         }, 20L * 60 * plugin.getSettingsManager().getGriefIntervalSeconds(), 20L * 60 * plugin.getSettingsManager().getGriefIntervalSeconds());
     }
-
     /**
      * If the block is dependent on another block to exist
      * @param type
      * @return
      */
-    public boolean isDependentBlock(int type)
-    {
-        if (type == 26 || type == 27 || type == 28 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 85 || type == 96)
-        {
-            return true;
-        }
-
-        return false;
-    }
 }

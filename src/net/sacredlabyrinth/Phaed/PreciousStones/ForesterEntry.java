@@ -17,7 +17,7 @@ public class ForesterEntry
     /**
      *
      * @param field
-     * @param count
+     * @param playerName
      */
     public ForesterEntry(Field field, String playerName)
     {

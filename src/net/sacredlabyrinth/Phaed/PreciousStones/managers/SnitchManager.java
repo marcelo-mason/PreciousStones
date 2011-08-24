@@ -26,7 +26,6 @@ public class SnitchManager
 
     /**
      *
-     * @param plugin
      */
     public SnitchManager()
     {

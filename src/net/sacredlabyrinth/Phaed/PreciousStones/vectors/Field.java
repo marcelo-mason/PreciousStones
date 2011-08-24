@@ -21,7 +21,7 @@ import org.bukkit.Location;
  * A field object
  * @author phaed
  */
-public class Field extends AbstractVec
+public class Field extends AbstractVec implements Comparable<Field>
 {
     private FieldSettings settings;
     private int radius;
@@ -48,6 +48,7 @@ public class Field extends AbstractVec
      * @param typeId
      * @param owner
      * @param name
+     * @param lastUsed
      */
     public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name, long lastUsed)
     {
@@ -540,7 +541,7 @@ public class Field extends AbstractVec
 
     /**
      * ADd a grief block to the collection
-     * @param block
+     * @param gb
      */
     public void addGriefBlock(GriefBlock gb)
     {
@@ -644,5 +645,38 @@ public class Field extends AbstractVec
     public void clearDirty()
     {
         dirty.clear();
+    }
+
+    /**
+     * Returns the distance between this field and a location
+     * @param loc
+     * @return
+     */
+    public double distance(Location loc)
+    {
+        return Math.sqrt(Math.pow(loc.getBlockX() - getX(), 2.0D) + Math.pow(loc.getBlockY() - getY(), 2.0D) + Math.pow(loc.getBlockZ() - getZ(), 2.0D));
+    }
+
+    @Override
+    public int compareTo(Field field) throws ClassCastException
+    {
+        int c = this.getX() - field.getX();
+
+        if (c == 0)
+        {
+            c = this.getZ() - field.getZ();
+        }
+
+        if (c == 0)
+        {
+            c = this.getY() - field.getY();
+        }
+
+        if (c == 0)
+        {
+            this.getWorld().compareTo(field.getWorld());
+        }
+
+        return c;
     }
 }

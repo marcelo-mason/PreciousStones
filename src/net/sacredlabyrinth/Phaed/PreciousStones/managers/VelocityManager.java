@@ -23,7 +23,6 @@ public class VelocityManager
 
     /**
      *
-     * @param plugin
      */
     public VelocityManager()
     {
@@ -32,7 +31,7 @@ public class VelocityManager
 
     /**
      *
-     * @param player
+     * @param entity
      * @param field
      */
     public void launchPlayer(final Entity entity, final Field field)
@@ -106,7 +105,7 @@ public class VelocityManager
 
     /**
      *
-     * @param player
+     * @param entity
      * @param field
      */
     public void shootPlayer(final Entity entity, Field field)

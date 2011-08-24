@@ -19,7 +19,6 @@ public final class SimpleClansManager
 
     /**
      *
-     * @param plugin
      */
     public SimpleClansManager()
     {
@@ -73,7 +72,7 @@ public final class SimpleClansManager
 
         if (clan != null && rivalClan != null)
         {
-            simpleClans.getClanManager().audioAnnounce("PreciousStones", clan, Helper.capitalize(rivalName) + " of rival clan " + Helper.stripColors(rivalClan.getColorTag()) + " has entered one of " + Helper.stripColors(clan.getColorTag()) + "'s bases [" + field.getX() + " " + field.getY() + " " + field.getZ() + " " + field.getWorld() + "]");
+            simpleClans.getClanManager().audioAnnounce("PreciousStones", clan, Helper.capitalize(rivalName) + " of rival clan " + Helper.stripColors(rivalClan.getColorTag()) + " has entered one of " + Helper.posessive(Helper.stripColors(clan.getColorTag())) + " bases [" + field.getX() + " " + field.getY() + " " + field.getZ() + " " + field.getWorld() + "]");
         }
     }
 
@@ -141,6 +140,32 @@ public final class SimpleClansManager
         if (clan1 != null && clan2 != null)
         {
             if (clan1.equals(clan2))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a player is in a clan
+     * @param playerName
+     * @param clanName
+     * @return
+     */
+    public boolean isInClan(String playerName, String clanName)
+    {
+        if (simpleClans == null)
+        {
+            return false;
+        }
+
+        Clan clan = simpleClans.getClanManager().getClanByPlayerName(playerName);
+
+        if (clan != null)
+        {
+            if (clan.getTag().equals(clanName))
             {
                 return true;
             }

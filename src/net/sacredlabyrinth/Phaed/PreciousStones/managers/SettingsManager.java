@@ -31,8 +31,6 @@ public final class SettingsManager
     private int saveFrequency;
     private List<Integer> griefUndoBlackList;
     private int griefIntervalSeconds;
-    private int griefUndoBatchSize;
-    private int griefUndoBatchDelayTicks;
     private List<Integer> foresterFertileBlocks;
     private int foresterInterval;
     private int foresterTrees;
@@ -41,8 +39,6 @@ public final class SettingsManager
     private int visualizeMarkChunkRadius;
     private int visualizeBlock;
     private int visualizeSeconds;
-    private int visualizeBatchSize;
-    private int visualizeBatchDelayTicks;
     private boolean visualizeEndOnMove;
     private boolean debug;
     private boolean debugdb;
@@ -115,7 +111,6 @@ public final class SettingsManager
 
     /**
      *
-     * @param plugin
      */
     public SettingsManager()
     {
@@ -207,15 +202,11 @@ public final class SettingsManager
         visualizeAdminChunkRadius = config.getInt("visualization.admin-chunk-radius", 10);
         visualizeMarkBlock = config.getInt("visualization.mark-block-type", 20);
         visualizeMarkChunkRadius = config.getInt("visualization.mark-chunk-radius", 10);
-        visualizeBatchSize = config.getInt("visualization.batch-size", 1000);
-        visualizeBatchDelayTicks = config.getInt("visualization.batch-delay-ticks", 10);
         foresterInterval = config.getInt("forester.interval-seconds", 1);
         foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
         foresterTrees = config.getInt("forester.trees", 60);
         griefIntervalSeconds = config.getInt("grief-undo.interval-seconds", 300);
         griefUndoBlackList = config.getIntList("grief-undo.black-list", blacklist);
-        griefUndoBatchSize = config.getInt("grief-undo.batch-size", 1000);
-        griefUndoBatchDelayTicks = config.getInt("grief-undo.batch-delay-ticks", 10);
         useMysql = config.getBoolean("mysql.enable", false);
         host = config.getString("mysql.host", "localhost");
         database = config.getString("mysql.database", "minecraft");
@@ -227,6 +218,9 @@ public final class SettingsManager
         save();
     }
 
+    /**
+     *
+     */
     public void save()
     {
         Configuration config = plugin.getConfiguration();
@@ -291,14 +285,10 @@ public final class SettingsManager
         config.setProperty("visualization.admin-chunk-radius", getVisualizeAdminChunkRadius());
         config.setProperty("visualization.mark-block-type", getVisualizeMarkBlock());
         config.setProperty("visualization.mark-chunk-radius", getVisualizeMarkChunkRadius());
-        config.setProperty("visualization.batch-size", getVisualizeBatchSize());
-        config.setProperty("visualization.batch-delay-ticks", getVisualizeBatchDelayTicks());
         config.setProperty("forester.interval-seconds", getForesterInterval());
         config.setProperty("forester.fertile-blocks", getForesterFertileBlocks());
         config.setProperty("grief-undo.interval-seconds", getGriefIntervalSeconds());
         config.setProperty("grief-undo.black-list", getGriefUndoBlackList());
-        config.setProperty("grief-undo.batch-size", getGriefUndoBatchSize());
-        config.setProperty("grief-undo.batch-delay-ticks", getGriefUndoBatchDelayTicks());
         config.setProperty("mysql.enable", isUseMysql());
         config.setProperty("mysql.host", getHost());
         config.setProperty("mysql.database", getDatabase());
@@ -418,7 +408,7 @@ public final class SettingsManager
 
     /**
      * Check if a world is blacklisted
-     * @param placedblock
+     * @param world
      * @return
      */
     public boolean isBlacklistedWorld(World world)
@@ -428,7 +418,7 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the unprotectable types
-     * @param placedblock
+     * @param type
      * @return
      */
     public boolean isUnprotectableType(int type)
@@ -438,7 +428,7 @@ public final class SettingsManager
 
     /**
      * Check if the id is one of forrester fertile types
-     * @param block
+     * @param id
      * @return
      */
     public boolean isFertileType(int id)
@@ -448,7 +438,7 @@ public final class SettingsManager
 
     /**
      * Check if the id is one of grief undo blacklisted types
-     * @param block
+     * @param id
      * @return
      */
     public boolean isGriefUndoBlackListType(int id)
@@ -458,7 +448,7 @@ public final class SettingsManager
 
     /**
      * Check if a type is a see through block
-     * @param block
+     * @param type
      * @return
      */
     public boolean isThroughType(int type)
@@ -628,7 +618,9 @@ public final class SettingsManager
      */
     public HashMap<Integer, FieldSettings> getFieldSettings()
     {
-        return fieldDefinitions;
+        HashMap<Integer, FieldSettings> fs = new HashMap<Integer, FieldSettings>();
+        fs.putAll(fieldDefinitions);
+        return fs;
     }
 
     /**
@@ -696,22 +688,6 @@ public final class SettingsManager
     }
 
     /**
-     * @return the griefUndoBatchSize
-     */
-    public int getGriefUndoBatchSize()
-    {
-        return griefUndoBatchSize;
-    }
-
-    /**
-     * @return the griefUndoBatchDelayTicks
-     */
-    public int getGriefUndoBatchDelayTicks()
-    {
-        return griefUndoBatchDelayTicks;
-    }
-
-    /**
      * @return the foresterFertileBlocks
      */
     public List<Integer> getForesterFertileBlocks()
@@ -773,22 +749,6 @@ public final class SettingsManager
     public int getVisualizeSeconds()
     {
         return visualizeSeconds;
-    }
-
-    /**
-     * @return the visualizeBatchSize
-     */
-    public int getVisualizeBatchSize()
-    {
-        return visualizeBatchSize;
-    }
-
-    /**
-     * @return the visualizeBatchDelayTicks
-     */
-    public int getVisualizeBatchDelayTicks()
-    {
-        return visualizeBatchDelayTicks;
     }
 
     /**

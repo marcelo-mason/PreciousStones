@@ -6,7 +6,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
+/**
+ *
+ * @author cc_madelg
+ */
 public class SQLiteCore implements DBCore
 {
     private Logger log;
@@ -15,11 +20,17 @@ public class SQLiteCore implements DBCore
     private String dbName;
     private File file;
 
-    public SQLiteCore(Logger log, String dbName, String dbLocation)
+    /**
+     *
+     * @param log
+     * @param dbName
+     * @param dbLocation
+     */
+    public SQLiteCore(String dbName, String dbLocation)
     {
-        this.log = log;
         this.dbName = dbName;
         this.dbLocation = dbLocation;
+        this.log = PreciousStones.getLogger();
 
         initialize();
     }
@@ -59,6 +70,9 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * @return connection
+     */
     @Override
     public Connection getConnection()
     {
@@ -70,12 +84,18 @@ public class SQLiteCore implements DBCore
         return connection;
     }
 
+    /**
+     * @return whether connection can be established
+     */
     @Override
     public Boolean checkConnection()
     {
         return getConnection() != null;
     }
 
+    /**
+     * Close connection
+     */
     @Override
     public void close()
     {
@@ -92,6 +112,11 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Execute a select statement
+     * @param query
+     * @return
+     */
     @Override
     public ResultSet select(String query)
     {
@@ -108,6 +133,10 @@ public class SQLiteCore implements DBCore
         return null;
     }
 
+    /**
+     * Execute an insert statement
+     * @param query
+     */
     @Override
     public void insert(String query)
     {
@@ -124,6 +153,10 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Execute an update statement
+     * @param query
+     */
     @Override
     public void update(String query)
     {
@@ -140,6 +173,10 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Execute a delete statement
+     * @param query
+     */
     @Override
     public void delete(String query)
     {
@@ -156,6 +193,11 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Execute a statement
+     * @param query
+     * @return
+     */
     @Override
     public Boolean execute(String query)
     {
@@ -171,10 +213,15 @@ public class SQLiteCore implements DBCore
         }
     }
 
+    /**
+     * Check whether a table exists
+     * @param table
+     * @return
+     */
     @Override
     public Boolean existsTable(String table)
     {
-       try
+        try
         {
             ResultSet tables = getConnection().getMetaData().getTables(null, null, table, null);
             return tables.next();

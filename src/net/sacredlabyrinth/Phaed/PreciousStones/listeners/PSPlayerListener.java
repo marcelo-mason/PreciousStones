@@ -41,7 +41,6 @@ public class PSPlayerListener extends PlayerListener
 
     /**
      *
-     * @param plugin
      */
     public PSPlayerListener()
     {
@@ -402,6 +401,10 @@ public class PSPlayerListener extends PlayerListener
         }
     }
 
+    /**
+     *
+     * @param event
+     */
     @Override
     public void onPlayerBucketFill(PlayerBucketFillEvent event)
     {

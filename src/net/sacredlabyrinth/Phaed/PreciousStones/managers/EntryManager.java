@@ -33,7 +33,6 @@ public final class EntryManager
 
     /**
      *
-     * @param plugin
      */
     public EntryManager()
     {
@@ -56,88 +55,88 @@ public final class EntryManager
 
                 processing = true;
 
-                synchronized (entries)
+                HashMap<String, EntryFields> e = getEntries();
+
+                for (String playername : e.keySet())
                 {
-                    for (String playername : entries.keySet())
+                    EntryFields ef = e.get(playername);
+                    List<Field> fields = ef.getFields();
+
+                    for (Field field : fields)
                     {
-                        EntryFields ef = entries.get(playername);
-                        List<Field> fields = ef.getFields();
+                        FieldSettings fs = field.getSettings();
 
-                        for (Field field : fields)
+                        Player player = Helper.matchSinglePlayer(playername);
+
+                        if (player == null)
                         {
-                            FieldSettings fs = field.getSettings();
+                            continue;
+                        }
 
-                            Player player = Helper.matchSinglePlayer(playername);
-
-                            if (player == null)
+                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.giveair"))
+                        {
+                            if (fs.hasFlag(FieldFlag.GIVE_AIR))
                             {
-                                continue;
-                            }
-
-                            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.giveair"))
-                            {
-                                if (fs.hasFlag(FieldFlag.GIVE_AIR))
+                                if (player.getRemainingAir() < 300)
                                 {
-                                    if (player.getRemainingAir() < 300)
-                                    {
-                                        player.setRemainingAir(600);
-                                        plugin.getCommunicationManager().showGiveAir(player);
-                                        continue;
-                                    }
+                                    player.setRemainingAir(600);
+                                    plugin.getCommunicationManager().showGiveAir(player);
+                                    continue;
+                                }
+                            }
+                        }
+
+                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.heal"))
+                        {
+                            if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
+                            {
+                                if (player.getHealth() < 20)
+                                {
+                                    player.setHealth(20);
+                                    plugin.getCommunicationManager().showInstantHeal(player);
+                                    continue;
                                 }
                             }
 
-                            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.heal"))
+                            if (fs.hasFlag(FieldFlag.SLOW_HEAL))
                             {
-                                if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
+                                if (player.getHealth() < 20)
                                 {
-                                    if (player.getHealth() < 20)
-                                    {
-                                        player.setHealth(20);
-                                        plugin.getCommunicationManager().showInstantHeal(player);
-                                        continue;
-                                    }
+                                    player.setHealth(healthCheck(player.getHealth() + 1));
+                                    plugin.getCommunicationManager().showSlowHeal(player);
+                                    continue;
                                 }
 
-                                if (fs.hasFlag(FieldFlag.SLOW_HEAL))
-                                {
-                                    if (player.getHealth() < 20)
-                                    {
-                                        player.setHealth(healthCheck(player.getHealth() + 1));
-                                        plugin.getCommunicationManager().showSlowHeal(player);
-                                        continue;
-                                    }
-
-                                }
                             }
+                        }
 
-                            if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.damage"))
+                        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.damage"))
+                        {
+                            if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
                             {
-                                if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
+                                if (!plugin.getForceFieldManager().isAllowed(field, playername))
                                 {
-                                    if (!plugin.getForceFieldManager().isAllowed(field, playername))
+                                    if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
                                     {
-                                        if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
+                                        if (player.getHealth() > 0)
                                         {
-                                            if (player.getHealth() > 0)
-                                            {
-                                                player.setHealth(healthCheck(player.getHealth() - 1));
-                                                plugin.getCommunicationManager().showSlowDamage(player);
-                                                continue;
-                                            }
+                                            player.setHealth(healthCheck(player.getHealth() - 1));
+                                            plugin.getCommunicationManager().showSlowDamage(player);
+                                            continue;
                                         }
+                                    }
 
-                                        if (fs.hasFlag(FieldFlag.FAST_DAMAGE))
+                                    if (fs.hasFlag(FieldFlag.FAST_DAMAGE))
+                                    {
+                                        if (player.getHealth() > 0)
                                         {
-                                            if (player.getHealth() > 0)
-                                            {
-                                                player.setHealth(healthCheck(player.getHealth() - 4));
-                                                plugin.getCommunicationManager().showFastDamage(player);
-                                                continue;
-                                            }
+                                            player.setHealth(healthCheck(player.getHealth() - 4));
+                                            plugin.getCommunicationManager().showFastDamage(player);
+                                            continue;
                                         }
                                     }
                                 }
+
                             }
                         }
                     }
@@ -402,7 +401,7 @@ public final class EntryManager
 
     /**
      * Returns players that are standing on Redstone triggerable fields
-     * @param player
+     * @param block
      * @return
      */
     public Map<String, Field> getTriggerableEntryPlayers(Block block)
@@ -440,6 +439,7 @@ public final class EntryManager
 
     /**
      * Whether the redstone source powers the field
+     * @param field
      * @param block
      * @return confirmation
      */
@@ -478,5 +478,18 @@ public final class EntryManager
         }
 
         return false;
+    }
+
+    /**
+     * @return the entries
+     */
+    public HashMap<String, EntryFields> getEntries()
+    {
+        HashMap<String, EntryFields> e = new HashMap<String, EntryFields>();
+        synchronized (entries)
+        {
+            e.putAll(entries);
+        }
+        return e;
     }
 }

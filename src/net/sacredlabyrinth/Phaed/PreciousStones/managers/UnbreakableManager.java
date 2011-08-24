@@ -26,7 +26,6 @@ public final class UnbreakableManager
 
     /**
      *
-     * @param plugin all unbreakables from the database
      */
     public UnbreakableManager()
     {
@@ -53,7 +52,7 @@ public final class UnbreakableManager
         {
             return false;
         }
-        
+
         // deny if world is blacklisted
 
         if (plugin.getSettingsManager().isBlacklistedWorld(unbreakableblock.getWorld()))
@@ -229,7 +228,7 @@ public final class UnbreakableManager
 
     /**
      * Clean up orphan unbreakables
-     * @param worldName the world name
+     * @param world
      * @return
      */
     public int cleanOrphans(World world)
@@ -291,7 +290,7 @@ public final class UnbreakableManager
 
     /**
      * Revert orphan unbreakables
-     * @param worldName the world name
+     * @param world
      * @return
      */
     public int revertOrphans(World world)

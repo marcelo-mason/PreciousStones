@@ -13,6 +13,15 @@ public class GriefBlock extends AbstractVec
     private byte data;
     private String signText;
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param world
+     * @param typeId
+     * @param data
+     */
     public GriefBlock(int x, int y, int z, String world, int typeId, byte data)
     {
         super(x, y, z, world);
@@ -21,6 +30,12 @@ public class GriefBlock extends AbstractVec
         this.signText = "";
     }
 
+    /**
+     *
+     * @param loc
+     * @param typeId
+     * @param data
+     */
     public GriefBlock(Location loc, int typeId, byte data)
     {
         super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
@@ -29,6 +44,10 @@ public class GriefBlock extends AbstractVec
         this.signText = "";
     }
 
+    /**
+     *
+     * @param block
+     */
     public GriefBlock(Block block)
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());

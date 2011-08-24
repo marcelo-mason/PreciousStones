@@ -27,7 +27,7 @@ public class PlayerData
 
     /**
      * Increment the field count of a specific field
-     * @param title
+     * @param typeid
      */
     public void incrementFieldCount(int typeid)
     {
@@ -43,7 +43,7 @@ public class PlayerData
 
     /**
      * Decrement the field count of a specific field
-     * @param title
+     * @param typeid
      */
     public void decrementFieldCount(int typeid)
     {
@@ -66,7 +66,7 @@ public class PlayerData
 
     /**
      * Get the number of fields the player has placed
-     * @param title
+     * @param typeid
      * @return
      */
     public int getFieldCount(int typeid)

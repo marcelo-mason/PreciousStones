@@ -13,6 +13,10 @@ public class BlockData
     private final byte data;
     private final Location location;
 
+    /**
+     *
+     * @param block
+     */
     public BlockData(Block block)
     {
         this.typeId = block.getTypeId();

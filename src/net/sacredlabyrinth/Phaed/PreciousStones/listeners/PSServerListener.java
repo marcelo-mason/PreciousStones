@@ -19,7 +19,6 @@ public class PSServerListener extends ServerListener
 
     /**
      *
-     * @param plugin
      */
     public PSServerListener()
     {
@@ -27,6 +26,10 @@ public class PSServerListener extends ServerListener
         Methods = new Methods();
     }
 
+    /**
+     *
+     * @param event
+     */
     @Override
     public void onPluginDisable(PluginDisableEvent event)
     {
@@ -41,6 +44,10 @@ public class PSServerListener extends ServerListener
         }
     }
 
+    /**
+     *
+     * @param event
+     */
     @Override
     public void onPluginEnable(PluginEnableEvent event)
     {

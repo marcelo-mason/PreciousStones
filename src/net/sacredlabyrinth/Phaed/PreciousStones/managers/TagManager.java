@@ -24,7 +24,6 @@ public final class TagManager
 
     /**
      *
-     * @param plugin
      */
     public TagManager()
     {
@@ -32,6 +31,9 @@ public final class TagManager
         untagWorlds();
     }
 
+    /**
+     *
+     */
     public void untagWorlds()
     {
         List<World> worlds = plugin.getServer().getWorlds();
@@ -110,7 +112,7 @@ public final class TagManager
 
         Set<ChunkVec> chunks = new HashSet<ChunkVec>();
 
-        HashMap<ChunkVec, HashMap<Vec, Field>> c = plugin.getForceFieldManager().retrieveFields(worldName);
+        HashMap<ChunkVec, HashMap<Vec, Field>> c = plugin.getForceFieldManager().getFields(worldName);
 
         if (c != null)
         {
