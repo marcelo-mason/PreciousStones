@@ -21,6 +21,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Squid;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -64,8 +65,7 @@ public class PSEntityListener extends EntityListener
             return;
         }
 
-        if (entity instanceof Monster
-                || entity instanceof Slime)
+        if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid)
         {
             if (plugin.getForceFieldManager().getSourceField(loc, FieldFlag.PREVENT_MOB_SPAWN) != null)
             {

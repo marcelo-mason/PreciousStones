@@ -4,7 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
-import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -47,11 +47,11 @@ public final class SimpleClansManager
             return;
         }
 
-        Clan clan = simpleClans.getClanManager().getClanByPlayerName(playerName);
+        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
 
-        if (clan != null)
+        if (cp != null)
         {
-            simpleClans.getClanManager().clanAnnounce("PreciousStones", clan, message);
+            cp.getClan().clanAnnounce("PreciousStones", message);
         }
     }
 
@@ -67,12 +67,12 @@ public final class SimpleClansManager
             return;
         }
 
-        Clan clan = simpleClans.getClanManager().getClanByPlayerName(field.getOwner());
-        Clan rivalClan = simpleClans.getClanManager().getClanByPlayerName(rivalName);
+        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(field.getOwner());
+        ClanPlayer rivalCp = simpleClans.getClanManager().getClanPlayer(rivalName);
 
-        if (clan != null && rivalClan != null)
+        if (cp != null && rivalCp != null)
         {
-            simpleClans.getClanManager().audioAnnounce("PreciousStones", clan, Helper.capitalize(rivalName) + " of rival clan " + Helper.stripColors(rivalClan.getColorTag()) + " has entered one of " + Helper.posessive(Helper.stripColors(clan.getColorTag())) + " bases [" + field.getX() + " " + field.getY() + " " + field.getZ() + " " + field.getWorld() + "]");
+            cp.getClan().audioAnnounce("PreciousStones", Helper.capitalize(rivalName) + " of rival clan " + Helper.stripColors(rivalCp.getClan().getColorTag()) + " has entered one of " + Helper.posessive(Helper.stripColors(cp.getClan().getColorTag())) + " bases [" + field.getX() + " " + field.getY() + " " + field.getZ() + " " + field.getWorld() + "]");
         }
     }
 
@@ -88,11 +88,11 @@ public final class SimpleClansManager
             return;
         }
 
-        Clan clan = simpleClans.getClanManager().getClan(player);
+        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(player);
 
-        if (clan != null)
+        if (cp != null)
         {
-            simpleClans.getClanManager().addBb("[PreciousStones]", clan, message);
+            cp.getClan().addBb("[PreciousStones]", message);
         }
     }
 
@@ -108,11 +108,11 @@ public final class SimpleClansManager
             return false;
         }
 
-        Clan clan = simpleClans.getClanManager().getClanByPlayerName(playerName);
+        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
 
-        if (clan != null)
+        if (cp != null)
         {
-            if (simpleClans.getClanManager().isAnyOnline(clan))
+            if (cp.getClan().isAnyOnline())
             {
                 return true;
             }
@@ -134,12 +134,12 @@ public final class SimpleClansManager
             return false;
         }
 
-        Clan clan1 = simpleClans.getClanManager().getClanByPlayerName(playerOne);
-        Clan clan2 = simpleClans.getClanManager().getClanByPlayerName(playerTwo);
+        ClanPlayer cp1 = simpleClans.getClanManager().getClanPlayer(playerOne);
+        ClanPlayer cp2 = simpleClans.getClanManager().getClanPlayer(playerTwo);
 
-        if (clan1 != null && clan2 != null)
+        if (cp1 != null && cp2 != null)
         {
-            if (clan1.equals(clan2))
+            if (cp1.getClan().equals(cp2.getClan()))
             {
                 return true;
             }
@@ -161,11 +161,11 @@ public final class SimpleClansManager
             return false;
         }
 
-        Clan clan = simpleClans.getClanManager().getClanByPlayerName(playerName);
+        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
 
-        if (clan != null)
+        if (cp != null)
         {
-            if (clan.getTag().equals(clanName))
+            if (cp.getTag().equals(clanName))
             {
                 return true;
             }
@@ -186,11 +186,11 @@ public final class SimpleClansManager
             return null;
         }
 
-        Clan clan = simpleClans.getClanManager().getClanByPlayerName(playerName);
+        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
 
-        if (clan != null)
+        if (cp != null)
         {
-            return clan.getTag();
+            return cp.getTag();
         }
 
         return null;

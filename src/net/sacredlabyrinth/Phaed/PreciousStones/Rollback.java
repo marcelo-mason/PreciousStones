@@ -29,7 +29,7 @@ public class Rollback implements Runnable
         this.world = world;
         this.plugin = PreciousStones.getInstance();
 
-        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 2);
+        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class Rollback implements Runnable
     {
         int i = 0;
 
-        while (i < 200 && !griefQueue.isEmpty())
+        while (i < 100 && !griefQueue.isEmpty())
         {
             GriefBlock gb = griefQueue.poll();
 

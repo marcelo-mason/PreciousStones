@@ -65,13 +65,13 @@ public final class StorageManager
 
             if (core.checkConnection())
             {
-                PreciousStones.log(Level.INFO, "MySQL Connection successful");
+                PreciousStones.log("MySQL Connection successful");
 
                 cleanup();
 
                 if (!core.existsTable("pstone_fields"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_fields");
+                    PreciousStones.log("Creating table: pstone_fields");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_fields_1` (`x`,`y`,`z`,`world`));";
                     core.execute(query);
@@ -79,7 +79,7 @@ public final class StorageManager
 
                 if (!core.existsTable("pstone_unbreakables"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_unbreakables");
+                    PreciousStones.log("Creating table: pstone_unbreakables");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(25) default NULL,  `owner` varchar(16) NOT NULL,  `type_id` int(11) default NULL,  PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_unbreakables_1` (`x`,`y`,`z`,`world`));";
                     core.execute(query);
@@ -87,7 +87,7 @@ public final class StorageManager
 
                 if (!core.existsTable("pstone_grief_undo"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_grief_undo");
+                    PreciousStones.log("Creating table: pstone_grief_undo");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_grief_undo` (  `id` bigint(20) NOT NULL auto_increment,  `date_griefed` datetime NOT NULL, `field_x` int(11) default NULL,  `field_y` int(11) default NULL, `field_z` int(11) default NULL, `world` varchar(25) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL, PRIMARY KEY  (`id`));";
                     core.execute(query);
@@ -95,7 +95,7 @@ public final class StorageManager
 
                 if (!core.existsTable("pstone_players"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_players");
+                    PreciousStones.log("Creating table: pstone_players");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, PRIMARY KEY  (`player_name`));";
                     core.execute(query);
@@ -104,7 +104,7 @@ public final class StorageManager
 
                 if (!core.existsTable("pstone_snitches"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_snitches");
+                    PreciousStones.log("Creating table: pstone_snitches");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_snitches` ( `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL, `name` varchar(16) NOT NULL, `reason` varchar(20) default NULL, `details` varchar(50) default NULL, `count` int(11) default NULL, PRIMARY KEY  (`x`, `y`, `z`, `world`, `name`, `reason`, `details`));";
                     core.execute(query);
@@ -112,7 +112,7 @@ public final class StorageManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, "MySQL Connection failed");
+                PreciousStones.log("MySQL Connection failed");
             }
         }
         else
@@ -121,13 +121,13 @@ public final class StorageManager
 
             if (core.checkConnection())
             {
-                PreciousStones.log(Level.INFO, "SQLite Connection successful");
+                PreciousStones.log("SQLite Connection successful");
 
                 cleanup();
 
                 if (!core.existsTable("pstone_fields"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_fields");
+                    PreciousStones.log("Creating table: pstone_fields");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL,  PRIMARY KEY  (`id`),  UNIQUE (`x`,`y`,`z`,`world`));";
                     core.execute(query);
@@ -135,7 +135,7 @@ public final class StorageManager
 
                 if (!core.existsTable("pstone_unbreakables"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_unbreakables");
+                    PreciousStones.log("Creating table: pstone_unbreakables");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(25) default NULL,  `owner` varchar(16) NOT NULL,  `type_id` int(11) default NULL,  PRIMARY KEY  (`id`),  UNIQUE (`x`,`y`,`z`,`world`));";
                     core.execute(query);
@@ -143,7 +143,7 @@ public final class StorageManager
 
                 if (!core.existsTable("pstone_grief_undo"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_grief_undo");
+                    PreciousStones.log("Creating table: pstone_grief_undo");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_grief_undo` (  `id` bigint(20),  `date_griefed` datetime NOT NULL, `field_x` int(11) default NULL,  `field_y` int(11) default NULL, `field_z` int(11) default NULL, `world` varchar(25) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL, `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL, PRIMARY KEY  (`id`));";
                     core.execute(query);
@@ -151,7 +151,7 @@ public final class StorageManager
 
                 if (!core.existsTable("pstone_players"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_players");
+                    PreciousStones.log("Creating table: pstone_players");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, PRIMARY KEY  (`player_name`));";
                     core.execute(query);
@@ -160,7 +160,7 @@ public final class StorageManager
 
                 if (!core.existsTable("pstone_snitches"))
                 {
-                    PreciousStones.log(Level.INFO, "Creating table: pstone_snitches");
+                    PreciousStones.log("Creating table: pstone_snitches");
 
                     String query = "CREATE TABLE IF NOT EXISTS `pstone_snitches` ( `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL, `name` varchar(16) NOT NULL, `reason` varchar(20) default NULL, `details` varchar(50) default NULL, `count` int(11) default NULL, PRIMARY KEY  (`x`, `y`, `z`, `world`, `name`, `reason`, `details`));";
                     core.execute(query);
@@ -168,7 +168,7 @@ public final class StorageManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, "SQLite Connection failed");
+                PreciousStones.log("SQLite Connection failed");
             }
         }
     }
@@ -243,7 +243,7 @@ public final class StorageManager
 
         if (fields.size() > 0)
         {
-            PreciousStones.log(Level.INFO, "({0}) fields: {1}", world, fields.size());
+            PreciousStones.log("({0}) fields: {1}", world, fields.size());
         }
     }
 
@@ -270,7 +270,7 @@ public final class StorageManager
 
         if (unbreakables.size() > 0)
         {
-            PreciousStones.log(Level.INFO, "({0}) unbreakables: {1}", world, unbreakables.size());
+            PreciousStones.log("({0}) unbreakables: {1}", world, unbreakables.size());
         }
     }
 
@@ -424,7 +424,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log(Level.INFO, "({0}) fields purged: {1}", worldName, purged);
+            PreciousStones.log("({0}) fields purged: {1}", worldName, purged);
         }
         return out;
     }
@@ -491,7 +491,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log(Level.INFO, "({0}) unbreakables purged: {1}", worldName, purged);
+            PreciousStones.log("({0}) unbreakables purged: {1}", worldName, purged);
         }
 
         return out;

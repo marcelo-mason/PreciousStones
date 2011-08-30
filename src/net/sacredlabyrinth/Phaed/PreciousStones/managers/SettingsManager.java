@@ -43,11 +43,11 @@ public final class SettingsManager
     private boolean debug;
     private boolean debugdb;
     private boolean debugsql;
-    private List<LinkedHashMap<String, Object>> forceFieldBlocks;
-    private List<Integer> unbreakableBlocks;
-    private List<Integer> bypassBlocks;
-    private List<Integer> unprotectableBlocks;
-    private List<Integer> toolItems;
+    private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
+    private List<Integer> unbreakableBlocks = new ArrayList<Integer>();
+    private List<Integer> bypassBlocks = new ArrayList<Integer>();
+    private List<Integer> unprotectableBlocks = new ArrayList<Integer>();
+    private List<Integer> toolItems = new ArrayList<Integer>();
     private boolean logFire;
     private boolean logEntry;
     private boolean logPlace;
@@ -213,9 +213,16 @@ public final class SettingsManager
         username = config.getString("mysql.username", "");
         password = config.getString("mysql.password", "");
 
-        addForceFieldStones(getForceFieldBlocks());
+        addForceFieldStones(forceFieldBlocks);
+
+        if (forceFieldBlocks.isEmpty())
+        {
+            PreciousStones.log("NO FORCE-FIELDS CONFIGURED");
+        }
 
         save();
+
+
     }
 
     /**

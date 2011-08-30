@@ -470,7 +470,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (fieldsInArea.size() > 0)
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Marking  " + fieldsInArea.size() + " field blocks...");
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Marking " + fieldsInArea.size() + " field blocks...");
 
                                     for (Field f : fieldsInArea)
                                     {
@@ -502,7 +502,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (count > 0)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Marking  " + count + " field blocks...");
+                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Marking " + count + " field blocks...");
                                         plugin.getVisualizationManager().displayVisualization(player, false);
                                     }
                                     else
@@ -611,7 +611,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     String target = args[0].toString();
 
-                                    if (!plugin.getCommunicationManager().showTargetCounts(player, target))
+                                    if (!plugin.getCommunicationManager().showFieldCounts(player, target))
                                     {
                                         ChatBlock.sendMessage(player, ChatColor.RED + "Player does not have any fields");
                                     }
@@ -680,7 +680,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (plugin.getSettingsManager().isLogBypassDelete())
                                         {
-                                            PreciousStones.log(Level.INFO, "Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " field", "s"), player.getName(), sourcefields.get(0).toString());
+                                            PreciousStones.log("Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " field", "s"), player.getName(), sourcefields.get(0).toString());
                                         }
                                     }
                                     else

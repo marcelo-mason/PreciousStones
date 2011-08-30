@@ -1,5 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,7 +63,7 @@ public class CommunicatonManager
      */
     public void debug(String msg)
     {
-        PreciousStones.log(Level.INFO, "[debug] ***************** {0}", msg);
+        PreciousStones.log("[debug] ***************** {0}", msg);
     }
 
     /**
@@ -141,7 +143,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} placed an unbreakable block [{1}|{2} {3} {4}]", player.getName(), unbreakable.getTypeId(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+                PreciousStones.log(" {0} placed an unbreakable block [{1}|{2} {3} {4}]", player.getName(), unbreakable.getTypeId(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
             }
         }
 
@@ -187,7 +189,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} placed a {1} field [{2}|{3} {4} {5}]", player.getName(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} placed a {1} field [{2}|{3} {4} {5}]", player.getName(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -233,7 +235,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} placed a breakable {1} field [{2}|{3} {4} {5}]", player.getName(), fs.getTitle(), fieldblock.getType(), fieldblock.getX(), fieldblock.getY(), field.getZ());
+                PreciousStones.log(" {0} placed a breakable {1} field [{2}|{3} {4} {5}]", player.getName(), fs.getTitle(), fieldblock.getType(), fieldblock.getX(), fieldblock.getY(), field.getZ());
             }
         }
 
@@ -276,7 +278,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} destroyed his own unbreakable block [{1}|{2} {3} {4}]", player.getName(), unbreakableblock.getType(), unbreakableblock.getX(), unbreakableblock.getY(), unbreakableblock.getZ());
+                PreciousStones.log(" {0} destroyed his own unbreakable block [{1}|{2} {3} {4}]", player.getName(), unbreakableblock.getType(), unbreakableblock.getX(), unbreakableblock.getY(), unbreakableblock.getZ());
             }
         }
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -321,7 +323,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} destroyed his {1} field [{2}|{3} {4} {5}]", player.getName(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} destroyed his {1} field [{2}|{3} {4} {5}]", player.getName(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -366,7 +368,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} destroyed {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} destroyed {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -412,7 +414,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} destroyed {1}'s breakable {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} destroyed {1}'s breakable {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -458,7 +460,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-placed a block inside {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} bypass-placed a block inside {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -504,7 +506,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-placed a block inside {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} bypass-placed a block inside {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -550,7 +552,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-placed an unbreakable block inside {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} bypass-placed an unbreakable block inside {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -596,7 +598,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-destroyed a block {1} in {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} bypass-destroyed a block {1} in {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -641,7 +643,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-destroyed {1}'s unbreakable block [{2}|{3} {4} {5}]", player.getName(), unbreakable.getOwner(), unbreakable.getType(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+                PreciousStones.log(" {0} bypass-destroyed {1}'s unbreakable block [{2}|{3} {4} {5}]", player.getName(), unbreakable.getOwner(), unbreakable.getType(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
             }
         }
 
@@ -687,7 +689,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-destroyed {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} bypass-destroyed {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -732,7 +734,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted entry into {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted entry into {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -783,7 +785,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to light fire in {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted to light fire in {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -829,7 +831,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted place a block {1} in {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted place a block {1} in {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -875,7 +877,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to use a {1} in {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), block.getType().toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted to use a {1} in {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), block.getType().toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -921,7 +923,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted empty a {1} in {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), block.getType().toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted empty a {1} in {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), block.getType().toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -966,7 +968,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to destroy {1}'s unbreakable block [{2}|{3} {4} {5}]", player.getName(), unbreakable.getOwner(), unbreakable.getType(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+                PreciousStones.log(" {0} attempted to destroy {1}'s unbreakable block [{2}|{3} {4} {5}]", player.getName(), unbreakable.getOwner(), unbreakable.getType(), unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
             }
         }
 
@@ -1012,7 +1014,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to destroy {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted to destroy {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -1058,7 +1060,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to destroy a block {1} inside {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(damagedblock)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted to destroy a block {1} inside {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(damagedblock)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -1111,7 +1113,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place an unbreakable block {1} conflicting with {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted to place an unbreakable block {1} conflicting with {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -1170,7 +1172,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place a field {1} conflicting with {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted to place a field {1} conflicting with {2}'s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -1221,7 +1223,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place a piston conflicting with {1}'s unbreakable [{2}|{3} {4} {5}]", player.getName(), ub.getOwner(), ub.getType(), ub.getX(), ub.getY(), ub.getZ());
+                PreciousStones.log(" {0} attempted to place a piston conflicting with {1}'s unbreakable [{2}|{3} {4} {5}]", player.getName(), ub.getOwner(), ub.getType(), ub.getX(), ub.getY(), ub.getZ());
             }
         }
 
@@ -1274,7 +1276,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place a piston conflicting with {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted to place a piston conflicting with {1}'s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -1325,7 +1327,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place an unbreakable conflicting with piston [{1} {2} {3}]", player.getName(), pistonBlock.getX(), pistonBlock.getY(), pistonBlock.getZ());
+                PreciousStones.log(" {0} attempted to place an unbreakable conflicting with piston [{1} {2} {3}]", player.getName(), pistonBlock.getX(), pistonBlock.getY(), pistonBlock.getZ());
             }
         }
 
@@ -1383,7 +1385,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place a field conflicting with piston [{1} {2} {3}]", player.getName(), pistonBlock.getX(), pistonBlock.getY(), pistonBlock.getZ());
+                PreciousStones.log(" {0} attempted to place a field conflicting with piston [{1} {2} {3}]", player.getName(), pistonBlock.getX(), pistonBlock.getY(), pistonBlock.getZ());
             }
         }
 
@@ -1429,7 +1431,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} tried to attack {1} in {2}'s {3} field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} tried to attack {1} in {2}'s {3} field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -1475,7 +1477,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-attack {1} in {2}'s {3} field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} bypass-attack {1} in {2}'s {3} field [{4}|{5} {6} {7}]", attacker.getName(), victim.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -1526,7 +1528,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
+                PreciousStones.log(" {0} attempted to place an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
             }
         }
 
@@ -1570,7 +1572,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
+                PreciousStones.log(" {0} attempted to place an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
             }
         }
 
@@ -1615,7 +1617,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}]", player.getName(), touchingblock.getType(), touchingblock.getX(), touchingblock.getY(), touchingblock.getZ());
+                PreciousStones.log(" {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}]", player.getName(), touchingblock.getType(), touchingblock.getX(), touchingblock.getY(), touchingblock.getZ());
             }
         }
 
@@ -1667,7 +1669,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}]", player.getName(), touchingblock.getType(), touchingblock.getX(), touchingblock.getY(), touchingblock.getZ());
+                PreciousStones.log(" {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}]", player.getName(), touchingblock.getType(), touchingblock.getX(), touchingblock.getY(), touchingblock.getZ());
             }
         }
 
@@ -1713,7 +1715,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}] inside a field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} attempted to protect an unprotectable block [{1}|{2} {3} {4}] inside a field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -1764,7 +1766,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} attempted to place a field [{1}] but an unprotectable was found in the area [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
+                PreciousStones.log(" {0} attempted to place a field [{1}] but an unprotectable was found in the area [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
             }
         }
 
@@ -1808,7 +1810,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
+                PreciousStones.log(" {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
             }
         }
 
@@ -1859,7 +1861,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
+                PreciousStones.log(" {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] near [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), protectionblock.getType(), protectionblock.getX(), protectionblock.getY(), protectionblock.getZ());
             }
         }
 
@@ -1904,7 +1906,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-protected an unprotectable block [{1}|{2} {3} {4}]", player.getName(), placedblock.getType(), placedblock.getX(), placedblock.getY(), placedblock.getZ());
+                PreciousStones.log(" {0} bypass-protected an unprotectable block [{1}|{2} {3} {4}]", player.getName(), placedblock.getType(), placedblock.getX(), placedblock.getY(), placedblock.getZ());
             }
         }
 
@@ -1950,7 +1952,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] inside a field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
+                PreciousStones.log(" {0} bypass-placed an unprotectable block [{1}|{2} {3} {4}] inside a field [{5}|{6} {7} {8}]", player.getName(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ(), field.getType(), field.getX(), field.getY(), field.getZ());
             }
         }
 
@@ -2001,7 +2003,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Level.INFO, " {0} bypass-placed a field [{1}] in an area with an unprotectable block [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
+                PreciousStones.log(" {0} bypass-placed a field [{1}] in an area with an unprotectable block [{2}|{3} {4} {5}]", player.getName(), fieldtypeblock.getType(), unprotectableblock.getType(), unprotectableblock.getX(), unprotectableblock.getY(), unprotectableblock.getZ());
             }
         }
 
@@ -2369,37 +2371,43 @@ public class CommunicatonManager
     }
 
     /**
-     * Shows the field counts to a player
-     * @param player the player seeing the counts
-     * @param playerName
+     * Shows a target's counts to a player
+     * @param player seeing the counts
+     * @param target
      * @return
      */
-    public boolean showFieldCounts(Player player, String playerName)
+    public boolean showFieldCounts(Player player, String target)
     {
         ChatBlock cb = getNewChatBlock(player);
 
-        cb.setAlignment("l", "c");
+        boolean showLimits = player.getName().equalsIgnoreCase(target) && plugin.getSettingsManager().haveLimits();
 
-        if (plugin.getSettingsManager().haveLimits())
+        if (showLimits)
         {
+            cb.setAlignment("l", "c", "c");
             cb.addRow("  " + ChatColor.GRAY + "Field", "Count", "Limit");
         }
         else
         {
+            cb.setAlignment("l", "c");
             cb.addRow("  " + ChatColor.GRAY + "Field", "Count");
         }
 
-        PlayerData data = plugin.getPlayerManager().getPlayerData(playerName);
-        HashMap<Integer, Integer> fieldCount = data.getFieldCount();
+        HashMap<Integer, Integer> fieldCounts;
 
-        if (fieldCount.isEmpty())
+        if (target.contains(":"))
         {
-            return false;
+            fieldCounts = plugin.getForceFieldManager().getFieldCounts(target);
+        }
+        else
+        {
+            PlayerData data = plugin.getPlayerManager().getPlayerData(target);
+            fieldCounts = data.getFieldCount();
         }
 
-        for (Integer type : fieldCount.keySet())
+        for (Integer type : fieldCounts.keySet())
         {
-            int count = fieldCount.get(type);
+            int count = fieldCounts.get(type);
 
             if (count == 0)
             {
@@ -2427,64 +2435,6 @@ public class CommunicatonManager
             {
                 cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), ChatColor.WHITE + " " + count);
             }
-        }
-
-        if (cb.size() > 1)
-        {
-            ChatBlock.sendBlank(player);
-            ChatBlock.saySingle(player, ChatColor.WHITE + Helper.posessive(Helper.capitalize(data.getName())) + " Field Counts" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
-            ChatBlock.sendBlank(player);
-
-            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
-
-            if (more)
-            {
-                ChatBlock.sendBlank(player);
-                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
-            }
-
-            ChatBlock.sendBlank(player);
-        }
-        else
-        {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields found");
-        }
-
-        return true;
-    }
-
-    /**
-     * Shows a target's counts to a player
-     * @param player seeing the counts
-     * @param target
-     * @return
-     */
-    public boolean showTargetCounts(Player player, String target)
-    {
-        ChatBlock cb = getNewChatBlock(player);
-
-        cb.setAlignment("l", "c");
-        cb.addRow("  " + ChatColor.GRAY + "Field", "Count");
-
-        HashMap<Integer, Integer> fieldCounts = plugin.getForceFieldManager().getFieldCounts(target);
-
-        for (Integer type : fieldCounts.keySet())
-        {
-            int count = fieldCounts.get(type);
-
-            if (count == 0)
-            {
-                continue;
-            }
-
-            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(type);
-
-            if (fs == null)
-            {
-                continue;
-            }
-
-            cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), ChatColor.WHITE + " " + count);
         }
 
         String targetName = target;
@@ -2530,8 +2480,6 @@ public class CommunicatonManager
      */
     public void showFieldLocations(Player player, int typeid, String target)
     {
-        PreciousStones.getLogger().info("0");
-
         ChatBlock cb = getNewChatBlock(player);
         boolean admin = !player.getName().equalsIgnoreCase(target);
 
@@ -2546,11 +2494,9 @@ public class CommunicatonManager
             cb.addRow("  " + ChatColor.GRAY + "Field", "Distance", "Coords");
         }
 
-        TreeMap<Field, Integer> distances = new TreeMap<Field, Integer>();
-
         List<Field> fields = plugin.getForceFieldManager().getFields(target, player.getWorld());
+        sortByDistance(fields, player.getLocation());
 
-        PreciousStones.getLogger().info("3");
         for (Field field : fields)
         {
             // if type id supplied, then only show fields of that typeid
@@ -2562,12 +2508,7 @@ public class CommunicatonManager
                     continue;
                 }
             }
-
-            int distance = (int) field.distance(player.getLocation());
-            distances.put(field, distance);
         }
-
-        Helper.sortByValues(distances);
 
         String targetName = target;
 
@@ -2580,9 +2521,9 @@ public class CommunicatonManager
             targetName = "Everyone";
         }
 
-        for (Field field : distances.keySet())
+        for (Field field : fields)
         {
-            int distance = distances.get(field);
+            int distance = (int) field.distance(player.getLocation());
             FieldSettings fs = field.getSettings();
 
             if (admin)
@@ -2615,6 +2556,26 @@ public class CommunicatonManager
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields found");
         }
+    }
+
+    /**
+     * Sort clan players by KDR
+     * @param clans
+     * @return
+     */
+    public void sortByDistance(List<Field> fields, final Location playerLocation)
+    {
+        Collections.sort(fields, new Comparator<Field>()
+        {
+            @Override
+            public int compare(Field f1, Field f2)
+            {
+                Float o1 = Float.valueOf((float) f1.distance(playerLocation));
+                Float o2 = Float.valueOf((float) f2.distance(playerLocation));
+
+                return o1.compareTo(o2);
+            }
+        });
     }
 
     /**

@@ -37,7 +37,7 @@ public class Visualize implements Runnable
         this.player = player;
         this.vis = vis;
 
-        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 2);
+        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Visualize implements Runnable
     {
         int i = 0;
 
-        while (i < 200 && !visualizationQueue.isEmpty())
+        while (i < 100 && !visualizationQueue.isEmpty())
         {
             Location loc = visualizationQueue.poll();
             player.sendBlockChange(loc, material, (byte) 0);

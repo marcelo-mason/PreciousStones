@@ -2,12 +2,8 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -492,27 +488,5 @@ public class Helper
             return true;
         }
         return false;
-    }
-
-    /**
-     * Sorts a Map by its values
-     * @param <K>
-     * @param <V>
-     * @param map
-     * @return
-     */
-    public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> sortByValues(Map<K, V> map)
-    {
-        SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<Map.Entry<K, V>>(
-                new Comparator<Map.Entry<K, V>>()
-                {
-                    @Override
-                    public int compare(Map.Entry<K, V> e1, Map.Entry<K, V> e2)
-                    {
-                        return e1.getValue().compareTo(e2.getValue());
-                    }
-                });
-        sortedEntries.addAll(map.entrySet());
-        return sortedEntries;
     }
 }

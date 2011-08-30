@@ -128,7 +128,7 @@ public final class TagManager
 
         if (chunks.size() > 0)
         {
-            PreciousStones.log(Level.INFO, "untagging {0} chunks", chunks.size());
+            PreciousStones.log("untagging {0} chunks", chunks.size());
         }
 
         World world = plugin.getServer().getWorld(worldName);

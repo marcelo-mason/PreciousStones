@@ -190,40 +190,27 @@ public class PSPlayerListener extends PlayerListener
                         {
                             HashSet<Field> overlapped = plugin.getForceFieldManager().getOverlappedFields(player, field);
 
-                            if (overlapped.size() == 1)
-                            {
-                                int size = plugin.getGriefUndoManager().undoGrief(field);
+                            int size = 0;
 
-                                if (size > 0)
+                            for (Field o : overlapped)
+                            {
+                                if (!field.getSettings().hasFlag(FieldFlag.GRIEF_UNDO_REQUEST))
                                 {
-                                    player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed " + Helper.plural(size, "block", "s"));
+                                    continue;
                                 }
-                                else
-                                {
-                                    showInfo(block, player);
-                                    player.sendMessage(ChatColor.AQUA + "No grief recorded");
-                                    ChatBlock.sendBlank(player);
-                                }
+
+                                size += plugin.getGriefUndoManager().undoGrief(o);
+                            }
+
+                            if (size > 0)
+                            {
+                                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed " + Helper.plural(size, "block", "s") + " on " + overlapped.size() + " overlapped " + Helper.plural(size, "field", "s"));
                             }
                             else
                             {
-                                int size = 0;
-
-                                for (Field o : overlapped)
-                                {
-                                    size += plugin.getGriefUndoManager().undoGrief(o);
-                                }
-
-                                if (size > 0)
-                                {
-                                    player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed " + Helper.plural(size, "block", "s") + " on " + overlapped.size() + " overlapped fields");
-                                }
-                                else
-                                {
-                                    showInfo(block, player);
-                                    player.sendMessage(ChatColor.AQUA + "No grief recorded on any of the " + overlapped.size() + " overlapped fields");
-                                    ChatBlock.sendBlank(player);
-                                }
+                                showInfo(block, player);
+                                player.sendMessage(ChatColor.AQUA + "No grief recorded on any of the " + overlapped.size() + " overlapped fields");
+                                ChatBlock.sendBlank(player);
                             }
                         }
                         else

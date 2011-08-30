@@ -36,7 +36,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.SimpleClansManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.TagManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.VisualizationManager;
-
 /**
  * PreciousStones for Bukkit
  *
@@ -46,10 +45,9 @@ public class PreciousStones extends JavaPlugin
 {
     private static PreciousStones instance;
     private static Logger logger = Logger.getLogger("Minecraft");
-
     private Method Method;
     private SettingsManager settingsManager;
-    private SimpleClansManager simpleTeamsManager;
+    private SimpleClansManager simpleClansManager;
     private CommandManager commandManager;
     private LimitManager limitManager;
     private ForceFieldManager forceFieldManager;
@@ -69,7 +67,6 @@ public class PreciousStones extends JavaPlugin
     private ForesterManager foresterManager;
     private TagManager tagManager;
     private LegacyManager legacyManager;
-
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
@@ -105,6 +102,16 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
+     * Parameterized info logger
+     * @param msg
+     * @param arg
+     */
+    public static void log(String msg, Object... arg)
+    {
+        log(Level.INFO, msg, arg);
+    }
+
+    /**
      *  Runs on plugin enable
      */
     @Override
@@ -115,7 +122,7 @@ public class PreciousStones extends JavaPlugin
         instance = this;
 
         settingsManager = new SettingsManager();
-        simpleTeamsManager = new SimpleClansManager();
+        simpleClansManager = new SimpleClansManager();
         commandManager = new CommandManager();
         limitManager = new LimitManager();
         forceFieldManager = new ForceFieldManager();
@@ -149,7 +156,7 @@ public class PreciousStones extends JavaPlugin
 
     private void displayStatusInfo()
     {
-        log(Level.INFO, "version {0} loaded", getDescription().getVersion());
+        log("version {0} loaded", getDescription().getVersion());
     }
 
     private void registerEvents()
@@ -338,11 +345,11 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
-     * @return the simpleTeamsManager
+     * @return the simpleClansManager
      */
     public SimpleClansManager getSimpleClansManager()
     {
-        return simpleTeamsManager;
+        return simpleClansManager;
     }
 
     /**

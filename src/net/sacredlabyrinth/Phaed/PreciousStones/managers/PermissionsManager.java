@@ -8,6 +8,7 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 import com.nijiko.permissions.PermissionHandler;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import java.util.LinkedList;
+import java.util.logging.Level;
 import org.bukkit.World;
 
 import org.bukkit.plugin.Plugin;
@@ -29,8 +30,10 @@ public final class PermissionsManager
     public PermissionsManager()
     {
         plugin = PreciousStones.getInstance();
-        startPermissionsBukkit();
-        startPermissions();
+        detectGroupManager();
+        detectPermissionsBukkit();
+        detectPermissions();
+
     }
 
     /**
@@ -134,7 +137,7 @@ public final class PermissionsManager
         return groups;
     }
 
-    private void startPermissions()
+    private void detectPermissions()
     {
         if (handler == null)
         {
@@ -147,7 +150,7 @@ public final class PermissionsManager
         }
     }
 
-    private void startPermissionsBukkit()
+    private void detectPermissionsBukkit()
     {
         if (handler2 == null)
         {
@@ -157,6 +160,17 @@ public final class PermissionsManager
             {
                 handler2 = ((PermissionsPlugin) test);
             }
+        }
+    }
+
+    private void detectGroupManager()
+    {
+        Plugin test = plugin.getServer().getPluginManager().getPlugin("GroupManager");
+
+        if (test != null)
+        {
+            PreciousStones.log(Level.SEVERE, "PreciousStones does not support GroupManager");
+            plugin.getPluginLoader().disablePlugin(plugin);
         }
     }
 }

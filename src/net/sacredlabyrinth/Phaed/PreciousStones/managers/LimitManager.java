@@ -46,6 +46,11 @@ public class LimitManager
         int limit = getLimit(player, fs);
         int count = plugin.getPlayerManager().getPlayerData(player.getName()).getFieldCount(fs.getTypeId());
 
+        if (limit == -1)
+        {
+            return false;
+        }
+
         if (limit == 0)
         {
             ChatBlock.sendMessage(player, ChatColor.RED + "You cannot place any " + fs.getTitle());
@@ -57,7 +62,6 @@ public class LimitManager
             ChatBlock.sendMessage(player, ChatColor.RED + "You have reached the " + fs.getTitle() + " limit of " + limit);
             return true;
         }
-
 
         return false;
     }

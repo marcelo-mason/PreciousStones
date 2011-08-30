@@ -56,7 +56,7 @@ public class PSServerListener extends ServerListener
             if (Methods.setMethod(event.getPlugin()))
             {
                 plugin.setMethod(Methods.getMethod());
-                PreciousStones.log(Level.INFO, "Payment method: {0} v{1}", plugin.getMethod().getName(), plugin.getMethod().getVersion());
+                PreciousStones.log("Payment method: {0} v{1}", plugin.getMethod().getName(), plugin.getMethod().getVersion());
             }
         }
     }

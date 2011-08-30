@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.logging.Level;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 
 import org.bukkit.entity.Player;
@@ -94,7 +93,7 @@ public final class ForceFieldManager
 
         if (!plugin.getPermissionsManager().hasPermission(owner, "preciousstones.bypass.purchase"))
         {
-            if (fs.getPrice() != 0 && !plugin.getForceFieldManager().purchase(owner, fs.getPrice()))
+            if (fs.getPrice() != 0 && !purchase(owner, fs.getPrice()))
             {
                 return false;
             }
@@ -102,6 +101,13 @@ public final class ForceFieldManager
 
         Field field = new Field(fieldblock, fs.getRadius(), fs.getHeight(), fs.hasFlag(FieldFlag.NO_OWNER) ? "Server" : owner.getName());
         field.setSettings(fs);
+
+        String clan = plugin.getSimpleClansManager().getClan(owner.getName());
+
+        if (clan != null)
+        {
+            field.addAllowed("c:" + clan);
+        }
 
         // add to database (skip foresters and activate them)
 
@@ -435,7 +441,7 @@ public final class ForceFieldManager
 
         if (cleanedCount != 0)
         {
-            PreciousStones.log(Level.INFO, "({0}) orphan-fields: {1}", world.getName(), cleanedCount);
+            PreciousStones.log("({0}) orphan-fields: {1}", world.getName(), cleanedCount);
         }
         return cleanedCount;
     }
@@ -755,7 +761,7 @@ public final class ForceFieldManager
     }
 
     /**
-     * Returns a list of players who are inside he overlapped fields
+     * Returns a list of players who are inside the overlapped fields
      * @param player
      * @param field
      * @return list of player names
@@ -1296,7 +1302,7 @@ public final class ForceFieldManager
 
         while (newlyfound.size() > 0)
         {
-            newlyfound = getIntersecting(player, total, field.getTypeId(), true);
+            newlyfound = getIntersecting(player, total, true);
 
             if (newlyfound.isEmpty())
             {
@@ -1327,7 +1333,7 @@ public final class ForceFieldManager
 
         while (newlyfound.size() > 0)
         {
-            newlyfound = getIntersecting(player, total, field.getTypeId(), false);
+            newlyfound = getIntersecting(player, total, false);
 
             if (newlyfound.isEmpty())
             {
@@ -1350,7 +1356,7 @@ public final class ForceFieldManager
      * @param onlyallowed
      * @return the fields
      */
-    public HashSet<Field> getIntersecting(Player player, HashSet<Field> total, int fieldType, boolean onlyallowed)
+    public HashSet<Field> getIntersecting(Player player, HashSet<Field> total, boolean onlyallowed)
     {
         HashSet<Field> newlyfound = new HashSet<Field>();
         HashSet<Field> near = new HashSet<Field>();
@@ -1362,11 +1368,6 @@ public final class ForceFieldManager
 
         for (Field nearfield : near)
         {
-            if (nearfield.getTypeId() != fieldType)
-            {
-                continue;
-            }
-
             if (total.contains(nearfield))
             {
                 continue;
