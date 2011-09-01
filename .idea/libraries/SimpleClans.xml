@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="SimpleClans">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../SimpleClans/out/artifacts/SimpleClans_jar" />
+      <root url="file://$PROJECT_DIR$/../SimpleClans/out/artifacts/SimpleClans_jar" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../SimpleClans/out/artifacts/SimpleClans_jar" recursive="false" />
+  </library>
+</component>

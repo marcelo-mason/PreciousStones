@@ -40,7 +40,6 @@ public class Visualize implements Runnable
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
     }
 
-    @Override
     public void run()
     {
         int i = 0;
@@ -60,7 +59,6 @@ public class Visualize implements Runnable
             {
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                 {
-                    @Override
                     public void run()
                     {
                         vis.setRunning(false);

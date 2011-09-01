@@ -1,21 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.DirtyFieldReason;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import org.bukkit.block.Block;
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import org.bukkit.Location;
+import java.util.*;
 
 /**
  * A field object
@@ -657,7 +648,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         return Math.sqrt(Math.pow(loc.getBlockX() - getX(), 2.0D) + Math.pow(loc.getBlockY() - getY(), 2.0D) + Math.pow(loc.getBlockZ() - getZ(), 2.0D));
     }
 
-    @Override
     public int compareTo(Field field) throws ClassCastException
     {
         int c = this.getX() - field.getX();

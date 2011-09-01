@@ -1,11 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.storage;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 /**
  *
@@ -58,7 +59,6 @@ public class MySQLCore implements DBCore
     /**
      * @return connection
      */
-    @Override
     public Connection getConnection()
     {
         if (connection == null)
@@ -72,7 +72,6 @@ public class MySQLCore implements DBCore
     /**
      * @return whether connection can be established
      */
-    @Override
     public Boolean checkConnection()
     {
         return getConnection() != null;
@@ -81,7 +80,6 @@ public class MySQLCore implements DBCore
     /**
      * Close connection
      */
-    @Override
     public void close()
     {
         try
@@ -102,7 +100,6 @@ public class MySQLCore implements DBCore
      * @param query
      * @return
      */
-    @Override
     public ResultSet select(String query)
     {
         try
@@ -121,7 +118,6 @@ public class MySQLCore implements DBCore
      * Execute an insert statement
      * @param query
      */
-    @Override
     public void insert(String query)
     {
         try
@@ -141,7 +137,6 @@ public class MySQLCore implements DBCore
      * Execute an update statement
      * @param query
      */
-    @Override
     public void update(String query)
     {
         try
@@ -161,7 +156,6 @@ public class MySQLCore implements DBCore
      * Execute a delete statement
      * @param query
      */
-    @Override
     public void delete(String query)
     {
         try
@@ -182,7 +176,6 @@ public class MySQLCore implements DBCore
      * @param query
      * @return
      */
-    @Override
     public Boolean execute(String query)
     {
         try
@@ -202,7 +195,6 @@ public class MySQLCore implements DBCore
      * @param table
      * @return
      */
-    @Override
     public Boolean existsTable(String table)
     {
         try

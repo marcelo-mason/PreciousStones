@@ -358,6 +358,14 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("grief-undo-produce-drop") && Helper.isBoolean(map.get("grief-undo-produce-drop")))
+        {
+            if ((Boolean) map.get("grief-undo-produce-drop"))
+            {
+                flags.add(FieldFlag.GRIEF_UNDO_PRODUCE_DROP);
+            }
+        }
+
         if (map.containsKey("entry-alert") && Helper.isBoolean(map.get("entry-alert")))
         {
             if ((Boolean) map.get("entry-alert"))
@@ -459,12 +467,8 @@ public class FieldSettings
      */
     public boolean canUse(int type)
     {
-        if (preventUse == null)
-        {
-            return true;
-        }
+        return preventUse == null || !preventUse.contains(type);
 
-        return !preventUse.contains(type);
     }
 
     /**

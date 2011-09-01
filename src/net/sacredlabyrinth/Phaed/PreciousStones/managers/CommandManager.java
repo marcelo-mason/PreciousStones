@@ -44,7 +44,6 @@ public final class CommandManager implements CommandExecutor
      * @param args
      * @return
      */
-    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
         try

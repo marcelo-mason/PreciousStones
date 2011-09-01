@@ -114,7 +114,6 @@ public class PreciousStones extends JavaPlugin
     /**
      *  Runs on plugin enable
      */
-    @Override
     public void onEnable()
     {
         displayStatusInfo();
@@ -200,7 +199,6 @@ public class PreciousStones extends JavaPlugin
     /**
      *  Runs on plugin disable
      */
-    @Override
     public void onDisable()
     {
         getServer().getScheduler().cancelTasks(this);

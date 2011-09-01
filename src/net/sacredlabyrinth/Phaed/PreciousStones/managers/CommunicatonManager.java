@@ -2566,7 +2566,6 @@ public class CommunicatonManager
     {
         Collections.sort(fields, new Comparator<Field>()
         {
-            @Override
             public int compare(Field f1, Field f2)
             {
                 Float o1 = Float.valueOf((float) f1.distance(playerLocation));

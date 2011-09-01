@@ -1,13 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Material;
@@ -16,6 +12,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -207,7 +208,6 @@ public final class ForesterManager
 
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
         {
-            @Override
             public void run()
             {
                 if (processing)

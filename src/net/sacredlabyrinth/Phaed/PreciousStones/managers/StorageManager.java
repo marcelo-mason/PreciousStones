@@ -995,7 +995,6 @@ public final class StorageManager
     {
         return plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
         {
-            @Override
             public void run()
             {
                 if (plugin.getSettingsManager().isDebugsql())

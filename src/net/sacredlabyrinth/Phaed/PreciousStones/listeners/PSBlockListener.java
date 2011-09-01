@@ -1,32 +1,18 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.*;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.BlockListener;
-import org.bukkit.entity.Player;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import org.bukkit.ChatColor;
-import org.bukkit.block.BlockFace;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
 
 /**
  * PreciousStones block listener
@@ -46,7 +32,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -55,7 +40,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -120,7 +104,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -168,7 +151,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -204,7 +186,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -341,10 +322,14 @@ public class PSBlockListener extends BlockListener
             {
                 if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                 {
-                    event.setCancelled(true);
                     plugin.getGriefUndoManager().addBlock(field, block);
                     plugin.getStorageManager().offerGrief(field);
-                    block.setTypeId(0);
+
+                    if (!field.getSettings().hasFlag(FieldFlag.GRIEF_UNDO_PRODUCE_DROP))
+                    {
+                        block.setTypeId(0);
+                        event.setCancelled(true);
+                    }
                     return;
                 }
             }
@@ -357,7 +342,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -617,7 +601,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -634,7 +617,7 @@ public class PSBlockListener extends BlockListener
         Player player = event.getPlayer();
         ItemStack is = player.getItemInHand();
 
-        if (scopedBlock == null || is == null || player == null)
+        if (scopedBlock == null || is == null)
         {
             return;
         }
@@ -662,7 +645,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -709,7 +691,6 @@ public class PSBlockListener extends BlockListener
     }
 
     /**
-     *
      * @param event
      */
     @Override

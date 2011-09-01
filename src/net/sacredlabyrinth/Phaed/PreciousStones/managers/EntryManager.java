@@ -1,24 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-import org.bukkit.entity.Player;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import net.sacredlabyrinth.Phaed.PreciousStones.EntryFields;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+
+import java.util.*;
 
 /**
  * Handles what happens inside fields
@@ -45,7 +36,6 @@ public final class EntryManager
     {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
         {
-            @Override
             public void run()
             {
                 if (processing)

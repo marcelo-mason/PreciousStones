@@ -1,19 +1,19 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.Rollback;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  *
@@ -233,7 +233,6 @@ public final class GriefUndoManager
     {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
         {
-            @Override
             public void run()
             {
                 if (processing)

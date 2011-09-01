@@ -1,37 +1,23 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import java.util.LinkedList;
-import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.BlockData;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityListener;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Squid;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.block.Block;
+import org.bukkit.entity.*;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * PreciousStones entity listener
@@ -51,7 +37,6 @@ public class PSEntityListener extends EntityListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -83,7 +68,6 @@ public class PSEntityListener extends EntityListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -108,7 +92,6 @@ public class PSEntityListener extends EntityListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -151,6 +134,14 @@ public class PSEntityListener extends EntityListener
 
             if (plugin.getForceFieldManager().isField(block))
             {
+                Field field = plugin.getForceFieldManager().getField(block);
+
+                if (field.getSettings().hasFlag(FieldFlag.BREAKABLE))
+                {
+                    plugin.getForceFieldManager().deleteField(field);
+                    continue;
+                }
+
                 revert.add(new BlockData(block));
                 block.setTypeIdAndData(0, (byte) 0, false);
                 continue;
@@ -210,7 +201,6 @@ public class PSEntityListener extends EntityListener
         {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
-                @Override
                 public void run()
                 {
                     for (BlockData db : tnts)
@@ -234,7 +224,6 @@ public class PSEntityListener extends EntityListener
         {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
-                @Override
                 public void run()
                 {
                     for (BlockData db : revert)
@@ -255,7 +244,6 @@ public class PSEntityListener extends EntityListener
 
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
-                @Override
                 public void run()
                 {
                     // remove all blocks and simulate drops for the blocks not in the field
@@ -287,7 +275,6 @@ public class PSEntityListener extends EntityListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -333,11 +320,11 @@ public class PSEntityListener extends EntityListener
                 Player victim = (Player) sub.getEntity();
                 Player attacker = null;
 
-                if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Player)
+                if (sub.getDamager() instanceof Player)
                 {
                     attacker = (Player) sub.getDamager();
                 }
-                else if (sub.getEntity() instanceof Player && sub.getDamager() instanceof Arrow)
+                else if (sub.getDamager() instanceof Arrow)
                 {
                     Arrow arrow = (Arrow) sub.getDamager();
 
@@ -411,7 +398,6 @@ public class PSEntityListener extends EntityListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -431,7 +417,6 @@ public class PSEntityListener extends EntityListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -472,7 +457,6 @@ public class PSEntityListener extends EntityListener
     }
 
     /**
-     *
      * @param event
      */
     @Override

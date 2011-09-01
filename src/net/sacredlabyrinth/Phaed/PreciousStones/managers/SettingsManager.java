@@ -1,21 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.util.config.Configuration;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import org.bukkit.World;
+import java.util.*;
 
 /**
  *
@@ -52,7 +46,6 @@ public final class SettingsManager
     private boolean logEntry;
     private boolean logPlace;
     private boolean logUse;
-    private boolean logEmpty;
     private boolean logDestroy;
     private boolean logDestroyArea;
     private boolean logUnprotectable;
@@ -61,7 +54,6 @@ public final class SettingsManager
     private boolean logBypassDelete;
     private boolean logBypassPlace;
     private boolean logBypassDestroy;
-    private boolean logBypassUnprotectable;
     private boolean logConflictPlace;
     private boolean notifyPlace;
     private boolean notifyDestroy;
@@ -76,7 +68,6 @@ public final class SettingsManager
     private boolean warnGiveAir;
     private boolean warnPlace;
     private boolean warnUse;
-    private boolean warnEmpty;
     private boolean warnDestroy;
     private boolean warnDestroyArea;
     private boolean warnUnprotectable;
@@ -124,9 +115,9 @@ public final class SettingsManager
     @SuppressWarnings("unchecked")
     public void load()
     {
-        for (int i = 0; i < throughFields.length; i++)
+        for (byte throughField : throughFields)
         {
-            getThroughFieldsSet().add(throughFields[i]);
+            getThroughFieldsSet().add(throughField);
         }
 
         Configuration config = plugin.getConfiguration();
@@ -460,9 +451,9 @@ public final class SettingsManager
      */
     public boolean isThroughType(int type)
     {
-        for (int i = 0; i < throughFields.length; i++)
+        for (byte throughField : throughFields)
         {
-            if (throughFields[i] == type)
+            if (throughField == type)
             {
                 return true;
             }
@@ -473,32 +464,12 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the tool item types
-     * @param block
-     * @return
-     */
-    public boolean isToolItemType(Block block)
-    {
-        return getToolItems().contains(block.getTypeId());
-    }
-
-    /**
-     * Check if a block is one of the tool item types
      * @param typeId
      * @return
      */
     public boolean isToolItemType(int typeId)
     {
         return getToolItems().contains(typeId);
-    }
-
-    /**
-     * Check if a block is one of the tool item types
-     * @param type
-     * @return
-     */
-    public boolean isToolItemType(String type)
-    {
-        return getToolItems().contains(Material.getMaterial(type).getId());
     }
 
     /**
@@ -863,14 +834,6 @@ public final class SettingsManager
     }
 
     /**
-     * @return the logEmpty
-     */
-    public boolean isLogEmpty()
-    {
-        return logEmpty;
-    }
-
-    /**
      * @return the logDestroy
      */
     public boolean isLogDestroy()
@@ -932,14 +895,6 @@ public final class SettingsManager
     public boolean isLogBypassDestroy()
     {
         return logBypassDestroy;
-    }
-
-    /**
-     * @return the logBypassUnprotectable
-     */
-    public boolean isLogBypassUnprotectable()
-    {
-        return logBypassUnprotectable;
     }
 
     /**
@@ -1052,14 +1007,6 @@ public final class SettingsManager
     public boolean isWarnUse()
     {
         return warnUse;
-    }
-
-    /**
-     * @return the warnEmpty
-     */
-    public boolean isWarnEmpty()
-    {
-        return warnEmpty;
     }
 
     /**
@@ -1252,16 +1199,6 @@ public final class SettingsManager
     public String getPassword()
     {
         return password;
-    }
-
-    /**
-     * @return the field definitions
-     */
-    public HashMap<Integer, FieldSettings> getFieldDefinitions()
-    {
-        HashMap<Integer, FieldSettings> fd = new HashMap<Integer, FieldSettings>();
-        fd.putAll(fieldDefinitions);
-        return fd;
     }
 
     /**

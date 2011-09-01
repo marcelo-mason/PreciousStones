@@ -1,16 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.HashMap;
-
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.util.Vector;
+
+import java.util.HashMap;
 
 /**
  *
@@ -83,7 +82,6 @@ public class VelocityManager
                 {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
-                        @Override
                         public void run()
                         {
                             if (vehicle != null)
@@ -150,7 +148,6 @@ public class VelocityManager
                 {
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
-                        @Override
                         public void run()
                         {
                             if (vehicle != null)
@@ -207,7 +204,6 @@ public class VelocityManager
 
         return plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
-            @Override
             public void run()
             {
                 fallDamageImmune.remove(name);

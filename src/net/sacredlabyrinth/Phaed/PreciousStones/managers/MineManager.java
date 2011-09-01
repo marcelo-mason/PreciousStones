@@ -55,7 +55,6 @@ public class MineManager
 
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
-                @Override
                 public void run()
                 {
                     plugin.getForceFieldManager().silentRelease(field);

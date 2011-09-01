@@ -50,7 +50,6 @@ public class LightningManager
 
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
 		{
-                    @Override
 		    public void run()
 		    {
 			Block block = plugin.getForceFieldManager().getBlock(field);
