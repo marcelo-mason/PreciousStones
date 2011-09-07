@@ -1,19 +1,19 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
-
 import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 /**
  *
@@ -84,7 +84,7 @@ public class PSVehicleListener extends VehicleListener
 
             // check all fields hes standing on and teleport him if hes in a prevent-entry field
 
-            List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation());
+            List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ALL);
 
             for (Field field : currentfields)
             {

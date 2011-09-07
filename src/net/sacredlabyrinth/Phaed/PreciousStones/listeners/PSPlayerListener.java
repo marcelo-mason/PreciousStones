@@ -1,34 +1,20 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.ContainerBlock;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.block.ContainerBlock;
-import org.bukkit.block.Block;
-import org.bukkit.Material;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  * PreciousStones player listener
@@ -48,7 +34,6 @@ public class PSPlayerListener extends PlayerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -59,7 +44,6 @@ public class PSPlayerListener extends PlayerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -70,7 +54,6 @@ public class PSPlayerListener extends PlayerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -86,7 +69,6 @@ public class PSPlayerListener extends PlayerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -258,7 +240,6 @@ public class PSPlayerListener extends PlayerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -273,7 +254,6 @@ public class PSPlayerListener extends PlayerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -329,7 +309,7 @@ public class PSPlayerListener extends PlayerListener
 
         // get all the fields the player is currently standing in
 
-        List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation());
+        List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ALL);
 
         // check for prevent-entry fields and teleport him away if hes not allowed in it
 
@@ -389,7 +369,6 @@ public class PSPlayerListener extends PlayerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -430,7 +409,12 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL, FieldFlag.GRIEF_UNDO_REQUEST);
+        field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_REQUEST);
+
+        if (field == null)
+        {
+            field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL);
+        }
 
         if (field != null)
         {
@@ -453,7 +437,6 @@ public class PSPlayerListener extends PlayerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
@@ -495,7 +478,12 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL, FieldFlag.GRIEF_UNDO_REQUEST);
+        field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_REQUEST);
+
+        if (field == null)
+        {
+            field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL);
+        }
 
         if (field != null)
         {

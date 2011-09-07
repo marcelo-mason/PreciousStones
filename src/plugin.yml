@@ -1,13 +1,13 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 5.5.9
+version: 6.0.0
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye]
 commands:
   ps:
     description: All of the PreciousStones commands
     usage: Syntax error, verify the command usage and try again
 permissions:
-  preciousstones.benefit.create.forcefield :
+  preciousstones.benefit.create.forcefield:
     description: Can create forcefield blocks
   preciousstones.benefit.create.unbreakable:
     description: Can create unbreakable blocks

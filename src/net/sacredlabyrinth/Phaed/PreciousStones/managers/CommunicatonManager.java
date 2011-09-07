@@ -1,27 +1,18 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.TreeMap;
-import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import uk.co.oliwali.HawkEye.util.HawkEyeAPI;
+
+import java.util.*;
 
 /**
  *
@@ -2203,7 +2194,7 @@ public class CommunicatonManager
      */
     public void showProtectedLocation(Player player, Block block)
     {
-        List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation());
+        List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
 
         ChatBlock.sendBlank(player);
         ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected: " + ChatColor.GRAY + Helper.toLocationString(block.getLocation()));

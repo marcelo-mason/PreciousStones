@@ -157,7 +157,12 @@ public class PSEntityListener extends EntityListener
 
             // record the blocks that are in undo fields
 
-            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_UNDO_INTERVAL, FieldFlag.GRIEF_UNDO_REQUEST);
+            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_UNDO_REQUEST);
+
+            if (field == null)
+            {
+                field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_UNDO_INTERVAL);
+            }
 
             if (field != null)
             {

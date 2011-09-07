@@ -117,7 +117,7 @@ public final class SettingsManager
     {
         for (byte throughField : throughFields)
         {
-            getThroughFieldsSet().add(throughField);
+            throughFieldsSet.add(throughField);
         }
 
         Configuration config = plugin.getConfiguration();

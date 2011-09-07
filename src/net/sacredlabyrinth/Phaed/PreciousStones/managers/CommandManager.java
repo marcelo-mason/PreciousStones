@@ -110,7 +110,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (args.length >= 1)
                             {
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                 if (field != null)
                                 {
@@ -140,7 +140,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (args.length >= 1)
                             {
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                 if (field != null)
                                 {
@@ -210,7 +210,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (cmd.equals("allowed") && !plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowed"))
                         {
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                             if (field != null)
                             {
@@ -241,7 +241,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (cmd.equals("who") && !plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.who"))
                         {
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                             if (field != null)
                             {
@@ -278,7 +278,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (playerName.length() > 0)
                                 {
-                                    Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                    Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                     if (field != null)
                                     {
@@ -308,7 +308,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 int radius = Integer.parseInt(args[0]);
 
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                 if (field != null)
                                 {
@@ -339,7 +339,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 int height = Integer.parseInt(args[0]);
 
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                 if (field != null)
                                 {
@@ -372,7 +372,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 float velocity = Float.parseFloat(args[0]);
 
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                 if (field != null)
                                 {
@@ -409,7 +409,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 plugin.getVisualizationManager().revertVisualization(player);
 
-                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeAdminChunkRadius());
+                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeAdminChunkRadius(), FieldFlag.ALL);
 
                                 if (fieldsInArea.size() > 0)
                                 {
@@ -427,7 +427,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 plugin.getVisualizationManager().revertVisualization(player);
 
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                 if (field != null)
                                 {
@@ -460,7 +460,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.mark"))
                             {
-                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeMarkChunkRadius());
+                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeMarkChunkRadius(), FieldFlag.ALL);
 
                                 if (fieldsInArea.size() > 0)
                                 {
@@ -480,7 +480,7 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
-                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeMarkChunkRadius());
+                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeMarkChunkRadius(), FieldFlag.ALL);
 
                                 if (fieldsInArea.size() > 0)
                                 {
@@ -516,7 +516,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (args.length == 0)
                             {
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                 if (field != null)
                                 {
@@ -533,7 +533,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (args[0].equals("clear"))
                                 {
-                                    Field field = plugin.getForceFieldManager().getOneAllowedField(block, player);
+                                    Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
                                     if (field != null)
                                     {
@@ -642,8 +642,8 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (cmd.equals("info") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.info"))
                         {
-                            Field pointing = plugin.getForceFieldManager().getOneAllowedField(block, player);
-                            List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation());
+                            Field pointing = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                            List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
 
                             if (pointing != null && !fields.contains(pointing))
                             {
@@ -662,7 +662,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (args.length == 0)
                             {
-                                List<Field> sourcefields = plugin.getForceFieldManager().getSourceFields(block.getLocation());
+                                List<Field> sourcefields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
 
                                 if (sourcefields.size() > 0)
                                 {
@@ -770,7 +770,7 @@ public final class CommandManager implements CommandExecutor
                                     int chunk_radius = Integer.parseInt(args[0]);
 
                                     List<Unbreakable> unbreakables = plugin.getUnbreakableManager().getUnbreakablesInArea(player, chunk_radius);
-                                    List<Field> fields = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), chunk_radius);
+                                    List<Field> fields = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), chunk_radius, FieldFlag.ALL);
 
                                     for (Unbreakable u : unbreakables)
                                     {
