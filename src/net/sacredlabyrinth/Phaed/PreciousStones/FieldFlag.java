@@ -6,6 +6,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
  */
 public enum FieldFlag
 {
+    ALL,
     PREVENT_FIRE,
     PREVENT_PLACE,
     PREVENT_DESTROY,

@@ -332,15 +332,6 @@ public class PSEntityListener extends EntityListener
                     {
                         attacker = (Player) arrow.getShooter();
                     }
-                    else
-                    {
-                        Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_MOB_DAMAGE);
-
-                        if (field != null)
-                        {
-                            event.setCancelled(true);
-                        }
-                    }
                 }
 
                 if (attacker != null)

@@ -1,41 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
 import net.sacredlabyrinth.register.payment.Method;
+import org.bukkit.event.Event;
+import org.bukkit.event.Event.Priority;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSBlockListener;
-import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSEntityListener;
-import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSPlayerListener;
-import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSServerListener;
-import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSWorldListener;
-import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSVehicleListener;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommandManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForceFieldManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.UnbreakableManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.UnprotectableManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.StorageManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.CommunicatonManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.EntryManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.GriefUndoManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.LegacyManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.PlayerManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SnitchManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.MineManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.LightningManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.LimitManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.VelocityManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.SimpleClansManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.TagManager;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.VisualizationManager;
 /**
  * PreciousStones for Bukkit
  *
@@ -49,6 +23,7 @@ public class PreciousStones extends JavaPlugin
     private SettingsManager settingsManager;
     private SimpleClansManager simpleClansManager;
     private CommandManager commandManager;
+    private CacheManager cacheManager;
     private LimitManager limitManager;
     private ForceFieldManager forceFieldManager;
     private UnbreakableManager unbreakableManager;
@@ -65,7 +40,6 @@ public class PreciousStones extends JavaPlugin
     private PermissionsManager permissionsManager;
     private VisualizationManager visualizationManager;
     private ForesterManager foresterManager;
-    private TagManager tagManager;
     private LegacyManager legacyManager;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
@@ -122,6 +96,7 @@ public class PreciousStones extends JavaPlugin
 
         settingsManager = new SettingsManager();
         simpleClansManager = new SimpleClansManager();
+        cacheManager = new CacheManager();
         commandManager = new CommandManager();
         limitManager = new LimitManager();
         forceFieldManager = new ForceFieldManager();
@@ -137,7 +112,6 @@ public class PreciousStones extends JavaPlugin
         permissionsManager = new PermissionsManager();
         visualizationManager = new VisualizationManager();
         foresterManager = new ForesterManager();
-        tagManager = new TagManager();
         griefUndoManager = new GriefUndoManager();
         storageManager = new StorageManager();
         legacyManager = new LegacyManager();
@@ -367,14 +341,6 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
-     * @return the tagManager
-     */
-    public TagManager getTagManager()
-    {
-        return tagManager;
-    }
-
-    /**
      * @return the legacyManager
      */
     public LegacyManager getLegacyManager()
@@ -388,5 +354,10 @@ public class PreciousStones extends JavaPlugin
     public LimitManager getLimitManager()
     {
         return limitManager;
+    }
+
+    public CacheManager getCacheManager()
+    {
+        return cacheManager;
     }
 }

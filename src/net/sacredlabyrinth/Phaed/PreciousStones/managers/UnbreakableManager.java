@@ -1,17 +1,17 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.logging.Level;
-
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import org.bukkit.World;
 
 /**
  * Handles unbreakable blocks
@@ -550,9 +550,5 @@ public final class UnbreakableManager
         // delete unbreakable form database
 
         plugin.getStorageManager().offerUnbreakable(ub, false);
-
-        // untag the chunk
-
-        plugin.getTagManager().untagChunk(ub.toChunkVec());
     }
 }

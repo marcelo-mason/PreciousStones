@@ -1,24 +1,19 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.logging.Level;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-
-import java.util.HashSet;
-import java.util.List;
-import org.bukkit.World;
-
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
+import java.util.HashSet;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  *
@@ -542,7 +537,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (field != null)
                                     {
-                                        boolean cleaned = plugin.getForceFieldManager().cleanSnitchList(player, field);
+                                        boolean cleaned = plugin.getForceFieldManager().cleanSnitchList(field);
 
                                         if (cleaned)
                                         {
@@ -696,7 +691,7 @@ public final class CommandManager implements CommandExecutor
                             }
                             else if (args.length == 1)
                             {
-                                Player badplayer = Helper.matchSinglePlayer(args[1]);
+                                Player badplayer = Helper.matchSinglePlayer(args[0]);
 
                                 if (badplayer != null)
                                 {

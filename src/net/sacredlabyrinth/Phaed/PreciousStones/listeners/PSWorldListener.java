@@ -42,9 +42,6 @@ public class PSWorldListener extends WorldListener
         plugin.getStorageManager().loadWorldFields(world.getName());
         plugin.getStorageManager().loadWorldUnbreakables(world.getName());
 
-        // remove in version 6
-        plugin.getTagManager().untagWorld(world.getName());
-
         if (plugin.getSettingsManager().isDebug())
         {
            dt.logProcessTime();

@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 5.5.8
+version: 5.5.9
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye]
 commands:
   ps:
