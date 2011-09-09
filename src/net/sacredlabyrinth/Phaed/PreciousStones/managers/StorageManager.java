@@ -1,29 +1,23 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
+import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
+import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.SnitchEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
-import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
-import net.sacredlabyrinth.Phaed.PreciousStones.DirtyFieldReason;
-import org.bukkit.block.BlockFace;
 
 /**
  *
@@ -501,7 +495,7 @@ public final class StorageManager
     {
         if (field.isDirty(DirtyFieldReason.GRIEF_BLOCKS))
         {
-            List<GriefBlock> grief = field.getGrief();
+            Queue<GriefBlock> grief = field.getGrief();
 
             for (GriefBlock gb : grief)
             {

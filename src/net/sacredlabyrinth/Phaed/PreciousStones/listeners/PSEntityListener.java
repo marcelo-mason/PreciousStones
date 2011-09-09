@@ -108,6 +108,7 @@ public class PSEntityListener extends EntityListener
         final List<BlockData> nonGriefed = new LinkedList<BlockData>();
         final List<BlockData> revert = new LinkedList<BlockData>();
         final List<BlockData> tnts = new LinkedList<BlockData>();
+        Field rollbackField = null;
 
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getLocation().getWorld()))
         {
@@ -153,6 +154,19 @@ public class PSEntityListener extends EntityListener
             {
                 event.setCancelled(true);
                 break;
+            }
+
+            // capture blocks to roll back in rollback fields
+
+            rollbackField = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ROLLBACK_EXPLOSIONS);
+
+            if (rollbackField != null)
+            {
+                if (block.getTypeId() != 46)
+                {
+                    plugin.getGriefUndoManager().addBlock(rollbackField, block);
+                }
+                continue;
             }
 
             // record the blocks that are in undo fields
@@ -223,6 +237,23 @@ public class PSEntityListener extends EntityListener
             }, 10);
         }
 
+        // revert blocks from rollback fields
+
+        if (rollbackField != null)
+        {
+            final Field finalRollbackField = rollbackField;
+            finalRollbackField.setProgress(true);
+
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            {
+                public void run()
+                {
+                    plugin.getGriefUndoManager().undoDirtyGrief(finalRollbackField);
+                    finalRollbackField.setProgress(false);
+                }
+            }, 1);
+        }
+
         // revert any blocks that need reversion
 
         if (!revert.isEmpty())
@@ -238,7 +269,7 @@ public class PSEntityListener extends EntityListener
                     }
                     revert.clear();
                 }
-            }, 2);
+            }, 1);
         }
 
         // if some blocks were anti-grief then fake the explosion of the rest
@@ -270,12 +301,36 @@ public class PSEntityListener extends EntityListener
                         }
                     }
                 }
-            }, 1);
+            }, 2);
         }
 
         if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @Override
+    public void onItemSpawn(ItemSpawnEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        // capture blocks to roll back in rollback fields
+
+        Field rollbackField = plugin.getForceFieldManager().getSourceField(event.getLocation(), FieldFlag.ROLLBACK_EXPLOSIONS);
+
+        if (rollbackField != null)
+        {
+            if(rollbackField.isProgress())
+            {
+                event.setCancelled(true);
+            }
         }
     }
 

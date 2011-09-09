@@ -3,13 +3,14 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.List;
+
 /**
- *
  * @author phaed
  */
 public final class SimpleClansManager
@@ -28,6 +29,7 @@ public final class SimpleClansManager
 
     /**
      * Whether SimpleClans was loaded
+     *
      * @return
      */
     public boolean hasSimpleClans()
@@ -37,6 +39,7 @@ public final class SimpleClansManager
 
     /**
      * Announce to players clan
+     *
      * @param playerName
      * @param message
      */
@@ -57,6 +60,7 @@ public final class SimpleClansManager
 
     /**
      * Announce to players that a rival is in their base
+     *
      * @param field
      * @param rivalName
      */
@@ -78,6 +82,7 @@ public final class SimpleClansManager
 
     /**
      * Adds a message to the player's clan's BB
+     *
      * @param player
      * @param message
      */
@@ -98,6 +103,7 @@ public final class SimpleClansManager
 
     /**
      * Check whether any of a player's clan members are online
+     *
      * @param playerName
      * @return
      */
@@ -121,8 +127,47 @@ public final class SimpleClansManager
         return false;
     }
 
+    public boolean inWar(Field field, String offenderName)
+    {
+        if (simpleClans == null)
+        {
+            return false;
+        }
+
+        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(offenderName);
+        ClanPlayer cpOwner = simpleClans.getClanManager().getClanPlayer(field.getOwner());
+
+        if (cp != null)
+        {
+            List<String> warringClans = cp.getClan().getWarringClans();
+
+            String ownerClan = "";
+
+            if (cpOwner != null)
+            {
+                ownerClan = cpOwner.getTag();
+            }
+
+            for (String warring : warringClans)
+            {
+                if (ownerClan.equals(warring))
+                {
+                    return true;
+                }
+
+                if (field.isAllowed(warring))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Check if two players are clanmates
+     *
      * @param playerOne
      * @param playerTwo
      * @return
@@ -150,6 +195,7 @@ public final class SimpleClansManager
 
     /**
      * Check if a player is in a clan
+     *
      * @param playerName
      * @param clanName
      * @return
@@ -175,7 +221,6 @@ public final class SimpleClansManager
     }
 
     /**
-     *
      * @param playerName
      * @return
      */

@@ -42,6 +42,7 @@ public final class UnbreakableManager
 
     /**
      * Add stone to the collection
+     *
      * @param unbreakableblock
      * @param owner
      * @return
@@ -74,6 +75,7 @@ public final class UnbreakableManager
 
     /**
      * Add the unbreakable to the collection held in memory
+     *
      * @param ub the unbreakable
      */
     public void addToCollection(Unbreakable ub)
@@ -111,6 +113,7 @@ public final class UnbreakableManager
 
     /**
      * Check whether a chunk has unbreakables
+     *
      * @param cv
      * @return
      */
@@ -135,6 +138,7 @@ public final class UnbreakableManager
 
     /**
      * Retrieve all unbreakables in a chunk
+     *
      * @param cv the chunk vec
      * @return all unbreakables from database that match the chunkvec
      */
@@ -155,6 +159,7 @@ public final class UnbreakableManager
 
     /**
      * Retrieve all chunks in collection
+     *
      * @param world the world you want the unbreakables from
      * @return all the chunks that match the world
      */
@@ -165,6 +170,7 @@ public final class UnbreakableManager
 
     /**
      * Gets the unbreakable from source block
+     *
      * @param block
      * @return the unbreakable
      */
@@ -197,6 +203,7 @@ public final class UnbreakableManager
 
     /**
      * Looks for the block in our unbreakable collection
+     *
      * @param unbreakableblock
      * @return confirmation
      */
@@ -207,6 +214,7 @@ public final class UnbreakableManager
 
     /**
      * Total number of unbreakable stones
+     *
      * @return the count
      */
     public int getCount()
@@ -228,6 +236,7 @@ public final class UnbreakableManager
 
     /**
      * Clean up orphan unbreakables
+     *
      * @param world
      * @return
      */
@@ -243,38 +252,41 @@ public final class UnbreakableManager
         {
             for (HashMap<Vec, Unbreakable> ubs : w.values())
             {
-                for (Unbreakable unbreakable : ubs.values())
+                if (ubs != null)
                 {
-                    // ensure chunk is loaded prior to polling
-
-                    ChunkVec cv = unbreakable.toChunkVec();
-
-                    if (!cv.equals(currentChunk))
+                    for (Unbreakable unbreakable : ubs.values())
                     {
-                        if (!currentChunkLoaded)
+                        // ensure chunk is loaded prior to polling
+
+                        ChunkVec cv = unbreakable.toChunkVec();
+
+                        if (!cv.equals(currentChunk))
                         {
-                            if (currentChunk != null)
+                            if (!currentChunkLoaded)
                             {
-                                world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                                if (currentChunk != null)
+                                {
+                                    world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                                }
                             }
+                            currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                            if (!currentChunkLoaded)
+                            {
+                                world.loadChunk(cv.getX(), cv.getZ());
+                            }
+
+                            currentChunk = cv;
                         }
 
-                        currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+                        int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 
-                        if (!currentChunkLoaded)
+                        if (type != unbreakable.getTypeId())
                         {
-                            world.loadChunk(cv.getX(), cv.getZ());
+                            cleanedCount++;
+                            queueRelease(unbreakable);
                         }
-
-                        currentChunk = cv;
-                    }
-
-                    int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
-
-                    if (type != unbreakable.getTypeId())
-                    {
-                        cleanedCount++;
-                        queueRelease(unbreakable);
+                        PreciousStones.getLogger().info("3");
                     }
                 }
             }
@@ -290,6 +302,7 @@ public final class UnbreakableManager
 
     /**
      * Revert orphan unbreakables
+     *
      * @param world
      * @return
      */
@@ -348,6 +361,7 @@ public final class UnbreakableManager
 
     /**
      * Determine whether a player is the owner of the stone
+     *
      * @param unbreakableblock
      * @param playerName
      * @return confirmation
@@ -365,6 +379,7 @@ public final class UnbreakableManager
 
     /**
      * Return the owner of a stone
+     *
      * @param unbreakableblock
      * @return the owner's name
      */
@@ -381,6 +396,7 @@ public final class UnbreakableManager
 
     /**
      * Returns the unbreakable blocks in the chunk and adjacent chunks
+     *
      * @param vec
      * @param chunkradius
      * @return the unbreakables
@@ -412,6 +428,7 @@ public final class UnbreakableManager
 
     /**
      * Returns the unbreakable blocks in the chunk and adjacent chunks
+     *
      * @param player
      * @param chunkradius
      * @return the unbreakables
@@ -423,6 +440,7 @@ public final class UnbreakableManager
 
     /**
      * If the block is touching a pstone block
+     *
      * @param block
      * @return the block
      */
@@ -462,6 +480,7 @@ public final class UnbreakableManager
 
     /**
      * Deletes all unbreakables belonging to a player
+     *
      * @param playerName the players
      * @return the count of deleted unbreakables
      */
@@ -491,6 +510,7 @@ public final class UnbreakableManager
 
     /**
      * Remove stones from the collection
+     *
      * @param unbreakableblock
      */
     public void release(Block unbreakableblock)
@@ -501,6 +521,7 @@ public final class UnbreakableManager
 
     /**
      * Adds to deletion queue
+     *
      * @param unbreakableblock
      */
     public void queueRelease(Block unbreakableblock)
@@ -510,6 +531,7 @@ public final class UnbreakableManager
 
     /**
      * Adds to deletion queue
+     *
      * @param unbreakable
      */
     public void queueRelease(Unbreakable unbreakable)
@@ -531,6 +553,7 @@ public final class UnbreakableManager
 
     /**
      * Delete an unbreakable from memory and from the database
+     *
      * @param ub
      */
     public void deleteUnbreakable(Unbreakable ub)

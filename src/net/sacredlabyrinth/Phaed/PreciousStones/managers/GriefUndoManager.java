@@ -115,10 +115,10 @@ public final class GriefUndoManager
 
                 for (String line : sign.getLines())
                 {
-                    signText += line + "ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°";
+                    signText += line + "`";
                 }
 
-                signText = Helper.stripTrailing(signText, "ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°");
+                signText = Helper.stripTrailing(signText, "`");
                 gb.setSignText(signText);
             }
 
@@ -158,6 +158,28 @@ public final class GriefUndoManager
 
             return gbs.size();
         }
+
+        return 0;
+    }
+
+    /**
+     * Undo the grief that has not yet been saved to the database from one field
+     * @param field
+     * @return
+     */
+    public int undoDirtyGrief(Field field)
+    {
+        World world = plugin.getServer().getWorld(field.getWorld());
+
+        if (world != null)
+        {
+            Queue<GriefBlock> gbs = field.getGrief();
+
+            Rollback rollback = new Rollback(gbs, world);
+
+            return gbs.size();
+        }
+        field.clearGrief();
 
         return 0;
     }
@@ -219,7 +241,7 @@ public final class GriefUndoManager
             if (block.getState() instanceof Sign && gb.getSignText().length() > 0)
             {
                 Sign sign = (Sign) block.getState();
-                String[] lines = gb.getSignText().split("[ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°]");
+                String[] lines = gb.getSignText().split("[`]");
 
                 for (int i = 0; i < lines.length; i++)
                 {

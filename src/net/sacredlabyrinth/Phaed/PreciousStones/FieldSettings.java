@@ -150,6 +150,14 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("rollback-explosions") && Helper.isBoolean(map.get("rollback-explosions")))
+        {
+            if ((Boolean) map.get("rollback-explosions"))
+            {
+                flags.add(FieldFlag.ROLLBACK_EXPLOSIONS);
+            }
+        }
+
         if (map.containsKey("prevent-pvp") && Helper.isBoolean(map.get("prevent-pvp")))
         {
             if ((Boolean) map.get("prevent-pvp"))

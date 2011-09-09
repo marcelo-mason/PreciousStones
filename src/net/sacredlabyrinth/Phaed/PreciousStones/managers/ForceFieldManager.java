@@ -321,8 +321,14 @@ public final class ForceFieldManager
         {
             return null;
         }
-        out.putAll(wLists.get(worldName));
+        HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(worldName);
 
+        if(w == null)
+        {
+            return null;
+        }
+
+        out.putAll(w);
         return out;
     }
 
@@ -453,40 +459,44 @@ public final class ForceFieldManager
 
         if (w != null)
         {
+            PreciousStones.getLogger().info("3");
             for (HashMap<Vec, Field> fields : w.values())
             {
-                for (Field field : fields.values())
+                if (fields != null)
                 {
-                    // ensure chunk is loaded prior to polling
-
-                    ChunkVec cv = field.toChunkVec();
-
-                    if (!cv.equals(currentChunk))
+                    for (Field field : fields.values())
                     {
-                        if (!currentChunkLoaded)
+                        // ensure chunk is loaded prior to polling
+
+                        ChunkVec cv = field.toChunkVec();
+
+                        if (!cv.equals(currentChunk))
                         {
-                            if (currentChunk != null)
+                            if (!currentChunkLoaded)
                             {
-                                world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                                if (currentChunk != null)
+                                {
+                                    world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                                }
                             }
+
+                            currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                            if (!currentChunkLoaded)
+                            {
+                                world.loadChunk(cv.getX(), cv.getZ());
+                            }
+
+                            currentChunk = cv;
                         }
 
-                        currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+                        int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
-                        if (!currentChunkLoaded)
+                        if (type != field.getTypeId())
                         {
-                            world.loadChunk(cv.getX(), cv.getZ());
+                            cleanedCount++;
+                            queueRelease(field);
                         }
-
-                        currentChunk = cv;
-                    }
-
-                    int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
-
-                    if (type != field.getTypeId())
-                    {
-                        cleanedCount++;
-                        queueRelease(field);
                     }
                 }
             }
@@ -1205,7 +1215,7 @@ public final class ForceFieldManager
         {
             Field field = (Field) it.next();
 
-            if (field.envelops(loc) && !isAllowed(field, playerName))
+            if (field.envelops(loc) && !isAllowed(field, playerName) && !plugin.getSimpleClansManager().inWar(field, playerName))
             {
                 return field;
             }
@@ -1229,7 +1239,7 @@ public final class ForceFieldManager
         {
             Field field = (Field) it.next();
 
-            if (!field.envelops(loc) || !isAllowed(field, playerName))
+            if (!field.envelops(loc) || (!isAllowed(field, playerName) && !plugin.getSimpleClansManager().inWar(field, playerName)))
             {
                 it.remove();
             }
@@ -1253,7 +1263,7 @@ public final class ForceFieldManager
         {
             Field field = (Field) it.next();
 
-            if (!field.envelops(loc) || isAllowed(field, playerName))
+            if (!field.envelops(loc) || isAllowed(field, playerName) || plugin.getSimpleClansManager().inWar(field, playerName))
             {
                 it.remove();
             }

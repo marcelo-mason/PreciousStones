@@ -813,14 +813,13 @@ public final class CommandManager implements CommandExecutor
                                 cleandFF += plugin.getForceFieldManager().cleanOrphans(world);
                                 cleandU += plugin.getUnbreakableManager().cleanOrphans(world);
                             }
-
                             if (cleandFF > 0)
                             {
                                 ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned fields");
                             }
                             if (cleandU > 0)
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned unbreakable blocks");
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Cleaned " + cleandU + " orphaned unbreakable blocks");
                             }
                             if (cleandFF == 0 && cleandU == 0)
                             {
@@ -847,7 +846,7 @@ public final class CommandManager implements CommandExecutor
                             }
                             if (cleandU > 0)
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Reverted " + cleandFF + " orphaned unbreakable blocks");
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Reverted " + cleandU + " orphaned unbreakable blocks");
                             }
 
                             if (cleandFF == 0 && cleandU == 0)

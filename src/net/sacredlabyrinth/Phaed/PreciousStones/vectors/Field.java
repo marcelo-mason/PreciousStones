@@ -22,10 +22,11 @@ public class Field extends AbstractVec implements Comparable<Field>
     private String owner;
     private String name;
     private List<String> allowed = new ArrayList<String>();
-    private List<DirtyFieldReason> dirty = new ArrayList<DirtyFieldReason>();
-    private List<GriefBlock> grief = new ArrayList<GriefBlock>();
+    private List<DirtyFieldReason> dirty = new LinkedList<DirtyFieldReason>();
+    private List<GriefBlock> grief = new LinkedList<GriefBlock>();
     private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
     private long lastUsed;
+    private boolean progress;
 
     /**
      *
@@ -244,13 +245,13 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
-     * @param allowedName
+     * Check whether a target (name, g:group, c:clan) is allowed on this field
+     * @param target
      * @return
      */
-    public boolean isAllowed(String allowedName)
+    public boolean isAllowed(String target)
     {
-        if (allowedName.equalsIgnoreCase(owner))
+        if (target.equalsIgnoreCase(owner))
         {
             return true;
         }
@@ -260,12 +261,12 @@ public class Field extends AbstractVec implements Comparable<Field>
             return true;
         }
 
-        if (allowed.contains(allowedName.toLowerCase()))
+        if (allowed.contains(target.toLowerCase()))
         {
             return true;
         }
 
-        List<String> groups = PreciousStones.getInstance().getPermissionsManager().getGroups(getWorld(), allowedName);
+        List<String> groups = PreciousStones.getInstance().getPermissionsManager().getGroups(getWorld(), target);
 
         for (String group : groups)
         {
@@ -275,7 +276,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             }
         }
 
-        String clan = PreciousStones.getInstance().getSimpleClansManager().getClan(allowedName);
+        String clan = PreciousStones.getInstance().getSimpleClansManager().getClan(target);
 
         if (clan != null)
         {
@@ -289,29 +290,29 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * Whether the player was allowed
-     * @param allowedName
+     * Allow a target (name, g:group, c:clan) into this field
+     * @param target
      * @return confirmation
      */
-    public boolean addAllowed(String allowedName)
+    public boolean addAllowed(String target)
     {
-        if (isAllowed(allowedName))
+        if (isAllowed(target))
         {
             return false;
         }
 
-        allowed.add(allowedName.toLowerCase());
+        allowed.add(target.toLowerCase());
         dirty.add(DirtyFieldReason.ALLOWED);
         return true;
     }
 
     /**
-     * Whether the player was removed
-     * @param allowedName
+     * Disallow a target (name, g:group, c:clan) from this field
+     * @param target
      */
-    public void removeAllowed(String allowedName)
+    public void removeAllowed(String target)
     {
-        allowed.remove(allowedName.toLowerCase());
+        allowed.remove(target.toLowerCase());
         dirty.add(DirtyFieldReason.ALLOWED);
     }
 
@@ -551,9 +552,11 @@ public class Field extends AbstractVec implements Comparable<Field>
     /**
      * @return the grief
      */
-    public List<GriefBlock> getGrief()
+    public Queue<GriefBlock> getGrief()
     {
-        return Collections.unmodifiableList(grief);
+        Queue<GriefBlock> g = new LinkedList<GriefBlock>();
+        g.addAll(grief);
+        return g;
     }
 
     /**
@@ -668,5 +671,15 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
 
         return c;
+    }
+
+    public boolean isProgress()
+    {
+        return progress;
+    }
+
+    public void setProgress(boolean progress)
+    {
+        this.progress = progress;
     }
 }
