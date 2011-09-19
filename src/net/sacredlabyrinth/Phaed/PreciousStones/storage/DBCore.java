@@ -35,7 +35,7 @@ public interface DBCore
      * Execute an insert statement
      * @param query
      */
-    public void insert(String query);
+    public long insert(String query);
 
     /**
      * Execute an update statement

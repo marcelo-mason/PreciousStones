@@ -2,15 +2,16 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 
 /**
- *
  * @author phaed
  */
 public abstract class AbstractVec
 {
     /**
-     *  The world name the vector belongs to
+     * The world name the vector belongs to
      */
     private int x;
     private int y;
@@ -22,10 +23,13 @@ public abstract class AbstractVec
      */
     public AbstractVec()
     {
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        this.world = "";
     }
 
     /**
-     *
      * @param x
      * @param y
      * @param z
@@ -48,7 +52,6 @@ public abstract class AbstractVec
     }
 
     /**
-     *
      * @return
      */
     public int getX()
@@ -65,7 +68,6 @@ public abstract class AbstractVec
     }
 
     /**
-     *
      * @return
      */
     public int getY()
@@ -82,7 +84,6 @@ public abstract class AbstractVec
     }
 
     /**
-     *
      * @return
      */
     public int getZ()
@@ -99,7 +100,6 @@ public abstract class AbstractVec
     }
 
     /**
-     *
      * @return
      */
     public String getWorld()
@@ -153,11 +153,24 @@ public abstract class AbstractVec
     }
 
     /**
-     *
      * @return
      */
     public Location getLocation()
     {
         return new Location(PreciousStones.getInstance().getServer().getWorld(getWorld()), getX(), getY(), getZ());
+    }
+
+    /**
+     * @return the block
+     */
+    public Block getBlock()
+    {
+        World world = PreciousStones.getInstance().getServer().getWorld(getWorld());
+
+        if (world != null)
+        {
+            return world.getBlockAt(getX(), getY(), getZ());
+        }
+        return null;
     }
 }

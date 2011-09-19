@@ -30,7 +30,6 @@ public final class PermissionsManager
     public PermissionsManager()
     {
         plugin = PreciousStones.getInstance();
-        detectGroupManager();
         detectPermissionsBukkit();
         detectPermissions();
 
@@ -160,17 +159,6 @@ public final class PermissionsManager
             {
                 handler2 = ((PermissionsPlugin) test);
             }
-        }
-    }
-
-    private void detectGroupManager()
-    {
-        Plugin test = plugin.getServer().getPluginManager().getPlugin("GroupManager");
-
-        if (test != null)
-        {
-            PreciousStones.log(Level.SEVERE, "PreciousStones does not support GroupManager");
-            plugin.getPluginLoader().disablePlugin(plugin);
         }
     }
 }

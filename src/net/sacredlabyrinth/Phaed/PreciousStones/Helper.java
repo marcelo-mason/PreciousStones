@@ -1,13 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -484,6 +484,21 @@ public class Helper
     public static boolean isSameBlock(Location loc, Location loc2)
     {
         if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Whether the two locations refer to the same location, ignoring pitch and yaw
+     * @param loc
+     * @param loc2
+     * @return
+     */
+    public static boolean isSameLocation(Location loc, Location loc2)
+    {
+        if (loc.getX() == loc2.getX() && loc.getY() == loc2.getY() && loc.getZ() == loc2.getZ())
         {
             return true;
         }

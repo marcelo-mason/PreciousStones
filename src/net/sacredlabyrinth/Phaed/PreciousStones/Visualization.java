@@ -1,33 +1,40 @@
-
 package net.sacredlabyrinth.Phaed.PreciousStones;
+
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.Location;
 
 /**
- *
  * @author phaed
  */
 public class Visualization
 {
-    private Queue<Location> locs = new LinkedList<Location>();
+    private Queue<BlockData> bds = new LinkedList<BlockData>();
     private List<Field> fields = new LinkedList<Field>();
-    private boolean running;
 
     /**
-     *
      * @param loc
      */
-    public void addLocation(Location loc)
+    public void addBlock(Block block)
     {
-        locs.add(loc);
+        bds.add(new BlockData(block));
+    }
+
+    public void addBlock(Location loc, int material, byte data)
+    {
+        BlockData bd = new BlockData(loc, material, data);
+
+        if (!bds.contains(bd))
+        {
+            bds.add(bd);
+        }
     }
 
     /**
-     *
      * @param field
      */
     public void addField(Field field)
@@ -38,11 +45,9 @@ public class Visualization
     /**
      * @return the locations
      */
-    public Queue<Location> getLocs()
+    public Queue<BlockData> getBlocks()
     {
-        Queue<Location> l = new LinkedList<Location>();
-        l.addAll(locs);
-        return l;
+        return bds;
     }
 
     /**
@@ -53,21 +58,5 @@ public class Visualization
         List<Field> f = new LinkedList<Field>();
         f.addAll(fields);
         return f;
-    }
-
-    /**
-     * @return the running
-     */
-    public boolean isRunning()
-    {
-        return running;
-    }
-
-    /**
-     * @param running the running to set
-     */
-    public void setRunning(boolean running)
-    {
-        this.running = running;
     }
 }

@@ -29,7 +29,8 @@ public enum FieldFlag
     GIVE_AIR,
     SNITCH,
     NO_CONFLICT,
-    LAUNCH, CANNON,
+    LAUNCH,
+    CANNON,
     MINE,
     LIGHTNING,
     NO_OWNER,
@@ -38,6 +39,8 @@ public enum FieldFlag
     GRIEF_UNDO_INTERVAL,
     GRIEF_UNDO_REQUEST,
     GRIEF_UNDO_PRODUCE_DROP,
-    ENTRY_ALERT
-
+    ENTRY_ALERT,
+    CUBOID,
+    VISUALIZE_ON_RIGHT_CLICK,
+    VISUALIZE_ON_PLACE
 }

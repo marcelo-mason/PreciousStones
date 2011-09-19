@@ -4,7 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 /**
- *
  * @author phaed
  */
 public class BlockData
@@ -14,7 +13,6 @@ public class BlockData
     private final Location location;
 
     /**
-     *
      * @param block
      */
     public BlockData(Block block)
@@ -22,6 +20,16 @@ public class BlockData
         this.typeId = block.getTypeId();
         this.data = block.getData();
         this.location = block.getLocation();
+    }
+
+    /**
+     * @param block
+     */
+    public BlockData(Location loc, int typeId, byte data)
+    {
+        this.typeId = typeId;
+        this.data = data;
+        this.location = loc;
     }
 
     /**
@@ -47,4 +55,41 @@ public class BlockData
     {
         return location;
     }
+
+    /**
+     * @return the block
+     */
+    public Block getBlock()
+    {
+        return location.getWorld().getBlockAt(location);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof BlockData))
+        {
+            return false;
+        }
+
+        BlockData other = (BlockData) obj;
+        return other.getTypeId() == this.getTypeId() && other.getData() == this.getData() && Helper.isSameBlock(this.getLocation(), other.getLocation());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 47 * hash + this.getTypeId();
+        hash = 47 * hash + this.getData();
+        hash = 47 * hash + this.getLocation().getBlockX() + this.getLocation().getBlockY() + this.getLocation().getBlockZ();
+        return hash;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "[" + getTypeId() + ":" + getData() + " " + Helper.toLocationString(location) + "]";
+    }
+
 }

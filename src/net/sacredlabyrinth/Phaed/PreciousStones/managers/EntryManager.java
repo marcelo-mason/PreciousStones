@@ -47,16 +47,16 @@ public final class EntryManager
 
                 HashMap<String, EntryFields> e = getEntries();
 
-                for (String playername : e.keySet())
+                for (String playerName : e.keySet())
                 {
-                    EntryFields ef = e.get(playername);
+                    EntryFields ef = e.get(playerName);
                     List<Field> fields = ef.getFields();
 
                     for (Field field : fields)
                     {
                         FieldSettings fs = field.getSettings();
 
-                        Player player = Helper.matchSinglePlayer(playername);
+                        Player player = Helper.matchSinglePlayer(playerName);
 
                         if (player == null)
                         {
@@ -104,7 +104,7 @@ public final class EntryManager
                         {
                             if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
                             {
-                                if (!plugin.getForceFieldManager().isAllowed(field, playername))
+                                if (!plugin.getForceFieldManager().isAllowed(field, playerName))
                                 {
                                     if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
                                     {
@@ -371,16 +371,16 @@ public final class EntryManager
 
         synchronized (entries)
         {
-            for (String playername : entries.keySet())
+            for (String playerName : entries.keySet())
             {
-                EntryFields ef = entries.get(playername);
+                EntryFields ef = entries.get(playerName);
                 List<Field> fields = ef.getFields();
 
                 for (Field testfield : fields)
                 {
                     if (field.equals(testfield))
                     {
-                        inhabitants.add(playername);
+                        inhabitants.add(playerName);
                     }
                 }
             }
@@ -400,9 +400,9 @@ public final class EntryManager
 
         synchronized (entries)
         {
-            for (String playername : entries.keySet())
+            for (String playerName : entries.keySet())
             {
-                EntryFields ef = entries.get(playername);
+                EntryFields ef = entries.get(playerName);
                 List<Field> fields = ef.getFields();
 
                 for (Field field : fields)
@@ -419,7 +419,7 @@ public final class EntryManager
                         continue;
                     }
 
-                    players.put(playername, field);
+                    players.put(playerName, field);
                 }
             }
         }

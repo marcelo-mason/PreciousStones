@@ -1,12 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.storage;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Logger;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+
+import java.io.File;
+import java.sql.*;
+import java.util.logging.Logger;
 
 /**
  *
@@ -133,11 +131,18 @@ public class SQLiteCore implements DBCore
      * Execute an insert statement
      * @param query
      */
-    public void insert(String query)
+    public long insert(String query)
     {
         try
         {
-            getConnection().createStatement().executeQuery(query);
+            Statement statement = getConnection().createStatement();
+            statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+            ResultSet keys = statement.getGeneratedKeys();
+
+            if (keys.next())
+            {
+                return keys.getInt(1);
+            }
         }
         catch (SQLException ex)
         {
@@ -146,6 +151,8 @@ public class SQLiteCore implements DBCore
                 log.severe("Error at SQL INSERT Query: " + ex);
             }
         }
+
+        return 0;
     }
 
     /**

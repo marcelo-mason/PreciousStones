@@ -1,42 +1,53 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import java.util.Queue;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
- *
  * @author phaed
  */
 public class Visualize implements Runnable
 {
     private PreciousStones plugin;
-    private final Visualization vis;
-    private Queue<Location> visualizationQueue;
+    private Queue<BlockData> visualizationQueue = new LinkedList<BlockData>();
     private final int timerID;
     private final Player player;
-    private final Material material;
-    private final boolean reverting;
+    private final boolean revert;
 
     /**
-     *
      * @param vis
      * @param visualizationQueue
      * @param material
      * @param player
      * @param reverting
      */
-    public Visualize(Visualization vis, Queue<Location> visualizationQueue, Material material, Player player, boolean reverting)
+    public Visualize(Visualization vis, Player player)
     {
-        this.visualizationQueue = visualizationQueue;
+        this.visualizationQueue.addAll(vis.getBlocks());
         this.plugin = PreciousStones.getInstance();
-        this.reverting = reverting;
-        this.material = material;
+        this.revert = false;
         this.player = player;
-        this.vis = vis;
+        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
+    }
 
+    /**
+     * @param vis
+     * @param visualizationQueue
+     * @param material
+     * @param player
+     * @param reverting
+     */
+    public Visualize(Visualization vis, Player player, boolean revert)
+    {
+        this.visualizationQueue.addAll(vis.getBlocks());
+        this.plugin = PreciousStones.getInstance();
+        this.revert = revert;
+        this.player = player;
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
     }
 
@@ -46,8 +57,19 @@ public class Visualize implements Runnable
 
         while (i < 100 && !visualizationQueue.isEmpty())
         {
-            Location loc = visualizationQueue.poll();
-            player.sendBlockChange(loc, material, (byte) 0);
+            BlockData bd = visualizationQueue.poll();
+            Location loc = bd.getLocation();
+
+            if (!revert)
+            {
+                player.sendBlockChange(loc, bd.getTypeId(), bd.getData());
+            }
+            else
+            {
+                Block block = bd.getBlock();
+                player.sendBlockChange(loc, block.getType(), block.getData());
+            }
+
             i++;
         }
 
@@ -55,13 +77,12 @@ public class Visualize implements Runnable
         {
             Bukkit.getServer().getScheduler().cancelTask(timerID);
 
-            if (!reverting)
+            if (!revert)
             {
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                 {
                     public void run()
                     {
-                        vis.setRunning(false);
                         plugin.getVisualizationManager().revertVisualization(player);
                     }
                 }, 20L * plugin.getSettingsManager().getVisualizeSeconds());

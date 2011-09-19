@@ -197,6 +197,51 @@ public class CommunicatonManager
         }
     }
 
+        /**
+     *
+     * @param player
+     * @param fieldblock
+     */
+    public void notifyPlaceCuboid(Player player, Field field)
+    {
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isNotifyPlace() && canNotify(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " cuboid field placed");
+        }
+
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogPlace())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Cuboid Field Place", player, field.getBlock().getLocation(), fs.getTitle());
+            }
+            else
+            {
+                PreciousStones.log(" {0} placed a {1} field [{2}|{3} {4} {5}]", player.getName(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            }
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().hasPermission(pl, "preciousstones.alert.notify.place") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " placed a " + fs.getTitle() + " cuboid field");
+            }
+        }
+    }
+
     /**
      *
      * @param player
@@ -2242,7 +2287,14 @@ public class CommunicatonManager
                 cb.addRow("  " + ChatColor.YELLOW + "Allowed: ", ChatColor.AQUA + field.getAllowedList());
             }
 
-            cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1));
+            if(field.hasFlag(FieldFlag.CUBOID))
+            {
+               cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + (field.getMaxx() - field.getMinx()) + "x" + (field.getMaxy() - field.getMiny()) + "x" + (field.getMaxz() - field.getMinz()));
+            }
+            else
+            {
+                cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1));
+            }
 
             if (field.getVelocity() > 0)
             {
@@ -2738,9 +2790,14 @@ public class CommunicatonManager
             cb.addRow(color + "  /ps snitch <clear> " + ChatColor.AQUA + "- View/clear snitch you're pointing at");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize") || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize"))
         {
-            cb.addRow(color + "  /ps visualize" + ChatColor.AQUA + "- Visualizes the perimiter of the field");
+            cb.addRow(color + "  /ps visualize" + ChatColor.AQUA + "- Visualize the field you are on");
+        }
+
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
+        {
+            cb.addRow(color + "  /ps visualize [radius]" + ChatColor.AQUA + "- Visualize fields for a radius");
         }
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.mark") || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.mark"))

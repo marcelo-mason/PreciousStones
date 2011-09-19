@@ -1,8 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import com.nijikokun.register.payment.Method;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
-import net.sacredlabyrinth.register.payment.Method;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 /**
  * PreciousStones for Bukkit
  *
@@ -23,9 +24,9 @@ public class PreciousStones extends JavaPlugin
     private SettingsManager settingsManager;
     private SimpleClansManager simpleClansManager;
     private CommandManager commandManager;
-    private CacheManager cacheManager;
     private LimitManager limitManager;
     private ForceFieldManager forceFieldManager;
+    private CuboidManager cuboidManager;
     private UnbreakableManager unbreakableManager;
     private UnprotectableManager unprotectableManager;
     private GriefUndoManager griefUndoManager;
@@ -66,9 +67,10 @@ public class PreciousStones extends JavaPlugin
 
     /**
      * Parameterized logger
+     *
      * @param level
-     * @param msg the message
-     * @param arg the arguments
+     * @param msg   the message
+     * @param arg   the arguments
      */
     public static void log(Level level, String msg, Object... arg)
     {
@@ -77,6 +79,7 @@ public class PreciousStones extends JavaPlugin
 
     /**
      * Parameterized info logger
+     *
      * @param msg
      * @param arg
      */
@@ -86,7 +89,7 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
-     *  Runs on plugin enable
+     * Runs on plugin enable
      */
     public void onEnable()
     {
@@ -96,10 +99,10 @@ public class PreciousStones extends JavaPlugin
 
         settingsManager = new SettingsManager();
         simpleClansManager = new SimpleClansManager();
-        cacheManager = new CacheManager();
         commandManager = new CommandManager();
         limitManager = new LimitManager();
         forceFieldManager = new ForceFieldManager();
+        cuboidManager = new CuboidManager();
         unbreakableManager = new UnbreakableManager();
         unprotectableManager = new UnprotectableManager();
         communicationManager = new CommunicatonManager();
@@ -129,7 +132,7 @@ public class PreciousStones extends JavaPlugin
 
     private void displayStatusInfo()
     {
-        log("version {0} loaded", getDescription().getVersion());
+        log("Version {0} loaded", getDescription().getVersion());
     }
 
     private void registerEvents()
@@ -137,6 +140,7 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET, entityListener, Event.Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.ITEM_SPAWN, entityListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PAINTING_BREAK, entityListener, Event.Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PAINTING_PLACE, entityListener, Event.Priority.High, this);
@@ -172,12 +176,12 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
-     *  Runs on plugin disable
+     * Runs on plugin disable
      */
     public void onDisable()
     {
-        getServer().getScheduler().cancelTasks(this);
         getStorageManager().processQueue();
+        getServer().getScheduler().cancelTasks(this);
         getStorageManager().closeConnection();
     }
 
@@ -357,8 +361,8 @@ public class PreciousStones extends JavaPlugin
         return limitManager;
     }
 
-    public CacheManager getCacheManager()
+    public CuboidManager getCuboidManager()
     {
-        return cacheManager;
+        return cuboidManager;
     }
 }

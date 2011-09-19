@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import org.bukkit.entity.Player;
@@ -139,7 +140,7 @@ public final class SimpleClansManager
 
         if (cp != null)
         {
-            List<String> warringClans = cp.getClan().getWarringClans();
+            List<Clan> warringClans = cp.getClan().getWarringClans();
 
             String ownerClan = "";
 
@@ -148,14 +149,14 @@ public final class SimpleClansManager
                 ownerClan = cpOwner.getTag();
             }
 
-            for (String warring : warringClans)
+            for (Clan warring : warringClans)
             {
                 if (ownerClan.equals(warring))
                 {
                     return true;
                 }
 
-                if (field.isAllowed(warring))
+                if (field.isAllowed(warring.getTag()))
                 {
                     return true;
                 }

@@ -1,15 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import org.bukkit.event.server.ServerListener;
-
-import net.sacredlabyrinth.register.payment.Methods;
-import java.util.logging.Level;
+import com.nijikokun.register.payment.Methods;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.event.server.ServerListener;
 
 /**
- *
  * @author phaed
  */
 public class PSServerListener extends ServerListener
@@ -27,12 +24,12 @@ public class PSServerListener extends ServerListener
     }
 
     /**
-     *
      * @param event
      */
     @Override
     public void onPluginDisable(PluginDisableEvent event)
     {
+        /*
         if (Methods != null && Methods.hasMethod())
         {
             Boolean check = Methods.checkDisabled(event.getPlugin());
@@ -42,22 +39,24 @@ public class PSServerListener extends ServerListener
                 plugin.setMethod(null);
             }
         }
+        */
     }
 
     /**
-     *
      * @param event
      */
     @Override
     public void onPluginEnable(PluginEnableEvent event)
     {
-        if (Methods != null && !Methods.hasMethod())
+        /*
+        if (!Methods.hasMethod())
         {
-            if (Methods.setMethod(event.getPlugin()))
+            if (Methods.setMethod(plugin.getServer().getPluginManager()))
             {
                 plugin.setMethod(Methods.getMethod());
                 PreciousStones.log("Payment method: {0} v{1}", plugin.getMethod().getName(), plugin.getMethod().getVersion());
             }
         }
+        */
     }
 }

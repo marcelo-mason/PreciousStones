@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- *
  * @author phaed
  */
 public class FieldSettings
@@ -28,13 +27,17 @@ public class FieldSettings
     private List<FieldFlag> flags = new ArrayList<FieldFlag>();
 
     /**
-     *
      * @param map
      */
 
     @SuppressWarnings("unchecked")
     public FieldSettings(LinkedHashMap<String, Object> map)
     {
+        if (map == null)
+        {
+            return;
+        }
+
         if (map.containsKey("block") && Helper.isInteger(map.get("block")))
         {
             typeId = (Integer) map.get("block");
@@ -65,11 +68,11 @@ public class FieldSettings
             if (Helper.isInteger(map.get("custom-height")))
             {
                 height = (Integer) map.get("custom-height");
-
             }
+
             if (height == 0)
             {
-                height = radius;
+                height = (radius * 2) + 1;
             }
         }
 
@@ -382,11 +385,36 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("cuboid") && Helper.isBoolean(map.get("cuboid")))
+        {
+            if ((Boolean) map.get("cuboid"))
+            {
+                flags.add(FieldFlag.CUBOID);
+            }
+        }
+
+        if (map.containsKey("visualize-on-rightclick") && Helper.isBoolean(map.get("visualize-on-rightclick")))
+        {
+            if ((Boolean) map.get("visualize-on-rightclick"))
+            {
+                flags.add(FieldFlag.VISUALIZE_ON_RIGHT_CLICK);
+            }
+        }
+
+        if (map.containsKey("visualize-on-place") && Helper.isBoolean(map.get("visualize-on-place")))
+        {
+            if ((Boolean) map.get("visualize-on-place"))
+            {
+                flags.add(FieldFlag.VISUALIZE_ON_PLACE);
+            }
+        }
+
         flags.add(FieldFlag.ALL);
     }
 
     /**
      * Check if the field has a flag
+     *
      * @param flag
      * @return
      */
@@ -396,7 +424,6 @@ public class FieldSettings
     }
 
     /**
-     *
      * @return
      */
     public boolean hasNameableFlag()
@@ -405,7 +432,6 @@ public class FieldSettings
     }
 
     /**
-     *
      * @return
      */
     public boolean hasGriefUndoFlag()
@@ -414,7 +440,6 @@ public class FieldSettings
     }
 
     /**
-     *
      * @return
      */
     public boolean hasVeocityFlag()
@@ -423,7 +448,6 @@ public class FieldSettings
     }
 
     /**
-     *
      * @return
      */
     public boolean hasForesterFlag()
@@ -432,7 +456,6 @@ public class FieldSettings
     }
 
     /**
-     *
      * @return
      */
     public boolean hasLimit()
@@ -441,7 +464,6 @@ public class FieldSettings
     }
 
     /**
-     *
      * @return
      */
     public String getTitle()
@@ -455,7 +477,6 @@ public class FieldSettings
     }
 
     /**
-     *
      * @return
      */
     public int getHeight()
@@ -472,6 +493,7 @@ public class FieldSettings
 
     /**
      * Whether a block type can be used in this field
+     *
      * @param type
      * @return
      */

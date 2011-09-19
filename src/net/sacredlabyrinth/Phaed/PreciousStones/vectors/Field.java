@@ -10,26 +10,73 @@ import java.util.*;
 
 /**
  * A field object
+ *
  * @author phaed
  */
 public class Field extends AbstractVec implements Comparable<Field>
 {
     private FieldSettings settings;
+    private long id = 0;
     private int radius;
     private int height;
+    private int maxx;
+    private int maxy;
+    private int maxz;
+    private int minx;
+    private int miny;
+    private int minz;
     private float velocity;
     private int typeId;
     private String owner;
     private String name;
+    private Field parent;
+    private List<Field> children = new LinkedList<Field>();
     private List<String> allowed = new ArrayList<String>();
     private List<DirtyFieldReason> dirty = new LinkedList<DirtyFieldReason>();
     private List<GriefBlock> grief = new LinkedList<GriefBlock>();
     private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
     private long lastUsed;
     private boolean progress;
+    //private boolean progress;
 
     /**
-     *
+     * @param x
+     * @param y
+     * @param z
+     * @param minx
+     * @param miny
+     * @param minz
+     * @param maxx
+     * @param maxy
+     * @param maxz
+     * @param velocity
+     * @param world
+     * @param typeId
+     * @param owner
+     * @param name
+     * @param lastUsed
+     */
+    public Field(int x, int y, int z, int minx, int miny, int minz, int maxx, int maxy, int maxz, float velocity, String world, int typeId, String owner, String name, long lastUsed)
+    {
+        super(x, y, z, world);
+
+        this.minx = minx;
+        this.miny = miny;
+        this.minz = minz;
+        this.maxx = maxx;
+        this.maxy = maxy;
+        this.maxz = maxz;
+        this.radius = x - minx;
+        this.height = maxy - miny;
+
+        this.velocity = velocity;
+        this.owner = owner;
+        this.name = name;
+        this.typeId = typeId;
+        this.lastUsed = lastUsed;
+    }
+
+    /**
      * @param x
      * @param y
      * @param z
@@ -48,15 +95,17 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         this.radius = radius;
         this.height = height;
+
         this.velocity = velocity;
         this.owner = owner;
         this.name = name;
         this.typeId = typeId;
         this.lastUsed = lastUsed;
+
+        calculateDimensions();
     }
 
     /**
-     *
      * @param block
      * @param radius
      * @param height
@@ -71,10 +120,11 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.owner = owner;
         this.name = "";
         this.typeId = block.getTypeId();
+
+        calculateDimensions();
     }
 
     /**
-     *
      * @param block
      * @param radius
      * @param height
@@ -88,10 +138,11 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = "";
         this.owner = "";
         this.typeId = block.getTypeId();
+
+        calculateDimensions();
     }
 
     /**
-     *
      * @param block
      */
     public Field(Block block)
@@ -99,19 +150,92 @@ public class Field extends AbstractVec implements Comparable<Field>
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
     }
 
+    public Field()
+    {
+    }
+
     /**
+     * Check if the field has certain certain properties
      *
+     * @param flag
+     * @return
+     */
+    public boolean hasFlag(FieldFlag flag)
+    {
+        if (settings == null)
+        {
+            return false;
+        }
+
+        return settings.hasFlag(flag);
+    }
+
+    private void calculateDimensions()
+    {
+        this.minx = getX() - radius;
+        this.maxx = getX() + radius;
+        this.minz = getZ() - radius;
+        this.maxz = getZ() + radius;
+        this.miny = getY() - radius;
+        this.maxy = getY() + radius;
+
+        if (height > 0)
+        {
+            this.miny = getY() - (int) Math.floor(((double) Math.max(height - 1, 0)) / 2);
+            this.maxy = getY() + (int) Math.ceil(((double) Math.max(height - 1, 0)) / 2);
+        }
+    }
+
+    /**
      * @param radius
      */
     public void setRadius(int radius)
     {
+        PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
+
         this.radius = radius;
-        this.setHeight((this.radius * 2) + 1);
+
+        if (height == 0)
+        {
+            this.height = (this.radius * 2) + 1;
+            dirty.add(DirtyFieldReason.HEIGHT);
+        }
+
         dirty.add(DirtyFieldReason.RADIUS);
+
+        PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
     }
 
     /**
+     * Sets the cuboid data
      *
+     * @param minX
+     * @param minY
+     * @param minZ
+     * @param maxX
+     * @param maxY
+     * @param maxZ
+     */
+    public void setCuboidDimensions(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
+    {
+        PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
+
+        this.minx = minX;
+        this.miny = minY;
+        this.minz = minZ;
+        this.maxx = maxX;
+        this.maxy = maxY;
+        this.maxz = maxZ;
+
+        this.radius = (maxx - minx) / 2;
+        this.height = maxy - miny;
+
+        dirty.add(DirtyFieldReason.DIMENSIONS);
+
+        PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
+    }
+
+    /**
      * @return the block type id
      */
     public int getTypeId()
@@ -120,7 +244,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return the block type name
      */
     public String getType()
@@ -129,7 +252,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return the radius
      */
     public int getRadius()
@@ -138,7 +260,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return the height
      */
     public int getHeight()
@@ -147,7 +268,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return the owner
      */
     public String getOwner()
@@ -156,7 +276,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @param owner
      */
     public void setOwner(String owner)
@@ -166,7 +285,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @param playerName
      * @return
      */
@@ -177,6 +295,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Set the name value
+     *
      * @param name
      */
     public void setName(String name)
@@ -186,7 +305,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return the name
      */
     public String getName()
@@ -195,7 +313,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @param name
      * @return
      */
@@ -210,7 +327,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return
      */
     public List<String> getAllAllowed()
@@ -222,7 +338,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return
      */
     public String getAllowedList()
@@ -246,6 +361,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Check whether a target (name, g:group, c:clan) is allowed on this field
+     *
      * @param target
      * @return
      */
@@ -291,6 +407,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Allow a target (name, g:group, c:clan) into this field
+     *
      * @param target
      * @return confirmation
      */
@@ -308,6 +425,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Disallow a target (name, g:group, c:clan) from this field
+     *
      * @param target
      */
     public void removeAllowed(String target)
@@ -317,7 +435,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return coordinates string
      */
     public String getCoords()
@@ -336,8 +453,12 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setHeight(int height)
     {
+        PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
+
         this.height = height;
         dirty.add(DirtyFieldReason.HEIGHT);
+
+        PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
     }
 
     /**
@@ -349,19 +470,11 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *
      * @return vectors of the corners
      */
-    public ArrayList<Vector> getCorners()
+    public List<Vector> getCorners()
     {
-        ArrayList<Vector> corners = new ArrayList<Vector>();
-
-        int minx = getX() - getRadius();
-        int maxx = getX() + getRadius();
-        int minz = getZ() - getRadius();
-        int maxz = getZ() + getRadius();
-        int miny = getY() - (int) Math.floor(((double) Math.max(getHeight() - 1, 0)) / 2);
-        int maxy = getY() + (int) Math.ceil(((double) Math.max(getHeight() - 1, 0)) / 2);
+        List<Vector> corners = new ArrayList<Vector>();
 
         corners.add(new Vector(minx, miny, minz));
         corners.add(new Vector(minx, miny, maxz));
@@ -376,7 +489,49 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
+     * Get all the chunks this field envelops
+     *
+     * @return
+     */
+    public Set<ChunkVec> getEnvelopingChunks()
+    {
+        HashSet<ChunkVec> envelopingChunks = new HashSet<ChunkVec>();
+
+        for (int x = minx; x <= maxx; x += 16)
+        {
+            for (int z = minz; z <= maxz; z += 16)
+            {
+                envelopingChunks.add(new ChunkVec(x >> 4, z >> 4, getWorld()));
+            }
+        }
+
+        envelopingChunks.add(new ChunkVec(maxx >> 4, maxz >> 4, getWorld()));
+
+        return envelopingChunks;
+    }
+
+    /**
+     * Returns all the fields that overlap this field
+     *
+     * @return
+     */
+    public Set<Field> getOverlappingFields()
+    {
+        Set<ChunkVec> envelopingChunks = getEnvelopingChunks();
+
+        Set<Field> sources = new HashSet<Field>();
+
+        for (ChunkVec ecv : envelopingChunks)
+        {
+            sources.addAll(PreciousStones.getInstance().getForceFieldManager().getSourceFields(ecv.getBlock().getChunk(), FieldFlag.ALL));
+        }
+
+        return sources;
+    }
+
+    /**
      * Whether the fields intersect
+     *
      * @param field
      * @return confirmation
      */
@@ -387,7 +542,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             return false;
         }
 
-        ArrayList<Vector> corners = field.getCorners();
+        List<Vector> corners = field.getCorners();
 
         for (Vector vec : corners)
         {
@@ -412,6 +567,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Whether vector is enveloped by the field
+     *
      * @param vec
      * @return confirmation
      */
@@ -420,13 +576,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         int px = vec.getBlockX();
         int py = vec.getBlockY();
         int pz = vec.getBlockZ();
-
-        int minx = getX() - getRadius();
-        int maxx = getX() + getRadius();
-        int minz = getZ() - getRadius();
-        int maxz = getZ() + getRadius();
-        int miny = getY() - (int) Math.floor(((double) Math.max(getHeight() - 1, 0)) / 2);
-        int maxy = getY() + (int) Math.ceil(((double) Math.max(getHeight() - 1, 0)) / 2);
 
         if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
         {
@@ -438,6 +587,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Whether field block is enveloped by the field
+     *
      * @param field
      * @return confirmation
      */
@@ -446,13 +596,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         int px = field.getX();
         int py = field.getY();
         int pz = field.getZ();
-
-        int minx = getX() - getRadius();
-        int maxx = getX() + getRadius();
-        int minz = getZ() - getRadius();
-        int maxz = getZ() + getRadius();
-        int miny = getY() - (int) Math.floor(((double) Math.max(getHeight() - 1, 0)) / 2);
-        int maxy = getY() + (int) Math.ceil(((double) Math.max(getHeight() - 1, 0)) / 2);
 
         if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz)
         {
@@ -464,6 +607,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Whether block is enveloped by the field
+     *
      * @param block
      * @return confirmation
      */
@@ -474,6 +618,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Whether location is enveloped by the field
+     *
      * @param loc
      * @return confirmation
      */
@@ -533,6 +678,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * ADd a grief block to the collection
+     *
      * @param gb
      */
     public void addGriefBlock(GriefBlock gb)
@@ -595,6 +741,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Returns the number of days last used
+     *
      * @return
      */
     public int getAgeInDays()
@@ -625,6 +772,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Whether the item is dirty
+     *
      * @param dirtyType
      * @return
      */
@@ -643,6 +791,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Returns the distance between this field and a location
+     *
      * @param loc
      * @return
      */
@@ -673,6 +822,37 @@ public class Field extends AbstractVec implements Comparable<Field>
         return c;
     }
 
+
+    public int getMaxx()
+    {
+        return maxx;
+    }
+
+    public int getMaxy()
+    {
+        return maxy;
+    }
+
+    public int getMaxz()
+    {
+        return maxz;
+    }
+
+    public int getMinx()
+    {
+        return minx;
+    }
+
+    public int getMiny()
+    {
+        return miny;
+    }
+
+    public int getMinz()
+    {
+        return minz;
+    }
+
     public boolean isProgress()
     {
         return progress;
@@ -682,4 +862,64 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         this.progress = progress;
     }
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
+    }
+
+    public List<Field> getChildren()
+    {
+        return children;
+    }
+
+    public Set<Field> getFamily()
+    {
+        Set<Field> out = new HashSet<Field>();
+        out.addAll(children);
+        out.add(this);
+        return out;
+    }
+
+    public void clearChildren()
+    {
+        this.children.clear();
+    }
+
+    public void clearParent()
+    {
+        parent = null;
+    }
+
+    public void addChild(Field field)
+    {
+        children.add(field);
+    }
+
+    public Field getParent()
+    {
+        return parent;
+    }
+
+    public void setParent(Field parent)
+    {
+        this.parent = parent;
+    }
+
+    public boolean isParent()
+    {
+        return !children.isEmpty();
+    }
+
+    public boolean isChild()
+    {
+        return parent != null;
+    }
+
+
 }

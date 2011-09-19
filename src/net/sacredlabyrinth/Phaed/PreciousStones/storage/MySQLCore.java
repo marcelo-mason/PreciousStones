@@ -2,14 +2,10 @@ package net.sacredlabyrinth.Phaed.PreciousStones.storage;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.logging.Logger;
 
 /**
- *
  * @author cc_madelg
  */
 public class MySQLCore implements DBCore
@@ -22,7 +18,6 @@ public class MySQLCore implements DBCore
     private String database;
 
     /**
-     *
      * @param host
      * @param database
      * @param username
@@ -97,6 +92,7 @@ public class MySQLCore implements DBCore
 
     /**
      * Execute a select statement
+     *
      * @param query
      * @return
      */
@@ -116,13 +112,21 @@ public class MySQLCore implements DBCore
 
     /**
      * Execute an insert statement
+     *
      * @param query
      */
-    public void insert(String query)
+    public long insert(String query)
     {
         try
         {
-            getConnection().createStatement().executeUpdate(query);
+            Statement statement = getConnection().createStatement();
+            statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+            ResultSet keys = statement.getGeneratedKeys();
+
+            if (keys.next())
+            {
+                return keys.getInt(1);
+            }
         }
         catch (SQLException ex)
         {
@@ -131,10 +135,13 @@ public class MySQLCore implements DBCore
                 log.severe("Error at SQL INSERT Query: " + ex);
             }
         }
+
+        return 0;
     }
 
     /**
      * Execute an update statement
+     *
      * @param query
      */
     public void update(String query)
@@ -154,6 +161,7 @@ public class MySQLCore implements DBCore
 
     /**
      * Execute a delete statement
+     *
      * @param query
      */
     public void delete(String query)
@@ -173,6 +181,7 @@ public class MySQLCore implements DBCore
 
     /**
      * Execute a statement
+     *
      * @param query
      * @return
      */
@@ -192,6 +201,7 @@ public class MySQLCore implements DBCore
 
     /**
      * Check whether a table exists
+     *
      * @param table
      * @return
      */

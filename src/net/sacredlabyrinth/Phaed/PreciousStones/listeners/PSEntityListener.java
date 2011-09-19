@@ -14,7 +14,6 @@ import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +39,23 @@ public class PSEntityListener extends EntityListener
      * @param event
      */
     @Override
+    public void onEntityTarget(EntityTargetEvent event)
+    {
+        Entity target = event.getTarget();
+
+        if (target instanceof Player)
+        {
+            if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE))
+            {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @Override
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
         Entity entity = event.getEntity();
@@ -52,7 +68,7 @@ public class PSEntityListener extends EntityListener
 
         if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid)
         {
-            if (plugin.getForceFieldManager().getSourceField(loc, FieldFlag.PREVENT_MOB_SPAWN) != null)
+            if (plugin.getForceFieldManager().hasSourceField(loc, FieldFlag.PREVENT_MOB_SPAWN))
             {
                 event.setCancelled(true);
             }
@@ -60,7 +76,7 @@ public class PSEntityListener extends EntityListener
 
         if (entity instanceof Animals)
         {
-            if (plugin.getForceFieldManager().getSourceField(loc, FieldFlag.PREVENT_ANIMAL_SPAWN) != null)
+            if (plugin.getForceFieldManager().hasSourceField(loc, FieldFlag.PREVENT_ANIMAL_SPAWN))
             {
                 event.setCancelled(true);
             }
@@ -104,8 +120,8 @@ public class PSEntityListener extends EntityListener
 
         DebugTimer dt = new DebugTimer("onEntityExplode");
 
-        final List<BlockData> griefed = new LinkedList<BlockData>();
-        final List<BlockData> nonGriefed = new LinkedList<BlockData>();
+        final List<BlockData> saved = new LinkedList<BlockData>();
+        final List<BlockData> unprotected = new LinkedList<BlockData>();
         final List<BlockData> revert = new LinkedList<BlockData>();
         final List<BlockData> tnts = new LinkedList<BlockData>();
         Field rollbackField = null;
@@ -115,13 +131,11 @@ public class PSEntityListener extends EntityListener
             return;
         }
 
-        for (final Block block : event.blockList())
-        {
-            if (block.getTypeId() == 0)
-            {
-                continue;
-            }
 
+        List<Block> blocks = event.blockList();
+
+        for (Block block : blocks)
+        {
             // prevent block break if breaking unbreakable
 
             if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
@@ -137,7 +151,7 @@ public class PSEntityListener extends EntityListener
             {
                 Field field = plugin.getForceFieldManager().getField(block);
 
-                if (field.getSettings().hasFlag(FieldFlag.BREAKABLE))
+                if (field.hasFlag(FieldFlag.BREAKABLE))
                 {
                     plugin.getForceFieldManager().deleteField(field);
                     continue;
@@ -150,10 +164,11 @@ public class PSEntityListener extends EntityListener
 
             // prevent explosion if explosion protected
 
-            if (plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_EXPLOSIONS) != null)
+            if (plugin.getForceFieldManager().hasSourceField(block.getLocation(), FieldFlag.PREVENT_EXPLOSIONS))
             {
+                saved.add(new BlockData(block));
                 event.setCancelled(true);
-                break;
+                continue;
             }
 
             // capture blocks to roll back in rollback fields
@@ -165,6 +180,10 @@ public class PSEntityListener extends EntityListener
                 if (block.getTypeId() != 46)
                 {
                     plugin.getGriefUndoManager().addBlock(rollbackField, block);
+                }
+                else
+                {
+                    tnts.add(new BlockData(block));
                 }
                 continue;
             }
@@ -193,24 +212,21 @@ public class PSEntityListener extends EntityListener
                     if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                     {
                         plugin.getGriefUndoManager().addBlock(field, block);
-                        griefed.add(new BlockData(block));
+                        saved.add(new BlockData(block));
                         block.setTypeId(0);
                     }
                 }
 
-                if (griefed.size() > 0)
+                if (saved.size() > 0)
                 {
                     plugin.getStorageManager().offerGrief(field);
                 }
             }
             else
             {
-                // record the non-griefed block
+                // record the unprotected block
 
-                if (block.getTypeId() != 46)
-                {
-                    nonGriefed.add(new BlockData(block));
-                }
+                unprotected.add(new BlockData(block));
             }
         }
 
@@ -241,17 +257,17 @@ public class PSEntityListener extends EntityListener
 
         if (rollbackField != null)
         {
-            final Field finalRollbackField = rollbackField;
-            finalRollbackField.setProgress(true);
+            final Field field = rollbackField;
+            field.setProgress(true);
 
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
                 {
-                    plugin.getGriefUndoManager().undoDirtyGrief(finalRollbackField);
-                    finalRollbackField.setProgress(false);
+                    plugin.getGriefUndoManager().undoDirtyGrief(field);
+                    field.setProgress(false);
                 }
-            }, 1);
+            }, 2);
         }
 
         // revert any blocks that need reversion
@@ -269,12 +285,12 @@ public class PSEntityListener extends EntityListener
                     }
                     revert.clear();
                 }
-            }, 1);
+            }, 3);
         }
 
         // if some blocks were anti-grief then fake the explosion of the rest
 
-        if (!griefed.isEmpty() && !nonGriefed.isEmpty())
+        if (!saved.isEmpty() && !unprotected.isEmpty())
         {
             event.setCancelled(true);
 
@@ -284,24 +300,17 @@ public class PSEntityListener extends EntityListener
                 {
                     // remove all blocks and simulate drops for the blocks not in the field
 
-                    for (BlockData db : nonGriefed)
+                    for (BlockData db : unprotected)
                     {
                         Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
                         if (block != null)
                         {
-                            Location loc = block.getLocation();
-                            ItemStack is = new ItemStack(block.getTypeId());
-
-                            if (is != null && loc != null)
-                            {
-                                block.getWorld().dropItemNaturally(loc, is);
-                                block.setTypeId(0);
-                            }
+                            block.setTypeId(0);
                         }
                     }
                 }
-            }, 2);
+            }, 1);
         }
 
         if (plugin.getSettingsManager().isDebug())
@@ -327,7 +336,7 @@ public class PSEntityListener extends EntityListener
 
         if (rollbackField != null)
         {
-            if(rollbackField.isProgress())
+            if (rollbackField.isProgress())
             {
                 event.setCancelled(true);
             }
@@ -429,15 +438,6 @@ public class PSEntityListener extends EntityListener
                             }
                         }
                     }
-                }
-            }
-            else
-            {
-                Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_MOB_DAMAGE);
-
-                if (field != null)
-                {
-                    event.setCancelled(true);
                 }
             }
         }

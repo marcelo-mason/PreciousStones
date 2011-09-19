@@ -6,6 +6,7 @@
         <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="PreciousStones" />
+      <element id="extracted-dir" path="D:/Download/Plugins/Register.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

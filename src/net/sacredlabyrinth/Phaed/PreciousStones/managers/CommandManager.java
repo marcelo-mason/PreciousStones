@@ -13,10 +13,10 @@ import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
- *
  * @author phaed
  */
 public final class CommandManager implements CommandExecutor
@@ -32,7 +32,6 @@ public final class CommandManager implements CommandExecutor
     }
 
     /**
-     *
      * @param sender
      * @param command
      * @param label
@@ -314,15 +313,23 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     FieldSettings fs = field.getSettings();
 
-                                    if (radius >= 0 && radius <= fs.getRadius())
+                                    if (!fs.hasFlag(FieldFlag.CUBOID))
                                     {
-                                        field.setRadius(radius);
-                                        plugin.getStorageManager().offerField(field);
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Radius set to " + radius);
+                                        if (radius >= 0 && radius <= fs.getRadius())
+                                        {
+                                            field.setRadius(radius);
+
+                                            plugin.getStorageManager().offerField(field);
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Radius set to " + radius);
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.RED + "Radius must be less than or equal to " + fs.getRadius());
+                                        }
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.RED + "Radius must be less than or equal to " + fs.getRadius());
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot change radius of a cuboid");
                                     }
                                     return true;
                                 }
@@ -345,17 +352,24 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     FieldSettings fs = field.getSettings();
 
-                                    int maxHeight = (((fs.getRadius() * 2) + 1) + fs.getHeight());
-
-                                    if (height >= 0 && height <= maxHeight)
+                                    if (!fs.hasFlag(FieldFlag.CUBOID))
                                     {
-                                        field.setHeight(height);
-                                        plugin.getStorageManager().offerField(field);
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Height set to " + height);
+                                        int maxHeight = (((fs.getRadius() * 2) + 1) + fs.getHeight());
+
+                                        if (height >= 0 && height <= maxHeight)
+                                        {
+                                            field.setHeight(height);
+                                            plugin.getStorageManager().offerField(field);
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Height set to " + height);
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.RED + "Height must be less than or equal to " + maxHeight);
+                                        }
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.RED + "Height must be less than or equal to " + maxHeight);
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot change radius of a cuboid");
                                     }
                                     return true;
                                 }
@@ -405,111 +419,147 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (cmd.equals("visualize") && !plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize"))
                         {
-                            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
+                            if (!plugin.getCuboidManager().hasOpenCuboid(player))
                             {
-                                plugin.getVisualizationManager().revertVisualization(player);
-
-                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeAdminChunkRadius(), FieldFlag.ALL);
-
-                                if (fieldsInArea.size() > 0)
+                                if (!plugin.getVisualizationManager().pendingVisualization(player))
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
-
-                                    for (Field f : fieldsInArea)
+                                    if (args.length == 1 && Helper.isInteger(args[0]))
                                     {
-                                        plugin.getVisualizationManager().addVisualizationField(player, f);
-                                    }
-
-                                    plugin.getVisualizationManager().displayVisualization(player, true);
-                                }
-                            }
-                            else
-                            {
-                                plugin.getVisualizationManager().revertVisualization(player);
-
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
-
-                                if (field != null)
-                                {
-                                    HashSet<Field> fields = plugin.getForceFieldManager().getOverlappedFields(player, field);
-
-                                    if (fields != null)
-                                    {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Generating visualization...");
-
-                                        for (Field f : fields)
+                                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
                                         {
-                                            plugin.getVisualizationManager().addVisualizationField(player, f);
-                                        }
+                                            int radius = Integer.parseInt(args[0]);
 
-                                        plugin.getVisualizationManager().displayVisualization(player, true);
+                                            Set<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), radius / 16, FieldFlag.ALL);
+
+                                            if (fieldsInArea.size() > 0)
+                                            {
+                                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Visualizing...");
+
+                                                for (Field f : fieldsInArea)
+                                                {
+                                                    plugin.getVisualizationManager().addVisualizationField(player, f);
+                                                }
+
+                                                plugin.getVisualizationManager().displayVisualization(player, true);
+                                                return true;
+                                            }
+                                            else
+                                            {
+                                                ChatBlock.sendMessage(player, ChatColor.RED + "No fields in area");
+                                            }
+                                        }
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.RED + "You are not inside of a field");
+                                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize"))
+                                        {
+                                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+
+                                            if (field != null)
+                                            {
+                                                HashSet<Field> fields = plugin.getForceFieldManager().getOverlappedFields(player, field);
+
+                                                if (fields != null)
+                                                {
+                                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Visualizing...");
+
+                                                    for (Field f : fields)
+                                                    {
+                                                        plugin.getVisualizationManager().addVisualizationField(player, f);
+                                                    }
+
+                                                    plugin.getVisualizationManager().displayVisualization(player, true);
+                                                }
+                                                else
+                                                {
+                                                    ChatBlock.sendMessage(player, ChatColor.RED + "You are not inside of a field");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                ChatBlock.sendMessage(player, ChatColor.RED + "You are not inside of a field");
+                                            }
+                                        }
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.RED + "You are not inside of a field");
+                                    ChatBlock.sendMessage(player, ChatColor.RED + "A visualization is already taking place");
                                 }
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot visualize while defining a cuboid");
                             }
                             return true;
                         }
                         else if (cmd.equals("mark") && !plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.mark"))
                         {
-                            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.mark"))
+                            if (!plugin.getCuboidManager().hasOpenCuboid(player))
                             {
-                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeMarkChunkRadius(), FieldFlag.ALL);
-
-                                if (fieldsInArea.size() > 0)
+                                if (!plugin.getVisualizationManager().pendingVisualization(player))
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Marking " + fieldsInArea.size() + " field blocks...");
-
-                                    for (Field f : fieldsInArea)
+                                    if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.mark"))
                                     {
-                                        plugin.getVisualizationManager().addFieldMark(player, f);
-                                    }
+                                        Set<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeMarkChunkRadius(), FieldFlag.ALL);
 
-                                    plugin.getVisualizationManager().displayVisualization(player, false);
+                                        if (fieldsInArea.size() > 0)
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Marking " + fieldsInArea.size() + " field blocks...");
+
+                                            for (Field f : fieldsInArea)
+                                            {
+                                                plugin.getVisualizationManager().addFieldMark(player, f);
+                                            }
+
+                                            plugin.getVisualizationManager().displayVisualization(player, false);
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields in the area");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Set<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeMarkChunkRadius(), FieldFlag.ALL);
+
+                                        if (fieldsInArea.size() > 0)
+                                        {
+                                            int count = 0;
+                                            for (Field f : fieldsInArea)
+                                            {
+                                                if (plugin.getForceFieldManager().isAllowed(f, player.getName()))
+                                                {
+                                                    count++;
+                                                    plugin.getVisualizationManager().addFieldMark(player, f);
+                                                }
+                                            }
+
+                                            if (count > 0)
+                                            {
+                                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Marking " + count + " field blocks...");
+                                                plugin.getVisualizationManager().displayVisualization(player, false);
+                                            }
+                                            else
+                                            {
+                                                ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields in the area");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields in the area");
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields in the area");
+                                    ChatBlock.sendMessage(player, ChatColor.RED + "A visualization is already taking place");
                                 }
                             }
                             else
                             {
-                                List<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getSettingsManager().getVisualizeMarkChunkRadius(), FieldFlag.ALL);
-
-                                if (fieldsInArea.size() > 0)
-                                {
-                                    int count = 0;
-                                    for (Field f : fieldsInArea)
-                                    {
-                                        if (plugin.getForceFieldManager().isAllowed(f, player.getName()))
-                                        {
-                                            count++;
-                                            plugin.getVisualizationManager().addFieldMark(player, f);
-                                        }
-                                    }
-
-                                    if (count > 0)
-                                    {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Marking " + count + " field blocks...");
-                                        plugin.getVisualizationManager().displayVisualization(player, false);
-                                    }
-                                    else
-                                    {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields in the area");
-                                    }
-                                }
-                                else
-                                {
-                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields in the area");
-                                }
+                                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot mark fields while defining a cuboid");
                             }
-
                             return true;
                         }
                         else if (cmd.equals("snitch") && !plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.snitch"))
@@ -770,7 +820,7 @@ public final class CommandManager implements CommandExecutor
                                     int chunk_radius = Integer.parseInt(args[0]);
 
                                     List<Unbreakable> unbreakables = plugin.getUnbreakableManager().getUnbreakablesInArea(player, chunk_radius);
-                                    List<Field> fields = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), chunk_radius, FieldFlag.ALL);
+                                    Set<Field> fields = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), chunk_radius, FieldFlag.ALL);
 
                                     for (Unbreakable u : unbreakables)
                                     {

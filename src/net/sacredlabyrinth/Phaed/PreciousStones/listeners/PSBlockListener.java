@@ -45,61 +45,53 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockFromTo(BlockFromToEvent event)
     {
-        if (event.isCancelled())
+        if (true)
         {
             return;
         }
 
-        if (false)
+        Block block = event.getBlock();
+        Block toBlock = event.getToBlock();
+        Block relBlock = block.getRelative(event.getFace());
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld()))
         {
-            Block block = event.getBlock();
-            Block toBlock = event.getToBlock();
+            return;
+        }
 
-            if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld()))
-            {
-                return;
-            }
+        if (Helper.isSameBlock(block.getLocation(), toBlock.getLocation()))
+        {
+            return;
+        }
 
-            // only capture water and lava movement
+        // only capture water and lava movement
 
-            if (!block.getType().equals(Material.WATER) && !block.getType().equals(Material.LAVA))
-            {
-                return;
-            }
+        PreciousStones.getLogger().info("-");
 
-            if (plugin.getForceFieldManager().getSourceFields(toBlock.getLocation(), FieldFlag.PREVENT_FLOW) != null)
-            {
-                return;
-            }
+        PreciousStones.getLogger().info("block: " + Helper.toLocationString(block.getLocation()));
+        PreciousStones.getLogger().info("toBlock: " + Helper.toLocationString(toBlock.getLocation()));
+        PreciousStones.getLogger().info("relBlock: " + Helper.toLocationString(relBlock.getLocation()));
 
-            DebugTimer dt = new DebugTimer("onBlockFromTo");
+        if (plugin.getForceFieldManager().hasSourceField(toBlock.getLocation(), FieldFlag.PREVENT_FLOW))
+        {
+            PreciousStones.getLogger().info("out");
+            return;
+        }
 
-            if (plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.PREVENT_FLOW) != null)
-            {
-                Block b = block.getRelative(event.getFace());
+        PreciousStones.getLogger().info("2");
 
-                if (block.getType().equals(Material.WATER))
-                {
-                    if ((block.getType().equals(Material.WATER) || block.getType().equals(Material.STATIONARY_WATER)) && (b.getData() > 0))
-                    {
-                        b.setType(Material.AIR);
-                    }
-                }
-                else
-                {
-                    if ((block.getType().equals(Material.LAVA) || block.getType().equals(Material.STATIONARY_LAVA)) && (b.getData() > 0))
-                    {
-                        b.setType(Material.AIR);
-                    }
-                }
+        DebugTimer dt = new DebugTimer("onBlockFromTo");
 
-                event.setCancelled(true);
-            }
+        if (plugin.getForceFieldManager().hasSourceField(block.getLocation(), FieldFlag.PREVENT_FLOW))
+        {
+            event.setCancelled(true);
+        }
 
-            if (plugin.getSettingsManager().isDebug())
-            {
-                dt.logProcessTime();
-            }
+        PreciousStones.getLogger().info("3");
+
+        if (plugin.getSettingsManager().isDebug())
+        {
+            dt.logProcessTime();
         }
     }
 
@@ -216,6 +208,8 @@ public class PSBlockListener extends BlockListener
 
         DebugTimer dt = new DebugTimer("onBlockBreak");
 
+        plugin.getCuboidManager().closeOpenCuboid(block);
+
         plugin.getSnitchManager().recordSnitchBlockBreak(player, block);
 
         if (plugin.getForceFieldManager().isField(block))
@@ -330,7 +324,7 @@ public class PSBlockListener extends BlockListener
                     plugin.getGriefUndoManager().addBlock(field, block);
                     plugin.getStorageManager().offerGrief(field);
 
-                    if (!field.getSettings().hasFlag(FieldFlag.GRIEF_UNDO_PRODUCE_DROP))
+                    if (!field.hasFlag(FieldFlag.GRIEF_UNDO_PRODUCE_DROP))
                     {
                         block.setTypeId(0);
                         event.setCancelled(true);

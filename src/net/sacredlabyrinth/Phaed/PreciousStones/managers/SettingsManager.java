@@ -17,6 +17,8 @@ import java.util.*;
  */
 public final class SettingsManager
 {
+    private int cuboidDefiningType;
+    private int cuboidVisualizationType;
     private boolean logToHawkEye;
     private List<String> blacklistedWorlds;
     private int purgeSnitchAfterDays;
@@ -30,9 +32,11 @@ public final class SettingsManager
     private int foresterTrees;
     private int visualizeAdminChunkRadius;
     private int visualizeMarkBlock;
+    private int visualizeFrameBlock;
     private int visualizeMarkChunkRadius;
     private int visualizeBlock;
     private int visualizeSeconds;
+    private int visualizeSpreadDivisor;
     private boolean visualizeEndOnMove;
     private boolean debug;
     private boolean debugdb;
@@ -84,7 +88,6 @@ public final class SettingsManager
     private boolean disableAlertsForAdmins;
     private boolean disableBypassAlertsForAdmins;
     private boolean offByDefault;
-    private int chunksInLargestForceFieldArea;
     private byte[] throughFields = new byte[]
     {
         0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94
@@ -137,62 +140,66 @@ public final class SettingsManager
         bypassBlocks = config.getIntList("bypass-blocks", new ArrayList<Integer>());
         unprotectableBlocks = config.getIntList("unprotectable-blocks", new ArrayList<Integer>());
         toolItems = config.getIntList("tool-items", new ArrayList<Integer>());
-        logFire = config.getBoolean("log.fire", false);
-        logEntry = config.getBoolean("log.entry", false);
-        logPlace = config.getBoolean("log.place", false);
-        logUse = config.getBoolean("log.use", false);
-        logPvp = config.getBoolean("log.pvp", false);
-        logDestroy = config.getBoolean("log.destroy", false);
-        logDestroyArea = config.getBoolean("log.destroy-area", false);
-        logUnprotectable = config.getBoolean("log.unprotectable", false);
-        logBypassPvp = config.getBoolean("log.bypass-pvp", false);
-        logBypassDelete = config.getBoolean("log.bypass-delete", false);
-        logBypassPlace = config.getBoolean("log.bypass-place", false);
-        logBypassDestroy = config.getBoolean("log.bypass-destroy", false);
-        logConflictPlace = config.getBoolean("log.conflict-place", false);
-        notifyPlace = config.getBoolean("notify.place", false);
-        notifyDestroy = config.getBoolean("notify.destroy", false);
-        notifyBypassUnprotectable = config.getBoolean("notify.bypass-unprotectable", false);
-        notifyBypassPvp = config.getBoolean("notify.bypass-pvp", false);
-        notifyBypassPlace = config.getBoolean("notify.bypass-place", false);
-        notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", false);
-        warnInstantHeal = config.getBoolean("warn.instant-heal", false);
-        warnSlowHeal = config.getBoolean("warn.slow-heal", false);
-        warnSlowDamage = config.getBoolean("warn.slow-damage", false);
-        warnFastDamage = config.getBoolean("warn.fast-damage", false);
-        warnGiveAir = config.getBoolean("warn.give-air", false);
-        warnFire = config.getBoolean("warn.fire", false);
-        warnEntry = config.getBoolean("warn.entry", false);
-        warnPlace = config.getBoolean("warn.place", false);
-        warnUse = config.getBoolean("warn.use", false);
-        warnPvp = config.getBoolean("warn.pvp", false);
-        warnDestroy = config.getBoolean("warn.destroy", false);
-        warnDestroyArea = config.getBoolean("warn.destroy-area", false);
-        warnUnprotectable = config.getBoolean("warn.unprotectable", false);
-        warnLaunch = config.getBoolean("warn.launch", false);
-        warnCannon = config.getBoolean("warn.cannon", false);
-        warnMine = config.getBoolean("warn.mine", false);
+        logFire = config.getBoolean("log.fire", true);
+        logEntry = config.getBoolean("log.entry", true);
+        logPlace = config.getBoolean("log.place", true);
+        logUse = config.getBoolean("log.use", true);
+        logPvp = config.getBoolean("log.pvp", true);
+        logDestroy = config.getBoolean("log.destroy", true);
+        logDestroyArea = config.getBoolean("log.destroy-area", true);
+        logUnprotectable = config.getBoolean("log.unprotectable", true);
+        logBypassPvp = config.getBoolean("log.bypass-pvp", true);
+        logBypassDelete = config.getBoolean("log.bypass-delete", true);
+        logBypassPlace = config.getBoolean("log.bypass-place", true);
+        logBypassDestroy = config.getBoolean("log.bypass-destroy", true);
+        logConflictPlace = config.getBoolean("log.conflict-place", true);
+        notifyPlace = config.getBoolean("notify.place", true);
+        notifyDestroy = config.getBoolean("notify.destroy", true);
+        notifyBypassUnprotectable = config.getBoolean("notify.bypass-unprotectable", true);
+        notifyBypassPvp = config.getBoolean("notify.bypass-pvp", true);
+        notifyBypassPlace = config.getBoolean("notify.bypass-place", true);
+        notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", true);
+        warnInstantHeal = config.getBoolean("warn.instant-heal", true);
+        warnSlowHeal = config.getBoolean("warn.slow-heal", true);
+        warnSlowDamage = config.getBoolean("warn.slow-damage", true);
+        warnFastDamage = config.getBoolean("warn.fast-damage", true);
+        warnGiveAir = config.getBoolean("warn.give-air", true);
+        warnFire = config.getBoolean("warn.fire", true);
+        warnEntry = config.getBoolean("warn.entry", true);
+        warnPlace = config.getBoolean("warn.place", true);
+        warnUse = config.getBoolean("warn.use", true);
+        warnPvp = config.getBoolean("warn.pvp", true);
+        warnDestroy = config.getBoolean("warn.destroy", true);
+        warnDestroyArea = config.getBoolean("warn.destroy-area", true);
+        warnUnprotectable = config.getBoolean("warn.unprotectable", true);
+        warnLaunch = config.getBoolean("warn.launch", true);
+        warnCannon = config.getBoolean("warn.cannon", true);
+        warnMine = config.getBoolean("warn.mine", true);
         publicBlockDetails = config.getBoolean("settings.public-block-details", false);
-        sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", false);
+        sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", true);
         allowedCanBreakPstones = config.getBoolean("settings.allowed-can-break-pstones", false);
-        dropOnDelete = config.getBoolean("settings.drop-on-delete", false);
-        disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins", false);
+        dropOnDelete = config.getBoolean("settings.drop-on-delete", true);
+        disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins", true);
         disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
         offByDefault = config.getBoolean("settings.off-by-default", false);
         linesPerPage = config.getInt("settings.lines-per-page", 12);
-        logToHawkEye = config.getBoolean("settings.log-to-hawkeye", false);
+        logToHawkEye = config.getBoolean("settings.log-to-hawkeye", true);
         debugdb = config.getBoolean("settings.debug-on", false);
         blacklistedWorlds = config.getStringList("settings.blacklisted-worlds", new ArrayList<String>());
+        cuboidDefiningType = config.getInt("cuboid.defining-blocktype", 49);
+        cuboidVisualizationType = config.getInt("cuboid.visualization-blocktype", 20);
         purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days", 45);
         purgeSnitchAfterDays = config.getInt("cleanup.snitch-unused-purge-days", 60);
         saveFrequency = config.getInt("saving.frequency-seconds", 300);
         maxSnitchRecords = config.getInt("saving.max-records-per-snitch", 50);
+        visualizeFrameBlock = config.getInt("visualization.frame-block-type", 20);
         visualizeBlock = config.getInt("visualization.block-type", 20);
-        visualizeSeconds = config.getInt("visualization.seconds", 30);
-        visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", true);
-        visualizeAdminChunkRadius = config.getInt("visualization.admin-chunk-radius", 10);
-        visualizeMarkBlock = config.getInt("visualization.mark-block-type", 20);
+        visualizeSeconds = config.getInt("visualization.seconds", 10);
+        visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", false);
+        visualizeAdminChunkRadius = config.getInt("visualization.admin-chunk-radius", 4);
+        visualizeMarkBlock = config.getInt("visualization.mark-block-type", 49);
         visualizeMarkChunkRadius = config.getInt("visualization.mark-chunk-radius", 10);
+        visualizeSpreadDivisor = config.getInt("visualization.spread-divisor", 130);
         foresterInterval = config.getInt("forester.interval-seconds", 1);
         foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
         foresterTrees = config.getInt("forester.trees", 60);
@@ -273,16 +280,20 @@ public final class SettingsManager
         config.setProperty("settings.lines-per-page", getLinesPerPage());
         config.setProperty("settings.blacklisted-worlds", getBlacklistedWorlds());
         config.setProperty("settings.log-to-hawkeye", isLogToHawkEye());
+        config.setProperty("cuboid.defining-blocktype", cuboidDefiningType);
+        config.setProperty("cuboid.visualization-blocktype", cuboidVisualizationType);
         config.setProperty("cleanup.player-inactivity-purge-days", getPurgeAfterDays());
         config.setProperty("cleanup.snitch-unused-purge-days", getPurgeSnitchAfterDays());
         config.setProperty("saving.frequency-seconds", getSaveFrequency());
         config.setProperty("saving.max-records-per-snitch", getMaxSnitchRecords());
+        config.setProperty("visualization.frame-block-type", visualizeFrameBlock);
         config.setProperty("visualization.block-type", getVisualizeBlock());
         config.setProperty("visualization.seconds", getVisualizeSeconds());
         config.setProperty("visualization.end-on-player-move", isVisualizeEndOnMove());
         config.setProperty("visualization.admin-chunk-radius", getVisualizeAdminChunkRadius());
         config.setProperty("visualization.mark-block-type", getVisualizeMarkBlock());
         config.setProperty("visualization.mark-chunk-radius", getVisualizeMarkChunkRadius());
+        config.setProperty("visualization.spread-divisor", visualizeSpreadDivisor);
         config.setProperty("forester.interval-seconds", getForesterInterval());
         config.setProperty("forester.fertile-blocks", getForesterFertileBlocks());
         config.setProperty("grief-undo.interval-seconds", getGriefIntervalSeconds());
@@ -323,17 +334,8 @@ public final class SettingsManager
                 // add the type id to our reference list
 
                 ffBlocks.add(fs.getTypeId());
-
-                // see if the radius is the largest
-
-                if (fs.getRadius() > largestForceField)
-                {
-                    largestForceField = fs.getRadius();
-                }
             }
         }
-
-        chunksInLargestForceFieldArea = (int) Math.max(Math.ceil(largestForceField / 16.0), 1);
     }
 
     /**
@@ -1138,14 +1140,6 @@ public final class SettingsManager
     }
 
     /**
-     * @return the chunksInLargestForceFieldArea
-     */
-    public int getChunksInLargestForceFieldArea()
-    {
-        return chunksInLargestForceFieldArea;
-    }
-
-    /**
      * @return the ffBlocks
      */
     public List<Integer> getFfBlocks()
@@ -1233,5 +1227,25 @@ public final class SettingsManager
         HashSet<Byte> tfs = new HashSet<Byte>();
         tfs.addAll(throughFieldsSet);
         return tfs;
+    }
+
+    public int getCuboidDefiningType()
+    {
+        return cuboidDefiningType;
+    }
+
+    public int getVisualizeSpreadDivisor()
+    {
+        return visualizeSpreadDivisor;
+    }
+
+    public int getCuboidVisualizationType()
+    {
+        return cuboidVisualizationType;
+    }
+
+    public int getVisualizeFrameBlock()
+    {
+        return visualizeFrameBlock;
     }
 }

@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author phaed
  */
 public final class StorageManager
@@ -61,7 +60,13 @@ public final class StorageManager
             {
                 PreciousStones.log("MySQL Connection successful");
 
-                cleanup();
+                if (!core.existsTable("pstone_cuboids"))
+                {
+                    PreciousStones.log("Creating table: pstone_cuboids");
+
+                    String query = "CREATE TABLE IF NOT EXISTS `pstone_cuboids` (  `id` bigint(20) NOT NULL auto_increment, `parent` bigint(20) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL,  `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL,  PRIMARY KEY  (`id`),  UNIQUE KEY `uq_cuboid_fields_1`  (`x`,`y`,`z`,`world`));";
+                    core.execute(query);
+                }
 
                 if (!core.existsTable("pstone_fields"))
                 {
@@ -117,7 +122,13 @@ public final class StorageManager
             {
                 PreciousStones.log("SQLite Connection successful");
 
-                cleanup();
+                if (!core.existsTable("pstone_cuboids"))
+                {
+                    PreciousStones.log("Creating table: pstone_cuboids");
+
+                    String query = "CREATE TABLE IF NOT EXISTS `pstone_cuboids` (  `id` bigint(20),  `parent` bigint(20) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL,  `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL,  PRIMARY KEY  (`id`),  UNIQUE (`x`,`y`,`z`,`world`));";
+                    core.execute(query);
+                }
 
                 if (!core.existsTable("pstone_fields"))
                 {
@@ -175,21 +186,6 @@ public final class StorageManager
         core.close();
     }
 
-    private void cleanup()
-    {
-        if (core.existsTable("pstone_fields") && !core.existsTable("pstone_snitches"))
-        {
-            if (plugin.getSettingsManager().isUseMysql())
-            {
-                String query = "ALTER TABLE pstone_fields DROP COLUMN packed_snitch_list;";
-                core.execute(query);
-            }
-
-            String query = "ALTER TABLE pstone_fields ADD COLUMN last_used bigint(20);";
-            core.execute(query);
-        }
-    }
-
     /**
      * Load pstones for any world that is loaded
      */
@@ -209,6 +205,7 @@ public final class StorageManager
 
     /**
      * Loads all fields for a specific world into memory
+     *
      * @param world the world to load
      */
     public void loadWorldFields(String world)
@@ -218,6 +215,7 @@ public final class StorageManager
         synchronized (this)
         {
             fields = getFields(world);
+            fields.addAll(getCuboidFields(world));
         }
 
         if (fields != null)
@@ -225,6 +223,8 @@ public final class StorageManager
             for (Field field : fields)
             {
                 FieldSettings fs = field.getSettings();
+
+                // add to collection
 
                 plugin.getForceFieldManager().addToCollection(field);
 
@@ -243,6 +243,7 @@ public final class StorageManager
 
     /**
      * Loads all unbreakables for a specific world into memory
+     *
      * @param world
      */
     public void loadWorldUnbreakables(String world)
@@ -270,6 +271,7 @@ public final class StorageManager
 
     /**
      * Puts the field up for future storage
+     *
      * @param field
      */
     public void offerField(Field field)
@@ -282,6 +284,7 @@ public final class StorageManager
 
     /**
      * Puts the unbreakable up for future storage
+     *
      * @param ub
      * @param insert
      */
@@ -295,6 +298,7 @@ public final class StorageManager
 
     /**
      * Puts the field up for grief reversion
+     *
      * @param field
      */
     public void offerGrief(Field field)
@@ -307,6 +311,7 @@ public final class StorageManager
 
     /**
      * Puts the player up for future storage
+     *
      * @param playerName
      * @param update
      */
@@ -320,6 +325,7 @@ public final class StorageManager
 
     /**
      * Puts the snitch list up for future storage
+     *
      * @param se
      */
     public void offerSnitchEntry(SnitchEntry se)
@@ -331,7 +337,8 @@ public final class StorageManager
     }
 
     /**
-     * Retrieves all fields belonging to a worlds from the database
+     * Retrieves all fields belonging to a world from the database
+     *
      * @param worldName
      * @return
      */
@@ -352,6 +359,7 @@ public final class StorageManager
                 {
                     try
                     {
+                        long id = res.getLong("id");
                         int x = res.getInt("x");
                         int y = res.getInt("y");
                         int z = res.getInt("z");
@@ -368,6 +376,7 @@ public final class StorageManager
 
                         Field field = new Field(x, y, z, radius, height, velocity, world, type_id, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
+                        field.setId(id);
 
                         if (last_seen > 0)
                         {
@@ -424,7 +433,206 @@ public final class StorageManager
     }
 
     /**
+     * Retrieves all of the cuboid fields belonging to a world from the database
+     *
+     * @param worldName
+     * @return
+     */
+    public Collection<Field> getCuboidFields(String worldName)
+    {
+        HashMap<Long, Field> out = new HashMap<Long, Field>();
+        int purged = 0;
+
+        String query = "SELECT * FROM  pstone_cuboids LEFT JOIN pstone_players ON pstone_cuboids.owner = pstone_players.player_name WHERE pstone_cuboids.parent = 0 AND world = '" + worldName + "';";
+
+        ResultSet res = core.select(query);
+
+        if (res != null)
+        {
+            try
+            {
+                while (res.next())
+                {
+                    try
+                    {
+                        long id = res.getLong("id");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
+                        int minx = res.getInt("minx");
+                        int miny = res.getInt("miny");
+                        int minz = res.getInt("minz");
+                        int maxx = res.getInt("maxx");
+                        int maxy = res.getInt("maxy");
+                        int maxz = res.getInt("maxz");
+                        int type_id = res.getInt("type_id");
+                        float velocity = res.getFloat("velocity");
+                        String world = res.getString("world");
+                        String owner = res.getString("owner");
+                        String name = res.getString("name");
+                        String packed_allowed = res.getString("packed_allowed");
+                        long last_seen = res.getLong("last_seen");
+                        long last_used = res.getLong("last_used");
+
+                        Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type_id, owner, name, last_used);
+                        field.setPackedAllowed(packed_allowed);
+                        field.setId(id);
+
+                        if (last_seen > 0)
+                        {
+                            int lastSeenDays = (int) Dates.differenceInDays(new Date(), new Date(last_seen));
+
+                            if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
+                            {
+                                offerPlayer(owner, false);
+                                purged++;
+                                continue;
+                            }
+                        }
+
+                        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+
+                        if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
+                        {
+                            if (fs != null && fs.hasFlag(FieldFlag.SNITCH))
+                            {
+                                deleteSnitchEntires(field);
+                                field.markForDeletion();
+                                offerField(field);
+                                purged++;
+                                continue;
+                            }
+                        }
+
+                        if (fs != null)
+                        {
+                            field.setSettings(fs);
+                            out.put(id, field);
+
+                            PlayerData data = plugin.getPlayerManager().getPlayerData(owner);
+                            data.incrementFieldCount(type_id);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+            catch (SQLException ex)
+            {
+                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        query = "SELECT * FROM  pstone_cuboids LEFT JOIN pstone_players ON pstone_cuboids.owner = pstone_players.player_name WHERE pstone_cuboids.parent > 0 AND world = '" + worldName + "';";
+
+        res = core.select(query);
+
+        if (res != null)
+        {
+            try
+            {
+                while (res.next())
+                {
+                    try
+                    {
+                        long id = res.getLong("id");
+                        long parent = res.getLong("parent");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
+                        int minx = res.getInt("minx");
+                        int miny = res.getInt("miny");
+                        int minz = res.getInt("minz");
+                        int maxx = res.getInt("maxx");
+                        int maxy = res.getInt("maxy");
+                        int maxz = res.getInt("maxz");
+                        int type_id = res.getInt("type_id");
+                        float velocity = res.getFloat("velocity");
+                        String world = res.getString("world");
+                        String owner = res.getString("owner");
+                        String name = res.getString("name");
+                        String packed_allowed = res.getString("packed_allowed");
+                        long last_seen = res.getLong("last_seen");
+                        long last_used = res.getLong("last_used");
+
+                        Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type_id, owner, name, last_used);
+                        field.setPackedAllowed(packed_allowed);
+
+                        Field parentField = out.get(parent);
+
+                        if (parentField != null)
+                        {
+                            field.setParent(parentField);
+                            parentField.addChild(field);
+                        }
+                        else
+                        {
+                            field.markForDeletion();
+                            offerField(field);
+                        }
+
+                        field.setId(id);
+
+                        if (last_seen > 0)
+                        {
+                            int lastSeenDays = (int) Dates.differenceInDays(new Date(), new Date(last_seen));
+
+                            if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
+                            {
+                                offerPlayer(owner, false);
+                                purged++;
+                                continue;
+                            }
+                        }
+
+                        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+
+                        if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
+                        {
+                            if (fs != null && fs.hasFlag(FieldFlag.SNITCH))
+                            {
+                                deleteSnitchEntires(field);
+                                field.markForDeletion();
+                                offerField(field);
+                                purged++;
+                                continue;
+                            }
+                        }
+
+                        if (fs != null)
+                        {
+                            field.setSettings(fs);
+                            out.put(id, field);
+
+                            PlayerData data = plugin.getPlayerManager().getPlayerData(owner);
+                            data.incrementFieldCount(type_id);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+            catch (SQLException ex)
+            {
+                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if (purged > 0)
+        {
+            PreciousStones.log("({0}) cuboids purged: {1}", worldName, purged);
+        }
+
+        return out.values();
+    }
+
+    /**
      * Retrieves all unbreakables belonging to a worlds from the database
+     *
      * @param worldName
      * @return
      */
@@ -543,9 +751,19 @@ public final class StorageManager
             subQuery += "last_used = " + (new Date()).getTime() + ", ";
         }
 
+        if (field.isDirty(DirtyFieldReason.DIMENSIONS))
+        {
+            subQuery += "minx = " + field.getMinx() + ", " + "miny = " + field.getMiny() + ", " + "minz = " + field.getMinz() + ", " + "maxx = " + field.getMaxx() + ", " + "maxy = " + field.getMaxy() + ", " + "maxz = " + field.getMaxz() + ", ";
+        }
+
         if (!subQuery.isEmpty())
         {
             String query = "UPDATE `pstone_fields` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+
+            if (field.hasFlag(FieldFlag.CUBOID))
+            {
+                query = "UPDATE `pstone_cuboids` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+            }
 
             if (plugin.getSettingsManager().isDebugsql())
             {
@@ -559,12 +777,19 @@ public final class StorageManager
 
     /**
      * Insert a field into the database
+     *
      * @param field
      */
     public void insertField(Field field)
     {
         String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`) ";
         String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "');";
+
+        if (field.hasFlag(FieldFlag.CUBOID))
+        {
+            query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`) ";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "');";
+        }
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -573,22 +798,30 @@ public final class StorageManager
 
         synchronized (this)
         {
-            core.insert(query + values);
+            field.setId(core.insert(query + values));
         }
     }
 
     /**
      * Delete a fields form the database
+     *
      * @param field
      */
     public void deleteField(Field field)
     {
         String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+
+        if (field.hasFlag(FieldFlag.CUBOID))
+        {
+            query = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+        }
+
         core.delete(query);
     }
 
     /**
      * Delete a fields form the database that a player owns
+     *
      * @param playerName
      */
     public void deleteFields(String playerName)
@@ -599,6 +832,7 @@ public final class StorageManager
 
     /**
      * Insert an unbreakable into the database
+     *
      * @param ub
      */
     public void insertUnbreakable(Unbreakable ub)
@@ -610,6 +844,7 @@ public final class StorageManager
 
     /**
      * Delete an unbreakabale form the database
+     *
      * @param ub
      */
     public void deleteUnbreakable(Unbreakable ub)
@@ -620,6 +855,7 @@ public final class StorageManager
 
     /**
      * Delete an unbreakabale form the database that a player owns
+     *
      * @param playerName
      */
     public void deleteUnbreakables(String playerName)
@@ -630,6 +866,7 @@ public final class StorageManager
 
     /**
      * Insert snitch entry into the database
+     *
      * @param snitch
      * @param se
      */
@@ -653,6 +890,7 @@ public final class StorageManager
 
     /**
      * Delete all snitch entries for a snitch form the database
+     *
      * @param snitch
      */
     public void deleteSnitchEntires(Field snitch)
@@ -672,6 +910,7 @@ public final class StorageManager
 
     /**
      * Retrieves all snitches belonging to a worlds from the database
+     *
      * @param snitch
      * @return
      */
@@ -735,6 +974,7 @@ public final class StorageManager
 
     /**
      * Delete a player from the players table
+     *
      * @param playerName
      */
     public void deletePlayer(String playerName)
@@ -745,6 +985,7 @@ public final class StorageManager
 
     /**
      * Update the player's last seen date on the database
+     *
      * @param playerName
      */
     public void touchPlayer(String playerName)
@@ -795,6 +1036,7 @@ public final class StorageManager
 
     /**
      * Record a single block grief
+     *
      * @param field
      * @param gb
      */
@@ -809,10 +1051,7 @@ public final class StorageManager
 
         if (!plugin.getGriefUndoManager().isDependentBlock(gb.getTypeId()))
         {
-            BlockFace[] faces =
-            {
-                BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
-            };
+            BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
 
             for (BlockFace face : faces)
             {
@@ -862,6 +1101,7 @@ public final class StorageManager
 
     /**
      * Record a single block grief
+     *
      * @param field
      * @param gb
      */
@@ -874,6 +1114,7 @@ public final class StorageManager
 
     /**
      * Restores a field's griefed blocks
+     *
      * @param field
      * @return
      */
@@ -947,6 +1188,7 @@ public final class StorageManager
 
     /**
      * Deletes all records form a specific field
+     *
      * @param field
      */
     public void deleteBlockGrief(Field field)
@@ -965,6 +1207,7 @@ public final class StorageManager
 
     /**
      * Deletes all records form a specific block
+     *
      * @param block
      */
     public void deleteBlockGrief(Block block)
@@ -983,6 +1226,7 @@ public final class StorageManager
 
     /**
      * Schedules the pending queue on save frequency
+     *
      * @return
      */
     public int saverScheduler()
@@ -1054,6 +1298,7 @@ public final class StorageManager
 
     /**
      * Process pending pstones
+     *
      * @param working
      */
     public void processFields(Map<Vec, Field> working)
@@ -1078,6 +1323,7 @@ public final class StorageManager
 
     /**
      * Process pending grief
+     *
      * @param workingUb
      */
     public void processUnbreakable(Map<Unbreakable, Boolean> workingUb)
@@ -1102,6 +1348,7 @@ public final class StorageManager
 
     /**
      * Process pending players
+     *
      * @param workingPlayers
      */
     public void processPlayers(Map<String, Boolean> workingPlayers)
@@ -1126,6 +1373,7 @@ public final class StorageManager
 
     /**
      * Process pending snitches
+     *
      * @param workingSnitchEntries
      */
     public void processSnitches(List<SnitchEntry> workingSnitchEntries)
@@ -1143,6 +1391,7 @@ public final class StorageManager
 
     /**
      * Process pending grief
+     *
      * @param workingGrief
      */
     public void processGrief(Set<Field> workingGrief)
