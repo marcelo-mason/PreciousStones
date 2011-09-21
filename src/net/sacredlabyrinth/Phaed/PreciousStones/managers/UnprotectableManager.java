@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -101,6 +102,51 @@ public class UnprotectableManager
                     if (plugin.getSettingsManager().isUnprotectableType(type))
                     {
                         return fieldblock.getWorld().getBlockAt(x, y, z);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * If an unprotectable block exists inside the field return it
+     * @param fieldblock the block that contains the field
+     * @return the offending block
+     */
+    public Block existsUnprotectableBlock(Field field)
+    {
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field.getTypeId());
+
+        if (fs == null)
+        {
+            return null;
+        }
+
+        int minx = field.getMinx();
+        int maxx = field.getMaxx();
+        int minz = field.getMinz();
+        int maxz = field.getMaxz();
+        int miny = field.getMiny();
+        int maxy = field.getMaxy();
+
+        for (int x = minx; x <= maxx; x++)
+        {
+            for (int z = minz; z <= maxz; z++)
+            {
+                for (int y = miny; y <= maxy; y++)
+                {
+                    if (x == 0 && y == 0 && z == 0)
+                    {
+                        continue;
+                    }
+
+                    int type = field.getBlock().getWorld().getBlockTypeIdAt(x, y, z);
+
+                    if (plugin.getSettingsManager().isUnprotectableType(type))
+                    {
+                        return field.getBlock().getWorld().getBlockAt(x, y, z);
                     }
                 }
             }

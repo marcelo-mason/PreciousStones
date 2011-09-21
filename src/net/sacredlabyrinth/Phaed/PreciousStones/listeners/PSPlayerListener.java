@@ -82,6 +82,7 @@ public class PSPlayerListener extends PlayerListener
         final Player player = event.getPlayer();
         DebugTimer dt = new DebugTimer("onPlayerInteract");
         Block block = event.getClickedBlock();
+        ItemStack is = player.getItemInHand();
 
         if (player == null)
         {
@@ -103,69 +104,106 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        ItemStack is = player.getItemInHand();
-
-        if (is.getTypeId() == 0)
+        if (plugin.getCuboidManager().hasOpenCuboid(player))
         {
-            if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
-            {
-                if (plugin.getCuboidManager().hasOpenCuboid(player))
-                {
-                    Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
+            Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
-                    Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_DESTROY);
-
-                    if (field == null)
-                    {
-                        field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_REQUEST);
-                    }
-
-                    if (field == null)
-                    {
-                        field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL);
-                    }
-
-                    if (field != null)
-                    {
-                        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.destroy"))
-                        {
-                            return;
-                        }
-                    }
-
-                    CuboidEntry openCuboid = plugin.getCuboidManager().getOpenCuboid(player);
-
-                    Field conflicts = plugin.getForceFieldManager().fieldConflicts(target, player);
-
-                    if (conflicts == null)
-                    {
-                        if (openCuboid.testOverflow(target.getLocation()))
-                        {
-                            Material material = Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType());
-
-                            plugin.getCuboidManager().addSelectionBlock(player, target);
-                            plugin.getVisualizationManager().displaySingle(player, material, target);
-                        }
-                        else
-                        {
-                            ChatBlock.sendMessage(player, ChatColor.RED + "Exceeding maximum dimensions");
-                        }
-                    }
-                    else
-                    {
-                        ChatBlock.sendMessage(player, ChatColor.RED + "Conflicts with someone else's field");
-                    }
-                }
-            }
+            boolean isPlacingField = false;
 
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
             {
-                if (plugin.getCuboidManager().hasOpenCuboid(player))
+                if (plugin.getSettingsManager().isFieldType(is.getType()))
+                {
+                    isPlacingField = true;
+                }
+            }
+
+            if (!isPlacingField)
+            {
+                // close the cuboid when clicking back to the origin block
+
+                if (plugin.getCuboidManager().isOpenCuboid(target))
                 {
                     plugin.getCuboidManager().closeCuboid(player);
                     return;
                 }
+
+                // check for protections
+
+                Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_DESTROY);
+
+                if (field == null)
+                {
+                    field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_REQUEST);
+                }
+
+                if (field == null)
+                {
+                    field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL);
+                }
+
+                if (field != null)
+                {
+                    if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.destroy"))
+                    {
+                        return;
+                    }
+                }
+
+                // add to the cuboid
+
+                CuboidEntry openCuboid = plugin.getCuboidManager().getOpenCuboid(player);
+
+                Field conflicts = plugin.getForceFieldManager().fieldConflicts(target, player);
+
+                if (conflicts == null)
+                {
+                    if (openCuboid.testOverflow(target.getLocation()))
+                    {
+                        Material material = Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType());
+
+                        plugin.getCuboidManager().addSelectionBlock(player, target);
+                        plugin.getVisualizationManager().displaySingle(player, material, target);
+                        event.setCancelled(true);
+                        return;
+                    }
+                    else
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.RED + "Exceeding maximum dimensions");
+                    }
+                }
+                else
+                {
+                    ChatBlock.sendMessage(player, ChatColor.RED + "Conflicts with someone else's field");
+                }
             }
+        }
+        else
+        {
+            Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
+
+            if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            {
+                if (player.isSneaking())
+                {
+                    Field field = plugin.getForceFieldManager().getField(target);
+
+                    if (field != null)
+                    {
+                        if (field.hasFlag(FieldFlag.CUBOID))
+                        {
+                            if (field.getParent() != null)
+                            {
+                                field = field.getParent();
+                            }
+
+                            plugin.getCuboidManager().openCuboid(player, field);
+                            return;
+                        }
+                    }
+                }
+            }
+
         }
 
         if (block != null)

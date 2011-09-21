@@ -90,7 +90,7 @@ public final class SettingsManager
     private boolean offByDefault;
     private byte[] throughFields = new byte[]
     {
-        0, 6, 8, 9, 10, 11, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94
+        0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106
     };
     private HashSet<Byte> throughFieldsSet = new HashSet<Byte>();
     private int linesPerPage;

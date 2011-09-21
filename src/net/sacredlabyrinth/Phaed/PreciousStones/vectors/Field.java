@@ -822,7 +822,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         return c;
     }
 
-
     public int getMaxx()
     {
         return maxx;

@@ -39,6 +39,51 @@ public class PSEntityListener extends EntityListener
      * @param event
      */
     @Override
+    public void onEndermanPickup(EndermanPickupEvent event)
+    {
+        if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.PREVENT_DESTROY))
+        {
+            event.setCancelled(true);
+        }
+
+        if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.GRIEF_UNDO_INTERVAL))
+        {
+            event.setCancelled(true);
+        }
+
+        if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.GRIEF_UNDO_REQUEST))
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @Override
+    public void onEndermanPlace(EndermanPlaceEvent event)
+    {
+        if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.PREVENT_PLACE))
+        {
+            event.setCancelled(true);
+        }
+
+        if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.GRIEF_UNDO_INTERVAL))
+        {
+            event.setCancelled(true);
+        }
+
+        if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.GRIEF_UNDO_REQUEST))
+        {
+            event.setCancelled(true);
+        }
+    }
+
+
+    /**
+     * @param event
+     */
+    @Override
     public void onEntityTarget(EntityTargetEvent event)
     {
         Entity target = event.getTarget();

@@ -74,11 +74,8 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.getForceFieldManager().hasSourceField(toBlock.getLocation(), FieldFlag.PREVENT_FLOW))
         {
-            PreciousStones.getLogger().info("out");
             return;
         }
-
-        PreciousStones.getLogger().info("2");
 
         DebugTimer dt = new DebugTimer("onBlockFromTo");
 
@@ -86,8 +83,6 @@ public class PSBlockListener extends BlockListener
         {
             event.setCancelled(true);
         }
-
-        PreciousStones.getLogger().info("3");
 
         if (plugin.getSettingsManager().isDebug())
         {
@@ -208,7 +203,7 @@ public class PSBlockListener extends BlockListener
 
         DebugTimer dt = new DebugTimer("onBlockBreak");
 
-        plugin.getCuboidManager().closeOpenCuboid(block);
+        plugin.getCuboidManager().cancelOpenCuboid(block);
 
         plugin.getSnitchManager().recordSnitchBlockBreak(player, block);
 

@@ -113,14 +113,13 @@ public final class ForceFieldManager
             }
             else
             {
-                event.setCancelled(true);
+                plugin.getCuboidManager().closeCuboid(player);
+                plugin.getVisualizationManager().revertVisualization(player);
+
                 ChatBlock.sendMessage(player, "Cannot place other type up fields while defining a cuboid.");
+                event.setCancelled(true);
                 return false;
             }
-        }
-        else if (fs.hasFlag(FieldFlag.CUBOID))
-        {
-            field = new Field(fieldBlock, 0, 0, owner);
         }
         else
         {
@@ -164,10 +163,6 @@ public final class ForceFieldManager
                 {
                     plugin.getCuboidManager().openChild(player, field);
                 }
-                else
-                {
-                    plugin.getCuboidManager().openCuboid(player, field);
-                }
             }
 
             // insert the field into database
@@ -186,10 +181,9 @@ public final class ForceFieldManager
             plugin.getVisualizationManager().visualizeSingleField(player, field);
         }
 
-        // do not display placed notification if cuboid
-
         if (fs.hasFlag(FieldFlag.CUBOID))
         {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cuboid field defined");
             return false;
         }
 

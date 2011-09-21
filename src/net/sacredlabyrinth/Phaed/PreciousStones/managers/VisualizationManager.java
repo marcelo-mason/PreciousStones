@@ -66,6 +66,11 @@ public class VisualizationManager
             vis = new Visualization();
         }
 
+        if (plugin.getCuboidManager().hasOpenCuboid(player))
+        {
+            return;
+        }
+
         vis.addField(field);
 
         int visualizationType = field.hasFlag(FieldFlag.CUBOID) ? plugin.getSettingsManager().getCuboidVisualizationType() : plugin.getSettingsManager().getVisualizeBlock();
