@@ -209,6 +209,22 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("remove-mob") && Helper.isBoolean(map.get("remove-mob")))
+        {
+            if ((Boolean) map.get("remove-mob"))
+            {
+                flags.add(FieldFlag.REMOVE_MOB);
+            }
+        }        
+        
+        if (map.containsKey("remove-animal") && Helper.isBoolean(map.get("remove-animal")))
+        {
+            if ((Boolean) map.get("remove-animal"))
+            {
+                flags.add(FieldFlag.REMOVE_ANIMAL);
+            }
+        }
+        
         if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
         {
             if ((Boolean) map.get("instant-heal"))
@@ -224,6 +240,22 @@ public class FieldSettings
                 flags.add(FieldFlag.SLOW_HEAL);
             }
         }
+
+        if (map.containsKey("slow-feeding") && Helper.isBoolean(map.get("slow-feeding")))
+        {
+            if ((Boolean) map.get("slow-feeding"))
+            {
+                flags.add(FieldFlag.SLOW_FEEDING);
+            }
+        }   
+        
+        if (map.containsKey("slow-repair") && Helper.isBoolean(map.get("slow-repair")))
+        {
+            if ((Boolean) map.get("slow-repair"))
+            {
+                flags.add(FieldFlag.SLOW_REPAIR);
+            }
+        }        
 
         if (map.containsKey("slow-damage") && Helper.isBoolean(map.get("slow-damage")))
         {

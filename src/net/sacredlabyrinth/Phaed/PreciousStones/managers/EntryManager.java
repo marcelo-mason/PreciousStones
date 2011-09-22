@@ -8,6 +8,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -76,6 +77,20 @@ public final class EntryManager
                             }
                         }
 
+                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.feed"))
+                        {
+                            if (fs.hasFlag(FieldFlag.SLOW_FEEDING))
+                            {
+                            	int food = player.getFoodLevel();
+                            	if(food < 20)
+                            	{	
+                            		player.setFoodLevel(food + 1);
+                            		plugin.getCommunicationManager().showSlowFeeding(player);
+                            		continue;
+                            	}
+                            }
+                        }
+
                         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.heal"))
                         {
                             if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
@@ -96,7 +111,60 @@ public final class EntryManager
                                     plugin.getCommunicationManager().showSlowHeal(player);
                                     continue;
                                 }
+                                
+                            }
+                        }
+                        
+                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.repair"))
+                        {
+                            if (fs.hasFlag(FieldFlag.SLOW_REPAIR))
+                            {
+                            	boolean updated = false;
+                            	
+                            	ItemStack[] armors = player.getInventory().getArmorContents();
+                            	for(ItemStack armor : armors)
+                            	{
+                            		if(plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
+                            		{
+                            			short dur = armor.getDurability();
+	                            		if(dur > 0) //has damage
+	                            		{
+	                            			dur -= 25; //repair amount
+	                            			if(dur < 0) dur = 0; //clamp it	                            			
+	                            			armor.setDurability(dur);
+	                            			plugin.getCommunicationManager().showSlowRepair(player);
+	                            			updated = true;
+	                            			break;
+	                            		}
+                            		}
+                            	}
 
+                            	if(updated)
+                            		continue;                            
+                            	
+                            	ItemStack[] items = player.getInventory().getContents();                            	                            	
+                            	for(ItemStack item : items)
+                            	{
+                            		if(item!=null)
+                            		{
+	                            		if(plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
+	                            		{
+		                            		short dur = item.getDurability();
+		                            		if(dur > 0) //has damage
+		                            		{
+		                            			dur -= 25; //repair amount
+		                            			if(dur < 0) dur = 0; //clamp it
+		                            			item.setDurability(dur);
+		                            			plugin.getCommunicationManager().showSlowRepair(player);
+		                            			updated = true;
+		                            			break;
+		                            		}
+	                            		}
+                            		}
+                            	}
+                            	
+                            	if(updated)
+                            		continue;
                             }
                         }
 
