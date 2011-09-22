@@ -181,12 +181,6 @@ public final class ForceFieldManager
             plugin.getVisualizationManager().visualizeSingleField(player, field);
         }
 
-        if (fs.hasFlag(FieldFlag.CUBOID))
-        {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cuboid field defined");
-            return false;
-        }
-
         return true;
     }
 

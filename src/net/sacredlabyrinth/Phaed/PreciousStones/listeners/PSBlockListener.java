@@ -3,14 +3,11 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.*;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -203,7 +200,7 @@ public class PSBlockListener extends BlockListener
 
         DebugTimer dt = new DebugTimer("onBlockBreak");
 
-        plugin.getCuboidManager().cancelOpenCuboid(block);
+        plugin.getCuboidManager().cancelOpenCuboid(player, block);
 
         plugin.getSnitchManager().recordSnitchBlockBreak(player, block);
 
@@ -604,6 +601,7 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockDamage(BlockDamageEvent event)
     {
+        /*
         if (event.isCancelled())
         {
             return;
@@ -625,21 +623,10 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
-        Material materialInHand = is.getType();
-
-        if (plugin.getSettingsManager().isFieldType(materialInHand) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.scoping"))
-        {
-            if (!plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled())
-            {
-                HashSet<Field> touching = plugin.getForceFieldManager().getTouchingFields(scopedBlock, materialInHand);
-                plugin.getCommunicationManager().printTouchingFields(player, touching);
-            }
-        }
-
         if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
-        }
+        }*/
     }
 
     /**

@@ -104,25 +104,15 @@ public class PSPlayerListener extends PlayerListener
             }
         }
 
-        if (plugin.getCuboidManager().hasOpenCuboid(player))
+        if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
         {
-            Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
-
-            boolean isPlacingField = false;
-
-            if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            if (plugin.getCuboidManager().hasOpenCuboid(player))
             {
-                if (plugin.getSettingsManager().isFieldType(is.getType()))
-                {
-                    isPlacingField = true;
-                }
-            }
+                Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
-            if (!isPlacingField)
-            {
                 // close the cuboid when clicking back to the origin block
 
-                if (plugin.getCuboidManager().isOpenCuboid(target))
+                if (plugin.getCuboidManager().isOpenCuboid(player, target))
                 {
                     plugin.getCuboidManager().closeCuboid(player);
                     return;
@@ -177,13 +167,10 @@ public class PSPlayerListener extends PlayerListener
                     ChatBlock.sendMessage(player, ChatColor.RED + "Conflicts with someone else's field");
                 }
             }
-        }
-        else
-        {
-            Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
-
-            if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            else
             {
+                Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
+
                 if (player.isSneaking())
                 {
                     Field field = plugin.getForceFieldManager().getField(target);
@@ -203,7 +190,20 @@ public class PSPlayerListener extends PlayerListener
                     }
                 }
             }
+        }
 
+        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK))
+        {
+            Material materialInHand = is.getType();
+
+            if (plugin.getSettingsManager().isFieldType(materialInHand) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.scoping"))
+            {
+                if (!plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled())
+                {
+                    HashSet<Field> touching = plugin.getForceFieldManager().getTouchingFields(event.getClickedBlock(), materialInHand);
+                    plugin.getCommunicationManager().printTouchingFields(player, touching);
+                }
+            }
         }
 
         if (block != null)
@@ -257,6 +257,7 @@ public class PSPlayerListener extends PlayerListener
                                     if (player.isSneaking())
                                     {
                                         plugin.getVisualizationManager().visualizeSingleField(player, field);
+                                        return;
                                     }
                                 }
                             }

@@ -41,28 +41,24 @@ public class CuboidManager
         return openCuboids.containsKey(player.getName());
     }
 
-    public boolean isOpenCuboid(Block block)
+    public boolean isOpenCuboid(Player player, Block block)
     {
-        for (String playerName : openCuboids.keySet())
-        {
-            CuboidEntry ce = openCuboids.get(playerName);
+        CuboidEntry ce = openCuboids.get(player.getName());
 
-            if (Helper.isSameBlock(ce.getField().getLocation(), block.getLocation()))
+        if (ce != null)
+        {
+            Field field = ce.getField();
+
+            if (Helper.isSameBlock(field.getLocation(), block.getLocation()))
             {
                 return true;
             }
 
-            Field field = plugin.getForceFieldManager().getField(block);
-
-            if (field != null)
+            for (Field child : field.getChildren())
             {
-                if (field.getParent() != null)
+                if (Helper.isSameBlock(child.getLocation(), block.getLocation()))
                 {
-
-                    if (Helper.isSameBlock(field.getParent().getLocation(), block.getLocation()))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -80,13 +76,20 @@ public class CuboidManager
         final CuboidEntry ce = new CuboidEntry(field);
         openCuboids.put(player.getName(), ce);
 
+        plugin.getVisualizationManager().revertVisualization(player);
+
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
             public void run()
             {
                 drawSplash(field.getBlock(), player);
 
-                ChatBlock.sendMessage(player, ChatColor.YELLOW + "Use your empty hand. Left-click to draw, right-click to finish.");
+                for(Field child : field.getChildren())
+                {
+                    drawSplash(child.getBlock(), player);
+                }
+
+                ChatBlock.sendMessage(player, ChatColor.YELLOW + "You are in drawing mode. Click on the block to finish.");
                 ChatBlock.sendMessage(player, ChatColor.YELLOW + "Max size: " + ChatColor.AQUA + ce.getMaxWidth() + "x" + ce.getMaxHeight() + "x" + ce.getMaxWidth());
             }
         }, 1L);
@@ -98,8 +101,6 @@ public class CuboidManager
 
         if (ce != null)
         {
-            final Material material = Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType());
-
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
@@ -163,21 +164,24 @@ public class CuboidManager
      *
      * @param block
      */
-    public void cancelOpenCuboid(Block block)
+    public void cancelOpenCuboid(Player player, Block block)
     {
-        for (String playerName : openCuboids.keySet())
+        CuboidEntry ce = openCuboids.get(player.getName());
+
+        if (ce != null)
         {
-            Field field = openCuboids.get(playerName).getField();
+            Field field = ce.getField();
 
             if (Helper.isSameBlock(field.getLocation(), block.getLocation()))
             {
-                Player player = Helper.matchSinglePlayer(playerName);
+                cancelOpenCuboid(player);
+            }
 
-                if (player != null)
+            for (Field child : field.getChildren())
+            {
+                if (Helper.isSameBlock(child.getLocation(), block.getLocation()))
                 {
-                    plugin.getVisualizationManager().revertVisualization(player);
-                    openCuboids.remove(playerName);
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid has been cancelled.");
+                    cancelOpenCuboid(player);
                 }
             }
         }

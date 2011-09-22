@@ -170,33 +170,69 @@ public class CuboidEntry
         return movedItem;
     }
 
-    public void setMovedItem(int movedItem)
+    public int getMaxWidth()
     {
-        this.movedItem = movedItem;
+        return getMaxDimensions().getWidth();
     }
 
     public int getMaxHeight()
     {
-        int maxHeight = (field.getSettings().getRadius() * 2) + 1;
-
-        if (field.getSettings().getHeight() > 0)
-        {
-            maxHeight = field.getSettings().getHeight();
-        }
-
-        int multiplier = field.getChildren().size() + 1;
-
-        maxHeight *= multiplier;
-        return Math.min(maxHeight, 512);
+        return getMaxDimensions().getHeight();
     }
 
-    public int getMaxWidth()
+    private Dimensions getMaxDimensions()
+    {
+        int familyVolume = getMaxVolume() * (field.getChildren().size() + 1);
+
+        int width = (field.getSettings().getRadius() * 2) + 1;
+        int height = field.getSettings().getHeight() > 0 ? field.getSettings().getHeight() : width;
+
+        for (;;)
+        {
+            width++;
+
+            if (height < 128 && width % 2 == 0)
+            {
+                height++;
+            }
+
+            int vol = width * height * width;
+
+            if (vol >= familyVolume)
+            {
+                return new Dimensions(width, height);
+            }
+        }
+    }
+
+    private class Dimensions
+    {
+        public Dimensions(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+        }
+
+        private int height;
+        private int width;
+
+        public int getHeight()
+        {
+            return height;
+        }
+
+        public int getWidth()
+        {
+            return width;
+        }
+    }
+
+    private int getMaxVolume()
     {
         int maxWidth = (field.getSettings().getRadius() * 2) + 1;
-        int multiplier = field.getChildren().size() + 1;
+        int maxHeight = field.getSettings().getHeight() > 0 ? field.getSettings().getHeight() : maxWidth;
 
-        maxWidth *= multiplier;
-        return maxWidth;
+        return maxHeight * maxWidth * maxWidth;
     }
 
     public boolean isExceeded()

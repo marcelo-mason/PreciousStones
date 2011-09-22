@@ -344,9 +344,8 @@ public class VisualizationManager
 
         if (vis != null)
         {
-            Visualize visualize = new Visualize(vis, player, true);
-
             visualizations.remove(player.getName());
+            Visualize visualize = new Visualize(vis, player, true);
         }
     }
 }
