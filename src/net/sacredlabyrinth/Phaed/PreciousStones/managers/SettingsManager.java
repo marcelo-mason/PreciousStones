@@ -46,6 +46,7 @@ public final class SettingsManager
     private List<Integer> bypassBlocks = new ArrayList<Integer>();
     private List<Integer> unprotectableBlocks = new ArrayList<Integer>();
     private List<Integer> toolItems = new ArrayList<Integer>();
+    private List<Integer> repairableItems = new ArrayList<Integer>();
     private boolean logFire;
     private boolean logEntry;
     private boolean logPlace;
@@ -67,6 +68,8 @@ public final class SettingsManager
     private boolean notifyBypassUnprotectable;
     private boolean warnInstantHeal;
     private boolean warnSlowHeal;
+    private boolean warnSlowFeeding;
+    private boolean warnSlowRepair;
     private boolean warnSlowDamage;
     private boolean warnFastDamage;
     private boolean warnGiveAir;
@@ -140,6 +143,7 @@ public final class SettingsManager
         bypassBlocks = config.getIntList("bypass-blocks", new ArrayList<Integer>());
         unprotectableBlocks = config.getIntList("unprotectable-blocks", new ArrayList<Integer>());
         toolItems = config.getIntList("tool-items", new ArrayList<Integer>());
+        repairableItems = config.getIntList("repairable-items", new ArrayList<Integer>());
         logFire = config.getBoolean("log.fire", true);
         logEntry = config.getBoolean("log.entry", true);
         logPlace = config.getBoolean("log.place", true);
@@ -162,6 +166,8 @@ public final class SettingsManager
         warnInstantHeal = config.getBoolean("warn.instant-heal", true);
         warnSlowHeal = config.getBoolean("warn.slow-heal", true);
         warnSlowDamage = config.getBoolean("warn.slow-damage", true);
+        warnSlowFeeding = config.getBoolean("warn.slow-feeding", true);
+        warnSlowRepair = config.getBoolean("warn.slow-repair", true); 
         warnFastDamage = config.getBoolean("warn.fast-damage", true);
         warnGiveAir = config.getBoolean("warn.give-air", true);
         warnFire = config.getBoolean("warn.fire", true);
@@ -235,6 +241,7 @@ public final class SettingsManager
         config.setProperty("bypass-blocks", getBypassBlocks());
         config.setProperty("unprotectable-blocks", getUnprotectableBlocks());
         config.setProperty("tool-items", getToolItems());
+        config.setProperty("repairable-items", getRepairableItems());
         config.setProperty("log.fire", isLogFire());
         config.setProperty("log.entry", isLogEntry());
         config.setProperty("log.place", isLogPlace());
@@ -256,6 +263,8 @@ public final class SettingsManager
         config.setProperty("notify.bypass-destroy", isNotifyBypassDestroy());
         config.setProperty("warn.instant-heal", isWarnInstantHeal());
         config.setProperty("warn.slow-heal", isWarnSlowHeal());
+        config.setProperty("warn.slow-feeding", isWarnSlowFeeding());
+        config.setProperty("warn.slow-repair", isWarnSlowRepair());
         config.setProperty("warn.slow-damage", isWarnSlowDamage());
         config.setProperty("warn.fast-damage", isWarnFastDamage());
         config.setProperty("warn.give-air", isWarnGiveAir());
@@ -472,6 +481,16 @@ public final class SettingsManager
     public boolean isToolItemType(int typeId)
     {
         return getToolItems().contains(typeId);
+    }
+
+    /**
+     * Check if a item is one of the repairable item types
+     * @param typeId
+     * @return
+     */
+    public boolean isRepairableItemType(int typeId)
+    {
+        return getRepairableItems().contains(typeId);
     }
 
     /**
@@ -804,6 +823,14 @@ public final class SettingsManager
     }
 
     /**
+     * @return the repairableItems
+     */
+    public List<Integer> getRepairableItems()
+    {
+        return Collections.unmodifiableList(repairableItems);
+    }
+
+    /**
      * @return the logFire
      */
     public boolean isLogFire()
@@ -963,6 +990,23 @@ public final class SettingsManager
         return warnInstantHeal;
     }
 
+    /**
+     * @return the warnSlowFeeding
+     */
+    public boolean isWarnSlowFeeding()
+    {
+        return warnSlowFeeding;
+    }
+    
+    /**
+     * @return the warnSlowRepair
+     */
+    public boolean isWarnSlowRepair()
+    {
+        return warnSlowRepair;
+    }
+    
+    
     /**
      * @return the warnSlowHeal
      */
