@@ -10,10 +10,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -86,14 +88,44 @@ public class PSEntityListener extends EntityListener
     @Override
     public void onEntityTarget(EntityTargetEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }        
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
+        {
+            return;
+        }
+
+        DebugTimer dt = new DebugTimer("onEntityTarget");
+
         Entity target = event.getTarget();
 
         if (target instanceof Player)
         {
-            if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE))
-            {
-                event.setCancelled(true);
+        	if(event.getReason() == TargetReason.CLOSEST_PLAYER)
+            {                      
+        		if(plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.REMOVE_MOB))
+        		{
+        			Entity mob = event.getEntity();
+        			if(mob instanceof Monster)
+        			{
+        				plugin.getCommunicationManager().debug("Removed a scary monster");
+        				mob.remove();
+        			}
+        		}
+
+        		if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE))
+        		{
+        			event.setCancelled(true);
+        		}
             }
+        }
+
+        if (plugin.getSettingsManager().isDebug())
+        {
+            dt.logProcessTime();
         }
     }
 

@@ -2194,6 +2194,18 @@ public class CommunicatonManager
      *
      * @param player
      */
+   public void showSlowFeeding(Player player)
+   {
+       if (plugin.getSettingsManager().isWarnSlowFeeding() && canWarn(player))
+       {
+           ChatBlock.sendMessage(player, ChatColor.WHITE + "~Feeding~");
+       }
+   }
+
+    /**
+     *
+     * @param player
+     */
     public void showSlowHeal(Player player)
     {
         if (plugin.getSettingsManager().isWarnSlowHeal() && canWarn(player))
@@ -2201,6 +2213,18 @@ public class CommunicatonManager
             ChatBlock.sendMessage(player, ChatColor.WHITE + "*healing*");
         }
     }
+
+    /**
+     *
+     * @param player
+    */
+   public void showSlowRepair(Player player)
+   {
+       if (plugin.getSettingsManager().isWarnSlowRepair() && canWarn(player))
+       {
+           ChatBlock.sendMessage(player, ChatColor.WHITE + "+repairing+");
+       }
+   }
 
     /**
      *
