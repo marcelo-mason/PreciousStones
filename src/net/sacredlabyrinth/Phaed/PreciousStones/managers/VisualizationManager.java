@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author phad
@@ -37,7 +39,7 @@ public class VisualizationManager
     public void visualizeSingleField(Player player, Field field)
     {
         addVisualizationField(player, field);
-        displayVisualization(player, false);
+        displayVisualization(player, false, 5);
     }
 
     /**
@@ -207,6 +209,102 @@ public class VisualizationManager
         visualizations.put(player.getName(), vis);
     }
 
+    /**
+     * Adds a fields outline to a player's visualization buffer
+     *
+     * @param player
+     * @param field
+     */
+    public void displayFieldOutline(Player player, CuboidEntry ce)
+    {
+        Visualization vis = visualizations.get(player.getName());
+
+        if (vis == null)
+        {
+            vis = new Visualization();
+        }
+
+        // save current outline and clear out the visualization
+
+        List<BlockData> oldBlocks = new LinkedList<BlockData>(vis.getOutlineBlocks());
+        List<BlockData> newBlocks = new LinkedList<BlockData>();
+
+        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
+
+        int offset = ce.selectedCount() > 1 ? 1 : 0;
+
+        int minx = ce.getMinx() - offset;
+        int minz = ce.getMinz() - offset;
+        int miny = ce.getMiny() - offset;
+        int maxx = ce.getMaxx() + offset;
+        int maxy = ce.getMaxy() + offset;
+        int maxz = ce.getMaxz() + offset;
+
+        // add  the blocks for the new outline
+
+        for (int x = minx; x <= maxx; x++)
+        {
+            Location loc = new Location(player.getWorld(), x, miny, maxz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), x, maxy, minz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), x, miny, minz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), x, maxy, maxz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+        }
+
+        for (int y = miny; y <= maxy; y++)
+        {
+            Location loc = new Location(player.getWorld(), minx, y, maxz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), maxx, y, miny);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), minx, y, minz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), maxx, y, maxz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+        }
+
+        for (int z = minz; z <= maxz; z++)
+        {
+            Location loc = new Location(player.getWorld(), minx, maxy, z);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), maxx, miny, z);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), minx, miny, z);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), maxx, maxy, z);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+        }
+
+        // get the blocks that are no longer in the new set and should be reverted
+
+        List<BlockData> revertible = new LinkedList<BlockData>(oldBlocks);
+        revertible.removeAll(newBlocks);
+
+        Visualize revert = new Visualize(revertible, player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
+
+        // now get all the new blocks that are not currently there
+
+        List<BlockData> missing = new LinkedList<BlockData>(newBlocks);
+        missing.removeAll(oldBlocks);
+
+        Visualize visualize = new Visualize(missing, player, false, true, plugin.getSettingsManager().getVisualizeSeconds());
+
+        vis.setOutlineBlocks(newBlocks);
+        visualizations.put(player.getName(), vis);
+    }
+
     private boolean turnCounter(String name, int size)
     {
         if (size == 0)
@@ -294,7 +392,6 @@ public class VisualizationManager
         player.sendBlockChange(block.getLocation(), material, (byte) 0);
     }
 
-
     /**
      * Displays contents of a player's visualization buffer to the player
      *
@@ -302,6 +399,17 @@ public class VisualizationManager
      * @param minusOverlap
      */
     public void displayVisualization(final Player player, boolean minusOverlap)
+    {
+        displayVisualization(player, minusOverlap, plugin.getSettingsManager().getVisualizeSeconds());
+    }
+
+    /**
+     * Displays contents of a player's visualization buffer to the player
+     *
+     * @param player
+     * @param minusOverlap
+     */
+    public void displayVisualization(final Player player, boolean minusOverlap, int seconds)
     {
         Visualization vis = visualizations.get(player.getName());
 
@@ -324,11 +432,11 @@ public class VisualizationManager
                     }
                 }
 
-                Visualize visualize = new Visualize(vis, player);
+                Visualize visualize = new Visualize(vis.getBlocks(), player, false, false, seconds);
             }
             else
             {
-                Visualize visualize = new Visualize(vis, player);
+                Visualize visualize = new Visualize(vis.getBlocks(), player, false, false, seconds);
             }
         }
     }
@@ -345,7 +453,23 @@ public class VisualizationManager
         if (vis != null)
         {
             visualizations.remove(player.getName());
-            Visualize visualize = new Visualize(vis, player, true);
+            Visualize visualize = new Visualize(vis.getBlocks(), player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
+        }
+    }
+
+    /**
+     * Reverts any player's entire visualization buffer
+     *
+     * @param player
+     */
+    public void revertOutline(Player player)
+    {
+        Visualization vis = visualizations.get(player.getName());
+
+        if (vis != null)
+        {
+            visualizations.remove(player.getName());
+            Visualize visualize = new Visualize(vis.getOutlineBlocks(), player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
         }
     }
 }

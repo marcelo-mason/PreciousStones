@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -18,36 +19,17 @@ public class Visualize implements Runnable
     private final int timerID;
     private final Player player;
     private final boolean revert;
+    private final boolean skipRevert;
+    private final int seconds;
 
-    /**
-     * @param vis
-     * @param visualizationQueue
-     * @param material
-     * @param player
-     * @param reverting
-     */
-    public Visualize(Visualization vis, Player player)
+    public Visualize(List<BlockData> blocks, Player player, boolean revert, boolean skipRevert, int seconds)
     {
-        this.visualizationQueue.addAll(vis.getBlocks());
-        this.plugin = PreciousStones.getInstance();
-        this.revert = false;
-        this.player = player;
-        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
-    }
-
-    /**
-     * @param vis
-     * @param visualizationQueue
-     * @param material
-     * @param player
-     * @param reverting
-     */
-    public Visualize(Visualization vis, Player player, boolean revert)
-    {
-        this.visualizationQueue.addAll(vis.getBlocks());
+        this.visualizationQueue.addAll(blocks);
         this.plugin = PreciousStones.getInstance();
         this.revert = revert;
         this.player = player;
+        this.skipRevert = skipRevert;
+        this.seconds = seconds;
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
     }
 
@@ -79,13 +61,16 @@ public class Visualize implements Runnable
 
             if (!revert)
             {
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                if (!skipRevert)
                 {
-                    public void run()
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
-                        plugin.getVisualizationManager().revertVisualization(player);
-                    }
-                }, 20L * plugin.getSettingsManager().getVisualizeSeconds());
+                        public void run()
+                        {
+                            plugin.getVisualizationManager().revertVisualization(player);
+                        }
+                    }, 20L * seconds);
+                }
             }
         }
     }

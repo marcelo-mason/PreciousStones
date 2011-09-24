@@ -4,7 +4,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,27 +17,111 @@ public class CuboidEntry
     private int maxx = -1024;
     private int maxy = -1024;
     private int maxz = -1024;
-    private int movedItem = -1;
 
     public CuboidEntry(Field field)
     {
         this.field = field;
     }
 
-    public Set<BlockData> getSelected()
-    {
-        return Collections.unmodifiableSet(selected);
-    }
-
+    /**
+     * Add a single selected block
+     *
+     * @param block
+     */
     public void addSelected(Block block)
     {
         selected.add(new BlockData(block));
+        calculate();
     }
 
+    public void removeSelected(Block block)
+    {
+        selected.remove(new BlockData(block));
+        calculate();
+    }
+
+    /**
+     * Check if a block has already been selected
+     *
+     * @param block
+     * @return
+     */
+    public boolean isSelected(Block block)
+    {
+        return selected.contains(new BlockData(block));
+    }
+
+    /**
+     * Return a count of selected blocks
+     *
+     * @return
+     */
+    public int selectedCount()
+    {
+        return selected.size();
+    }
+
+    private void calculate()
+    {
+        minx = 1024;
+        miny = 1024;
+        minz = 1024;
+        maxx = -1024;
+        maxy = -1024;
+        maxz = -1024;
+
+        for (BlockData bd : selected)
+        {
+            Location loc = bd.getLocation();
+
+            if (loc.getBlockX() < minx)
+            {
+                minx = loc.getBlockX();
+            }
+
+            if (loc.getBlockY() < miny)
+            {
+                miny = loc.getBlockY();
+            }
+
+            if (loc.getBlockZ() < minz)
+            {
+                minz = loc.getBlockZ();
+            }
+
+            if (loc.getBlockX() > maxx)
+            {
+                maxx = loc.getBlockX();
+            }
+
+            if (loc.getBlockY() > maxy)
+            {
+                maxy = loc.getBlockY();
+            }
+
+            if (loc.getBlockZ() > maxz)
+            {
+                maxz = loc.getBlockZ();
+            }
+        }
+    }
+
+    /**
+     * Write the final cuboid dimensions to the field
+     */
+    public void finalizeField()
+    {
+        field.setCuboidDimensions(minx, miny, minz, maxx, maxy, maxz);
+    }
+
+    /**
+     * Test whether the new selected location meets the max valume size
+     *
+     * @param newLoc
+     * @return
+     */
     public boolean testOverflow(Location newLoc)
     {
-        calculate();
-
         int minxt = minx;
         int minyt = miny;
         int minzt = minz;
@@ -76,63 +159,64 @@ public class CuboidEntry
             maxzt = newLoc.getBlockZ();
         }
 
-        int testHeight = maxyt - minyt;
-        int testWidth = Math.max(maxxt - minxt, maxzt - minzt);
+        int testVolume = (maxyt - minyt) * (maxxt - minxt) * (maxzt - minzt);
 
-        if (testHeight > getMaxHeight())
-        {
-            return false;
-        }
-
-        if (testWidth > getMaxWidth())
-        {
-            return false;
-        }
-
-        return true;
+        return testVolume <= getMaxVolume();
     }
 
-    public void calculate()
+    /**
+     * Get the current volume of the definition
+     *
+     * @return
+     */
+    public int getVolume()
     {
-        for (BlockData bd : selected)
-        {
-            Location loc = bd.getLocation();
-
-            if (loc.getBlockX() < minx)
-            {
-                minx = loc.getBlockX();
-            }
-
-            if (loc.getBlockY() < miny)
-            {
-                miny = loc.getBlockY();
-            }
-
-            if (loc.getBlockZ() < minz)
-            {
-                minz = loc.getBlockZ();
-            }
-
-            if (loc.getBlockX() > maxx)
-            {
-                maxx = loc.getBlockX();
-            }
-
-            if (loc.getBlockY() > maxy)
-            {
-                maxy = loc.getBlockY();
-            }
-
-            if (loc.getBlockZ() > maxz)
-            {
-                maxz = loc.getBlockZ();
-            }
-        }
+        return (maxy - miny) * (maxx - minx) * (maxz - minz);
     }
 
+    /**
+     * The the maximum allowed volume for the cuboid
+     *
+     * @return
+     */
+    public int getMaxVolume()
+    {
+        int maxWidth = (field.getSettings().getRadius() * 2) + 1;
+        int maxHeight = field.getSettings().getHeight() > 0 ? field.getSettings().getHeight() : maxWidth;
+
+        return (maxHeight * maxWidth * maxWidth) * (field.getChildren().size() + 1);
+    }
+
+    /**
+     * The the available volume that is left
+     *
+     * @return
+     */
+    public int getAvailableVolume()
+    {
+        return getMaxVolume() - getVolume();
+    }
+
+    /**
+     * Get the parent field
+     *
+     * @return
+     */
     public Field getField()
     {
         return field;
+    }
+
+    /**
+     * Whether the current definition has exceeded the volume
+     *
+     * @return
+     */
+    public boolean isExceeded()
+    {
+        int testVolume = (maxy - miny) * (maxx - minx) * (maxz - minz);
+
+        return testVolume > getMaxVolume();
     }
 
     public int getMinx()
@@ -163,95 +247,5 @@ public class CuboidEntry
     public int getMaxz()
     {
         return maxz;
-    }
-
-    public int getMovedItem()
-    {
-        return movedItem;
-    }
-
-    public int getMaxWidth()
-    {
-        return getMaxDimensions().getWidth();
-    }
-
-    public int getMaxHeight()
-    {
-        return getMaxDimensions().getHeight();
-    }
-
-    private Dimensions getMaxDimensions()
-    {
-        int familyVolume = getMaxVolume() * (field.getChildren().size() + 1);
-
-        int width = (field.getSettings().getRadius() * 2) + 1;
-        int height = field.getSettings().getHeight() > 0 ? field.getSettings().getHeight() : width;
-
-        for (;;)
-        {
-            width++;
-
-            if (height < 128 && width % 2 == 0)
-            {
-                height++;
-            }
-
-            int vol = width * height * width;
-
-            if (vol >= familyVolume)
-            {
-                return new Dimensions(width, height);
-            }
-        }
-    }
-
-    private class Dimensions
-    {
-        public Dimensions(int width, int height)
-        {
-            this.width = width;
-            this.height = height;
-        }
-
-        private int height;
-        private int width;
-
-        public int getHeight()
-        {
-            return height;
-        }
-
-        public int getWidth()
-        {
-            return width;
-        }
-    }
-
-    private int getMaxVolume()
-    {
-        int maxWidth = (field.getSettings().getRadius() * 2) + 1;
-        int maxHeight = field.getSettings().getHeight() > 0 ? field.getSettings().getHeight() : maxWidth;
-
-        return maxHeight * maxWidth * maxWidth;
-    }
-
-    public boolean isExceeded()
-    {
-        if (maxx - minx > getMaxWidth())
-        {
-            return true;
-        }
-
-        if (maxz - minz > getMaxWidth())
-        {
-            return true;
-        }
-
-        if (maxy - miny > getMaxHeight())
-        {
-            return true;
-        }
-
-        return false;
     }
 }

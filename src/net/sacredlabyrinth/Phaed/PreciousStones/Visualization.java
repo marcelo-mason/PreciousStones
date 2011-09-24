@@ -6,14 +6,14 @@ import org.bukkit.block.Block;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * @author phaed
  */
 public class Visualization
 {
-    private Queue<BlockData> bds = new LinkedList<BlockData>();
+    private List<BlockData> blocks = new LinkedList<BlockData>();
+    private List<BlockData> outlineBlocks = new LinkedList<BlockData>();
     private List<Field> fields = new LinkedList<Field>();
 
     /**
@@ -21,16 +21,16 @@ public class Visualization
      */
     public void addBlock(Block block)
     {
-        bds.add(new BlockData(block));
+        blocks.add(new BlockData(block));
     }
 
     public void addBlock(Location loc, int material, byte data)
     {
         BlockData bd = new BlockData(loc, material, data);
 
-        if (!bds.contains(bd))
+        if (!blocks.contains(bd))
         {
-            bds.add(bd);
+            blocks.add(bd);
         }
     }
 
@@ -45,9 +45,9 @@ public class Visualization
     /**
      * @return the locations
      */
-    public Queue<BlockData> getBlocks()
+    public List<BlockData> getBlocks()
     {
-        return bds;
+        return blocks;
     }
 
     /**
@@ -58,5 +58,20 @@ public class Visualization
         List<Field> f = new LinkedList<Field>();
         f.addAll(fields);
         return f;
+    }
+
+    public void setBlocks(List<BlockData> bds)
+    {
+        this.blocks = bds;
+    }
+
+    public List<BlockData> getOutlineBlocks()
+    {
+        return outlineBlocks;
+    }
+
+    public void setOutlineBlocks(List<BlockData> outlineBlocks)
+    {
+        this.outlineBlocks = outlineBlocks;
     }
 }

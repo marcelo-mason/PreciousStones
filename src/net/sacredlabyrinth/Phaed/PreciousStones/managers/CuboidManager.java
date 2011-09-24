@@ -8,12 +8,9 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 public class CuboidManager
 {
@@ -28,19 +25,24 @@ public class CuboidManager
         plugin = PreciousStones.getInstance();
     }
 
-    public void addSelectionBlock(Player player, Block block)
-    {
-        if (openCuboids.containsKey(player.getName()))
-        {
-            openCuboids.get(player.getName()).addSelected(block);
-        }
-    }
-
+    /**
+     * Whether the player has a currently open cuboid definition
+     *
+     * @param player
+     * @return
+     */
     public boolean hasOpenCuboid(Player player)
     {
         return openCuboids.containsKey(player.getName());
     }
 
+    /**
+     * If there is a currently open cuboid definition emanating from the field block or its parent
+     *
+     * @param player
+     * @param block
+     * @return
+     */
     public boolean isOpenCuboid(Player player, Block block)
     {
         CuboidEntry ce = openCuboids.get(player.getName());
@@ -66,11 +68,59 @@ public class CuboidManager
         return false;
     }
 
+    /**
+     * REturns the currently open cuboid definition if any
+     *
+     * @param player
+     * @return
+     */
     public CuboidEntry getOpenCuboid(Player player)
     {
         return openCuboids.get(player.getName());
     }
 
+    /**
+     * Adds a single block to the cuboid definition
+     *
+     * @param player
+     * @param block
+     */
+    public void processSelectedBlock(Player player, Block block)
+    {
+        if (openCuboids.containsKey(player.getName()))
+        {
+            CuboidEntry ce = openCuboids.get(player.getName());
+
+            int oldVolume = ce.getAvailableVolume();
+
+            if (ce.isSelected(block))
+            {
+                ce.removeSelected(block);
+                plugin.getVisualizationManager().displaySingle(player, block.getType(), block);
+            }
+            else
+            {
+                ce.addSelected(block);
+                plugin.getVisualizationManager().displaySingle(player, Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType()), block);
+            }
+
+            int newVolume = ce.getAvailableVolume();
+
+            if (newVolume != oldVolume)
+            {
+                plugin.getVisualizationManager().displayFieldOutline(player, ce);
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + newVolume + " blocks");
+            }
+        }
+    }
+
+
+    /**
+     * Initiates a cuboid definition
+     *
+     * @param player
+     * @param field
+     */
     public void openCuboid(final Player player, final Field field)
     {
         final CuboidEntry ce = new CuboidEntry(field);
@@ -82,19 +132,27 @@ public class CuboidManager
         {
             public void run()
             {
-                drawSplash(field.getBlock(), player);
+                ce.addSelected(field.getBlock());
 
-                for(Field child : field.getChildren())
+                for (Field child : field.getChildren())
                 {
-                    drawSplash(child.getBlock(), player);
+                    ce.addSelected(child.getBlock());
                 }
 
-                ChatBlock.sendMessage(player, ChatColor.YELLOW + "You are in drawing mode. Click on the block to finish.");
-                ChatBlock.sendMessage(player, ChatColor.YELLOW + "Max size: " + ChatColor.AQUA + ce.getMaxWidth() + "x" + ce.getMaxHeight() + "x" + ce.getMaxWidth());
+                plugin.getVisualizationManager().displayFieldOutline(player, ce);
+
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "You are in drawing mode. Click on the block to finish.");
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + ce.getAvailableVolume() + " blocks");
             }
         }, 1L);
     }
 
+    /**
+     * Adds a child field to the currently open cuboid definition
+     *
+     * @param player
+     * @param field
+     */
     public void openChild(final Player player, final Field field)
     {
         final CuboidEntry ce = openCuboids.get(player.getName());
@@ -105,14 +163,19 @@ public class CuboidManager
             {
                 public void run()
                 {
-                    drawSplash(field.getBlock(), player);
-
-                    ChatBlock.sendMessage(player, ChatColor.YELLOW + "Max size: " + ChatColor.AQUA + ce.getMaxWidth() + "x" + ce.getMaxHeight() + "x" + ce.getMaxWidth());
+                    ce.addSelected(field.getBlock());
+                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + ce.getAvailableVolume() + " blocks");
                 }
             }, 1L);
         }
     }
 
+    /**
+     * End the open cuboid definition cleanly
+     *
+     * @param player
+     * @return
+     */
     public boolean closeCuboid(final Player player)
     {
         CuboidEntry ce = openCuboids.get(player.getName());
@@ -120,10 +183,9 @@ public class CuboidManager
         if (ce != null)
         {
             plugin.getVisualizationManager().revertVisualization(player);
+            plugin.getVisualizationManager().revertOutline(player);
 
             final Field field = ce.getField();
-
-            ce.calculate();
 
             if (ce.isExceeded())
             {
@@ -131,6 +193,8 @@ public class CuboidManager
                 openCuboids.remove(player.getName());
                 return false;
             }
+
+            ce.finalizeField();
 
             Block foundBlock = plugin.getUnprotectableManager().existsUnprotectableBlock(field);
 
@@ -146,7 +210,6 @@ public class CuboidManager
             }
 
             plugin.getForceFieldManager().removeSourceField(field);
-            field.setCuboidDimensions(ce.getMinx(), ce.getMiny(), ce.getMinz(), ce.getMaxx(), ce.getMaxy(), ce.getMaxz());
             plugin.getForceFieldManager().addSourceField(field);
 
             openCuboids.remove(player.getName());
@@ -160,7 +223,7 @@ public class CuboidManager
     }
 
     /**
-     * Closes a currently open cuboid definition
+     * Cancels a currently open cuboid definition
      *
      * @param block
      */
@@ -187,74 +250,11 @@ public class CuboidManager
         }
     }
 
-    /**
-     * Closes a currently open cuboid definition
-     *
-     * @param player
-     */
-    public void cancelOpenCuboid(Player player)
+    private void cancelOpenCuboid(Player player)
     {
         plugin.getVisualizationManager().revertVisualization(player);
+        plugin.getVisualizationManager().revertOutline(player);
         openCuboids.remove(player.getName());
         ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid has been cancelled.");
-    }
-
-
-    private void drawSplash(Block block, Player player)
-    {
-        final Material material = Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType());
-        BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
-
-        for (BlockFace face : faces)
-        {
-            Block faceBlock = block.getRelative(face);
-
-            if (!plugin.getSettingsManager().isThroughType(faceBlock.getTypeId()))
-            {
-                if (!plugin.getSettingsManager().isFieldType(faceBlock))
-                {
-                    addSelectionBlock(player, faceBlock);
-                    plugin.getVisualizationManager().displaySingle(player, material, faceBlock);
-                }
-
-                List<BlockFace> blackFaces = new LinkedList<BlockFace>();
-
-                if (face.equals(BlockFace.EAST) || face.equals(BlockFace.WEST))
-                {
-                    blackFaces.add(BlockFace.NORTH);
-                    blackFaces.add(BlockFace.SOUTH);
-                    blackFaces.add(BlockFace.UP);
-                    blackFaces.add(BlockFace.DOWN);
-                }
-                else if (face.equals(BlockFace.SOUTH) || face.equals(BlockFace.SOUTH))
-                {
-                    blackFaces.add(BlockFace.EAST);
-                    blackFaces.add(BlockFace.WEST);
-                    blackFaces.add(BlockFace.UP);
-                    blackFaces.add(BlockFace.DOWN);
-                }
-                else if (face.equals(BlockFace.UP) || face.equals(BlockFace.DOWN))
-                {
-                    blackFaces.add(BlockFace.EAST);
-                    blackFaces.add(BlockFace.WEST);
-                    blackFaces.add(BlockFace.NORTH);
-                    blackFaces.add(BlockFace.SOUTH);
-                }
-
-                for (BlockFace bf : blackFaces)
-                {
-                    Block relative = faceBlock.getRelative(bf);
-
-                    if (!plugin.getSettingsManager().isThroughType(relative.getTypeId()))
-                    {
-                        if (!plugin.getSettingsManager().isFieldType(relative))
-                        {
-                            addSelectionBlock(player, relative);
-                            plugin.getVisualizationManager().displaySingle(player, material, relative);
-                        }
-                    }
-                }
-            }
-        }
     }
 }

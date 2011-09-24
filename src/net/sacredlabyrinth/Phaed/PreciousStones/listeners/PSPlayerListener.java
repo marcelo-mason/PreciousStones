@@ -150,16 +150,13 @@ public class PSPlayerListener extends PlayerListener
                 {
                     if (openCuboid.testOverflow(target.getLocation()))
                     {
-                        Material material = Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType());
-
-                        plugin.getCuboidManager().addSelectionBlock(player, target);
-                        plugin.getVisualizationManager().displaySingle(player, material, target);
+                        plugin.getCuboidManager().processSelectedBlock(player, target);
                         event.setCancelled(true);
                         return;
                     }
                     else
                     {
-                        ChatBlock.sendMessage(player, ChatColor.RED + "Exceeding maximum dimensions");
+                        ChatBlock.sendMessage(player, ChatColor.RED + "Exceeds maximum volume");
                     }
                 }
                 else
@@ -189,22 +186,23 @@ public class PSPlayerListener extends PlayerListener
                         }
                     }
                 }
-            }
-        }
 
-        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK))
-        {
-            Material materialInHand = is.getType();
-
-            if (plugin.getSettingsManager().isFieldType(materialInHand) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.scoping"))
-            {
-                if (!plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled())
+                if (event.getAction().equals(Action.LEFT_CLICK_BLOCK))
                 {
-                    HashSet<Field> touching = plugin.getForceFieldManager().getTouchingFields(event.getClickedBlock(), materialInHand);
-                    plugin.getCommunicationManager().printTouchingFields(player, touching);
+                    Material materialInHand = is.getType();
+
+                    if (plugin.getSettingsManager().isFieldType(materialInHand) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.scoping"))
+                    {
+                        if (!plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled())
+                        {
+                            HashSet<Field> touching = plugin.getForceFieldManager().getTouchingFields(event.getClickedBlock(), materialInHand);
+                            plugin.getCommunicationManager().printTouchingFields(player, touching);
+                        }
+                    }
                 }
             }
         }
+
 
         if (block != null)
         {
