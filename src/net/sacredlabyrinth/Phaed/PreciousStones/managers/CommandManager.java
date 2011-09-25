@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -712,11 +713,11 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (args.length == 0)
                             {
-                                List<Field> sourcefields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
+                                List<Field> sourceFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
 
-                                if (sourcefields.size() > 0)
+                                if (sourceFields.size() > 0)
                                 {
-                                    int count = plugin.getForceFieldManager().deleteFields(player, sourcefields.get(0));
+                                    int count = plugin.getForceFieldManager().deleteFields(player, sourceFields.get(0));
 
                                     if (count > 0)
                                     {
@@ -724,7 +725,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (plugin.getSettingsManager().isLogBypassDelete())
                                         {
-                                            PreciousStones.log("Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " field", "s"), player.getName(), sourcefields.get(0).toString());
+                                            PreciousStones.log("Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " field", "s"), player.getName(), sourceFields.get(0).toString());
                                         }
                                     }
                                     else
@@ -741,31 +742,63 @@ public final class CommandManager implements CommandExecutor
                             }
                             else if (args.length == 1)
                             {
-                                Player badplayer = Helper.matchSinglePlayer(args[0]);
-
-                                if (badplayer != null)
+                                if (Helper.isInteger(args[0]))
                                 {
-                                    int fields = plugin.getForceFieldManager().deleteBelonging(badplayer.getName());
-                                    int ubs = plugin.getForceFieldManager().deleteBelonging(badplayer.getName());
+                                    int typeId = Integer.parseInt(args[0]);
 
-                                    if (fields > 0)
+                                    if (typeId != 0)
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Deleted " + badplayer.getName() + "'s " + fields + " fields");
+                                        int fields = plugin.getForceFieldManager().deleteFieldsOfType(typeId);
+                                        int ubs = plugin.getUnbreakableManager().deleteUnbreakablesOfType(typeId);
+
+                                        if (fields > 0)
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Deleted " + fields +  " " + Material.getMaterial(typeId) + " fields");
+                                        }
+
+                                        if (ubs > 0)
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Deleted " +  fields +  " " + Material.getMaterial(typeId) + " unbreakables");
+                                        }
+
+                                        if (ubs == 0 && fields == 0)
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "No pstones of the type found");
+                                        }
                                     }
-
-                                    if (ubs > 0)
+                                    else
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "Deleted " + badplayer.getName() + "'s " + fields + " unbreakables");
-                                    }
-
-                                    if (ubs == 0 && fields == 0)
-                                    {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + "The player had no pstones");
+                                        plugin.getCommunicationManager().showNotFound(player);
                                     }
                                 }
                                 else
                                 {
-                                    plugin.getCommunicationManager().showNotFound(player);
+                                    Player badPlayer = Helper.matchSinglePlayer(args[0]);
+
+                                    if (badPlayer != null)
+                                    {
+                                        int fields = plugin.getForceFieldManager().deleteBelonging(badPlayer.getName());
+                                        int ubs = plugin.getUnbreakableManager().deleteBelonging(badPlayer.getName());
+
+                                        if (fields > 0)
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Deleted " + badPlayer.getName() + "'s " + fields + " fields");
+                                        }
+
+                                        if (ubs > 0)
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Deleted " + badPlayer.getName() + "'s " + fields + " unbreakables");
+                                        }
+
+                                        if (ubs == 0 && fields == 0)
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "The player had no pstones");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        plugin.getCommunicationManager().showNotFound(player);
+                                    }
                                 }
                                 return true;
                             }

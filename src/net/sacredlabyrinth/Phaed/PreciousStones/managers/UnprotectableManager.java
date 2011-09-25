@@ -1,10 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 
 /**
  * Handles unprotectable blocks
@@ -25,6 +24,7 @@ public class UnprotectableManager
 
     /**
      * Whether the block is touching an unprotectable block
+     *
      * @param block the block that has been placed
      * @return true if an unprotectable is found touching it
      */
@@ -35,6 +35,7 @@ public class UnprotectableManager
 
     /**
      * If the block is touching an unprotectable block return it
+     *
      * @param block the block that has been placed
      * @return the offending unprotectable block
      */
@@ -66,6 +67,7 @@ public class UnprotectableManager
 
     /**
      * If an unprotectable block exists inside the field return it
+     *
      * @param fieldblock the block that contains the field
      * @return the offending block
      */
@@ -85,6 +87,18 @@ public class UnprotectableManager
 
         int miny = fieldblock.getY() - (int) Math.floor(((double) Math.max(fs.getHeight() - 1, 0)) / 2);
         int maxy = fieldblock.getY() + (int) Math.ceil(((double) Math.max(fs.getHeight() - 1, 0)) / 2);
+
+        Field field = plugin.getForceFieldManager().getField(fieldblock);
+
+        if (field != null)
+        {
+            minx = field.getMinx();
+            maxx = field.getMaxx();
+            minz = field.getMinz();
+            maxz = field.getMaxz();
+            miny = field.getMiny();
+            maxy = field.getMaxy();
+        }
 
         for (int x = minx; x <= maxx; x++)
         {
@@ -112,6 +126,7 @@ public class UnprotectableManager
 
     /**
      * If an unprotectable block exists inside the field return it
+     *
      * @param fieldblock the block that contains the field
      * @return the offending block
      */

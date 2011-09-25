@@ -2832,7 +2832,7 @@ public class CommunicatonManager
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.delete"))
         {
             cb.addRow(ChatColor.DARK_RED + "  /ps delete " + ChatColor.AQUA + "- Delete the field(s) you're standing on");
-            cb.addRow(ChatColor.DARK_RED + "  /ps delete [player] " + ChatColor.AQUA + "- Delete all pstones of the player");
+            cb.addRow(ChatColor.DARK_RED + "  /ps delete [player/typeId] " + ChatColor.AQUA + "- Batch delete pstones");
         }
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.info"))

@@ -173,11 +173,11 @@ public class Field extends AbstractVec implements Comparable<Field>
     private void calculateDimensions()
     {
         this.minx = getX() - radius;
-        this.maxx = getX() + radius + 1;
+        this.maxx = getX() + radius;
         this.minz = getZ() - radius;
-        this.maxz = getZ() + radius + 1;
+        this.maxz = getZ() + radius;
         this.miny = getY() - radius;
-        this.maxy = getY() + radius + 1;
+        this.maxy = getY() + radius;
 
         if (height > 0)
         {

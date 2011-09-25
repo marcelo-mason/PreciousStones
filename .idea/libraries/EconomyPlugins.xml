@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="EconomyPlugins">
+    <CLASSES>
+      <root url="file://D:/Download/Plugins/lib" />
+      <root url="file://D:/Download/Plugins/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://D:/Download/Plugins/lib" recursive="false" />
+  </library>
+</component>

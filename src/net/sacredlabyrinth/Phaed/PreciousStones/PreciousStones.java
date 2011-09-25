@@ -42,6 +42,7 @@ public class PreciousStones extends JavaPlugin
     private VisualizationManager visualizationManager;
     private ForesterManager foresterManager;
     private LegacyManager legacyManager;
+    private WorldGuardManager worldGuardManager;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
@@ -118,6 +119,7 @@ public class PreciousStones extends JavaPlugin
         griefUndoManager = new GriefUndoManager();
         storageManager = new StorageManager();
         legacyManager = new LegacyManager();
+        worldGuardManager = new WorldGuardManager();
 
         playerListener = new PSPlayerListener();
         blockListener = new PSBlockListener();
@@ -366,5 +368,10 @@ public class PreciousStones extends JavaPlugin
     public CuboidManager getCuboidManager()
     {
         return cuboidManager;
+    }
+
+    public WorldGuardManager getWorldGuardManager()
+    {
+        return worldGuardManager;
     }
 }

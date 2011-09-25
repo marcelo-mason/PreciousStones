@@ -63,4 +63,11 @@ public interface DBCore
      */
     public Boolean existsTable(String table);
 
+    /**
+     * Check whether a column exists
+     * @param table
+     * @param column
+     * @return
+     */
+    public Boolean existsColumn(String table, String column);
 }

@@ -29,7 +29,6 @@ public class PSServerListener extends ServerListener
     @Override
     public void onPluginDisable(PluginDisableEvent event)
     {
-        /*
         if (Methods != null && Methods.hasMethod())
         {
             Boolean check = Methods.checkDisabled(event.getPlugin());
@@ -39,7 +38,6 @@ public class PSServerListener extends ServerListener
                 plugin.setMethod(null);
             }
         }
-        */
     }
 
     /**
@@ -48,7 +46,6 @@ public class PSServerListener extends ServerListener
     @Override
     public void onPluginEnable(PluginEnableEvent event)
     {
-        /*
         if (!Methods.hasMethod())
         {
             if (Methods.setMethod(plugin.getServer().getPluginManager()))
@@ -57,6 +54,5 @@ public class PSServerListener extends ServerListener
                 PreciousStones.log("Payment method: {0} v{1}", plugin.getMethod().getName(), plugin.getMethod().getVersion());
             }
         }
-        */
     }
 }

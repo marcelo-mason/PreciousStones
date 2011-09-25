@@ -9,6 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Plugins" level="project" />
     <orderEntry type="library" name="SimpleClans" level="project" />
+    <orderEntry type="library" name="EconomyPlugins" level="project" />
   </component>
 </module>
 

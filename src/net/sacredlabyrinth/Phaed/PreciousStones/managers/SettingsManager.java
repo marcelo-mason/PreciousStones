@@ -167,7 +167,7 @@ public final class SettingsManager
         warnSlowHeal = config.getBoolean("warn.slow-heal", true);
         warnSlowDamage = config.getBoolean("warn.slow-damage", true);
         warnSlowFeeding = config.getBoolean("warn.slow-feeding", true);
-        warnSlowRepair = config.getBoolean("warn.slow-repair", true); 
+        warnSlowRepair = config.getBoolean("warn.slow-repair", true);
         warnFastDamage = config.getBoolean("warn.fast-damage", true);
         warnGiveAir = config.getBoolean("warn.give-air", true);
         warnFire = config.getBoolean("warn.fire", true);
@@ -997,7 +997,7 @@ public final class SettingsManager
     {
         return warnSlowFeeding;
     }
-    
+
     /**
      * @return the warnSlowRepair
      */
@@ -1005,8 +1005,8 @@ public final class SettingsManager
     {
         return warnSlowRepair;
     }
-    
-    
+
+
     /**
      * @return the warnSlowHeal
      */

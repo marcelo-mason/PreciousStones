@@ -125,7 +125,7 @@ public class MySQLCore implements DBCore
 
             if (keys.next())
             {
-                return keys.getInt(1);
+                return keys.getLong(1);
             }
         }
         catch (SQLException ex)
@@ -210,6 +210,30 @@ public class MySQLCore implements DBCore
         try
         {
             ResultSet result = getConnection().createStatement().executeQuery("SELECT * FROM " + table);
+            return result != null;
+        }
+        catch (SQLException ex)
+        {
+            if (!ex.getMessage().contains("exist"))
+            {
+                log.warning("Error at SQL Query: " + ex.getMessage());
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Check whether a column exists
+     *
+     * @param table
+     * @param column
+     * @return
+     */
+    public Boolean existsColumn(String table, String column)
+    {
+        try
+        {
+            ResultSet result = getConnection().createStatement().executeQuery("SELECT " + column + " FROM " + table);
             return result != null;
         }
         catch (SQLException ex)

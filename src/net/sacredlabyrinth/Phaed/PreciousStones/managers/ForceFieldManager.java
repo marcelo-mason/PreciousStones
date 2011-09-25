@@ -178,7 +178,7 @@ public final class ForceFieldManager
 
         if (field.hasFlag(FieldFlag.VISUALIZE_ON_PLACE) && !isChild)
         {
-            plugin.getVisualizationManager().visualizeSingleField(player, field);
+            plugin.getVisualizationManager().visualizeSingleFieldFast(player, field);
         }
 
         return true;
@@ -201,14 +201,14 @@ public final class ForceFieldManager
         {
             // add to fields collection
 
-            HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wlist = fieldLists.get(flag);
+            HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
 
-            if (wlist == null)
+            if (wLists == null)
             {
-                wlist = new HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>>();
+                wLists = new HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>>();
             }
 
-            HashMap<ChunkVec, HashMap<Vec, Field>> w = wlist.get(world);
+            HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(world);
 
             if (w == null)
             {
@@ -224,8 +224,8 @@ public final class ForceFieldManager
 
             c.put(field.toVec(), field);
             w.put(cv, c);
-            wlist.put(world, w);
-            fieldLists.put(flag, wlist);
+            wLists.put(world, w);
+            fieldLists.put(flag, wLists);
 
             // add to sources collection
 
@@ -283,22 +283,27 @@ public final class ForceFieldManager
     {
         // remove from fields collection
 
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
+        List<FieldFlag> flags = field.getSettings().getFlags();
 
-        if (wLists == null)
+        for (FieldFlag flag : flags)
         {
-            return;
-        }
+            HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
 
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(field.getWorld());
-
-        if (w != null)
-        {
-            HashMap<Vec, Field> c = w.get(field.toChunkVec());
-
-            if (c != null)
+            if (wLists == null)
             {
-                c.remove(field.toVec());
+                return;
+            }
+
+            HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(field.getWorld());
+
+            if (w != null)
+            {
+                HashMap<Vec, Field> c = w.get(field.toChunkVec());
+
+                if (c != null)
+                {
+                    c.remove(field.toVec());
+                }
             }
         }
 
@@ -1974,6 +1979,48 @@ public final class ForceFieldManager
         {
             queueRelease(f);
             deletedCount++;
+        }
+
+        if (deletedCount > 0)
+        {
+            flush();
+        }
+        return deletedCount;
+    }
+
+    /**
+     * Delete fields of a certain type
+     *
+     * @param typeId
+     * @return count of fields deleted
+     */
+    public int deleteFieldsOfType(int typeId)
+    {
+        int deletedCount = 0;
+
+        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
+
+        if (wLists != null)
+        {
+            for (HashMap<ChunkVec, HashMap<Vec, Field>> w : wLists.values())
+            {
+                if (w != null)
+                {
+                    for (ChunkVec cv : w.keySet())
+                    {
+                        HashMap<Vec, Field> c = w.get(cv);
+
+                        for (Field field : c.values())
+                        {
+                            if (field.getTypeId() == typeId)
+                            {
+                                queueRelease(field);
+                                deletedCount++;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         if (deletedCount > 0)

@@ -83,7 +83,7 @@ public final class EntryManager
                             {
                             	int food = player.getFoodLevel();
                             	if(food < 20)
-                            	{	
+                            	{
                             		player.setFoodLevel(food + 1);
                             		plugin.getCommunicationManager().showSlowFeeding(player);
                             		continue;
@@ -111,16 +111,16 @@ public final class EntryManager
                                     plugin.getCommunicationManager().showSlowHeal(player);
                                     continue;
                                 }
-                                
+
                             }
                         }
-                        
+
                         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.repair"))
                         {
                             if (fs.hasFlag(FieldFlag.SLOW_REPAIR))
                             {
                             	boolean updated = false;
-                            	
+
                             	ItemStack[] armors = player.getInventory().getArmorContents();
                             	for(ItemStack armor : armors)
                             	{
@@ -130,7 +130,7 @@ public final class EntryManager
 	                            		if(dur > 0) //has damage
 	                            		{
 	                            			dur -= 25; //repair amount
-	                            			if(dur < 0) dur = 0; //clamp it	                            			
+	                            			if(dur < 0) dur = 0; //clamp it
 	                            			armor.setDurability(dur);
 	                            			plugin.getCommunicationManager().showSlowRepair(player);
 	                            			updated = true;
@@ -140,9 +140,9 @@ public final class EntryManager
                             	}
 
                             	if(updated)
-                            		continue;                            
-                            	
-                            	ItemStack[] items = player.getInventory().getContents();                            	                            	
+                            		continue;
+
+                            	ItemStack[] items = player.getInventory().getContents();
                             	for(ItemStack item : items)
                             	{
                             		if(item!=null)
@@ -162,7 +162,7 @@ public final class EntryManager
 	                            		}
                             		}
                             	}
-                            	
+
                             	if(updated)
                             		continue;
                             }

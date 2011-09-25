@@ -7,7 +7,6 @@ import java.sql.*;
 import java.util.logging.Logger;
 
 /**
- *
  * @author cc_madelg
  */
 public class SQLiteCore implements DBCore
@@ -19,7 +18,6 @@ public class SQLiteCore implements DBCore
     private File file;
 
     /**
-     *
      * @param log
      * @param dbName
      * @param dbLocation
@@ -109,6 +107,7 @@ public class SQLiteCore implements DBCore
 
     /**
      * Execute a select statement
+     *
      * @param query
      * @return
      */
@@ -129,6 +128,7 @@ public class SQLiteCore implements DBCore
 
     /**
      * Execute an insert statement
+     *
      * @param query
      */
     public long insert(String query)
@@ -136,12 +136,12 @@ public class SQLiteCore implements DBCore
         try
         {
             Statement statement = getConnection().createStatement();
-            statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-            ResultSet keys = statement.getGeneratedKeys();
+            statement.executeUpdate(query);
+            ResultSet keys = statement.executeQuery("SELECT last_insert_rowid()");
 
             if (keys.next())
             {
-                return keys.getInt(1);
+                return keys.getLong(1);
             }
         }
         catch (SQLException ex)
@@ -157,6 +157,7 @@ public class SQLiteCore implements DBCore
 
     /**
      * Execute an update statement
+     *
      * @param query
      */
     public void update(String query)
@@ -176,6 +177,7 @@ public class SQLiteCore implements DBCore
 
     /**
      * Execute a delete statement
+     *
      * @param query
      */
     public void delete(String query)
@@ -195,6 +197,7 @@ public class SQLiteCore implements DBCore
 
     /**
      * Execute a statement
+     *
      * @param query
      * @return
      */
@@ -214,6 +217,7 @@ public class SQLiteCore implements DBCore
 
     /**
      * Check whether a table exists
+     *
      * @param table
      * @return
      */
@@ -227,6 +231,30 @@ public class SQLiteCore implements DBCore
         catch (SQLException e)
         {
             log.severe("Failed to check if table \"" + table + "\" exists: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Check whether a column exists
+     *
+     * @param table
+     * @param column
+     * @return
+     */
+    public Boolean existsColumn(String column, String table)
+    {
+        try
+        {
+            ResultSet result = getConnection().createStatement().executeQuery("SELECT " + column + " FROM " + table);
+            return result != null;
+        }
+        catch (SQLException ex)
+        {
+            if (!ex.getMessage().contains("exist"))
+            {
+                log.warning("Error at SQL Query: " + ex.getMessage());
+            }
             return false;
         }
     }

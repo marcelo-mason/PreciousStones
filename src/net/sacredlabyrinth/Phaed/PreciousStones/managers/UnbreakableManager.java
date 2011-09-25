@@ -509,6 +509,42 @@ public final class UnbreakableManager
     }
 
     /**
+     * Deletes all unbreakables of a certain type
+     *
+     * @param typeId
+     * @return the count of deleted unbreakables
+     */
+    public int deleteUnbreakablesOfType(int typeId)
+    {
+        int deletedCount = 0;
+
+        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values())
+        {
+            if (w != null)
+            {
+                for (HashMap<Vec, Unbreakable> c : w.values())
+                {
+                    if (c != null)
+                    {
+                        for (Unbreakable ub : c.values())
+                        {
+                            queueRelease(ub);
+                            deletedCount++;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (deletedCount > 0)
+        {
+            flush();
+        }
+
+        return deletedCount;
+    }
+
+    /**
      * Remove stones from the collection
      *
      * @param unbreakableblock

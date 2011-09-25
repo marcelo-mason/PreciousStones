@@ -39,7 +39,19 @@ public class VisualizationManager
     public void visualizeSingleField(Player player, Field field)
     {
         addVisualizationField(player, field);
-        displayVisualization(player, false, 5);
+        displayVisualization(player, false);
+    }
+
+    /**
+     * Visualize and display a single field for 2 seconds
+     *
+     * @param player
+     * @param field
+     */
+    public void visualizeSingleFieldFast(Player player, Field field)
+    {
+        addVisualizationField(player, field);
+        displayVisualization(player, false, 2);
     }
 
     /**

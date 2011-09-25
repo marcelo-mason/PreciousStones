@@ -1,18 +1,16 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.platymuus.bukkit.permissions.Group;
-import java.util.List;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-
-import com.nijikokun.bukkit.Permissions.Permissions;
 import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
+import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
-import java.util.LinkedList;
-import java.util.logging.Level;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.World;
-
-import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -32,7 +30,6 @@ public final class PermissionsManager
         plugin = PreciousStones.getInstance();
         detectPermissionsBukkit();
         detectPermissions();
-
     }
 
     /**

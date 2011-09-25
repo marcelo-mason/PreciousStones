@@ -213,7 +213,7 @@ public class CuboidManager
             plugin.getForceFieldManager().addSourceField(field);
 
             openCuboids.remove(player.getName());
-            plugin.getVisualizationManager().visualizeSingleField(player, field);
+            plugin.getVisualizationManager().visualizeSingleFieldFast(player, field);
             plugin.getStorageManager().offerField(field);
             plugin.getCommunicationManager().notifyPlaceCuboid(player, field);
             return true;

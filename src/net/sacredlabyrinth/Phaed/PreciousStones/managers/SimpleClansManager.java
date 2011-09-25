@@ -25,7 +25,7 @@ public final class SimpleClansManager
     public SimpleClansManager()
     {
         plugin = PreciousStones.getInstance();
-        startST();
+        getSimpleClans();
     }
 
     /**
@@ -242,7 +242,7 @@ public final class SimpleClansManager
         return null;
     }
 
-    private void startST()
+    private void getSimpleClans()
     {
         if (simpleClans == null)
         {

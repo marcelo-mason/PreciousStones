@@ -91,7 +91,7 @@ public class PSEntityListener extends EntityListener
         if (event.isCancelled())
         {
             return;
-        }        
+        }
 
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
         {
@@ -105,7 +105,7 @@ public class PSEntityListener extends EntityListener
         if (target instanceof Player)
         {
         	if(event.getReason() == TargetReason.CLOSEST_PLAYER)
-            {                      
+            {
         		if(plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.REMOVE_MOB))
         		{
         			Entity mob = event.getEntity();
