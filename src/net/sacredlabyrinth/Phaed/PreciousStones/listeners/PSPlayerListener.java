@@ -57,21 +57,6 @@ public class PSPlayerListener extends PlayerListener
      * @param event
      */
     @Override
-    public void onPlayerKick(PlayerKickEvent event)
-    {
-        if (event.isCancelled())
-        {
-            return;
-        }
-
-        plugin.getPlayerManager().playerLogoff(event.getPlayer());
-        plugin.getStorageManager().offerPlayer(event.getPlayer().getName(), true);
-    }
-
-    /**
-     * @param event
-     */
-    @Override
     public void onPlayerInteract(PlayerInteractEvent event)
     {
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
@@ -148,15 +133,29 @@ public class PSPlayerListener extends PlayerListener
 
                 if (conflicts == null)
                 {
-                    if (openCuboid.testOverflow(target.getLocation()))
+                    if (!plugin.getVisualizationManager().isOutlineBlock(player, target))
                     {
-                        plugin.getCuboidManager().processSelectedBlock(player, target);
-                        event.setCancelled(true);
-                        return;
+                        if (openCuboid.testOverflow(target.getLocation()) || plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.cuboid"))
+                        {
+                            if (plugin.getWorldGuardManager().canBuild(player, target))
+                            {
+                                plugin.getCuboidManager().processSelectedBlock(player, target);
+                                event.setCancelled(true);
+                                return;
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot extend inside WorldGuard region");
+                            }
+                        }
+                        else
+                        {
+                            ChatBlock.sendMessage(player, ChatColor.RED + "Exceeds maximum volume");
+                        }
                     }
                     else
                     {
-                        ChatBlock.sendMessage(player, ChatColor.RED + "Exceeds maximum volume");
+                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot click on the outline");
                     }
                 }
                 else
@@ -324,7 +323,7 @@ public class PSPlayerListener extends PlayerListener
                         }
                         else
                         {
-                            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
+                            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALL);
 
                             if (field != null)
                             {

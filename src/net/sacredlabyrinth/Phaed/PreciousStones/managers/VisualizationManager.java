@@ -246,8 +246,8 @@ public class VisualizationManager
         int offset = ce.selectedCount() > 1 ? 1 : 0;
 
         int minx = ce.getMinx() - offset;
-        int minz = ce.getMinz() - offset;
         int miny = ce.getMiny() - offset;
+        int minz = ce.getMinz() - offset;
         int maxx = ce.getMaxx() + offset;
         int maxy = ce.getMaxy() + offset;
         int maxz = ce.getMaxz() + offset;
@@ -274,7 +274,7 @@ public class VisualizationManager
             Location loc = new Location(player.getWorld(), minx, y, maxz);
             newBlocks.add(new BlockData(loc, frameType, (byte) 0));
 
-            loc = new Location(player.getWorld(), maxx, y, miny);
+            loc = new Location(player.getWorld(), maxx, y, minz);
             newBlocks.add(new BlockData(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, y, minz);
@@ -299,14 +299,14 @@ public class VisualizationManager
             newBlocks.add(new BlockData(loc, frameType, (byte) 0));
         }
 
-        // get the blocks that are no longer in the new set and should be reverted
+        // revert the blocks that are no longer in the new set and should be reverted
 
         List<BlockData> revertible = new LinkedList<BlockData>(oldBlocks);
         revertible.removeAll(newBlocks);
 
         Visualize revert = new Visualize(revertible, player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
 
-        // now get all the new blocks that are not currently there
+        // visualize all the new blocks that are left to visualize
 
         List<BlockData> missing = new LinkedList<BlockData>(newBlocks);
         missing.removeAll(oldBlocks);
@@ -315,6 +315,24 @@ public class VisualizationManager
 
         vis.setOutlineBlocks(newBlocks);
         visualizations.put(player.getName(), vis);
+    }
+
+    /**
+     * Whether the block is currently visualized as outline
+     * @param player
+     * @param block
+     * @return
+     */
+    public boolean isOutlineBlock(Player player, Block block)
+    {
+        Visualization vis = visualizations.get(player.getName());
+
+        if (vis == null)
+        {
+            vis = new Visualization();
+        }
+
+        return vis.getOutlineBlocks().contains(new BlockData(block));
     }
 
     private boolean turnCounter(String name, int size)

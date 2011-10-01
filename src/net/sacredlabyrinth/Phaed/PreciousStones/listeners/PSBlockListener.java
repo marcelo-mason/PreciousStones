@@ -367,21 +367,21 @@ public class PSBlockListener extends BlockListener
 
         if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.create.unbreakable"))
         {
-            Field conflictfield = plugin.getForceFieldManager().unbreakableConflicts(block, player);
+            Field conflictField = plugin.getForceFieldManager().unbreakableConflicts(block, player);
 
-            if (conflictfield != null)
+            if (conflictField != null)
             {
                 if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.place"))
                 {
                     if (plugin.getUnbreakableManager().add(block, player))
                     {
-                        plugin.getCommunicationManager().notifyBypassPlaceU(player, block, conflictfield);
+                        plugin.getCommunicationManager().notifyBypassPlaceU(player, block, conflictField);
                     }
                 }
                 else
                 {
                     event.setCancelled(true);
-                    plugin.getCommunicationManager().warnConflictU(player, block, conflictfield);
+                    plugin.getCommunicationManager().warnConflictU(player, block, conflictField);
                 }
             }
             else
@@ -413,12 +413,12 @@ public class PSBlockListener extends BlockListener
         }
         else if (plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.create.forcefield"))
         {
-            Field conflictfield = plugin.getForceFieldManager().fieldConflicts(block, player);
+            Field conflictField = plugin.getForceFieldManager().fieldConflicts(block, player);
 
-            if (conflictfield != null)
+            if (conflictField != null)
             {
                 event.setCancelled(true);
-                plugin.getCommunicationManager().warnConflictFF(player, block, conflictfield);
+                plugin.getCommunicationManager().warnConflictFF(player, block, conflictField);
             }
             else
             {

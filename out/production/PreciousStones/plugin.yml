@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 6.2
+version: 6.3
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, iConomy, BOSEconomy, Currency, MultiCurrency]
 commands:
@@ -46,6 +46,10 @@ permissions:
     description: Can use /ps locations
   preciousstones.benefit.snitch:
     description: Can use /ps snitch list/clean
+  preciousstones.benefit.feed:
+    description: Can get feed by feed block
+  preciousstones.benefit.repair:
+    description: Can get rapired by feed block
   preciousstones.whitelist.allow:
     description: Can use /ps allow
   preciousstones.whitelist.allowed:
@@ -82,6 +86,8 @@ permissions:
     description: Bypasses lightning fields
   preciousstones.bypass.limits:
     description: Bypasses limits
+  preciousstones.bypass.cuboid:
+    description: Bypasses cuboid size limits
   preciousstones.alert.notify.place:
     description: Gets alert for block placement notifys
   preciousstones.alert.notify.destroy:
@@ -206,6 +212,8 @@ permissions:
       preciousstones.benefit.onoff: true
       preciousstones.benefit.scoping: true
       preciousstones.benefit.snitch: true
+      preciousstones.benefit.repair: true
+      preciousstones.benefit.feed: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: true
@@ -231,6 +239,7 @@ permissions:
       preciousstones.bypass.snitch: true
       preciousstones.bypass.mine: true
       preciousstones.bypass.lightning: true
+      preciousstones.bypass.cuboid: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false

@@ -523,7 +523,8 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         for (ChunkVec ecv : envelopingChunks)
         {
-            sources.addAll(PreciousStones.getInstance().getForceFieldManager().getSourceFields(ecv.getBlock().getChunk(), FieldFlag.ALL));
+            List<Field> fields = PreciousStones.getInstance().getForceFieldManager().getSourceFields(ecv, FieldFlag.ALL);
+            sources.addAll(fields);
         }
 
         return sources;

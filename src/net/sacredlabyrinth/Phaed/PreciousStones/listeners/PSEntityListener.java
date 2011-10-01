@@ -15,7 +15,6 @@ import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.List;

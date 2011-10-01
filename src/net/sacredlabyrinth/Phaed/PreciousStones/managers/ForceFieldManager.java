@@ -1,10 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.nijikokun.register.payment.Method;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
+import net.sacredlabyrinth.Phaed.register.payment.Method;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -44,6 +44,28 @@ public final class ForceFieldManager
         sourceFields.clear();
     }
 
+    public void drawSourceFields()
+    {
+        for (ChunkVec cv : sourceFields.keySet())
+        {
+            PreciousStones.getLogger().info(cv.toString());
+
+            HashMap<FieldFlag, List<Field>> flagList = sourceFields.get(cv);
+
+            for (FieldFlag flag : flagList.keySet())
+            {
+                PreciousStones.getLogger().info("   -" + flag);
+
+                List<Field> fields = flagList.get(flag);
+
+                for (Field field : fields)
+                {
+                    PreciousStones.getLogger().info("     -" + Helper.toLocationString(field.getLocation()));
+                }
+            }
+        }
+    }
+
     /**
      * Add a brand new field
      *
@@ -70,6 +92,15 @@ public final class ForceFieldManager
 
         if (plugin.getSettingsManager().isBlacklistedWorld(fieldBlock.getWorld()))
         {
+            return false;
+        }
+
+        // check if in worldguard region
+
+        if (!plugin.getWorldGuardManager().canBuildField(player, fieldBlock, fs))
+        {
+            ChatBlock.sendMessage(player, "The field intersects with a WorldGuard region you are not allowed in.");
+            event.setCancelled(true);
             return false;
         }
 
@@ -226,11 +257,11 @@ public final class ForceFieldManager
             w.put(cv, c);
             wLists.put(world, w);
             fieldLists.put(flag, wLists);
-
-            // add to sources collection
-
-            addSourceField(field);
         }
+
+        // add to sources collection
+
+        addSourceField(field);
     }
 
     /**
@@ -373,6 +404,7 @@ public final class ForceFieldManager
      */
     public void removeSourceField(Field field)
     {
+
         Set<ChunkVec> scvs = field.getEnvelopingChunks();
 
         for (ChunkVec scv : scvs)
@@ -472,39 +504,6 @@ public final class ForceFieldManager
     }
 
     /**
-     * Get all fields in a chunk, optionally based on field flags
-     *
-     * @param cv the chunk vector you want the fields from
-     * @return all fields from database that match the chunkvec
-     */
-    public Collection<Field> getFields(ChunkVec cv, FieldFlag flag)
-    {
-        Collection<Field> out = new LinkedList<Field>();
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
-
-        if (wLists == null)
-        {
-            return null;
-        }
-
-        if (wLists.get(cv.getWorld()) == null)
-        {
-            return null;
-        }
-
-        if (wLists.get(cv.getWorld()).get(cv) == null)
-        {
-            return null;
-        }
-
-        Collection<Field> fields = wLists.get(cv.getWorld()).get(cv).values();
-
-        out.addAll(fields);
-
-        return out;
-    }
-
-    /**
      * Get all fields on a world, optionally based on field flags
      *
      * @param worldName
@@ -520,6 +519,7 @@ public final class ForceFieldManager
         {
             return null;
         }
+
         HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(worldName);
 
         if (w == null)
@@ -1311,7 +1311,7 @@ public final class ForceFieldManager
      */
     public List<Field> getSourceFields(Location loc, FieldFlag flag)
     {
-        List<Field> sources = getSourceFields(loc.getBlock().getChunk(), flag);
+        List<Field> sources = getSourceFields(new ChunkVec(loc.getBlock().getChunk()), flag);
 
         for (Iterator it = sources.iterator(); it.hasNext(); )
         {
@@ -1323,9 +1323,18 @@ public final class ForceFieldManager
             }
         }
 
-        //PreciousStones.getLogger().info("block source: " + sources.size());
-
         return sources;
+    }
+
+    /**
+     * Get all fields matching this flag that are touching this chunk
+     *
+     * @param cv
+     * @return
+     */
+    public List<Field> getSourceFields(Chunk chunk, FieldFlag flag)
+    {
+        return getSourceFields(new ChunkVec(chunk), flag);
     }
 
     /**
@@ -1338,32 +1347,18 @@ public final class ForceFieldManager
     {
         HashMap<FieldFlag, List<Field>> flagList = sourceFields.get(cv);
 
-        List<Field> out = new LinkedList<Field>();
-
         if (flagList != null)
         {
             List<Field> fields = flagList.get(flag);
 
             if (fields != null)
             {
-                out.addAll(fields);
+                return new LinkedList<Field>(fields);
             }
         }
 
-        //PreciousStones.getLogger().info("chunk source: " + sourceFields.size());
 
-        return out;
-    }
-
-    /**
-     * Get all fields matching this flag that are touching this chunk
-     *
-     * @param cv
-     * @return
-     */
-    public List<Field> getSourceFields(Chunk chunk, FieldFlag flag)
-    {
-        return getSourceFields(new ChunkVec(chunk), flag);
+        return new LinkedList<Field>();
     }
 
     /**

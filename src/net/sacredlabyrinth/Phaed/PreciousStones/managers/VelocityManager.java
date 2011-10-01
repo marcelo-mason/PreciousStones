@@ -4,15 +4,12 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 
 /**
- *
  * @author phaed
  */
 public class VelocityManager
@@ -29,39 +26,11 @@ public class VelocityManager
     }
 
     /**
-     *
      * @param entity
      * @param field
      */
-    public void launchPlayer(final Entity entity, final Field field)
+    public void launchPlayer(final Player player, final Field field)
     {
-        Player p = null;
-        Vehicle v = null;
-
-        if (entity instanceof Player)
-        {
-            p = (Player) entity;
-        }
-
-        if (entity instanceof Vehicle)
-        {
-            v = (Vehicle) entity;
-            Entity e = v.getPassenger();
-
-            if (e instanceof Player)
-            {
-                p = (Player) e;
-            }
-        }
-
-        if (p == null)
-        {
-            return;
-        }
-
-        final Player player = p;
-        final Vehicle vehicle = v;
-
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.launch"))
         {
             if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
@@ -84,16 +53,16 @@ public class VelocityManager
                     {
                         public void run()
                         {
-                            if (vehicle != null)
+                            if (player.getVehicle() != null)
                             {
-                                vehicle.setVelocity(velocity);
+                                player.getVehicle().setVelocity(velocity);
                             }
-                            else
-                            {
-                                player.setVelocity(velocity);
-                            }
+
+                            player.setVelocity(velocity);
+
                             plugin.getCommunicationManager().showLaunch(player);
                             startFallImmunity(player);
+                            player.getWorld().createExplosion(player.getLocation(), -1);
                         }
                     }, 0L);
                 }
@@ -102,39 +71,11 @@ public class VelocityManager
     }
 
     /**
-     *
      * @param entity
      * @param field
      */
-    public void shootPlayer(final Entity entity, Field field)
+    public void shootPlayer(final Player player, Field field)
     {
-        Player p = null;
-        Vehicle v = null;
-
-        if (entity instanceof Player)
-        {
-            p = (Player) entity;
-        }
-
-        if (entity instanceof Vehicle)
-        {
-            v = (Vehicle) entity;
-            Entity e = v.getPassenger();
-
-            if (e instanceof Player)
-            {
-                p = (Player) e;
-            }
-        }
-
-        if (p == null)
-        {
-            return;
-        }
-
-        final Player player = p;
-        final Vehicle vehicle = v;
-
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.bounce"))
         {
             if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
@@ -150,16 +91,16 @@ public class VelocityManager
                     {
                         public void run()
                         {
-                            if (vehicle != null)
-                            {
-                                vehicle.setVelocity(new Vector(0, height, 0));
-                            }
-                            else
+                            if (player.getVehicle() != null)
                             {
                                 player.setVelocity(new Vector(0, height, 0));
                             }
+
+                            player.setVelocity(new Vector(0, height, 0));
+
                             plugin.getCommunicationManager().showCannon(player);
                             startFallImmunity(player);
+                            player.getWorld().createExplosion(player.getLocation(), -1);
                         }
                     }, 0L);
                 }
@@ -168,7 +109,6 @@ public class VelocityManager
     }
 
     /**
-     *
      * @param player
      */
     public void startFallImmunity(final Player player)
@@ -184,7 +124,6 @@ public class VelocityManager
     }
 
     /**
-     *
      * @param player
      * @return
      */
@@ -194,7 +133,6 @@ public class VelocityManager
     }
 
     /**
-     *
      * @param player
      * @return
      */

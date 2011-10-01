@@ -42,7 +42,7 @@ public final class PermissionsManager
     {
         if (player == null)
         {
-            return false;
+            return true;
         }
 
         if (handler != null)

@@ -7,7 +7,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -53,6 +52,12 @@ public final class EntryManager
                     EntryFields ef = e.get(playerName);
                     List<Field> fields = ef.getFields();
 
+                    boolean hasDamage = false;
+                    boolean hasHeal = false;
+                    boolean hasFeeding = false;
+                    boolean hasAir = false;
+                    boolean hasRepair = false;
+
                     for (Field field : fields)
                     {
                         FieldSettings fs = field.getSettings();
@@ -66,105 +71,133 @@ public final class EntryManager
 
                         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.giveair"))
                         {
-                            if (fs.hasFlag(FieldFlag.GIVE_AIR))
+                            if (!hasAir)
                             {
-                                if (player.getRemainingAir() < 300)
+                                if (fs.hasFlag(FieldFlag.GIVE_AIR))
                                 {
-                                    player.setRemainingAir(600);
-                                    plugin.getCommunicationManager().showGiveAir(player);
-                                    continue;
+                                    if (player.getRemainingAir() < 300)
+                                    {
+                                        player.setRemainingAir(600);
+                                        plugin.getCommunicationManager().showGiveAir(player);
+                                        hasAir = true;
+                                        continue;
+                                    }
                                 }
                             }
                         }
 
                         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.feed"))
                         {
-                            if (fs.hasFlag(FieldFlag.SLOW_FEEDING))
+                            if (!hasFeeding)
                             {
-                            	int food = player.getFoodLevel();
-                            	if(food < 20)
-                            	{
-                            		player.setFoodLevel(food + 1);
-                            		plugin.getCommunicationManager().showSlowFeeding(player);
-                            		continue;
-                            	}
+                                if (fs.hasFlag(FieldFlag.SLOW_FEEDING))
+                                {
+                                    int food = player.getFoodLevel();
+                                    if (food < 20)
+                                    {
+                                        player.setFoodLevel(food + 1);
+                                        plugin.getCommunicationManager().showSlowFeeding(player);
+                                        hasFeeding = true;
+                                        continue;
+                                    }
+                                }
                             }
                         }
 
                         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.heal"))
                         {
-                            if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
+                            if (!hasHeal)
                             {
-                                if (player.getHealth() < 20)
+                                if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
                                 {
-                                    player.setHealth(20);
-                                    plugin.getCommunicationManager().showInstantHeal(player);
-                                    continue;
-                                }
-                            }
-
-                            if (fs.hasFlag(FieldFlag.SLOW_HEAL))
-                            {
-                                if (player.getHealth() < 20)
-                                {
-                                    player.setHealth(healthCheck(player.getHealth() + 1));
-                                    plugin.getCommunicationManager().showSlowHeal(player);
-                                    continue;
+                                    if (player.getHealth() < 20)
+                                    {
+                                        player.setHealth(20);
+                                        plugin.getCommunicationManager().showInstantHeal(player);
+                                        hasHeal = true;
+                                        continue;
+                                    }
                                 }
 
+                                if (fs.hasFlag(FieldFlag.SLOW_HEAL))
+                                {
+                                    if (player.getHealth() < 20)
+                                    {
+                                        player.setHealth(healthCheck(player.getHealth() + 1));
+                                        plugin.getCommunicationManager().showSlowHeal(player);
+                                        hasHeal = true;
+                                        continue;
+                                    }
+
+                                }
                             }
                         }
 
                         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.repair"))
                         {
-                            if (fs.hasFlag(FieldFlag.SLOW_REPAIR))
+                            if (!hasRepair)
                             {
-                            	boolean updated = false;
+                                if (fs.hasFlag(FieldFlag.SLOW_REPAIR))
+                                {
+                                    boolean updated = false;
 
-                            	ItemStack[] armors = player.getInventory().getArmorContents();
-                            	for(ItemStack armor : armors)
-                            	{
-                            		if(plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
-                            		{
-                            			short dur = armor.getDurability();
-	                            		if(dur > 0) //has damage
-	                            		{
-	                            			dur -= 25; //repair amount
-	                            			if(dur < 0) dur = 0; //clamp it
-	                            			armor.setDurability(dur);
-	                            			plugin.getCommunicationManager().showSlowRepair(player);
-	                            			updated = true;
-	                            			break;
-	                            		}
-                            		}
-                            	}
+                                    ItemStack[] armors = player.getInventory().getArmorContents();
+                                    for (ItemStack armor : armors)
+                                    {
+                                        if (plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
+                                        {
+                                            short dur = armor.getDurability();
+                                            if (dur > 0)
+                                            {
+                                                dur -= 25;
+                                                if (dur < 0)
+                                                {
+                                                    dur = 0;
+                                                }
+                                                armor.setDurability(dur);
+                                                plugin.getCommunicationManager().showSlowRepair(player);
+                                                updated = true;
+                                                hasRepair = true;
+                                                break;
+                                            }
+                                        }
+                                    }
 
-                            	if(updated)
-                            		continue;
+                                    if (updated)
+                                    {
+                                        continue;
+                                    }
 
-                            	ItemStack[] items = player.getInventory().getContents();
-                            	for(ItemStack item : items)
-                            	{
-                            		if(item!=null)
-                            		{
-	                            		if(plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
-	                            		{
-		                            		short dur = item.getDurability();
-		                            		if(dur > 0) //has damage
-		                            		{
-		                            			dur -= 25; //repair amount
-		                            			if(dur < 0) dur = 0; //clamp it
-		                            			item.setDurability(dur);
-		                            			plugin.getCommunicationManager().showSlowRepair(player);
-		                            			updated = true;
-		                            			break;
-		                            		}
-	                            		}
-                            		}
-                            	}
+                                    ItemStack[] items = player.getInventory().getContents();
+                                    for (ItemStack item : items)
+                                    {
+                                        if (item != null)
+                                        {
+                                            if (plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
+                                            {
+                                                short dur = item.getDurability();
+                                                if (dur > 0)
+                                                {
+                                                    dur -= 25;
+                                                    if (dur < 0)
+                                                    {
+                                                        dur = 0;
+                                                    }
+                                                    item.setDurability(dur);
+                                                    plugin.getCommunicationManager().showSlowRepair(player);
+                                                    updated = true;
+                                                    hasRepair = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
 
-                            	if(updated)
-                            		continue;
+                                    if (updated)
+                                    {
+                                        continue;
+                                    }
+                                }
                             }
                         }
 
@@ -174,27 +207,31 @@ public final class EntryManager
                             {
                                 if (!plugin.getForceFieldManager().isAllowed(field, playerName))
                                 {
-                                    if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
+                                    if (!hasDamage)
                                     {
-                                        if (player.getHealth() > 0)
+                                        if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
                                         {
-                                            player.setHealth(healthCheck(player.getHealth() - 1));
-                                            plugin.getCommunicationManager().showSlowDamage(player);
-                                            continue;
+                                            if (player.getHealth() > 0)
+                                            {
+                                                player.setHealth(healthCheck(player.getHealth() - 4));
+                                                plugin.getCommunicationManager().showSlowDamage(player);
+                                                hasDamage = true;
+                                                continue;
+                                            }
                                         }
-                                    }
 
-                                    if (fs.hasFlag(FieldFlag.FAST_DAMAGE))
-                                    {
-                                        if (player.getHealth() > 0)
+                                        if (fs.hasFlag(FieldFlag.FAST_DAMAGE))
                                         {
-                                            player.setHealth(healthCheck(player.getHealth() - 4));
-                                            plugin.getCommunicationManager().showFastDamage(player);
-                                            continue;
+                                            if (player.getHealth() > 0)
+                                            {
+                                                player.setHealth(healthCheck(player.getHealth() - 8));
+                                                plugin.getCommunicationManager().showFastDamage(player);
+                                                hasDamage = true;
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
-
                             }
                         }
                     }
@@ -206,7 +243,6 @@ public final class EntryManager
     }
 
     /**
-     *
      * @param player
      * @return
      */
@@ -229,6 +265,7 @@ public final class EntryManager
 
     /**
      * Runs when a player enters an overlapped area
+     *
      * @param player
      * @param field
      */
@@ -252,6 +289,7 @@ public final class EntryManager
 
     /**
      * Runs when a player leaves an overlapped area
+     *
      * @param player
      * @param entryField
      */
@@ -266,35 +304,17 @@ public final class EntryManager
     }
 
     /**
-     *
      * @param entity
      * @param field
      */
     public void enterField(Entity entity, Field field)
     {
-        Player player = null;
-        Vehicle vehicle = null;
-
-        if (entity instanceof Player)
-        {
-            player = (Player) entity;
-        }
-
-        if (entity instanceof Vehicle)
-        {
-            vehicle = (Vehicle) entity;
-            Entity e = vehicle.getPassenger();
-
-            if (e instanceof Player)
-            {
-                player = (Player) e;
-            }
-        }
-
-        if (player == null)
+        if (!(entity instanceof Player))
         {
             return;
         }
+
+        Player player = (Player) entity;
 
         synchronized (entries)
         {
@@ -316,16 +336,8 @@ public final class EntryManager
 
         if (!plugin.getForceFieldManager().isRedstoneHookedDisabled(field))
         {
-            if (vehicle != null)
-            {
-                plugin.getVelocityManager().launchPlayer(vehicle, field);
-                plugin.getVelocityManager().shootPlayer(vehicle, field);
-            }
-            else
-            {
-                plugin.getVelocityManager().launchPlayer(player, field);
-                plugin.getVelocityManager().shootPlayer(player, field);
-            }
+            plugin.getVelocityManager().launchPlayer(player, field);
+            plugin.getVelocityManager().shootPlayer(player, field);
         }
 
         plugin.getMineManager().enterMine(player, field);
@@ -333,7 +345,6 @@ public final class EntryManager
     }
 
     /**
-     *
      * @param player
      * @param field
      */
@@ -353,6 +364,7 @@ public final class EntryManager
 
     /**
      * Remove a player from all fields (used on death)
+     *
      * @param player
      */
     public void leaveAllFields(Player player)
@@ -364,7 +376,6 @@ public final class EntryManager
     }
 
     /**
-     *
      * @param player
      * @param field
      * @return
@@ -385,7 +396,6 @@ public final class EntryManager
     }
 
     /**
-     *
      * @param player
      * @param field
      * @return
@@ -429,7 +439,6 @@ public final class EntryManager
     }
 
     /**
-     *
      * @param field
      * @return
      */
@@ -459,6 +468,7 @@ public final class EntryManager
 
     /**
      * Returns players that are standing on Redstone triggerable fields
+     *
      * @param block
      * @return
      */
@@ -497,16 +507,14 @@ public final class EntryManager
 
     /**
      * Whether the redstone source powers the field
+     *
      * @param field
      * @param block
      * @return confirmation
      */
     public boolean powersField(Field field, Block block)
     {
-        BlockFace[] faces =
-        {
-            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.DOWN, BlockFace.UP
-        };
+        BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.DOWN, BlockFace.UP};
 
         for (BlockFace face : faces)
         {
@@ -518,10 +526,7 @@ public final class EntryManager
             }
         }
 
-        BlockFace[] downfaces =
-        {
-            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
-        };
+        BlockFace[] downfaces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
 
         Block upblock = block.getRelative(BlockFace.DOWN);
 

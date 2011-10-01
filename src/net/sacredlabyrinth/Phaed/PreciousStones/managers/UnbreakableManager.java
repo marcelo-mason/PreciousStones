@@ -286,7 +286,6 @@ public final class UnbreakableManager
                             cleanedCount++;
                             queueRelease(unbreakable);
                         }
-                        PreciousStones.getLogger().info("3");
                     }
                 }
             }

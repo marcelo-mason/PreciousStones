@@ -842,17 +842,6 @@ public final class StorageManager
     }
 
     /**
-     * Delete an unbreakabale form the database that a player owns
-     *
-     * @param playerName
-     */
-    public void deleteUnbreakables(String playerName)
-    {
-        String query = "DELETE FROM `pstone_unbreakables` WHERE owner = '" + playerName + "';";
-        core.delete(query);
-    }
-
-    /**
      * Insert snitch entry into the database
      *
      * @param snitch
@@ -870,7 +859,7 @@ public final class StorageManager
         else
         {
             String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`) ";
-            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + snitch.getWorld() + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1) ";
+            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + snitch.getWorld() + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1);";
             String update = "UPDATE `pstone_snitches` SET count = count+1;";
             core.insert(query + values + update);
         }

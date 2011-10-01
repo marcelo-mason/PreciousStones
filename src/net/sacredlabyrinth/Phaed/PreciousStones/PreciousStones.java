@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import com.nijikokun.register.payment.Method;
+import net.sacredlabyrinth.Phaed.register.payment.Method;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
 import org.bukkit.event.Event;
@@ -373,5 +373,35 @@ public class PreciousStones extends JavaPlugin
     public WorldGuardManager getWorldGuardManager()
     {
         return worldGuardManager;
+    }
+
+    public PSPlayerListener getPlayerListener()
+    {
+        return playerListener;
+    }
+
+    public PSBlockListener getBlockListener()
+    {
+        return blockListener;
+    }
+
+    public PSEntityListener getEntityListener()
+    {
+        return entityListener;
+    }
+
+    public PSWorldListener getWorldListener()
+    {
+        return worldListener;
+    }
+
+    public PSVehicleListener getVehicleListener()
+    {
+        return vehicleListener;
+    }
+
+    public PSServerListener getServerListener()
+    {
+        return serverListener;
     }
 }

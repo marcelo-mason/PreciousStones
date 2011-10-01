@@ -30,10 +30,8 @@ public final class SettingsManager
     private List<Integer> foresterFertileBlocks;
     private int foresterInterval;
     private int foresterTrees;
-    private int visualizeAdminChunkRadius;
     private int visualizeMarkBlock;
     private int visualizeFrameBlock;
-    private int visualizeMarkChunkRadius;
     private int visualizeBlock;
     private int visualizeSeconds;
     private int visualizeSpreadDivisor;
@@ -202,9 +200,7 @@ public final class SettingsManager
         visualizeBlock = config.getInt("visualization.block-type", 20);
         visualizeSeconds = config.getInt("visualization.seconds", 10);
         visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", false);
-        visualizeAdminChunkRadius = config.getInt("visualization.admin-chunk-radius", 4);
         visualizeMarkBlock = config.getInt("visualization.mark-block-type", 49);
-        visualizeMarkChunkRadius = config.getInt("visualization.mark-chunk-radius", 10);
         visualizeSpreadDivisor = config.getInt("visualization.spread-divisor", 130);
         foresterInterval = config.getInt("forester.interval-seconds", 1);
         foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
@@ -219,14 +215,12 @@ public final class SettingsManager
 
         addForceFieldStones(forceFieldBlocks);
 
-        if (forceFieldBlocks.isEmpty())
+        if (forceFieldBlocks == null || forceFieldBlocks.isEmpty())
         {
             PreciousStones.log("NO FORCE-FIELDS CONFIGURED");
         }
 
         save();
-
-
     }
 
     /**
@@ -299,9 +293,7 @@ public final class SettingsManager
         config.setProperty("visualization.block-type", getVisualizeBlock());
         config.setProperty("visualization.seconds", getVisualizeSeconds());
         config.setProperty("visualization.end-on-player-move", isVisualizeEndOnMove());
-        config.setProperty("visualization.admin-chunk-radius", getVisualizeAdminChunkRadius());
         config.setProperty("visualization.mark-block-type", getVisualizeMarkBlock());
-        config.setProperty("visualization.mark-chunk-radius", getVisualizeMarkChunkRadius());
         config.setProperty("visualization.spread-divisor", visualizeSpreadDivisor);
         config.setProperty("forester.interval-seconds", getForesterInterval());
         config.setProperty("forester.fertile-blocks", getForesterFertileBlocks());
@@ -327,8 +319,6 @@ public final class SettingsManager
         {
             return;
         }
-
-        double largestForceField = 0;
 
         for (LinkedHashMap<String, Object> map : maps)
         {
@@ -711,27 +701,11 @@ public final class SettingsManager
     }
 
     /**
-     * @return the visualizeAdminChunkRadius
-     */
-    public int getVisualizeAdminChunkRadius()
-    {
-        return visualizeAdminChunkRadius;
-    }
-
-    /**
      * @return the visualizeMarkBlock
      */
     public int getVisualizeMarkBlock()
     {
         return visualizeMarkBlock;
-    }
-
-    /**
-     * @return the visualizeMarkChunkRadius
-     */
-    public int getVisualizeMarkChunkRadius()
-    {
-        return visualizeMarkChunkRadius;
     }
 
     /**

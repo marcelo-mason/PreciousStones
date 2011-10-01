@@ -1,12 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import java.util.Arrays;
-import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -105,13 +108,13 @@ public class ChatBlock
 
     /**
      *
-     * @param player
+     * @param sender
      * @param amount
      * @return
      */
-    public boolean sendBlock(Player player, int amount)
+    public boolean sendBlock(CommandSender sender, int amount)
     {
-        if (player == null)
+        if (sender == null)
         {
             return false;
         }
@@ -119,6 +122,11 @@ public class ChatBlock
         if (rows.size() == 0)
         {
             return false;
+        }
+
+        if (!(sender instanceof Player))
+        {
+            amount = 999;
         }
 
         // if no column sizes provided them
@@ -171,7 +179,7 @@ public class ChatBlock
                     }
                     else if (msgLength(section) < colsize)
                     {
-                        rowstring += paddLeftToFit(section, colsize);
+                        rowstring += padLeftToFit(section, colsize);
                     }
                 }
                 else if (align.equalsIgnoreCase("l"))
@@ -182,7 +190,7 @@ public class ChatBlock
                     }
                     else if (msgLength(section) < colsize)
                     {
-                        rowstring += paddRightToFit(section, colsize);
+                        rowstring += padRightToFit(section, colsize);
                     }
                 }
                 else if (align.equalsIgnoreCase("c"))
@@ -204,7 +212,7 @@ public class ChatBlock
                     }
                     else if (msgLength(section) < colsize)
                     {
-                        rowstring += paddRightToFit(section, colsize);
+                        rowstring += padRightToFit(section, colsize);
                     }
                 }
             }
@@ -216,7 +224,7 @@ public class ChatBlock
                 msg = color + msg;
             }
 
-            player.sendMessage(msg);
+            sender.sendMessage(msg);
         }
 
         return rows.size() > 0;
@@ -224,12 +232,12 @@ public class ChatBlock
 
     /**
      *
-     * @param player
+     * @param sender
      * @param prefix
      */
-    public void sendBlock(Player player, String prefix)
+    public void sendBlock(CommandSender sender, String prefix)
     {
-        if (player == null)
+        if (sender == null)
         {
             return;
         }
@@ -287,7 +295,7 @@ public class ChatBlock
                     }
                     else if (msgLength(section) < colsize)
                     {
-                        rowstring += paddLeftToFit(section, colsize);
+                        rowstring += padLeftToFit(section, colsize);
                     }
                 }
                 else if (align.equalsIgnoreCase("l"))
@@ -298,7 +306,7 @@ public class ChatBlock
                     }
                     else if (msgLength(section) < colsize)
                     {
-                        rowstring += paddRightToFit(section, colsize);
+                        rowstring += padRightToFit(section, colsize);
                     }
                 }
                 else if (align.equalsIgnoreCase("c"))
@@ -321,7 +329,7 @@ public class ChatBlock
                 msg = color + msg;
             }
 
-            player.sendMessage(msg);
+            sender.sendMessage(msg);
 
             prefix_used = true;
         }
@@ -329,11 +337,11 @@ public class ChatBlock
 
     /**
      *
-     * @param player
+     * @param sender
      */
-    public void sendBlock(Player player)
+    public void sendBlock(CommandSender sender)
     {
-        sendBlock(player, null);
+        sendBlock(sender, null);
     }
 
     /**
@@ -341,7 +349,7 @@ public class ChatBlock
      * @param sender
      * @param msg
      */
-    public static void sendMessageAll(Player sender, String msg)
+    public static void sendMessageAll(CommandSender sender, String msg)
     {
         sendMessageAll(sender, msg);
     }
@@ -395,11 +403,11 @@ public class ChatBlock
 
         // pad the left with space
 
-        msg = paddLeftToFit(msg, length + sideSpace);
+        msg = padLeftToFit(msg, length + sideSpace);
 
-        // padd the right with space
+        // pad the right with space
 
-        msg = paddRightToFit(msg, length + sideSpace + sideSpace);
+        msg = padRightToFit(msg, length + sideSpace + sideSpace);
 
         return msg;
     }
@@ -416,7 +424,7 @@ public class ChatBlock
             return "";
         }
 
-        return paddLeftToFit("", msgLength(str));
+        return padLeftToFit("", msgLength(str));
     }
 
     /**
@@ -467,7 +475,7 @@ public class ChatBlock
      * @param length
      * @return
      */
-    public static String paddLeftToFit(String msg, double length)
+    public static String padLeftToFit(String msg, double length)
     {
         if (msgLength(msg) > length)
         {
@@ -488,7 +496,7 @@ public class ChatBlock
      * @param length
      * @return
      */
-    public static String paddRightToFit(String msg, double length)
+    public static String padRightToFit(String msg, double length)
     {
         if (msgLength(msg) > length)
         {
@@ -725,7 +733,7 @@ public class ChatBlock
      * @param receiver
      * @param msg
      */
-    public static void saySingle(Player receiver, String msg)
+    public static void saySingle(CommandSender receiver, String msg)
     {
         if (receiver == null)
         {
@@ -740,7 +748,7 @@ public class ChatBlock
      * @param receiver
      * @param msg
      */
-    public static void sendMessage(Player receiver, String msg)
+    public static void sendMessage(CommandSender receiver, String msg)
     {
         sendPrefixedMessage(receiver, null, msg);
     }
@@ -751,7 +759,7 @@ public class ChatBlock
      * @param prefix
      * @param msg
      */
-    public static void sendPrefixedMessage(Player receiver, String prefix, String msg)
+    public static void sendPrefixedMessage(CommandSender receiver, String prefix, String msg)
     {
         if (receiver == null)
         {
@@ -781,7 +789,7 @@ public class ChatBlock
      * Send blank lie
      * @param receiver
      */
-    public static void sendBlank(Player receiver)
+    public static void sendBlank(CommandSender receiver)
     {
         if (receiver == null)
         {

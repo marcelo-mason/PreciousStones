@@ -7,7 +7,11 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import uk.co.oliwali.HawkEye.util.HawkEyeAPI;
@@ -15,7 +19,6 @@ import uk.co.oliwali.HawkEye.util.HawkEyeAPI;
 import java.util.*;
 
 /**
- *
  * @author phaed
  */
 public class CommunicatonManager
@@ -49,6 +52,7 @@ public class CommunicatonManager
 
     /**
      * For debug output
+     *
      * @param msg
      */
     public void debug(String msg)
@@ -58,6 +62,7 @@ public class CommunicatonManager
 
     /**
      * Return a player's chat block, contains his pending chat messages
+     *
      * @param player
      * @return
      */
@@ -76,13 +81,21 @@ public class CommunicatonManager
 
     /**
      * Return a new chat block for a player, overwriting old
+     *
      * @param player
      * @return
      */
-    public ChatBlock getNewChatBlock(Player player)
+    public ChatBlock getNewChatBlock(CommandSender sender)
     {
         ChatBlock cb = new ChatBlock();
-        chatBlocks.put(player.getName(), cb);
+        if (sender instanceof Player)
+        {
+            chatBlocks.put(sender.getName(), cb);
+        }
+        else
+        {
+            chatBlocks.put("console", cb);
+        }
         return cb;
     }
 
@@ -107,7 +120,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unbreakableblock
      */
@@ -152,7 +164,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param fieldblock
      */
@@ -197,8 +208,7 @@ public class CommunicatonManager
         }
     }
 
-        /**
-     *
+    /**
      * @param player
      * @param fieldblock
      */
@@ -243,7 +253,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param fieldblock
      */
@@ -289,7 +298,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unbreakableblock
      */
@@ -331,7 +339,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param fieldblock
      */
@@ -376,7 +383,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param fieldblock
      */
@@ -422,7 +428,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param fieldblock
      */
@@ -468,7 +473,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -514,7 +518,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param loc
      * @param field
@@ -560,7 +563,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -606,7 +608,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -652,7 +653,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unbreakableblock
      */
@@ -697,7 +697,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param fieldblock
      */
@@ -743,7 +742,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param field
      */
@@ -793,7 +791,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -839,7 +836,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -885,7 +881,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -931,7 +926,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -977,7 +971,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unbreakableblock
      */
@@ -1022,7 +1015,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param fieldblock
      */
@@ -1068,7 +1060,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param damagedblock
      * @param field
@@ -1114,7 +1105,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -1167,7 +1157,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -1226,7 +1215,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param ub
@@ -1277,7 +1265,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param field
@@ -1330,7 +1317,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param pistonBlock
@@ -1381,7 +1367,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      * @param pistonBlock
@@ -1439,7 +1424,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param attacker
      * @param victim
      * @param field
@@ -1485,7 +1469,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param attacker
      * @param victim
      * @param field
@@ -1531,7 +1514,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unprotectableblock
      * @param protectionblock
@@ -1582,7 +1564,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unprotectableblock
      * @param protectionblock
@@ -1626,7 +1607,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param placedblock
      */
@@ -1671,7 +1651,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param placedblock
      */
@@ -1723,7 +1702,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unprotectableblock
      * @param field
@@ -1769,7 +1747,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unprotectableblock
      * @param fieldtypeblock
@@ -1820,7 +1797,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unprotectableblock
      * @param protectionblock
@@ -1864,7 +1840,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unprotectableblock
      * @param protectionblock
@@ -1915,7 +1890,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param placedblock
      */
@@ -1960,7 +1934,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unprotectableblock
      * @param field
@@ -2006,7 +1979,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param unprotectableblock
      * @param fieldtypeblock
@@ -2057,7 +2029,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param name
      */
@@ -2067,7 +2038,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param name
      */
@@ -2077,16 +2047,14 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
-    public void showNotFound(Player player)
+    public void showNotFound(CommandSender sender)
     {
-        ChatBlock.sendMessage(player, ChatColor.RED + "No fields found");
+        ChatBlock.sendMessage(sender, ChatColor.RED + "No fields found");
     }
 
     /**
-     *
      * @param player
      */
     public void showSlowDamage(Player player)
@@ -2098,7 +2066,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
     public void showFastDamage(Player player)
@@ -2110,7 +2077,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
     public void showInstantHeal(Player player)
@@ -2122,7 +2088,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
     public void showGiveAir(Player player)
@@ -2134,7 +2099,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
     public void showLaunch(Player player)
@@ -2146,7 +2110,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
     public void showCannon(Player player)
@@ -2158,7 +2121,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
     public void showMine(Player player)
@@ -2170,7 +2132,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
     public void showLightning(Player player)
@@ -2182,7 +2143,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
     public void showThump(Player player)
@@ -2191,19 +2151,17 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
-   public void showSlowFeeding(Player player)
-   {
-       if (plugin.getSettingsManager().isWarnSlowFeeding() && canWarn(player))
-       {
-           ChatBlock.sendMessage(player, ChatColor.WHITE + "~Feeding~");
-       }
-   }
+    public void showSlowFeeding(Player player)
+    {
+        if (plugin.getSettingsManager().isWarnSlowFeeding() && canWarn(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.WHITE + "~Feeding~");
+        }
+    }
 
     /**
-     *
      * @param player
      */
     public void showSlowHeal(Player player)
@@ -2215,19 +2173,17 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
-    */
-   public void showSlowRepair(Player player)
-   {
-       if (plugin.getSettingsManager().isWarnSlowRepair() && canWarn(player))
-       {
-           ChatBlock.sendMessage(player, ChatColor.WHITE + "+repairing+");
-       }
-   }
+     */
+    public void showSlowRepair(Player player)
+    {
+        if (plugin.getSettingsManager().isWarnSlowRepair() && canWarn(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.WHITE + "+repairing+");
+        }
+    }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -2237,7 +2193,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -2247,7 +2202,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -2257,7 +2211,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param block
      * @param player
      */
@@ -2274,7 +2227,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param unbreakable
      * @param player
      */
@@ -2285,7 +2237,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param fields
      */
@@ -2311,9 +2262,9 @@ public class CommunicatonManager
                 cb.addRow("  " + ChatColor.YELLOW + "Allowed: ", ChatColor.AQUA + field.getAllowedList());
             }
 
-            if(field.hasFlag(FieldFlag.CUBOID))
+            if (field.hasFlag(FieldFlag.CUBOID))
             {
-               cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + (field.getMaxx() - field.getMinx()) + "x" + (field.getMaxy() - field.getMiny()) + "x" + (field.getMaxz() - field.getMinz()));
+                cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + (field.getMaxx() - field.getMinx()) + "x" + (field.getMaxy() - field.getMiny()) + "x" + (field.getMaxz() - field.getMinz()));
             }
             else
             {
@@ -2348,9 +2299,10 @@ public class CommunicatonManager
 
     /**
      * Shows all the configured fields to the player
+     *
      * @param player
      */
-    public void showConfiguredFields(Player player)
+    public void showConfiguredFields(CommandSender player)
     {
         ChatBlock cb = getNewChatBlock(player);
 
@@ -2382,14 +2334,25 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param type
      * @return
      */
-    public boolean showCounts(Player player, int type)
+    public boolean showCounts(CommandSender sender, int type)
     {
-        ChatBlock cb = getNewChatBlock(player);
+        Player player = null;
+
+        if (sender instanceof Player)
+        {
+            player = (Player) sender;
+        }
+        else
+        {
+            CraftServer server = (CraftServer) plugin.getServer();
+            sender = new ColouredConsoleSender(server);
+        }
+
+        ChatBlock cb = getNewChatBlock(sender);
 
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(type);
 
@@ -2416,21 +2379,25 @@ public class CommunicatonManager
             }
         }
 
-        if (cb.size() > 0)
+        if (cb.size() > 1)
         {
-            ChatBlock.sendBlank(player);
-            ChatBlock.saySingle(player, ChatColor.WHITE + Helper.capitalize(fs.getTitle()) + " Counts" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
-            ChatBlock.sendBlank(player);
+            ChatBlock.sendBlank(sender);
+            ChatBlock.saySingle(sender, ChatColor.WHITE + Helper.capitalize(fs.getTitle()) + " Counts" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
+            ChatBlock.sendBlank(sender);
 
-            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+            boolean more = cb.sendBlock(sender, plugin.getSettingsManager().getLinesPerPage());
 
             if (more)
             {
-                ChatBlock.sendBlank(player);
-                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+                ChatBlock.sendBlank(sender);
+                ChatBlock.sendMessage(sender, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
             }
 
-            ChatBlock.sendBlank(player);
+            ChatBlock.sendBlank(sender);
+        }
+        else
+        {
+            ChatBlock.sendMessage(sender, ChatColor.AQUA + "No fields found");
         }
 
         return true;
@@ -2438,13 +2405,26 @@ public class CommunicatonManager
 
     /**
      * Shows a target's counts to a player
+     *
      * @param player seeing the counts
      * @param target
      * @return
      */
-    public boolean showFieldCounts(Player player, String target)
+    public boolean showFieldCounts(CommandSender sender, String target)
     {
-        ChatBlock cb = getNewChatBlock(player);
+        Player player = null;
+
+        if (sender instanceof Player)
+        {
+            player = (Player) sender;
+        }
+        else
+        {
+            CraftServer server = (CraftServer) plugin.getServer();
+            sender = new ColouredConsoleSender(server);
+        }
+
+        ChatBlock cb = getNewChatBlock(sender);
 
         boolean showLimits = player.getName().equalsIgnoreCase(target) && plugin.getSettingsManager().haveLimits();
 
@@ -2516,23 +2496,23 @@ public class CommunicatonManager
 
         if (cb.size() > 1)
         {
-            ChatBlock.sendBlank(player);
-            ChatBlock.saySingle(player, ChatColor.WHITE + Helper.posessive(Helper.capitalize(targetName)) + " Field Counts" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
-            ChatBlock.sendBlank(player);
+            ChatBlock.sendBlank(sender);
+            ChatBlock.saySingle(sender, ChatColor.WHITE + Helper.posessive(Helper.capitalize(targetName)) + " Field Counts" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
+            ChatBlock.sendBlank(sender);
 
-            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+            boolean more = cb.sendBlock(sender, plugin.getSettingsManager().getLinesPerPage());
 
             if (more)
             {
-                ChatBlock.sendBlank(player);
-                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+                ChatBlock.sendBlank(sender);
+                ChatBlock.sendMessage(sender, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
             }
 
-            ChatBlock.sendBlank(player);
+            ChatBlock.sendBlank(sender);
         }
         else
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields found");
+            ChatBlock.sendMessage(sender, ChatColor.AQUA + "No fields found");
         }
 
         return true;
@@ -2540,14 +2520,28 @@ public class CommunicatonManager
 
     /**
      * Show a player's field locations by type to a player
+     *
      * @param player the player to show the list to
      * @param typeid use -1 to show all types
      * @param target
      */
-    public void showFieldLocations(Player player, int typeid, String target)
+    public void showFieldLocations(CommandSender sender, int typeid, String target)
     {
-        ChatBlock cb = getNewChatBlock(player);
-        boolean admin = !player.getName().equalsIgnoreCase(target);
+        Player player = null;
+
+        if (sender instanceof Player)
+        {
+            player = (Player) sender;
+        }
+        else
+        {
+            CraftServer server = (CraftServer) plugin.getServer();
+            sender = new ColouredConsoleSender(server);
+        }
+
+        ChatBlock cb = getNewChatBlock(sender);
+        boolean admin = player == null ? true : !player.getName().equalsIgnoreCase(target);
+        Location center = player == null ? new Location(plugin.getServer().getWorlds().get(0), 0, 0, 0) : player.getLocation();
 
         if (admin)
         {
@@ -2560,8 +2554,21 @@ public class CommunicatonManager
             cb.addRow("  " + ChatColor.GRAY + "Field", "Distance", "Coords");
         }
 
-        List<Field> fields = plugin.getForceFieldManager().getFields(target, player.getWorld());
-        sortByDistance(fields, player.getLocation());
+        List<Field> fields = new LinkedList<Field>();
+
+        if (player != null)
+        {
+            fields = plugin.getForceFieldManager().getFields(target, player.getWorld());
+        }
+        else
+        {
+            for (World world : plugin.getServer().getWorlds())
+            {
+                fields.addAll(plugin.getForceFieldManager().getFields(target, world));
+            }
+        }
+
+        sortByDistance(fields, center);
 
         for (Field field : fields)
         {
@@ -2589,7 +2596,7 @@ public class CommunicatonManager
 
         for (Field field : fields)
         {
-            int distance = (int) field.distance(player.getLocation());
+            int distance = (int) field.distance(center);
             FieldSettings fs = field.getSettings();
 
             if (admin)
@@ -2604,28 +2611,37 @@ public class CommunicatonManager
 
         if (cb.size() > 1)
         {
-            ChatBlock.sendBlank(player);
-            ChatBlock.saySingle(player, ChatColor.WHITE + Helper.posessive(Helper.capitalize(targetName)) + " " + Helper.capitalize(player.getWorld().getName()) + " Field Locations" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
-            ChatBlock.sendBlank(player);
+            ChatBlock.sendBlank(sender);
 
-            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+            if (player == null)
+            {
+                ChatBlock.saySingle(sender, ChatColor.WHITE + Helper.posessive(Helper.capitalize(targetName)) + " Field Locations" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
+            }
+            else
+            {
+                ChatBlock.saySingle(sender, ChatColor.WHITE + Helper.posessive(Helper.capitalize(targetName)) + " " + Helper.capitalize(player.getWorld().getName()) + " Field Locations" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
+            }
+            ChatBlock.sendBlank(sender);
+
+            boolean more = cb.sendBlock(sender, plugin.getSettingsManager().getLinesPerPage());
 
             if (more)
             {
-                ChatBlock.sendBlank(player);
-                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+                ChatBlock.sendBlank(sender);
+                ChatBlock.sendMessage(sender, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
             }
 
-            ChatBlock.sendBlank(player);
+            ChatBlock.sendBlank(sender);
         }
         else
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields found");
+            ChatBlock.sendMessage(sender, ChatColor.AQUA + "No fields found");
         }
     }
 
     /**
      * Sort clan players by KDR
+     *
      * @param clans
      * @return
      */
@@ -2644,7 +2660,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param field
      * @return
@@ -2701,7 +2716,6 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      * @param scoped
      */
@@ -2734,108 +2748,130 @@ public class CommunicatonManager
     }
 
     /**
-     *
      * @param player
      */
-    public void showMenu(Player player)
+    public void showMenu(CommandSender sender)
     {
-        ChatColor color = plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() ? ChatColor.DARK_GRAY : ChatColor.YELLOW;
-        String status = plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() ? ChatColor.GRAY + " - disabled" : "";
+        ChatColor color = ChatColor.YELLOW;
+        String status = "";
 
-        ChatBlock cb = getNewChatBlock(player);
+        Player player = null;
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.onoff"))
+        if (sender instanceof Player)
+        {
+            player = (Player) sender;
+
+            if (plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled())
+            {
+                color = ChatColor.DARK_GRAY;
+                status = ChatColor.GRAY + " - disabled";
+            }
+        }
+        else
+        {
+            CraftServer server = (CraftServer) plugin.getServer();
+            sender = new ColouredConsoleSender(server);
+        }
+
+        boolean hasplayer = player != null;
+
+        ChatBlock cb = getNewChatBlock(sender);
+
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.onoff") && hasplayer)
         {
             cb.addRow(ChatColor.YELLOW + "  /ps on/off " + ChatColor.AQUA + "- Disable/Enable the placing of pstones");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allow"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allow") && hasplayer)
         {
             cb.addRow(color + "  /ps allow [player/g:group/c:clan/*] " + ChatColor.AQUA + "- To overlapped fields");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowall"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowall") && hasplayer)
         {
             cb.addRow(color + "  /ps allowall [player/g:group/c:clan/*] " + ChatColor.AQUA + "- To all your fields");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.remove"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.remove") && hasplayer)
         {
             cb.addRow(color + "  /ps remove [player/g:group/c:clan/*] " + ChatColor.AQUA + "- From overlapped fields");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.removeall"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.removeall") && hasplayer)
         {
             cb.addRow(color + "  /ps removeall [player/g:group/c:clan/*] " + ChatColor.AQUA + "- From all your fields");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowed"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowed") && hasplayer)
         {
             cb.addRow(color + "  /ps allowed " + ChatColor.AQUA + "- List all allowed players in overlapped fields");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.who"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.who") && hasplayer)
         {
             cb.addRow(color + "  /ps who " + ChatColor.AQUA + "- List all inhabitants inside the overlapped fields");
         }
 
-        if (plugin.getSettingsManager().haveLimits() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.counts"))
+        if (plugin.getSettingsManager().haveLimits() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.counts") && hasplayer)
         {
             cb.addRow(color + "  /ps counts " + ChatColor.AQUA + "- View your field counts");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.locations"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.locations") && hasplayer)
         {
             cb.addRow(color + "  /ps locations " + ChatColor.AQUA + "- View your field locations");
         }
 
-        if (plugin.getSettingsManager().haveNameable() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setname"))
+        if (plugin.getSettingsManager().haveNameable() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setname") && hasplayer)
         {
             cb.addRow(color + "  /ps setname [name] " + ChatColor.AQUA + "- Set the name of fields");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setradius"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setradius") && hasplayer)
         {
             cb.addRow(color + "  /ps setradius [radius] " + ChatColor.AQUA + "- Sets the field's radius");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setheight"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setheight") && hasplayer)
         {
             cb.addRow(color + "  /ps setheight [height] " + ChatColor.AQUA + "- Sets the field's height");
         }
 
-        if (plugin.getSettingsManager().haveVelocity() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setvelocity"))
+        if (plugin.getSettingsManager().haveVelocity() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setvelocity") && hasplayer)
         {
             cb.addRow(color + "  /ps setvelocity [.1-5] " + ChatColor.AQUA + "- For launchers/cannons (0=auto)");
         }
 
-        if (plugin.getSettingsManager().haveSnitch() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.snitch"))
+        if (plugin.getSettingsManager().haveSnitch() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.snitch") && hasplayer)
         {
             cb.addRow(color + "  /ps snitch <clear> " + ChatColor.AQUA + "- View/clear snitch you're pointing at");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize") && hasplayer)
         {
             cb.addRow(color + "  /ps visualize" + ChatColor.AQUA + "- Visualize the field you are on");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize") && hasplayer)
         {
             cb.addRow(color + "  /ps visualize [radius]" + ChatColor.AQUA + "- Visualize fields for a radius");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.mark") || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.mark"))
+        if ((plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.mark") || plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.mark")) && hasplayer)
         {
             cb.addRow(ChatColor.DARK_RED + "  /ps mark" + ChatColor.AQUA + "- Marks the location of fields");
         }
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.delete"))
         {
-            cb.addRow(ChatColor.DARK_RED + "  /ps delete " + ChatColor.AQUA + "- Delete the field(s) you're standing on");
+            if (hasplayer)
+            {
+                cb.addRow(ChatColor.DARK_RED + "  /ps delete " + ChatColor.AQUA + "- Delete the field(s) you're standing on");
+            }
             cb.addRow(ChatColor.DARK_RED + "  /ps delete [player/typeId] " + ChatColor.AQUA + "- Batch delete pstones");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.info"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.info") && hasplayer)
         {
             cb.addRow(ChatColor.DARK_RED + "  /ps info " + ChatColor.AQUA + "- Get info for the field youre standing on");
         }
@@ -2850,12 +2886,12 @@ public class CommunicatonManager
             cb.addRow(ChatColor.DARK_RED + "  /ps locations [player/g:group/c:clan/*] <typeid> " + ChatColor.AQUA + "- View field locations");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.list"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.list") && hasplayer)
         {
             cb.addRow(ChatColor.DARK_RED + "  /ps list [chunks-in-radius]" + ChatColor.AQUA + "- Lists all pstones in area");
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.setowner"))
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.setowner") && hasplayer)
         {
             cb.addRow(ChatColor.DARK_RED + "  /ps setowner [player] " + ChatColor.AQUA + "- Of the block you're pointing at");
         }
@@ -2880,21 +2916,34 @@ public class CommunicatonManager
             cb.addRow(ChatColor.DARK_RED + "  /ps revert " + ChatColor.AQUA + "- Reverts all orphan fields in the world");
         }
 
+        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.debug"))
+        {
+            cb.addRow(ChatColor.DARK_RED + "  /ps debug " + ChatColor.AQUA + "- Prints timing info to console");
+            cb.addRow(ChatColor.DARK_RED + "  /ps debugdb " + ChatColor.AQUA + "- Prints out save process info");
+            cb.addRow(ChatColor.DARK_RED + "  /ps debugsql " + ChatColor.AQUA + "- Prints sql queries to console");
+        }
+
         if (cb.size() > 0)
         {
-            ChatBlock.sendBlank(player);
-            ChatBlock.saySingle(player, ChatColor.WHITE + plugin.getDescription().getName() + " " + plugin.getDescription().getVersion() + status + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
-            ChatBlock.sendBlank(player);
+            if (hasplayer)
+            {
+                ChatBlock.sendBlank(sender);
+            }
+            ChatBlock.saySingle(sender, ChatColor.WHITE + plugin.getDescription().getName() + " " + plugin.getDescription().getVersion() + status + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
+            ChatBlock.sendBlank(sender);
 
-            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+            boolean more = cb.sendBlock(sender, plugin.getSettingsManager().getLinesPerPage());
 
             if (more)
             {
-                ChatBlock.sendBlank(player);
-                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+                ChatBlock.sendBlank(sender);
+                ChatBlock.sendMessage(sender, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
             }
 
-            ChatBlock.sendBlank(player);
+            if (hasplayer)
+            {
+                ChatBlock.sendBlank(sender);
+            }
         }
     }
 }

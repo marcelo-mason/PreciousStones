@@ -11,12 +11,12 @@ public class CuboidEntry
 {
     private Field field;
     private Set<BlockData> selected = new HashSet<BlockData>();
-    private int minx = 1024;
-    private int miny = 1024;
-    private int minz = 1024;
-    private int maxx = -1024;
-    private int maxy = -1024;
-    private int maxz = -1024;
+    private int minx = 999999999;
+    private int miny = 999999999;
+    private int minz = 999999999;
+    private int maxx = -999999999;
+    private int maxy = -999999999;
+    private int maxz = -999999999;
 
     public CuboidEntry(Field field)
     {
@@ -63,12 +63,12 @@ public class CuboidEntry
 
     private void calculate()
     {
-        minx = 1024;
-        miny = 1024;
-        minz = 1024;
-        maxx = -1024;
-        maxy = -1024;
-        maxz = -1024;
+        minx = 999999999;
+        miny = 999999999;
+        minz = 999999999;
+        maxx = -999999999;
+        maxy = -999999999;
+        maxz = -999999999;
 
         for (BlockData bd : selected)
         {

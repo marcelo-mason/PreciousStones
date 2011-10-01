@@ -139,6 +139,7 @@ public class CuboidManager
                     ce.addSelected(child.getBlock());
                 }
 
+                PreciousStones.getInstance().getForceFieldManager().removeSourceField(field);
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
 
                 ChatBlock.sendMessage(player, ChatColor.AQUA + "You are in drawing mode. Click on the block to finish.");
@@ -164,6 +165,7 @@ public class CuboidManager
                 public void run()
                 {
                     ce.addSelected(field.getBlock());
+                    PreciousStones.getInstance().getForceFieldManager().addSourceField(field);
                     ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + ce.getAvailableVolume() + " blocks");
                 }
             }, 1L);
@@ -209,7 +211,6 @@ public class CuboidManager
                 }
             }
 
-            plugin.getForceFieldManager().removeSourceField(field);
             plugin.getForceFieldManager().addSourceField(field);
 
             openCuboids.remove(player.getName());
