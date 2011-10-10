@@ -497,15 +497,13 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         HashSet<ChunkVec> envelopingChunks = new HashSet<ChunkVec>();
 
-        for (int x = minx; x <= maxx; x += 16)
+        for (int x = minx; x <= (maxx + 15); x += 16)
         {
-            for (int z = minz; z <= maxz; z += 16)
+            for (int z = minz; z <= (maxz + 15); z += 16)
             {
                 envelopingChunks.add(new ChunkVec(x >> 4, z >> 4, getWorld()));
             }
         }
-
-        envelopingChunks.add(new ChunkVec(maxx >> 4, maxz >> 4, getWorld()));
 
         return envelopingChunks;
     }
