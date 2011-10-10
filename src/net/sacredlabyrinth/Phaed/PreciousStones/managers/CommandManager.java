@@ -128,9 +128,17 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                boolean overlapped = false;
+
                                 for (String playerName : args)
                                 {
-                                    int count = plugin.getForceFieldManager().addAllowed(player, field, playerName);
+                                    if (playerName.equalsIgnoreCase("-o"))
+                                    {
+                                        overlapped = true;
+                                        continue;
+                                    }
+
+                                    int count = plugin.getForceFieldManager().addAllowed(player, field, playerName, overlapped);
 
                                     if (count > 0)
                                     {
@@ -158,9 +166,17 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                boolean overlapped = false;
+
                                 for (String playerName : args)
                                 {
-                                    int count = plugin.getForceFieldManager().removeAllowed(player, field, playerName);
+                                    if (playerName.equalsIgnoreCase("-o"))
+                                    {
+                                        overlapped = true;
+                                        continue;
+                                    }
+
+                                    int count = plugin.getForceFieldManager().removeAllowed(player, field, playerName, overlapped);
 
                                     if (count > 0)
                                     {
@@ -228,7 +244,14 @@ public final class CommandManager implements CommandExecutor
 
                         if (field != null)
                         {
-                            HashSet<String> allowed = plugin.getForceFieldManager().getAllowed(player, field);
+                            boolean overlapped = false;
+
+                            if (args.length >= 1)
+                            {
+                                overlapped = args[0].equalsIgnoreCase("-o");
+                            }
+
+                            HashSet<String> allowed = plugin.getForceFieldManager().getAllowed(player, field, overlapped);
 
                             if (allowed.size() > 0)
                             {
@@ -432,7 +455,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("visualize") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize") && hasplayer)
+                    else if ((cmd.equals("visualize") || cmd.equals("visualise")) && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize") && hasplayer)
                     {
                         if (!plugin.getCuboidManager().hasOpenCuboid(player))
                         {
@@ -731,7 +754,14 @@ public final class CommandManager implements CommandExecutor
 
                             if (sourceFields.size() > 0)
                             {
-                                int count = plugin.getForceFieldManager().deleteFields(player, sourceFields.get(0));
+                                boolean overlapped = false;
+
+                                if (args.length >= 1)
+                                {
+                                    overlapped = args[0].equalsIgnoreCase("-o");
+                                }
+
+                                int count = plugin.getForceFieldManager().deleteFields(player, sourceFields.get(0), overlapped);
 
                                 if (count > 0)
                                 {

@@ -12,7 +12,6 @@ import org.bukkit.util.config.Configuration;
 import java.util.*;
 
 /**
- *
  * @author phaed
  */
 public final class SettingsManager
@@ -35,6 +34,8 @@ public final class SettingsManager
     private int visualizeBlock;
     private int visualizeSeconds;
     private int visualizeSpreadDivisor;
+    private int visualizeTicksBetweenSends;
+    private int visualizeSendSize;
     private boolean visualizeEndOnMove;
     private boolean debug;
     private boolean debugdb;
@@ -89,10 +90,7 @@ public final class SettingsManager
     private boolean disableAlertsForAdmins;
     private boolean disableBypassAlertsForAdmins;
     private boolean offByDefault;
-    private byte[] throughFields = new byte[]
-    {
-        0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106
-    };
+    private byte[] throughFields = new byte[]{0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106};
     private HashSet<Byte> throughFieldsSet = new HashSet<Byte>();
     private int linesPerPage;
     private boolean useMysql;
@@ -100,6 +98,7 @@ public final class SettingsManager
     private String database;
     private String username;
     private String password;
+    private int port;
     private List<Integer> ffBlocks = new ArrayList<Integer>();
     private final HashMap<Integer, FieldSettings> fieldDefinitions = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
@@ -202,6 +201,8 @@ public final class SettingsManager
         visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", false);
         visualizeMarkBlock = config.getInt("visualization.mark-block-type", 49);
         visualizeSpreadDivisor = config.getInt("visualization.spread-divisor", 130);
+        visualizeTicksBetweenSends = config.getInt("visualization.blocks-to-send", 100);
+        visualizeSendSize = config.getInt("visualization.ticks-between-sends", 10);
         foresterInterval = config.getInt("forester.interval-seconds", 1);
         foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
         foresterTrees = config.getInt("forester.trees", 60);
@@ -209,16 +210,18 @@ public final class SettingsManager
         griefUndoBlackList = config.getIntList("grief-undo.black-list", blacklist);
         useMysql = config.getBoolean("mysql.enable", false);
         host = config.getString("mysql.host", "localhost");
+        port = config.getInt("mysql.port", 3306);
         database = config.getString("mysql.database", "minecraft");
         username = config.getString("mysql.username", "");
         password = config.getString("mysql.password", "");
 
-        addForceFieldStones(forceFieldBlocks);
-
         if (forceFieldBlocks == null || forceFieldBlocks.isEmpty())
         {
-            PreciousStones.log("NO FORCE-FIELDS CONFIGURED");
+            PreciousStones.log("No force-fields configured, generating defaults...");
+            generateDefaults();
         }
+
+        addForceFieldStones(forceFieldBlocks);
 
         save();
     }
@@ -295,12 +298,15 @@ public final class SettingsManager
         config.setProperty("visualization.end-on-player-move", isVisualizeEndOnMove());
         config.setProperty("visualization.mark-block-type", getVisualizeMarkBlock());
         config.setProperty("visualization.spread-divisor", visualizeSpreadDivisor);
+        config.setProperty("visualization.ticks-between-sends", visualizeTicksBetweenSends);
+        config.setProperty("visualization.blocks-to-send", visualizeSendSize);
         config.setProperty("forester.interval-seconds", getForesterInterval());
         config.setProperty("forester.fertile-blocks", getForesterFertileBlocks());
         config.setProperty("grief-undo.interval-seconds", getGriefIntervalSeconds());
         config.setProperty("grief-undo.black-list", getGriefUndoBlackList());
         config.setProperty("mysql.enable", isUseMysql());
         config.setProperty("mysql.host", getHost());
+        config.setProperty("mysql.port", getPort());
         config.setProperty("mysql.database", getDatabase());
         config.setProperty("mysql.username", getUsername());
         config.setProperty("mysql.password", getPassword());
@@ -308,8 +314,161 @@ public final class SettingsManager
         config.save();
     }
 
+    private void generateDefaults()
+    {
+        forceFieldBlocks = new LinkedList<LinkedHashMap<String, Object>>();
+
+        LinkedHashMap<String, Object> city = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> bouncer = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> jack = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> creature = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> atlantis = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> snitch = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> shocker = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> mine = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> launcher = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> cannon = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> griefRevert = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> glow = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> forester = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> peaceKeeper = new LinkedHashMap<String, Object>();
+
+        city.put("title", "City Protection");
+        city.put("block", 57);
+        city.put("radius", 20);
+        city.put("custom-height", 15);
+        city.put("prevent-fire", true);
+        city.put("prevent-place", true);
+        city.put("prevent-destroy", true);
+        city.put("prevent-explosions", true);
+        city.put("prevent-unprotectable", true);
+        city.put("prevent-flow", true);
+        city.put("welcome-message", true);
+        city.put("farewell-message", true);
+        city.put("cuboid", true);
+
+        griefRevert.put("title", "Grief Revert");
+        griefRevert.put("block", 41);
+        griefRevert.put("radius", 20);
+        griefRevert.put("custom-height", 15);
+        griefRevert.put("grief-undo-request", true);
+        griefRevert.put("welcome-message", true);
+        griefRevert.put("farewell-message", true);
+        griefRevert.put("cuboid", true);
+
+        peaceKeeper.put("title", "Peace Keeper");
+        peaceKeeper.put("block", 19);
+        peaceKeeper.put("radius", 10);
+        peaceKeeper.put("prevent-pvp", true);
+        peaceKeeper.put("prevent-mob-damage", true);
+        peaceKeeper.put("cuboid", true);
+
+        bouncer.put("title", "Entry Bouncer");
+        bouncer.put("block", 22);
+        bouncer.put("radius", 5);
+        bouncer.put("prevent-entry", true);
+        bouncer.put("prevent-fire", true);
+        bouncer.put("prevent-place", true);
+        bouncer.put("prevent-destroy", true);
+        bouncer.put("prevent-explosions", true);
+        bouncer.put("prevent-unprotectable", true);
+        bouncer.put("prevent-flow", true);
+        bouncer.put("cuboid", true);
+
+        snitch.put("title", "Proximity Snitch");
+        snitch.put("block", 47);
+        snitch.put("radius", 5);
+        snitch.put("snitch", true);
+        snitch.put("entry-alert", true);
+        snitch.put("no-conflict", true);
+
+        jack.put("title", "Jack-o-Death");
+        jack.put("block", 91);
+        jack.put("radius", 5);
+        jack.put("slow-damage", true);
+        jack.put("no-conflict", true);
+
+        shocker.put("title", "The Shocker");
+        shocker.put("block", 97);
+        shocker.put("radius", 0);
+        shocker.put("custom-height", 3);
+        shocker.put("lightning", true);
+        shocker.put("lightning-replace-block", 1);
+        shocker.put("breakable", true);
+        shocker.put("no-conflict", true);
+
+        mine.put("title", "Proximity Mine");
+        mine.put("block", 73);
+        mine.put("radius", 1);
+        mine.put("custom-height", 5);
+        mine.put("mine", true);
+        mine.put("mine-replace-block", 1);
+        mine.put("breakable", true);
+        mine.put("no-conflict", true);
+
+        glow.put("title", "God Stone");
+        glow.put("block", 99);
+        glow.put("radius", 2);
+        glow.put("slow-heal", true);
+        glow.put("slow-feeding", true);
+        glow.put("slow-repair", true);
+        glow.put("no-conflict", true);
+
+        atlantis.put("title", "Air of Atlantis");
+        atlantis.put("block", 21);
+        atlantis.put("radius", 10);
+        atlantis.put("custom-height", 64);
+        atlantis.put("give-air", true);
+        atlantis.put("no-conflict", true);
+        atlantis.put("cuboid", true);
+
+        creature.put("title", "Creature Repeller");
+        creature.put("block", 30);
+        creature.put("radius", 20);
+        creature.put("prevent-mob-spawn", true);
+        creature.put("prevent-animal-spawn", true);
+        creature.put("no-conflict", true);
+        creature.put("cuboid", true);
+
+        cannon.put("title", "Sky Cannon");
+        cannon.put("block", 16);
+        cannon.put("radius", 0);
+        cannon.put("custom-height", 3);
+        cannon.put("cannon", true);
+        cannon.put("no-conflict", true);
+
+        launcher.put("title", "Launch Pad");
+        launcher.put("block", 15);
+        launcher.put("radius", 1);
+        launcher.put("launch", true);
+        launcher.put("no-conflict", true);
+
+        forester.put("title", "forester");
+        forester.put("block", 86);
+        forester.put("radius", 20);
+        forester.put("custom-height", 15);
+        forester.put("forester", true);
+        forester.put("forester-shrubs", true);
+        forester.put("no-owner", true);
+        forester.put("no-conflict", true);
+
+        forceFieldBlocks.add(city);
+        forceFieldBlocks.add(bouncer);
+        forceFieldBlocks.add(jack);
+        forceFieldBlocks.add(creature);
+        forceFieldBlocks.add(atlantis);
+        forceFieldBlocks.add(snitch);
+        forceFieldBlocks.add(shocker);
+        forceFieldBlocks.add(mine);
+        forceFieldBlocks.add(launcher);
+        forceFieldBlocks.add(cannon);
+        forceFieldBlocks.add(griefRevert);
+        forceFieldBlocks.add(glow);
+        forceFieldBlocks.add(forester);
+        forceFieldBlocks.add(peaceKeeper);
+    }
+
     /**
-     *
      * @param maps
      */
     @SuppressWarnings("unchecked")
@@ -339,6 +498,7 @@ public final class SettingsManager
 
     /**
      * Whether any pstones have welcome or farewell flags
+     *
      * @return
      */
     public boolean haveNameable()
@@ -356,6 +516,7 @@ public final class SettingsManager
 
     /**
      * Whether any pstones have cannon or launch flag
+     *
      * @return
      */
     public boolean haveVelocity()
@@ -373,6 +534,7 @@ public final class SettingsManager
 
     /**
      * Whether any pstones have snitch flag
+     *
      * @return
      */
     public boolean haveSnitch()
@@ -390,6 +552,7 @@ public final class SettingsManager
 
     /**
      * Whether any pstones have limits
+     *
      * @return
      */
     public boolean haveLimits()
@@ -407,6 +570,7 @@ public final class SettingsManager
 
     /**
      * Check if a world is blacklisted
+     *
      * @param world
      * @return
      */
@@ -417,6 +581,7 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the unprotectable types
+     *
      * @param type
      * @return
      */
@@ -427,6 +592,7 @@ public final class SettingsManager
 
     /**
      * Check if the id is one of forrester fertile types
+     *
      * @param id
      * @return
      */
@@ -437,6 +603,7 @@ public final class SettingsManager
 
     /**
      * Check if the id is one of grief undo blacklisted types
+     *
      * @param id
      * @return
      */
@@ -447,6 +614,7 @@ public final class SettingsManager
 
     /**
      * Check if a type is a see through block
+     *
      * @param type
      * @return
      */
@@ -465,6 +633,7 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the tool item types
+     *
      * @param typeId
      * @return
      */
@@ -475,6 +644,7 @@ public final class SettingsManager
 
     /**
      * Check if a item is one of the repairable item types
+     *
      * @param typeId
      * @return
      */
@@ -485,6 +655,7 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the snitch types
+     *
      * @param block
      * @return
      */
@@ -503,6 +674,7 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the unbreakable types
+     *
      * @param unbreakableblock
      * @return
      */
@@ -513,6 +685,7 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the unbreakable types
+     *
      * @param typeId
      * @return
      */
@@ -523,6 +696,7 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the unbreakable types
+     *
      * @param type
      * @return
      */
@@ -533,6 +707,7 @@ public final class SettingsManager
 
     /**
      * Check if a block is one of the forcefeld types
+     *
      * @param block
      * @return
      */
@@ -543,6 +718,7 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the forcefeld types
+     *
      * @param type
      * @return
      */
@@ -553,6 +729,7 @@ public final class SettingsManager
 
     /**
      * Check if the material is one of the forcefeld types
+     *
      * @param material
      * @return
      */
@@ -563,6 +740,7 @@ public final class SettingsManager
 
     /**
      * Check if a type is one of the forcefeld types
+     *
      * @param typeId
      * @return
      */
@@ -573,6 +751,7 @@ public final class SettingsManager
 
     /**
      * Whetehr the block is a bypass type
+     *
      * @param block
      * @return
      */
@@ -583,6 +762,7 @@ public final class SettingsManager
 
     /**
      * Returns the settings for a specific field type
+     *
      * @param field
      * @return
      */
@@ -593,6 +773,7 @@ public final class SettingsManager
 
     /**
      * Returns the settings for a specific block type
+     *
      * @param typeId
      * @return
      */
@@ -603,6 +784,7 @@ public final class SettingsManager
 
     /**
      * Returns all the field settings
+     *
      * @return
      */
     public HashMap<Integer, FieldSettings> getFieldSettings()
@@ -1242,9 +1424,7 @@ public final class SettingsManager
      */
     public HashSet<Byte> getThroughFieldsSet()
     {
-        HashSet<Byte> tfs = new HashSet<Byte>();
-        tfs.addAll(throughFieldsSet);
-        return tfs;
+        return new HashSet<Byte>(throughFieldsSet);
     }
 
     public int getCuboidDefiningType()
@@ -1265,5 +1445,20 @@ public final class SettingsManager
     public int getVisualizeFrameBlock()
     {
         return visualizeFrameBlock;
+    }
+
+    public int getVisualizeTicksBetweenSends()
+    {
+        return visualizeTicksBetweenSends;
+    }
+
+    public int getVisualizeSendSize()
+    {
+        return visualizeSendSize;
+    }
+
+    public int getPort()
+    {
+        return port;
     }
 }

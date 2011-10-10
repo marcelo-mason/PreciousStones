@@ -1084,7 +1084,7 @@ public final class ForceFieldManager
      * @param field
      * @return allowed entry object per user
      */
-    public HashSet<String> getAllowed(Player player, Field field)
+    public HashSet<String> getAllowed(Player player, Field field, boolean overlapped)
     {
         HashSet<String> allowed = new HashSet<String>();
         HashSet<Field> total = getOverlappedFields(player, field);
@@ -1105,7 +1105,7 @@ public final class ForceFieldManager
      * @param allowedName
      * @return count of fields the player was allowed in
      */
-    public int addAllowed(Player player, Field field, String allowedName)
+    public int addAllowed(Player player, Field field, String allowedName, boolean overlapped)
     {
         HashSet<Field> total = getOverlappedFields(player, field);
 
@@ -1157,7 +1157,7 @@ public final class ForceFieldManager
      * @param field
      * @return count of fields the player was removed from
      */
-    public int removeAllowed(Player player, Field field, String allowedName)
+    public int removeAllowed(Player player, Field field, String allowedName, boolean overlapped)
     {
         HashSet<Field> total = getOverlappedFields(player, field);
         int removedCount = 0;
@@ -1964,7 +1964,7 @@ public final class ForceFieldManager
      * @param field
      * @return count of fields deleted
      */
-    public int deleteFields(Player player, Field field)
+    public int deleteFields(Player player, Field field, boolean overlapped)
     {
         HashSet<Field> total = getAllOverlappedFields(player, field);
 

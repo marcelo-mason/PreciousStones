@@ -30,14 +30,14 @@ public class Visualize implements Runnable
         this.player = player;
         this.skipRevert = skipRevert;
         this.seconds = seconds;
-        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
+        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, PreciousStones.getInstance().getSettingsManager().getVisualizeTicksBetweenSends());
     }
 
     public void run()
     {
         int i = 0;
 
-        while (i < 100 && !visualizationQueue.isEmpty())
+        while (i < PreciousStones.getInstance().getSettingsManager().getVisualizeSendSize() && !visualizationQueue.isEmpty())
         {
             BlockData bd = visualizationQueue.poll();
             Location loc = bd.getLocation();

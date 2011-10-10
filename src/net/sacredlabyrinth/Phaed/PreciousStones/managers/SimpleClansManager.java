@@ -128,6 +128,12 @@ public final class SimpleClansManager
         return false;
     }
 
+    /**
+     * Check if
+     * @param field
+     * @param offenderName
+     * @return
+     */
     public boolean inWar(Field field, String offenderName)
     {
         if (simpleClans == null)

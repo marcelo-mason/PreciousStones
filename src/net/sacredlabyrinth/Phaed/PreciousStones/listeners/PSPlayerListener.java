@@ -165,23 +165,26 @@ public class PSPlayerListener extends PlayerListener
             }
             else
             {
-                Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
-
-                if (player.isSneaking())
+                if (player.getLocation().getY() < 128)
                 {
-                    Field field = plugin.getForceFieldManager().getField(target);
+                    Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
-                    if (field != null)
+                    if (player.isSneaking())
                     {
-                        if (field.hasFlag(FieldFlag.CUBOID))
-                        {
-                            if (field.getParent() != null)
-                            {
-                                field = field.getParent();
-                            }
+                        Field field = plugin.getForceFieldManager().getField(target);
 
-                            plugin.getCuboidManager().openCuboid(player, field);
-                            return;
+                        if (field != null)
+                        {
+                            if (field.hasFlag(FieldFlag.CUBOID))
+                            {
+                                if (field.getParent() != null)
+                                {
+                                    field = field.getParent();
+                                }
+
+                                plugin.getCuboidManager().openCuboid(player, field);
+                                return;
+                            }
                         }
                     }
                 }
@@ -199,9 +202,9 @@ public class PSPlayerListener extends PlayerListener
                         }
                     }
                 }
+
             }
         }
-
 
         if (block != null)
         {

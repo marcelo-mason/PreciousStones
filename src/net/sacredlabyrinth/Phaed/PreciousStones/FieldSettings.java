@@ -37,7 +37,7 @@ public class FieldSettings
             return;
         }
 
-        if (map.containsKey("block") && Helper.isInteger(map.get("block")))
+        if (map.containsKey("block") && Helper.isInteger(map.get("block")) && ((Integer)map.get("block") > 0))
         {
             typeId = (Integer) map.get("block");
         }

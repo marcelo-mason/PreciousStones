@@ -10,8 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import uk.co.oliwali.HawkEye.util.HawkEyeAPI;
@@ -33,7 +31,7 @@ public class CommunicatonManager
     public CommunicatonManager()
     {
         plugin = PreciousStones.getInstance();
-        useHawkEye = useHawkEye();
+        //useHawkEye = useHawkEye();
     }
 
     private boolean useHawkEye()
@@ -2340,16 +2338,10 @@ public class CommunicatonManager
      */
     public boolean showCounts(CommandSender sender, int type)
     {
-        Player player = null;
-
-        if (sender instanceof Player)
+        if (!(sender instanceof Player))
         {
-            player = (Player) sender;
-        }
-        else
-        {
-            CraftServer server = (CraftServer) plugin.getServer();
-            sender = new ColouredConsoleSender(server);
+            //sender = new ColouredConsoleSender((CraftServer)PreciousStones.getInstance().getServer());
+            sender = PreciousStones.getInstance().getServer().getConsoleSender();
         }
 
         ChatBlock cb = getNewChatBlock(sender);
@@ -2420,8 +2412,8 @@ public class CommunicatonManager
         }
         else
         {
-            CraftServer server = (CraftServer) plugin.getServer();
-            sender = new ColouredConsoleSender(server);
+            //sender = new ColouredConsoleSender((CraftServer)PreciousStones.getInstance().getServer());
+            sender = PreciousStones.getInstance().getServer().getConsoleSender();
         }
 
         ChatBlock cb = getNewChatBlock(sender);
@@ -2535,8 +2527,8 @@ public class CommunicatonManager
         }
         else
         {
-            CraftServer server = (CraftServer) plugin.getServer();
-            sender = new ColouredConsoleSender(server);
+            //sender = new ColouredConsoleSender((CraftServer)PreciousStones.getInstance().getServer());
+            sender = PreciousStones.getInstance().getServer().getConsoleSender();
         }
 
         ChatBlock cb = getNewChatBlock(sender);
@@ -2769,8 +2761,8 @@ public class CommunicatonManager
         }
         else
         {
-            CraftServer server = (CraftServer) plugin.getServer();
-            sender = new ColouredConsoleSender(server);
+            //sender = new ColouredConsoleSender((CraftServer)PreciousStones.getInstance().getServer());
+            sender = PreciousStones.getInstance().getServer().getConsoleSender();
         }
 
         boolean hasplayer = player != null;
@@ -2784,32 +2776,32 @@ public class CommunicatonManager
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allow") && hasplayer)
         {
-            cb.addRow(color + "  /ps allow [player/g:group/c:clan/*] " + ChatColor.AQUA + "- To overlapped fields");
+            cb.addRow(color + "  /ps allow [player/g:group/c:clan/*] " + ChatColor.AQUA + "- Allow players");
         }
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowall") && hasplayer)
         {
-            cb.addRow(color + "  /ps allowall [player/g:group/c:clan/*] " + ChatColor.AQUA + "- To all your fields");
+            cb.addRow(color + "  /ps allowall [player/g:group/c:clan/*] " + ChatColor.AQUA + "- Allow players to all");
         }
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.remove") && hasplayer)
         {
-            cb.addRow(color + "  /ps remove [player/g:group/c:clan/*] " + ChatColor.AQUA + "- From overlapped fields");
+            cb.addRow(color + "  /ps remove [player/g:group/c:clan/*] " + ChatColor.AQUA + "- Remove players");
         }
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.removeall") && hasplayer)
         {
-            cb.addRow(color + "  /ps removeall [player/g:group/c:clan/*] " + ChatColor.AQUA + "- From all your fields");
+            cb.addRow(color + "  /ps removeall [player/g:group/c:clan/*] " + ChatColor.AQUA + "- Remove players from all");
         }
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowed") && hasplayer)
         {
-            cb.addRow(color + "  /ps allowed " + ChatColor.AQUA + "- List all allowed players in overlapped fields");
+            cb.addRow(color + "  /ps allowed " + ChatColor.AQUA + "- List all allowed players from fields");
         }
 
         if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.who") && hasplayer)
         {
-            cb.addRow(color + "  /ps who " + ChatColor.AQUA + "- List all inhabitants inside the overlapped fields");
+            cb.addRow(color + "  /ps who " + ChatColor.AQUA + "- List all inhabitants inside the fields");
         }
 
         if (plugin.getSettingsManager().haveLimits() && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.counts") && hasplayer)

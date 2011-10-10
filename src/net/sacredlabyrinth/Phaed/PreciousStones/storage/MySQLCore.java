@@ -16,6 +16,7 @@ public class MySQLCore implements DBCore
     private String username;
     private String password;
     private String database;
+    private int port;
 
     /**
      * @param host
@@ -23,10 +24,11 @@ public class MySQLCore implements DBCore
      * @param username
      * @param password
      */
-    public MySQLCore(String host, String database, String username, String password)
+    public MySQLCore(String host, int port, String database, String username, String password)
     {
         this.database = database;
         this.host = host;
+        this.port = port;
         this.username = username;
         this.password = password;
         this.log = PreciousStones.getLogger();
@@ -39,7 +41,7 @@ public class MySQLCore implements DBCore
         try
         {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database, username, password);
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password);
         }
         catch (ClassNotFoundException e)
         {
