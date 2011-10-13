@@ -93,74 +93,78 @@ public class PSPlayerListener extends PlayerListener
         {
             if (plugin.getCuboidManager().hasOpenCuboid(player))
             {
-                Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
-
-                // close the cuboid when clicking back to the origin block
-
-                if (plugin.getCuboidManager().isOpenCuboid(player, target))
+                if (player.getLocation().getY() < 128)
                 {
-                    plugin.getCuboidManager().closeCuboid(player);
-                    return;
-                }
+                    Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
-                // check for protections
+                    // close the cuboid when clicking back to the origin block
 
-                Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_DESTROY);
-
-                if (field == null)
-                {
-                    field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_REQUEST);
-                }
-
-                if (field == null)
-                {
-                    field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL);
-                }
-
-                if (field != null)
-                {
-                    if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.destroy"))
+                    if (plugin.getCuboidManager().isOpenCuboid(player, target))
                     {
+                        plugin.getCuboidManager().closeCuboid(player);
                         return;
                     }
-                }
 
-                // add to the cuboid
 
-                CuboidEntry openCuboid = plugin.getCuboidManager().getOpenCuboid(player);
+                    // check for protections
 
-                Field conflicts = plugin.getForceFieldManager().fieldConflicts(target, player);
+                    Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_DESTROY);
 
-                if (conflicts == null)
-                {
-                    if (!plugin.getVisualizationManager().isOutlineBlock(player, target))
+                    if (field == null)
                     {
-                        if (openCuboid.testOverflow(target.getLocation()) || plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.cuboid"))
+                        field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_REQUEST);
+                    }
+
+                    if (field == null)
+                    {
+                        field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_UNDO_INTERVAL);
+                    }
+
+                    if (field != null)
+                    {
+                        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.destroy"))
                         {
-                            if (plugin.getWorldGuardManager().canBuild(player, target))
+                            return;
+                        }
+                    }
+
+                    // add to the cuboid
+
+                    CuboidEntry openCuboid = plugin.getCuboidManager().getOpenCuboid(player);
+
+                    Field conflicts = plugin.getForceFieldManager().fieldConflicts(target, player);
+
+                    if (conflicts == null)
+                    {
+                        if (!plugin.getVisualizationManager().isOutlineBlock(player, target))
+                        {
+                            if (openCuboid.testOverflow(target.getLocation()) || plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.cuboid"))
                             {
-                                plugin.getCuboidManager().processSelectedBlock(player, target);
-                                event.setCancelled(true);
-                                return;
+                                if (plugin.getWorldGuardManager().canBuild(player, target))
+                                {
+                                    plugin.getCuboidManager().processSelectedBlock(player, target);
+                                    event.setCancelled(true);
+                                    return;
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot extend inside WorldGuard region");
+                                }
                             }
                             else
                             {
-                                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot extend inside WorldGuard region");
+                                ChatBlock.sendMessage(player, ChatColor.RED + "Exceeds maximum volume");
                             }
                         }
                         else
                         {
-                            ChatBlock.sendMessage(player, ChatColor.RED + "Exceeds maximum volume");
+                            ChatBlock.sendMessage(player, ChatColor.RED + "Cannot click on the outline");
                         }
                     }
                     else
                     {
-                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot click on the outline");
+                        ChatBlock.sendMessage(player, ChatColor.RED + "Conflicts with someone else's field");
                     }
-                }
-                else
-                {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Conflicts with someone else's field");
                 }
             }
             else
@@ -182,7 +186,10 @@ public class PSPlayerListener extends PlayerListener
                                     field = field.getParent();
                                 }
 
-                                plugin.getCuboidManager().openCuboid(player, field);
+                                if (field.isOwner(player.getName()))
+                                {
+                                    plugin.getCuboidManager().openCuboid(player, field);
+                                }
                                 return;
                             }
                         }

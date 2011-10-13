@@ -918,6 +918,4 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         return parent != null;
     }
-
-
 }

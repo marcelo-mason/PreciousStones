@@ -21,6 +21,12 @@ public class CuboidEntry
     public CuboidEntry(Field field)
     {
         this.field = field;
+        minx = field.getX();
+        miny = field.getY();
+        minz = field.getZ();
+        maxx = field.getX();
+        maxy = field.getY();
+        maxz = field.getZ();
     }
 
     /**
@@ -221,31 +227,61 @@ public class CuboidEntry
 
     public int getMinx()
     {
+        if (selected.isEmpty())
+        {
+            return 0;
+        }
+
         return minx;
     }
 
     public int getMiny()
     {
+        if (selected.isEmpty())
+        {
+            return 0;
+        }
+
         return miny;
     }
 
     public int getMinz()
     {
+        if (selected.isEmpty())
+        {
+            return 0;
+        }
+
         return minz;
     }
 
     public int getMaxx()
     {
+        if (selected.isEmpty())
+        {
+            return 0;
+        }
+
         return maxx;
     }
 
     public int getMaxy()
     {
+        if (selected.isEmpty())
+        {
+            return 0;
+        }
+
         return maxy;
     }
 
     public int getMaxz()
     {
+        if (selected.isEmpty())
+        {
+            return 0;
+        }
+
         return maxz;
     }
 }

@@ -351,6 +351,8 @@ public class PSBlockListener extends BlockListener
             return;
         }
 
+        boolean isDisabled = plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled();
+
         if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld()))
         {
             return;
@@ -365,7 +367,7 @@ public class PSBlockListener extends BlockListener
 
         plugin.getSnitchManager().recordSnitchBlockPlace(player, block);
 
-        if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.create.unbreakable"))
+        if (!isDisabled && plugin.getSettingsManager().isUnbreakableType(block) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.create.unbreakable"))
         {
             Field conflictField = plugin.getForceFieldManager().unbreakableConflicts(block, player);
 
@@ -411,7 +413,7 @@ public class PSBlockListener extends BlockListener
             }
             return;
         }
-        else if (plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.create.forcefield"))
+        else if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.create.forcefield"))
         {
             Field conflictField = plugin.getForceFieldManager().fieldConflicts(block, player);
 

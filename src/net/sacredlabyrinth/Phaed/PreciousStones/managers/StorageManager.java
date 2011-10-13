@@ -47,10 +47,7 @@ public final class StorageManager
         saverScheduler();
     }
 
-    /**
-     * Initiates the db
-     */
-    public void initiateDB()
+    private void initiateDB()
     {
         if (plugin.getSettingsManager().isUseMysql())
         {
@@ -335,7 +332,7 @@ public final class StorageManager
         List<Field> out = new ArrayList<Field>();
         int purged = 0;
 
-        String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, velocity, world, owner, name, packed_allowed, last_seen, last_used FROM pstone_fields LEFT JOIN pstone_players ON pstone_fields.owner = pstone_players.player_name WHERE world = '" + worldName + "';";
+        String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, velocity, world, owner, name, packed_allowed, last_seen, last_used FROM pstone_fields LEFT JOIN pstone_players ON pstone_fields.owner = pstone_players.player_name WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
         ResultSet res = core.select(query);
 
@@ -431,7 +428,7 @@ public final class StorageManager
         HashMap<Long, Field> out = new HashMap<Long, Field>();
         int purged = 0;
 
-        String query = "SELECT pstone_cuboids.id as id, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, velocity, world, owner, name, packed_allowed, last_seen, last_used  FROM  pstone_cuboids LEFT JOIN pstone_players ON pstone_cuboids.owner = pstone_players.player_name WHERE pstone_cuboids.parent = 0 AND world = '" + worldName + "';";
+        String query = "SELECT pstone_cuboids.id as id, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, velocity, world, owner, name, packed_allowed, last_seen, last_used  FROM  pstone_cuboids LEFT JOIN pstone_players ON pstone_cuboids.owner = pstone_players.player_name WHERE pstone_cuboids.parent = 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
 
         ResultSet res = core.select(query);
 
@@ -515,7 +512,7 @@ public final class StorageManager
             }
         }
 
-        query = "SELECT pstone_cuboids.id as id, parent, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, velocity, world, owner, name, packed_allowed, last_seen, last_used FROM  pstone_cuboids LEFT JOIN pstone_players ON pstone_cuboids.owner = pstone_players.player_name WHERE pstone_cuboids.parent > 0 AND world = '" + worldName + "';";
+        query = "SELECT pstone_cuboids.id as id, parent, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, velocity, world, owner, name, packed_allowed, last_seen, last_used FROM  pstone_cuboids LEFT JOIN pstone_players ON pstone_cuboids.owner = pstone_players.player_name WHERE pstone_cuboids.parent > 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
 
         res = core.select(query);
 
@@ -632,7 +629,7 @@ public final class StorageManager
         int purged = 0;
 
 
-        String query = "SELECT * FROM  `pstone_unbreakables` LEFT JOIN pstone_players ON pstone_unbreakables.owner = pstone_players.player_name WHERE world = '" + worldName + "';";
+        String query = "SELECT * FROM  `pstone_unbreakables` LEFT JOIN pstone_players ON pstone_unbreakables.owner = pstone_players.player_name WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
         ResultSet res = core.select(query);
 
@@ -773,12 +770,12 @@ public final class StorageManager
     public void insertField(Field field)
     {
         String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "');";
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "');";
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
             query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "');";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "');";
         }
 
         if (plugin.getSettingsManager().isDebugsql())
@@ -799,11 +796,11 @@ public final class StorageManager
      */
     public void deleteField(Field field)
     {
-        String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+        String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
-            query = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+            query = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld())  + "';";
         }
 
         core.delete(query);
@@ -828,7 +825,7 @@ public final class StorageManager
     public void insertUnbreakable(Unbreakable ub)
     {
         String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`) ";
-        String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + ub.getWorld() + "','" + ub.getOwner() + "'," + ub.getTypeId() + ");";
+        String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + Helper.escapeQuotes(ub.getWorld()) + "','" + ub.getOwner() + "'," + ub.getTypeId() + ");";
         core.insert(query + values);
     }
 
@@ -839,7 +836,7 @@ public final class StorageManager
      */
     public void deleteUnbreakable(Unbreakable ub)
     {
-        String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + ub.getWorld() + "';";
+        String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + Helper.escapeQuotes(ub.getWorld()) + "';";
         core.delete(query);
     }
 
@@ -854,14 +851,14 @@ public final class StorageManager
         if (plugin.getSettingsManager().isUseMysql())
         {
             String query = "INSERT INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`) ";
-            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + snitch.getWorld() + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1) ";
+            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1) ";
             String update = "ON DUPLICATE KEY UPDATE count = count+1;";
             core.insert(query + values + update);
         }
         else
         {
             String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`) ";
-            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + snitch.getWorld() + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1);";
+            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1);";
             String update = "UPDATE `pstone_snitches` SET count = count+1;";
             core.insert(query + values + update);
         }
@@ -874,7 +871,7 @@ public final class StorageManager
      */
     public void deleteSnitchEntires(Field snitch)
     {
-        String query = "DELETE FROM `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + snitch.getWorld() + "';";
+        String query = "DELETE FROM `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "';";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -910,7 +907,7 @@ public final class StorageManager
 
         List<SnitchEntry> out = new ArrayList<SnitchEntry>();
 
-        String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + snitch.getWorld() + "' ORDER BY `id` DESC;";
+        String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "' ORDER BY `id` DESC;";
 
         ResultSet res;
 
@@ -1087,7 +1084,7 @@ public final class StorageManager
     public void recordBlockGriefClean(Field field, GriefBlock gb)
     {
         String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
-        String values = "VALUES ( '" + new Timestamp((new Date()).getTime()) + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + field.getWorld() + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
+        String values = "VALUES ( '" + new Timestamp((new Date()).getTime()) + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
         core.insert(query + values);
     }
 
@@ -1114,7 +1111,7 @@ public final class StorageManager
 
         Queue<GriefBlock> out = new LinkedList<GriefBlock>();
 
-        String query = "SELECT * FROM  `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + field.getWorld() + "' ORDER BY y ASC;";
+        String query = "SELECT * FROM  `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "' ORDER BY y ASC;";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -1172,7 +1169,7 @@ public final class StorageManager
      */
     public void deleteBlockGrief(Field field)
     {
-        String query = "DELETE FROM `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+        String query = "DELETE FROM `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -1191,7 +1188,7 @@ public final class StorageManager
      */
     public void deleteBlockGrief(Block block)
     {
-        String query = "DELETE FROM `pstone_grief_undo` WHERE x = " + block.getX() + " AND y = " + block.getY() + " AND z = " + block.getZ() + " AND world = '" + block.getWorld().getName() + "';";
+        String query = "DELETE FROM `pstone_grief_undo` WHERE x = " + block.getX() + " AND y = " + block.getY() + " AND z = " + block.getZ() + " AND world = '" +  block.getWorld().getName() + "';";
 
         if (plugin.getSettingsManager().isDebugsql())
         {

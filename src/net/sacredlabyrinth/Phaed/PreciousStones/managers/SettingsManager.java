@@ -7,8 +7,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -102,6 +104,7 @@ public final class SettingsManager
     private List<Integer> ffBlocks = new ArrayList<Integer>();
     private final HashMap<Integer, FieldSettings> fieldDefinitions = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
+    private File main;
 
     /**
      *
@@ -109,6 +112,7 @@ public final class SettingsManager
     public SettingsManager()
     {
         plugin = PreciousStones.getInstance();
+        main  = new File(plugin.getDataFolder() + File.separator + "config.yml");
         load();
     }
 
@@ -123,103 +127,105 @@ public final class SettingsManager
             throughFieldsSet.add(throughField);
         }
 
-        Configuration config = plugin.getConfiguration();
-        config.load();
+        FileConfiguration config = plugin.getConfig();
 
-        List<Integer> fblocks = new ArrayList<Integer>();
-        fblocks.add(2);
-        fblocks.add(3);
-        fblocks.add(13);
-        fblocks.add(87);
+        boolean exists = (main).exists();
 
-        List<Integer> blacklist = new ArrayList<Integer>();
-        blacklist.add(92);
-
-        forceFieldBlocks = (ArrayList) config.getProperty("force-field-blocks");
-        unbreakableBlocks = config.getIntList("unbreakable-blocks", new ArrayList<Integer>());
-        bypassBlocks = config.getIntList("bypass-blocks", new ArrayList<Integer>());
-        unprotectableBlocks = config.getIntList("unprotectable-blocks", new ArrayList<Integer>());
-        toolItems = config.getIntList("tool-items", new ArrayList<Integer>());
-        repairableItems = config.getIntList("repairable-items", new ArrayList<Integer>());
-        logFire = config.getBoolean("log.fire", true);
-        logEntry = config.getBoolean("log.entry", true);
-        logPlace = config.getBoolean("log.place", true);
-        logUse = config.getBoolean("log.use", true);
-        logPvp = config.getBoolean("log.pvp", true);
-        logDestroy = config.getBoolean("log.destroy", true);
-        logDestroyArea = config.getBoolean("log.destroy-area", true);
-        logUnprotectable = config.getBoolean("log.unprotectable", true);
-        logBypassPvp = config.getBoolean("log.bypass-pvp", true);
-        logBypassDelete = config.getBoolean("log.bypass-delete", true);
-        logBypassPlace = config.getBoolean("log.bypass-place", true);
-        logBypassDestroy = config.getBoolean("log.bypass-destroy", true);
-        logConflictPlace = config.getBoolean("log.conflict-place", true);
-        notifyPlace = config.getBoolean("notify.place", true);
-        notifyDestroy = config.getBoolean("notify.destroy", true);
-        notifyBypassUnprotectable = config.getBoolean("notify.bypass-unprotectable", true);
-        notifyBypassPvp = config.getBoolean("notify.bypass-pvp", true);
-        notifyBypassPlace = config.getBoolean("notify.bypass-place", true);
-        notifyBypassDestroy = config.getBoolean("notify.bypass-destroy", true);
-        warnInstantHeal = config.getBoolean("warn.instant-heal", true);
-        warnSlowHeal = config.getBoolean("warn.slow-heal", true);
-        warnSlowDamage = config.getBoolean("warn.slow-damage", true);
-        warnSlowFeeding = config.getBoolean("warn.slow-feeding", true);
-        warnSlowRepair = config.getBoolean("warn.slow-repair", true);
-        warnFastDamage = config.getBoolean("warn.fast-damage", true);
-        warnGiveAir = config.getBoolean("warn.give-air", true);
-        warnFire = config.getBoolean("warn.fire", true);
-        warnEntry = config.getBoolean("warn.entry", true);
-        warnPlace = config.getBoolean("warn.place", true);
-        warnUse = config.getBoolean("warn.use", true);
-        warnPvp = config.getBoolean("warn.pvp", true);
-        warnDestroy = config.getBoolean("warn.destroy", true);
-        warnDestroyArea = config.getBoolean("warn.destroy-area", true);
-        warnUnprotectable = config.getBoolean("warn.unprotectable", true);
-        warnLaunch = config.getBoolean("warn.launch", true);
-        warnCannon = config.getBoolean("warn.cannon", true);
-        warnMine = config.getBoolean("warn.mine", true);
-        publicBlockDetails = config.getBoolean("settings.public-block-details", false);
-        sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage", true);
-        allowedCanBreakPstones = config.getBoolean("settings.allowed-can-break-pstones", false);
-        dropOnDelete = config.getBoolean("settings.drop-on-delete", true);
-        disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins", true);
-        disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins", false);
-        offByDefault = config.getBoolean("settings.off-by-default", false);
-        linesPerPage = config.getInt("settings.lines-per-page", 12);
-        logToHawkEye = config.getBoolean("settings.log-to-hawkeye", true);
-        debugdb = config.getBoolean("settings.debug-on", false);
-        blacklistedWorlds = config.getStringList("settings.blacklisted-worlds", new ArrayList<String>());
-        cuboidDefiningType = config.getInt("cuboid.defining-blocktype", 49);
-        cuboidVisualizationType = config.getInt("cuboid.visualization-blocktype", 20);
-        purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days", 45);
-        purgeSnitchAfterDays = config.getInt("cleanup.snitch-unused-purge-days", 60);
-        saveFrequency = config.getInt("saving.frequency-seconds", 300);
-        maxSnitchRecords = config.getInt("saving.max-records-per-snitch", 50);
-        visualizeFrameBlock = config.getInt("visualization.frame-block-type", 20);
-        visualizeBlock = config.getInt("visualization.block-type", 20);
-        visualizeSeconds = config.getInt("visualization.seconds", 10);
-        visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move", false);
-        visualizeMarkBlock = config.getInt("visualization.mark-block-type", 49);
-        visualizeSpreadDivisor = config.getInt("visualization.spread-divisor", 130);
-        visualizeTicksBetweenSends = config.getInt("visualization.blocks-to-send", 100);
-        visualizeSendSize = config.getInt("visualization.ticks-between-sends", 10);
-        foresterInterval = config.getInt("forester.interval-seconds", 1);
-        foresterFertileBlocks = config.getIntList("forester.fertile-blocks", fblocks);
-        foresterTrees = config.getInt("forester.trees", 60);
-        griefIntervalSeconds = config.getInt("grief-undo.interval-seconds", 300);
-        griefUndoBlackList = config.getIntList("grief-undo.black-list", blacklist);
-        useMysql = config.getBoolean("mysql.enable", false);
-        host = config.getString("mysql.host", "localhost");
-        port = config.getInt("mysql.port", 3306);
-        database = config.getString("mysql.database", "minecraft");
-        username = config.getString("mysql.username", "");
-        password = config.getString("mysql.password", "");
-
-        if (forceFieldBlocks == null || forceFieldBlocks.isEmpty())
+        if (exists)
         {
-            PreciousStones.log("No force-fields configured, generating defaults...");
-            generateDefaults();
+            try
+            {
+                config.load(main);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
+        else
+        {
+            config.options().copyDefaults(true);
+        }
+
+        forceFieldBlocks = (ArrayList) config.get("force-field-blocks");
+        bypassBlocks = config.getList("bypass-blocks");
+        unprotectableBlocks = config.getList("unprotectable-blocks");
+        toolItems = config.getList("tool-items");
+        repairableItems = config.getList("repairable-items");
+        logFire = config.getBoolean("log.fire");
+        logEntry = config.getBoolean("log.entry");
+        logPlace = config.getBoolean("log.place");
+        logUse = config.getBoolean("log.use");
+        logPvp = config.getBoolean("log.pvp");
+        logDestroy = config.getBoolean("log.destroy");
+        logDestroyArea = config.getBoolean("log.destroy-area");
+        logUnprotectable = config.getBoolean("log.unprotectable");
+        logBypassPvp = config.getBoolean("log.bypass-pvp");
+        logBypassDelete = config.getBoolean("log.bypass-delete");
+        logBypassPlace = config.getBoolean("log.bypass-place");
+        logBypassDestroy = config.getBoolean("log.bypass-destroy");
+        logConflictPlace = config.getBoolean("log.conflict-place");
+        notifyPlace = config.getBoolean("notify.place");
+        notifyDestroy = config.getBoolean("notify.destroy");
+        notifyBypassUnprotectable = config.getBoolean("notify.bypass-unprotectable");
+        notifyBypassPvp = config.getBoolean("notify.bypass-pvp");
+        notifyBypassPlace = config.getBoolean("notify.bypass-place");
+        notifyBypassDestroy = config.getBoolean("notify.bypass-destroy");
+        warnInstantHeal = config.getBoolean("warn.instant-heal");
+        warnSlowHeal = config.getBoolean("warn.slow-heal");
+        warnSlowDamage = config.getBoolean("warn.slow-damage");
+        warnSlowFeeding = config.getBoolean("warn.slow-feeding");
+        warnSlowRepair = config.getBoolean("warn.slow-repair");
+        warnFastDamage = config.getBoolean("warn.fast-damage");
+        warnGiveAir = config.getBoolean("warn.give-air");
+        warnFire = config.getBoolean("warn.fire");
+        warnEntry = config.getBoolean("warn.entry");
+        warnPlace = config.getBoolean("warn.place");
+        warnUse = config.getBoolean("warn.use");
+        warnPvp = config.getBoolean("warn.pvp");
+        warnDestroy = config.getBoolean("warn.destroy");
+        warnDestroyArea = config.getBoolean("warn.destroy-area");
+        warnUnprotectable = config.getBoolean("warn.unprotectable");
+        warnLaunch = config.getBoolean("warn.launch");
+        warnCannon = config.getBoolean("warn.cannon");
+        warnMine = config.getBoolean("warn.mine");
+        publicBlockDetails = config.getBoolean("settings.public-block-details");
+        sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage");
+        allowedCanBreakPstones = config.getBoolean("settings.allowed-can-break-pstones");
+        dropOnDelete = config.getBoolean("settings.drop-on-delete");
+        disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins");
+        disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins");
+        offByDefault = config.getBoolean("settings.off-by-default");
+        linesPerPage = config.getInt("settings.lines-per-page");
+        logToHawkEye = config.getBoolean("settings.log-to-hawkeye");
+        debugdb = config.getBoolean("settings.debug-on");
+        blacklistedWorlds = config.getList("settings.blacklisted-worlds");
+        cuboidDefiningType = config.getInt("cuboid.defining-blocktype");
+        cuboidVisualizationType = config.getInt("cuboid.visualization-blocktype");
+        purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days");
+        purgeSnitchAfterDays = config.getInt("cleanup.snitch-unused-purge-days");
+        saveFrequency = config.getInt("saving.frequency-seconds");
+        maxSnitchRecords = config.getInt("saving.max-records-per-snitch");
+        visualizeFrameBlock = config.getInt("visualization.frame-block-type");
+        visualizeBlock = config.getInt("visualization.block-type");
+        visualizeSeconds = config.getInt("visualization.seconds");
+        visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move");
+        visualizeMarkBlock = config.getInt("visualization.mark-block-type");
+        visualizeSpreadDivisor = config.getInt("visualization.spread-divisor");
+        visualizeSendSize = config.getInt("visualization.blocks-to-send");
+        visualizeTicksBetweenSends = config.getInt("visualization.ticks-between-sends");
+        foresterInterval = config.getInt("forester.interval-seconds");
+        foresterFertileBlocks = config.getList("forester.fertile-blocks");
+        foresterTrees = config.getInt("forester.trees");
+        griefIntervalSeconds = config.getInt("grief-undo.interval-seconds");
+        griefUndoBlackList = config.getList("grief-undo.black-list");
+        useMysql = config.getBoolean("mysql.enable");
+        host = config.getString("mysql.host");
+        port = config.getInt("mysql.port");
+        database = config.getString("mysql.database");
+        username = config.getString("mysql.username");
+        password = config.getString("mysql.password");
+
 
         addForceFieldStones(forceFieldBlocks);
 
@@ -231,241 +237,94 @@ public final class SettingsManager
      */
     public void save()
     {
-        Configuration config = plugin.getConfiguration();
+        FileConfiguration config = plugin.getConfig();
 
-        config.setProperty("force-field-blocks", getForceFieldBlocks());
-        config.setProperty("unbreakable-blocks", getUnbreakableBlocks());
-        config.setProperty("bypass-blocks", getBypassBlocks());
-        config.setProperty("unprotectable-blocks", getUnprotectableBlocks());
-        config.setProperty("tool-items", getToolItems());
-        config.setProperty("repairable-items", getRepairableItems());
-        config.setProperty("log.fire", isLogFire());
-        config.setProperty("log.entry", isLogEntry());
-        config.setProperty("log.place", isLogPlace());
-        config.setProperty("log.use", isLogUse());
-        config.setProperty("log.pvp", isLogPvp());
-        config.setProperty("log.destroy", isLogDestroy());
-        config.setProperty("log.destroy-area", isLogDestroyArea());
-        config.setProperty("log.unprotectable", isLogUnprotectable());
-        config.setProperty("log.bypass-pvp", isLogBypassPvp());
-        config.setProperty("log.bypass-delete", isLogBypassDelete());
-        config.setProperty("log.bypass-place", isLogBypassPlace());
-        config.setProperty("log.bypass-destroy", isLogBypassDestroy());
-        config.setProperty("log.conflict-place", isLogConflictPlace());
-        config.setProperty("notify.place", isNotifyPlace());
-        config.setProperty("notify.destroy", isNotifyDestroy());
-        config.setProperty("notify.bypass-unprotectable", isNotifyBypassUnprotectable());
-        config.setProperty("notify.bypass-pvp", isNotifyBypassPvp());
-        config.setProperty("notify.bypass-place", isNotifyBypassPlace());
-        config.setProperty("notify.bypass-destroy", isNotifyBypassDestroy());
-        config.setProperty("warn.instant-heal", isWarnInstantHeal());
-        config.setProperty("warn.slow-heal", isWarnSlowHeal());
-        config.setProperty("warn.slow-feeding", isWarnSlowFeeding());
-        config.setProperty("warn.slow-repair", isWarnSlowRepair());
-        config.setProperty("warn.slow-damage", isWarnSlowDamage());
-        config.setProperty("warn.fast-damage", isWarnFastDamage());
-        config.setProperty("warn.give-air", isWarnGiveAir());
-        config.setProperty("warn.fire", isWarnFire());
-        config.setProperty("warn.entry", isWarnEntry());
-        config.setProperty("warn.place", isWarnPlace());
-        config.setProperty("warn.use", isWarnUse());
-        config.setProperty("warn.pvp", isWarnPvp());
-        config.setProperty("warn.destroy", isWarnDestroy());
-        config.setProperty("warn.destroy-area", isWarnDestroyArea());
-        config.setProperty("warn.unprotectable", isWarnUnprotectable());
-        config.setProperty("warn.launch", isWarnLaunch());
-        config.setProperty("warn.cannon", isWarnCannon());
-        config.setProperty("warn.mine", isWarnMine());
-        config.setProperty("settings.public-block-details", isPublicBlockDetails());
-        config.setProperty("settings.sneaking-bypasses-damage", isSneakingBypassesDamage());
-        config.setProperty("settings.allowed-can-break-pstones", isAllowedCanBreakPstones());
-        config.setProperty("settings.drop-on-delete", isDropOnDelete());
-        config.setProperty("settings.disable-alerts-for-admins", isDisableAlertsForAdmins());
-        config.setProperty("settings.disable-bypass-alerts-for-admins", isDisableBypassAlertsForAdmins());
-        config.setProperty("settings.off-by-default", isOffByDefault());
-        config.setProperty("settings.lines-per-page", getLinesPerPage());
-        config.setProperty("settings.blacklisted-worlds", getBlacklistedWorlds());
-        config.setProperty("settings.log-to-hawkeye", isLogToHawkEye());
-        config.setProperty("cuboid.defining-blocktype", cuboidDefiningType);
-        config.setProperty("cuboid.visualization-blocktype", cuboidVisualizationType);
-        config.setProperty("cleanup.player-inactivity-purge-days", getPurgeAfterDays());
-        config.setProperty("cleanup.snitch-unused-purge-days", getPurgeSnitchAfterDays());
-        config.setProperty("saving.frequency-seconds", getSaveFrequency());
-        config.setProperty("saving.max-records-per-snitch", getMaxSnitchRecords());
-        config.setProperty("visualization.frame-block-type", visualizeFrameBlock);
-        config.setProperty("visualization.block-type", getVisualizeBlock());
-        config.setProperty("visualization.seconds", getVisualizeSeconds());
-        config.setProperty("visualization.end-on-player-move", isVisualizeEndOnMove());
-        config.setProperty("visualization.mark-block-type", getVisualizeMarkBlock());
-        config.setProperty("visualization.spread-divisor", visualizeSpreadDivisor);
-        config.setProperty("visualization.ticks-between-sends", visualizeTicksBetweenSends);
-        config.setProperty("visualization.blocks-to-send", visualizeSendSize);
-        config.setProperty("forester.interval-seconds", getForesterInterval());
-        config.setProperty("forester.fertile-blocks", getForesterFertileBlocks());
-        config.setProperty("grief-undo.interval-seconds", getGriefIntervalSeconds());
-        config.setProperty("grief-undo.black-list", getGriefUndoBlackList());
-        config.setProperty("mysql.enable", isUseMysql());
-        config.setProperty("mysql.host", getHost());
-        config.setProperty("mysql.port", getPort());
-        config.setProperty("mysql.database", getDatabase());
-        config.setProperty("mysql.username", getUsername());
-        config.setProperty("mysql.password", getPassword());
+        config.set("force-field-blocks", getForceFieldBlocks());
+        config.set("unbreakable-blocks", getUnbreakableBlocks());
+        config.set("bypass-blocks", getBypassBlocks());
+        config.set("unprotectable-blocks", getUnprotectableBlocks());
+        config.set("tool-items", getToolItems());
+        config.set("repairable-items", getRepairableItems());
+        config.set("log.fire", isLogFire());
+        config.set("log.entry", isLogEntry());
+        config.set("log.place", isLogPlace());
+        config.set("log.use", isLogUse());
+        config.set("log.pvp", isLogPvp());
+        config.set("log.destroy", isLogDestroy());
+        config.set("log.destroy-area", isLogDestroyArea());
+        config.set("log.unprotectable", isLogUnprotectable());
+        config.set("log.bypass-pvp", isLogBypassPvp());
+        config.set("log.bypass-delete", isLogBypassDelete());
+        config.set("log.bypass-place", isLogBypassPlace());
+        config.set("log.bypass-destroy", isLogBypassDestroy());
+        config.set("log.conflict-place", isLogConflictPlace());
+        config.set("notify.place", isNotifyPlace());
+        config.set("notify.destroy", isNotifyDestroy());
+        config.set("notify.bypass-unprotectable", isNotifyBypassUnprotectable());
+        config.set("notify.bypass-pvp", isNotifyBypassPvp());
+        config.set("notify.bypass-place", isNotifyBypassPlace());
+        config.set("notify.bypass-destroy", isNotifyBypassDestroy());
+        config.set("warn.instant-heal", isWarnInstantHeal());
+        config.set("warn.slow-heal", isWarnSlowHeal());
+        config.set("warn.slow-feeding", isWarnSlowFeeding());
+        config.set("warn.slow-repair", isWarnSlowRepair());
+        config.set("warn.slow-damage", isWarnSlowDamage());
+        config.set("warn.fast-damage", isWarnFastDamage());
+        config.set("warn.give-air", isWarnGiveAir());
+        config.set("warn.fire", isWarnFire());
+        config.set("warn.entry", isWarnEntry());
+        config.set("warn.place", isWarnPlace());
+        config.set("warn.use", isWarnUse());
+        config.set("warn.pvp", isWarnPvp());
+        config.set("warn.destroy", isWarnDestroy());
+        config.set("warn.destroy-area", isWarnDestroyArea());
+        config.set("warn.unprotectable", isWarnUnprotectable());
+        config.set("warn.launch", isWarnLaunch());
+        config.set("warn.cannon", isWarnCannon());
+        config.set("warn.mine", isWarnMine());
+        config.set("settings.public-block-details", isPublicBlockDetails());
+        config.set("settings.sneaking-bypasses-damage", isSneakingBypassesDamage());
+        config.set("settings.allowed-can-break-pstones", isAllowedCanBreakPstones());
+        config.set("settings.drop-on-delete", isDropOnDelete());
+        config.set("settings.disable-alerts-for-admins", isDisableAlertsForAdmins());
+        config.set("settings.disable-bypass-alerts-for-admins", isDisableBypassAlertsForAdmins());
+        config.set("settings.off-by-default", isOffByDefault());
+        config.set("settings.lines-per-page", getLinesPerPage());
+        config.set("settings.blacklisted-worlds", getBlacklistedWorlds());
+        config.set("settings.log-to-hawkeye", isLogToHawkEye());
+        config.set("cuboid.defining-blocktype", cuboidDefiningType);
+        config.set("cuboid.visualization-blocktype", cuboidVisualizationType);
+        config.set("cleanup.player-inactivity-purge-days", getPurgeAfterDays());
+        config.set("cleanup.snitch-unused-purge-days", getPurgeSnitchAfterDays());
+        config.set("saving.frequency-seconds", getSaveFrequency());
+        config.set("saving.max-records-per-snitch", getMaxSnitchRecords());
+        config.set("visualization.frame-block-type", visualizeFrameBlock);
+        config.set("visualization.block-type", getVisualizeBlock());
+        config.set("visualization.seconds", getVisualizeSeconds());
+        config.set("visualization.end-on-player-move", isVisualizeEndOnMove());
+        config.set("visualization.mark-block-type", getVisualizeMarkBlock());
+        config.set("visualization.spread-divisor", visualizeSpreadDivisor);
+        config.set("visualization.ticks-between-sends", visualizeTicksBetweenSends);
+        config.set("visualization.blocks-to-send", visualizeSendSize);
+        config.set("forester.interval-seconds", getForesterInterval());
+        config.set("forester.fertile-blocks", getForesterFertileBlocks());
+        config.set("grief-undo.interval-seconds", getGriefIntervalSeconds());
+        config.set("grief-undo.black-list", getGriefUndoBlackList());
+        config.set("mysql.enable", isUseMysql());
+        config.set("mysql.host", getHost());
+        config.set("mysql.port", getPort());
+        config.set("mysql.database", getDatabase());
+        config.set("mysql.username", getUsername());
+        config.set("mysql.password", getPassword());
 
-        config.save();
-    }
-
-    private void generateDefaults()
-    {
-        forceFieldBlocks = new LinkedList<LinkedHashMap<String, Object>>();
-
-        LinkedHashMap<String, Object> city = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> bouncer = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> jack = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> creature = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> atlantis = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> snitch = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> shocker = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> mine = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> launcher = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> cannon = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> griefRevert = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> glow = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> forester = new LinkedHashMap<String, Object>();
-        LinkedHashMap<String, Object> peaceKeeper = new LinkedHashMap<String, Object>();
-
-        city.put("title", "City Protection");
-        city.put("block", 57);
-        city.put("radius", 20);
-        city.put("custom-height", 15);
-        city.put("prevent-fire", true);
-        city.put("prevent-place", true);
-        city.put("prevent-destroy", true);
-        city.put("prevent-explosions", true);
-        city.put("prevent-unprotectable", true);
-        city.put("prevent-flow", true);
-        city.put("welcome-message", true);
-        city.put("farewell-message", true);
-        city.put("cuboid", true);
-
-        griefRevert.put("title", "Grief Revert");
-        griefRevert.put("block", 41);
-        griefRevert.put("radius", 20);
-        griefRevert.put("custom-height", 15);
-        griefRevert.put("grief-undo-request", true);
-        griefRevert.put("welcome-message", true);
-        griefRevert.put("farewell-message", true);
-        griefRevert.put("cuboid", true);
-
-        peaceKeeper.put("title", "Peace Keeper");
-        peaceKeeper.put("block", 19);
-        peaceKeeper.put("radius", 10);
-        peaceKeeper.put("prevent-pvp", true);
-        peaceKeeper.put("prevent-mob-damage", true);
-        peaceKeeper.put("cuboid", true);
-
-        bouncer.put("title", "Entry Bouncer");
-        bouncer.put("block", 22);
-        bouncer.put("radius", 5);
-        bouncer.put("prevent-entry", true);
-        bouncer.put("prevent-fire", true);
-        bouncer.put("prevent-place", true);
-        bouncer.put("prevent-destroy", true);
-        bouncer.put("prevent-explosions", true);
-        bouncer.put("prevent-unprotectable", true);
-        bouncer.put("prevent-flow", true);
-        bouncer.put("cuboid", true);
-
-        snitch.put("title", "Proximity Snitch");
-        snitch.put("block", 47);
-        snitch.put("radius", 5);
-        snitch.put("snitch", true);
-        snitch.put("entry-alert", true);
-        snitch.put("no-conflict", true);
-
-        jack.put("title", "Jack-o-Death");
-        jack.put("block", 91);
-        jack.put("radius", 5);
-        jack.put("slow-damage", true);
-        jack.put("no-conflict", true);
-
-        shocker.put("title", "The Shocker");
-        shocker.put("block", 97);
-        shocker.put("radius", 0);
-        shocker.put("custom-height", 3);
-        shocker.put("lightning", true);
-        shocker.put("lightning-replace-block", 1);
-        shocker.put("breakable", true);
-        shocker.put("no-conflict", true);
-
-        mine.put("title", "Proximity Mine");
-        mine.put("block", 73);
-        mine.put("radius", 1);
-        mine.put("custom-height", 5);
-        mine.put("mine", true);
-        mine.put("mine-replace-block", 1);
-        mine.put("breakable", true);
-        mine.put("no-conflict", true);
-
-        glow.put("title", "God Stone");
-        glow.put("block", 99);
-        glow.put("radius", 2);
-        glow.put("slow-heal", true);
-        glow.put("slow-feeding", true);
-        glow.put("slow-repair", true);
-        glow.put("no-conflict", true);
-
-        atlantis.put("title", "Air of Atlantis");
-        atlantis.put("block", 21);
-        atlantis.put("radius", 10);
-        atlantis.put("custom-height", 64);
-        atlantis.put("give-air", true);
-        atlantis.put("no-conflict", true);
-        atlantis.put("cuboid", true);
-
-        creature.put("title", "Creature Repeller");
-        creature.put("block", 30);
-        creature.put("radius", 20);
-        creature.put("prevent-mob-spawn", true);
-        creature.put("prevent-animal-spawn", true);
-        creature.put("no-conflict", true);
-        creature.put("cuboid", true);
-
-        cannon.put("title", "Sky Cannon");
-        cannon.put("block", 16);
-        cannon.put("radius", 0);
-        cannon.put("custom-height", 3);
-        cannon.put("cannon", true);
-        cannon.put("no-conflict", true);
-
-        launcher.put("title", "Launch Pad");
-        launcher.put("block", 15);
-        launcher.put("radius", 1);
-        launcher.put("launch", true);
-        launcher.put("no-conflict", true);
-
-        forester.put("title", "forester");
-        forester.put("block", 86);
-        forester.put("radius", 20);
-        forester.put("custom-height", 15);
-        forester.put("forester", true);
-        forester.put("forester-shrubs", true);
-        forester.put("no-owner", true);
-        forester.put("no-conflict", true);
-
-        forceFieldBlocks.add(city);
-        forceFieldBlocks.add(bouncer);
-        forceFieldBlocks.add(jack);
-        forceFieldBlocks.add(creature);
-        forceFieldBlocks.add(atlantis);
-        forceFieldBlocks.add(snitch);
-        forceFieldBlocks.add(shocker);
-        forceFieldBlocks.add(mine);
-        forceFieldBlocks.add(launcher);
-        forceFieldBlocks.add(cannon);
-        forceFieldBlocks.add(griefRevert);
-        forceFieldBlocks.add(glow);
-        forceFieldBlocks.add(forester);
-        forceFieldBlocks.add(peaceKeeper);
+        try
+        {
+            config.save(main);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**

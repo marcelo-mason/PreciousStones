@@ -461,15 +461,24 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (!plugin.getVisualizationManager().pendingVisualization(player))
                             {
-                                if (args.length == 1 && Helper.isInteger(args[0]))
+                                if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize"))
                                 {
-                                    if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
+                                    if (args.length == 1 && Helper.isInteger(args[0]))
                                     {
-                                        int radius = Integer.parseInt(args[0]);
+                                        int radius = Math.min(Integer.parseInt(args[0]), plugin.getServer().getViewDistance());
 
-                                        Set<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), radius / 16, FieldFlag.ALL);
+                                        Set<Field> fieldsInArea = null;
 
-                                        if (fieldsInArea.size() > 0)
+                                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
+                                        {
+                                            fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), radius / 16, FieldFlag.ALL);
+                                        }
+                                        else
+                                        {
+                                            fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), radius / 16, FieldFlag.ALL, player);
+                                        }
+
+                                        if (fieldsInArea != null && fieldsInArea.size() > 0)
                                         {
                                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualizing...");
 
@@ -486,10 +495,7 @@ public final class CommandManager implements CommandExecutor
                                             ChatBlock.sendMessage(sender, ChatColor.RED + "No fields in area");
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize"))
+                                    else
                                     {
                                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -850,28 +856,31 @@ public final class CommandManager implements CommandExecutor
                                 return true;
                             }
 
-                            Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 100);
-
-                            if (targetBlock != null)
+                            if (player.getLocation().getY() < 128)
                             {
-                                Field field = plugin.getForceFieldManager().getField(targetBlock);
+                                Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
-                                if (field != null)
+                                if (targetBlock != null)
                                 {
-                                    // transfer the count over to the new owner
+                                    Field field = plugin.getForceFieldManager().getField(targetBlock);
 
-                                    PlayerData oldData = plugin.getPlayerManager().getPlayerData(field.getOwner());
-                                    oldData.decrementFieldCount(field.getTypeId());
+                                    if (field != null)
+                                    {
+                                        // transfer the count over to the new owner
 
-                                    PlayerData newData = plugin.getPlayerManager().getPlayerData(owner);
-                                    newData.incrementFieldCount(field.getTypeId());
+                                        PlayerData oldData = plugin.getPlayerManager().getPlayerData(field.getOwner());
+                                        oldData.decrementFieldCount(field.getTypeId());
 
-                                    // change the owner
+                                        PlayerData newData = plugin.getPlayerManager().getPlayerData(owner);
+                                        newData.incrementFieldCount(field.getTypeId());
 
-                                    field.setOwner(owner);
-                                    plugin.getStorageManager().offerField(field);
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Owner set to " + owner);
-                                    return true;
+                                        // change the owner
+
+                                        field.setOwner(owner);
+                                        plugin.getStorageManager().offerField(field);
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Owner set to " + owner);
+                                        return true;
+                                    }
                                 }
                             }
 

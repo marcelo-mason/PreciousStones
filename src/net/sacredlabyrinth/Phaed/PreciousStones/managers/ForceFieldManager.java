@@ -116,7 +116,7 @@ public final class ForceFieldManager
 
         if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.purchase"))
         {
-            if (fs.getPrice() != 0 && !purchase(player, fs.getPrice()))
+            if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
             {
                 return false;
             }
@@ -1107,18 +1107,29 @@ public final class ForceFieldManager
      */
     public int addAllowed(Player player, Field field, String allowedName, boolean overlapped)
     {
-        HashSet<Field> total = getOverlappedFields(player, field);
-
         int allowedCount = 0;
 
-        for (Field f : total)
+        if (overlapped)
         {
-            if (!f.isAllowed(allowedName))
+            HashSet<Field> total = getOverlappedFields(player, field);
+
+            for (Field f : total)
             {
-                f.addAllowed(allowedName);
+                if (!f.isAllowed(allowedName))
+                {
+                    f.addAllowed(allowedName);
+                    allowedCount++;
+                }
+                plugin.getStorageManager().offerField(field);
+            }
+        }
+        else
+        {
+            if (!field.isAllowed(allowedName))
+            {
+                field.addAllowed(player.getName());
                 allowedCount++;
             }
-            plugin.getStorageManager().offerField(field);
         }
         return allowedCount;
     }
@@ -1159,17 +1170,29 @@ public final class ForceFieldManager
      */
     public int removeAllowed(Player player, Field field, String allowedName, boolean overlapped)
     {
-        HashSet<Field> total = getOverlappedFields(player, field);
         int removedCount = 0;
 
-        for (Field f : total)
+        if (overlapped)
         {
-            if (f.isAllowed(allowedName))
+            HashSet<Field> total = getOverlappedFields(player, field);
+
+            for (Field f : total)
             {
-                f.removeAllowed(allowedName);
+                if (f.isAllowed(allowedName))
+                {
+                    f.removeAllowed(allowedName);
+                    removedCount++;
+                }
+                plugin.getStorageManager().offerField(f);
+            }
+        }
+        else
+        {
+            if (field.isAllowed(allowedName))
+            {
+                field.removeAllowed(allowedName);
                 removedCount++;
             }
-            plugin.getStorageManager().offerField(f);
         }
 
         return removedCount;
@@ -1466,6 +1489,44 @@ public final class ForceFieldManager
     }
 
     /**
+     * Returns the fields in the chunk and adjacent chunks that the player is allowe din
+     *
+     * @param loc
+     * @param chunkradius
+     * @return the fields
+     */
+    public Set<Field> getFieldsInCustomArea(Location loc, int chunkradius, FieldFlag flag, Player player)
+    {
+        Set<Field> out = new HashSet<Field>();
+
+        int xlow = (loc.getBlockX() >> 4) - chunkradius;
+        int xhigh = (loc.getBlockX() >> 4) + chunkradius;
+        int zlow = (loc.getBlockZ() >> 4) - chunkradius;
+        int zhigh = (loc.getBlockZ() >> 4) + chunkradius;
+
+        for (int x = xlow; x <= xhigh; x++)
+        {
+            for (int z = zlow; z <= zhigh; z++)
+            {
+                List<Field> fields = getSourceFields(new ChunkVec(x, z, loc.getWorld().getName()), flag);
+
+                if (fields != null)
+                {
+                    for (Field field : fields)
+                    {
+                        if (field.isAllowed(player.getName()))
+                        {
+                            out.add(field);
+                        }
+                    }
+                }
+            }
+        }
+
+        return out;
+    }
+
+    /**
      * Returns the field pointed at
      *
      * @param player
@@ -1473,22 +1534,25 @@ public final class ForceFieldManager
      */
     public Field getPointedField(Player player)
     {
-        Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 100);
-
-        if (targetBlock != null)
+        if (player.getLocation().getY() < 128)
         {
-            Field f = getField(targetBlock);
+            Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
-            if (f != null)
+            if (targetBlock != null)
             {
-                if (f.isChild())
-                {
-                    f = f.getParent();
-                }
+                Field f = getField(targetBlock);
 
-                if (isAllowed(f, player.getName()))
+                if (f != null)
                 {
-                    return f;
+                    if (f.isChild())
+                    {
+                        f = f.getParent();
+                    }
+
+                    if (isAllowed(f, player.getName()))
+                    {
+                        return f;
+                    }
                 }
             }
         }

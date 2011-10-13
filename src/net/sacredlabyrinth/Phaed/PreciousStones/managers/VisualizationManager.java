@@ -66,6 +66,25 @@ public class VisualizationManager
     }
 
     /**
+     * Reverts all current visualizations
+     */
+    public void revertAll()
+    {
+        for (String playerName : visualizations.keySet())
+        {
+            Visualization vis = visualizations.get(playerName);
+            Player player = Helper.matchSinglePlayer(playerName);
+
+            if (player != null)
+            {
+                Visualize visualize = new Visualize(vis.getBlocks(), player, true, false, 0);
+            }
+        }
+        visualizations.clear();
+        counts.clear();
+    }
+
+    /**
      * Adds a fields perimeter to a player's visualization buffer
      *
      * @param player
@@ -155,8 +174,8 @@ public class VisualizationManager
             vis.addBlock(loc, frameType, (byte) 0);
         }
 
-        resetCounter(player.getName() + 1);
-        resetCounter(player.getName() + 2);
+        counts.put(player.getName() + 1, 0);
+        counts.put(player.getName() + 2, 0);
 
         for (int y = miny; y <= maxy; y++)
         {
@@ -176,8 +195,8 @@ public class VisualizationManager
             }
         }
 
-        resetCounter(player.getName() + 1);
-        resetCounter(player.getName() + 2);
+        counts.put(player.getName() + 1, 0);
+        counts.put(player.getName() + 2, 0);
 
         for (int x = minx; x <= maxx; x++)
         {
@@ -197,8 +216,8 @@ public class VisualizationManager
             }
         }
 
-        resetCounter(player.getName() + 1);
-        resetCounter(player.getName() + 2);
+        counts.put(player.getName() + 1, 0);
+        counts.put(player.getName() + 2, 0);
 
         for (int y = miny; y <= maxy; y++)
         {
@@ -218,7 +237,38 @@ public class VisualizationManager
             }
         }
 
+        counts.remove(player.getName() + 1);
+        counts.remove(player.getName() + 2);
+
         visualizations.put(player.getName(), vis);
+    }
+
+    private boolean turnCounter(String name, int size)
+    {
+        if (size == 0)
+        {
+            return true;
+        }
+
+        if (counts.containsKey(name))
+        {
+            int count = counts.get(name);
+            count += 1;
+
+            if (count >= size)
+            {
+                counts.put(name, 0);
+                return true;
+            }
+
+            counts.put(name, count);
+        }
+        else
+        {
+            counts.put(name, 1);
+        }
+
+        return false;
     }
 
     /**
@@ -319,6 +369,7 @@ public class VisualizationManager
 
     /**
      * Whether the block is currently visualized as outline
+     *
      * @param player
      * @param block
      * @return
@@ -333,39 +384,6 @@ public class VisualizationManager
         }
 
         return vis.getOutlineBlocks().contains(new BlockData(block));
-    }
-
-    private boolean turnCounter(String name, int size)
-    {
-        if (size == 0)
-        {
-            return true;
-        }
-
-        if (counts.containsKey(name))
-        {
-            int count = counts.get(name);
-            count += 1;
-
-            if (count >= size)
-            {
-                counts.put(name, 0);
-                return true;
-            }
-
-            counts.put(name, count);
-        }
-        else
-        {
-            counts.put(name, 1);
-        }
-
-        return false;
-    }
-
-    private void resetCounter(String name)
-    {
-        counts.put(name, 0);
     }
 
     /**
@@ -483,7 +501,7 @@ public class VisualizationManager
         if (vis != null)
         {
             visualizations.remove(player.getName());
-            Visualize visualize = new Visualize(vis.getBlocks(), player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
+            Visualize visualize = new Visualize(vis.getBlocks(), player, true, false, 0);
         }
     }
 
@@ -499,7 +517,7 @@ public class VisualizationManager
         if (vis != null)
         {
             visualizations.remove(player.getName());
-            Visualize visualize = new Visualize(vis.getOutlineBlocks(), player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
+            Visualize visualize = new Visualize(vis.getOutlineBlocks(), player, true, false, 0);
         }
     }
 }

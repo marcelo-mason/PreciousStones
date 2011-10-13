@@ -69,7 +69,7 @@ public class CuboidManager
     }
 
     /**
-     * REturns the currently open cuboid definition if any
+     * Returns the players open cuboid definition if it exists
      *
      * @param player
      * @return

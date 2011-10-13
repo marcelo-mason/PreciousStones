@@ -1,8 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import org.bukkit.Location;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Location;
 
 /**
  *
