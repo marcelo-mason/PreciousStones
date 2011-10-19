@@ -117,8 +117,8 @@ public final class ForesterManager
         int maxx = field.getX() + field.getRadius();
         int minz = field.getZ() - field.getRadius();
         int maxz = field.getZ() + field.getRadius();
-        int miny = field.getY() - (int) Math.floor(((double) Math.max(field.getHeight() - 1, 0)) / 2);
-        int maxy = field.getY() + (int) Math.ceil(((double) Math.max(field.getHeight() - 1, 0)) / 2);
+        int miny = field.getY() - (Math.max(field.getHeight() - 1, 0) / 2);
+        int maxy = field.getY() + (Math.max(field.getHeight() - 1, 0) / 2);
 
         for (int x = minx; x < maxx; x += 4)
         {
@@ -185,7 +185,7 @@ public final class ForesterManager
 
                     if (f != null)
                     {
-                        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.place"))
+                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                         {
                             return;
                         }

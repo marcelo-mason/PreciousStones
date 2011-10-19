@@ -31,7 +31,7 @@ public class VelocityManager
      */
     public void launchPlayer(final Player player, final Field field)
     {
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.launch"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.launch"))
         {
             if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
             {
@@ -76,7 +76,7 @@ public class VelocityManager
      */
     public void shootPlayer(final Player player, Field field)
     {
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.bounce"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.bounce"))
         {
             if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
             {

@@ -76,6 +76,8 @@ public final class ForceFieldManager
      */
     public boolean add(Block fieldBlock, Player player, BlockPlaceEvent event)
     {
+        boolean notify = true;
+
         if (plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled())
         {
             return false;
@@ -114,7 +116,7 @@ public final class ForceFieldManager
 
         // purchase pstone
 
-        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.purchase"))
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
         {
             if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
             {
@@ -124,6 +126,7 @@ public final class ForceFieldManager
 
         String owner = fs.hasFlag(FieldFlag.NO_OWNER) ? "Server" : player.getName();
         boolean isChild = false;
+        boolean isImport = false;
         Field field;
 
         // create field
@@ -132,25 +135,48 @@ public final class ForceFieldManager
         {
             CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
 
-            if (ce.getField().getTypeId() == fs.getTypeId())
+            if ((ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup() || fs.getMixingGroup() == 0) && ce.getField().getSettings().getTypeId() != fs.getTypeId())
             {
-                field = new Field(fieldBlock, 0, 0, owner);
-
-                // set up parent/child relationship
-
-                ce.getField().addChild(field);
-                field.setParent(ce.getField());
-                isChild = true;
-            }
-            else
-            {
-                plugin.getCuboidManager().closeCuboid(player);
-                plugin.getVisualizationManager().revertVisualization(player);
-
-                ChatBlock.sendMessage(player, "Cannot place other type up fields while defining a cuboid.");
+                plugin.getCuboidManager().cancelOpenCuboid(player);
+                ChatBlock.sendMessage(player, "Cannot mix fields that are not in the same mixing group.");
                 event.setCancelled(true);
                 return false;
             }
+
+            if (fs.getPrice() > ce.getField().getSettings().getPrice())
+            {
+                plugin.getCuboidManager().cancelOpenCuboid(player);
+                ChatBlock.sendMessage(player, "Cannot add on properties of more valuable fields");
+                event.setCancelled(true);
+                return false;
+            }
+
+            if (fs.getRadius() > ce.getField().getSettings().getPrice())
+            {
+                plugin.getCuboidManager().cancelOpenCuboid(player);
+                ChatBlock.sendMessage(player, "Cannot mix in flags of a fields that cost more than the drawing field");
+                event.setCancelled(true);
+                return false;
+            }
+
+            field = new Field(fieldBlock, 0, 0, owner);
+
+            // set up parent/child relationship
+
+            ce.getField().addChild(field);
+            field.setParent(ce.getField());
+            isChild = true;
+            notify = false;
+
+            // import field flags
+
+            if (ce.getField().getTypeId() != fs.getTypeId())
+            {
+                ce.getField().importFlags(fs.getFlags());
+                ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(fs.getTitle()) + "'s field flags imported");
+                isImport = true;
+            }
+
         }
         else
         {
@@ -179,16 +205,9 @@ public final class ForceFieldManager
             PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
             data.incrementFieldCount(fieldBlock.getTypeId());
 
-            // if interval field then register it
-
-            if (fs.hasFlag(FieldFlag.GRIEF_UNDO_INTERVAL))
-            {
-                plugin.getGriefUndoManager().add(field);
-            }
-
             // open cuboid definition
 
-            if (fs.hasFlag(FieldFlag.CUBOID))
+            if (fs.hasFlag(FieldFlag.CUBOID) && !isImport)
             {
                 if (isChild)
                 {
@@ -212,7 +231,7 @@ public final class ForceFieldManager
             plugin.getVisualizationManager().visualizeSingleFieldFast(player, field);
         }
 
-        return true;
+        return notify;
     }
 
     /**
@@ -226,7 +245,7 @@ public final class ForceFieldManager
 
         ChunkVec cv = field.toChunkVec();
 
-        List<FieldFlag> flags = field.getSettings().getFlags();
+        Set<FieldFlag> flags = field.getSettings().getFlags();
 
         for (FieldFlag flag : flags)
         {
@@ -282,7 +301,7 @@ public final class ForceFieldManager
                 sf = new HashMap<FieldFlag, List<Field>>();
             }
 
-            List<FieldFlag> flags = field.getSettings().getFlags();
+            Set<FieldFlag> flags = field.getSettings().getFlags();
 
             for (FieldFlag flag : flags)
             {
@@ -314,7 +333,7 @@ public final class ForceFieldManager
     {
         // remove from fields collection
 
-        List<FieldFlag> flags = field.getSettings().getFlags();
+        Set<FieldFlag> flags = field.getSettings().getFlags();
 
         for (FieldFlag flag : flags)
         {
@@ -360,7 +379,7 @@ public final class ForceFieldManager
 
         // remove from grief-undo and delete any records on the database
 
-        if (fs.hasGriefUndoFlag())
+        if (fs.hasFlag(FieldFlag.GRIEF_REVERT))
         {
             plugin.getGriefUndoManager().remove(field);
             plugin.getStorageManager().deleteBlockGrief(field);
@@ -384,9 +403,14 @@ public final class ForceFieldManager
             field.clearChildren();
         }
 
+        // if the childs parent is not open, then remove the whole family
+
         if (field.isChild())
         {
-            queueRelease(field.getParent());
+            if (!field.getParent().isOpen())
+            {
+                queueRelease(field.getParent());
+            }
         }
 
         flushDrop();
@@ -413,7 +437,7 @@ public final class ForceFieldManager
 
             if (sf != null)
             {
-                List<FieldFlag> flags = field.getSettings().getFlags();
+                Set<FieldFlag> flags = field.getSettings().getFlags();
 
                 for (FieldFlag flag : flags)
                 {
@@ -1053,7 +1077,7 @@ public final class ForceFieldManager
 
         if (player != null)
         {
-            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.allowed"))
+            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
             {
                 return true;
             }
@@ -1078,23 +1102,30 @@ public final class ForceFieldManager
     }
 
     /**
-     * Get allowed players on the overlapped fields
+     * Get allowed players on fields
      *
      * @param player
      * @param field
+     * @param overlapped
      * @return allowed entry object per user
      */
-    public HashSet<String> getAllowed(Player player, Field field, boolean overlapped)
+    public List<String> getAllowed(Player player, Field field, boolean overlapped)
     {
-        HashSet<String> allowed = new HashSet<String>();
-        HashSet<Field> total = getOverlappedFields(player, field);
-
-        for (Field f : total)
+        if (overlapped)
         {
-            allowed.addAll(f.getAllAllowed());
-        }
+            HashSet<String> allowed = new HashSet<String>();
+            HashSet<Field> total = getOverlappedFields(player, field);
 
-        return allowed;
+            for (Field f : total)
+            {
+                allowed.addAll(f.getAllAllowed());
+            }
+            return new LinkedList<String>(allowed);
+        }
+        else
+        {
+            return field.getAllAllowed();
+        }
     }
 
     /**
@@ -1127,9 +1158,10 @@ public final class ForceFieldManager
         {
             if (!field.isAllowed(allowedName))
             {
-                field.addAllowed(player.getName());
+                field.addAllowed(allowedName);
                 allowedCount++;
             }
+            plugin.getStorageManager().offerField(field);
         }
         return allowedCount;
     }
@@ -1193,6 +1225,7 @@ public final class ForceFieldManager
                 field.removeAllowed(allowedName);
                 removedCount++;
             }
+            plugin.getStorageManager().offerField(field);
         }
 
         return removedCount;
@@ -1534,7 +1567,7 @@ public final class ForceFieldManager
      */
     public Field getPointedField(Player player)
     {
-        if (player.getLocation().getY() < 128)
+        if (player.getLocation().getY() < 127)
         {
             Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
@@ -1834,6 +1867,55 @@ public final class ForceFieldManager
 
         return null;
     }
+
+    /**
+     * Return the first field that conflicts with the cuboid entry
+     *
+     * @param placedBlock
+     * @param placer
+     * @return the field, null if none found
+     */
+    public Field fieldConflicts(CuboidEntry ce, Player placer)
+    {
+        FieldSettings fs = ce.getField().getSettings();
+
+        if (fs == null)
+        {
+            return null;
+        }
+
+        if (fs.hasFlag(FieldFlag.NO_CONFLICT))
+        {
+            return null;
+        }
+
+        // create throwaway field to test intersection
+
+        Set<Field> overlapping = ce.getField().getOverlappingFields();
+
+        for (Field field : overlapping)
+        {
+            FieldSettings fsArea = field.getSettings();
+
+            if (fsArea.hasFlag(FieldFlag.NO_CONFLICT))
+            {
+                continue;
+            }
+
+            if (isAllowed(field, placer.getName()))
+            {
+                continue;
+            }
+
+            if (field.intersects(ce.getField()))
+            {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
 
     /**
      * Get all touching fields
@@ -2164,7 +2246,6 @@ public final class ForceFieldManager
             Method.MethodAccount account = plugin.getMethod().getAccount(player.getName());
             account.add(price);
             player.sendMessage(ChatColor.AQUA + "Your account has been credited");
-
         }
     }
 }

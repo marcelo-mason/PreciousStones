@@ -85,8 +85,8 @@ public class UnprotectableManager
         int minz = fieldblock.getZ() - fs.getRadius();
         int maxz = fieldblock.getZ() + fs.getRadius();
 
-        int miny = fieldblock.getY() - (int) Math.floor(((double) Math.max(fs.getHeight() - 1, 0)) / 2);
-        int maxy = fieldblock.getY() + (int) Math.ceil(((double) Math.max(fs.getHeight() - 1, 0)) / 2);
+        int miny = fieldblock.getY() - (Math.max(fs.getHeight() - 1, 0) / 2);
+        int maxy = fieldblock.getY() + (Math.max(fs.getHeight() - 1, 0) / 2);
 
         Field field = plugin.getForceFieldManager().getField(fieldblock);
 

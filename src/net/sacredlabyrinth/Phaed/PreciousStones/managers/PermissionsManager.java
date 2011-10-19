@@ -38,7 +38,7 @@ public final class PermissionsManager
      * @param permission
      * @return
      */
-    public boolean hasPermission(Player player, String permission)
+    public boolean has(Player player, String permission)
     {
         if (player == null)
         {

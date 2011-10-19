@@ -113,8 +113,8 @@ public class VisualizationManager
         int maxx = field.getX() + field.getRadius() + 1;
         int minz = field.getZ() - field.getRadius() - 1;
         int maxz = field.getZ() + field.getRadius() + 1;
-        int miny = field.getY() - ((int) Math.floor(((double) Math.max(field.getHeight() - 1, 0)) / 2)) - 1;
-        int maxy = field.getY() + ((int) Math.ceil(((double) Math.max(field.getHeight() - 1, 0)) / 2)) + 1;
+        int miny = field.getY() - (Math.max(field.getHeight() - 1, 0) / 2) - 1;
+        int maxy = field.getY() + (Math.max(field.getHeight() - 1, 0) / 2) + 1;
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
@@ -126,15 +126,12 @@ public class VisualizationManager
             maxy = field.getMaxy() + 1;
         }
 
-        int total = (maxx - minx) + (maxy + miny) + (maxz - minz);
-        int size = total / plugin.getSettingsManager().getVisualizeSpreadDivisor();
-
         for (int x = minx; x <= maxx; x++)
         {
-            Location loc = new Location(player.getWorld(), x, maxy, maxz);
+            Location loc = new Location(player.getWorld(), x, miny, maxz);
             vis.addBlock(loc, frameType, (byte) 0);
 
-            loc = new Location(player.getWorld(), x, miny, minz);
+            loc = new Location(player.getWorld(), x, maxy, minz);
             vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), x, miny, minz);
@@ -149,7 +146,7 @@ public class VisualizationManager
             Location loc = new Location(player.getWorld(), minx, y, maxz);
             vis.addBlock(loc, frameType, (byte) 0);
 
-            loc = new Location(player.getWorld(), maxx, y, miny);
+            loc = new Location(player.getWorld(), maxx, y, minz);
             vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), minx, y, minz);
@@ -174,82 +171,125 @@ public class VisualizationManager
             vis.addBlock(loc, frameType, (byte) 0);
         }
 
-        counts.put(player.getName() + 1, 0);
-        counts.put(player.getName() + 2, 0);
+        PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
+
+        int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
 
         for (int y = miny; y <= maxy; y++)
         {
-            if (turnCounter(player.getName() + 1, size))
-            {
-                for (int z = minz; z <= maxz; z++)
-                {
-                    if (turnCounter(player.getName() + 2, size))
-                    {
-                        Location loc = new Location(player.getWorld(), minx, y, z);
-                        vis.addBlock(loc, visualizationType, (byte) 0);
+            boolean yTurn = turnCounter(player.getName() + 1, spacing);
 
-                        loc = new Location(player.getWorld(), maxx, y, z);
-                        vis.addBlock(loc, visualizationType, (byte) 0);
+            if (maxy - y < spacing)
+            {
+                yTurn = false;
+            }
+
+            int count = 0;
+            for (int z = minz; z <= maxz; z++)
+            {
+                if (yTurn || turnCounter(player.getName() + 2, spacing))
+                {
+                    if (maxz - z < spacing && !yTurn)
+                    {
+                        break;
                     }
+
+                    if (!yTurn && count >= data.getDensity() - 1)
+                    {
+                        break;
+                    }
+
+                    Location loc = new Location(player.getWorld(), minx, y, z);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+
+                    loc = new Location(player.getWorld(), maxx, y, z);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    count++;
                 }
             }
+            counts.put(player.getName() + 2, 0);
         }
-
         counts.put(player.getName() + 1, 0);
-        counts.put(player.getName() + 2, 0);
+
 
         for (int x = minx; x <= maxx; x++)
         {
-            if (turnCounter(player.getName() + 1, size))
-            {
-                for (int z = minz; z <= maxz; z++)
-                {
-                    if (turnCounter(player.getName() + 2, size))
-                    {
-                        Location loc = new Location(player.getWorld(), x, miny, z);
-                        vis.addBlock(loc, visualizationType, (byte) 0);
+            boolean xTurn = turnCounter(player.getName() + 1, spacing);
 
-                        loc = new Location(player.getWorld(), x, maxy, z);
-                        vis.addBlock(loc, visualizationType, (byte) 0);
+            if (maxx - x < spacing)
+            {
+                xTurn = false;
+            }
+
+            int count = 0;
+            for (int z = minz; z <= maxz; z++)
+            {
+                if (xTurn || turnCounter(player.getName() + 2, spacing))
+                {
+                    if (maxz - z < spacing && !xTurn)
+                    {
+                        break;
                     }
+
+                    if (!xTurn && count >= data.getDensity() - 1)
+                    {
+                        break;
+                    }
+
+                    Location loc = new Location(player.getWorld(), x, miny, z);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+
+                    loc = new Location(player.getWorld(), x, maxy, z);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    count++;
                 }
             }
+            counts.put(player.getName() + 2, 0);
         }
-
         counts.put(player.getName() + 1, 0);
-        counts.put(player.getName() + 2, 0);
+
 
         for (int y = miny; y <= maxy; y++)
         {
-            if (turnCounter(player.getName() + 1, size))
-            {
-                for (int x = minx; x <= maxx; x++)
-                {
-                    if (turnCounter(player.getName() + 2, size))
-                    {
-                        Location loc = new Location(player.getWorld(), x, y, minz);
-                        vis.addBlock(loc, visualizationType, (byte) 0);
+            boolean yTurn = turnCounter(player.getName() + 1, spacing);
 
-                        loc = new Location(player.getWorld(), x, y, maxz);
-                        vis.addBlock(loc, visualizationType, (byte) 0);
-                    }
+            if (maxy - y < spacing)
+            {
+                yTurn = false;
+            }
+
+            int count = 0;
+            for (int x = minx; x <= maxx; x++)
+            {
+                if (maxx - x < spacing && !yTurn)
+                {
+                    break;
+                }
+
+                if (!yTurn && count >= data.getDensity() - 1)
+                {
+                    break;
+                }
+
+                if (yTurn || turnCounter(player.getName() + 2, spacing))
+                {
+                    Location loc = new Location(player.getWorld(), x, y, minz);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+
+                    loc = new Location(player.getWorld(), x, y, maxz);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    count++;
                 }
             }
+            counts.put(player.getName() + 2, 0);
         }
-
-        counts.remove(player.getName() + 1);
-        counts.remove(player.getName() + 2);
+        counts.put(player.getName() + 1, 0);
 
         visualizations.put(player.getName(), vis);
     }
 
     private boolean turnCounter(String name, int size)
     {
-        if (size == 0)
-        {
-            return true;
-        }
-
         if (counts.containsKey(name))
         {
             int count = counts.get(name);
@@ -269,6 +309,97 @@ public class VisualizationManager
         }
 
         return false;
+    }
+
+    /**
+     * Visualizes a single field's outline nad reverts
+     *
+     * @param player
+     * @param field
+     */
+    public void visualizeSingleOutline(Player player, Field field)
+    {
+        Visualization vis = visualizations.get(player.getName());
+
+        if (vis == null)
+        {
+            vis = new Visualization();
+        }
+
+        // save current outline and clear out the visualization
+
+        List<BlockData> newBlocks = new LinkedList<BlockData>();
+
+        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
+
+        int minx = field.getX() - field.getRadius() - 1;
+        int maxx = field.getX() + field.getRadius() + 1;
+        int minz = field.getZ() - field.getRadius() - 1;
+        int maxz = field.getZ() + field.getRadius() + 1;
+        int miny = field.getY() - (Math.max(field.getHeight() - 1, 0) / 2) - 1;
+        int maxy = field.getY() + (Math.max(field.getHeight() - 1, 0) / 2) + 1;
+
+        if (field.hasFlag(FieldFlag.CUBOID))
+        {
+            minx = field.getMinx() - 1;
+            maxx = field.getMaxx() + 1;
+            minz = field.getMinz() - 1;
+            maxz = field.getMaxz() + 1;
+            miny = field.getMiny() - 1;
+            maxy = field.getMaxy() + 1;
+        }
+
+        // add  the blocks for the new outline
+
+        for (int x = minx; x <= maxx; x++)
+        {
+            Location loc = new Location(player.getWorld(), x, miny, maxz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), x, maxy, minz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), x, miny, minz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), x, maxy, maxz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+        }
+
+        for (int y = miny; y <= maxy; y++)
+        {
+            Location loc = new Location(player.getWorld(), minx, y, maxz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), maxx, y, minz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), minx, y, minz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), maxx, y, maxz);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+        }
+
+        for (int z = minz; z <= maxz; z++)
+        {
+            Location loc = new Location(player.getWorld(), minx, maxy, z);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), maxx, miny, z);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), minx, miny, z);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+
+            loc = new Location(player.getWorld(), maxx, maxy, z);
+            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+        }
+
+        // visualize all the new blocks that are left to visualize
+
+        Visualize visualize = new Visualize(newBlocks, player, false, false, plugin.getSettingsManager().getVisualizeSeconds());
+        visualizations.put(player.getName(), vis);
     }
 
     /**
@@ -438,6 +569,27 @@ public class VisualizationManager
         visualizations.put(player.getName(), vis);
 
         player.sendBlockChange(block.getLocation(), material, (byte) 0);
+    }
+
+    /**
+     * Revert a single a visualized block to the player
+     *
+     * @param player
+     * @param field
+     */
+    public void revertSingle(Player player, Block block)
+    {
+        Visualization vis = visualizations.get(player.getName());
+
+        if (vis == null)
+        {
+            vis = new Visualization();
+        }
+
+        vis.addBlock(block);
+        visualizations.put(player.getName(), vis);
+
+        player.sendBlockChange(block.getLocation(), block.getType(), (byte) 0);
     }
 
     /**

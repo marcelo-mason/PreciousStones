@@ -69,7 +69,7 @@ public final class EntryManager
                             continue;
                         }
 
-                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.giveair"))
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.giveair"))
                         {
                             if (!hasAir)
                             {
@@ -86,7 +86,7 @@ public final class EntryManager
                             }
                         }
 
-                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.feed"))
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.feed"))
                         {
                             if (!hasFeeding)
                             {
@@ -104,7 +104,7 @@ public final class EntryManager
                             }
                         }
 
-                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.heal"))
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.heal"))
                         {
                             if (!hasHeal)
                             {
@@ -133,7 +133,7 @@ public final class EntryManager
                             }
                         }
 
-                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.repair"))
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.repair"))
                         {
                             if (!hasRepair)
                             {
@@ -201,7 +201,7 @@ public final class EntryManager
                             }
                         }
 
-                        if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.damage"))
+                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.damage"))
                         {
                             if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
                             {

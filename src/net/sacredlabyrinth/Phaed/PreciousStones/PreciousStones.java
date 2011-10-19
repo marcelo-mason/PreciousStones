@@ -158,6 +158,7 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_FILL, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_DISABLE, serverListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FROMTO, blockListener, Priority.Normal, this);
@@ -172,6 +173,7 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.WORLD_LOAD, worldListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD, worldListener, Priority.High, this);
     }
 
     private void registerCommands()

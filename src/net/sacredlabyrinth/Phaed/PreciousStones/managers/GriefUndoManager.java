@@ -11,19 +11,16 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Queue;
 
 /**
- *
  * @author phaed
  */
 public final class GriefUndoManager
 {
     private PreciousStones plugin;
-    private List<Field> intervalFields = new ArrayList<Field>();
-    private boolean processing = false;
+    private HashMap<Field, Integer> intervalFields = new HashMap<Field, Integer>();
 
     /**
      *
@@ -31,21 +28,28 @@ public final class GriefUndoManager
     public GriefUndoManager()
     {
         plugin = PreciousStones.getInstance();
-
-        startInterval();
     }
 
     /**
      * Register an interval field
+     *
      * @param field
      */
-    public void add(Field field)
+    public void register(Field field)
     {
-        intervalFields.add(field);
+        if (intervalFields.containsKey(field))
+        {
+            int taskId = intervalFields.get(field);
+            plugin.getServer().getScheduler().cancelTask(taskId);
+        }
+
+        int taskId = startInterval(field);
+        intervalFields.put(field, taskId);
     }
 
     /**
      * Un-register an interval field
+     *
      * @param field
      */
     public void remove(Field field)
@@ -55,6 +59,7 @@ public final class GriefUndoManager
 
     /**
      * Add grief block to field, accounts for dependents and signs
+     *
      * @param field
      * @param block
      */
@@ -62,10 +67,7 @@ public final class GriefUndoManager
     {
         if (!plugin.getGriefUndoManager().isDependentBlock(block.getTypeId()))
         {
-            BlockFace[] faces =
-            {
-                BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN
-            };
+            BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
 
             for (BlockFace face : faces)
             {
@@ -128,6 +130,7 @@ public final class GriefUndoManager
 
     /**
      * Whether the block depends on an adjacent block to be placed
+     *
      * @param type
      * @return
      */
@@ -143,6 +146,7 @@ public final class GriefUndoManager
 
     /**
      * Undo the grief recorded in one field
+     *
      * @param field
      * @return
      */
@@ -154,8 +158,10 @@ public final class GriefUndoManager
         {
             Queue<GriefBlock> gbs = plugin.getStorageManager().retrieveBlockGrief(field);
 
-            Rollback rollback = new Rollback(gbs, world);
-
+            if (!gbs.isEmpty())
+            {
+                Rollback rollback = new Rollback(gbs, world);
+            }
             return gbs.size();
         }
 
@@ -164,6 +170,7 @@ public final class GriefUndoManager
 
     /**
      * Undo the grief that has not yet been saved to the database from one field
+     *
      * @param field
      * @return
      */
@@ -185,7 +192,6 @@ public final class GriefUndoManager
     }
 
     /**
-     *
      * @param gb
      * @param world
      */
@@ -205,10 +211,7 @@ public final class GriefUndoManager
 
         boolean noConflict = false;
 
-        int[] seeThrough =
-        {
-            0, 6, 8, 31, 32, 37, 38, 39, 40, 9, 10, 11, 12, 51, 59, 83, 81
-        };
+        int[] seeThrough = {0, 6, 8, 31, 32, 37, 38, 39, 40, 9, 10, 11, 12, 51, 59, 83, 81};
 
         for (int st : seeThrough)
         {
@@ -251,31 +254,14 @@ public final class GriefUndoManager
         }
     }
 
-    private void startInterval()
+    private int startInterval(final Field field)
     {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
+        return plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
         {
             public void run()
             {
-                if (processing)
-                {
-                    return;
-                }
-
-                processing = true;
-
-                for (Field field : intervalFields)
-                {
-                    undoGrief(field);
-                }
-
-                processing = false;
+                undoGrief(field);
             }
-        }, 20L * 60 * plugin.getSettingsManager().getGriefIntervalSeconds(), 20L * 60 * plugin.getSettingsManager().getGriefIntervalSeconds());
+        }, field.getRevertSecs() * 20L, field.getRevertSecs() * 20L);
     }
-    /**
-     * If the block is dependent on another block to exist
-     * @param type
-     * @return
-     */
 }

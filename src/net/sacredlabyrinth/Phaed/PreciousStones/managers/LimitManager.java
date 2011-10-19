@@ -38,7 +38,7 @@ public class LimitManager
             return false;
         }
 
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.limits"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.limits"))
         {
             return false;
         }
@@ -83,7 +83,7 @@ public class LimitManager
 
         for (int i = limits.size() - 1; i >= 0; i--)
         {
-            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.limit" + (i + 1)))
+            if (plugin.getPermissionsManager().has(player, "preciousstones.limit" + (i + 1)))
             {
                 return limits.get(i);
             }

@@ -1,9 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.CuboidEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,7 +34,7 @@ public class CuboidManager
     }
 
     /**
-     * If there is a currently open cuboid definition emanating from the field block or its parent
+     * If the block is a cuboid field or one of its children
      *
      * @param player
      * @param block
@@ -45,16 +42,50 @@ public class CuboidManager
      */
     public boolean isOpenCuboid(Player player, Block block)
     {
+        return isOpenCuboidField(player, block) || isOpenCuboidChild(player, block);
+    }
+
+    /**
+     * If there is a currently open cuboid definition emanating from the field block
+     *
+     * @param player
+     * @param block
+     * @return
+     */
+    public boolean isOpenCuboidField(Player player, Block block)
+    {
         CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
         {
             Field field = ce.getField();
 
-            if (Helper.isSameBlock(field.getLocation(), block.getLocation()))
+            if (field != null)
             {
-                return true;
+                if (Helper.isSameBlock(field.getLocation(), block.getLocation()))
+                {
+                    return true;
+                }
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * If the block belongs to a child field inside an open cuboid definition
+     *
+     * @param player
+     * @param block
+     * @return
+     */
+    public boolean isOpenCuboidChild(Player player, Block block)
+    {
+        CuboidEntry ce = openCuboids.get(player.getName());
+
+        if (ce != null)
+        {
+            Field field = ce.getField();
 
             for (Field child : field.getChildren())
             {
@@ -85,33 +116,59 @@ public class CuboidManager
      * @param player
      * @param block
      */
-    public void processSelectedBlock(Player player, Block block)
+    public boolean processSelectedBlock(Player player, Block block)
     {
-        if (openCuboids.containsKey(player.getName()))
+        CuboidEntry openCuboid = getOpenCuboid(player);
+
+        if (!plugin.getVisualizationManager().isOutlineBlock(player, block))
         {
-            CuboidEntry ce = openCuboids.get(player.getName());
-
-            int oldVolume = ce.getAvailableVolume();
-
-            if (ce.isSelected(block))
+            if (openCuboid.testOverflow(block.getLocation()) || plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
             {
-                ce.removeSelected(block);
-                plugin.getVisualizationManager().displaySingle(player, block.getType(), block);
+                if (plugin.getWorldGuardManager().canBuild(player, block))
+                {
+                    if (openCuboids.containsKey(player.getName()))
+                    {
+                        CuboidEntry ce = openCuboids.get(player.getName());
+
+                        int oldVolume = ce.getAvailableVolume();
+
+                        if (ce.isSelected(block))
+                        {
+                            ce.removeSelected(block);
+                            plugin.getVisualizationManager().displaySingle(player, block.getType(), block);
+                        }
+                        else
+                        {
+                            ce.addSelected(block);
+                            plugin.getVisualizationManager().displaySingle(player, Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType()), block);
+                        }
+
+                        int newVolume = ce.getAvailableVolume();
+
+                        if (newVolume != oldVolume)
+                        {
+                            plugin.getVisualizationManager().displayFieldOutline(player, ce);
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + newVolume + " blocks");
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot extend inside WorldGuard region");
+                }
             }
             else
             {
-                ce.addSelected(block);
-                plugin.getVisualizationManager().displaySingle(player, Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType()), block);
-            }
-
-            int newVolume = ce.getAvailableVolume();
-
-            if (newVolume != oldVolume)
-            {
-                plugin.getVisualizationManager().displayFieldOutline(player, ce);
-                ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + newVolume + " blocks");
+                ChatBlock.sendMessage(player, ChatColor.RED + "Exceeds maximum volume");
             }
         }
+        else
+        {
+            ChatBlock.sendMessage(player, ChatColor.RED + "Cannot click on the outline");
+        }
+
+        return false;
     }
 
 
@@ -126,6 +183,7 @@ public class CuboidManager
         final CuboidEntry ce = new CuboidEntry(field);
         openCuboids.put(player.getName(), ce);
 
+        field.setOpen(true);
         plugin.getVisualizationManager().revertVisualization(player);
 
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
@@ -184,36 +242,47 @@ public class CuboidManager
 
         if (ce != null)
         {
-            plugin.getVisualizationManager().revertVisualization(player);
-            plugin.getVisualizationManager().revertOutline(player);
-
             final Field field = ce.getField();
 
-            if (ce.isExceeded())
+            if (ce.isExceeded() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
             {
                 ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid exceeds maximum size");
-                openCuboids.remove(player.getName());
+                cancelOpenCuboid(player);
                 return false;
             }
 
-            ce.finalizeField();
-
-            Block foundBlock = plugin.getUnprotectableManager().existsUnprotectableBlock(field);
-
-            if (foundBlock != null)
+            if (plugin.getForceFieldManager().fieldConflicts(ce, player) != null)
             {
-                if (!plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.unprotectable"))
+                ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid would conflict with someone else's field");
+                cancelOpenCuboid(player);
+                return false;
+            }
+
+            if (field.hasFlag(FieldFlag.PREVENT_UNPROTECTABLE))
+            {
+                Block foundBlock = plugin.getUnprotectableManager().existsUnprotectableBlock(field);
+
+                if (foundBlock != null)
                 {
-                    plugin.getCommunicationManager().warnPlaceFieldInUnprotectable(player, foundBlock, field.getBlock());
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid has been cancelled.");
-                    openCuboids.remove(player.getName());
-                    return false;
+                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                    {
+                        plugin.getCommunicationManager().warnPlaceFieldInUnprotectable(player, foundBlock, field.getBlock());
+                        cancelOpenCuboid(player);
+                        return false;
+                    }
                 }
             }
+
+            plugin.getVisualizationManager().revertVisualization(player);
+            plugin.getVisualizationManager().revertOutline(player);
+
+            ce.finalizeField();
+            field.setOpen(false);
 
             plugin.getForceFieldManager().addSourceField(field);
 
             openCuboids.remove(player.getName());
+
             plugin.getVisualizationManager().visualizeSingleFieldFast(player, field);
             plugin.getStorageManager().offerField(field);
             plugin.getCommunicationManager().notifyPlaceCuboid(player, field);
@@ -224,9 +293,26 @@ public class CuboidManager
     }
 
     /**
-     * Cancels a currently open cuboid definition
+     * Remove a child block from an open field
      *
+     * @param player
      * @param block
+     */
+    public void removeChild(Player player, Block block)
+    {
+        CuboidEntry ce = openCuboids.get(player.getName());
+        Field child = plugin.getForceFieldManager().getField(block);
+
+        if (ce != null && child != null)
+        {
+            ce.getField().getChildren().remove(child);
+        }
+    }
+
+    /**
+     * Cancels a currently open cuboid definition if one of the field blocks are broken
+     *
+     * @param block the block that is being broken
      */
     public void cancelOpenCuboid(Player player, Block block)
     {
@@ -251,11 +337,38 @@ public class CuboidManager
         }
     }
 
-    private void cancelOpenCuboid(Player player)
+    /**
+     * Cancel an open cuboid and revert all visualizations
+     * @param player
+     */
+    public void cancelOpenCuboid(Player player)
     {
         plugin.getVisualizationManager().revertVisualization(player);
         plugin.getVisualizationManager().revertOutline(player);
         openCuboids.remove(player.getName());
         ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid has been cancelled.");
+    }
+
+    /**
+     * Revert the last selected block
+     *
+     * @param player
+     */
+    public void revertLastSelection(Player player)
+    {
+        CuboidEntry ce = openCuboids.get(player.getName());
+
+        if (ce != null)
+        {
+            BlockData selected = ce.getLastSelected();
+
+            if (selected != null)
+            {
+                ce.revertLastSelected();
+                plugin.getVisualizationManager().revertSingle(player, selected.getBlock());
+                plugin.getVisualizationManager().displayFieldOutline(player, ce);
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Selection reverted");
+            }
+        }
     }
 }

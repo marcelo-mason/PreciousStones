@@ -27,7 +27,7 @@ public final class SettingsManager
     private int maxSnitchRecords;
     private int saveFrequency;
     private List<Integer> griefUndoBlackList;
-    private int griefIntervalSeconds;
+    private int griefRevertMinInterval;
     private List<Integer> foresterFertileBlocks;
     private int foresterInterval;
     private int foresterTrees;
@@ -35,7 +35,7 @@ public final class SettingsManager
     private int visualizeFrameBlock;
     private int visualizeBlock;
     private int visualizeSeconds;
-    private int visualizeSpreadDivisor;
+    private int visualizeDensity;
     private int visualizeTicksBetweenSends;
     private int visualizeSendSize;
     private boolean visualizeEndOnMove;
@@ -105,6 +105,7 @@ public final class SettingsManager
     private final HashMap<Integer, FieldSettings> fieldDefinitions = new HashMap<Integer, FieldSettings>();
     private PreciousStones plugin;
     private File main;
+    private FileConfiguration config;
 
     /**
      *
@@ -112,7 +113,8 @@ public final class SettingsManager
     public SettingsManager()
     {
         plugin = PreciousStones.getInstance();
-        main  = new File(plugin.getDataFolder() + File.separator + "config.yml");
+        config = plugin.getConfig();
+        main = new File(plugin.getDataFolder() + File.separator + "config.yml");
         load();
     }
 
@@ -127,14 +129,13 @@ public final class SettingsManager
             throughFieldsSet.add(throughField);
         }
 
-        FileConfiguration config = plugin.getConfig();
-
         boolean exists = (main).exists();
 
         if (exists)
         {
             try
             {
+                config.options().copyDefaults(true);
                 config.load(main);
             }
             catch (Exception e)
@@ -211,13 +212,13 @@ public final class SettingsManager
         visualizeSeconds = config.getInt("visualization.seconds");
         visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move");
         visualizeMarkBlock = config.getInt("visualization.mark-block-type");
-        visualizeSpreadDivisor = config.getInt("visualization.spread-divisor");
+        visualizeDensity = config.getInt("visualization.default-density");
         visualizeSendSize = config.getInt("visualization.blocks-to-send");
         visualizeTicksBetweenSends = config.getInt("visualization.ticks-between-sends");
         foresterInterval = config.getInt("forester.interval-seconds");
         foresterFertileBlocks = config.getList("forester.fertile-blocks");
         foresterTrees = config.getInt("forester.trees");
-        griefIntervalSeconds = config.getInt("grief-undo.interval-seconds");
+        griefRevertMinInterval = config.getInt("grief-undo.min-interval-secs");
         griefUndoBlackList = config.getList("grief-undo.black-list");
         useMysql = config.getBoolean("mysql.enable");
         host = config.getString("mysql.host");
@@ -225,7 +226,6 @@ public final class SettingsManager
         database = config.getString("mysql.database");
         username = config.getString("mysql.username");
         password = config.getString("mysql.password");
-
 
         addForceFieldStones(forceFieldBlocks);
 
@@ -237,86 +237,6 @@ public final class SettingsManager
      */
     public void save()
     {
-        FileConfiguration config = plugin.getConfig();
-
-        config.set("force-field-blocks", getForceFieldBlocks());
-        config.set("unbreakable-blocks", getUnbreakableBlocks());
-        config.set("bypass-blocks", getBypassBlocks());
-        config.set("unprotectable-blocks", getUnprotectableBlocks());
-        config.set("tool-items", getToolItems());
-        config.set("repairable-items", getRepairableItems());
-        config.set("log.fire", isLogFire());
-        config.set("log.entry", isLogEntry());
-        config.set("log.place", isLogPlace());
-        config.set("log.use", isLogUse());
-        config.set("log.pvp", isLogPvp());
-        config.set("log.destroy", isLogDestroy());
-        config.set("log.destroy-area", isLogDestroyArea());
-        config.set("log.unprotectable", isLogUnprotectable());
-        config.set("log.bypass-pvp", isLogBypassPvp());
-        config.set("log.bypass-delete", isLogBypassDelete());
-        config.set("log.bypass-place", isLogBypassPlace());
-        config.set("log.bypass-destroy", isLogBypassDestroy());
-        config.set("log.conflict-place", isLogConflictPlace());
-        config.set("notify.place", isNotifyPlace());
-        config.set("notify.destroy", isNotifyDestroy());
-        config.set("notify.bypass-unprotectable", isNotifyBypassUnprotectable());
-        config.set("notify.bypass-pvp", isNotifyBypassPvp());
-        config.set("notify.bypass-place", isNotifyBypassPlace());
-        config.set("notify.bypass-destroy", isNotifyBypassDestroy());
-        config.set("warn.instant-heal", isWarnInstantHeal());
-        config.set("warn.slow-heal", isWarnSlowHeal());
-        config.set("warn.slow-feeding", isWarnSlowFeeding());
-        config.set("warn.slow-repair", isWarnSlowRepair());
-        config.set("warn.slow-damage", isWarnSlowDamage());
-        config.set("warn.fast-damage", isWarnFastDamage());
-        config.set("warn.give-air", isWarnGiveAir());
-        config.set("warn.fire", isWarnFire());
-        config.set("warn.entry", isWarnEntry());
-        config.set("warn.place", isWarnPlace());
-        config.set("warn.use", isWarnUse());
-        config.set("warn.pvp", isWarnPvp());
-        config.set("warn.destroy", isWarnDestroy());
-        config.set("warn.destroy-area", isWarnDestroyArea());
-        config.set("warn.unprotectable", isWarnUnprotectable());
-        config.set("warn.launch", isWarnLaunch());
-        config.set("warn.cannon", isWarnCannon());
-        config.set("warn.mine", isWarnMine());
-        config.set("settings.public-block-details", isPublicBlockDetails());
-        config.set("settings.sneaking-bypasses-damage", isSneakingBypassesDamage());
-        config.set("settings.allowed-can-break-pstones", isAllowedCanBreakPstones());
-        config.set("settings.drop-on-delete", isDropOnDelete());
-        config.set("settings.disable-alerts-for-admins", isDisableAlertsForAdmins());
-        config.set("settings.disable-bypass-alerts-for-admins", isDisableBypassAlertsForAdmins());
-        config.set("settings.off-by-default", isOffByDefault());
-        config.set("settings.lines-per-page", getLinesPerPage());
-        config.set("settings.blacklisted-worlds", getBlacklistedWorlds());
-        config.set("settings.log-to-hawkeye", isLogToHawkEye());
-        config.set("cuboid.defining-blocktype", cuboidDefiningType);
-        config.set("cuboid.visualization-blocktype", cuboidVisualizationType);
-        config.set("cleanup.player-inactivity-purge-days", getPurgeAfterDays());
-        config.set("cleanup.snitch-unused-purge-days", getPurgeSnitchAfterDays());
-        config.set("saving.frequency-seconds", getSaveFrequency());
-        config.set("saving.max-records-per-snitch", getMaxSnitchRecords());
-        config.set("visualization.frame-block-type", visualizeFrameBlock);
-        config.set("visualization.block-type", getVisualizeBlock());
-        config.set("visualization.seconds", getVisualizeSeconds());
-        config.set("visualization.end-on-player-move", isVisualizeEndOnMove());
-        config.set("visualization.mark-block-type", getVisualizeMarkBlock());
-        config.set("visualization.spread-divisor", visualizeSpreadDivisor);
-        config.set("visualization.ticks-between-sends", visualizeTicksBetweenSends);
-        config.set("visualization.blocks-to-send", visualizeSendSize);
-        config.set("forester.interval-seconds", getForesterInterval());
-        config.set("forester.fertile-blocks", getForesterFertileBlocks());
-        config.set("grief-undo.interval-seconds", getGriefIntervalSeconds());
-        config.set("grief-undo.black-list", getGriefUndoBlackList());
-        config.set("mysql.enable", isUseMysql());
-        config.set("mysql.host", getHost());
-        config.set("mysql.port", getPort());
-        config.set("mysql.database", getDatabase());
-        config.set("mysql.username", getUsername());
-        config.set("mysql.password", getPassword());
-
         try
         {
             config.save(main);
@@ -383,6 +303,24 @@ public final class SettingsManager
         for (FieldSettings fs : fieldDefinitions.values())
         {
             if (fs.hasVeocityFlag())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether any pstones have greif revert
+     *
+     * @return
+     */
+    public boolean haveGriefRevert()
+    {
+        for (FieldSettings fs : fieldDefinitions.values())
+        {
+            if (fs.hasFlag(FieldFlag.GRIEF_REVERT))
             {
                 return true;
             }
@@ -707,14 +645,6 @@ public final class SettingsManager
     public List<Integer> getGriefUndoBlackList()
     {
         return Collections.unmodifiableList(griefUndoBlackList);
-    }
-
-    /**
-     * @return the griefIntervalSeconds
-     */
-    public int getGriefIntervalSeconds()
-    {
-        return griefIntervalSeconds;
     }
 
     /**
@@ -1291,11 +1221,6 @@ public final class SettingsManager
         return cuboidDefiningType;
     }
 
-    public int getVisualizeSpreadDivisor()
-    {
-        return visualizeSpreadDivisor;
-    }
-
     public int getCuboidVisualizationType()
     {
         return cuboidVisualizationType;
@@ -1319,5 +1244,15 @@ public final class SettingsManager
     public int getPort()
     {
         return port;
+    }
+
+    public int getVisualizeDensity()
+    {
+        return visualizeDensity;
+    }
+
+    public int getGriefRevertMinInterval()
+    {
+        return griefRevertMinInterval;
     }
 }

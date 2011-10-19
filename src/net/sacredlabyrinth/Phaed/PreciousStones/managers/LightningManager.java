@@ -32,7 +32,7 @@ public class LightningManager
      */
     public void enterLightning(final Player player, final Field field)
     {
-	if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.lightning"))
+	if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.lightning"))
         {
             return;
 	}

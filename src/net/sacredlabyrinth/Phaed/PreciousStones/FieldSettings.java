@@ -1,9 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author phaed
@@ -13,18 +10,21 @@ public class FieldSettings
     private boolean validField = true;
     private int typeId;
     private int radius = 0;
-    private int height = 0;
     private int launchHeight = 0;
     private int cannonHeight = 0;
+    private int customHeight = 0;
+    private int customVolume = 0;
     private int mineDelaySeconds = 0;
     private int mineReplaceBlock = 0;
     private int lightningDelaySeconds = 0;
     private int lightningReplaceBlock = 0;
+    private int mixingGroup = 0;
     private String title;
     private int price = 0;
     private List<Integer> limits = new ArrayList<Integer>();
     private List<Integer> preventUse = new ArrayList<Integer>();
-    private List<FieldFlag> flags = new ArrayList<FieldFlag>();
+    private Set<FieldFlag> flags = new HashSet<FieldFlag>();
+    private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
 
     /**
      * @param map
@@ -37,7 +37,7 @@ public class FieldSettings
             return;
         }
 
-        if (map.containsKey("block") && Helper.isInteger(map.get("block")) && ((Integer)map.get("block") > 0))
+        if (map.containsKey("block") && Helper.isInteger(map.get("block")) && ((Integer) map.get("block") > 0))
         {
             typeId = (Integer) map.get("block");
         }
@@ -66,13 +66,23 @@ public class FieldSettings
         {
             if (Helper.isInteger(map.get("custom-height")))
             {
-                height = (Integer) map.get("custom-height");
-            }
+                customHeight = (Integer) map.get("custom-height");
 
-            if (height == 0)
-            {
-                height = (radius * 2) + 1;
+                if (customHeight % 2 == 0)
+                {
+                    customHeight++;
+                }
             }
+        }
+
+        if (map.containsKey("mixing-group") && Helper.isInteger(map.get("mixing-group")))
+        {
+            mixingGroup = (Integer) map.get("mixing-group");
+        }
+
+        if (map.containsKey("custom-volume") && Helper.isInteger(map.get("custom-volume")))
+        {
+            customVolume = (Integer) map.get("custom-volume");
         }
 
         if (map.containsKey("launch-height") && Helper.isInteger(map.get("launch-height")))
@@ -384,27 +394,19 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("grief-undo-request") && Helper.isBoolean(map.get("grief-undo-request")))
+        if (map.containsKey("grief-revert") && Helper.isBoolean(map.get("grief-revert")))
         {
-            if ((Boolean) map.get("grief-undo-request"))
+            if ((Boolean) map.get("grief-revert"))
             {
-                flags.add(FieldFlag.GRIEF_UNDO_REQUEST);
+                flags.add(FieldFlag.GRIEF_REVERT);
             }
         }
 
-        if (map.containsKey("grief-undo-interval") && Helper.isBoolean(map.get("grief-undo-interval")))
+        if (map.containsKey("grief-revert-drop") && Helper.isBoolean(map.get("grief-revert-drop")))
         {
-            if ((Boolean) map.get("grief-undo-interval"))
+            if ((Boolean) map.get("grief-revert-drop"))
             {
-                flags.add(FieldFlag.GRIEF_UNDO_INTERVAL);
-            }
-        }
-
-        if (map.containsKey("grief-undo-produce-drop") && Helper.isBoolean(map.get("grief-undo-produce-drop")))
-        {
-            if ((Boolean) map.get("grief-undo-produce-drop"))
-            {
-                flags.add(FieldFlag.GRIEF_UNDO_PRODUCE_DROP);
+                flags.add(FieldFlag.GRIEF_REVERT_DROP);
             }
         }
 
@@ -440,7 +442,88 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("keep-chunks-loaded") && Helper.isBoolean(map.get("keep-chunks-loaded")))
+        {
+            if ((Boolean) map.get("keep-chunks-loaded"))
+            {
+                flags.add(FieldFlag.KEEP_CHUNKS_LOADED);
+            }
+        }
+
         flags.add(FieldFlag.ALL);
+    }
+
+    /**
+     * Add a flag to the settings
+     *
+     * @param flagStr
+     */
+    public boolean insertFlag(String flagStr)
+    {
+        FieldFlag flag = Helper.toFieldFlag(flagStr);
+
+        if (flag != null && !flags.contains(flag))
+        {
+            flags.add(flag);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Enable a flag
+     *
+     * @param flagStr
+     */
+    public void enableFlag(String flagStr)
+    {
+        for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
+        {
+            FieldFlag flag = (FieldFlag) iter.next();
+
+            if (Helper.toFlagStr(flag).equals(flagStr))
+            {
+                iter.remove();
+                flags.add(flag);
+            }
+        }
+    }
+
+    /**
+     * Disabled a flag.
+     *
+     * @param flagStr
+     */
+    public void disableFlag(String flagStr)
+    {
+        for (Iterator iter = flags.iterator(); iter.hasNext(); )
+        {
+            FieldFlag flag = (FieldFlag) iter.next();
+            if (Helper.toFlagStr(flag).equals(flagStr))
+            {
+                iter.remove();
+                disabledFlags.add(flag);
+            }
+        }
+    }
+
+
+    /**
+     * Check if the field has a flag
+     *
+     * @param flag
+     * @return
+     */
+    public boolean hasFlag(String flagStr)
+    {
+        for (FieldFlag flag : flags)
+        {
+            if (Helper.toFlagStr(flag).equals(flagStr))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -460,14 +543,6 @@ public class FieldSettings
     public boolean hasNameableFlag()
     {
         return flags.contains(FieldFlag.WELCOME_MESSAGE) || flags.contains(FieldFlag.FAREWELL_MESSAGE) || flags.contains(FieldFlag.ENTRY_ALERT);
-    }
-
-    /**
-     * @return
-     */
-    public boolean hasGriefUndoFlag()
-    {
-        return flags.contains(FieldFlag.GRIEF_UNDO_INTERVAL) || flags.contains(FieldFlag.GRIEF_UNDO_REQUEST);
     }
 
     /**
@@ -512,14 +587,12 @@ public class FieldSettings
      */
     public int getHeight()
     {
-        if (this.height == 0)
+        if (this.customHeight > 0)
         {
-            return (this.getRadius() * 2) + 1;
+            return this.customHeight;
         }
-        else
-        {
-            return this.height;
-        }
+
+        return (this.getRadius() * 2) + 1;
     }
 
     /**
@@ -626,8 +699,23 @@ public class FieldSettings
         return Collections.unmodifiableList(limits);
     }
 
-    public List<FieldFlag> getFlags()
+    public Set<FieldFlag> getFlags()
     {
-        return Collections.unmodifiableList(flags);
+        return Collections.unmodifiableSet(flags);
+    }
+
+    public List<FieldFlag> getDisabledFlags()
+    {
+        return Collections.unmodifiableList(disabledFlags);
+    }
+
+    public int getCustomVolume()
+    {
+        return customVolume;
+    }
+
+    public int getMixingGroup()
+    {
+        return mixingGroup;
     }
 }

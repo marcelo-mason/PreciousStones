@@ -7,6 +7,7 @@
       </element>
       <element id="module-output" name="PreciousStones" />
       <element id="extracted-dir" path="D:/Download/Plugins/Register.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Download/Plugins/stringtree-json-2.0.9.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

@@ -4,19 +4,19 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CuboidEntry
 {
     private Field field;
-    private Set<BlockData> selected = new HashSet<BlockData>();
-    private int minx = 999999999;
-    private int miny = 999999999;
-    private int minz = 999999999;
-    private int maxx = -999999999;
-    private int maxy = -999999999;
-    private int maxz = -999999999;
+    private List<BlockData> selected = new LinkedList<BlockData>();
+    private int minx;
+    private int miny;
+    private int minz;
+    private int maxx;
+    private int maxy;
+    private int maxz;
 
     public CuboidEntry(Field field)
     {
@@ -36,14 +36,47 @@ public class CuboidEntry
      */
     public void addSelected(Block block)
     {
-        selected.add(new BlockData(block));
-        calculate();
+        if (!selected.contains(block))
+        {
+            selected.add(new BlockData(block));
+            calculate();
+        }
     }
 
+    /**
+     * Removes the selected block from the lsit
+     *
+     * @param block
+     */
     public void removeSelected(Block block)
     {
         selected.remove(new BlockData(block));
         calculate();
+    }
+
+    /**
+     * Reverts the last selected block
+     */
+    public void revertLastSelected()
+    {
+        if (selected.size() > 1)
+        {
+            selected.remove(selected.size() - 1);
+        }
+        calculate();
+    }
+
+    /**
+     * Gets the latest reverted block
+     */
+    public BlockData getLastSelected()
+    {
+        if (selected.size() > 1)
+        {
+            return selected.get(selected.size() - 1);
+        }
+
+        return null;
     }
 
     /**
@@ -69,12 +102,12 @@ public class CuboidEntry
 
     private void calculate()
     {
-        minx = 999999999;
-        miny = 999999999;
-        minz = 999999999;
-        maxx = -999999999;
-        maxy = -999999999;
-        maxz = -999999999;
+        minx = field.getX();
+        miny = field.getY();
+        minz = field.getZ();
+        maxx = field.getX();
+        maxy = field.getY();
+        maxz = field.getZ();
 
         for (BlockData bd : selected)
         {
@@ -187,10 +220,14 @@ public class CuboidEntry
      */
     public int getMaxVolume()
     {
-        int maxWidth = (field.getSettings().getRadius() * 2) + 1;
-        int maxHeight = field.getSettings().getHeight() > 0 ? field.getSettings().getHeight() : maxWidth;
+        int volume = field.getVolume();
 
-        return (maxHeight * maxWidth * maxWidth) * (field.getChildren().size() + 1);
+        for (Field child : field.getChildren())
+        {
+            volume += child.getVolume();
+        }
+
+        return volume;
     }
 
     /**

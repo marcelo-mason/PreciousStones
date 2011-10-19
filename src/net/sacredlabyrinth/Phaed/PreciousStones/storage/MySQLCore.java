@@ -235,8 +235,8 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            ResultSet result = getConnection().createStatement().executeQuery("SELECT " + column + " FROM " + table);
-            return result != null;
+            getConnection().createStatement().executeQuery("SELECT " + column + " FROM " + table);
+            return true;
         }
         catch (SQLException ex)
         {

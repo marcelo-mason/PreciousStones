@@ -47,12 +47,7 @@ public class PSEntityListener extends EntityListener
             event.setCancelled(true);
         }
 
-        if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.GRIEF_UNDO_INTERVAL))
-        {
-            event.setCancelled(true);
-        }
-
-        if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.GRIEF_UNDO_REQUEST))
+        if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.GRIEF_REVERT))
         {
             event.setCancelled(true);
         }
@@ -69,12 +64,7 @@ public class PSEntityListener extends EntityListener
             event.setCancelled(true);
         }
 
-        if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.GRIEF_UNDO_INTERVAL))
-        {
-            event.setCancelled(true);
-        }
-
-        if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.GRIEF_UNDO_REQUEST))
+        if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.GRIEF_REVERT))
         {
             event.setCancelled(true);
         }
@@ -266,12 +256,7 @@ public class PSEntityListener extends EntityListener
 
             // record the blocks that are in undo fields
 
-            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_UNDO_REQUEST);
-
-            if (field == null)
-            {
-                field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_UNDO_INTERVAL);
-            }
+            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
             if (field != null)
             {
@@ -485,7 +470,7 @@ public class PSEntityListener extends EntityListener
 
                     if (field != null)
                     {
-                        if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
+                        if (plugin.getPermissionsManager().has(attacker, "preciousstones.bypass.pvp"))
                         {
                             plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
                         }
@@ -502,7 +487,7 @@ public class PSEntityListener extends EntityListener
 
                         if (field != null)
                         {
-                            if (plugin.getPermissionsManager().hasPermission(attacker, "preciousstones.bypass.pvp"))
+                            if (plugin.getPermissionsManager().has(attacker, "preciousstones.bypass.pvp"))
                             {
                                 plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
                             }
@@ -569,7 +554,7 @@ public class PSEntityListener extends EntityListener
 
                 if (field != null)
                 {
-                    if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.destroy"))
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                     {
                         return;
                     }
@@ -600,7 +585,7 @@ public class PSEntityListener extends EntityListener
 
         if (field != null)
         {
-            if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.place"))
+            if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
             {
                 plugin.getCommunicationManager().notifyPaintingBypassPlace(player, painting.getLocation(), field);
             }

@@ -10,13 +10,13 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- *
  * @author phaed
  */
 public class Helper
 {
     /**
      * Helper function to check for integer
+     *
      * @param o
      * @return
      */
@@ -27,6 +27,7 @@ public class Helper
 
     /**
      * Helper function to check for byte
+     *
      * @param input
      * @return
      */
@@ -45,6 +46,7 @@ public class Helper
 
     /**
      * Helper function to check for short
+     *
      * @param input
      * @return
      */
@@ -63,6 +65,7 @@ public class Helper
 
     /**
      * Helper function to check for integer
+     *
      * @param input
      * @return
      */
@@ -81,6 +84,7 @@ public class Helper
 
     /**
      * Helper function to check for integer list
+     *
      * @param obj
      * @return
      */
@@ -88,8 +92,7 @@ public class Helper
     {
         try
         {
-            @SuppressWarnings("unchecked")
-            List<Integer> list = (List<Integer>) obj;
+            @SuppressWarnings("unchecked") List<Integer> list = (List<Integer>) obj;
             return true;
         }
         catch (Exception ex)
@@ -100,6 +103,7 @@ public class Helper
 
     /**
      * Helper function to check for string list
+     *
      * @param obj
      * @return
      */
@@ -107,8 +111,7 @@ public class Helper
     {
         try
         {
-            @SuppressWarnings("unchecked")
-            List<String> list = (List<String>) obj;
+            @SuppressWarnings("unchecked") List<String> list = (List<String>) obj;
             return true;
         }
         catch (Exception ex)
@@ -119,6 +122,7 @@ public class Helper
 
     /**
      * Helper function to check for float
+     *
      * @param input
      * @return
      */
@@ -137,6 +141,7 @@ public class Helper
 
     /**
      * Helper function to check for string
+     *
      * @param o
      * @return
      */
@@ -147,6 +152,7 @@ public class Helper
 
     /**
      * Helper function to check for boolean
+     *
      * @param o
      * @return
      */
@@ -157,6 +163,7 @@ public class Helper
 
     /**
      * Remove a character from a string
+     *
      * @param s
      * @param c
      * @return
@@ -178,6 +185,7 @@ public class Helper
 
     /**
      * Remove first character from a string
+     *
      * @param s
      * @param c
      * @return
@@ -200,6 +208,7 @@ public class Helper
 
     /**
      * Capitalize first word of sentence
+     *
      * @param content
      * @return
      */
@@ -215,7 +224,6 @@ public class Helper
     }
 
     /**
-     *
      * @param playername
      * @return
      */
@@ -233,6 +241,7 @@ public class Helper
 
     /**
      * Convert block type names to friendly format
+     *
      * @param type
      * @return
      */
@@ -254,6 +263,7 @@ public class Helper
 
     /**
      * Return plural word if count is bigger than one
+     *
      * @param count
      * @param word
      * @param ending
@@ -266,6 +276,7 @@ public class Helper
 
     /**
      * Return plural word if count is bigger than one
+     *
      * @param word
      * @return
      */
@@ -283,6 +294,7 @@ public class Helper
 
     /**
      * Removes color codes from strings
+     *
      * @param msg
      * @return
      */
@@ -295,6 +307,7 @@ public class Helper
 
     /**
      * Removes trailing separators
+     *
      * @param msg
      * @param sep
      * @return
@@ -325,6 +338,7 @@ public class Helper
 
     /**
      * Hex value to ChatColor
+     *
      * @param hexValue
      * @return
      */
@@ -335,6 +349,7 @@ public class Helper
 
     /**
      * Converts string array to ArrayList<String>, remove empty strings
+     *
      * @param values
      * @return
      */
@@ -348,6 +363,7 @@ public class Helper
 
     /**
      * Converts string array to HashSet<String>, remove empty strings
+     *
      * @param values
      * @return
      */
@@ -361,6 +377,7 @@ public class Helper
 
     /**
      * Converts a player array to ArrayList<Player>
+     *
      * @param values
      * @return
      */
@@ -373,6 +390,7 @@ public class Helper
 
     /**
      * Converts List<String> to string array
+     *
      * @param list
      * @return
      */
@@ -384,6 +402,7 @@ public class Helper
 
     /**
      * Removes first item from a string array
+     *
      * @param args
      * @return
      */
@@ -400,6 +419,7 @@ public class Helper
 
     /**
      * Converts a string array to a space separated string
+     *
      * @param args
      * @return
      */
@@ -417,6 +437,7 @@ public class Helper
 
     /**
      * Converts a string array to a string with custom separators
+     *
      * @param args
      * @param sep
      * @return
@@ -435,6 +456,7 @@ public class Helper
 
     /**
      * Converts a string array to a string with custom separators
+     *
      * @param args
      * @param sep
      * @return
@@ -453,6 +475,7 @@ public class Helper
 
     /**
      * Returns a prettier coordinate, does not include world
+     *
      * @param loc
      * @return
      */
@@ -463,6 +486,7 @@ public class Helper
 
     /**
      * Escapes single quotes
+     *
      * @param str
      * @return
      */
@@ -477,6 +501,7 @@ public class Helper
 
     /**
      * Whether the two locations refer to the same block
+     *
      * @param loc
      * @param loc2
      * @return
@@ -492,6 +517,7 @@ public class Helper
 
     /**
      * Whether the two locations refer to the same location, ignoring pitch and yaw
+     *
      * @param loc
      * @param loc2
      * @return
@@ -503,5 +529,34 @@ public class Helper
             return true;
         }
         return false;
+    }
+
+    /**
+     * Converts a FieldFlag to a string
+     *
+     * @param flag
+     * @return
+     */
+    public static String toFlagStr(FieldFlag flag)
+    {
+        return flag.toString().toLowerCase().replace("_", "-");
+    }
+
+    /**
+     * Converts a string back to a field flag
+     *
+     * @param flagStr
+     * @return
+     */
+    public static FieldFlag toFieldFlag(String flagStr)
+    {
+        try
+        {
+            return FieldFlag.valueOf(flagStr.toUpperCase().replace("-", "_"));
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
     }
 }

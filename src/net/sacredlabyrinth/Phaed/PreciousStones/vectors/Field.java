@@ -5,6 +5,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
+import org.stringtree.json.JSONReader;
+import org.stringtree.json.JSONValidatingReader;
+import org.stringtree.json.JSONWriter;
 
 import java.util.*;
 
@@ -32,11 +35,15 @@ public class Field extends AbstractVec implements Comparable<Field>
     private Field parent;
     private List<Field> children = new LinkedList<Field>();
     private List<String> allowed = new ArrayList<String>();
-    private List<DirtyFieldReason> dirty = new LinkedList<DirtyFieldReason>();
+    private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
     private List<GriefBlock> grief = new LinkedList<GriefBlock>();
     private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
+    private List<String> disabledFlags = new LinkedList<String>();
+    private List<String> insertedFlags = new LinkedList<String>();
     private long lastUsed;
     private boolean progress;
+    private boolean open;
+    private int revertSecs;
     //private boolean progress;
 
     /**
@@ -170,6 +177,22 @@ public class Field extends AbstractVec implements Comparable<Field>
         return settings.hasFlag(flag);
     }
 
+    /**
+     * Check if the field has certain certain properties
+     *
+     * @param flag
+     * @return
+     */
+    public boolean hasFlag(String flagStr)
+    {
+        if (settings == null)
+        {
+            return false;
+        }
+
+        return settings.hasFlag(flagStr);
+    }
+
     private void calculateDimensions()
     {
         this.minx = getX() - radius;
@@ -181,8 +204,8 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         if (height > 0)
         {
-            this.miny = getY() - (int) Math.floor(((double) height) / 2);
-            this.maxy = getY() + (int) Math.ceil(((double) height) / 2);
+            this.miny = getY() - ((height - 1) / 2);
+            this.maxy = getY() + ((height - 1) / 2);
         }
     }
 
@@ -338,28 +361,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * @return
-     */
-    public String getAllowedList()
-    {
-        String out = "";
-
-        if (allowed.size() > 0)
-        {
-            for (int i = 0; i < allowed.size(); i++)
-            {
-                out += ", " + allowed.get(i);
-            }
-        }
-        else
-        {
-            return null;
-        }
-
-        return out.substring(2);
-    }
-
-    /**
      * Check whether a target (name, g:group, c:clan) is allowed on this field
      *
      * @param target
@@ -446,27 +447,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     public String toString()
     {
         return super.toString() + " [" + getOwner() + "]";
-    }
-
-    /**
-     * @param height the height to set
-     */
-    public void setHeight(int height)
-    {
-        PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
-
-        this.height = height;
-        dirty.add(DirtyFieldReason.HEIGHT);
-
-        PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
-    }
-
-    /**
-     * @param typeId the typeId to set
-     */
-    public void setTypeId(int typeId)
-    {
-        this.typeId = typeId;
     }
 
     /**
@@ -721,15 +701,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * @param snitches the snitches to set
-     */
-    public void setSnitches(List<SnitchEntry> snitches)
-    {
-        this.snitches.clear();
-        this.snitches.addAll(snitches);
-    }
-
-    /**
      *
      */
     public void updateLastUsed()
@@ -917,5 +888,190 @@ public class Field extends AbstractVec implements Comparable<Field>
     public boolean isChild()
     {
         return parent != null;
+    }
+
+    public int getVolume()
+    {
+        if (settings.getCustomVolume() > 0)
+        {
+            return settings.getCustomVolume();
+        }
+
+        int maxWidth = (settings.getRadius() * 2) + 1;
+        int maxHeight = settings.getHeight();
+
+        return (maxHeight * maxWidth * maxWidth);
+    }
+
+    public boolean isOpen()
+    {
+        return open;
+    }
+
+    public void setOpen(boolean open)
+    {
+        this.open = open;
+    }
+
+    /**
+     * Return the list of flags and their data as a json string
+     *
+     * @return the flags
+     */
+    public String getFlags()
+    {
+        HashMap<String, Object> flags = new HashMap<String, Object>();
+
+        // writing the list of flags to json
+
+        flags.put("disabledFlags", disabledFlags);
+        flags.put("insertedFlags", insertedFlags);
+        flags.put("revertSecs", revertSecs);
+
+        return (new JSONWriter()).write(flags);
+    }
+
+    /**
+     * Read the list of flags in from a json string
+     *
+     * @param flagString the flags to set
+     */
+    public void setFlags(String flagString)
+    {
+        if (flagString != null && !flagString.isEmpty())
+        {
+            JSONReader reader = new JSONValidatingReader();
+            HashMap<String, Object> flags = (HashMap<String, Object>) reader.read(flagString);
+
+            if (flags != null)
+            {
+                for (String flag : flags.keySet())
+                {
+                    // reading the list of flags from json
+
+                    if (flag.equals("disabledFlags"))
+                    {
+                        disabledFlags = (List<String>) flags.get(flag);
+
+                        for (String flagStr : disabledFlags)
+                        {
+                            disableFieldFlag(flagStr);
+                        }
+                    }
+
+                    if (flag.equals("insertedFlags"))
+                    {
+                        insertedFlags = (List<String>) flags.get(flag);
+
+                        for (String flagStr : insertedFlags)
+                        {
+                            settings.insertFlag(flagStr);
+                        }
+                    }
+
+                    if (flag.equals("revertSecs"))
+                    {
+                        revertSecs = ((Long) flags.get(flag)).intValue();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Toggles a field flag.  returns its state.
+     *
+     * @param flagStr
+     */
+    public boolean toggleFieldFlag(String flagStr)
+    {
+        boolean hasFlag = settings.hasFlag(flagStr);
+
+        dirty.add(DirtyFieldReason.FLAGS);
+
+        if (hasFlag)
+        {
+            settings.disableFlag(flagStr);
+
+            if (!disabledFlags.contains(flagStr))
+            {
+                disabledFlags.add(flagStr);
+            }
+            return false;
+        }
+        else
+        {
+            settings.enableFlag(flagStr);
+            disabledFlags.remove(flagStr);
+            return true;
+        }
+    }
+
+    /**
+     * Disables a field flag.
+     *
+     * @param flagStr
+     */
+    public void disableFieldFlag(String flagStr)
+    {
+        settings.disableFlag(flagStr);
+
+        if (!disabledFlags.contains(flagStr))
+        {
+            disabledFlags.add(flagStr);
+        }
+        dirty.add(DirtyFieldReason.FLAGS);
+
+    }
+
+    /**
+     * Whether the flag string matches a disabled flag
+     *
+     * @param flagStr
+     * @return
+     */
+    public boolean hasDisabledFlag(String flagStr)
+    {
+        return disabledFlags.contains(flagStr);
+    }
+
+
+    /**
+     * Insert a field flag into the field
+     *
+     * @param flagStr
+     */
+    public boolean insertFieldFlag(String flagStr)
+    {
+        if (settings.insertFlag(flagStr))
+        {
+            dirty.add(DirtyFieldReason.FLAGS);
+            insertedFlags.add(flagStr);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Imports a collection of field flags to this field
+     * @param flags
+     */
+    public void importFlags(Set<FieldFlag> flags)
+    {
+        for (FieldFlag flag : flags)
+        {
+            insertFieldFlag(Helper.toFlagStr(flag));
+        }
+    }
+
+    public int getRevertSecs()
+    {
+        return revertSecs;
+    }
+
+    public void setRevertSecs(int revertSecs)
+    {
+        this.revertSecs = revertSecs;
     }
 }

@@ -1,14 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.TreeMap;
 import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
-
-import org.bukkit.entity.Player;
-
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.TreeMap;
 
 /**
  *
@@ -44,11 +43,11 @@ public class PlayerManager
      */
     public PlayerData getPlayerData(String playerName)
     {
-        PlayerData data = getPlayers().get(playerName.toLowerCase());
+        PlayerData data = players.get(playerName.toLowerCase());
 
         if (data == null)
         {
-            data = new PlayerData(plugin.getSettingsManager().isOffByDefault());
+            data = new PlayerData();
             data.setName(playerName);
             players.put(playerName.toLowerCase(), data);
         }
@@ -62,7 +61,7 @@ public class PlayerManager
      */
     public void playerLogin(Player player)
     {
-        PlayerData data = getPlayerData(player.getName().toLowerCase());
+        PlayerData data = getPlayerData(player.getName());
         data.setOnline(true);
     }
 
@@ -72,7 +71,7 @@ public class PlayerManager
      */
     public void playerLogoff(Player player)
     {
-        PlayerData data = getPlayerData(player.getName().toLowerCase());
+        PlayerData data = getPlayerData(player.getName());
         data.setOnline(false);
         data.setOutsideLocation(null);
     }
@@ -83,7 +82,7 @@ public class PlayerManager
      */
     public void updateOutsideLocation(Player player)
     {
-        PlayerData data = getPlayerData(player.getName().toLowerCase());
+        PlayerData data = getPlayerData(player.getName());
         data.setOutsideLocation(player.getLocation());
     }
 
@@ -94,7 +93,7 @@ public class PlayerManager
      */
     public Location getOutsideLocation(Player player)
     {
-        PlayerData data = getPlayerData(player.getName().toLowerCase());
+        PlayerData data = getPlayerData(player.getName());
         Location loc = data.getOutsideLocation();
 
         if (loc != null)

@@ -15,5 +15,6 @@ public enum DirtyFieldReason
     GRIEF_BLOCKS,
     DELETE,
     LASTUSED,
-    DIMENSIONS
+    DIMENSIONS,
+    FLAGS
 }

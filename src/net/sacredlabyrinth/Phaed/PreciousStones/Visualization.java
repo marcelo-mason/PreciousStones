@@ -43,6 +43,18 @@ public class Visualization
     }
 
     /**
+     * Remove the latest added block
+     * @return
+     */
+    public void undoBlock()
+    {
+        if (blocks.size() > 1)
+        {
+            blocks.remove(blocks.size() - 1);
+        }
+    }
+
+    /**
      * @return the locations
      */
     public List<BlockData> getBlocks()

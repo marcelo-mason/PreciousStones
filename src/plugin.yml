@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 6.4.2
+version: 7.0.1
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, iConomy, BOSEconomy, Currency, MultiCurrency]
 commands:
@@ -26,10 +26,10 @@ permissions:
     description: Can use /ps setname
   preciousstones.benefit.setradius:
     description: Can use /ps setradius
-  preciousstones.benefit.setheight:
-    description: Can use /ps setheight
   preciousstones.benefit.setvelocity:
     description: Can use /ps setvelocity
+  preciousstones.benefit.setinterval:
+    description: Can use /ps setinterval
   preciousstones.benefit.mark:
     description: Can use /ps mark
   preciousstones.benefit.visualize:
@@ -50,6 +50,10 @@ permissions:
     description: Can get feed by feed block
   preciousstones.benefit.repair:
     description: Can get rapired by feed block
+  preciousstones.benefit.toggle:
+    description: Can use /ps toggle
+  preciousstones.benefit.density:
+    description: Can set the visualization density
   preciousstones.whitelist.allow:
     description: Can use /ps allow
   preciousstones.whitelist.allowed:
@@ -88,6 +92,8 @@ permissions:
     description: Bypasses limits
   preciousstones.bypass.cuboid:
     description: Bypasses cuboid size limits
+  preciousstones.bypass.interval:
+    description: Bypasses interval configured minimum
   preciousstones.alert.notify.place:
     description: Gets alert for block placement notifys
   preciousstones.alert.notify.destroy:
@@ -148,6 +154,8 @@ permissions:
     description: Tells you locations of conflicting pstones when placing new field
   preciousstones.admin.retag:
     description: Can use /ps retag
+  preciousstones.admin.insert:
+    description: Can use /ps insert
   preciousstones.admin.isadmin:
     description: Can used internally to detect admins
   preciousstones.admin.counts:
@@ -202,7 +210,6 @@ permissions:
       preciousstones.benefit.bounce: true
       preciousstones.benefit.setname: true
       preciousstones.benefit.setradius: true
-      preciousstones.benefit.setheight: true
       preciousstones.benefit.setvelocity: true
       preciousstones.benefit.mark: true
       preciousstones.benefit.visualize: true
@@ -214,6 +221,9 @@ permissions:
       preciousstones.benefit.snitch: true
       preciousstones.benefit.repair: true
       preciousstones.benefit.feed: true
+      preciousstones.benefit.density: true
+      preciousstones.benefit.toggle: true
+      preciousstones.benefit.setinterval: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: true
@@ -240,6 +250,7 @@ permissions:
       preciousstones.bypass.mine: true
       preciousstones.bypass.lightning: true
       preciousstones.bypass.cuboid: true
+      preciousstones.bypass.interval: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false
@@ -281,6 +292,7 @@ permissions:
       preciousstones.admin.isadmin: true
       preciousstones.admin.counts: true
       preciousstones.admin.locations: true
+      preciousstones.admin.insert: true
   preciousstones.override.*:
     description: These players will receive no warnings or notifications
     default: false

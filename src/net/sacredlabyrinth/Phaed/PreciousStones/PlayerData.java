@@ -1,12 +1,14 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import org.bukkit.Location;
+import org.stringtree.json.JSONReader;
+import org.stringtree.json.JSONValidatingReader;
+import org.stringtree.json.JSONWriter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author phaed
  */
 public class PlayerData
@@ -14,20 +16,23 @@ public class PlayerData
     private String name;
     private boolean disabled;
     private boolean online;
+    private int density;
     private Location outsideLocation;
     private Map<Integer, Integer> fieldCount = new HashMap<Integer, Integer>();
 
     /**
-     *
      * @param disabled
      */
-    public PlayerData(boolean disabled)
+    public PlayerData()
     {
-        this.disabled = disabled;
+
+        disabled = PreciousStones.getInstance().getSettingsManager().isOffByDefault();
+        density = PreciousStones.getInstance().getSettingsManager().getVisualizeDensity();
     }
 
     /**
      * Increment the field count of a specific field
+     *
      * @param typeid
      */
     public void incrementFieldCount(int typeid)
@@ -44,6 +49,7 @@ public class PlayerData
 
     /**
      * Decrement the field count of a specific field
+     *
      * @param typeid
      */
     public void decrementFieldCount(int typeid)
@@ -67,6 +73,7 @@ public class PlayerData
 
     /**
      * Get the number of fields the player has placed
+     *
      * @param typeid
      * @return
      */
@@ -81,7 +88,6 @@ public class PlayerData
     }
 
     /**
-     *
      * @return
      */
     public boolean isDisabled()
@@ -90,7 +96,6 @@ public class PlayerData
     }
 
     /**
-     *
      * @param disabled
      */
     public void setDisabled(boolean disabled)
@@ -144,5 +149,64 @@ public class PlayerData
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    /**
+     * Return the list of flags and their data as a json string
+     *
+     * @return the flags
+     */
+    public String getFlags()
+    {
+        HashMap<String, Object> flags = new HashMap<String, Object>();
+
+        // writing the list of flags to json
+
+        flags.put("disabled", disabled);
+        flags.put("density", density);
+
+        return (new JSONWriter()).write(flags);
+    }
+
+    /**
+     * Read the list of flags in from a json string
+     *
+     * @param flagString the flags to set
+     */
+    public void setFlags(String flagString)
+    {
+        if (flagString != null && !flagString.isEmpty())
+        {
+            JSONReader reader = new JSONValidatingReader();
+            HashMap<String, Object> flags = (HashMap<String, Object>) reader.read(flagString);
+
+            if (flags != null)
+            {
+                for (String flag : flags.keySet())
+                {
+                    // reading the list of flags from json
+
+                    if (flag.equals("disabled"))
+                    {
+                        disabled = (Boolean) flags.get(flag);
+                    }
+
+                    if (flag.equals("subdivisions"))
+                    {
+                        density = ((Long) flags.get(flag)).intValue();
+                    }
+                }
+            }
+        }
+    }
+
+    public int getDensity()
+    {
+        return Math.max(density, 1);
+    }
+
+    public void setDensity(int density)
+    {
+        this.density = density;
     }
 }

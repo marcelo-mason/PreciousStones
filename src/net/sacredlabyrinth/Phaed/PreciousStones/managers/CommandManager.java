@@ -76,25 +76,25 @@ public final class CommandManager implements CommandExecutor
                         plugin.getForceFieldManager().drawSourceFields();
                         return true;
                     }
-                    else if (cmd.equals("debug") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.debug"))
+                    else if (cmd.equals("debug") && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
                     {
                         plugin.getSettingsManager().setDebug(!plugin.getSettingsManager().isDebug());
                         ChatBlock.sendMessage(sender, ChatColor.AQUA + "Debug output " + (plugin.getSettingsManager().isDebug() ? "enabled" : "disabled"));
                         return true;
                     }
-                    else if (cmd.equals("debugdb") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.debug"))
+                    else if (cmd.equals("debugdb") && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
                     {
                         plugin.getSettingsManager().setDebugdb(!plugin.getSettingsManager().isDebugdb());
                         ChatBlock.sendMessage(sender, ChatColor.AQUA + "Debug db output " + (plugin.getSettingsManager().isDebugdb() ? "enabled" : "disabled"));
                         return true;
                     }
-                    else if (cmd.equals("debugsql") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.debug"))
+                    else if (cmd.equals("debugsql") && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
                     {
                         plugin.getSettingsManager().setDebugsql(!plugin.getSettingsManager().isDebugsql());
                         ChatBlock.sendMessage(sender, ChatColor.AQUA + "Debug sql output " + (plugin.getSettingsManager().isDebugsql() ? "enabled" : "disabled"));
                         return true;
                     }
-                    else if (cmd.equals("on") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.onoff") && hasplayer)
+                    else if (cmd.equals("on") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
                         if (isDisabled)
                         {
@@ -107,7 +107,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("off") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.onoff") && hasplayer)
+                    else if (cmd.equals("off") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
                         if (!isDisabled)
                         {
@@ -120,7 +120,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("allow") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allow") && hasplayer)
+                    else if (cmd.equals("allow") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allow") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -158,7 +158,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("remove") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.remove") && hasplayer)
+                    else if (cmd.equals("remove") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.remove") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -196,7 +196,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("allowall") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowall") && hasplayer)
+                    else if (cmd.equals("allowall") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -217,7 +217,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("removeall") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.removeall") && hasplayer)
+                    else if (cmd.equals("removeall") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.removeall") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -238,7 +238,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("allowed") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.whitelist.allowed") && hasplayer)
+                    else if (cmd.equals("allowed") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowed") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -251,7 +251,7 @@ public final class CommandManager implements CommandExecutor
                                 overlapped = args[0].equalsIgnoreCase("-o");
                             }
 
-                            HashSet<String> allowed = plugin.getForceFieldManager().getAllowed(player, field, overlapped);
+                            List<String> allowed = plugin.getForceFieldManager().getAllowed(player, field, overlapped);
 
                             if (allowed.size() > 0)
                             {
@@ -276,7 +276,7 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals("who") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.who") && hasplayer)
+                    else if (cmd.equals("who") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.who") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -307,7 +307,7 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals("setname") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setname") && hasplayer)
+                    else if (cmd.equals("setname") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setname") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -339,7 +339,7 @@ public final class CommandManager implements CommandExecutor
                             }
                         }
                     }
-                    else if (cmd.equals("setradius") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setradius") && hasplayer)
+                    else if (cmd.equals("setradius") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setradius") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))
                         {
@@ -378,47 +378,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("setheight") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setheight") && hasplayer)
-                    {
-                        if (args.length == 1 && Helper.isInteger(args[0]))
-                        {
-                            int height = Integer.parseInt(args[0]);
-
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
-
-                            if (field != null)
-                            {
-                                FieldSettings fs = field.getSettings();
-
-                                if (!fs.hasFlag(FieldFlag.CUBOID))
-                                {
-                                    int maxHeight = (((fs.getRadius() * 2) + 1) + fs.getHeight());
-
-                                    if (height >= 0 && height <= maxHeight)
-                                    {
-                                        field.setHeight(height);
-                                        plugin.getStorageManager().offerField(field);
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Height set to " + height);
-                                    }
-                                    else
-                                    {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "Height must be less than or equal to " + maxHeight);
-                                    }
-                                }
-                                else
-                                {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Cannot change radius of a cuboid");
-                                }
-                                return true;
-                            }
-                            else
-                            {
-                                plugin.getCommunicationManager().showNotFound(player);
-                            }
-                            return true;
-                        }
-                    }
-                    else if (cmd.equals("setvelocity") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.setvelocity") && hasplayer)
+                    else if (cmd.equals("setvelocity") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isFloat(args[0]))
                         {
@@ -455,13 +415,80 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if ((cmd.equals("visualize") || cmd.equals("visualise")) && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize") && hasplayer)
+                    else if (cmd.equals("density") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.density") && hasplayer)
+                    {
+                        if (args.length == 1 && Helper.isInteger(args[0]))
+                        {
+                            int density = Integer.parseInt(args[0]);
+
+                            if (density == 0)
+                            {
+                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Density must be larger than zero");
+                                return true;
+                            }
+
+                            PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
+                            data.setDensity(density);
+                            plugin.getStorageManager().offerPlayer(player.getName(), true);
+
+                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualization density changed to " + density);
+                            return true;
+                        }
+                        else if (args.length == 0)
+                        {
+                            PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
+                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Your visualization density is set to " + data.getDensity());
+                        }
+                    }
+                    else if (cmd.equals("toggle") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle") && hasplayer)
+                    {
+                        if (args.length == 1)
+                        {
+                            String flagStr = args[0];
+
+                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+
+                            if (field != null)
+                            {
+                                if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
+                                {
+                                    if (flagStr.equals("All"))
+                                    {
+                                        return true;
+                                    }
+
+                                    boolean enabled = field.toggleFieldFlag(flagStr);
+
+                                    if (enabled)
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "The " + flagStr + " flag has been enabled.");
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "The " + flagStr + " flag has been disabled.");
+                                    }
+
+                                    plugin.getStorageManager().offerField(field);
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "The field does not contain this flag");
+                                }
+                            }
+                            else
+                            {
+                                plugin.getCommunicationManager().showNotFound(player);
+                            }
+                            return true;
+                        }
+                    }
+                    else if ((cmd.equals("visualize") || cmd.equals("visualise")) && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize") && hasplayer)
                     {
                         if (!plugin.getCuboidManager().hasOpenCuboid(player))
                         {
                             if (!plugin.getVisualizationManager().pendingVisualization(player))
                             {
-                                if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.visualize"))
+                                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
                                 {
                                     if (args.length == 1 && Helper.isInteger(args[0]))
                                     {
@@ -469,7 +496,7 @@ public final class CommandManager implements CommandExecutor
 
                                         Set<Field> fieldsInArea = null;
 
-                                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.visualize"))
+                                        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
                                         {
                                             fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), radius / 16, FieldFlag.ALL);
                                         }
@@ -537,13 +564,13 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("mark") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.mark") && hasplayer)
+                    else if (cmd.equals("mark") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.mark") && hasplayer)
                     {
                         if (!plugin.getCuboidManager().hasOpenCuboid(player))
                         {
                             if (!plugin.getVisualizationManager().pendingVisualization(player))
                             {
-                                if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.mark"))
+                                if (plugin.getPermissionsManager().has(player, "preciousstones.admin.mark"))
                                 {
                                     Set<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getServer().getViewDistance(), FieldFlag.ALL);
 
@@ -606,11 +633,73 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("snitch") && !isDisabled && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.snitch") && hasplayer)
+                    else if (cmd.equals("insert") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasplayer)
+                    {
+                        if (args.length == 1)
+                        {
+                            String flagStr = args[0];
+
+                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+
+                            if (field != null)
+                            {
+                                if (!field.hasFlag(flagStr) && !field.hasDisabledFlag(flagStr))
+                                {
+                                    if (field.insertFieldFlag(flagStr))
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "The field flag inserted");
+                                        plugin.getStorageManager().offerField(field);
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "The field flag entered doesn not exist");
+                                    }
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "The field already contains this flag");
+                                }
+                            }
+                            else
+                            {
+                                plugin.getCommunicationManager().showNotFound(player);
+                            }
+                            return true;
+                        }
+                    }
+                    else if (cmd.equals("setinterval") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setinterval") && hasplayer)
+                    {
+                        if (args.length == 1 && Helper.isInteger(args[0]))
+                        {
+                            int interval = Integer.parseInt(args[0]);
+
+                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.GRIEF_REVERT);
+
+                            if (field != null)
+                            {
+                                if (interval >= plugin.getSettingsManager().getGriefRevertMinInterval() || plugin.getPermissionsManager().has(player, "preciousstones.bypass.interval"))
+                                {
+                                    field.setRevertSecs(interval);
+                                    plugin.getGriefUndoManager().register(field);
+                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "The grief-revert interval has been set to " + interval + " seconds");
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "The minimum interval is " + plugin.getSettingsManager().getGriefRevertMinInterval() + " seconds");
+                                }
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a grief-revert block");
+                            }
+                            return true;
+                        }
+                    }
+                    else if (cmd.equals("snitch") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasplayer)
                     {
                         if (args.length == 0)
                         {
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.SNITCH);
 
                             if (field != null)
                             {
@@ -627,7 +716,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (args[0].equals("clear"))
                             {
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.SNITCH);
 
                                 if (field != null)
                                 {
@@ -650,7 +739,7 @@ public final class CommandManager implements CommandExecutor
                             }
                         }
                     }
-                    else if (cmd.equals("more") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.snitch") && hasplayer)
+                    else if (cmd.equals("more") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasplayer)
                     {
                         ChatBlock cb = plugin.getCommunicationManager().getChatBlock(player);
 
@@ -675,7 +764,7 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals("counts"))
                     {
-                        if (args.length == 0 && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.counts") && hasplayer)
+                        if (args.length == 0 && plugin.getPermissionsManager().has(player, "preciousstones.benefit.counts") && hasplayer)
                         {
                             if (!plugin.getCommunicationManager().showFieldCounts(player, player.getName()))
                             {
@@ -684,7 +773,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
 
-                        if (args.length == 1 && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.counts"))
+                        if (args.length == 1 && plugin.getPermissionsManager().has(player, "preciousstones.admin.counts"))
                         {
                             if (Helper.isInteger(args[0]))
                             {
@@ -710,13 +799,13 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals("locations"))
                     {
-                        if (args.length == 0 && plugin.getPermissionsManager().hasPermission(player, "preciousstones.benefit.locations") && hasplayer)
+                        if (args.length == 0 && plugin.getPermissionsManager().has(player, "preciousstones.benefit.locations") && hasplayer)
                         {
                             plugin.getCommunicationManager().showFieldLocations(sender, -1, sender.getName());
                             return true;
                         }
 
-                        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.locations"))
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.locations"))
                         {
                             if (args.length == 1 && Helper.isString(args[0]))
                             {
@@ -734,7 +823,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return false;
                     }
-                    else if (cmd.equals("info") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.info") && hasplayer)
+                    else if (cmd.equals("info") && plugin.getPermissionsManager().has(player, "preciousstones.admin.info") && hasplayer)
                     {
                         Field pointing = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
                         List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
@@ -744,7 +833,14 @@ public final class CommandManager implements CommandExecutor
                             fields.add(pointing);
                         }
 
-                        plugin.getCommunicationManager().showFieldDetails(player, fields);
+                        if (fields.size() == 1)
+                        {
+                            plugin.getCommunicationManager().showFieldDetails(player, fields.get(0));
+                        }
+                        else
+                        {
+                            plugin.getCommunicationManager().showFieldDetails(player, fields);
+                        }
 
                         if (fields.isEmpty())
                         {
@@ -752,7 +848,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("delete") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.delete"))
+                    else if (cmd.equals("delete") && plugin.getPermissionsManager().has(player, "preciousstones.admin.delete"))
                     {
                         if (args.length == 0 && hasplayer)
                         {
@@ -844,7 +940,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("setowner") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.setowner") && hasplayer)
+                    else if (cmd.equals("setowner") && plugin.getPermissionsManager().has(player, "preciousstones.admin.setowner") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -856,7 +952,7 @@ public final class CommandManager implements CommandExecutor
                                 return true;
                             }
 
-                            if (player.getLocation().getY() < 128)
+                            if (player.getLocation().getY() < 127)
                             {
                                 Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
@@ -888,7 +984,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("list") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.list") && hasplayer)
+                    else if (cmd.equals("list") && plugin.getPermissionsManager().has(player, "preciousstones.admin.list") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -917,18 +1013,18 @@ public final class CommandManager implements CommandExecutor
                             }
                         }
                     }
-                    else if (cmd.equals("reload") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.reload"))
+                    else if (cmd.equals("reload") && plugin.getPermissionsManager().has(player, "preciousstones.admin.reload"))
                     {
                         plugin.getSettingsManager().load();
                         ChatBlock.sendMessage(sender, ChatColor.AQUA + "Configuration reloaded");
                         return true;
                     }
-                    else if (cmd.equals("fields") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.fields"))
+                    else if (cmd.equals("fields") && plugin.getPermissionsManager().has(player, "preciousstones.admin.fields"))
                     {
                         plugin.getCommunicationManager().showConfiguredFields(sender);
                         return true;
                     }
-                    else if (cmd.equals("clean") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.clean"))
+                    else if (cmd.equals("clean") && plugin.getPermissionsManager().has(player, "preciousstones.admin.clean"))
                     {
                         List<World> worlds = plugin.getServer().getWorlds();
 
@@ -954,7 +1050,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("revert") && plugin.getPermissionsManager().hasPermission(player, "preciousstones.admin.revert"))
+                    else if (cmd.equals("revert") && plugin.getPermissionsManager().has(player, "preciousstones.admin.revert"))
                     {
                         List<World> worlds = plugin.getServer().getWorlds();
 

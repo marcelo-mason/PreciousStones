@@ -32,7 +32,7 @@ public class MineManager
      */
     public void enterMine(final Player player, final Field field)
     {
-        if (plugin.getPermissionsManager().hasPermission(player, "preciousstones.bypass.mine"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.mine"))
         {
             return;
         }
