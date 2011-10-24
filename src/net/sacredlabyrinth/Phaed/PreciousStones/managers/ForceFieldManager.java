@@ -151,14 +151,6 @@ public final class ForceFieldManager
                 return false;
             }
 
-            if (fs.getRadius() > ce.getField().getSettings().getPrice())
-            {
-                plugin.getCuboidManager().cancelOpenCuboid(player);
-                ChatBlock.sendMessage(player, "Cannot mix in flags of a fields that cost more than the drawing field");
-                event.setCancelled(true);
-                return false;
-            }
-
             field = new Field(fieldBlock, 0, 0, owner);
 
             // set up parent/child relationship

@@ -130,6 +130,7 @@ public final class SimpleClansManager
 
     /**
      * Check if
+     *
      * @param field
      * @param offenderName
      * @return
@@ -166,6 +167,28 @@ public final class SimpleClansManager
                 {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param field
+     * @param player
+     * @return
+     */
+    public boolean isAllyOwner(String owner, String playerName)
+    {
+        Player player = plugin.getServer().getPlayerExact(playerName);
+
+        if (player != null)
+        {
+            ClanPlayer cpOwner = simpleClans.getClanManager().getClanPlayer(owner);
+
+            if (cpOwner != null)
+            {
+                return cpOwner.isAlly(player);
             }
         }
 

@@ -94,6 +94,11 @@ public class PSPlayerListener extends PlayerListener
             {
                 if (player.getLocation().getY() < 127)
                 {
+                    if (player.isSneaking())
+                    {
+                        return;
+                    }
+
                     Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
                     // close the cuboid when clicking back to the origin block
@@ -289,6 +294,12 @@ public class PSPlayerListener extends PlayerListener
                                 else
                                 {
                                     showInfo(field, player);
+
+                                    if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle"))
+                                    {
+                                        player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
+                                        ChatBlock.sendBlank(player);
+                                    }
                                 }
                             }
                         }
@@ -315,7 +326,7 @@ public class PSPlayerListener extends PlayerListener
                                 }
                                 else
                                 {
-                                    plugin.getCommunicationManager().showProtected(player, block);
+                                    //plugin.getCommunicationManager().showProtected(player, block);
                                 }
                             }
                         }

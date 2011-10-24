@@ -31,7 +31,7 @@ public class CommunicatonManager
     public CommunicatonManager()
     {
         plugin = PreciousStones.getInstance();
-        //useHawkEye = useHawkEye();
+        useHawkEye = useHawkEye();
     }
 
     private boolean useHawkEye()
@@ -157,6 +157,40 @@ public class CommunicatonManager
             if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.notify.place") && canAlert(pl))
             {
                 ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " placed an unbreakable block [" + unbreakable.getTypeId() + "]");
+            }
+        }
+    }
+
+    /**
+     * @param player
+     * @param field
+     */
+    public void notifyRollBack(Field field, int count)
+    {
+        Player player = plugin.getServer().getPlayerExact(field.getOwner());
+
+        if (player != null)
+        {
+            if (plugin.getSettingsManager().isNotifyRollback() && canNotify(player))
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " block reverted " + count + " blocks " + field.getCoords());
+            }
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogRollback())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Grief-Reversion", player, field.getLocation(), "blocks:" + count);
+            }
+            else
+            {
+                PreciousStones.log(ChatColor.AQUA + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " block reverted " + count + " blocks " + field.getCoords());
             }
         }
     }
@@ -858,7 +892,7 @@ public class CommunicatonManager
             return;
         }
 
-        if (plugin.getSettingsManager().isLogPlace())
+        if (plugin.getSettingsManager().isLogPlaceArea())
         {
             if (useHawkEye)
             {
@@ -948,7 +982,7 @@ public class CommunicatonManager
             return;
         }
 
-        if (plugin.getSettingsManager().isLogPlace())
+        if (plugin.getSettingsManager().isLogPlaceArea())
         {
             if (useHawkEye)
             {
@@ -1025,40 +1059,44 @@ public class CommunicatonManager
     public void warnDestroyFF(Player player, Block fieldblock)
     {
         Field field = plugin.getForceFieldManager().getField(fieldblock);
-        FieldSettings fs = field.getSettings();
 
-        if (plugin.getSettingsManager().isWarnDestroy() && canWarn(player))
+        if (field != null)
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Only the owner can remove this block");
-        }
+            FieldSettings fs = field.getSettings();
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
-        {
-            return;
-        }
-
-        if (plugin.getSettingsManager().isLogDestroy())
-        {
-            if (useHawkEye)
+            if (plugin.getSettingsManager().isWarnDestroy() && canWarn(player))
             {
-                HawkEyeAPI.addCustomEntry(plugin, "Field Destroy", player, fieldblock.getLocation(), fs.getTitle());
-            }
-            else
-            {
-                PreciousStones.log(" {0} attempted to destroy {1}s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
-            }
-        }
-
-        for (Player pl : plugin.getServer().getOnlinePlayers())
-        {
-            if (pl.equals(player))
-            {
-                continue;
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Only the owner can remove this block");
             }
 
-            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.destroy") && canAlert(pl))
+            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to destroy " + Helper.posessive(field.getOwner()) + " " + fs.getTitle() + " field");
+                return;
+            }
+
+            if (plugin.getSettingsManager().isLogDestroy())
+            {
+                if (useHawkEye)
+                {
+                    HawkEyeAPI.addCustomEntry(plugin, "Field Destroy", player, fieldblock.getLocation(), fs.getTitle());
+                }
+                else
+                {
+                    PreciousStones.log(" {0} attempted to destroy {1}s {2} field [{3}|{4} {5} {6}]", player.getName(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+                }
+            }
+
+            for (Player pl : plugin.getServer().getOnlinePlayers())
+            {
+                if (pl.equals(player))
+                {
+                    continue;
+                }
+
+                if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.destroy") && canAlert(pl))
+                {
+                    ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to destroy " + Helper.posessive(field.getOwner()) + " " + fs.getTitle() + " field");
+                }
             }
         }
     }

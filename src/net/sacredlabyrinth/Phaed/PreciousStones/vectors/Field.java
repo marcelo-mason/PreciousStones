@@ -403,6 +403,15 @@ public class Field extends AbstractVec implements Comparable<Field>
             }
         }
 
+        // allows all allies into each others fields
+
+        /*
+        if (PreciousStones.getInstance().getSimpleClansManager().isAllyOwner(owner, target))
+        {
+            return true;
+        }
+        */
+
         return false;
     }
 
@@ -1055,6 +1064,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     /**
      * Imports a collection of field flags to this field
+     *
      * @param flags
      */
     public void importFlags(Set<FieldFlag> flags)

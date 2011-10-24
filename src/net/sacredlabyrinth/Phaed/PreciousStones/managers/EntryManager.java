@@ -297,7 +297,7 @@ public final class EntryManager
     {
         FieldSettings fs = entryField.getSettings();
 
-        if (fs.hasFlag(FieldFlag.WELCOME_MESSAGE) && entryField.getName().length() > 0)
+        if (fs.hasFlag(FieldFlag.FAREWELL_MESSAGE) && entryField.getName().length() > 0)
         {
             plugin.getCommunicationManager().showFarewellMessage(player, entryField.getName());
         }

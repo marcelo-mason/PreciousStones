@@ -48,9 +48,11 @@ public final class SettingsManager
     private List<Integer> unprotectableBlocks = new ArrayList<Integer>();
     private List<Integer> toolItems = new ArrayList<Integer>();
     private List<Integer> repairableItems = new ArrayList<Integer>();
+    private boolean logRollback;
     private boolean logFire;
     private boolean logEntry;
     private boolean logPlace;
+    private boolean logPlaceArea;
     private boolean logUse;
     private boolean logDestroy;
     private boolean logDestroyArea;
@@ -61,6 +63,7 @@ public final class SettingsManager
     private boolean logBypassPlace;
     private boolean logBypassDestroy;
     private boolean logConflictPlace;
+    private boolean notifyRollback;
     private boolean notifyPlace;
     private boolean notifyDestroy;
     private boolean notifyBypassPvp;
@@ -153,6 +156,7 @@ public final class SettingsManager
         unprotectableBlocks = config.getList("unprotectable-blocks");
         toolItems = config.getList("tool-items");
         repairableItems = config.getList("repairable-items");
+        logRollback = config.getBoolean("log.rollback");
         logFire = config.getBoolean("log.fire");
         logEntry = config.getBoolean("log.entry");
         logPlace = config.getBoolean("log.place");
@@ -160,12 +164,14 @@ public final class SettingsManager
         logPvp = config.getBoolean("log.pvp");
         logDestroy = config.getBoolean("log.destroy");
         logDestroyArea = config.getBoolean("log.destroy-area");
+        logPlaceArea = config.getBoolean("log.place-area");
         logUnprotectable = config.getBoolean("log.unprotectable");
         logBypassPvp = config.getBoolean("log.bypass-pvp");
         logBypassDelete = config.getBoolean("log.bypass-delete");
         logBypassPlace = config.getBoolean("log.bypass-place");
         logBypassDestroy = config.getBoolean("log.bypass-destroy");
         logConflictPlace = config.getBoolean("log.conflict-place");
+        notifyRollback = config.getBoolean("notify.rollback");
         notifyPlace = config.getBoolean("notify.place");
         notifyDestroy = config.getBoolean("notify.destroy");
         notifyBypassUnprotectable = config.getBoolean("notify.bypass-unprotectable");
@@ -1254,5 +1260,20 @@ public final class SettingsManager
     public int getGriefRevertMinInterval()
     {
         return griefRevertMinInterval;
+    }
+
+    public boolean isLogRollback()
+    {
+        return logRollback;
+    }
+
+    public boolean isNotifyRollback()
+    {
+        return notifyRollback;
+    }
+
+    public boolean isLogPlaceArea()
+    {
+        return logPlaceArea;
     }
 }

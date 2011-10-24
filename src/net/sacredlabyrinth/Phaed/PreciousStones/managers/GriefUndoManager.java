@@ -37,6 +37,11 @@ public final class GriefUndoManager
      */
     public void register(Field field)
     {
+        if (field.getRevertSecs() == 0)
+        {
+            return;
+        }
+
         if (intervalFields.containsKey(field))
         {
             int taskId = intervalFields.get(field);
@@ -160,6 +165,7 @@ public final class GriefUndoManager
 
             if (!gbs.isEmpty())
             {
+                plugin.getCommunicationManager().notifyRollBack(field, gbs.size());
                 Rollback rollback = new Rollback(gbs, world);
             }
             return gbs.size();
@@ -182,8 +188,11 @@ public final class GriefUndoManager
         {
             Queue<GriefBlock> gbs = field.getGrief();
 
-            Rollback rollback = new Rollback(gbs, world);
-
+            if (!gbs.isEmpty())
+            {
+                plugin.getCommunicationManager().notifyRollBack(field, gbs.size());
+                Rollback rollback = new Rollback(gbs, world);
+            }
             return gbs.size();
         }
         field.clearGrief();

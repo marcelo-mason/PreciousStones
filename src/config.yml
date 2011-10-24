@@ -56,7 +56,7 @@ force-field-blocks:
     mixing-group: 1
     cuboid: true
 -   title: Proximity Snitch
-    block: 47
+    block: 25
     radius: 5
     snitch: true
     entry-alert: true
@@ -157,7 +157,7 @@ cleanup:
     snitch-unused-purge-days: 60
 settings:
     sneaking-bypasses-damage: true
-    log-to-hawkeye: true
+    log-to-hawkeye: false
     lines-per-page: 12
     disable-bypass-alerts-for-admins: false
     disable-alerts-for-admins: true
@@ -182,11 +182,13 @@ log:
     use: true
     fire: true
     destroy: true
-    destroy-area: true
+    destroy-area: false
+    place-area: false
     entry: true
     unprotectable: true
     bypass-place: true
     place: true
+    rollback: true
     bypass-delete: true
     conflict-place: true
 cuboid:
@@ -208,6 +210,7 @@ notify:
     bypass-unprotectable: true
     bypass-place: true
     place: true
+    rollback: true
 grief-undo:
     min-interval-secs: 30
     black-list:
