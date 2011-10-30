@@ -158,6 +158,27 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
+                    else if (cmd.equals("allowall") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasplayer)
+                    {
+                        if (args.length >= 1)
+                        {
+                            for (String playerName : args)
+                            {
+                                int count = plugin.getForceFieldManager().allowAll(player, playerName);
+
+                                if (count > 0)
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " field", "s"));
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " is already on all your lists");
+                                }
+                            }
+
+                            return true;
+                        }
+                    }
                     else if (cmd.equals("remove") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.remove") && hasplayer)
                     {
                         if (args.length >= 1)
@@ -191,27 +212,6 @@ public final class CommandManager implements CommandExecutor
                             else
                             {
                                 plugin.getCommunicationManager().showNotFound(player);
-                            }
-
-                            return true;
-                        }
-                    }
-                    else if (cmd.equals("allowall") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasplayer)
-                    {
-                        if (args.length >= 1)
-                        {
-                            for (String playerName : args)
-                            {
-                                int count = plugin.getForceFieldManager().allowAll(player, playerName);
-
-                                if (count > 0)
-                                {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " field", "s"));
-                                }
-                                else
-                                {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " is already on all your lists");
-                                }
                             }
 
                             return true;

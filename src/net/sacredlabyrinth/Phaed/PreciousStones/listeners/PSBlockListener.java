@@ -227,11 +227,12 @@ public class PSBlockListener extends BlockListener
                 plugin.getCuboidManager().cancelOpenCuboid(player, block);
                 release = true;
             }
-            else if (plugin.getCuboidManager().isOpenCuboidChild(player, block))
+            /*else if (plugin.getCuboidManager().isOpenCuboidChild(player, block))
             {
                 plugin.getCuboidManager().removeChild(player, block);
                 release = true;
             }
+            */
 
             if (release)
             {

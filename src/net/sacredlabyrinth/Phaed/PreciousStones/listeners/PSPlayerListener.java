@@ -94,12 +94,15 @@ public class PSPlayerListener extends PlayerListener
             {
                 if (player.getLocation().getY() < 127)
                 {
+                    Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
+
+                    // close the cuboid if the player shift clicks any block
+
                     if (player.isSneaking())
                     {
+                        plugin.getCuboidManager().closeCuboid(player);
                         return;
                     }
-
-                    Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
                     // close the cuboid when clicking back to the origin block
 
@@ -108,40 +111,43 @@ public class PSPlayerListener extends PlayerListener
                         plugin.getCuboidManager().closeCuboid(player);
                         return;
                     }
-                    else
-                    {
-                        // do not paint field blocks
 
-                        if (plugin.getForceFieldManager().getField(target) != null)
+                    // do not select field blocks
+
+                    if (plugin.getForceFieldManager().getField(target) != null)
+                    {
+                        return;
+                    }
+
+                    // or add to the cuboid selection
+
+                    Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_DESTROY);
+
+                    if (field == null)
+                    {
+                        field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_REVERT);
+                    }
+
+                    if (field != null)
+                    {
+                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                         {
                             return;
                         }
-
-                        // or add to the cuboid selection
-
-                        Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_DESTROY);
-
-                        if (field == null)
-                        {
-                            field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.GRIEF_REVERT);
-                        }
-
-                        if (field != null)
-                        {
-                            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
-                            {
-                                return;
-                            }
-                        }
-
-                        // add to the cuboid
-
-                        if (plugin.getCuboidManager().processSelectedBlock(player, target))
-                        {
-                            event.setCancelled(true);
-                        }
-                        return;
                     }
+
+                    // add to the cuboid
+
+                    if (plugin.getCuboidManager().processSelectedBlock(player, target))
+                    {
+                        event.setCancelled(true);
+                    }
+                    return;
+                }
+                else
+                {
+                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot select blocks from this height");
+                    return;
                 }
             }
             else
@@ -171,6 +177,11 @@ public class PSPlayerListener extends PlayerListener
                             }
                         }
                     }
+                }
+                else
+                {
+                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot select blocks from this height");
+                    return;
                 }
 
                 if (event.getAction().equals(Action.LEFT_CLICK_BLOCK))

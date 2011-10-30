@@ -249,12 +249,8 @@ public class SQLiteCore implements DBCore
             getConnection().createStatement().executeQuery("SELECT " + column + " FROM " + table);
             return true;
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
-            if (!ex.getMessage().contains("exist"))
-            {
-                log.warning("Error at SQL Query: " + ex.getMessage());
-            }
             return false;
         }
     }
