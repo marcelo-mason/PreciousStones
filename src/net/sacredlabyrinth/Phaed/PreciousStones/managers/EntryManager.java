@@ -339,9 +339,14 @@ public final class EntryManager
             plugin.getVelocityManager().launchPlayer(player, field);
             plugin.getVelocityManager().shootPlayer(player, field);
         }
-
-        plugin.getMineManager().enterMine(player, field);
-        plugin.getLightningManager().enterLightning(player, field);
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.damage"))
+        {
+            if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
+            {
+                plugin.getMineManager().enterMine(player, field);
+                plugin.getLightningManager().enterLightning(player, field);
+            }
+        }
     }
 
     /**
