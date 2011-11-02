@@ -32,8 +32,25 @@ public class PSBlockListener extends BlockListener
      * @param event
      */
     @Override
+    public void onBlockFade(BlockFadeEvent event)
+    {
+        Block affectedBlock = event.getBlock();
+        //PreciousStones.getLogger().info("block was affected by BlockPhysics: " + Helper.toLocationString(affectedBlock.getLocation()) + " " + event.getEventName());
+        //If the block is going to disappear because it's a field.(leaves, ice, etc)
+        //Cancel the event
+        if (plugin.getForceFieldManager().isField(affectedBlock))
+        {
+            
+            event.setCancelled(true);
+            return;
+        }
+    }
+
+    @Override
     public void onBlockPhysics(BlockPhysicsEvent event)
     {
+        
+        
     }
 
     /**

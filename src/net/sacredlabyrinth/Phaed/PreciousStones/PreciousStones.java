@@ -50,6 +50,7 @@ public class PreciousStones extends JavaPlugin
     private PSVehicleListener vehicleListener;
     private PSServerListener serverListener;
 
+   
     /**
      * @return the instance
      */
@@ -162,6 +163,7 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_DISABLE, serverListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FROMTO, blockListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FADE, blockListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PHYSICS, blockListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.High, this);
