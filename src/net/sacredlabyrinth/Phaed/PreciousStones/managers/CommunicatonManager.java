@@ -2290,18 +2290,25 @@ public class CommunicatonManager
         {
             cb.addRow("", "", "");
 
-            FieldSettings fs = field.getSettings();
-
-            cb.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
-
-            if (fs.hasNameableFlag() && field.getName().length() > 0)
+            if (field.isDisabled())
             {
-                cb.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName(), "");
+                cb.addRow("  " + ChatColor.RED + "Field Disabled", "", "");
             }
+            else
+            {
+                FieldSettings fs = field.getSettings();
 
-            cb.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
+                cb.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
 
-            cb.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
+                if (fs.hasNameableFlag() && field.getName().length() > 0)
+                {
+                    cb.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName(), "");
+                }
+
+                cb.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
+
+                cb.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
+            }
         }
 
         if (cb.size() > 0)
@@ -2332,20 +2339,69 @@ public class CommunicatonManager
 
         cb.addRow("", "", "");
 
-        cb.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
-
-        if (fs.hasNameableFlag() && field.getName().length() > 0)
+        if (field.isDisabled())
         {
-            cb.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName(), "");
+            cb.addRow("  " + ChatColor.RED + "Field Disabled", "", "");
         }
-
-        cb.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
-
-        if (field.getAllowed().size() > 0)
+        else
         {
-            List<String> allowed = field.getAllowed();
+            cb.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
 
-            int rows = (int) Math.ceil(allowed.size() / 2);
+            if (fs.hasNameableFlag() && field.getName().length() > 0)
+            {
+                cb.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName(), "");
+            }
+
+            cb.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
+
+            if (field.getAllowed().size() > 0)
+            {
+                List<String> allowed = field.getAllowed();
+
+                int rows = (int) Math.ceil(allowed.size() / 2);
+
+                for (int i = 0; i < rows; i++)
+                {
+                    String title = "";
+
+                    if (i == 0)
+                    {
+                        title = ChatColor.YELLOW + "Allowed: ";
+                    }
+
+                    cb.addRow("  " + title, ChatColor.WHITE + getAllowed(allowed, i * 2), getAllowed(allowed, (i * 2) + 1));
+                }
+            }
+
+            if (field.hasFlag(FieldFlag.CUBOID))
+            {
+                cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + (field.getMaxx() - field.getMinx() + 1) + "x" + (field.getMaxy() - field.getMiny() + 1) + "x" + (field.getMaxz() - field.getMinz() + 1), "");
+            }
+            else
+            {
+                cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1), "");
+            }
+
+            if (field.getVelocity() > 0)
+            {
+                cb.addRow("  " + ChatColor.YELLOW + "Velocity: ", ChatColor.AQUA + "" + field.getVelocity(), "");
+            }
+
+            if (field.getRevertSecs() > 0)
+            {
+                cb.addRow("  " + ChatColor.YELLOW + "Interval: ", ChatColor.AQUA + "" + field.getRevertSecs(), "");
+            }
+
+
+            cb.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
+
+            List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getSettings().getFlags());
+            List<FieldFlag> disabledFlags = field.getSettings().getDisabledFlags();
+
+            flags.remove(FieldFlag.ALL);
+            flags.addAll(disabledFlags);
+
+            int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
 
             for (int i = 0; i < rows; i++)
             {
@@ -2353,53 +2409,11 @@ public class CommunicatonManager
 
                 if (i == 0)
                 {
-                    title = ChatColor.YELLOW + "Allowed: ";
+                    title = ChatColor.YELLOW + "Flags: ";
                 }
 
-                cb.addRow("  " + title, ChatColor.WHITE + getAllowed(allowed, i * 2), getAllowed(allowed, (i * 2) + 1));
+                cb.addRow("  " + title, getFlag(disabledFlags, flags, i * 2), getFlag(disabledFlags, flags, (i * 2) + 1));
             }
-        }
-
-        if (field.hasFlag(FieldFlag.CUBOID))
-        {
-            cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + (field.getMaxx() - field.getMinx() + 1) + "x" + (field.getMaxy() - field.getMiny() + 1) + "x" + (field.getMaxz() - field.getMinz() + 1), "");
-        }
-        else
-        {
-            cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1), "");
-        }
-
-        if (field.getVelocity() > 0)
-        {
-            cb.addRow("  " + ChatColor.YELLOW + "Velocity: ", ChatColor.AQUA + "" + field.getVelocity(), "");
-        }
-
-        if (field.getRevertSecs() > 0)
-        {
-            cb.addRow("  " + ChatColor.YELLOW + "Interval: ", ChatColor.AQUA + "" + field.getRevertSecs(), "");
-        }
-
-
-        cb.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
-
-        List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getSettings().getFlags());
-        List<FieldFlag> disabledFlags = field.getSettings().getDisabledFlags();
-
-        flags.remove(FieldFlag.ALL);
-        flags.addAll(disabledFlags);
-
-        int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
-
-        for (int i = 0; i < rows; i++)
-        {
-            String title = "";
-
-            if (i == 0)
-            {
-                title = ChatColor.YELLOW + "Flags: ";
-            }
-
-            cb.addRow("  " + title, getFlag(disabledFlags, flags, i * 2), getFlag(disabledFlags, flags, (i * 2) + 1));
         }
 
         if (cb.size() > 0)
@@ -2931,6 +2945,11 @@ public class CommunicatonManager
 
         if (!disabled)
         {
+            if (plugin.getPermissionsManager().has(player, "preciousstones.whitelist.disable") && hasPlayer)
+            {
+                cb.addRow(color + "  /ps enable/disable " + colorDesc + "- Enable/disable a field");
+            }
+
             if (plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allow") && hasPlayer)
             {
                 cb.addRow(color + "  /ps allow [player/g:group/c:clan/*] " + colorDesc + "- Allow players");

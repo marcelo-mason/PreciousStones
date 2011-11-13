@@ -282,6 +282,11 @@ public final class ForceFieldManager
      */
     public void addSourceField(Field field)
     {
+        if (field.isDisabled())
+        {
+            return;
+        }
+
         Set<ChunkVec> scvs = field.getEnvelopingChunks();
 
         for (ChunkVec scv : scvs)
@@ -420,7 +425,6 @@ public final class ForceFieldManager
      */
     public void removeSourceField(Field field)
     {
-
         Set<ChunkVec> scvs = field.getEnvelopingChunks();
 
         for (ChunkVec scv : scvs)
@@ -1317,15 +1321,26 @@ public final class ForceFieldManager
     }
 
     /**
-     * If a field in the location that matches the field flag(s)
+     * Get all fields matching this flag that are touching this chunk
      *
-     * @param loc
-     * @param flags
-     * @return result
+     * @param cv
+     * @return
      */
-    public boolean hasSourceField(Location loc, FieldFlag flag)
+    public List<Field> getSourceFields(ChunkVec cv, FieldFlag flag)
     {
-        return getSourceField(loc, flag) != null;
+        HashMap<FieldFlag, List<Field>> flagList = sourceFields.get(cv);
+
+        if (flagList != null)
+        {
+            List<Field> fields = flagList.get(flag);
+
+            if (fields != null)
+            {
+                return new LinkedList<Field>(fields);
+            }
+        }
+
+        return new LinkedList<Field>();
     }
 
     /**
@@ -1348,6 +1363,18 @@ public final class ForceFieldManager
         }
 
         return null;
+    }
+
+    /**
+     * If a field in the location that matches the field flag(s)
+     *
+     * @param loc
+     * @param flags
+     * @return result
+     */
+    public boolean hasSourceField(Location loc, FieldFlag flag)
+    {
+        return getSourceField(loc, flag) != null;
     }
 
     /**
@@ -1386,30 +1413,6 @@ public final class ForceFieldManager
     }
 
     /**
-     * Get all fields matching this flag that are touching this chunk
-     *
-     * @param cv
-     * @return
-     */
-    public List<Field> getSourceFields(ChunkVec cv, FieldFlag flag)
-    {
-        HashMap<FieldFlag, List<Field>> flagList = sourceFields.get(cv);
-
-        if (flagList != null)
-        {
-            List<Field> fields = flagList.get(flag);
-
-            if (fields != null)
-            {
-                return new LinkedList<Field>(fields);
-            }
-        }
-
-
-        return new LinkedList<Field>();
-    }
-
-    /**
      * Returns the first field found in the location and that the player is not allowed in, optionally with field flags
      *
      * @param loc
@@ -1425,6 +1428,30 @@ public final class ForceFieldManager
             Field field = (Field) it.next();
 
             if (field.envelops(loc) && !isAllowed(field, playerName) && !plugin.getSimpleClansManager().inWar(field, playerName))
+            {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the first  conflict field found in the location and that the player is not allowed in, optionally with field flags
+     *
+     * @param loc
+     * @param playerName
+     * @return the fields
+     */
+    public Field getNotAllowedConflictSourceField(Location loc, String playerName, FieldFlag flag)
+    {
+        List<Field> sources = getSourceFields(loc.getBlock().getChunk(), flag);
+
+        for (Iterator it = sources.iterator(); it.hasNext(); )
+        {
+            Field field = (Field) it.next();
+
+            if (field.envelops(loc) && !field.hasFlag(FieldFlag.NO_CONFLICT) && !isAllowed(field, playerName) && !plugin.getSimpleClansManager().inWar(field, playerName))
             {
                 return field;
             }

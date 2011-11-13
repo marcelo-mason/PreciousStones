@@ -38,6 +38,7 @@ public final class SettingsManager
     private int visualizeDensity;
     private int visualizeTicksBetweenSends;
     private int visualizeSendSize;
+    private int visualizeMaxFields;
     private boolean visualizeEndOnMove;
     private boolean debug;
     private boolean debugdb;
@@ -220,6 +221,7 @@ public final class SettingsManager
         visualizeMarkBlock = config.getInt("visualization.mark-block-type");
         visualizeDensity = config.getInt("visualization.default-density");
         visualizeSendSize = config.getInt("visualization.blocks-to-send");
+        visualizeMaxFields = config.getInt("visualization.max-fields-to-visualize-at-once");
         visualizeTicksBetweenSends = config.getInt("visualization.ticks-between-sends");
         foresterInterval = config.getInt("forester.interval-seconds");
         foresterFertileBlocks = config.getList("forester.fertile-blocks");
@@ -1275,5 +1277,20 @@ public final class SettingsManager
     public boolean isLogPlaceArea()
     {
         return logPlaceArea;
+    }
+
+    public void setVisualizeSendSize(int visualizeSendSize)
+    {
+        this.visualizeSendSize = visualizeSendSize;
+    }
+
+    public int getVisualizeMaxFields()
+    {
+        return visualizeMaxFields;
+    }
+
+    public void setVisualizeMaxFields(int visualizeMaxFields)
+    {
+        this.visualizeMaxFields = visualizeMaxFields;
     }
 }

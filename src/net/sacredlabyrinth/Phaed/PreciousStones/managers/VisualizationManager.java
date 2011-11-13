@@ -104,6 +104,13 @@ public class VisualizationManager
             return;
         }
 
+        PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
+
+        if (data.getDensity() == 0)
+        {
+            return;
+        }
+
         vis.addField(field);
 
         int visualizationType = field.hasFlag(FieldFlag.CUBOID) ? plugin.getSettingsManager().getCuboidVisualizationType() : plugin.getSettingsManager().getVisualizeBlock();
@@ -170,8 +177,6 @@ public class VisualizationManager
             loc = new Location(player.getWorld(), maxx, maxy, z);
             vis.addBlock(loc, frameType, (byte) 0);
         }
-
-        PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
 
         int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
 

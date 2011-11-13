@@ -162,7 +162,7 @@ public final class StorageManager
             }
         }
 
-        fixes();
+        //fixes();
     }
 
     private void fixes()

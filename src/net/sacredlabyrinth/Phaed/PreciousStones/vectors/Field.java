@@ -44,7 +44,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private boolean progress;
     private boolean open;
     private int revertSecs;
-    //private boolean progress;
+    private boolean disabled;
 
     /**
      * @param x
@@ -936,6 +936,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         flags.put("disabledFlags", disabledFlags);
         flags.put("insertedFlags", insertedFlags);
         flags.put("revertSecs", revertSecs);
+        flags.put("disabled", disabled);
 
         return (new JSONWriter()).write(flags);
     }
@@ -981,6 +982,11 @@ public class Field extends AbstractVec implements Comparable<Field>
                     if (flag.equals("revertSecs"))
                     {
                         revertSecs = ((Long) flags.get(flag)).intValue();
+                    }
+
+                    if (flag.equals("disabled"))
+                    {
+                        disabled = ((Boolean) flags.get(flag));
                     }
                 }
             }
@@ -1083,5 +1089,27 @@ public class Field extends AbstractVec implements Comparable<Field>
     public void setRevertSecs(int revertSecs)
     {
         this.revertSecs = revertSecs;
+    }
+
+    public boolean isDisabled()
+    {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled)
+    {
+        if (disabled != this.disabled)
+        {
+            this.disabled = disabled;
+
+            if (disabled)
+            {
+                PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
+            }
+            else
+            {
+                PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
+            }
+        }
     }
 }

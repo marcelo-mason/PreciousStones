@@ -415,17 +415,57 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
+                    else if (cmd.equals("disable") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.disable") && hasplayer)
+                    {
+                        Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+
+                        if (field != null)
+                        {
+                            if (!field.isDisabled())
+                            {
+                                field.setDisabled(true);
+                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been enabled");
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(sender, ChatColor.RED + "Field is already disabled");
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            plugin.getCommunicationManager().showNotFound(player);
+                        }
+                        return true;
+                    }
+                    else if (cmd.equals("enable") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.enable") && hasplayer)
+                    {
+                        Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+
+                        if (field != null)
+                        {
+                            if (field.isDisabled())
+                            {
+                                field.setDisabled(false);
+                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been disabled");
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(sender, ChatColor.RED + "Field is already enabled");
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            plugin.getCommunicationManager().showNotFound(player);
+                        }
+                        return true;
+                    }
                     else if (cmd.equals("density") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.density") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))
                         {
                             int density = Integer.parseInt(args[0]);
-
-                            if (density == 0)
-                            {
-                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Density must be larger than zero");
-                                return true;
-                            }
 
                             PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
                             data.setDensity(density);
@@ -509,8 +549,14 @@ public final class CommandManager implements CommandExecutor
                                         {
                                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualizing...");
 
+                                            int count = 0;
                                             for (Field f : fieldsInArea)
                                             {
+                                                if (count++ >= plugin.getSettingsManager().getVisualizeMaxFields())
+                                                {
+                                                    continue;
+                                                }
+
                                                 plugin.getVisualizationManager().addVisualizationField(player, f);
                                             }
 
@@ -534,8 +580,17 @@ public final class CommandManager implements CommandExecutor
                                             {
                                                 ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualizing...");
 
+                                                fields.remove(field);
+                                                plugin.getVisualizationManager().addVisualizationField(player, field);
+
+                                                int count = 1;
                                                 for (Field f : fields)
                                                 {
+                                                    if (count++ >= plugin.getSettingsManager().getVisualizeMaxFields())
+                                                    {
+                                                        continue;
+                                                    }
+
                                                     plugin.getVisualizationManager().addVisualizationField(player, f);
                                                 }
 

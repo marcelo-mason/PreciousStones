@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -35,12 +36,12 @@ public class PSBlockListener extends BlockListener
     public void onBlockFade(BlockFadeEvent event)
     {
         Block affectedBlock = event.getBlock();
-        //PreciousStones.getLogger().info("block was affected by BlockPhysics: " + Helper.toLocationString(affectedBlock.getLocation()) + " " + event.getEventName());
+
         //If the block is going to disappear because it's a field.(leaves, ice, etc)
         //Cancel the event
+
         if (plugin.getForceFieldManager().isField(affectedBlock))
         {
-            
             event.setCancelled(true);
             return;
         }
@@ -49,8 +50,8 @@ public class PSBlockListener extends BlockListener
     @Override
     public void onBlockPhysics(BlockPhysicsEvent event)
     {
-        
-        
+
+
     }
 
     /**
@@ -412,7 +413,7 @@ public class PSBlockListener extends BlockListener
                     event.setCancelled(true);
                     ChatBlock.sendMessage(player, ChatColor.RED + "The field type does not mix");
                     return;
-               }
+                }
             }
         }
 
@@ -611,6 +612,47 @@ public class PSBlockListener extends BlockListener
         }
 
         // -------------------------------------------------------------------------------------------
+
+        if (block.getType().equals(Material.CHEST))
+        {
+            Field field = plugin.getForceFieldManager().getNotAllowedConflictSourceField(block.getLocation(), player.getName(), FieldFlag.ALL);
+
+            boolean conflicted = false;
+
+            Field field1 = plugin.getForceFieldManager().getNotAllowedConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
+
+            if (field1 != null && !field1.equals(field))
+            {
+                conflicted = true;
+            }
+
+            Field field2 = plugin.getForceFieldManager().getNotAllowedConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
+
+            if (field2 != null && !field2.equals(field))
+            {
+                conflicted = true;
+            }
+
+            Field field3 = plugin.getForceFieldManager().getNotAllowedConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
+
+            if (field3 != null && !field3.equals(field))
+            {
+                conflicted = true;
+            }
+
+            Field field4 = plugin.getForceFieldManager().getNotAllowedConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
+
+            if (field4 != null && !field4.equals(field))
+            {
+                conflicted = true;
+            }
+
+            if (conflicted)
+            {
+                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place chest next so someone else's field");
+                event.setCancelled(true);
+            }
+        }
 
         Field field = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.PREVENT_PLACE);
 

@@ -203,6 +203,7 @@ visualization:
     blocks-to-send: 100
     ticks-between-sends: 10
     default-density: 8
+    max-fields-to-visualize-at-once: 20
 notify:
     destroy: true
     bypass-pvp: true
