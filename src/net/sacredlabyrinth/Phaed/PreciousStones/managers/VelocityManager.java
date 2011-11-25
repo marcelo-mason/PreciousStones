@@ -35,20 +35,20 @@ public class VelocityManager
         {
             if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
             {
-                FieldSettings fs = field.getSettings();
 
-                final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : fs.getLaunchHeight();
-                double speed = 8;
+                
 
-                Vector loc = player.getLocation().toVector();
-                Vector target = new Vector(field.getX(), field.getY(), field.getZ());
-
-                final Vector velocity = target.clone().subtract(new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-                velocity.multiply(speed / velocity.length());
-                velocity.setY(launchheight > 0 ? launchheight : (((player.getLocation().getPitch() * -1) + 90) / 35));
-
-                if (fs.hasFlag(FieldFlag.LAUNCH))
+                if (field.hasFlag(FieldFlag.LAUNCH))
                 {
+                    final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getLaunchHeight();
+                    double speed = 8;
+
+                    Vector loc = player.getLocation().toVector();
+                    Vector target = new Vector(field.getX(), field.getY(), field.getZ());
+
+                    final Vector velocity = target.clone().subtract(new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                    velocity.multiply(speed / velocity.length());
+                    velocity.setY(launchheight > 0 ? launchheight : (((player.getLocation().getPitch() * -1) + 90) / 35));
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
                         public void run()
@@ -80,13 +80,12 @@ public class VelocityManager
         {
             if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
             {
-                FieldSettings fs = field.getSettings();
 
-                final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : fs.getCannonHeight();
-                final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
 
-                if (fs.hasFlag(FieldFlag.CANNON))
+                if (field.hasFlag(FieldFlag.CANNON))
                 {
+                    final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getCannonHeight();
+                    final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
                     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
                         public void run()

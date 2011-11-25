@@ -351,7 +351,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 FieldSettings fs = field.getSettings();
 
-                                if (!fs.hasFlag(FieldFlag.CUBOID))
+                                if (!field.hasFlag(FieldFlag.CUBOID))
                                 {
                                     if (radius >= 0 && radius <= fs.getRadius())
                                     {
@@ -722,6 +722,22 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
+                    else if (cmd.equals("reset") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.admin.reset") && hasplayer)
+                    {
+                        Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+
+                        if (field != null)
+                        {
+                            field.RevertFlags();
+                            plugin.getStorageManager().offerField(field);
+                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "The field flags have been reverted to default.");
+                        }
+                        else
+                        {
+                            plugin.getCommunicationManager().showNotFound(player);
+                        }
+                        return true;
+                    }        
                     else if (cmd.equals("setinterval") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setinterval") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))

@@ -235,13 +235,11 @@ public final class StorageManager
         {
             for (Field field : fields)
             {
-                FieldSettings fs = field.getSettings();
-
                 // add to collection
 
                 plugin.getForceFieldManager().addToCollection(field);
 
-                if (fs.hasFlag(FieldFlag.GRIEF_REVERT) && field.getRevertSecs() > 0)
+                if (field.hasFlag(FieldFlag.GRIEF_REVERT) && field.getRevertSecs() > 0)
                 {
                     plugin.getGriefUndoManager().register(field);
                 }
@@ -395,7 +393,7 @@ public final class StorageManager
 
                         if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                         {
-                            if (fs != null && fs.hasFlag(FieldFlag.SNITCH))
+                            if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
                             {
                                 deleteSnitchEntires(field);
                                 field.markForDeletion();
@@ -484,7 +482,7 @@ public final class StorageManager
 
                         if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                         {
-                            if (fs != null && fs.hasFlag(FieldFlag.SNITCH))
+                            if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
                             {
                                 deleteSnitchEntires(field);
                                 field.markForDeletion();
@@ -570,7 +568,7 @@ public final class StorageManager
 
                         if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                         {
-                            if (fs != null && fs.hasFlag(FieldFlag.SNITCH))
+                            if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
                             {
                                 deleteSnitchEntires(field);
                                 field.markForDeletion();
@@ -792,7 +790,7 @@ public final class StorageManager
 
         if (field.isDirty(DirtyFieldReason.FLAGS))
         {
-            subQuery += "flags = '" + Helper.escapeQuotes(field.getFlags()) + "', ";
+            subQuery += "flags = '" + Helper.escapeQuotes(field.getFlagsAsString()) + "', ";
         }
 
         if (field.isDirty(DirtyFieldReason.DIMENSIONS))
@@ -814,7 +812,10 @@ public final class StorageManager
                 PreciousStones.getLogger().info(query);
             }
 
-            core.update(query);
+            if(!core.execute(query)){
+                //this can happen when the data didn't change
+                //PreciousStones.getLogger().info(query + " error");
+            }
         }
 
         field.clearDirty();
@@ -833,12 +834,12 @@ public final class StorageManager
         }
 
         String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `flags`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlags()) + "');";
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
             query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `flags`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlags()) + "');";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
         }
 
         if (plugin.getSettingsManager().isDebugsql())

@@ -243,8 +243,6 @@ public class PSPlayerListener extends PlayerListener
                                 field = field.getParent();
                             }
 
-                            FieldSettings fs = field.getSettings();
-
                             if (!plugin.getCuboidManager().hasOpenCuboid(player))
                             {
                                 if (field.isAllowed(player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
@@ -275,7 +273,7 @@ public class PSPlayerListener extends PlayerListener
                             }
                             else
                             {
-                                if ((fs.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
+                                if ((field.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
                                 {
                                     HashSet<Field> overlapped = plugin.getForceFieldManager().getOverlappedFields(player, field);
 
@@ -455,9 +453,9 @@ public class PSPlayerListener extends PlayerListener
         {
             for (Field field : currentfields)
             {
-                FieldSettings fs = field.getSettings();
 
-                if (fs.hasFlag(FieldFlag.PREVENT_ENTRY))
+
+                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
                 {
                     if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
                     {

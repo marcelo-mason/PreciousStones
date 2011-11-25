@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 7.0.5
+version: 7.0.6
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, iConomy, BOSEconomy, Currency, MultiCurrency]
 commands:
@@ -158,6 +158,8 @@ permissions:
     description: Can use /ps retag
   preciousstones.admin.insert:
     description: Can use /ps insert
+  preciousstones.admin.reset:
+    description: Can use /ps reset
   preciousstones.admin.isadmin:
     description: Can used internally to detect admins
   preciousstones.admin.counts:

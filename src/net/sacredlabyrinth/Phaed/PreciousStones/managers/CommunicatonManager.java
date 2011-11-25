@@ -2395,8 +2395,8 @@ public class CommunicatonManager
 
             cb.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 
-            List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getSettings().getFlags());
-            List<FieldFlag> disabledFlags = field.getSettings().getDisabledFlags();
+            List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getFlags());
+            List<FieldFlag> disabledFlags = field.getDisabledFlags();
 
             flags.remove(FieldFlag.ALL);
             flags.addAll(disabledFlags);
@@ -3043,6 +3043,11 @@ public class CommunicatonManager
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasPlayer)
             {
                 cb.addRow(ChatColor.DARK_RED + "  /ps insert [flag]" + colorDesc + "- Inserts flags into fields");
+            }
+            
+            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.reset") && hasPlayer)
+            {
+                cb.addRow(ChatColor.DARK_RED + "  /ps reset" + colorDesc + "- Resets the flags of the field to defaults");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.mark") && hasPlayer)

@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import org.bukkit.Location;
-import org.stringtree.json.JSONReader;
-import org.stringtree.json.JSONValidatingReader;
-import org.stringtree.json.JSONWriter;
+import net.stringtree.json.JSONReader;
+import net.stringtree.json.JSONValidatingReader;
+import net.stringtree.json.JSONWriter;
 
 import java.util.HashMap;
 import java.util.Map;

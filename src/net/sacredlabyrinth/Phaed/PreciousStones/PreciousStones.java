@@ -49,7 +49,14 @@ public class PreciousStones extends JavaPlugin
     private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
     private PSServerListener serverListener;
-
+    
+    /*
+     * Fake main to allow us to run from netbeans
+     */
+    public static void main(String[] args) {
+        
+        
+    }
    
     /**
      * @return the instance
@@ -186,6 +193,7 @@ public class PreciousStones extends JavaPlugin
     /**
      * Runs on plugin disable
      */
+    @Override
     public void onDisable()
     {
         getVisualizationManager().revertAll();

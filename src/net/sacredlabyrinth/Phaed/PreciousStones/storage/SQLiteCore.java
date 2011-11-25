@@ -205,8 +205,8 @@ public class SQLiteCore implements DBCore
     {
         try
         {
-            getConnection().createStatement().execute(query);
-            return true;
+            return getConnection().createStatement().execute(query);
+           
         }
         catch (SQLException ex)
         {

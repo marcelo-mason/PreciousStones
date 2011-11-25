@@ -39,7 +39,7 @@ public class MineManager
 
         FieldSettings fs = field.getSettings();
 
-        if (!fs.hasFlag(FieldFlag.MINE))
+        if (!field.hasFlag(FieldFlag.MINE))
         {
             return;
         }

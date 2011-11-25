@@ -130,7 +130,7 @@ public final class ForesterManager
 
                     if (!isSeeThrough(type))
                     {
-                        prepareSpot(field, world, x, y, z, 4, fs.hasFlag(FieldFlag.FORESTER_SHRUBS));
+                        prepareSpot(field, world, x, y, z, 4, field.hasFlag(FieldFlag.FORESTER_SHRUBS));
                     }
                 }
             }

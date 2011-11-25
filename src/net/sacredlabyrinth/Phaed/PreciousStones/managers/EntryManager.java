@@ -73,7 +73,7 @@ public final class EntryManager
                         {
                             if (!hasAir)
                             {
-                                if (fs.hasFlag(FieldFlag.GIVE_AIR))
+                                if (field.hasFlag(FieldFlag.GIVE_AIR))
                                 {
                                     if (player.getRemainingAir() < 300)
                                     {
@@ -90,7 +90,7 @@ public final class EntryManager
                         {
                             if (!hasFeeding)
                             {
-                                if (fs.hasFlag(FieldFlag.SLOW_FEEDING))
+                                if (field.hasFlag(FieldFlag.SLOW_FEEDING))
                                 {
                                     int food = player.getFoodLevel();
                                     if (food < 20)
@@ -108,7 +108,7 @@ public final class EntryManager
                         {
                             if (!hasHeal)
                             {
-                                if (fs.hasFlag(FieldFlag.INSTANT_HEAL))
+                                if (field.hasFlag(FieldFlag.INSTANT_HEAL))
                                 {
                                     if (player.getHealth() < 20)
                                     {
@@ -119,7 +119,7 @@ public final class EntryManager
                                     }
                                 }
 
-                                if (fs.hasFlag(FieldFlag.SLOW_HEAL))
+                                if (field.hasFlag(FieldFlag.SLOW_HEAL))
                                 {
                                     if (player.getHealth() < 20)
                                     {
@@ -137,7 +137,7 @@ public final class EntryManager
                         {
                             if (!hasRepair)
                             {
-                                if (fs.hasFlag(FieldFlag.SLOW_REPAIR))
+                                if (field.hasFlag(FieldFlag.SLOW_REPAIR))
                                 {
                                     boolean updated = false;
 
@@ -209,7 +209,7 @@ public final class EntryManager
                                 {
                                     if (!hasDamage)
                                     {
-                                        if (fs.hasFlag(FieldFlag.SLOW_DAMAGE))
+                                        if (field.hasFlag(FieldFlag.SLOW_DAMAGE))
                                         {
                                             if (player.getHealth() > 0)
                                             {
@@ -220,7 +220,7 @@ public final class EntryManager
                                             }
                                         }
 
-                                        if (fs.hasFlag(FieldFlag.FAST_DAMAGE))
+                                        if (field.hasFlag(FieldFlag.FAST_DAMAGE))
                                         {
                                             if (player.getHealth() > 0)
                                             {
@@ -271,14 +271,12 @@ public final class EntryManager
      */
     public void enterOverlappedArea(Player player, Field field)
     {
-        FieldSettings fs = field.getSettings();
-
-        if (fs.hasFlag(FieldFlag.WELCOME_MESSAGE) && field.getName().length() > 0)
+        if (field.hasFlag(FieldFlag.WELCOME_MESSAGE) && field.getName().length() > 0)
         {
             plugin.getCommunicationManager().showWelcomeMessage(player, field.getName());
         }
 
-        if (fs.hasFlag(FieldFlag.ENTRY_ALERT))
+        if (field.hasFlag(FieldFlag.ENTRY_ALERT))
         {
             if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
             {
@@ -293,13 +291,11 @@ public final class EntryManager
      * @param player
      * @param entryField
      */
-    public void leaveOverlappedArea(Player player, Field entryField)
+    public void leaveOverlappedArea(Player player, Field field)
     {
-        FieldSettings fs = entryField.getSettings();
-
-        if (fs.hasFlag(FieldFlag.FAREWELL_MESSAGE) && entryField.getName().length() > 0)
+        if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE) && field.getName().length() > 0)
         {
-            plugin.getCommunicationManager().showFarewellMessage(player, entryField.getName());
+            plugin.getCommunicationManager().showFarewellMessage(player, field.getName());
         }
     }
 

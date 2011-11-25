@@ -172,14 +172,13 @@ public class PSBlockListener extends BlockListener
             if (player != null)
             {
                 Field field = players.get(playerName);
-                FieldSettings fs = field.getSettings();
 
-                if (fs.hasFlag(FieldFlag.LAUNCH))
+                if (field.hasFlag(FieldFlag.LAUNCH))
                 {
                     plugin.getVelocityManager().launchPlayer(player, field);
                 }
 
-                if (fs.hasFlag(FieldFlag.CANNON))
+                if (field.hasFlag(FieldFlag.CANNON))
                 {
                     plugin.getVelocityManager().shootPlayer(player, field);
                 }
@@ -514,7 +513,7 @@ public class PSBlockListener extends BlockListener
                     return;
                 }
 
-                if (fs.hasFlag(FieldFlag.PREVENT_UNPROTECTABLE))
+                if (fs.hasDefaultFlag(FieldFlag.PREVENT_UNPROTECTABLE))
                 {
                     Block foundblock = plugin.getUnprotectableManager().existsUnprotectableBlock(block);
 

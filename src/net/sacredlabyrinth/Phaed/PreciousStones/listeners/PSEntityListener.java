@@ -134,18 +134,18 @@ public class PSEntityListener extends EntityListener
 
         if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid)
         {
-            if (plugin.getForceFieldManager().hasSourceField(loc, FieldFlag.PREVENT_MOB_SPAWN))
+            if (plugin.getForceFieldManager().getSourceFields(loc, FieldFlag.PREVENT_MOB_SPAWN).size() > 0)
             {
                 event.setCancelled(true);
-            }
+            }  
         }
 
         if (entity instanceof Animals)
         {
-            if (plugin.getForceFieldManager().hasSourceField(loc, FieldFlag.PREVENT_ANIMAL_SPAWN))
+            if (plugin.getForceFieldManager().getSourceFields(loc, FieldFlag.PREVENT_ANIMAL_SPAWN).size() > 0)
             {
                 event.setCancelled(true);
-            }
+            }           
         }
     }
 

@@ -44,7 +44,7 @@ public class LightningManager
 	    final int delay = fs.getLightningDelaySeconds();
 	    final int leftbehind = fs.getLightningReplaceBlock();
 
-	    if (fs.hasFlag(FieldFlag.LIGHTNING))
+	    if (field.hasFlag(FieldFlag.LIGHTNING))
 	    {
 		plugin.getCommunicationManager().showLightning(player);
 

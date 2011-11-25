@@ -36,9 +36,7 @@ public class SnitchManager
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.hasFlag(FieldFlag.SNITCH))
+            if (field.hasFlag(FieldFlag.SNITCH))
             {
                 if (!field.isAllowed(player.getName()))
                 {

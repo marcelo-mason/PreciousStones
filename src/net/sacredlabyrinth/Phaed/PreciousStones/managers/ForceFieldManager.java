@@ -124,7 +124,7 @@ public final class ForceFieldManager
             }
         }
 
-        String owner = fs.hasFlag(FieldFlag.NO_OWNER) ? "Server" : player.getName();
+        String owner = fs.hasDefaultFlag(FieldFlag.NO_OWNER) ? "Server" : player.getName();
         boolean isChild = false;
         boolean isImport = false;
         Field field;
@@ -164,7 +164,7 @@ public final class ForceFieldManager
 
             if (ce.getField().getTypeId() != fs.getTypeId())
             {
-                ce.getField().importFlags(fs.getFlags());
+                ce.getField().importFlags(fs.getDefaultFlags());
                 ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(fs.getTitle()) + "'s field flags imported");
                 isImport = true;
             }
@@ -186,7 +186,7 @@ public final class ForceFieldManager
 
         // add to database (skip foresters and activate them)
 
-        if (fs.hasFlag(FieldFlag.FORESTER) || fs.hasFlag(FieldFlag.FORESTER_SHRUBS))
+        if (fs.hasDefaultFlag(FieldFlag.FORESTER) || fs.hasDefaultFlag(FieldFlag.FORESTER_SHRUBS))
         {
             plugin.getForesterManager().add(field, player.getName());
         }
@@ -199,7 +199,7 @@ public final class ForceFieldManager
 
             // open cuboid definition
 
-            if (fs.hasFlag(FieldFlag.CUBOID) && !isImport)
+            if (field.hasFlag(FieldFlag.CUBOID) && !isImport)
             {
                 if (isChild)
                 {
@@ -237,7 +237,7 @@ public final class ForceFieldManager
 
         ChunkVec cv = field.toChunkVec();
 
-        Set<FieldFlag> flags = field.getSettings().getFlags();
+        List<FieldFlag> flags = field.getSettings().getDefaultFlags();
 
         for (FieldFlag flag : flags)
         {
@@ -298,7 +298,7 @@ public final class ForceFieldManager
                 sf = new HashMap<FieldFlag, List<Field>>();
             }
 
-            Set<FieldFlag> flags = field.getSettings().getFlags();
+            List<FieldFlag> flags = field.getSettings().getDefaultFlags();
 
             for (FieldFlag flag : flags)
             {
@@ -330,7 +330,7 @@ public final class ForceFieldManager
     {
         // remove from fields collection
 
-        Set<FieldFlag> flags = field.getSettings().getFlags();
+        List<FieldFlag> flags = field.getSettings().getDefaultFlags();
 
         for (FieldFlag flag : flags)
         {
@@ -362,21 +362,21 @@ public final class ForceFieldManager
 
         // remove from forester
 
-        if (fs.hasFlag(FieldFlag.FORESTER) || fs.hasFlag(FieldFlag.FORESTER_SHRUBS))
+        if (fs.hasDefaultFlag(FieldFlag.FORESTER) || fs.hasDefaultFlag(FieldFlag.FORESTER_SHRUBS))
         {
             plugin.getForesterManager().remove(field);
         }
 
         // delete any snitch entries
 
-        if (fs.hasFlag(FieldFlag.SNITCH))
+        if (fs.hasDefaultFlag(FieldFlag.SNITCH))
         {
             plugin.getStorageManager().deleteSnitchEntires(field);
         }
 
         // remove from grief-undo and delete any records on the database
 
-        if (fs.hasFlag(FieldFlag.GRIEF_REVERT))
+        if (fs.hasDefaultFlag(FieldFlag.GRIEF_REVERT))
         {
             plugin.getGriefUndoManager().remove(field);
             plugin.getStorageManager().deleteBlockGrief(field);
@@ -433,7 +433,7 @@ public final class ForceFieldManager
 
             if (sf != null)
             {
-                Set<FieldFlag> flags = field.getSettings().getFlags();
+                List<FieldFlag> flags = field.getSettings().getDefaultFlags();
 
                 for (FieldFlag flag : flags)
                 {
@@ -797,7 +797,7 @@ public final class ForceFieldManager
     {
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block.getTypeId());
 
-        return fs != null && fs.hasFlag(FieldFlag.BREAKABLE);
+        return fs != null && fs.hasDefaultFlag(FieldFlag.BREAKABLE);
     }
 
     /**
@@ -1001,7 +1001,7 @@ public final class ForceFieldManager
     {
         FieldSettings fs = field.getSettings();
 
-        if (fs.hasFlag(FieldFlag.SNITCH))
+        if (fs.hasDefaultFlag(FieldFlag.SNITCH))
         {
             field.clearSnitch();
             plugin.getStorageManager().deleteSnitchEntires(field);
@@ -1816,9 +1816,7 @@ public final class ForceFieldManager
 
         for (Field field : sources)
         {
-            FieldSettings fs = field.getSettings();
-
-            if (fs.hasFlag(FieldFlag.NO_CONFLICT))
+            if (field.hasFlag(FieldFlag.NO_CONFLICT))
             {
                 continue;
             }
@@ -1853,7 +1851,7 @@ public final class ForceFieldManager
             return null;
         }
 
-        if (fs.hasFlag(FieldFlag.NO_CONFLICT))
+        if (fs.hasDefaultFlag(FieldFlag.NO_CONFLICT))
         {
             return null;
         }
@@ -1866,9 +1864,7 @@ public final class ForceFieldManager
 
         for (Field field : overlapping)
         {
-            FieldSettings fsArea = field.getSettings();
-
-            if (fsArea.hasFlag(FieldFlag.NO_CONFLICT))
+            if (field.hasFlag(FieldFlag.NO_CONFLICT))
             {
                 continue;
             }
@@ -1896,14 +1892,7 @@ public final class ForceFieldManager
      */
     public Field fieldConflicts(CuboidEntry ce, Player placer)
     {
-        FieldSettings fs = ce.getField().getSettings();
-
-        if (fs == null)
-        {
-            return null;
-        }
-
-        if (fs.hasFlag(FieldFlag.NO_CONFLICT))
+        if (ce.getField().hasFlag(FieldFlag.NO_CONFLICT))
         {
             return null;
         }
@@ -1914,9 +1903,7 @@ public final class ForceFieldManager
 
         for (Field field : overlapping)
         {
-            FieldSettings fsArea = field.getSettings();
-
-            if (fsArea.hasFlag(FieldFlag.NO_CONFLICT))
+            if (field.hasFlag(FieldFlag.NO_CONFLICT))
             {
                 continue;
             }
@@ -1970,7 +1957,7 @@ public final class ForceFieldManager
                 continue;
             }
 
-            if (fs.hasFlag(FieldFlag.NO_CONFLICT))
+            if (field.hasFlag(FieldFlag.NO_CONFLICT))
             {
                 continue;
             }

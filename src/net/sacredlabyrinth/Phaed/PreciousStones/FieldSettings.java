@@ -23,13 +23,13 @@ public class FieldSettings
     private int price = 0;
     private List<Integer> limits = new ArrayList<Integer>();
     private List<Integer> preventUse = new ArrayList<Integer>();
-    private Set<FieldFlag> flags = new HashSet<FieldFlag>();
-    private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
-
+    
+    private List<FieldFlag> defaultFlags = new LinkedList<FieldFlag>();
+    
     /**
      * @param map
      */
-
+   
     public FieldSettings(LinkedHashMap<String, Object> map)
     {
         if (map == null)
@@ -134,7 +134,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-fire"))
             {
-                flags.add(FieldFlag.PREVENT_FIRE);
+                defaultFlags.add(FieldFlag.PREVENT_FIRE);
             }
         }
 
@@ -142,7 +142,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-place"))
             {
-                flags.add(FieldFlag.PREVENT_PLACE);
+                defaultFlags.add(FieldFlag.PREVENT_PLACE);
             }
         }
 
@@ -150,7 +150,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-destroy"))
             {
-                flags.add(FieldFlag.PREVENT_DESTROY);
+                defaultFlags.add(FieldFlag.PREVENT_DESTROY);
             }
         }
 
@@ -158,7 +158,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-explosions"))
             {
-                flags.add(FieldFlag.PREVENT_EXPLOSIONS);
+                defaultFlags.add(FieldFlag.PREVENT_EXPLOSIONS);
             }
         }
 
@@ -166,7 +166,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("rollback-explosions"))
             {
-                flags.add(FieldFlag.ROLLBACK_EXPLOSIONS);
+                defaultFlags.add(FieldFlag.ROLLBACK_EXPLOSIONS);
             }
         }
 
@@ -174,7 +174,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-pvp"))
             {
-                flags.add(FieldFlag.PREVENT_PVP);
+                defaultFlags.add(FieldFlag.PREVENT_PVP);
             }
         }
 
@@ -182,7 +182,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-mob-damage"))
             {
-                flags.add(FieldFlag.PREVENT_MOB_DAMAGE);
+                defaultFlags.add(FieldFlag.PREVENT_MOB_DAMAGE);
             }
         }
 
@@ -190,7 +190,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-mob-spawn"))
             {
-                flags.add(FieldFlag.PREVENT_MOB_SPAWN);
+                defaultFlags.add(FieldFlag.PREVENT_MOB_SPAWN);
             }
         }
 
@@ -198,7 +198,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-animal-spawn"))
             {
-                flags.add(FieldFlag.PREVENT_ANIMAL_SPAWN);
+                defaultFlags.add(FieldFlag.PREVENT_ANIMAL_SPAWN);
             }
         }
 
@@ -206,7 +206,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-entry"))
             {
-                flags.add(FieldFlag.PREVENT_ENTRY);
+                defaultFlags.add(FieldFlag.PREVENT_ENTRY);
             }
         }
 
@@ -214,7 +214,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-unprotectable"))
             {
-                flags.add(FieldFlag.PREVENT_UNPROTECTABLE);
+                defaultFlags.add(FieldFlag.PREVENT_UNPROTECTABLE);
             }
         }
 
@@ -222,7 +222,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("remove-mob"))
             {
-                flags.add(FieldFlag.REMOVE_MOB);
+                defaultFlags.add(FieldFlag.REMOVE_MOB);
             }
         }
 
@@ -230,7 +230,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("remove-animal"))
             {
-                flags.add(FieldFlag.REMOVE_ANIMAL);
+                defaultFlags.add(FieldFlag.REMOVE_ANIMAL);
             }
         }
 
@@ -238,7 +238,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("instant-heal"))
             {
-                flags.add(FieldFlag.INSTANT_HEAL);
+                defaultFlags.add(FieldFlag.INSTANT_HEAL);
             }
         }
 
@@ -246,7 +246,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("slow-heal"))
             {
-                flags.add(FieldFlag.SLOW_HEAL);
+                defaultFlags.add(FieldFlag.SLOW_HEAL);
             }
         }
 
@@ -254,7 +254,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("slow-feeding"))
             {
-                flags.add(FieldFlag.SLOW_FEEDING);
+                defaultFlags.add(FieldFlag.SLOW_FEEDING);
             }
         }
 
@@ -262,7 +262,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("slow-repair"))
             {
-                flags.add(FieldFlag.SLOW_REPAIR);
+                defaultFlags.add(FieldFlag.SLOW_REPAIR);
             }
         }
 
@@ -270,7 +270,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("slow-damage"))
             {
-                flags.add(FieldFlag.SLOW_DAMAGE);
+                defaultFlags.add(FieldFlag.SLOW_DAMAGE);
             }
         }
 
@@ -278,7 +278,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("fast-damage"))
             {
-                flags.add(FieldFlag.FAST_DAMAGE);
+                defaultFlags.add(FieldFlag.FAST_DAMAGE);
             }
         }
 
@@ -286,7 +286,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("breakable"))
             {
-                flags.add(FieldFlag.BREAKABLE);
+                defaultFlags.add(FieldFlag.BREAKABLE);
             }
         }
 
@@ -294,7 +294,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("welcome-message"))
             {
-                flags.add(FieldFlag.WELCOME_MESSAGE);
+                defaultFlags.add(FieldFlag.WELCOME_MESSAGE);
             }
         }
 
@@ -302,7 +302,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("farewell-message"))
             {
-                flags.add(FieldFlag.FAREWELL_MESSAGE);
+                defaultFlags.add(FieldFlag.FAREWELL_MESSAGE);
             }
         }
 
@@ -310,7 +310,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("give-air"))
             {
-                flags.add(FieldFlag.GIVE_AIR);
+                defaultFlags.add(FieldFlag.GIVE_AIR);
             }
         }
 
@@ -318,7 +318,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("snitch"))
             {
-                flags.add(FieldFlag.SNITCH);
+                defaultFlags.add(FieldFlag.SNITCH);
             }
         }
 
@@ -326,7 +326,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("no-conflict"))
             {
-                flags.add(FieldFlag.NO_CONFLICT);
+                defaultFlags.add(FieldFlag.NO_CONFLICT);
             }
         }
 
@@ -334,7 +334,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("no-owner"))
             {
-                flags.add(FieldFlag.NO_OWNER);
+                defaultFlags.add(FieldFlag.NO_OWNER);
             }
         }
 
@@ -342,7 +342,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("launch"))
             {
-                flags.add(FieldFlag.LAUNCH);
+                defaultFlags.add(FieldFlag.LAUNCH);
             }
         }
 
@@ -350,7 +350,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("cannon"))
             {
-                flags.add(FieldFlag.CANNON);
+                defaultFlags.add(FieldFlag.CANNON);
             }
         }
 
@@ -358,7 +358,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("mine"))
             {
-                flags.add(FieldFlag.MINE);
+                defaultFlags.add(FieldFlag.MINE);
             }
         }
 
@@ -366,7 +366,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("lightning"))
             {
-                flags.add(FieldFlag.LIGHTNING);
+                defaultFlags.add(FieldFlag.LIGHTNING);
             }
         }
 
@@ -374,7 +374,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("prevent-flow"))
             {
-                flags.add(FieldFlag.PREVENT_FLOW);
+                defaultFlags.add(FieldFlag.PREVENT_FLOW);
             }
         }
 
@@ -382,7 +382,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("forester"))
             {
-                flags.add(FieldFlag.FORESTER);
+                defaultFlags.add(FieldFlag.FORESTER);
             }
         }
 
@@ -390,7 +390,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("forester-shrubs"))
             {
-                flags.add(FieldFlag.FORESTER_SHRUBS);
+                defaultFlags.add(FieldFlag.FORESTER_SHRUBS);
             }
         }
 
@@ -398,7 +398,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("grief-revert"))
             {
-                flags.add(FieldFlag.GRIEF_REVERT);
+                defaultFlags.add(FieldFlag.GRIEF_REVERT);
             }
         }
 
@@ -406,7 +406,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("grief-revert-drop"))
             {
-                flags.add(FieldFlag.GRIEF_REVERT_DROP);
+                defaultFlags.add(FieldFlag.GRIEF_REVERT_DROP);
             }
         }
 
@@ -414,7 +414,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("entry-alert"))
             {
-                flags.add(FieldFlag.ENTRY_ALERT);
+                defaultFlags.add(FieldFlag.ENTRY_ALERT);
             }
         }
 
@@ -422,7 +422,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("cuboid"))
             {
-                flags.add(FieldFlag.CUBOID);
+                defaultFlags.add(FieldFlag.CUBOID);
             }
         }
 
@@ -430,7 +430,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("visualize-on-rightclick"))
             {
-                flags.add(FieldFlag.VISUALIZE_ON_RIGHT_CLICK);
+                defaultFlags.add(FieldFlag.VISUALIZE_ON_RIGHT_CLICK);
             }
         }
 
@@ -438,7 +438,7 @@ public class FieldSettings
         {
             if ((Boolean) map.get("visualize-on-place"))
             {
-                flags.add(FieldFlag.VISUALIZE_ON_PLACE);
+                defaultFlags.add(FieldFlag.VISUALIZE_ON_PLACE);
             }
         }
 
@@ -446,77 +446,25 @@ public class FieldSettings
         {
             if ((Boolean) map.get("keep-chunks-loaded"))
             {
-                flags.add(FieldFlag.KEEP_CHUNKS_LOADED);
+                defaultFlags.add(FieldFlag.KEEP_CHUNKS_LOADED);
             }
         }
 
-        flags.add(FieldFlag.ALL);
+        defaultFlags.add(FieldFlag.ALL);
     }
 
+    
+    
+    
     /**
-     * Add a flag to the settings
-     *
-     * @param flagStr
-     */
-    public boolean insertFlag(String flagStr)
-    {
-        FieldFlag flag = Helper.toFieldFlag(flagStr);
-
-        if (flag != null && !flags.contains(flag))
-        {
-            flags.add(flag);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Enable a flag
-     *
-     * @param flagStr
-     */
-    public void enableFlag(String flagStr)
-    {
-        for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
-        {
-            FieldFlag flag = (FieldFlag) iter.next();
-
-            if (Helper.toFlagStr(flag).equals(flagStr))
-            {
-                iter.remove();
-                flags.add(flag);
-            }
-        }
-    }
-
-    /**
-     * Disabled a flag.
-     *
-     * @param flagStr
-     */
-    public void disableFlag(String flagStr)
-    {
-        for (Iterator iter = flags.iterator(); iter.hasNext(); )
-        {
-            FieldFlag flag = (FieldFlag) iter.next();
-            if (Helper.toFlagStr(flag).equals(flagStr))
-            {
-                iter.remove();
-                disabledFlags.add(flag);
-            }
-        }
-    }
-
-
-    /**
-     * Check if the field has a flag
+     * Check if the setting has a flag
      *
      * @param flag
      * @return
      */
-    public boolean hasFlag(String flagStr)
+    public boolean hasDefaultFlag(String flagStr)
     {
-        for (FieldFlag flag : flags)
+        for (FieldFlag flag : defaultFlags)
         {
             if (Helper.toFlagStr(flag).equals(flagStr))
             {
@@ -532,9 +480,9 @@ public class FieldSettings
      * @param flag
      * @return
      */
-    public boolean hasFlag(FieldFlag flag)
+    public boolean hasDefaultFlag(FieldFlag flag)
     {
-        return flags.contains(flag);
+        return defaultFlags.contains(flag);
     }
 
     /**
@@ -542,7 +490,7 @@ public class FieldSettings
      */
     public boolean hasNameableFlag()
     {
-        return flags.contains(FieldFlag.WELCOME_MESSAGE) || flags.contains(FieldFlag.FAREWELL_MESSAGE) || flags.contains(FieldFlag.ENTRY_ALERT);
+        return defaultFlags.contains(FieldFlag.WELCOME_MESSAGE) || defaultFlags.contains(FieldFlag.FAREWELL_MESSAGE) || defaultFlags.contains(FieldFlag.ENTRY_ALERT);
     }
 
     /**
@@ -550,7 +498,7 @@ public class FieldSettings
      */
     public boolean hasVeocityFlag()
     {
-        return flags.contains(FieldFlag.CANNON) || flags.contains(FieldFlag.LAUNCH);
+        return defaultFlags.contains(FieldFlag.CANNON) || defaultFlags.contains(FieldFlag.LAUNCH);
     }
 
     /**
@@ -558,7 +506,7 @@ public class FieldSettings
      */
     public boolean hasForesterFlag()
     {
-        return flags.contains(FieldFlag.FORESTER) || flags.contains(FieldFlag.FORESTER_SHRUBS);
+        return defaultFlags.contains(FieldFlag.FORESTER) || defaultFlags.contains(FieldFlag.FORESTER_SHRUBS);
     }
 
     /**
@@ -699,15 +647,12 @@ public class FieldSettings
         return Collections.unmodifiableList(limits);
     }
 
-    public Set<FieldFlag> getFlags()
+    public List<FieldFlag> getDefaultFlags()
     {
-        return Collections.unmodifiableSet(flags);
+        return Collections.unmodifiableList(defaultFlags);
     }
-
-    public List<FieldFlag> getDisabledFlags()
-    {
-        return Collections.unmodifiableList(disabledFlags);
-    }
+   
+    
 
     public int getCustomVolume()
     {

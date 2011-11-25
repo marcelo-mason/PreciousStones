@@ -5,9 +5,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
-import org.stringtree.json.JSONReader;
-import org.stringtree.json.JSONValidatingReader;
-import org.stringtree.json.JSONWriter;
+import net.stringtree.json.JSONReader;
+import net.stringtree.json.JSONValidatingReader;
+import net.stringtree.json.JSONWriter;
 
 import java.util.*;
 
@@ -38,8 +38,9 @@ public class Field extends AbstractVec implements Comparable<Field>
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
     private List<GriefBlock> grief = new LinkedList<GriefBlock>();
     private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
-    private List<String> disabledFlags = new LinkedList<String>();
-    private List<String> insertedFlags = new LinkedList<String>();
+    private List<FieldFlag> flags = new LinkedList<FieldFlag>();
+    private List<FieldFlag> disabledFlags = new LinkedList<FieldFlag>();
+    private List<FieldFlag> insertedFlags = new LinkedList<FieldFlag>();
     private long lastUsed;
     private boolean progress;
     private boolean open;
@@ -169,29 +170,21 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean hasFlag(FieldFlag flag)
     {
-        if (settings == null)
-        {
-            return false;
+        boolean ret = flags.contains(flag);
+        if(!ret){
+          ret = insertedFlags.contains(flag);
         }
-
-        return settings.hasFlag(flag);
+        if(disabledFlags.contains(flag)){
+            ret = false;
+        }
+        
+        return ret;
     }
-
-    /**
-     * Check if the field has certain certain properties
-     *
-     * @param flag
-     * @return
-     */
     public boolean hasFlag(String flagStr)
     {
-        if (settings == null)
-        {
-            return false;
-        }
-
-        return settings.hasFlag(flagStr);
+        return hasFlag(Helper.toFieldFlag(flagStr));
     }
+    
 
     private void calculateDimensions()
     {
@@ -745,7 +738,11 @@ public class Field extends AbstractVec implements Comparable<Field>
      * @param settings the settings to set
      */
     public void setSettings(FieldSettings settings)
-    {
+    {   
+        //Add all the default flags
+        for (FieldFlag flag : settings.getDefaultFlags()){
+            flags.add(flag);
+        }
         this.settings = settings;
     }
 
@@ -927,20 +924,41 @@ public class Field extends AbstractVec implements Comparable<Field>
      *
      * @return the flags
      */
-    public String getFlags()
+    public String getFlagsAsString()
     {
         HashMap<String, Object> flags = new HashMap<String, Object>();
 
         // writing the list of flags to json
 
-        flags.put("disabledFlags", disabledFlags);
-        flags.put("insertedFlags", insertedFlags);
+        flags.put("disabledFlags", getDisabledFlagsStringList());
+        flags.put("insertedFlags", getInsertedFlagsStringList());
         flags.put("revertSecs", revertSecs);
         flags.put("disabled", disabled);
 
-        return (new JSONWriter()).write(flags);
+        JSONWriter jw = new JSONWriter();
+        return jw.write(flags);
+        
     }
-
+ 
+    public LinkedList<String> getDisabledFlagsStringList(){
+        LinkedList<String> ll = new LinkedList();
+        for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
+        {
+            FieldFlag flag = (FieldFlag) iter.next();
+            ll.add(Helper.toFlagStr(flag));
+        }
+        return ll;
+    }
+    public LinkedList<String> getInsertedFlagsStringList(){
+        LinkedList<String> ll = new LinkedList();
+        for (Iterator iter = insertedFlags.iterator(); iter.hasNext(); )
+        {
+            FieldFlag flag = (FieldFlag) iter.next();
+            ll.add(Helper.toFlagStr(flag));
+        }
+        return ll;
+    }
+    
     /**
      * Read the list of flags in from a json string
      *
@@ -948,6 +966,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setFlags(String flagString)
     {
+        
         if (flagString != null && !flagString.isEmpty())
         {
             JSONReader reader = new JSONValidatingReader();
@@ -958,33 +977,28 @@ public class Field extends AbstractVec implements Comparable<Field>
                 for (String flag : flags.keySet())
                 {
                     // reading the list of flags from json
-
                     if (flag.equals("disabledFlags"))
                     {
-                        disabledFlags = (List<String>) flags.get(flag);
+                        List<String> disabledFlags = (List<String>) flags.get(flag);
 
                         for (String flagStr : disabledFlags)
                         {
-                            disableFieldFlag(flagStr);
+                            disableFlag(flagStr);
                         }
                     }
-
-                    if (flag.equals("insertedFlags"))
+                    else if (flag.equals("insertedFlags"))
                     {
-                        insertedFlags = (List<String>) flags.get(flag);
-
-                        for (String flagStr : insertedFlags)
+                        List<String> localFlags = (List<String>) flags.get(flag);
+                        for (String flagStr : localFlags)
                         {
-                            settings.insertFlag(flagStr);
+                            insertFieldFlag(flagStr);
                         }
                     }
-
-                    if (flag.equals("revertSecs"))
+                    else if (flag.equals("revertSecs"))
                     {
                         revertSecs = ((Long) flags.get(flag)).intValue();
                     }
-
-                    if (flag.equals("disabled"))
+                    else if (flag.equals("disabled"))
                     {
                         disabled = ((Boolean) flags.get(flag));
                     }
@@ -993,6 +1007,84 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
     }
 
+   
+    /**
+     * Force insert a flag if it doesn't exist.
+     * This can suck
+     *
+     * @param flagStr
+     */
+    public boolean insertFlag(String flagStr)
+    {
+        if (!flags.contains(Helper.toFieldFlag(flagStr))){
+            flags.add(Helper.toFieldFlag(flagStr));
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Enable a flag
+     *
+     * @param flagStr
+     */
+    public void enableFlag(String flagStr)
+    {
+        for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
+        {
+            FieldFlag flag = (FieldFlag) iter.next();
+
+            if (Helper.toFlagStr(flag).equals(flagStr))
+            {
+                //remove from the disableFlags list
+                iter.remove();
+            }
+        }
+        if (!flags.contains(Helper.toFieldFlag(flagStr))){
+            flags.add(Helper.toFieldFlag(flagStr));
+        }
+    }
+
+    /**
+     * Disabled a flag.
+     *
+     * @param flagStr
+     */
+    public void disableFlag(String flagStr)
+    {
+        for (Iterator iter = flags.iterator(); iter.hasNext(); )
+        {
+            FieldFlag flag = (FieldFlag) iter.next();
+            if (Helper.toFlagStr(flag).equals(flagStr))
+            {
+                iter.remove();                
+            }
+        }
+        if (!disabledFlags.contains(Helper.toFieldFlag(flagStr))){
+            disabledFlags.add(Helper.toFieldFlag(flagStr));
+        }
+         
+    }
+
+
+    public boolean hasDisabledFlag(String flagStr){
+        for (FieldFlag flag : disabledFlags)
+        {
+            if (Helper.toFlagStr(flag).equals(flagStr))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean hasDisabledFlag(FieldFlag flag)
+    {
+        return disabledFlags.contains(flag);
+    }
+    public List<FieldFlag> getDisabledFlags()
+    {
+        return Collections.unmodifiableList(disabledFlags);
+    }
     /**
      * Toggles a field flag.  returns its state.
      *
@@ -1000,57 +1092,38 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean toggleFieldFlag(String flagStr)
     {
-        boolean hasFlag = settings.hasFlag(flagStr);
+        boolean hasFlag = hasFlag(flagStr);
 
         dirty.add(DirtyFieldReason.FLAGS);
-
         if (hasFlag)
         {
-            settings.disableFlag(flagStr);
-
-            if (!disabledFlags.contains(flagStr))
-            {
-                disabledFlags.add(flagStr);
-            }
+            disableFlag(flagStr);
             return false;
         }
         else
         {
-            settings.enableFlag(flagStr);
-            disabledFlags.remove(flagStr);
+            enableFlag(flagStr);            
             return true;
         }
     }
 
-    /**
-     * Disables a field flag.
-     *
-     * @param flagStr
-     */
-    public void disableFieldFlag(String flagStr)
-    {
-        settings.disableFlag(flagStr);
 
-        if (!disabledFlags.contains(flagStr))
-        {
-            disabledFlags.add(flagStr);
+    public void RevertFlags(){
+        //Revert all the flags back to the default
+        insertedFlags.clear();
+        disabledFlags.clear();
+        flags.clear();
+        for (FieldFlag flag : settings.getDefaultFlags()){
+            flags.add(flag);
         }
-        dirty.add(DirtyFieldReason.FLAGS);
-
+        dirty.add(DirtyFieldReason.FLAGS);        
     }
+            
 
-    /**
-     * Whether the flag string matches a disabled flag
-     *
-     * @param flagStr
-     * @return
-     */
-    public boolean hasDisabledFlag(String flagStr)
-    {
-        return disabledFlags.contains(flagStr);
+    public List<FieldFlag> getFlags(){
+        
+        return Collections.unmodifiableList(flags);
     }
-
-
     /**
      * Insert a field flag into the field
      *
@@ -1058,10 +1131,9 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean insertFieldFlag(String flagStr)
     {
-        if (settings.insertFlag(flagStr))
-        {
+        if(!insertedFlags.contains(Helper.toFieldFlag(flagStr))){
             dirty.add(DirtyFieldReason.FLAGS);
-            insertedFlags.add(flagStr);
+            insertedFlags.add(Helper.toFieldFlag(flagStr));
             return true;
         }
 
@@ -1073,7 +1145,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      *
      * @param flags
      */
-    public void importFlags(Set<FieldFlag> flags)
+    public void importFlags(List<FieldFlag> flags)
     {
         for (FieldFlag flag : flags)
         {
