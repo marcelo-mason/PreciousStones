@@ -4,7 +4,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import net.sacredlabyrinth.Phaed.register.payment.Method;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -26,6 +25,7 @@ public final class ForceFieldManager
 
     private Queue<Field> deletionQueue = new LinkedList<Field>();
     private PreciousStones plugin;
+    private net.sacredlabyrinth.Phaed.PreciousStones.vault.Vault vault;
 
     /**
      *
@@ -118,7 +118,7 @@ public final class ForceFieldManager
 
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
         {
-            if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
+					if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
             {
                 return false;
             }
@@ -371,7 +371,7 @@ public final class ForceFieldManager
 
         if (fs.hasDefaultFlag(FieldFlag.SNITCH))
         {
-            plugin.getStorageManager().deleteSnitchEntires(field);
+            plugin.getStorageManager().deleteSnitchEntries(field);
         }
 
         // remove from grief-undo and delete any records on the database
@@ -1004,7 +1004,7 @@ public final class ForceFieldManager
         if (fs.hasDefaultFlag(FieldFlag.SNITCH))
         {
             field.clearSnitch();
-            plugin.getStorageManager().deleteSnitchEntires(field);
+            plugin.getStorageManager().deleteSnitchEntries(field);
             return true;
         }
 
@@ -2216,18 +2216,17 @@ public final class ForceFieldManager
      * Removes money from player's account
      *
      * @param player
-     * @param price
+     * @param amount
      * @return
      */
-    public boolean purchase(Player player, int price)
+    public boolean purchase(Player player, double amount)
     {
-        if (plugin.getMethod() != null)
+    	
+        if (vault.hasEconomy())
         {
-            Method.MethodAccount account = plugin.getMethod().getAccount(player.getName());
-
-            if (account.hasEnough(price))
+           if (net.sacredlabyrinth.Phaed.PreciousStones.vault.Vault.hasMoney(player, amount))
             {
-                account.subtract(price);
+                vault.playerCharge(player, amount);
             }
             else
             {
@@ -2243,14 +2242,13 @@ public final class ForceFieldManager
      * Credits money back to player's account
      *
      * @param player
-     * @param price
+     * @param amount
      */
-    public void refund(Player player, int price)
+    public void refund(Player player, double amount)
     {
-        if (plugin.getMethod() != null)
+        if (vault.hasEconomy())
         {
-            Method.MethodAccount account = plugin.getMethod().getAccount(player.getName());
-            account.add(price);
+            vault.playerCredit(player, amount);
             player.sendMessage(ChatColor.AQUA + "Your account has been credited");
         }
     }

@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import net.sacredlabyrinth.Phaed.register.payment.Method;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
 import org.bukkit.event.Event;
@@ -20,7 +19,6 @@ public class PreciousStones extends JavaPlugin
 {
     private static PreciousStones instance;
     private static Logger logger = Logger.getLogger("Minecraft");
-    private Method Method;
     private SettingsManager settingsManager;
     private SimpleClansManager simpleClansManager;
     private CommandManager commandManager;
@@ -193,29 +191,13 @@ public class PreciousStones extends JavaPlugin
     /**
      * Runs on plugin disable
      */
-    @Override
+
     public void onDisable()
     {
         getVisualizationManager().revertAll();
         getStorageManager().processQueue();
         getServer().getScheduler().cancelTasks(this);
         getStorageManager().closeConnection();
-    }
-
-    /**
-     * @param Method the Method to set
-     */
-    public void setMethod(Method Method)
-    {
-        this.Method = Method;
-    }
-
-    /**
-     * @return the Method
-     */
-    public Method getMethod()
-    {
-        return Method;
     }
 
     /**
