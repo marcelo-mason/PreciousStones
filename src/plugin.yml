@@ -2,8 +2,7 @@ name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
 version: 7.1.0
 load: 'postworld'
-depend: [Vault]
-softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye]
+softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault]
 commands:
   ps:
     description: All of the PreciousStones commands
