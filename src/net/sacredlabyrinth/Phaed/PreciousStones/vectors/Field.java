@@ -376,7 +376,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             return true;
         }
 
-        List<String> groups = PreciousStones.getInstance().getPermissionsManager().getGroups(getWorld(), target);
+        String[] groups = PreciousStones.getInstance().getPermissionsManager().getGroups(getWorld(), target);
 
         for (String group : groups)
         {
