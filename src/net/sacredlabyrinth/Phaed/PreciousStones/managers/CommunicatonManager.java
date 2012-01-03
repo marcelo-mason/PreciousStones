@@ -1509,6 +1509,27 @@ public class CommunicatonManager
             }
         }
     }
+    
+    /**
+     * @param attacker
+     * @param victim
+     * @param field
+     */
+    public void warnBypassPvPDueToCombat(Player attacker, Player victim)
+    {
+    
+        if (canNotify(attacker))
+        {
+            attacker.sendMessage(ChatColor.AQUA + "PvP Protection Ignored due to combat");
+        }
+
+        if (canNotify(victim))
+        {
+            victim.sendMessage(ChatColor.AQUA + "PvP Protection Ignored due to combat");
+        }
+
+
+    }
 
     /**
      * @param attacker

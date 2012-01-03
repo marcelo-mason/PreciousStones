@@ -41,6 +41,7 @@ public class PreciousStones extends JavaPlugin
     private ForesterManager foresterManager;
     private LegacyManager legacyManager;
     private WorldGuardManager worldGuardManager;
+    private CombatTagManager combatTagManager;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
@@ -126,6 +127,7 @@ public class PreciousStones extends JavaPlugin
         storageManager = new StorageManager();
         legacyManager = new LegacyManager();
         worldGuardManager = new WorldGuardManager();
+        combatTagManager = new CombatTagManager();
 
         playerListener = new PSPlayerListener();
         blockListener = new PSBlockListener();
@@ -368,6 +370,11 @@ public class PreciousStones extends JavaPlugin
     public WorldGuardManager getWorldGuardManager()
     {
         return worldGuardManager;
+    }
+    
+    public CombatTagManager getCombatTagManager()
+    {
+        return combatTagManager;
     }
 
     public PSPlayerListener getPlayerListener()
