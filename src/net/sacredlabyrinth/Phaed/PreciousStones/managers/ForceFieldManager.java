@@ -22,9 +22,10 @@ public final class ForceFieldManager
 {
     private final HashMap<FieldFlag, HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>>> fieldLists = new HashMap<FieldFlag, HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>>>();
     private final HashMap<ChunkVec, HashMap<FieldFlag, List<Field>>> sourceFields = new HashMap<ChunkVec, HashMap<FieldFlag, List<Field>>>();
-    private EconomyManager economy = new EconomyManager();
+
     private Queue<Field> deletionQueue = new LinkedList<Field>();
     private PreciousStones plugin;
+    private net.sacredlabyrinth.Phaed.PreciousStones.vault.Vault vault;
 
     /**
      *
@@ -117,7 +118,7 @@ public final class ForceFieldManager
 
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
         {
-            if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
+					if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
             {
                 return false;
             }
@@ -492,7 +493,7 @@ public final class ForceFieldManager
                         {
                             String group = target.substring(2);
 
-                            if (plugin.getPermissionsManager().inGroup(world, field.getOwner(), group))
+                            if (plugin.getPermissionsManager().inGroup(field.getOwner(), world, group))
                             {
                                 out.add(field);
                             }
@@ -2215,20 +2216,21 @@ public final class ForceFieldManager
      * Removes money from player's account
      *
      * @param player
-     * @param price
+     * @param amount
      * @return
      */
-    public boolean purchase(Player player, double price)
+    public boolean purchase(Player player, double amount)
     {
-        if (economy.hasEconomy())
+    	
+        if (vault.hasEconomy())
         {
-            String name = player.getName();
-            if (economy.hasFunds(name, price))
+           if (net.sacredlabyrinth.Phaed.PreciousStones.vault.Vault.hasMoney(player, amount))
             {
-                economy.chargePlayer(name, price);
+                vault.playerCharge(player, amount);
             }
             else
             {
+                player.sendMessage(ChatColor.RED + "You do not have sufficient money in your account");
                 return false;
             }
         }
@@ -2240,14 +2242,14 @@ public final class ForceFieldManager
      * Credits money back to player's account
      *
      * @param player
-     * @param price
+     * @param amount
      */
-    public void refund(Player player, double price)
+    public void refund(Player player, double amount)
     {
-        if (economy.hasEconomy())
+        if (vault.hasEconomy())
         {
-        	String name = player.getName();
-            economy.chargePlayer(name, price);
+            vault.playerCredit(player, amount);
+            player.sendMessage(ChatColor.AQUA + "Your account has been credited");
         }
     }
 }
