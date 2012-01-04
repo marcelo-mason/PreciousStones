@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import net.sacredlabyrinth.Phaed.register.payment.Method;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
 import org.bukkit.event.Event;
@@ -20,7 +19,6 @@ public class PreciousStones extends JavaPlugin
 {
     private static PreciousStones instance;
     private static Logger logger = Logger.getLogger("Minecraft");
-    private Method Method;
     private SettingsManager settingsManager;
     private SimpleClansManager simpleClansManager;
     private CommandManager commandManager;
@@ -43,6 +41,7 @@ public class PreciousStones extends JavaPlugin
     private ForesterManager foresterManager;
     private LegacyManager legacyManager;
     private WorldGuardManager worldGuardManager;
+    private CombatTagManager combatTagManager;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
@@ -128,6 +127,7 @@ public class PreciousStones extends JavaPlugin
         storageManager = new StorageManager();
         legacyManager = new LegacyManager();
         worldGuardManager = new WorldGuardManager();
+        combatTagManager = new CombatTagManager();
 
         playerListener = new PSPlayerListener();
         blockListener = new PSBlockListener();
@@ -193,29 +193,13 @@ public class PreciousStones extends JavaPlugin
     /**
      * Runs on plugin disable
      */
-    @Override
+
     public void onDisable()
     {
         getVisualizationManager().revertAll();
         getStorageManager().processQueue();
         getServer().getScheduler().cancelTasks(this);
         getStorageManager().closeConnection();
-    }
-
-    /**
-     * @param Method the Method to set
-     */
-    public void setMethod(Method Method)
-    {
-        this.Method = Method;
-    }
-
-    /**
-     * @return the Method
-     */
-    public Method getMethod()
-    {
-        return Method;
     }
 
     /**
@@ -386,6 +370,11 @@ public class PreciousStones extends JavaPlugin
     public WorldGuardManager getWorldGuardManager()
     {
         return worldGuardManager;
+    }
+    
+    public CombatTagManager getCombatTagManager()
+    {
+        return combatTagManager;
     }
 
     public PSPlayerListener getPlayerListener()
