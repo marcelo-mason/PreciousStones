@@ -37,6 +37,7 @@ public class PreciousStones extends JavaPlugin
     private LightningManager lightningManager;
     private VelocityManager velocityManager;
     private PermissionsManager permissionsManager;
+    private EconomyManager economyManager;
     private VisualizationManager visualizationManager;
     private ForesterManager foresterManager;
     private LegacyManager legacyManager;
@@ -120,6 +121,7 @@ public class PreciousStones extends JavaPlugin
         lightningManager = new LightningManager();
         velocityManager = new VelocityManager();
         permissionsManager = new PermissionsManager();
+        setEconomyManager(new EconomyManager());
         visualizationManager = new VisualizationManager();
         foresterManager = new ForesterManager();
         griefUndoManager = new GriefUndoManager();
@@ -399,4 +401,14 @@ public class PreciousStones extends JavaPlugin
     {
         return serverListener;
     }
+
+	public EconomyManager getEconomyManager()
+	    {
+			    return economyManager;
+	    }
+
+	public void setEconomyManager(EconomyManager economyManager)
+	    {
+			    this.economyManager = economyManager;
+	    }
 }

@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.listeners.PSServerListener;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -40,7 +41,7 @@ public final class PermissionsManager
 				{
 					return true;
 				}
-			if(handler.isEnabled())
+			if(PSServerListener.permission != null)
 				{
 					if(handler.has(player, "preciousstones.blacklist") && ! handler.has(player, "preciousstones.admintest"))
 						{
@@ -64,7 +65,7 @@ public final class PermissionsManager
 	 */
 	public boolean inGroup(World world, String playerName, String group)
 		{
-			if(handler != null)
+			if(PSServerListener.permission != null)
 				{
 					return(handler.playerInGroup(world, playerName, group));
 				}
@@ -81,7 +82,7 @@ public final class PermissionsManager
 	public String[] getGroups(String worldName, String playerName)
 		{
 			String[] groups = null;
-			if(handler != null)
+			if(PSServerListener.permission != null)
 				{
 					groups = handler.getPlayerGroups(worldName, playerName);
 				}
