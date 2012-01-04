@@ -492,10 +492,9 @@ public final class ForceFieldManager
                         if (target.contains("g:"))
                         {
                             String group = target.substring(2);
-
-                            if (plugin.getPermissionsManager().inGroup(field.getOwner(), world, group))
-                            {
+                            for(String s: plugin.getPermissionsManager().getGroups(world.getName(), field.getOwner())){
                                 out.add(field);
+                                break;
                             }
                             continue;
                         }
