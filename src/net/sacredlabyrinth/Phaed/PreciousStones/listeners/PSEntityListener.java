@@ -18,6 +18,8 @@ import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import java.util.LinkedList;
 import java.util.List;
+import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
+import org.bukkit.ChatColor;
 
 /**
  * PreciousStones entity listener
@@ -476,9 +478,18 @@ public class PSEntityListener extends EntityListener
                         }
                         else
                         {
-                            sub.setCancelled(true);
-                            plugin.getCommunicationManager().warnPvP(attacker, victim, field);
-                            return;
+                            //If both the attacker and the victim are in combat, don't cancel it
+                            if(((plugin.getCombatTagManager().isInCombat(attacker)) && (plugin.getCombatTagManager().isInCombat(victim)))){
+                                //warn both players
+                                plugin.getCommunicationManager().warnBypassPvPDueToCombat(attacker, victim);
+                                return;
+                            }
+                            else
+                            {
+                                sub.setCancelled(true);
+                                plugin.getCommunicationManager().warnPvP(attacker, victim, field);
+                                return;
+                            }
                         }
                     }
                     else

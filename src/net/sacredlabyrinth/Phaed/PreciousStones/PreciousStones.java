@@ -37,11 +37,11 @@ public class PreciousStones extends JavaPlugin
     private LightningManager lightningManager;
     private VelocityManager velocityManager;
     private PermissionsManager permissionsManager;
-    private EconomyManager economyManager;
     private VisualizationManager visualizationManager;
     private ForesterManager foresterManager;
     private LegacyManager legacyManager;
     private WorldGuardManager worldGuardManager;
+    private CombatTagManager combatTagManager;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
@@ -121,13 +121,13 @@ public class PreciousStones extends JavaPlugin
         lightningManager = new LightningManager();
         velocityManager = new VelocityManager();
         permissionsManager = new PermissionsManager();
-        setEconomyManager(new EconomyManager());
         visualizationManager = new VisualizationManager();
         foresterManager = new ForesterManager();
         griefUndoManager = new GriefUndoManager();
         storageManager = new StorageManager();
         legacyManager = new LegacyManager();
         worldGuardManager = new WorldGuardManager();
+        combatTagManager = new CombatTagManager();
 
         playerListener = new PSPlayerListener();
         blockListener = new PSBlockListener();
@@ -371,6 +371,11 @@ public class PreciousStones extends JavaPlugin
     {
         return worldGuardManager;
     }
+    
+    public CombatTagManager getCombatTagManager()
+    {
+        return combatTagManager;
+    }
 
     public PSPlayerListener getPlayerListener()
     {
@@ -401,14 +406,4 @@ public class PreciousStones extends JavaPlugin
     {
         return serverListener;
     }
-
-	public EconomyManager getEconomyManager()
-	    {
-			    return economyManager;
-	    }
-
-	public void setEconomyManager(EconomyManager economyManager)
-	    {
-			    this.economyManager = economyManager;
-	    }
 }
