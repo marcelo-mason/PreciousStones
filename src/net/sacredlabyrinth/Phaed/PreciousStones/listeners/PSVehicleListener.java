@@ -4,15 +4,16 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 /**
- *
  * @author phaed
  */
-public class PSVehicleListener extends VehicleListener
+public class PSVehicleListener implements Listener
 {
     private final PreciousStones plugin;
 
@@ -25,10 +26,9 @@ public class PSVehicleListener extends VehicleListener
     }
 
     /**
-     *
      * @param event
      */
-    @Override
+    @EventHandler(event = VehicleMoveEvent.class, priority = EventPriority.HIGH)
     public void onVehicleMove(VehicleMoveEvent event)
     {
         Vehicle v = event.getVehicle();
@@ -39,7 +39,7 @@ public class PSVehicleListener extends VehicleListener
             return;
         }
 
-        if(!(entity instanceof Player))
+        if (!(entity instanceof Player))
         {
             return;
         }

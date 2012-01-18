@@ -416,7 +416,7 @@ public final class StorageManager
                     }
                     catch (final Exception ex)
                     {
-                        PreciousStones.getLogger().info(ex.getMessage());
+                        PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
@@ -653,7 +653,7 @@ public final class StorageManager
                     }
                     catch (final Exception ex)
                     {
-                        PreciousStones.getLogger().info(ex.getMessage());
+                        PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
@@ -719,7 +719,7 @@ public final class StorageManager
                     }
                     catch (final Exception ex)
                     {
-                        PreciousStones.getLogger().info(ex.getMessage());
+                        PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
@@ -809,13 +809,13 @@ public final class StorageManager
 
             if (plugin.getSettingsManager().isDebugsql())
             {
-                PreciousStones.getLogger().info(query);
+                PreciousStones.getLog().info(query);
             }
 
             if (!core.execute(query))
             {
                 // this can happen when the data didn't change
-                // PreciousStones.getLogger().info(query +
+                // PreciousStones.getLog().info(query +
                 // " error");
             }
         }
@@ -846,7 +846,7 @@ public final class StorageManager
 
         if (plugin.getSettingsManager().isDebugsql())
         {
-            PreciousStones.getLogger().info(query + values);
+            PreciousStones.getLog().info(query + values);
         }
 
         synchronized (this)
@@ -941,7 +941,7 @@ public final class StorageManager
 
         if (plugin.getSettingsManager().isDebugsql())
         {
-            PreciousStones.getLogger().info(query);
+            PreciousStones.getLog().info(query);
         }
 
         synchronized (this)
@@ -1001,7 +1001,7 @@ public final class StorageManager
                     }
                     catch (final Exception ex)
                     {
-                        PreciousStones.getLogger().info(ex.getMessage());
+                        PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
@@ -1183,7 +1183,7 @@ public final class StorageManager
 
         if (plugin.getSettingsManager().isDebugsql())
         {
-            PreciousStones.getLogger().info(query);
+            PreciousStones.getLog().info(query);
         }
 
         ResultSet res;
@@ -1215,7 +1215,7 @@ public final class StorageManager
                     }
                     catch (final Exception ex)
                     {
-                        PreciousStones.getLogger().info(ex.getMessage());
+                        PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
@@ -1241,7 +1241,7 @@ public final class StorageManager
 
         if (plugin.getSettingsManager().isDebugsql())
         {
-            PreciousStones.getLogger().info(query);
+            PreciousStones.getLog().info(query);
         }
         synchronized (this)
         {
@@ -1260,7 +1260,7 @@ public final class StorageManager
 
         if (plugin.getSettingsManager().isDebugsql())
         {
-            PreciousStones.getLogger().info(query);
+            PreciousStones.getLog().info(query);
         }
         synchronized (this)
         {
@@ -1281,7 +1281,7 @@ public final class StorageManager
             {
                 if (plugin.getSettingsManager().isDebugsql())
                 {
-                    PreciousStones.getLogger().info("[Queue] processing queue...");
+                    PreciousStones.getLog().info("[Queue] processing queue...");
                 }
                 processQueue();
             }
@@ -1344,7 +1344,7 @@ public final class StorageManager
     {
         if (plugin.getSettingsManager().isDebugdb())
         {
-            PreciousStones.getLogger().info("[Queue] processing single query");
+            PreciousStones.getLog().info("[Queue] processing single query");
         }
 
         if (field.isDirty(DirtyFieldReason.DELETE))
@@ -1368,7 +1368,7 @@ public final class StorageManager
     {
         if (plugin.getSettingsManager().isDebugdb() && !working.isEmpty())
         {
-            PreciousStones.getLogger().info("[Queue] processing " + working.size() + " pstone queries...");
+            PreciousStones.getLog().info("[Queue] processing " + working.size() + " pstone queries...");
         }
 
         for (final Field field : working.values())
@@ -1393,7 +1393,7 @@ public final class StorageManager
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingUb.isEmpty())
         {
-            PreciousStones.getLogger().info("[Queue] processing " + workingUb.size() + " unbreakable queries...");
+            PreciousStones.getLog().info("[Queue] processing " + workingUb.size() + " unbreakable queries...");
         }
 
         for (final Unbreakable ub : workingUb.keySet())
@@ -1418,7 +1418,7 @@ public final class StorageManager
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingPlayers.isEmpty())
         {
-            PreciousStones.getLogger().info("[Queue] processing " + workingPlayers.size() + " player queries...");
+            PreciousStones.getLog().info("[Queue] processing " + workingPlayers.size() + " player queries...");
         }
 
         for (final String playerName : workingPlayers.keySet())
@@ -1443,7 +1443,7 @@ public final class StorageManager
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingSnitchEntries.isEmpty())
         {
-            PreciousStones.getLogger().info("[Queue] sending " + workingSnitchEntries.size() + " snitch queries...");
+            PreciousStones.getLog().info("[Queue] sending " + workingSnitchEntries.size() + " snitch queries...");
         }
 
         for (final SnitchEntry se : workingSnitchEntries)
@@ -1461,7 +1461,7 @@ public final class StorageManager
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingGrief.isEmpty())
         {
-            PreciousStones.getLogger().info("[Queue] processing " + workingGrief.size() + " grief queries...");
+            PreciousStones.getLog().info("[Queue] processing " + workingGrief.size() + " grief queries...");
         }
 
         for (final Field field : workingGrief)

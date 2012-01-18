@@ -8,6 +8,9 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
@@ -18,15 +21,13 @@ import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import java.util.LinkedList;
 import java.util.List;
-import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
-import org.bukkit.ChatColor;
 
 /**
  * PreciousStones entity listener
  *
  * @author Phaed
  */
-public class PSEntityListener extends EntityListener
+public class PSEntityListener implements Listener
 {
     private final PreciousStones plugin;
 
@@ -41,7 +42,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=EndermanPickupEvent.class, priority= EventPriority.HIGH)
     public void onEndermanPickup(EndermanPickupEvent event)
     {
         if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.PREVENT_DESTROY))
@@ -58,7 +59,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=EndermanPlaceEvent.class, priority=EventPriority.HIGH)
     public void onEndermanPlace(EndermanPlaceEvent event)
     {
         if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.PREVENT_PLACE))
@@ -76,7 +77,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=EntityTargetEvent.class, priority=EventPriority.HIGH)
     public void onEntityTarget(EntityTargetEvent event)
     {
         if (event.isCancelled())
@@ -123,7 +124,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=CreatureSpawnEvent.class, priority=EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
         Entity entity = event.getEntity();
@@ -139,7 +140,7 @@ public class PSEntityListener extends EntityListener
             if (plugin.getForceFieldManager().getSourceFields(loc, FieldFlag.PREVENT_MOB_SPAWN).size() > 0)
             {
                 event.setCancelled(true);
-            }  
+            }
         }
 
         if (entity instanceof Animals)
@@ -147,14 +148,14 @@ public class PSEntityListener extends EntityListener
             if (plugin.getForceFieldManager().getSourceFields(loc, FieldFlag.PREVENT_ANIMAL_SPAWN).size() > 0)
             {
                 event.setCancelled(true);
-            }           
+            }
         }
     }
 
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=ExplosionPrimeEvent.class, priority=EventPriority.HIGH)
     public void onExplosionPrime(ExplosionPrimeEvent event)
     {
         if (event.isCancelled())
@@ -178,7 +179,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=EntityExplodeEvent.class, priority=EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent event)
     {
         if (event.isCancelled())
@@ -385,7 +386,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=ItemSpawnEvent.class, priority=EventPriority.HIGH)
     public void onItemSpawn(ItemSpawnEvent event)
     {
         if (event.isCancelled())
@@ -409,7 +410,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=EntityDamageEvent.class, priority=EventPriority.HIGH)
     public void onEntityDamage(EntityDamageEvent event)
     {
         if (event.isCancelled())
@@ -523,18 +524,12 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=EntityDeathEvent.class, priority=EventPriority.HIGH)
     public void onEntityDeath(EntityDeathEvent event)
     {
-        if (plugin.getSettingsManager().isBlacklistedWorld(event.getEntity().getLocation().getWorld()))
-        {
-            return;
-        }
-
         if (event.getEntity() instanceof Player)
         {
             Player player = (Player) event.getEntity();
-
             plugin.getEntryManager().leaveAllFields(player);
         }
     }
@@ -542,7 +537,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=PaintingBreakEvent.class, priority=EventPriority.HIGH)
     public void onPaintingBreak(PaintingBreakEvent event)
     {
         Painting painting = event.getPainting();
@@ -582,7 +577,7 @@ public class PSEntityListener extends EntityListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=PaintingPlaceEvent.class, priority=EventPriority.HIGH)
     public void onPaintingPlace(PaintingPlaceEvent event)
     {
         Painting painting = event.getPainting();

@@ -31,7 +31,7 @@ public class MySQLCore implements DBCore
         this.port = port;
         this.username = username;
         this.password = password;
-        this.log = PreciousStones.getLogger();
+        this.log = PreciousStones.getLog();
 
         initialize();
     }
@@ -107,6 +107,7 @@ public class MySQLCore implements DBCore
         catch (SQLException ex)
         {
             log.severe("Error at SQL Query: " + ex.getMessage());
+            log.severe("Query: " + query);
         }
 
         return null;
@@ -135,6 +136,7 @@ public class MySQLCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL INSERT Query: " + ex);
+                log.severe("Query: " + query);
             }
         }
 
@@ -157,6 +159,7 @@ public class MySQLCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL UPDATE Query: " + ex);
+                log.severe("Query: " + query);
             }
         }
     }
@@ -177,6 +180,7 @@ public class MySQLCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL DELETE Query: " + ex);
+                log.severe("Query: " + query);
             }
         }
     }
@@ -197,6 +201,7 @@ public class MySQLCore implements DBCore
         catch (SQLException ex)
         {
             log.severe(ex.getMessage());
+            log.severe("Query: " + query);
             return false;
         }
     }

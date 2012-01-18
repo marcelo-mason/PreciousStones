@@ -25,7 +25,6 @@ public final class ForceFieldManager
 
     private Queue<Field> deletionQueue = new LinkedList<Field>();
     private PreciousStones plugin;
-    private net.sacredlabyrinth.Phaed.PreciousStones.vault.Vault vault;
 
     /**
      *
@@ -48,19 +47,19 @@ public final class ForceFieldManager
     {
         for (ChunkVec cv : sourceFields.keySet())
         {
-            PreciousStones.getLogger().info(cv.toString());
+            PreciousStones.getLog().info(cv.toString());
 
             HashMap<FieldFlag, List<Field>> flagList = sourceFields.get(cv);
 
             for (FieldFlag flag : flagList.keySet())
             {
-                PreciousStones.getLogger().info("   -" + flag);
+                PreciousStones.getLog().info("   -" + flag);
 
                 List<Field> fields = flagList.get(flag);
 
                 for (Field field : fields)
                 {
-                    PreciousStones.getLogger().info("     -" + Helper.toLocationString(field.getLocation()));
+                    PreciousStones.getLog().info("     -" + Helper.toLocationString(field.getLocation()));
                 }
             }
         }
@@ -118,7 +117,7 @@ public final class ForceFieldManager
 
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
         {
-					if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
+            if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
             {
                 return false;
             }
@@ -330,26 +329,34 @@ public final class ForceFieldManager
     {
         // remove from fields collection
 
-        List<FieldFlag> flags = field.getSettings().getDefaultFlags();
-
-        for (FieldFlag flag : flags)
+        if (field == null)
         {
-            HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
+            return;
+        }
 
-            if (wLists == null)
+        if (field.getSettings() != null)
+        {
+            List<FieldFlag> flags = field.getSettings().getDefaultFlags();
+
+            for (FieldFlag flag : flags)
             {
-                return;
-            }
+                HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
 
-            HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(field.getWorld());
-
-            if (w != null)
-            {
-                HashMap<Vec, Field> c = w.get(field.toChunkVec());
-
-                if (c != null)
+                if (wLists == null)
                 {
-                    c.remove(field.toVec());
+                    return;
+                }
+
+                HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(field.getWorld());
+
+                if (w != null)
+                {
+                    HashMap<Vec, Field> c = w.get(field.toChunkVec());
+
+                    if (c != null)
+                    {
+                        c.remove(field.toVec());
+                    }
                 }
             }
         }
@@ -686,6 +693,7 @@ public final class ForceFieldManager
                     {
                         // ensure chunk is loaded prior to polling
 
+                        /*
                         ChunkVec cv = field.toChunkVec();
 
                         if (!cv.equals(currentChunk))
@@ -707,6 +715,7 @@ public final class ForceFieldManager
 
                             currentChunk = cv;
                         }
+                        */
 
                         int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
@@ -1019,8 +1028,22 @@ public final class ForceFieldManager
      * @param name
      * @return count of fields set
      */
-    public int setNameFields(Player player, Field field, String name)
+    public int setNameFields(Player player, Field field, String name, boolean overlapped)
     {
+        if (!overlapped)
+        {
+            FieldSettings fs = field.getSettings();
+
+            if ((fs.hasNameableFlag()) && !field.getName().equals(name))
+            {
+                field.setName(name);
+                plugin.getStorageManager().offerField(field);
+                return 1;
+            }
+
+            return 0;
+        }
+
         HashSet<Field> total = getOverlappedFields(player, field);
 
         int renamedCount = 0;
@@ -2221,12 +2244,12 @@ public final class ForceFieldManager
      */
     public boolean purchase(Player player, double amount)
     {
-    	
-        if (vault.hasEconomy())
+        if (plugin.getVaultManager().hasEconomy())
         {
-           if (net.sacredlabyrinth.Phaed.PreciousStones.vault.Vault.hasMoney(player, amount))
+            if (plugin.getVaultManager().hasMoney(player, amount))
             {
-                vault.playerCharge(player, amount);
+                plugin.getVaultManager().playerCharge(player, amount);
+                player.sendMessage(ChatColor.AQUA + "You do not have sufficient money in your account");
             }
             else
             {
@@ -2246,9 +2269,9 @@ public final class ForceFieldManager
      */
     public void refund(Player player, double amount)
     {
-        if (vault.hasEconomy())
+        if (plugin.getVaultManager().hasEconomy())
         {
-            vault.playerCredit(player, amount);
+            plugin.getVaultManager().playerCredit(player, amount);
             player.sendMessage(ChatColor.AQUA + "Your account has been credited");
         }
     }

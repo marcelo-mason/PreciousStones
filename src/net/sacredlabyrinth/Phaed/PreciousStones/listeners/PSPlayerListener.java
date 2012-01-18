@@ -8,7 +8,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,7 +24,7 @@ import java.util.List;
  *
  * @author Phaed
  */
-public class PSPlayerListener extends PlayerListener
+public class PSPlayerListener implements Listener
 {
     private final PreciousStones plugin;
 
@@ -35,7 +39,7 @@ public class PSPlayerListener extends PlayerListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = PlayerLoginEvent.class, priority = EventPriority.HIGH)
     public void onPlayerLogin(PlayerLoginEvent event)
     {
         plugin.getPlayerManager().playerLogin(event.getPlayer());
@@ -45,17 +49,36 @@ public class PSPlayerListener extends PlayerListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = PlayerQuitEvent.class, priority = EventPriority.HIGH)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         plugin.getPlayerManager().playerLogoff(event.getPlayer());
         plugin.getStorageManager().offerPlayer(event.getPlayer().getName(), true);
+        plugin.getEntryManager().leaveAllFields(event.getPlayer());
     }
 
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = PlayerRespawnEvent.class, priority = EventPriority.HIGH)
+    public void onPlayerRespawn(PlayerRespawnEvent event)
+    {
+        handlePlayerSpawn(event.getPlayer());
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(event = PlayerJoinEvent.class, priority = EventPriority.HIGH)
+    public void onPlayerJoin(PlayerJoinEvent event)
+    {
+        handlePlayerSpawn(event.getPlayer());
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(event = PlayerInteractEvent.class, priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event)
     {
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
@@ -367,12 +390,24 @@ public class PSPlayerListener extends PlayerListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = PlayerTeleportEvent.class, priority = EventPriority.HIGH)
     public void onPlayerTeleport(PlayerTeleportEvent event)
     {
         if (event.isCancelled())
         {
             return;
+        }
+
+        Field field = plugin.getForceFieldManager().getNotAllowedSourceField(event.getTo(), event.getPlayer().getName(), FieldFlag.PREVENT_TELEPORT);
+
+        if (field != null)
+        {
+            if (!plugin.getPermissionsManager().has(event.getPlayer(), "preciousstones.bypass.teleport"))
+            {
+                event.getPlayer().sendMessage(ChatColor.RED + "You are not allowed to teleport to that location");
+                event.setCancelled(true);
+                return;
+            }
         }
 
         handlePlayerMove(event);
@@ -381,7 +416,7 @@ public class PSPlayerListener extends PlayerListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = PlayerMoveEvent.class, priority = EventPriority.HIGH)
     public void onPlayerMove(PlayerMoveEvent event)
     {
         if (event.isCancelled())
@@ -504,10 +539,100 @@ public class PSPlayerListener extends PlayerListener
         }
     }
 
+    private void handlePlayerSpawn(Player player)
+    {
+        // undo a player's visualization if it exists
+
+        if (plugin.getSettingsManager().isVisualizeEndOnMove())
+        {
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
+            {
+                if (!plugin.getCuboidManager().hasOpenCuboid(player))
+                {
+                    plugin.getVisualizationManager().revertVisualization(player);
+                }
+            }
+        }
+
+        // remove player from any entry field he is not currently in
+
+        List<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
+
+        if (entryfields != null)
+        {
+            for (Field entryfield : entryfields)
+            {
+                if (!entryfield.envelops(player.getLocation()))
+                {
+                    plugin.getEntryManager().leaveField(player, entryfield);
+
+                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryfield))
+                    {
+                        plugin.getEntryManager().leaveOverlappedArea(player, entryfield);
+                    }
+                }
+            }
+        }
+
+        // get all the fields the player is currently standing in
+
+        List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ALL);
+
+        // check for prevent-entry fields and teleport him away if hes not allowed in it
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entry"))
+        {
+            for (Field field : currentfields)
+            {
+                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
+                {
+                    if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
+                    {
+                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
+
+                        if (outside != null)
+                        {
+                            Field f = plugin.getForceFieldManager().getNotAllowedSourceField(outside, player.getName(), FieldFlag.PREVENT_ENTRY);
+
+                            if (f != null)
+                            {
+                                loc = outside;
+                            }
+                        }
+
+                        player.teleport(loc);
+                        plugin.getCommunicationManager().warnEntry(player, field);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // did not get teleported out so now we update his last known outside location
+
+        plugin.getPlayerManager().updateOutsideLocation(player);
+
+        // enter all fields hes is not currently entered into yet
+
+        for (Field currentfield : currentfields)
+        {
+            if (!plugin.getEntryManager().enteredField(player, currentfield))
+            {
+                if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentfield))
+                {
+                    plugin.getEntryManager().enterOverlappedArea(player, currentfield);
+                }
+                plugin.getEntryManager().enterField(player, currentfield);
+            }
+        }
+    }
+
+
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = PlayerBucketFillEvent.class, priority = EventPriority.HIGH)
     public void onPlayerBucketFill(PlayerBucketFillEvent event)
     {
         if (event.isCancelled())
@@ -570,7 +695,7 @@ public class PSPlayerListener extends PlayerListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = PlayerBucketEmptyEvent.class, priority = EventPriority.HIGH)
     public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
     {
         if (event.isCancelled())
@@ -634,7 +759,7 @@ public class PSPlayerListener extends PlayerListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = PlayerToggleSneakEvent.class, priority = EventPriority.HIGH)
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event)
     {
         Player player = event.getPlayer();

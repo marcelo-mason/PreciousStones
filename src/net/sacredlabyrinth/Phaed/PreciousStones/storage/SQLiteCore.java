@@ -26,7 +26,7 @@ public class SQLiteCore implements DBCore
     {
         this.dbName = dbName;
         this.dbLocation = dbLocation;
-        this.log = PreciousStones.getLogger();
+        this.log = PreciousStones.getLog();
 
         initialize();
     }
@@ -122,6 +122,7 @@ public class SQLiteCore implements DBCore
         catch (SQLException ex)
         {
             log.severe("Error at SQL Query: " + ex.getMessage());
+            log.severe("Query: " + query);
         }
         return null;
     }
@@ -149,6 +150,7 @@ public class SQLiteCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL INSERT Query: " + ex);
+                log.severe("Query: " + query);
             }
         }
 
@@ -171,6 +173,7 @@ public class SQLiteCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL UPDATE Query: " + ex);
+                log.severe("Query: " + query);
             }
         }
     }
@@ -191,6 +194,7 @@ public class SQLiteCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL DELETE Query: " + ex);
+                log.severe("Query: " + query);
             }
         }
     }
@@ -206,11 +210,12 @@ public class SQLiteCore implements DBCore
         try
         {
             return getConnection().createStatement().execute(query);
-           
+
         }
         catch (SQLException ex)
         {
             log.severe(ex.getMessage());
+            log.severe("Query: " + query);
             return false;
         }
     }

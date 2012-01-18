@@ -6,8 +6,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldListener;
 import org.bukkit.event.world.WorldLoadEvent;
 
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.List;
  *
  * @author Phaed
  */
-public class PSWorldListener extends WorldListener
+public class PSWorldListener implements Listener
 {
     private final PreciousStones plugin;
 
@@ -32,6 +34,7 @@ public class PSWorldListener extends WorldListener
     /**
      * @param event
      */
+    @EventHandler(event=ChunkUnloadEvent.class, priority= EventPriority.HIGH)
     public void onChunkUnload(ChunkUnloadEvent event)
     {
         World world = event.getWorld();
@@ -52,7 +55,7 @@ public class PSWorldListener extends WorldListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event=WorldLoadEvent.class, priority=EventPriority.HIGH)
     public void onWorldLoad(WorldLoadEvent event)
     {
         DebugTimer dt = new DebugTimer("onWorldLoad");

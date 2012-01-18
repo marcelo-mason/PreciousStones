@@ -2,8 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.MessageFormat;
@@ -42,21 +40,22 @@ public class PreciousStones extends JavaPlugin
     private LegacyManager legacyManager;
     private WorldGuardManager worldGuardManager;
     private CombatTagManager combatTagManager;
+    private VaultManager vaultManager;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
     private PSEntityListener entityListener;
     private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
     private PSServerListener serverListener;
-    
+
     /*
      * Fake main to allow us to run from netbeans
      */
     public static void main(String[] args) {
-        
-        
+
+
     }
-   
+
     /**
      * @return the instance
      */
@@ -68,7 +67,7 @@ public class PreciousStones extends JavaPlugin
     /**
      * @return the logger
      */
-    public static Logger getLogger()
+    public static Logger getLog()
     {
         return logger;
     }
@@ -128,6 +127,7 @@ public class PreciousStones extends JavaPlugin
         legacyManager = new LegacyManager();
         worldGuardManager = new WorldGuardManager();
         combatTagManager = new CombatTagManager();
+        vaultManager = new VaultManager();
 
         playerListener = new PSPlayerListener();
         blockListener = new PSBlockListener();
@@ -147,42 +147,12 @@ public class PreciousStones extends JavaPlugin
 
     private void registerEvents()
     {
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Event.Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET, entityListener, Event.Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENDERMAN_PICKUP, entityListener, Event.Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENDERMAN_PLACE, entityListener, Event.Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ITEM_SPAWN, entityListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PAINTING_BREAK, entityListener, Event.Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PAINTING_PLACE, entityListener, Event.Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME, entityListener, Event.Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.CREATURE_SPAWN, entityListener, Event.Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_EMPTY, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_BUCKET_FILL, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, serverListener, Priority.Monitor, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_DISABLE, serverListener, Priority.Monitor, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FROMTO, blockListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FADE, blockListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PHYSICS, blockListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_IGNITE, blockListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PISTON_EXTEND, blockListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PISTON_RETRACT, blockListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.VEHICLE_UPDATE, vehicleListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.WORLD_LOAD, worldListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD, worldListener, Priority.High, this);
+        getServer().getPluginManager().registerEvents(entityListener, this);
+        getServer().getPluginManager().registerEvents(playerListener, this);
+        getServer().getPluginManager().registerEvents(serverListener, this);
+        getServer().getPluginManager().registerEvents(blockListener, this);
+        getServer().getPluginManager().registerEvents(vehicleListener, this);
+        getServer().getPluginManager().registerEvents(worldListener, this);
     }
 
     private void registerCommands()
@@ -371,7 +341,7 @@ public class PreciousStones extends JavaPlugin
     {
         return worldGuardManager;
     }
-    
+
     public CombatTagManager getCombatTagManager()
     {
         return combatTagManager;
@@ -405,5 +375,10 @@ public class PreciousStones extends JavaPlugin
     public PSServerListener getServerListener()
     {
         return serverListener;
+    }
+
+    public VaultManager getVaultManager()
+    {
+        return vaultManager;
     }
 }

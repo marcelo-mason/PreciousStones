@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -255,14 +256,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (allowed.size() > 0)
                             {
-                                String out = "";
-
-                                for (String ae : allowed)
-                                {
-                                    out += ", " + ae;
-                                }
-
-                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Allowed: " + ChatColor.AQUA + out.substring(2));
+                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Allowed: " + ChatColor.AQUA + Helper.toMessage(new LinkedList<String>(allowed), ", "));
                             }
                             else
                             {
@@ -286,14 +280,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (inhabitants.size() > 0)
                             {
-                                String out = "";
-
-                                for (String i : inhabitants)
-                                {
-                                    out += ", " + i;
-                                }
-
-                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Inhabitants: " + ChatColor.AQUA + out.substring(2));
+                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Inhabitants: " + ChatColor.AQUA + Helper.toMessage(new LinkedList<String>(inhabitants), ", "));
                             }
                             else
                             {
@@ -311,7 +298,18 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length >= 1)
                         {
-                            String playerName = Helper.toMessage(args);
+                            boolean overlapped = args[0].equalsIgnoreCase("-o");
+
+                            String playerName;
+
+                            if (overlapped)
+                            {
+                                playerName = Helper.toMessage(Helper.removeFirst(args));
+                            }
+                            else
+                            {
+                                playerName = Helper.toMessage(args);
+                            }
 
                             if (playerName.length() > 0)
                             {
@@ -319,11 +317,18 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    int count = plugin.getForceFieldManager().setNameFields(player, field, playerName);
+                                    int count = plugin.getForceFieldManager().setNameFields(player, field, playerName, overlapped);
 
                                     if (count > 0)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed " + count + Helper.plural(count, " field", "s") + " to " + playerName);
+                                        if (!overlapped)
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed field to " + playerName);
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed " + count + Helper.plural(count, " field", "s") + " to " + playerName);
+                                        }
                                     }
                                     else
                                     {
@@ -737,7 +742,7 @@ public final class CommandManager implements CommandExecutor
                             plugin.getCommunicationManager().showNotFound(player);
                         }
                         return true;
-                    }        
+                    }
                     else if (cmd.equals("setinterval") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setinterval") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))

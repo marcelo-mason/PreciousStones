@@ -7,6 +7,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.Map;
  *
  * @author Phaed
  */
-public class PSBlockListener extends BlockListener
+public class PSBlockListener implements Listener
 {
     private PreciousStones plugin;
 
@@ -32,7 +35,7 @@ public class PSBlockListener extends BlockListener
     /**
      * @param event
      */
-    @Override
+    @EventHandler(event = BlockFadeEvent.class, priority = EventPriority.NORMAL)
     public void onBlockFade(BlockFadeEvent event)
     {
         Block affectedBlock = event.getBlock();
@@ -47,17 +50,11 @@ public class PSBlockListener extends BlockListener
         }
     }
 
-    @Override
-    public void onBlockPhysics(BlockPhysicsEvent event)
-    {
-
-
-    }
-
     /**
      * @param event
      */
-    @Override
+
+    @EventHandler(event = BlockFromToEvent.class, priority = EventPriority.NORMAL)
     public void onBlockFromTo(BlockFromToEvent event)
     {
         if (true)
@@ -81,12 +78,6 @@ public class PSBlockListener extends BlockListener
 
         // only capture water and lava movement
 
-        PreciousStones.getLogger().info("-");
-
-        PreciousStones.getLogger().info("block: " + Helper.toLocationString(block.getLocation()));
-        PreciousStones.getLogger().info("toBlock: " + Helper.toLocationString(toBlock.getLocation()));
-        PreciousStones.getLogger().info("relBlock: " + Helper.toLocationString(relBlock.getLocation()));
-
         if (plugin.getForceFieldManager().hasSourceField(toBlock.getLocation(), FieldFlag.PREVENT_FLOW))
         {
             return;
@@ -108,7 +99,8 @@ public class PSBlockListener extends BlockListener
     /**
      * @param event
      */
-    @Override
+
+    @EventHandler(event = BlockIgniteEvent.class, priority = EventPriority.HIGH)
     public void onBlockIgnite(BlockIgniteEvent event)
     {
         if (event.isCancelled())
@@ -155,7 +147,8 @@ public class PSBlockListener extends BlockListener
     /**
      * @param event
      */
-    @Override
+
+    @EventHandler(event = BlockRedstoneEvent.class, priority = EventPriority.HIGH)
     public void onBlockRedstoneChange(BlockRedstoneEvent event)
     {
         if (event.getNewCurrent() <= event.getOldCurrent())
@@ -189,7 +182,8 @@ public class PSBlockListener extends BlockListener
     /**
      * @param event
      */
-    @Override
+
+    @EventHandler(event = BlockBreakEvent.class, priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event)
     {
         if (event.isCancelled())
@@ -379,7 +373,8 @@ public class PSBlockListener extends BlockListener
     /**
      * @param event
      */
-    @Override
+
+    @EventHandler(event = BlockPlaceEvent.class, priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent event)
     {
         if (event.isCancelled())
@@ -546,6 +541,56 @@ public class PSBlockListener extends BlockListener
                     }
                 }
 
+                // if not allowed in this world then place as regular block
+
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.world"))
+                {
+                    if (!fs.allowedWorld(block.getWorld()))
+                    {
+                        return;
+                    }
+                }
+
+                // ensure placement of only those with the required permission, fail silently otherwise
+
+                if (fs.getRequiredPermission() != null)
+                {
+                    if (!plugin.getPermissionsManager().has(player, fs.getRequiredPermission()))
+                    {
+                        return;
+                    }
+                }
+
+                // ensure placement inside allowed only fields
+
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.allowed-only-inside"))
+                {
+                    if (fs.hasAllowedOnlyField())
+                    {
+                        List<Field> fields = plugin.getForceFieldManager().getAllowedSourceFields(block.getLocation(), player.getName(), FieldFlag.ALL);
+
+                        boolean allowed = false;
+
+                        for (Field allowedField : fields)
+                        {
+                            if (fs.isAllowedOnlyField(allowedField))
+                            {
+                                PreciousStones.getLog().info("allowed: " + allowedField);
+                                allowed = true;
+                                break;
+                            }
+                        }
+
+                        if (!allowed)
+                        {
+                            player.sendMessage(ChatColor.RED + "The field can only be placed inside the following field types: ");
+                            player.sendMessage(ChatColor.WHITE + fs.getAllowedOnlyFieldString());
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+                }
+
                 if (plugin.getForceFieldManager().add(block, player, event))
                 {
                     if (plugin.getForceFieldManager().isBreakable(block))
@@ -701,7 +746,8 @@ public class PSBlockListener extends BlockListener
     /**
      * @param event
      */
-    @Override
+
+    @EventHandler(event = BlockDamageEvent.class, priority = EventPriority.HIGH)
     public void onBlockDamage(BlockDamageEvent event)
     {
         /*
@@ -735,7 +781,8 @@ public class PSBlockListener extends BlockListener
     /**
      * @param event
      */
-    @Override
+
+    @EventHandler(event = BlockPistonExtendEvent.class, priority = EventPriority.HIGH)
     public void onBlockPistonExtend(BlockPistonExtendEvent event)
     {
         boolean unprotected = false;
@@ -781,7 +828,8 @@ public class PSBlockListener extends BlockListener
     /**
      * @param event
      */
-    @Override
+
+    @EventHandler(event = BlockPistonRetractEvent.class, priority = EventPriority.HIGH)
     public void onBlockPistonRetract(BlockPistonRetractEvent event)
     {
         boolean unprotected = false;
@@ -799,6 +847,8 @@ public class PSBlockListener extends BlockListener
         {
             unprotected = true;
         }
+
+        // prevent piston from moving a field or unbreakable block
 
         Block block = piston.getRelative(event.getDirection()).getRelative(event.getDirection());
 

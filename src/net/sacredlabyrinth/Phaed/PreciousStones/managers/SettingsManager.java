@@ -21,14 +21,14 @@ public final class SettingsManager
     private int cuboidDefiningType;
     private int cuboidVisualizationType;
     private boolean logToHawkEye;
-    private List<String> blacklistedWorlds;
+    private List<Object> blacklistedWorlds;
     private int purgeSnitchAfterDays;
     private int purgeAfterDays;
     private int maxSnitchRecords;
     private int saveFrequency;
-    private List<Integer> griefUndoBlackList;
+    private List<Object> griefUndoBlackList;
     private int griefRevertMinInterval;
-    private List<Integer> foresterFertileBlocks;
+    private List<Object> foresterFertileBlocks;
     private int foresterInterval;
     private int foresterTrees;
     private int visualizeMarkBlock;
@@ -44,11 +44,11 @@ public final class SettingsManager
     private boolean debugdb;
     private boolean debugsql;
     private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
-    private List<Integer> unbreakableBlocks = new ArrayList<Integer>();
-    private List<Integer> bypassBlocks = new ArrayList<Integer>();
-    private List<Integer> unprotectableBlocks = new ArrayList<Integer>();
-    private List<Integer> toolItems = new ArrayList<Integer>();
-    private List<Integer> repairableItems = new ArrayList<Integer>();
+    private List<Object> unbreakableBlocks = new ArrayList<Object>();
+    private List<Object> bypassBlocks = new ArrayList<Object>();
+    private List<Object> unprotectableBlocks = new ArrayList<Object>();
+    private List<Object> toolItems = new ArrayList<Object>();
+    private List<Object> repairableItems = new ArrayList<Object>();
     private boolean logRollback;
     private boolean logFire;
     private boolean logEntry;
@@ -610,7 +610,7 @@ public final class SettingsManager
     /**
      * @return the blacklistedWorlds
      */
-    public List<String> getBlacklistedWorlds()
+    public List<Object> getBlacklistedWorlds()
     {
         return Collections.unmodifiableList(blacklistedWorlds);
     }
@@ -650,7 +650,7 @@ public final class SettingsManager
     /**
      * @return the griefUndoBlackList
      */
-    public List<Integer> getGriefUndoBlackList()
+    public List<Object> getGriefUndoBlackList()
     {
         return Collections.unmodifiableList(griefUndoBlackList);
     }
@@ -658,7 +658,7 @@ public final class SettingsManager
     /**
      * @return the foresterFertileBlocks
      */
-    public List<Integer> getForesterFertileBlocks()
+    public List<Object> getForesterFertileBlocks()
     {
         return Collections.unmodifiableList(foresterFertileBlocks);
     }
@@ -746,7 +746,7 @@ public final class SettingsManager
     /**
      * @return the unbreakableBlocks
      */
-    public List<Integer> getUnbreakableBlocks()
+    public List<Object> getUnbreakableBlocks()
     {
         return Collections.unmodifiableList(unbreakableBlocks);
     }
@@ -754,7 +754,7 @@ public final class SettingsManager
     /**
      * @return the bypassBlocks
      */
-    public List<Integer> getBypassBlocks()
+    public List<Object> getBypassBlocks()
     {
         return Collections.unmodifiableList(bypassBlocks);
     }
@@ -762,7 +762,7 @@ public final class SettingsManager
     /**
      * @return the unprotectableBlocks
      */
-    public List<Integer> getUnprotectableBlocks()
+    public List<Object> getUnprotectableBlocks()
     {
         return Collections.unmodifiableList(unprotectableBlocks);
     }
@@ -770,7 +770,7 @@ public final class SettingsManager
     /**
      * @return the toolItems
      */
-    public List<Integer> getToolItems()
+    public List<Object> getToolItems()
     {
         return Collections.unmodifiableList(toolItems);
     }
@@ -778,7 +778,7 @@ public final class SettingsManager
     /**
      * @return the repairableItems
      */
-    public List<Integer> getRepairableItems()
+    public List<Object> getRepairableItems()
     {
         return Collections.unmodifiableList(repairableItems);
     }

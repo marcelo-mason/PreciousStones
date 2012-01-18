@@ -60,11 +60,16 @@ public final class EntryManager
 
                     for (Field field : fields)
                     {
-                        FieldSettings fs = field.getSettings();
-
                         Player player = Helper.matchSinglePlayer(playerName);
 
                         if (player == null)
+                        {
+                            continue;
+                        }
+
+                        // disabled fields shoudln't be doing things
+
+                        if (field.isDisabled())
                         {
                             continue;
                         }
@@ -73,14 +78,17 @@ public final class EntryManager
                         {
                             if (!hasAir)
                             {
-                                if (field.hasFlag(FieldFlag.GIVE_AIR))
+                                if (plugin.getForceFieldManager().isAllowed(field, playerName))
                                 {
-                                    if (player.getRemainingAir() < 300)
+                                    if (field.hasFlag(FieldFlag.GIVE_AIR))
                                     {
-                                        player.setRemainingAir(600);
-                                        plugin.getCommunicationManager().showGiveAir(player);
-                                        hasAir = true;
-                                        continue;
+                                        if (player.getRemainingAir() < 300)
+                                        {
+                                            player.setRemainingAir(600);
+                                            plugin.getCommunicationManager().showGiveAir(player);
+                                            hasAir = true;
+                                            continue;
+                                        }
                                     }
                                 }
                             }
@@ -90,15 +98,18 @@ public final class EntryManager
                         {
                             if (!hasFeeding)
                             {
-                                if (field.hasFlag(FieldFlag.SLOW_FEEDING))
+                                if (plugin.getForceFieldManager().isAllowed(field, playerName))
                                 {
-                                    int food = player.getFoodLevel();
-                                    if (food < 20)
+                                    if (field.hasFlag(FieldFlag.SLOW_FEEDING))
                                     {
-                                        player.setFoodLevel(food + 1);
-                                        plugin.getCommunicationManager().showSlowFeeding(player);
-                                        hasFeeding = true;
-                                        continue;
+                                        int food = player.getFoodLevel();
+                                        if (food < 20)
+                                        {
+                                            player.setFoodLevel(food + 1);
+                                            plugin.getCommunicationManager().showSlowFeeding(player);
+                                            hasFeeding = true;
+                                            continue;
+                                        }
                                     }
                                 }
                             }
@@ -108,27 +119,30 @@ public final class EntryManager
                         {
                             if (!hasHeal)
                             {
-                                if (field.hasFlag(FieldFlag.INSTANT_HEAL))
+                                if (plugin.getForceFieldManager().isAllowed(field, playerName))
                                 {
-                                    if (player.getHealth() < 20)
+                                    if (field.hasFlag(FieldFlag.INSTANT_HEAL))
                                     {
-                                        player.setHealth(20);
-                                        plugin.getCommunicationManager().showInstantHeal(player);
-                                        hasHeal = true;
-                                        continue;
-                                    }
-                                }
-
-                                if (field.hasFlag(FieldFlag.SLOW_HEAL))
-                                {
-                                    if (player.getHealth() < 20)
-                                    {
-                                        player.setHealth(healthCheck(player.getHealth() + 1));
-                                        plugin.getCommunicationManager().showSlowHeal(player);
-                                        hasHeal = true;
-                                        continue;
+                                        if (player.getHealth() < 20)
+                                        {
+                                            player.setHealth(20);
+                                            plugin.getCommunicationManager().showInstantHeal(player);
+                                            hasHeal = true;
+                                            continue;
+                                        }
                                     }
 
+                                    if (field.hasFlag(FieldFlag.SLOW_HEAL))
+                                    {
+                                        if (player.getHealth() < 20)
+                                        {
+                                            player.setHealth(healthCheck(player.getHealth() + 1));
+                                            plugin.getCommunicationManager().showSlowHeal(player);
+                                            hasHeal = true;
+                                            continue;
+                                        }
+
+                                    }
                                 }
                             }
                         }
@@ -137,45 +151,18 @@ public final class EntryManager
                         {
                             if (!hasRepair)
                             {
-                                if (field.hasFlag(FieldFlag.SLOW_REPAIR))
+                                if (plugin.getForceFieldManager().isAllowed(field, playerName))
                                 {
-                                    boolean updated = false;
-
-                                    ItemStack[] armors = player.getInventory().getArmorContents();
-                                    for (ItemStack armor : armors)
+                                    if (field.hasFlag(FieldFlag.SLOW_REPAIR))
                                     {
-                                        if (plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
+                                        boolean updated = false;
+
+                                        ItemStack[] armors = player.getInventory().getArmorContents();
+                                        for (ItemStack armor : armors)
                                         {
-                                            short dur = armor.getDurability();
-                                            if (dur > 0)
+                                            if (plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
                                             {
-                                                dur -= 25;
-                                                if (dur < 0)
-                                                {
-                                                    dur = 0;
-                                                }
-                                                armor.setDurability(dur);
-                                                plugin.getCommunicationManager().showSlowRepair(player);
-                                                updated = true;
-                                                hasRepair = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    if (updated)
-                                    {
-                                        continue;
-                                    }
-
-                                    ItemStack[] items = player.getInventory().getContents();
-                                    for (ItemStack item : items)
-                                    {
-                                        if (item != null)
-                                        {
-                                            if (plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
-                                            {
-                                                short dur = item.getDurability();
+                                                short dur = armor.getDurability();
                                                 if (dur > 0)
                                                 {
                                                     dur -= 25;
@@ -183,7 +170,7 @@ public final class EntryManager
                                                     {
                                                         dur = 0;
                                                     }
-                                                    item.setDurability(dur);
+                                                    armor.setDurability(dur);
                                                     plugin.getCommunicationManager().showSlowRepair(player);
                                                     updated = true;
                                                     hasRepair = true;
@@ -191,11 +178,41 @@ public final class EntryManager
                                                 }
                                             }
                                         }
-                                    }
 
-                                    if (updated)
-                                    {
-                                        continue;
+                                        if (updated)
+                                        {
+                                            continue;
+                                        }
+
+                                        ItemStack[] items = player.getInventory().getContents();
+                                        for (ItemStack item : items)
+                                        {
+                                            if (item != null)
+                                            {
+                                                if (plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
+                                                {
+                                                    short dur = item.getDurability();
+                                                    if (dur > 0)
+                                                    {
+                                                        dur -= 25;
+                                                        if (dur < 0)
+                                                        {
+                                                            dur = 0;
+                                                        }
+                                                        item.setDurability(dur);
+                                                        plugin.getCommunicationManager().showSlowRepair(player);
+                                                        updated = true;
+                                                        hasRepair = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if (updated)
+                                        {
+                                            continue;
+                                        }
                                     }
                                 }
                             }

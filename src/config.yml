@@ -14,6 +14,7 @@ force-field-blocks:
     prevent-explosions: true
     prevent-unprotectable: true
     prevent-flow: true
+    prevent-teleport: true
     welcome-message: true
     farewell-message: true
     visualize-on-rightclick: true
@@ -154,8 +155,9 @@ warn:
     place: true
 cleanup:
     player-inactivity-purge-days: 45
-    snitch-unused-purge-days: 60
+    snitch-unused-purge-days: 30
 settings:
+    off-by-default: false
     sneaking-bypasses-damage: true
     log-to-hawkeye: false
     lines-per-page: 12
@@ -165,7 +167,6 @@ settings:
     blacklisted-worlds: [creative_world]
     debug-on: false
     drop-on-delete: true
-    off-by-default: false
     allowed-can-break-pstones: false
 forester:
     trees: 60
@@ -203,7 +204,7 @@ visualization:
     blocks-to-send: 100
     ticks-between-sends: 10
     default-density: 8
-    max-fields-to-visualize-at-once: 20
+    max-fields-to-visualize-at-once: 5
 notify:
     destroy: true
     bypass-pvp: true

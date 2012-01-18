@@ -1,8 +1,8 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 7.0.6
+version: 7.2
 load: 'postworld'
-softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, iConomy, BOSEconomy, Currency, MultiCurrency]
+softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag]
 commands:
   ps:
     description: All of the PreciousStones commands
@@ -96,6 +96,12 @@ permissions:
     description: Bypasses cuboid size limits
   preciousstones.bypass.interval:
     description: Bypasses interval configured minimum
+  preciousstones.bypass.teleport:
+    description: Bypasses teleport block
+  preciousstones.bypass.world:
+    description: Bypasses world limitation
+  preciousstones.bypass.allowed-only-inside:
+    description: Bypasses allowed only restriction
   preciousstones.alert.notify.place:
     description: Gets alert for block placement notifys
   preciousstones.alert.notify.destroy:
@@ -201,10 +207,9 @@ permissions:
   preciousstones.limit15:
     description: Limit 15
   preciousstones.benefit.*:
-    default: true
+    default: false
     description: Can use PreciousStones
     children:
-      preciousstones.benefit.ps: true
       preciousstones.benefit.create.forcefield : true
       preciousstones.benefit.create.unbreakable: true
       preciousstones.benefit.create.protection: true
@@ -231,7 +236,7 @@ permissions:
       preciousstones.benefit.disable: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
-    default: true
+    default: false
     children:
       preciousstones.whitelist.allow: true
       preciousstones.whitelist.allowed: true
@@ -256,6 +261,9 @@ permissions:
       preciousstones.bypass.lightning: true
       preciousstones.bypass.cuboid: true
       preciousstones.bypass.interval: true
+      preciousstones.bypass.teleport: true
+      preciousstones.bypass.world: true
+      preciousstones.bypass.allowed-only-inside: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false

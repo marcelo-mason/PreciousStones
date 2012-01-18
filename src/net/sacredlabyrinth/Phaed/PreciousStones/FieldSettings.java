@@ -1,5 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.World;
+
 import java.util.*;
 
 /**
@@ -19,17 +22,19 @@ public class FieldSettings
     private int lightningDelaySeconds = 0;
     private int lightningReplaceBlock = 0;
     private int mixingGroup = 0;
+    private String requiredPermission;
     private String title;
     private int price = 0;
     private List<Integer> limits = new ArrayList<Integer>();
     private List<Integer> preventUse = new ArrayList<Integer>();
-    
+    private List<String> allowedWorlds = new ArrayList<String>();
+    private List<String> allowedOnlyFields = new ArrayList<String>();
     private List<FieldFlag> defaultFlags = new LinkedList<FieldFlag>();
-    
+
     /**
      * @param map
      */
-   
+
     public FieldSettings(LinkedHashMap<String, Object> map)
     {
         if (map == null)
@@ -55,6 +60,15 @@ public class FieldSettings
         {
             validField = false;
             return;
+        }
+
+        if (map.containsKey("required-permission") && Helper.isString(map.get("required-permission")))
+        {
+            requiredPermission = (String) map.get("required-permission");
+        }
+        else
+        {
+            requiredPermission = null;
         }
 
         if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
@@ -120,6 +134,11 @@ public class FieldSettings
             preventUse = (List<Integer>) map.get("prevent-use");
         }
 
+        if (map.containsKey("allowed-worlds") && Helper.isStringList(map.get("allowed-worlds")))
+        {
+            allowedWorlds = (List<String>) map.get("allowed-worlds");
+        }
+
         if (map.containsKey("price") && Helper.isInteger(map.get("price")))
         {
             price = (Integer) map.get("price");
@@ -128,6 +147,11 @@ public class FieldSettings
         if (map.containsKey("limits") && Helper.isIntList(map.get("limits")))
         {
             limits = (List<Integer>) map.get("limits");
+        }
+
+        if (map.containsKey("allowed-only-inside") && Helper.isStringList(map.get("allowed-only-inside")))
+        {
+            allowedOnlyFields = (List<String>) map.get("allowed-only-inside");
         }
 
         if (map.containsKey("prevent-fire") && Helper.isBoolean(map.get("prevent-fire")))
@@ -175,6 +199,14 @@ public class FieldSettings
             if ((Boolean) map.get("prevent-pvp"))
             {
                 defaultFlags.add(FieldFlag.PREVENT_PVP);
+            }
+        }
+
+        if (map.containsKey("prevent-teleport") && Helper.isBoolean(map.get("prevent-teleport")))
+        {
+            if ((Boolean) map.get("prevent-teleport"))
+            {
+                defaultFlags.add(FieldFlag.PREVENT_TELEPORT);
             }
         }
 
@@ -453,9 +485,6 @@ public class FieldSettings
         defaultFlags.add(FieldFlag.ALL);
     }
 
-    
-    
-    
     /**
      * Check if the setting has a flag
      *
@@ -556,6 +585,46 @@ public class FieldSettings
     }
 
     /**
+     * If the field can be placed in a world
+     *
+     * @param worldName
+     * @return
+     */
+    public boolean allowedWorld(World world)
+    {
+        return allowedWorlds == null || allowedWorlds.isEmpty() || allowedWorlds.contains(world.getName());
+    }
+
+    /**
+     * Whether the field has allowed only fields set
+     *
+     * @return
+     */
+    public boolean hasAllowedOnlyField()
+    {
+        return allowedOnlyFields != null && !allowedOnlyFields.isEmpty() && defaultFlags.contains(FieldFlag.NO_CONFLICT);
+    }
+
+    /**
+     * If the field is inside and allowed field
+     *
+     * @return
+     */
+    public boolean isAllowedOnlyField(Field field)
+    {
+        return allowedOnlyFields.contains(field.getSettings().getTitle());
+    }
+
+    /**
+     * Returns a formatted string with all the allowed only fields
+     * @return
+     */
+    public String getAllowedOnlyFieldString()
+    {
+        return Helper.toMessage(allowedOnlyFields, ", ");
+    }
+
+    /**
      * @return the typeId
      */
     public int getTypeId()
@@ -651,8 +720,6 @@ public class FieldSettings
     {
         return Collections.unmodifiableList(defaultFlags);
     }
-   
-    
 
     public int getCustomVolume()
     {
@@ -662,5 +729,10 @@ public class FieldSettings
     public int getMixingGroup()
     {
         return mixingGroup;
+    }
+
+    public String getRequiredPermission()
+    {
+        return requiredPermission;
     }
 }
