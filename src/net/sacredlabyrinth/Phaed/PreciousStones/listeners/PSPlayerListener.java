@@ -12,11 +12,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -185,6 +183,12 @@ public class PSPlayerListener implements Listener
 
                         if (field != null)
                         {
+                            if (plugin.getForceFieldManager().hasSubFields(field))
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.RED + "The field has sub-fields inside of it thus cannot be redifined.");
+                                return;
+                            }
+
                             if (field.hasFlag(FieldFlag.CUBOID))
                             {
                                 if (field.getParent() != null)
@@ -207,6 +211,7 @@ public class PSPlayerListener implements Listener
                     return;
                 }
 
+                /*
                 if (event.getAction().equals(Action.LEFT_CLICK_BLOCK))
                 {
                     Material materialInHand = is.getType();
@@ -220,7 +225,7 @@ public class PSPlayerListener implements Listener
                         }
                     }
                 }
-
+                */
             }
         }
 
@@ -298,28 +303,16 @@ public class PSPlayerListener implements Listener
                             {
                                 if ((field.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
                                 {
-                                    HashSet<Field> overlapped = plugin.getForceFieldManager().getOverlappedFields(player, field);
-
-                                    int size = 0;
-
-                                    for (Field o : overlapped)
-                                    {
-                                        if (!field.hasFlag(FieldFlag.GRIEF_REVERT))
-                                        {
-                                            continue;
-                                        }
-
-                                        size += plugin.getGriefUndoManager().undoGrief(o);
-                                    }
+                                    int size = plugin.getGriefUndoManager().undoGrief(field);
 
                                     if (size > 0)
                                     {
-                                        player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed " + Helper.plural(size, "block", "s") + " on " + overlapped.size() + " overlapped " + Helper.plural(size, "field", "s"));
+                                        player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + size + " griefed " + Helper.plural(size, "block", "s") + " on the field");
                                     }
                                     else
                                     {
                                         showInfo(field, player);
-                                        player.sendMessage(ChatColor.AQUA + "No grief recorded on any of the " + overlapped.size() + " overlapped fields");
+                                        player.sendMessage(ChatColor.AQUA + "No grief recorded on the field");
                                         ChatBlock.sendBlank(player);
                                     }
                                 }

@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 7.2
+version: 8
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag]
 commands:
@@ -40,8 +40,6 @@ permissions:
     description: Can use /ps who
   preciousstones.benefit.onoff:
     description: Can use /ps on and /ps off
-  preciousstones.benefit.scoping:
-    description: Can scope the ground with a field block in hand
   preciousstones.benefit.counts:
     description: Can use /ps counts
   preciousstones.benefit.locations:
@@ -226,7 +224,6 @@ permissions:
       preciousstones.benefit.locations: true
       preciousstones.benefit.who: true
       preciousstones.benefit.onoff: true
-      preciousstones.benefit.scoping: true
       preciousstones.benefit.snitch: true
       preciousstones.benefit.repair: true
       preciousstones.benefit.feed: true

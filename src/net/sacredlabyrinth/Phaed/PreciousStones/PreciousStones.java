@@ -37,7 +37,6 @@ public class PreciousStones extends JavaPlugin
     private PermissionsManager permissionsManager;
     private VisualizationManager visualizationManager;
     private ForesterManager foresterManager;
-    private LegacyManager legacyManager;
     private WorldGuardManager worldGuardManager;
     private CombatTagManager combatTagManager;
     private VaultManager vaultManager;
@@ -124,7 +123,6 @@ public class PreciousStones extends JavaPlugin
         foresterManager = new ForesterManager();
         griefUndoManager = new GriefUndoManager();
         storageManager = new StorageManager();
-        legacyManager = new LegacyManager();
         worldGuardManager = new WorldGuardManager();
         combatTagManager = new CombatTagManager();
         vaultManager = new VaultManager();
@@ -314,14 +312,6 @@ public class PreciousStones extends JavaPlugin
     public ForesterManager getForesterManager()
     {
         return foresterManager;
-    }
-
-    /**
-     * @return the legacyManager
-     */
-    public LegacyManager getLegacyManager()
-    {
-        return legacyManager;
     }
 
     /**

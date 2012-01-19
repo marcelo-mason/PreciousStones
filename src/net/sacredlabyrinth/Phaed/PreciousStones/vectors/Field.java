@@ -1,13 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.stringtree.json.JSONReader;
+import net.stringtree.json.JSONValidatingReader;
+import net.stringtree.json.JSONWriter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
-import net.stringtree.json.JSONReader;
-import net.stringtree.json.JSONValidatingReader;
-import net.stringtree.json.JSONWriter;
 
 import java.util.*;
 
@@ -30,9 +30,11 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int minz;
     private float velocity;
     private int typeId;
+    private byte data;
     private String owner;
     private String name;
     private Field parent;
+    private List<Field> subFields = new LinkedList<Field>();
     private List<Field> children = new LinkedList<Field>();
     private List<String> allowed = new ArrayList<String>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
@@ -64,7 +66,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      * @param name
      * @param lastUsed
      */
-    public Field(int x, int y, int z, int minx, int miny, int minz, int maxx, int maxy, int maxz, float velocity, String world, int typeId, String owner, String name, long lastUsed)
+    public Field(int x, int y, int z, int minx, int miny, int minz, int maxx, int maxy, int maxz, float velocity, String world, int typeId, byte data, String owner, String name, long lastUsed)
     {
         super(x, y, z, world);
 
@@ -81,6 +83,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.owner = owner;
         this.name = name;
         this.typeId = typeId;
+        this.data = data;
         this.lastUsed = lastUsed;
     }
 
@@ -97,7 +100,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      * @param name
      * @param lastUsed
      */
-    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, String owner, String name, long lastUsed)
+    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, byte data, String owner, String name, long lastUsed)
     {
         super(x, y, z, world);
 
@@ -108,6 +111,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.owner = owner;
         this.name = name;
         this.typeId = typeId;
+        this.data = data;
         this.lastUsed = lastUsed;
 
         calculateDimensions();
@@ -128,6 +132,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.owner = owner;
         this.name = "";
         this.typeId = block.getTypeId();
+        this.data = block.getData();
 
         calculateDimensions();
     }
@@ -146,6 +151,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = "";
         this.owner = "";
         this.typeId = block.getTypeId();
+        this.data = block.getData();
 
         calculateDimensions();
     }
@@ -171,20 +177,23 @@ public class Field extends AbstractVec implements Comparable<Field>
     public boolean hasFlag(FieldFlag flag)
     {
         boolean ret = flags.contains(flag);
-        if(!ret){
-          ret = insertedFlags.contains(flag);
+        if (!ret)
+        {
+            ret = insertedFlags.contains(flag);
         }
-        if(disabledFlags.contains(flag)){
+        if (disabledFlags.contains(flag))
+        {
             ret = false;
         }
-        
+
         return ret;
     }
+
     public boolean hasFlag(String flagStr)
     {
         return hasFlag(Helper.toFieldFlag(flagStr));
     }
-    
+
 
     private void calculateDimensions()
     {
@@ -260,6 +269,34 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
+     * @return the raw type id
+     */
+    public int getRawTypeId()
+    {
+        if (typeId == 35)
+        {
+            if (data == 0)
+            {
+                return 35;
+            }
+
+            String str = Byte.toString(data);
+
+            if (str.length() == 1)
+            {
+                str = "0" + str;
+            }
+
+            str = "35" + str;
+
+            return Integer.parseInt(str);
+        }
+
+        return typeId;
+    }
+
+
+    /**
      * @return the block type name
      */
     public String getType()
@@ -281,6 +318,21 @@ public class Field extends AbstractVec implements Comparable<Field>
     public int getHeight()
     {
         return this.height;
+    }
+
+    /**
+     * returns the computed height, whether custom height was used or not
+     *
+     * @return
+     */
+    public int getComputedHeight()
+    {
+        if (this.height > 0)
+        {
+            return this.height;
+        }
+
+        return (this.radius * 2) + 1;
     }
 
     /**
@@ -505,6 +557,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         {
             List<Field> fields = PreciousStones.getInstance().getForceFieldManager().getSourceFields(ecv, FieldFlag.ALL);
             sources.addAll(fields);
+            sources.remove(this);
         }
 
         return sources;
@@ -738,9 +791,10 @@ public class Field extends AbstractVec implements Comparable<Field>
      * @param settings the settings to set
      */
     public void setSettings(FieldSettings settings)
-    {   
+    {
         //Add all the default flags
-        for (FieldFlag flag : settings.getDefaultFlags()){
+        for (FieldFlag flag : settings.getDefaultFlags())
+        {
             flags.add(flag);
         }
         this.settings = settings;
@@ -937,10 +991,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         JSONWriter jw = new JSONWriter();
         return jw.write(flags);
-        
+
     }
- 
-    public LinkedList<String> getDisabledFlagsStringList(){
+
+    public LinkedList<String> getDisabledFlagsStringList()
+    {
         LinkedList<String> ll = new LinkedList();
         for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
         {
@@ -949,7 +1004,9 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
         return ll;
     }
-    public LinkedList<String> getInsertedFlagsStringList(){
+
+    public LinkedList<String> getInsertedFlagsStringList()
+    {
         LinkedList<String> ll = new LinkedList();
         for (Iterator iter = insertedFlags.iterator(); iter.hasNext(); )
         {
@@ -958,7 +1015,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
         return ll;
     }
-    
+
     /**
      * Read the list of flags in from a json string
      *
@@ -966,7 +1023,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setFlags(String flagString)
     {
-        
+
         if (flagString != null && !flagString.isEmpty())
         {
             JSONReader reader = new JSONValidatingReader();
@@ -1007,7 +1064,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
     }
 
-   
+
     /**
      * Force insert a flag if it doesn't exist.
      * This can suck
@@ -1016,13 +1073,14 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean insertFlag(String flagStr)
     {
-        if (!flags.contains(Helper.toFieldFlag(flagStr))){
+        if (!flags.contains(Helper.toFieldFlag(flagStr)))
+        {
             flags.add(Helper.toFieldFlag(flagStr));
             return true;
         }
         return false;
     }
-    
+
     /**
      * Enable a flag
      *
@@ -1040,7 +1098,8 @@ public class Field extends AbstractVec implements Comparable<Field>
                 iter.remove();
             }
         }
-        if (!flags.contains(Helper.toFieldFlag(flagStr))){
+        if (!flags.contains(Helper.toFieldFlag(flagStr)))
+        {
             flags.add(Helper.toFieldFlag(flagStr));
         }
     }
@@ -1057,17 +1116,24 @@ public class Field extends AbstractVec implements Comparable<Field>
             FieldFlag flag = (FieldFlag) iter.next();
             if (Helper.toFlagStr(flag).equals(flagStr))
             {
-                iter.remove();                
+                iter.remove();
             }
         }
-        if (!disabledFlags.contains(Helper.toFieldFlag(flagStr))){
+        if (!disabledFlags.contains(Helper.toFieldFlag(flagStr)))
+        {
             disabledFlags.add(Helper.toFieldFlag(flagStr));
         }
-         
+
     }
 
-
-    public boolean hasDisabledFlag(String flagStr){
+    /**
+     * Whether it has the disabled flag string
+     *
+     * @param flagStr
+     * @return
+     */
+    public boolean hasDisabledFlag(String flagStr)
+    {
         for (FieldFlag flag : disabledFlags)
         {
             if (Helper.toFlagStr(flag).equals(flagStr))
@@ -1077,14 +1143,28 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
         return false;
     }
+
+    /**
+     * Whether it has the disabled flag
+     *
+     * @param flagStr
+     * @return
+     */
     public boolean hasDisabledFlag(FieldFlag flag)
     {
         return disabledFlags.contains(flag);
     }
+
+    /**
+     * Returns the disabled flags
+     *
+     * @return
+     */
     public List<FieldFlag> getDisabledFlags()
     {
         return Collections.unmodifiableList(disabledFlags);
     }
+
     /**
      * Toggles a field flag.  returns its state.
      *
@@ -1102,28 +1182,37 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
         else
         {
-            enableFlag(flagStr);            
+            enableFlag(flagStr);
             return true;
         }
     }
 
-
-    public void RevertFlags(){
+    /**
+     * Revert all the flags back to default
+     */
+    public void RevertFlags()
+    {
         //Revert all the flags back to the default
         insertedFlags.clear();
         disabledFlags.clear();
         flags.clear();
-        for (FieldFlag flag : settings.getDefaultFlags()){
+        for (FieldFlag flag : settings.getDefaultFlags())
+        {
             flags.add(flag);
         }
-        dirty.add(DirtyFieldReason.FLAGS);        
+        dirty.add(DirtyFieldReason.FLAGS);
     }
-            
 
-    public List<FieldFlag> getFlags(){
-        
+    /**
+     * Returns all the flags
+     *
+     * @return
+     */
+    public List<FieldFlag> getFlags()
+    {
         return Collections.unmodifiableList(flags);
     }
+
     /**
      * Insert a field flag into the field
      *
@@ -1131,7 +1220,8 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean insertFieldFlag(String flagStr)
     {
-        if(!insertedFlags.contains(Helper.toFieldFlag(flagStr))){
+        if (!insertedFlags.contains(Helper.toFieldFlag(flagStr)))
+        {
             dirty.add(DirtyFieldReason.FLAGS);
             insertedFlags.add(Helper.toFieldFlag(flagStr));
             return true;
@@ -1153,21 +1243,41 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
     }
 
+    /**
+     * Gets the amount of seconds between each automatic grief revert
+     *
+     * @return
+     */
     public int getRevertSecs()
     {
         return revertSecs;
     }
 
+    /**
+     * Sets the amount of seconds between each automatic grief revert
+     *
+     * @param revertSecs
+     */
     public void setRevertSecs(int revertSecs)
     {
         this.revertSecs = revertSecs;
     }
 
+    /**
+     * Whether the field is disabled
+     *
+     * @return
+     */
     public boolean isDisabled()
     {
         return disabled;
     }
 
+    /**
+     * Disables the field
+     *
+     * @param disabled
+     */
     public void setDisabled(boolean disabled)
     {
         if (disabled != this.disabled)
@@ -1183,5 +1293,10 @@ public class Field extends AbstractVec implements Comparable<Field>
                 PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
             }
         }
+    }
+
+    public byte getData()
+    {
+        return data;
     }
 }

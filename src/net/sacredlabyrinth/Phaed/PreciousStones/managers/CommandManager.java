@@ -129,21 +129,13 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                boolean overlapped = false;
-
                                 for (String playerName : args)
                                 {
-                                    if (playerName.equalsIgnoreCase("-o"))
-                                    {
-                                        overlapped = true;
-                                        continue;
-                                    }
+                                    boolean done = plugin.getForceFieldManager().addAllowed(field, playerName);
 
-                                    int count = plugin.getForceFieldManager().addAllowed(player, field, playerName, overlapped);
-
-                                    if (count > 0)
+                                    if (done)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " field", "s"));
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in the field");
                                     }
                                     else
                                     {
@@ -188,21 +180,19 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                boolean overlapped = false;
-
                                 for (String playerName : args)
                                 {
-                                    if (playerName.equalsIgnoreCase("-o"))
+                                    if (plugin.getForceFieldManager().conflictOfInterestExists(field, playerName))
                                     {
-                                        overlapped = true;
-                                        continue;
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "You cannot disallow " + playerName + ", one of his fields is overlapping yours");
+                                        return true;
                                     }
 
-                                    int count = plugin.getForceFieldManager().removeAllowed(player, field, playerName, overlapped);
+                                    boolean done = plugin.getForceFieldManager().removeAllowed(field, playerName);
 
-                                    if (count > 0)
+                                    if (done)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed from " + count + Helper.plural(count, " field", "s"));
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed from the field");
                                     }
                                     else
                                     {
@@ -232,7 +222,7 @@ public final class CommandManager implements CommandExecutor
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " is not in any of your lists");
+                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Nothing to be done");
                                 }
                             }
 
@@ -245,14 +235,7 @@ public final class CommandManager implements CommandExecutor
 
                         if (field != null)
                         {
-                            boolean overlapped = false;
-
-                            if (args.length >= 1)
-                            {
-                                overlapped = args[0].equalsIgnoreCase("-o");
-                            }
-
-                            List<String> allowed = plugin.getForceFieldManager().getAllowed(player, field, overlapped);
+                            List<String> allowed = plugin.getForceFieldManager().getAllowed(player, field);
 
                             if (allowed.size() > 0)
                             {
@@ -276,7 +259,7 @@ public final class CommandManager implements CommandExecutor
 
                         if (field != null)
                         {
-                            HashSet<String> inhabitants = plugin.getForceFieldManager().getWho(player, field);
+                            HashSet<String> inhabitants = plugin.getForceFieldManager().getWho(field);
 
                             if (inhabitants.size() > 0)
                             {
@@ -284,7 +267,7 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "No players found in these overlapped fields");
+                                ChatBlock.sendMessage(sender, ChatColor.RED + "No players found in the field");
                             }
                         }
                         else
@@ -298,18 +281,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length >= 1)
                         {
-                            boolean overlapped = args[0].equalsIgnoreCase("-o");
-
-                            String playerName;
-
-                            if (overlapped)
-                            {
-                                playerName = Helper.toMessage(Helper.removeFirst(args));
-                            }
-                            else
-                            {
-                                playerName = Helper.toMessage(args);
-                            }
+                            String playerName = Helper.toMessage(args);
 
                             if (playerName.length() > 0)
                             {
@@ -317,18 +289,11 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    int count = plugin.getForceFieldManager().setNameFields(player, field, playerName, overlapped);
+                                    boolean done = plugin.getForceFieldManager().setNameFields(field, playerName);
 
-                                    if (count > 0)
+                                    if (done)
                                     {
-                                        if (!overlapped)
-                                        {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed field to " + playerName);
-                                        }
-                                        else
-                                        {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed " + count + Helper.plural(count, " field", "s") + " to " + playerName);
-                                        }
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed field to " + playerName);
                                     }
                                     else
                                     {
@@ -497,7 +462,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
                                 {
-                                    if (flagStr.equals("All"))
+                                    if (flagStr.equalsIgnoreCase("All"))
                                     {
                                         return true;
                                     }
@@ -579,32 +544,10 @@ public final class CommandManager implements CommandExecutor
 
                                         if (field != null)
                                         {
-                                            HashSet<Field> fields = plugin.getForceFieldManager().getOverlappedFields(player, field);
+                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualizing...");
 
-                                            if (fields != null)
-                                            {
-                                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualizing...");
-
-                                                fields.remove(field);
-                                                plugin.getVisualizationManager().addVisualizationField(player, field);
-
-                                                int count = 1;
-                                                for (Field f : fields)
-                                                {
-                                                    if (count++ >= plugin.getSettingsManager().getVisualizeMaxFields())
-                                                    {
-                                                        continue;
-                                                    }
-
-                                                    plugin.getVisualizationManager().addVisualizationField(player, f);
-                                                }
-
-                                                plugin.getVisualizationManager().displayVisualization(player, true);
-                                            }
-                                            else
-                                            {
-                                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not inside of a field");
-                                            }
+                                            plugin.getVisualizationManager().addVisualizationField(player, field);
+                                            plugin.getVisualizationManager().displayVisualization(player, true);
                                         }
                                         else
                                         {
@@ -932,22 +875,15 @@ public final class CommandManager implements CommandExecutor
 
                             if (sourceFields.size() > 0)
                             {
-                                boolean overlapped = false;
-
-                                if (args.length >= 1)
-                                {
-                                    overlapped = args[0].equalsIgnoreCase("-o");
-                                }
-
-                                int count = plugin.getForceFieldManager().deleteFields(player, sourceFields.get(0), overlapped);
+                                int count = plugin.getForceFieldManager().deleteFields(sourceFields);
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Protective field removed from " + count + Helper.plural(count, " field", "s"));
+                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Protective field removed from the field");
 
                                     if (plugin.getSettingsManager().isLogBypassDelete())
                                     {
-                                        PreciousStones.log("Protective field removed from {0}{1} by {2} near {3}", count, Helper.plural(count, " field", "s"), player.getName(), sourceFields.get(0).toString());
+                                        PreciousStones.log("Protective field removed from {0} {1}", count, Helper.plural(count, "field", "'s"));
                                     }
                                 }
                                 else
@@ -1044,7 +980,7 @@ public final class CommandManager implements CommandExecutor
                                         oldData.decrementFieldCount(field.getTypeId());
 
                                         PlayerData newData = plugin.getPlayerManager().getPlayerData(owner);
-                                        newData.incrementFieldCount(field.getTypeId());
+                                        newData.incrementFieldCount(field.getSettings().getRawTypeId());
 
                                         // change the owner
 

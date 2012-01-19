@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Material;
@@ -274,11 +275,16 @@ public final class SettingsManager
             {
                 // add field definition to our collection
 
-                fieldDefinitions.put(fs.getTypeId(), fs);
+                fieldDefinitions.put(fs.getRawTypeId(), fs);
 
                 // add the type id to our reference list
 
-                ffBlocks.add(fs.getTypeId());
+                ffBlocks.add(fs.getRawTypeId());
+
+                if (!ffBlocks.contains(fs.getTypeId()))
+                {
+                    ffBlocks.add(fs.getTypeId());
+                }
             }
         }
     }
@@ -468,7 +474,7 @@ public final class SettingsManager
     {
         for (FieldSettings fs : fieldDefinitions.values())
         {
-            if (fs.hasDefaultFlag(FieldFlag.SNITCH) && fs.getTypeId() == block.getTypeId())
+            if (fs.hasDefaultFlag(FieldFlag.SNITCH) && fs.getRawTypeId() == Helper.toRawTypeId(block))
             {
                 return true;
             }
@@ -573,7 +579,7 @@ public final class SettingsManager
      */
     public FieldSettings getFieldSettings(Field field)
     {
-        return getFieldSettings(field.getTypeId());
+        return getFieldSettings(field.getRawTypeId());
     }
 
     /**

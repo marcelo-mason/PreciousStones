@@ -11,8 +11,10 @@ import java.util.*;
 public class FieldSettings
 {
     private boolean validField = true;
+    private int rawTypeId;
     private int typeId;
     private int radius = 0;
+    private byte data = 0;
     private int launchHeight = 0;
     private int cannonHeight = 0;
     private int customHeight = 0;
@@ -45,6 +47,15 @@ public class FieldSettings
         if (map.containsKey("block") && Helper.isInteger(map.get("block")) && ((Integer) map.get("block") > 0))
         {
             typeId = (Integer) map.get("block");
+
+            // hack for wool
+
+            if (typeId > 3500)
+            {
+                rawTypeId = typeId;
+                data = (byte)(typeId - 3500);
+                typeId = 35;
+            }
         }
         else
         {
@@ -602,7 +613,7 @@ public class FieldSettings
      */
     public boolean hasAllowedOnlyField()
     {
-        return allowedOnlyFields != null && !allowedOnlyFields.isEmpty() && defaultFlags.contains(FieldFlag.NO_CONFLICT);
+        return allowedOnlyFields != null && !allowedOnlyFields.isEmpty();
     }
 
     /**
@@ -617,11 +628,12 @@ public class FieldSettings
 
     /**
      * Returns a formatted string with all the allowed only fields
+     *
      * @return
      */
     public String getAllowedOnlyFieldString()
     {
-        return Helper.toMessage(allowedOnlyFields, ", ");
+        return Helper.toMessage(allowedOnlyFields, " or ");
     }
 
     /**
@@ -630,6 +642,14 @@ public class FieldSettings
     public int getTypeId()
     {
         return typeId;
+    }
+
+    /**
+     * @return the typeId
+     */
+    public byte getData()
+    {
+        return data;
     }
 
     /**
@@ -734,5 +754,10 @@ public class FieldSettings
     public String getRequiredPermission()
     {
         return requiredPermission;
+    }
+
+    public int getRawTypeId()
+    {
+        return rawTypeId > 0 ? rawTypeId : typeId;
     }
 }

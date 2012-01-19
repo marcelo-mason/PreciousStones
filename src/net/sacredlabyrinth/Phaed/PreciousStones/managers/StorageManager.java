@@ -89,7 +89,7 @@ public final class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_players");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT NOT NULL, PRIMARY KEY  (`player_name`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT default NULL, PRIMARY KEY  (`player_name`));");
                     touchAllPlayers();
                 }
 
@@ -145,7 +145,7 @@ public final class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_players");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT NOT NULL, PRIMARY KEY (`player_name`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT default NULL, PRIMARY KEY (`player_name`));");
                     touchAllPlayers();
                 }
 
@@ -377,7 +377,7 @@ public final class StorageManager
                         final int z = res.getInt("z");
                         final int radius = res.getInt("radius");
                         final int height = res.getInt("height");
-                        final int type_id = res.getInt("type_id");
+                        int type_id = res.getInt("type_id");
                         final float velocity = res.getFloat("velocity");
                         final String world = res.getString("world");
                         final String owner = res.getString("owner");
@@ -386,7 +386,16 @@ public final class StorageManager
                         final String packed_allowed = res.getString("packed_allowed");
                         final long last_used = res.getLong("last_used");
 
-                        final Field field = new Field(x, y, z, radius, height, velocity, world, type_id, owner, name, last_used);
+                        byte data = 0;
+                        int rawTypeId = type_id;
+
+                        if (type_id > 3500)
+                        {
+                            data = Helper.dataFromRawTypeId(type_id);
+                            type_id = 35;
+                        }
+
+                        final Field field = new Field(x, y, z, radius, height, velocity, world, type_id, data, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
                         field.setId(id);
 
@@ -410,19 +419,21 @@ public final class StorageManager
                             field.setFlags(flags);
                             out.add(field);
 
-                            final PlayerData data = plugin.getPlayerManager().getPlayerData(owner);
-                            data.incrementFieldCount(type_id);
+                            final PlayerData playerdata = plugin.getPlayerManager().getPlayerData(owner);
+                            playerdata.incrementFieldCount(rawTypeId);
                         }
                     }
                     catch (final Exception ex)
                     {
-                        PreciousStones.getLog().info(ex.getMessage());
+                        System.out.print(ex.getMessage());
+                        ex.printStackTrace();
                     }
                 }
             }
             catch (final SQLException ex)
             {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.print(ex.getMessage());
+                ex.printStackTrace();
             }
         }
 
@@ -466,7 +477,7 @@ public final class StorageManager
                         final int maxx = res.getInt("maxx");
                         final int maxy = res.getInt("maxy");
                         final int maxz = res.getInt("maxz");
-                        final int type_id = res.getInt("type_id");
+                        int type_id = res.getInt("type_id");
                         final float velocity = res.getFloat("velocity");
                         final String world = res.getString("world");
                         final String owner = res.getString("owner");
@@ -475,7 +486,16 @@ public final class StorageManager
                         final String packed_allowed = res.getString("packed_allowed");
                         final long last_used = res.getLong("last_used");
 
-                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type_id, owner, name, last_used);
+                        byte data = 0;
+                        int rawTypeId = type_id;
+
+                        if (type_id > 3500)
+                        {
+                            data = Helper.dataFromRawTypeId(type_id);
+                            type_id = 35;
+                        }
+
+                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type_id, data, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
                         field.setId(id);
 
@@ -499,19 +519,21 @@ public final class StorageManager
                             field.setFlags(flags);
                             out.put(id, field);
 
-                            final PlayerData data = plugin.getPlayerManager().getPlayerData(owner);
-                            data.incrementFieldCount(type_id);
+                            final PlayerData playerdata = plugin.getPlayerManager().getPlayerData(owner);
+                            playerdata.incrementFieldCount(rawTypeId);
                         }
                     }
                     catch (final Exception ex)
                     {
+                        System.out.print(ex.getMessage());
                         ex.printStackTrace();
                     }
                 }
             }
             catch (final SQLException ex)
             {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.print(ex.getMessage());
+                ex.printStackTrace();
             }
         }
 
@@ -538,7 +560,7 @@ public final class StorageManager
                         final int maxx = res.getInt("maxx");
                         final int maxy = res.getInt("maxy");
                         final int maxz = res.getInt("maxz");
-                        final int type_id = res.getInt("type_id");
+                        int type_id = res.getInt("type_id");
                         final float velocity = res.getFloat("velocity");
                         final String world = res.getString("world");
                         final String owner = res.getString("owner");
@@ -547,7 +569,16 @@ public final class StorageManager
                         final String packed_allowed = res.getString("packed_allowed");
                         final long last_used = res.getLong("last_used");
 
-                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type_id, owner, name, last_used);
+                        byte data = 0;
+                        int rawTypeId = type_id;
+
+                        if (type_id > 3500)
+                        {
+                            data = Helper.dataFromRawTypeId(type_id);
+                            type_id = 35;
+                        }
+
+                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type_id, data, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
 
                         final Field parentField = out.get(parent);
@@ -585,19 +616,21 @@ public final class StorageManager
                             field.setFlags(flags);
                             out.put(id, field);
 
-                            final PlayerData data = plugin.getPlayerManager().getPlayerData(owner);
-                            data.incrementFieldCount(type_id);
+                            final PlayerData playerdata = plugin.getPlayerManager().getPlayerData(owner);
+                            playerdata.incrementFieldCount(rawTypeId);
                         }
                     }
                     catch (final Exception ex)
                     {
+                        System.out.print(ex.getMessage());
                         ex.printStackTrace();
                     }
                 }
             }
             catch (final SQLException ex)
             {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.print(ex.getMessage());
+                ex.printStackTrace();
             }
         }
 
@@ -659,7 +692,8 @@ public final class StorageManager
             }
             catch (final SQLException ex)
             {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.print(ex.getMessage());
+                ex.printStackTrace();
             }
         }
 
@@ -725,7 +759,8 @@ public final class StorageManager
             }
             catch (final SQLException ex)
             {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.print(ex.getMessage());
+                ex.printStackTrace();
             }
         }
 
@@ -836,12 +871,12 @@ public final class StorageManager
         }
 
         String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `flags`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getRawTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
             query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `flags`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getRawTypeId()  + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
         }
 
         if (plugin.getSettingsManager().isDebugsql())
@@ -1058,22 +1093,22 @@ public final class StorageManager
 
         if (plugin.getSettingsManager().isUseMysql())
         {
-            String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`) ";
-            String values = "SELECT DISTINCT `owner`, " + time + " as last_seen FROM pstone_fields ";
+            String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
+            String values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_fields ";
             core.insert(query + values);
 
-            query = "INSERT IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`) ";
-            values = "SELECT DISTINCT `owner`, " + time + " as last_seen FROM pstone_unbreakables ";
+            query = "INSERT IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
+            values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_unbreakables ";
             core.insert(query + values);
         }
         else
         {
-            String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`) ";
-            String values = "SELECT DISTINCT `owner`, " + time + " as last_seen FROM pstone_fields ";
+            String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
+            String values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_fields ";
             core.insert(query + values);
 
-            query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`) ";
-            values = "SELECT DISTINCT `owner`, " + time + " as last_seen FROM pstone_unbreakables ";
+            query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
+            values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_unbreakables ";
             core.insert(query + values);
         }
     }

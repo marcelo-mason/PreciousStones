@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
@@ -73,7 +74,7 @@ public class UnprotectableManager
      */
     public Block existsUnprotectableBlock(Block fieldblock)
     {
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(fieldblock.getTypeId());
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(fieldblock));
 
         if (fs == null)
         {
@@ -132,7 +133,7 @@ public class UnprotectableManager
      */
     public Block existsUnprotectableBlock(Field field)
     {
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field.getTypeId());
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field.getSettings().getRawTypeId());
 
         if (fs == null)
         {

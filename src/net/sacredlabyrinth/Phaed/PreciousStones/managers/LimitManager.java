@@ -1,11 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import java.util.List;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  *
@@ -44,7 +45,7 @@ public class LimitManager
         }
 
         int limit = getLimit(player, fs);
-        int count = plugin.getPlayerManager().getPlayerData(player.getName()).getFieldCount(fs.getTypeId());
+        int count = plugin.getPlayerManager().getPlayerData(player.getName()).getFieldCount(fs.getRawTypeId());
 
         if (limit == -1)
         {

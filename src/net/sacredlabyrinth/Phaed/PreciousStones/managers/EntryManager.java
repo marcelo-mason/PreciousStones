@@ -430,7 +430,7 @@ public final class EntryManager
 
                 for (Field entryfield : entryfields)
                 {
-                    if (entryfield.getOwner().equals(field.getOwner()) && entryfield.getName().equals(field.getName()))
+                    if (entryfield.getOwner().equals(field.getOwner()) && entryfield.getName().equals(field.getName()) && entryfield.getType().equals(field.getType()))
                     {
                         return true;
                     }

@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -558,5 +559,40 @@ public class Helper
         {
             return null;
         }
+    }
+
+    public static int toRawTypeId(Block block)
+    {
+        if (block.getTypeId() == 35)
+        {
+            if (block.getData() == 0)
+            {
+                return 35;
+            }
+
+            String str = Byte.toString(block.getData());
+
+            if (str.length() == 1)
+            {
+                str = "0" + str;
+            }
+
+            str = "35" + str;
+
+            return Integer.parseInt(str);
+        }
+
+        return block.getTypeId();
+    }
+
+    public static byte dataFromRawTypeId(int raw)
+    {
+        if (raw > 3500)
+        {
+            String str = Integer.toString(raw);
+            return Byte.parseByte(str.substring(2));
+        }
+
+        return 0;
     }
 }

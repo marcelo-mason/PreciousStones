@@ -62,6 +62,7 @@ public class PSBlockListener implements Listener
             return;
         }
 
+        /*
         Block block = event.getBlock();
         Block toBlock = event.getToBlock();
         Block relBlock = block.getRelative(event.getFace());
@@ -94,6 +95,7 @@ public class PSBlockListener implements Listener
         {
             dt.logProcessTime();
         }
+        */
     }
 
     /**
@@ -223,7 +225,7 @@ public class PSBlockListener implements Listener
 
         if (plugin.getForceFieldManager().isField(block))
         {
-            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block.getTypeId());
+            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
 
             if (fs == null)
             {
@@ -238,12 +240,6 @@ public class PSBlockListener implements Listener
                 plugin.getCuboidManager().cancelOpenCuboid(player, block);
                 release = true;
             }
-            /*else if (plugin.getCuboidManager().isOpenCuboidChild(player, block))
-            {
-                plugin.getCuboidManager().removeChild(player, block);
-                release = true;
-            }
-            */
 
             if (release)
             {
@@ -283,6 +279,15 @@ public class PSBlockListener implements Listener
             {
                 plugin.getCommunicationManager().warnDestroyFF(player, block);
                 event.setCancelled(true);
+            }
+
+            Field field = plugin.getForceFieldManager().getField(block);
+
+            if (plugin.getForceFieldManager().hasSubFields(field))
+            {
+                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot remove field as there are sub-fields inside of it.  You must remove them first before you can remove this field.");
+                event.setCancelled(true);
+                return;
             }
 
             if (release)
@@ -400,7 +405,7 @@ public class PSBlockListener implements Listener
             else
             {
                 CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
-                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block.getTypeId());
+                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
 
                 if (ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup())
                 {
@@ -486,22 +491,17 @@ public class PSBlockListener implements Listener
             {
                 if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
                 {
-                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
-                    {
-                        if (plugin.getForceFieldManager().add(block, player, event))
-                        {
-                            plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
-                        }
-                    }
-                    else
+                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
                     {
                         event.setCancelled(true);
                         plugin.getCommunicationManager().warnFieldPlaceTouchingUnprotectable(player, block);
+                        return;
                     }
-                    return;
+
+                    plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
                 }
 
-                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block.getTypeId());
+                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
 
                 if (fs == null)
                 {
@@ -514,19 +514,14 @@ public class PSBlockListener implements Listener
 
                     if (foundblock != null)
                     {
-                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
-                        {
-                            if (plugin.getForceFieldManager().add(block, player, event))
-                            {
-                                plugin.getCommunicationManager().notifyBypassFieldInUnprotectable(player, foundblock, block);
-                            }
-                        }
-                        else
+                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
                         {
                             event.setCancelled(true);
                             plugin.getCommunicationManager().warnPlaceFieldInUnprotectable(player, foundblock, block);
+                            return;
                         }
-                        return;
+
+                        plugin.getCommunicationManager().notifyBypassFieldInUnprotectable(player, foundblock, block);
                     }
                 }
 
@@ -583,24 +578,20 @@ public class PSBlockListener implements Listener
 
                         if (!allowed)
                         {
-                            player.sendMessage(ChatColor.RED + "The field can only be placed inside the following field types: ");
-                            player.sendMessage(ChatColor.WHITE + fs.getAllowedOnlyFieldString());
+                            player.sendMessage(ChatColor.RED + Helper.capitalize(fs.getTitle()) + " needs to be be placed inside a " + fs.getAllowedOnlyFieldString());
                             event.setCancelled(true);
                             return;
                         }
                     }
                 }
 
-                if (plugin.getForceFieldManager().add(block, player, event))
+                Field field = plugin.getForceFieldManager().add(block, player, event);
+
+                if (field != null)
                 {
-                    if (plugin.getForceFieldManager().isBreakable(block))
-                    {
-                        plugin.getCommunicationManager().notifyPlaceBreakableFF(player, block);
-                    }
-                    else
-                    {
-                        plugin.getCommunicationManager().notifyPlaceFF(player, block);
-                    }
+                    // allow all owners of overlapping fields into the field
+
+                    plugin.getForceFieldManager().addAllowOverlappingOwners(field);
                 }
             }
             return;

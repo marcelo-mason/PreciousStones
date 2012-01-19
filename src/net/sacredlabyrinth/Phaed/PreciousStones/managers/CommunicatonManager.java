@@ -206,7 +206,7 @@ public class CommunicatonManager
 
         if (plugin.getSettingsManager().isNotifyPlace() && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " field placed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " placed");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -295,7 +295,7 @@ public class CommunicatonManager
 
         if (plugin.getSettingsManager().isNotifyPlace() && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Breakable " + fs.getTitle() + " field placed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Breakable " + fs.getTitle() + " placed");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -381,7 +381,7 @@ public class CommunicatonManager
 
         if (plugin.getSettingsManager().isNotifyDestroy() && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " field destroyed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " destroyed");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -425,7 +425,7 @@ public class CommunicatonManager
 
         if (plugin.getSettingsManager().isNotifyDestroy() && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " field destroyed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " destroyed");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -470,7 +470,7 @@ public class CommunicatonManager
 
         if (plugin.getSettingsManager().isNotifyDestroy() && canNotify(player))
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.posessive(field.getOwner()) + " breakable " + fs.getTitle() + " field destroyed");
+            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.posessive(field.getOwner()) + " breakable " + fs.getTitle() + " destroyed");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -1207,7 +1207,7 @@ public class CommunicatonManager
     {
         FieldSettings fs = field.getSettings();
 
-        FieldSettings fsconflict = plugin.getSettingsManager().getFieldSettings(block.getTypeId());
+        FieldSettings fsconflict = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
 
         if (fsconflict == null)
         {
@@ -1415,7 +1415,7 @@ public class CommunicatonManager
      */
     public void warnConflictPistonRFF(Player player, Block block, Block pistonBlock)
     {
-        FieldSettings fsconflict = plugin.getSettingsManager().getFieldSettings(block.getTypeId());
+        FieldSettings fsconflict = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
 
         if (fsconflict == null)
         {
@@ -2379,7 +2379,7 @@ public class CommunicatonManager
             {
                 List<String> allowed = field.getAllowed();
 
-                int rows = (int) Math.ceil(allowed.size() / 2);
+                int rows = (int) Math.max(Math.ceil(allowed.size() / 2), 1);
 
                 for (int i = 0; i < rows; i++)
                 {
@@ -2959,8 +2959,7 @@ public class CommunicatonManager
 
         ChatBlock cb = getNewChatBlock(sender);
 
-        cb.addRow(ChatColor.GRAY + "  Identifier:" + ChatColor.DARK_GRAY + " player, g:group, c:clan, *");
-        cb.addRow(ChatColor.GRAY + "  -o:" + ChatColor.DARK_GRAY + " Applies command to all overlapped fields");
+        cb.addRow(ChatColor.GRAY + "  Identifiers:" + ChatColor.DARK_GRAY + " player, g:group, c:clan, *");
         cb.addRow("");
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasPlayer)
@@ -2970,14 +2969,14 @@ public class CommunicatonManager
 
         if (!disabled)
         {
-            if (plugin.getPermissionsManager().has(player, "preciousstones.whitelist.disable") && hasPlayer)
+            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.disable") && hasPlayer)
             {
                 cb.addRow(color + "  /ps enable/disable " + colorDesc + "- Enable/disable a field");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allow") && hasPlayer)
             {
-                cb.addRow(color + "  /ps allow <-o> [identifier(s)] " + colorDesc + "- Allow to field");
+                cb.addRow(color + "  /ps allow [identifier(s)] " + colorDesc + "- Allow to field");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasPlayer)
@@ -2987,7 +2986,7 @@ public class CommunicatonManager
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.whitelist.remove") && hasPlayer)
             {
-                cb.addRow(color + "  /ps remove <-o> [identifier(s)] " + colorDesc + "- Remove from field");
+                cb.addRow(color + "  /ps remove [identifier(s)] " + colorDesc + "- Remove from field");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.whitelist.removeall") && hasPlayer)
@@ -2997,7 +2996,7 @@ public class CommunicatonManager
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowed") && hasPlayer)
             {
-                cb.addRow(color + "  /ps allowed <-o> " + colorDesc + "- List all allowed players on field(s)");
+                cb.addRow(color + "  /ps allowed " + colorDesc + "- List all allowed players on field");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.who") && hasPlayer)
@@ -3022,7 +3021,7 @@ public class CommunicatonManager
 
             if (plugin.getSettingsManager().haveNameable() && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setname") && hasPlayer)
             {
-                cb.addRow(color + "  /ps setname <-o> [name] " + colorDesc + "- Set the name of field(s)");
+                cb.addRow(color + "  /ps setname [name] " + colorDesc + "- Set the name of field");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.setradius") && hasPlayer)
@@ -3084,7 +3083,7 @@ public class CommunicatonManager
             {
                 if (hasPlayer)
                 {
-                    cb.addRow(ChatColor.DARK_RED + "  /ps delete <-o>" + colorDesc + "- Delete the field(s) you're standing on");
+                    cb.addRow(ChatColor.DARK_RED + "  /ps delete " + colorDesc + "- Delete the field you're standing on");
                 }
                 cb.addRow(ChatColor.DARK_RED + "  /ps delete [player/typeId] " + colorDesc + "- Batch delete pstones");
             }
@@ -3096,12 +3095,12 @@ public class CommunicatonManager
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.counts"))
             {
-                cb.addRow(ChatColor.DARK_RED + "  /ps counts [typeid/player/g:group/c:clan/*] " + colorDesc + "- View field counts");
+                cb.addRow(ChatColor.DARK_RED + "  /ps counts [identifier(s)] " + colorDesc + "- View field counts");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.locations"))
             {
-                cb.addRow(ChatColor.DARK_RED + "  /ps locations [player/g:group/c:clan/*] <typeid> " + colorDesc + "- View field locations");
+                cb.addRow(ChatColor.DARK_RED + "  /ps locations [identifier(s)] <typeid> " + colorDesc + "- View field locations");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.list") && hasPlayer)
