@@ -2197,7 +2197,6 @@ public final class ForceFieldManager
             if (plugin.getVaultManager().hasMoney(player, amount))
             {
                 plugin.getVaultManager().playerCharge(player, amount);
-                player.sendMessage(ChatColor.AQUA + "You do not have sufficient money in your account");
             }
             else
             {
