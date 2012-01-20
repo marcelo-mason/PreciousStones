@@ -1,13 +1,11 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.milkbowl.vault.economy.Economy;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.io.*;
 import java.net.URL;
@@ -20,32 +18,10 @@ import static org.bukkit.Bukkit.getServer;
  */
 public class PSServerListener implements Listener
 {
-    public static Economy economy = null;
-
     @EventHandler(event = PluginEnableEvent.class, priority = EventPriority.MONITOR)
     public void onPluginEnable(PluginEnableEvent event)
     {
         getVault();
-        setupEconomy();
-        if (economy != null)
-        {
-            PreciousStones.log("Payment method found.");
-        }
-        else
-        {
-            PreciousStones.log("No payment method found: economy disabled!");
-        }
-    }
-
-    private Boolean setupEconomy()
-    {
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null)
-        {
-            economy = economyProvider.getProvider();
-        }
-
-        return (economy != null);
     }
 
     public void getVault()

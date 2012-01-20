@@ -705,7 +705,6 @@ public final class ForceFieldManager
                     {
                         // ensure chunk is loaded prior to polling
 
-                        /*
                         ChunkVec cv = field.toChunkVec();
 
                         if (!cv.equals(currentChunk))
@@ -727,7 +726,6 @@ public final class ForceFieldManager
 
                             currentChunk = cv;
                         }
-                        */
 
                         int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
@@ -771,7 +769,6 @@ public final class ForceFieldManager
                 {
                     // ensure chunk is loaded prior to polling
 
-                    /*
                     ChunkVec cv = field.toChunkVec();
 
                     if (!cv.equals(currentChunk))
@@ -793,7 +790,6 @@ public final class ForceFieldManager
 
                         currentChunk = cv;
                     }
-                    */
 
                     int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
 
@@ -802,7 +798,10 @@ public final class ForceFieldManager
                         revertedCount++;
                         Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
                         block.setTypeId(field.getTypeId());
-                        block.setData(field.getData());
+                        if (field.getData() > 0)
+                        {
+                            block.setData(field.getData());
+                        }
                     }
                 }
             }
