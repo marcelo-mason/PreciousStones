@@ -4,22 +4,26 @@ import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author phaed
  */
 public final class PermissionsManager
 {
+    public static Permission permission = null;
+    private static Economy economy = null;
     private PermissionHandler handler;
-    private PermissionsPlugin handler2;
+    private PermissionsPlugin pbukkit;
     private PreciousStones plugin;
 
     /**
@@ -30,107 +34,19 @@ public final class PermissionsManager
         plugin = PreciousStones.getInstance();
         detectPermissionsBukkit();
         detectPermissions();
-    }
 
-    /**
-     * Check whether a player has a permission
-     * @param player
-     * @param permission
-     * @return
-     */
-    public boolean has(Player player, String permission)
-    {
-        if (player == null)
+        try
         {
-            return true;
-        }
+            Class.forName("net.milkbowl.vault.permission.Permission");
 
-        if (handler != null)
+            setupEconomy();
+            setupPermissions();
+        }
+        catch (ClassNotFoundException e)
         {
-            if (handler.has(player, "preciousstones.blacklist") && !handler.has(player, "preciousstones.admintest"))
-            {
-                return false;
-            }
-
-            return handler.has(player, permission);
+            //SimpleClans.log("[PreciousStones] Vault.jar not found. No economy support.");
+            //no need to spam everyone who doesnt use vault
         }
-        else
-        {
-            return player.hasPermission(permission);
-        }
-    }
-
-    /**
-     * Check whether a player belongs to a group
-     * @param playerName
-     * @param group
-     * @param world
-     * @return
-     */
-    @SuppressWarnings(
-    {
-        "deprecation", "deprecation"
-    })
-    public boolean inGroup(String playerName, World world, String group)
-    {
-        if (handler2 != null)
-        {
-            List<Group> groups = handler2.getGroups(playerName);
-
-            for (Group g : groups)
-            {
-                if (g.getName().equalsIgnoreCase(group))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        if (handler != null)
-        {
-            if (handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group))
-            {
-                return true;
-            }
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * Get a player's groups
-     * @param worldName
-     * @param playerName
-     * @return
-     */
-    public List<String> getGroups(String worldName, String playerName)
-    {
-        List<String> groups = new LinkedList<String>();
-
-        if (handler2 != null)
-        {
-            List<Group> gs = handler2.getGroups(playerName);
-
-            for (Group group : gs)
-            {
-                groups.add(group.getName().toLowerCase());
-            }
-            return groups;
-        }
-
-        if (handler != null)
-        {
-            @SuppressWarnings("deprecation")
-            String group = handler.getGroup(worldName, playerName);
-
-            if (group != null)
-            {
-                groups.add(group.toLowerCase());
-            }
-        }
-
-        return groups;
     }
 
     private void detectPermissions()
@@ -148,14 +64,243 @@ public final class PermissionsManager
 
     private void detectPermissionsBukkit()
     {
-        if (handler2 == null)
+        if (pbukkit == null)
         {
             Plugin test = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit");
 
             if (test != null)
             {
-                handler2 = ((PermissionsPlugin) test);
+                pbukkit = ((PermissionsPlugin) test);
             }
         }
+    }
+
+    private Boolean setupPermissions()
+    {
+        RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null)
+        {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
+    }
+
+    private Boolean setupEconomy()
+    {
+        RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+
+        if (economyProvider != null)
+        {
+            economy = economyProvider.getProvider();
+        }
+
+        return (economy != null);
+    }
+
+    /**
+     * Check whether a player has a permission
+     *
+     * @param player
+     * @param permission
+     * @return
+     */
+    public boolean has(Player player, String perm)
+    {
+        if (player == null)
+        {
+            return true;
+        }
+
+        if (permission != null)
+        {
+            if (permission.has(player, "preciousstones.blacklist") && !permission.has(player, "preciousstones.admintest"))
+            {
+                return false;
+            }
+
+            return permission.has(player, perm);
+        }
+        else if (handler != null)
+        {
+            if (handler.has(player, "preciousstones.blacklist") && !handler.has(player, "preciousstones.admintest"))
+            {
+                return false;
+            }
+
+            return handler.has(player, perm);
+        }
+        else
+        {
+            return player.hasPermission(perm);
+        }
+    }
+
+    /**
+     * Check whether a player belongs to a group
+     *
+     * @param playerName
+     * @param group
+     * @param world
+     * @return
+     */
+    public boolean inGroup(String playerName, World world, String group)
+    {
+        if (pbukkit != null)
+        {
+            List<Group> groups = pbukkit.getGroups(playerName);
+
+            for (Group g : groups)
+            {
+                if (g.getName().equalsIgnoreCase(group))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if (permission != null)
+        {
+            return permission.playerInGroup(world, playerName, group);
+        }
+        else if (handler != null)
+        {
+            if (handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group))
+            {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Get a player's groups
+     *
+     * @param worldName
+     * @param playerName
+     * @return
+     */
+    public List<String> getGroups(String worldName, String playerName)
+    {
+        List<String> groups = new LinkedList<String>();
+
+        if (pbukkit != null)
+        {
+            List<Group> gs = pbukkit.getGroups(playerName);
+
+            for (Group group : gs)
+            {
+                groups.add(group.getName().toLowerCase());
+            }
+            return groups;
+        }
+        else if (permission != null)
+        {
+            World world = plugin.getServer().getWorld(worldName);
+
+            if (world != null)
+            {
+                String[] groupList = permission.getPlayerGroups(world, playerName);
+
+                for (String g : groupList)
+                {
+                    groups.add(g);
+                }
+            }
+        }
+        else if (handler != null)
+        {
+            @SuppressWarnings("deprecation") String group = handler.getGroup(worldName, playerName);
+
+            if (group != null)
+            {
+                groups.add(group.toLowerCase());
+            }
+        }
+
+        return groups;
+    }
+
+
+    /**
+     * Gives the player permissions linked to a clan
+     *
+     * @param cp
+     */
+    public void addGroup(Player player, String group)
+    {
+        if (permission != null)
+        {
+            if (player != null)
+            {
+                permission.playerAddGroup(player, group);
+            }
+        }
+    }
+
+    /**
+     * Removes permissions linked to a clan from the player
+     *
+     * @param cp
+     */
+    public void removeGroup(Player player, String group)
+    {
+        if (permission != null)
+        {
+            if (player != null)
+            {
+                permission.playerRemoveGroup(player, group);
+            }
+        }
+    }
+
+    /**
+     * Whether exonomy plugin exists and is enabled
+     *
+     * @return
+     */
+    public boolean hasEconomy()
+    {
+        if (economy != null && economy.isEnabled())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Charge player money
+     *
+     * @param player
+     * @param amount
+     * @return
+     */
+    public boolean playerCharge(Player player, double amount)
+    {
+        return economy.withdrawPlayer(player.getName(), amount).transactionSuccess();
+    }
+
+    /**
+     * Return money to player
+     *
+     * @param player
+     * @param amount
+     * @return
+     */
+    public boolean playerCredit(Player player, double amount)
+    {
+        return economy.depositPlayer(player.getName(), amount).transactionSuccess();
+    }
+
+    /**
+     * Check whether player has money
+     *
+     * @param player
+     * @param amount
+     * @return
+     */
+    public static boolean hasMoney(Player player, double amount)
+    {
+        return economy.has(player.getName(), amount);
     }
 }

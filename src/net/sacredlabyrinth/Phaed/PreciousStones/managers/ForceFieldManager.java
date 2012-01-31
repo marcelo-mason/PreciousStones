@@ -1075,6 +1075,30 @@ public final class ForceFieldManager
      * @param playerName
      * @return
      */
+    public boolean isApplyToAllowed(Field field, String playerName)
+    {
+        Player player = Helper.matchSinglePlayer(playerName);
+
+        if (player != null)
+        {
+            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
+            {
+                return true;
+            }
+        }
+
+        boolean allowed = field.isAllowed(playerName);
+
+        return allowed;
+    }
+
+    /**
+     * Whether the player is allowed in the field
+     *
+     * @param field
+     * @param playerName
+     * @return
+     */
     public boolean isAllowed(Field field, String playerName)
     {
         Player player = Helper.matchSinglePlayer(playerName);
@@ -1495,7 +1519,7 @@ public final class ForceFieldManager
     }
 
     /**
-     * Returns the first  conflict field found in the location and that the player is not allowed in, optionally with field flags
+     * Returns the first conflict field found in the location and that the player is not allowed in, optionally with field flags
      *
      * @param loc
      * @param playerName
@@ -1716,17 +1740,22 @@ public final class ForceFieldManager
      */
     public Field findUseProtected(Location loc, Player player, int type_id)
     {
-        List<Field> sources = getNotAllowedSourceFields(loc, player.getName(), FieldFlag.ALL);
+        List<Field> sources = getSourceFields(loc, FieldFlag.ALL);
 
         LinkedList<Field> out = new LinkedList<Field>();
 
         for (Field field : sources)
         {
-            FieldSettings fs = field.getSettings();
+            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (!fs.canUse(type_id))
+            if (allowed)
             {
-                out.add(field);
+                FieldSettings fs = field.getSettings();
+
+                if (!fs.canUse(type_id))
+                {
+                    out.add(field);
+                }
             }
         }
 
@@ -2192,11 +2221,11 @@ public final class ForceFieldManager
      */
     public boolean purchase(Player player, double amount)
     {
-        if (plugin.getVaultManager().hasEconomy())
+        if (plugin.getPermissionsManager().hasEconomy())
         {
-            if (plugin.getVaultManager().hasMoney(player, amount))
+            if (plugin.getPermissionsManager().hasMoney(player, amount))
             {
-                plugin.getVaultManager().playerCharge(player, amount);
+                plugin.getPermissionsManager().playerCharge(player, amount);
             }
             else
             {
@@ -2216,9 +2245,9 @@ public final class ForceFieldManager
      */
     public void refund(Player player, double amount)
     {
-        if (plugin.getVaultManager().hasEconomy())
+        if (plugin.getPermissionsManager().hasEconomy())
         {
-            plugin.getVaultManager().playerCredit(player, amount);
+            plugin.getPermissionsManager().playerCredit(player, amount);
             player.sendMessage(ChatColor.AQUA + "Your account has been credited");
         }
     }

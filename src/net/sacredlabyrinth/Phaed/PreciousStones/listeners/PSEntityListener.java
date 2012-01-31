@@ -42,7 +42,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=EndermanPickupEvent.class, priority= EventPriority.HIGH)
+    @EventHandler(event = EndermanPickupEvent.class, priority = EventPriority.HIGH)
     public void onEndermanPickup(EndermanPickupEvent event)
     {
         if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.PREVENT_DESTROY))
@@ -59,7 +59,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=EndermanPlaceEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = EndermanPlaceEvent.class, priority = EventPriority.HIGH)
     public void onEndermanPlace(EndermanPlaceEvent event)
     {
         if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.PREVENT_PLACE))
@@ -77,7 +77,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=EntityTargetEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = EntityTargetEvent.class, priority = EventPriority.HIGH)
     public void onEntityTarget(EntityTargetEvent event)
     {
         if (event.isCancelled())
@@ -96,22 +96,22 @@ public class PSEntityListener implements Listener
 
         if (target instanceof Player)
         {
-        	if(event.getReason() == TargetReason.CLOSEST_PLAYER)
+            if (event.getReason() == TargetReason.CLOSEST_PLAYER)
             {
-        		if(plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.REMOVE_MOB))
-        		{
-        			Entity mob = event.getEntity();
-        			if(mob instanceof Monster)
-        			{
-        				plugin.getCommunicationManager().debug("Removed a scary monster");
-        				mob.remove();
-        			}
-        		}
+                if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.REMOVE_MOB))
+                {
+                    Entity mob = event.getEntity();
+                    if (mob instanceof Monster)
+                    {
+                        plugin.getCommunicationManager().debug("Removed a scary monster");
+                        mob.remove();
+                    }
+                }
 
-        		if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE))
-        		{
-        			event.setCancelled(true);
-        		}
+                if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE))
+                {
+                    event.setCancelled(true);
+                }
             }
         }
 
@@ -124,7 +124,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=CreatureSpawnEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = CreatureSpawnEvent.class, priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
         Entity entity = event.getEntity();
@@ -155,7 +155,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=ExplosionPrimeEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = ExplosionPrimeEvent.class, priority = EventPriority.HIGH)
     public void onExplosionPrime(ExplosionPrimeEvent event)
     {
         if (event.isCancelled())
@@ -176,10 +176,11 @@ public class PSEntityListener implements Listener
         }
     }
 
+
     /**
      * @param event
      */
-    @EventHandler(event=EntityExplodeEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = EntityExplodeEvent.class, priority = EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent event)
     {
         if (event.isCancelled())
@@ -386,7 +387,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=ItemSpawnEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = ItemSpawnEvent.class, priority = EventPriority.HIGH)
     public void onItemSpawn(ItemSpawnEvent event)
     {
         if (event.isCancelled())
@@ -410,7 +411,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=EntityDamageEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = EntityDamageEvent.class, priority = EventPriority.HIGH)
     public void onEntityDamage(EntityDamageEvent event)
     {
         if (event.isCancelled())
@@ -480,7 +481,8 @@ public class PSEntityListener implements Listener
                         else
                         {
                             //If both the attacker and the victim are in combat, don't cancel it
-                            if(((plugin.getCombatTagManager().isInCombat(attacker)) && (plugin.getCombatTagManager().isInCombat(victim)))){
+                            if (((plugin.getCombatTagManager().isInCombat(attacker)) && (plugin.getCombatTagManager().isInCombat(victim))))
+                            {
                                 //warn both players
                                 plugin.getCommunicationManager().warnBypassPvPDueToCombat(attacker, victim);
                                 return;
@@ -524,7 +526,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=EntityDeathEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = EntityDeathEvent.class, priority = EventPriority.HIGH)
     public void onEntityDeath(EntityDeathEvent event)
     {
         if (event.getEntity() instanceof Player)
@@ -537,7 +539,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=PaintingBreakEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = PaintingBreakEvent.class, priority = EventPriority.HIGH)
     public void onPaintingBreak(PaintingBreakEvent event)
     {
         Painting painting = event.getPainting();
@@ -556,28 +558,34 @@ public class PSEntityListener implements Listener
             {
                 Player player = (Player) pre.getRemover();
 
-                Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_DESTROY);
+                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
 
                 if (field != null)
                 {
-                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (allowed)
                     {
-                        return;
-                    }
-                    else
-                    {
-                        event.setCancelled(true);
-                        return;
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
                 }
             }
         }
     }
 
+
     /**
      * @param event
      */
-    @EventHandler(event=PaintingPlaceEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(event = PaintingPlaceEvent.class, priority = EventPriority.HIGH)
     public void onPaintingPlace(PaintingPlaceEvent event)
     {
         Painting painting = event.getPainting();
@@ -587,17 +595,22 @@ public class PSEntityListener implements Listener
         {
             return;
         }
-        Field field = plugin.getForceFieldManager().getNotAllowedSourceField(player.getLocation(), player.getName(), FieldFlag.PREVENT_PLACE);
+        Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_PLACE);
 
         if (field != null)
         {
-            if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+            if (allowed)
             {
-                plugin.getCommunicationManager().notifyPaintingBypassPlace(player, painting.getLocation(), field);
-            }
-            else
-            {
-                event.setCancelled(true);
+                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                {
+                    plugin.getCommunicationManager().notifyPaintingBypassPlace(player, painting.getLocation(), field);
+                }
+                else
+                {
+                    event.setCancelled(true);
+                }
             }
         }
     }

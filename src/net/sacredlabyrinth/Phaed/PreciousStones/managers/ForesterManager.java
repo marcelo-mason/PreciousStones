@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Random;
 
 /**
- *
  * @author phaed
  */
 public final class ForesterManager
@@ -29,7 +28,6 @@ public final class ForesterManager
     private boolean processing = false;
 
     /**
-     *
      * @param plugin
      */
     public ForesterManager()
@@ -40,6 +38,7 @@ public final class ForesterManager
 
     /**
      * Add forester
+     *
      * @param field
      */
     public void add(Field field, String playerName)
@@ -49,6 +48,7 @@ public final class ForesterManager
 
     /**
      * Remove forester
+     *
      * @param field
      */
     public void remove(Field field)
@@ -164,10 +164,7 @@ public final class ForesterManager
 
                     // do not place next to an existing tree
 
-                    BlockFace[] faces =
-                    {
-                        BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST
-                    };
+                    BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
 
                     for (BlockFace face : faces)
                     {
@@ -181,13 +178,18 @@ public final class ForesterManager
 
                     // do not place in protected area
 
-                    Field f = plugin.getForceFieldManager().getNotAllowedSourceField(block.getLocation(), player.getName(), FieldFlag.PREVENT_PLACE);
+                    Field f = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
 
                     if (f != null)
                     {
-                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                        if (allowed)
                         {
-                            return;
+                            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                            {
+                                return;
+                            }
                         }
                     }
 

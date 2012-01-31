@@ -394,7 +394,7 @@ public final class CommandManager implements CommandExecutor
                             if (!field.isDisabled())
                             {
                                 field.setDisabled(true);
-                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been enabled");
+                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been disabled");
                             }
                             else
                             {
@@ -417,7 +417,7 @@ public final class CommandManager implements CommandExecutor
                             if (field.isDisabled())
                             {
                                 field.setDisabled(false);
-                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been disabled");
+                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been enabled");
                             }
                             else
                             {
@@ -462,7 +462,22 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
                                 {
-                                    if (flagStr.equalsIgnoreCase("All"))
+                                    if (flagStr.equalsIgnoreCase("all"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("cuboid"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("apply-to-allowed"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("apply-to-allowed"))
                                     {
                                         return true;
                                     }

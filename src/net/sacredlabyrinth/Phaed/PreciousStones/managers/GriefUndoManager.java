@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 
 import java.util.HashMap;
@@ -60,6 +61,18 @@ public final class GriefUndoManager
     public void remove(Field field)
     {
         intervalFields.remove(field);
+    }
+
+    /**
+     * Add grief block to field, accounts for dependents and signs
+     *
+     * @param field
+     * @param state
+     */
+    public void addBlock(Field field, BlockState state)
+    {
+        GriefBlock gb = new GriefBlock(state);
+        field.addGriefBlock(gb);
     }
 
     /**
@@ -215,6 +228,14 @@ public final class GriefUndoManager
 
         if (block == null)
         {
+            return;
+        }
+
+        // rollback empty blocks straight up
+
+        if (gb.isEmpty())
+        {
+            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), true);
             return;
         }
 

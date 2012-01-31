@@ -50,6 +50,7 @@ public final class SettingsManager
     private List<Object> unprotectableBlocks = new ArrayList<Object>();
     private List<Object> toolItems = new ArrayList<Object>();
     private List<Object> repairableItems = new ArrayList<Object>();
+    private List<String> allEntryGroups = new ArrayList<String>();
     private boolean logRollback;
     private boolean logFire;
     private boolean logEntry;
@@ -276,6 +277,11 @@ public final class SettingsManager
                 // add field definition to our collection
 
                 fieldDefinitions.put(fs.getRawTypeId(), fs);
+
+                if (fs.getGroupOnEntry() != null)
+                {
+                    allEntryGroups.add(fs.getGroupOnEntry());
+                }
 
                 // add the type id to our reference list
 
@@ -1298,5 +1304,10 @@ public final class SettingsManager
     public void setVisualizeMaxFields(int visualizeMaxFields)
     {
         this.visualizeMaxFields = visualizeMaxFields;
+    }
+
+    public List<String> getAllEntryGroups()
+    {
+        return Collections.unmodifiableList(allEntryGroups);
     }
 }

@@ -78,7 +78,7 @@ public final class EntryManager
                         {
                             if (!hasAir)
                             {
-                                if (plugin.getForceFieldManager().isAllowed(field, playerName))
+                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
                                 {
                                     if (field.hasFlag(FieldFlag.GIVE_AIR))
                                     {
@@ -98,7 +98,7 @@ public final class EntryManager
                         {
                             if (!hasFeeding)
                             {
-                                if (plugin.getForceFieldManager().isAllowed(field, playerName))
+                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
                                 {
                                     if (field.hasFlag(FieldFlag.SLOW_FEEDING))
                                     {
@@ -119,7 +119,7 @@ public final class EntryManager
                         {
                             if (!hasHeal)
                             {
-                                if (plugin.getForceFieldManager().isAllowed(field, playerName))
+                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
                                 {
                                     if (field.hasFlag(FieldFlag.INSTANT_HEAL))
                                     {
@@ -151,7 +151,7 @@ public final class EntryManager
                         {
                             if (!hasRepair)
                             {
-                                if (plugin.getForceFieldManager().isAllowed(field, playerName))
+                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
                                 {
                                     if (field.hasFlag(FieldFlag.SLOW_REPAIR))
                                     {
@@ -222,7 +222,7 @@ public final class EntryManager
                         {
                             if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
                             {
-                                if (!plugin.getForceFieldManager().isAllowed(field, playerName))
+                                if (!plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
                                 {
                                     if (!hasDamage)
                                     {
@@ -293,9 +293,14 @@ public final class EntryManager
             plugin.getCommunicationManager().showWelcomeMessage(player, field.getName());
         }
 
+        if (field.getSettings().getGroupOnEntry() != null)
+        {
+            plugin.getPermissionsManager().addGroup(player, field.getSettings().getGroupOnEntry());
+        }
+
         if (field.hasFlag(FieldFlag.ENTRY_ALERT))
         {
-            if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
+            if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()))
             {
                 plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
             }
@@ -313,6 +318,11 @@ public final class EntryManager
         if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE) && field.getName().length() > 0)
         {
             plugin.getCommunicationManager().showFarewellMessage(player, field.getName());
+        }
+
+        if (field.getSettings().getGroupOnEntry() != null)
+        {
+            plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
         }
     }
 
@@ -387,9 +397,20 @@ public final class EntryManager
      */
     public void leaveAllFields(Player player)
     {
+        // remove player from all entered fields
+
         synchronized (entries)
         {
             entries.remove(player.getName());
+        }
+
+        // remove player from all entry groups
+
+        List<String> allEntryGroups = plugin.getSettingsManager().getAllEntryGroups();
+
+        for (String group : allEntryGroups)
+        {
+            plugin.getPermissionsManager().removeGroup(player, group);
         }
     }
 

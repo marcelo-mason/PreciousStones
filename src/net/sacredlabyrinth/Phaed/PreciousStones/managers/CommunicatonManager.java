@@ -173,7 +173,7 @@ public class CommunicatonManager
         {
             if (plugin.getSettingsManager().isNotifyRollback() && canNotify(player))
             {
-                ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " block reverted " + count + " blocks " + field.getCoords());
+                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + count + " griefed " + Helper.plural(count, "block", "s") + " on field " + field.getCoords());
             }
         }
 
@@ -2373,6 +2373,20 @@ public class CommunicatonManager
                 cb.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName(), "");
             }
 
+            List<String> applies = new LinkedList<String>();
+
+            if (field.hasFlag(FieldFlag.APPLY_TO_ALLOWED))
+            {
+                applies.add("allowed");
+            }
+
+            if (field.hasFlag(FieldFlag.APPLY_TO_OTHERS))
+            {
+                applies.add("others");
+            }
+
+            cb.addRow("  " + ChatColor.YELLOW + "Applies to: ", ChatColor.WHITE + Helper.toMessage(applies, ","), "");
+
             cb.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
 
             if (field.getAllowed().size() > 0)
@@ -2420,6 +2434,9 @@ public class CommunicatonManager
             List<FieldFlag> disabledFlags = field.getDisabledFlags();
 
             flags.remove(FieldFlag.ALL);
+            flags.remove(FieldFlag.APPLY_TO_ALLOWED);
+            flags.remove(FieldFlag.APPLY_TO_OTHERS);
+            flags.remove(FieldFlag.CUBOID);
             flags.addAll(disabledFlags);
 
             int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
@@ -2444,12 +2461,7 @@ public class CommunicatonManager
             ChatBlock.sendBlank(player);
             ChatBlock.saySingle(player, ChatColor.WHITE + "Field Info " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
 
-            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
-
-            if (more)
-            {
-                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
-            }
+            cb.sendBlock(player);
         }
     }
 

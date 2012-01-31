@@ -1,16 +1,14 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-
 /**
- *
  * @author phaed
  */
 public class MineManager
@@ -26,7 +24,6 @@ public class MineManager
     }
 
     /**
-     *
      * @param player
      * @param field
      */
@@ -44,7 +41,7 @@ public class MineManager
             return;
         }
 
-        if (!plugin.getForceFieldManager().isAllowed(field, player.getName()))
+        if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()))
         {
             final int delay = fs.getMineDelaySeconds();
             final int leftbehind = fs.getMineReplaceBlock();

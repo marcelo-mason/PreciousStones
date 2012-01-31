@@ -2,19 +2,19 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 /**
- *
  * @author phaed
  */
 public class GriefBlock extends AbstractVec
 {
     private int typeId;
     private byte data;
-    private String signText;
+    private String signText = "";
+    private boolean empty = false;
 
     /**
-     *
      * @param x
      * @param y
      * @param z
@@ -27,11 +27,9 @@ public class GriefBlock extends AbstractVec
         super(x, y, z, world);
         this.typeId = typeId;
         this.data = data;
-        this.signText = "";
     }
 
     /**
-     *
      * @param loc
      * @param typeId
      * @param data
@@ -41,11 +39,9 @@ public class GriefBlock extends AbstractVec
         super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
         this.typeId = typeId;
         this.data = data;
-        this.signText = "";
     }
 
     /**
-     *
      * @param block
      */
     public GriefBlock(Block block)
@@ -53,8 +49,18 @@ public class GriefBlock extends AbstractVec
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
         this.typeId = block.getTypeId();
         this.data = block.getData();
-        this.signText = "";
     }
+
+    /**
+     * @param block
+     */
+    public GriefBlock(BlockState state)
+    {
+        super(state.getX(), state.getY(), state.getZ(), state.getWorld().getName());
+        this.typeId = state.getTypeId();
+        this.empty = true;
+    }
+
 
     /**
      * @return the typeId
@@ -102,5 +108,15 @@ public class GriefBlock extends AbstractVec
     public void setSignText(String signText)
     {
         this.signText = signText;
+    }
+
+    public boolean isEmpty()
+    {
+        return empty;
+    }
+
+    public void setEmpty(boolean empty)
+    {
+        this.empty = empty;
     }
 }

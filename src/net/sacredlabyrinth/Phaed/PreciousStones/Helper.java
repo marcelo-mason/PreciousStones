@@ -2,8 +2,11 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -594,5 +597,17 @@ public class Helper
         }
 
         return 0;
+    }
+
+    /**
+     * Drop block to ground
+     *
+     * @param block
+     */
+    public static void dropBlock(Block block)
+    {
+        World world = block.getWorld();
+        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+        world.dropItemNaturally(block.getLocation(), is);
     }
 }

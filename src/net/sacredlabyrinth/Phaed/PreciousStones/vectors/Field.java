@@ -4,9 +4,11 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.stringtree.json.JSONReader;
 import net.stringtree.json.JSONValidatingReader;
 import net.stringtree.json.JSONWriter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -427,6 +429,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         {
             return true;
         }
+
 
         List<String> groups = PreciousStones.getInstance().getPermissionsManager().getGroups(getWorld(), target);
 
@@ -991,7 +994,6 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         JSONWriter jw = new JSONWriter();
         return jw.write(flags);
-
     }
 
     public LinkedList<String> getDisabledFlagsStringList()
@@ -1023,7 +1025,6 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setFlags(String flagString)
     {
-
         if (flagString != null && !flagString.isEmpty())
         {
             JSONReader reader = new JSONValidatingReader();
@@ -1291,6 +1292,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             else
             {
                 PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
+                startDisabler();
             }
         }
     }
@@ -1298,5 +1300,36 @@ public class Field extends AbstractVec implements Comparable<Field>
     public byte getData()
     {
         return data;
+    }
+
+    /**
+     * Starts the disabling process for auto disable fields
+     */
+    public boolean startDisabler()
+    {
+        if (settings.getAutoDisableMinutes() > 0)
+        {
+            final Player player = Helper.matchSinglePlayer(owner);
+
+            if (player != null)
+            {
+                ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field will disable itself after " + settings.getAutoDisableMinutes() + Helper.plural(settings.getAutoDisableMinutes(), " minute", "s"));
+            }
+
+            PreciousStones.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
+            {
+                public void run()
+                {
+                    if (player != null)
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field at " + this.toString() + " has been disabled");
+                    }
+                    setDisabled(true);
+                }
+            }, 20L * 60 * settings.getAutoDisableMinutes());
+
+            return true;
+        }
+        return false;
     }
 }

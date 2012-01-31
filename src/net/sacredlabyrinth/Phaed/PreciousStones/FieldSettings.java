@@ -24,7 +24,9 @@ public class FieldSettings
     private int lightningDelaySeconds = 0;
     private int lightningReplaceBlock = 0;
     private int mixingGroup = 0;
-    private String requiredPermission;
+    private int autoDisableMinutes = 0;
+    private String groupOnEntry = null;
+    private String requiredPermission = null;
     private String title;
     private int price = 0;
     private List<Integer> limits = new ArrayList<Integer>();
@@ -53,7 +55,7 @@ public class FieldSettings
             if (typeId > 3500)
             {
                 rawTypeId = typeId;
-                data = (byte)(typeId - 3500);
+                data = (byte) (typeId - 3500);
                 typeId = 35;
             }
         }
@@ -77,9 +79,15 @@ public class FieldSettings
         {
             requiredPermission = (String) map.get("required-permission");
         }
-        else
+
+        if (map.containsKey("group-on-entry") && Helper.isString(map.get("group-on-entry")))
         {
-            requiredPermission = null;
+            groupOnEntry = (String) map.get("group-on-entry");
+        }
+
+        if (map.containsKey("auto-disable-minutes") && Helper.isInteger(map.get("auto-disable-minutes")))
+        {
+            autoDisableMinutes = (Integer) map.get("auto-disable-minutes");
         }
 
         if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
@@ -469,11 +477,11 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("visualize-on-rightclick") && Helper.isBoolean(map.get("visualize-on-rightclick")))
+        if (map.containsKey("visualize-on-shift-rightclick") && Helper.isBoolean(map.get("visualize-on-shift-rightclick")))
         {
-            if ((Boolean) map.get("visualize-on-rightclick"))
+            if ((Boolean) map.get("visualize-on-shift-rightclick"))
             {
-                defaultFlags.add(FieldFlag.VISUALIZE_ON_RIGHT_CLICK);
+                defaultFlags.add(FieldFlag.VISUALIZE_ON_SHIFT_RIGHT_CLICK);
             }
         }
 
@@ -492,6 +500,71 @@ public class FieldSettings
                 defaultFlags.add(FieldFlag.KEEP_CHUNKS_LOADED);
             }
         }
+
+        if (map.containsKey("grief-revert-allow-place-grief") && Helper.isBoolean(map.get("grief-revert-allow-place-grief")))
+        {
+            if ((Boolean) map.get("grief-revert-allow-place-grief"))
+            {
+                defaultFlags.add(FieldFlag.GRIEF_REVERT_ALLOW_PLACE_GRIEF);
+            }
+        }
+
+        if (map.containsKey("toggle-only-while-disabled") && Helper.isBoolean(map.get("toggle-only-while-disabled")))
+        {
+            if ((Boolean) map.get("toggle-only-while-disabled"))
+            {
+                defaultFlags.add(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED);
+            }
+        }
+
+        if (map.containsKey("redefine-only-while-disabled") && Helper.isBoolean(map.get("redefine-only-while-disabled")))
+        {
+            if ((Boolean) map.get("redefine-only-while-disabled"))
+            {
+                defaultFlags.add(FieldFlag.REDEFINE_ONLY_WHILE_DISABLE);
+            }
+        }
+
+        if (map.containsKey("disable-enable-on-left-click") && Helper.isBoolean(map.get("disable-enable-on-left-click")))
+        {
+            if ((Boolean) map.get("disable-enable-on-left-click"))
+            {
+                defaultFlags.add(FieldFlag.DISABLE_ENABLE_ON_LEFT_CLICK);
+            }
+        }
+
+        if (map.containsKey("breakable-when-disabled") && Helper.isBoolean(map.get("breakable-when-disabled")))
+        {
+            if ((Boolean) map.get("breakable-when-disabled"))
+            {
+                defaultFlags.add(FieldFlag.BREAKABLE_WHEN_DISABLED);
+            }
+        }
+
+        if (map.containsKey("disable-place-near-players") && Helper.isBoolean(map.get("disable-place-near-players")))
+        {
+            if ((Boolean) map.get("disable-place-near-players"))
+            {
+                defaultFlags.add(FieldFlag.DISABLE_PLACE_NEAR_PLAYERS);
+            }
+        }
+
+        if (map.containsKey("apply-to-allowed") && Helper.isBoolean(map.get("apply-to-allowed")))
+        {
+            if ((Boolean) map.get("apply-to-allowed"))
+            {
+                defaultFlags.add(FieldFlag.APPLY_TO_ALLOWED);
+            }
+        }
+
+        if (map.containsKey("apply-to-others") && Helper.isBoolean(map.get("apply-to-others")))
+        {
+            if ((Boolean) map.get("apply-to-others"))
+            {
+                defaultFlags.add(FieldFlag.APPLY_TO_OTHERS);
+            }
+        }
+
 
         defaultFlags.add(FieldFlag.ALL);
     }
@@ -759,5 +832,15 @@ public class FieldSettings
     public int getRawTypeId()
     {
         return rawTypeId > 0 ? rawTypeId : typeId;
+    }
+
+    public int getAutoDisableMinutes()
+    {
+        return autoDisableMinutes;
+    }
+
+    public String getGroupOnEntry()
+    {
+        return groupOnEntry;
     }
 }

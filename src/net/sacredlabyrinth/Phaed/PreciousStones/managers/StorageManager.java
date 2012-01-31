@@ -870,13 +870,13 @@ public final class StorageManager
             processSingleField(pending.get(field.toVec()));
         }
 
-        String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `flags`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getRawTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+        String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getRawTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
-            query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `flags`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getRawTypeId()  + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+            query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getRawTypeId()  + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
         }
 
         if (plugin.getSettingsManager().isDebugsql())
@@ -1243,10 +1243,15 @@ public final class StorageManager
                         final byte data = res.getByte("data");
                         final String signText = res.getString("sign_text");
 
-                        final GriefBlock bg = new GriefBlock(x, y, z, field.getWorld(), type_id, data);
+                        final GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type_id, data);
 
-                        bg.setSignText(signText);
-                        out.add(bg);
+                        if (plugin.getSettingsManager().isThroughType(type_id))
+                        {
+                            gb.setEmpty(true);
+                        }
+
+                        gb.setSignText(signText);
+                        out.add(gb);
                     }
                     catch (final Exception ex)
                     {

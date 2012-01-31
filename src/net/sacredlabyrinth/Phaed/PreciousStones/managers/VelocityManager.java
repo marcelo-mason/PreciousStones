@@ -1,7 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.entity.Player;
@@ -33,11 +32,8 @@ public class VelocityManager
     {
         if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.launch"))
         {
-            if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
+            if (plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()))
             {
-
-                
-
                 if (field.hasFlag(FieldFlag.LAUNCH))
                 {
                     final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getLaunchHeight();
@@ -78,10 +74,8 @@ public class VelocityManager
     {
         if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.bounce"))
         {
-            if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
+            if (plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()))
             {
-
-
                 if (field.hasFlag(FieldFlag.CANNON))
                 {
                     final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getCannonHeight();

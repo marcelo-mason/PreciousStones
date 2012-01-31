@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 8.0.2
+version: 8.1.0
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag]
 commands:
@@ -16,6 +16,8 @@ permissions:
     description: Can create protection blocks
   preciousstones.benefit.disable:
     description: Can disable his own fields
+  preciousstones.benefit.enable:
+    description: Can enable his own fields
   preciousstones.benefit.heal:
     description: Can be healed in healing zones
   preciousstones.benefit.giveair:
@@ -231,6 +233,7 @@ permissions:
       preciousstones.benefit.toggle: true
       preciousstones.benefit.setinterval: true
       preciousstones.benefit.disable: true
+      preciousstones.benefit.enable: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: false
