@@ -2311,25 +2311,24 @@ public class CommunicatonManager
         {
             cb.addRow("", "", "");
 
+            ChatColor color = field.isDisabled() ? ChatColor.RED : ChatColor.YELLOW;
+
             if (field.isDisabled())
             {
                 cb.addRow("  " + ChatColor.RED + "Field Disabled", "", "");
             }
-            else
+            FieldSettings fs = field.getSettings();
+
+            cb.addRow("  " + color + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
+
+            if (fs.hasNameableFlag() && field.getName().length() > 0)
             {
-                FieldSettings fs = field.getSettings();
-
-                cb.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
-
-                if (fs.hasNameableFlag() && field.getName().length() > 0)
-                {
-                    cb.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName(), "");
-                }
-
-                cb.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
-
-                cb.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
+                cb.addRow("  " + color + "Name: ", ChatColor.AQUA + field.getName(), "");
             }
+
+            cb.addRow("  " + color + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
+
+            cb.addRow("  " + color + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
         }
 
         if (cb.size() > 0)
@@ -2352,94 +2351,47 @@ public class CommunicatonManager
     /**
      * @param player
      * @param fields
+     * @return
      */
-    public void showFieldDetails(Player player, Field field)
+    public boolean showFieldDetails(Player player, Field field)
     {
         ChatBlock cb = getNewChatBlock(player);
         FieldSettings fs = field.getSettings();
 
         cb.addRow("", "", "");
 
-        if (field.isDisabled())
+        ChatColor color = field.isDisabled() ? ChatColor.RED : ChatColor.YELLOW;
+
+        boolean showMessage = true;
+
+        cb.addRow("  " + color + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
+
+        if (fs.hasNameableFlag() && field.getName().length() > 0)
         {
-            cb.addRow("  " + ChatColor.RED + "Field Disabled", "", "");
+            cb.addRow("  " + color + "Name: ", ChatColor.AQUA + field.getName(), "");
         }
-        else
+
+        List<String> applies = new LinkedList<String>();
+
+        if (field.hasFlag(FieldFlag.APPLY_TO_ALLOWED))
         {
-            cb.addRow("  " + ChatColor.YELLOW + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
+            applies.add("allowed");
+        }
 
-            if (fs.hasNameableFlag() && field.getName().length() > 0)
-            {
-                cb.addRow("  " + ChatColor.YELLOW + "Name: ", ChatColor.AQUA + field.getName(), "");
-            }
+        if (field.hasFlag(FieldFlag.APPLY_TO_OTHERS))
+        {
+            applies.add("others");
+        }
 
-            List<String> applies = new LinkedList<String>();
+        cb.addRow("  " + color + "Applies to: ", ChatColor.WHITE + Helper.toMessage(applies, ","), "");
 
-            if (field.hasFlag(FieldFlag.APPLY_TO_ALLOWED))
-            {
-                applies.add("allowed");
-            }
+        cb.addRow("  " + color + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
 
-            if (field.hasFlag(FieldFlag.APPLY_TO_OTHERS))
-            {
-                applies.add("others");
-            }
+        if (field.getAllowed().size() > 0)
+        {
+            List<String> allowed = field.getAllowed();
 
-            cb.addRow("  " + ChatColor.YELLOW + "Applies to: ", ChatColor.WHITE + Helper.toMessage(applies, ","), "");
-
-            cb.addRow("  " + ChatColor.YELLOW + "Owner: ", ChatColor.AQUA + field.getOwner(), "");
-
-            if (field.getAllowed().size() > 0)
-            {
-                List<String> allowed = field.getAllowed();
-
-                int rows = (int) Math.max(Math.ceil(allowed.size() / 2), 1);
-
-                for (int i = 0; i < rows; i++)
-                {
-                    String title = "";
-
-                    if (i == 0)
-                    {
-                        title = ChatColor.YELLOW + "Allowed: ";
-                    }
-
-                    cb.addRow("  " + title, ChatColor.WHITE + getAllowed(allowed, i * 2), getAllowed(allowed, (i * 2) + 1));
-                }
-            }
-
-            if (field.hasFlag(FieldFlag.CUBOID))
-            {
-                cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + (field.getMaxx() - field.getMinx() + 1) + "x" + (field.getMaxy() - field.getMiny() + 1) + "x" + (field.getMaxz() - field.getMinz() + 1), "");
-            }
-            else
-            {
-                cb.addRow("  " + ChatColor.YELLOW + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1), "");
-            }
-
-            if (field.getVelocity() > 0)
-            {
-                cb.addRow("  " + ChatColor.YELLOW + "Velocity: ", ChatColor.AQUA + "" + field.getVelocity(), "");
-            }
-
-            if (field.getRevertSecs() > 0)
-            {
-                cb.addRow("  " + ChatColor.YELLOW + "Interval: ", ChatColor.AQUA + "" + field.getRevertSecs(), "");
-            }
-
-
-            cb.addRow("  " + ChatColor.YELLOW + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
-
-            List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getFlags());
-            List<FieldFlag> disabledFlags = field.getDisabledFlags();
-
-            flags.remove(FieldFlag.ALL);
-            flags.remove(FieldFlag.APPLY_TO_ALLOWED);
-            flags.remove(FieldFlag.APPLY_TO_OTHERS);
-            flags.remove(FieldFlag.CUBOID);
-            flags.addAll(disabledFlags);
-
-            int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
+            int rows = (int) Math.max(Math.ceil(allowed.size() / 2), 1);
 
             for (int i = 0; i < rows; i++)
             {
@@ -2447,11 +2399,62 @@ public class CommunicatonManager
 
                 if (i == 0)
                 {
-                    title = ChatColor.YELLOW + "Flags: ";
+                    title = color + "Allowed: ";
                 }
 
-                cb.addRow("  " + title, getFlag(disabledFlags, flags, i * 2), getFlag(disabledFlags, flags, (i * 2) + 1));
+                cb.addRow("  " + title, ChatColor.WHITE + getAllowed(allowed, i * 2), getAllowed(allowed, (i * 2) + 1));
             }
+        }
+
+        if (field.hasFlag(FieldFlag.CUBOID))
+        {
+            cb.addRow("  " + color + "Dimensions: ", ChatColor.AQUA + "" + (field.getMaxx() - field.getMinx() + 1) + "x" + (field.getMaxy() - field.getMiny() + 1) + "x" + (field.getMaxz() - field.getMinz() + 1), "");
+        }
+        else
+        {
+            cb.addRow("  " + color + "Dimensions: ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1), "");
+        }
+
+        if (field.getVelocity() > 0)
+        {
+            cb.addRow("  " + color + "Velocity: ", ChatColor.AQUA + "" + field.getVelocity(), "");
+        }
+
+        if (field.getRevertSecs() > 0)
+        {
+            cb.addRow("  " + color + "Interval: ", ChatColor.AQUA + "" + field.getRevertSecs(), "");
+        }
+
+
+        cb.addRow("  " + color + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
+
+        List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getFlags());
+        List<FieldFlag> disabledFlags = field.getDisabledFlags();
+
+        flags.remove(FieldFlag.ALL);
+        flags.remove(FieldFlag.APPLY_TO_ALLOWED);
+        flags.remove(FieldFlag.APPLY_TO_OTHERS);
+        flags.remove(FieldFlag.CUBOID);
+        flags.remove(FieldFlag.DENY_PLACE_NEAR_PLAYERS);
+        flags.remove(FieldFlag.BREAKABLE);
+        flags.remove(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED);
+        flags.remove(FieldFlag.REDEFINE_ONLY_WHILE_DISABLED);
+        flags.remove(FieldFlag.BREAKABLE_WHEN_DISABLED);
+        flags.remove(FieldFlag.MODIFY_ONLY_WHILE_DISABLED);
+        flags.addAll(disabledFlags);
+
+        int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
+
+        for (int i = 0; i < rows; i++)
+        {
+            String title = "";
+
+            if (i == 0)
+            {
+                title = color + "Flags: ";
+            }
+
+            cb.addRow("  " + title, getFlag(disabledFlags, flags, i * 2), getFlag(disabledFlags, flags, (i * 2) + 1));
         }
 
         if (cb.size() > 0)
@@ -2459,10 +2462,55 @@ public class CommunicatonManager
             cb.addRow("", "", "", "");
 
             ChatBlock.sendBlank(player);
-            ChatBlock.saySingle(player, ChatColor.WHITE + "Field Info " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
+
+            if (field.isDisabled())
+            {
+                ChatBlock.saySingle(player, ChatColor.WHITE + "Field Info " + ChatColor.RED + "(disabled)" + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
+            }
+            else
+            {
+                ChatBlock.saySingle(player, ChatColor.WHITE + "Field Info " + ChatColor.DARK_GRAY + "----------------------------------------------------------------------------------------");
+            }
+
+            if (field.isDisabled())
+            {
+                ChatBlock.sendBlank(player);
+
+                if (field.hasFlag(FieldFlag.BREAKABLE_WHEN_DISABLED))
+                {
+                    ChatBlock.sendMessage(player, "  " + ChatColor.WHITE + " * " + ChatColor.RED + "This field becomes breakable when disabled");
+                }
+
+                List<String> cond = new LinkedList<String>();
+
+                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                {
+                    cond.add("settings");
+                }
+
+                if (field.hasFlag(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED))
+                {
+                    cond.add("flags");
+                }
+
+                if (field.hasFlag(FieldFlag.REDEFINE_ONLY_WHILE_DISABLED))
+                {
+                    cond.add("cuboid");
+                }
+
+                if (!cond.isEmpty())
+                {
+                    ChatBlock.sendMessage(player, "  " + ChatColor.WHITE + " * " + ChatColor.RED + "This field's " + Helper.toMessage(cond, ", ") + " can only be modified");
+                    ChatBlock.sendMessage(player, "     " + ChatColor.RED + "while the field is disabled");
+                }
+
+                showMessage = false;
+            }
 
             cb.sendBlock(player);
         }
+
+        return showMessage;
     }
 
     private String getFlag(List<FieldFlag> disabledFlags, List<FieldFlag> flags, int index)

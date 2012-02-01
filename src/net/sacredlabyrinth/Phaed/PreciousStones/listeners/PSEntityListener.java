@@ -564,7 +564,7 @@ public class PSEntityListener implements Listener
                 {
                     boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                    if (allowed)
+                    if (!allowed)
                     {
                         if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                         {
@@ -601,7 +601,7 @@ public class PSEntityListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (allowed)
+            if (!allowed)
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                 {

@@ -288,19 +288,39 @@ public final class EntryManager
      */
     public void enterOverlappedArea(Player player, Field field)
     {
+        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
         if (field.hasFlag(FieldFlag.WELCOME_MESSAGE) && field.getName().length() > 0)
         {
             plugin.getCommunicationManager().showWelcomeMessage(player, field.getName());
         }
 
-        if (field.getSettings().getGroupOnEntry() != null)
+        if (allowed)
         {
-            plugin.getPermissionsManager().addGroup(player, field.getSettings().getGroupOnEntry());
+            if (field.getSettings().getGroupOnEntry() != null)
+            {
+                plugin.getPermissionsManager().addGroup(player, field.getSettings().getGroupOnEntry());
+            }
+
+            if (field.getSettings().getForceEntryGameMode() != null)
+            {
+                player.setGameMode(field.getSettings().getForceEntryGameMode());
+            }
         }
 
-        if (field.hasFlag(FieldFlag.ENTRY_ALERT))
+        if (!allowed)
         {
-            if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()))
+            if (field.hasFlag(FieldFlag.DENY_FLIGHT))
+            {
+                if (plugin.getSettingsManager().isNotifyFlyZones())
+                {
+                    ChatBlock.sendMessage(player, ChatColor.YELLOW + "Entering no fly zone");
+                }
+
+                player.setAllowFlight(false);
+            }
+
+            if (field.hasFlag(FieldFlag.ENTRY_ALERT))
             {
                 plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
             }
@@ -315,14 +335,42 @@ public final class EntryManager
      */
     public void leaveOverlappedArea(Player player, Field field)
     {
+        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
         if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE) && field.getName().length() > 0)
         {
             plugin.getCommunicationManager().showFarewellMessage(player, field.getName());
         }
 
-        if (field.getSettings().getGroupOnEntry() != null)
+        if (allowed)
         {
-            plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
+            if (field.getSettings().getGroupOnEntry() != null)
+            {
+                plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
+            }
+
+            if (field.getSettings().getForceLeavingGameMode() != null)
+            {
+                player.setGameMode(field.getSettings().getForceLeavingGameMode());
+            }
+        }
+
+        if (!allowed)
+        {
+            if (field.hasFlag(FieldFlag.DENY_FLIGHT))
+            {
+                Field sub = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.DENY_FLIGHT);
+
+                if (sub == null)
+                {
+                    if (plugin.getSettingsManager().isNotifyFlyZones())
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Leaving no fly zone");
+                    }
+
+                    player.setAllowFlight(true);
+                }
+            }
         }
     }
 
@@ -401,7 +449,17 @@ public final class EntryManager
 
         synchronized (entries)
         {
-            entries.remove(player.getName());
+            if (entries.containsKey(player.getName()))
+            {
+                EntryFields entryFields = entries.get(player.getName());
+
+                for (Field field : entryFields.getFields())
+                {
+                    leaveOverlappedArea(player, field);
+                }
+
+                entries.remove(player.getName());
+            }
         }
 
         // remove player from all entry groups
@@ -411,6 +469,40 @@ public final class EntryManager
         for (String group : allEntryGroups)
         {
             plugin.getPermissionsManager().removeGroup(player, group);
+        }
+    }
+
+    /**
+     * Remove all players from field
+     *
+     * @param player
+     */
+    public void removeAllPlayers(Field field)
+    {
+        synchronized (entries)
+        {
+            for (String playerName : entries.keySet())
+            {
+                EntryFields ef = entries.get(playerName);
+                List<Field> fields = ef.getFields();
+
+                for (Iterator iter = fields.iterator(); iter.hasNext(); )
+                {
+                    Field testfield = (Field) iter.next();
+
+                    if (field.equals(testfield))
+                    {
+                        iter.remove();
+
+                        Player player = Helper.matchSinglePlayer(playerName);
+
+                        if (player != null)
+                        {
+                            leaveOverlappedArea(player, field);
+                        }
+                    }
+                }
+            }
         }
     }
 

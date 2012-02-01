@@ -417,6 +417,12 @@ public final class StorageManager
                         {
                             field.setSettings(fs);
                             field.setFlags(flags);
+
+                            if(fs.getAutoDisableSeconds() > 0)
+                            {
+                                field.setDisabled(true);
+                            }
+
                             out.add(field);
 
                             final PlayerData playerdata = plugin.getPlayerManager().getPlayerData(owner);
@@ -517,6 +523,12 @@ public final class StorageManager
                         {
                             field.setSettings(fs);
                             field.setFlags(flags);
+
+                            if(fs.getAutoDisableSeconds() > 0)
+                            {
+                                field.setDisabled(true);
+                            }
+
                             out.put(id, field);
 
                             final PlayerData playerdata = plugin.getPlayerManager().getPlayerData(owner);

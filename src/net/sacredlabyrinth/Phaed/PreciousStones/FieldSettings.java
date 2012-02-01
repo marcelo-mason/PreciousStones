@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 
 import java.util.*;
@@ -24,9 +25,11 @@ public class FieldSettings
     private int lightningDelaySeconds = 0;
     private int lightningReplaceBlock = 0;
     private int mixingGroup = 0;
-    private int autoDisableMinutes = 0;
+    private int autoDisableSeconds = 0;
     private String groupOnEntry = null;
     private String requiredPermission = null;
+    private GameMode forceEntryGameMode = null;
+    private GameMode forceLeavingGameMode = null;
     private String title;
     private int price = 0;
     private List<Integer> limits = new ArrayList<Integer>();
@@ -85,9 +88,39 @@ public class FieldSettings
             groupOnEntry = (String) map.get("group-on-entry");
         }
 
-        if (map.containsKey("auto-disable-minutes") && Helper.isInteger(map.get("auto-disable-minutes")))
+        if (map.containsKey("force-entry-game-mode") && Helper.isString(map.get("force-entry-game-mode")))
         {
-            autoDisableMinutes = (Integer) map.get("auto-disable-minutes");
+            String gameMode = (String) map.get("force-entry-game-mode");
+
+            if (gameMode.equalsIgnoreCase("creative"))
+            {
+                forceEntryGameMode = GameMode.CREATIVE;
+            }
+
+            if (gameMode.equalsIgnoreCase("survival"))
+            {
+                forceEntryGameMode = GameMode.SURVIVAL;
+            }
+        }
+
+        if (map.containsKey("force-leaving-game-mode") && Helper.isString(map.get("force-leaving-game-mode")))
+        {
+            String gameMode = (String) map.get("force-leaving-game-mode");
+
+            if (gameMode.equalsIgnoreCase("creative"))
+            {
+                forceLeavingGameMode = GameMode.CREATIVE;
+            }
+
+            if (gameMode.equalsIgnoreCase("survival"))
+            {
+                forceLeavingGameMode = GameMode.SURVIVAL;
+            }
+        }
+
+        if (map.containsKey("auto-disable-seconds") && Helper.isInteger(map.get("auto-disable-seconds")))
+        {
+            autoDisableSeconds = (Integer) map.get("auto-disable-seconds");
         }
 
         if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
@@ -521,15 +554,23 @@ public class FieldSettings
         {
             if ((Boolean) map.get("redefine-only-while-disabled"))
             {
-                defaultFlags.add(FieldFlag.REDEFINE_ONLY_WHILE_DISABLE);
+                defaultFlags.add(FieldFlag.REDEFINE_ONLY_WHILE_DISABLED);
             }
         }
 
-        if (map.containsKey("disable-enable-on-left-click") && Helper.isBoolean(map.get("disable-enable-on-left-click")))
+        if (map.containsKey("modify-only-while-disabled") && Helper.isBoolean(map.get("modify-only-while-disabled")))
         {
-            if ((Boolean) map.get("disable-enable-on-left-click"))
+            if ((Boolean) map.get("modify-only-while-disabled"))
             {
-                defaultFlags.add(FieldFlag.DISABLE_ENABLE_ON_LEFT_CLICK);
+                defaultFlags.add(FieldFlag.MODIFY_ONLY_WHILE_DISABLED);
+            }
+        }
+
+        if (map.containsKey("enable-on-shift-right-click") && Helper.isBoolean(map.get("enable-on-shift-right-click")))
+        {
+            if ((Boolean) map.get("enable-on-shift-right-click"))
+            {
+                defaultFlags.add(FieldFlag.ENABLE_ON_SHIFT_RIGHT_CLICK);
             }
         }
 
@@ -541,11 +582,11 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("disable-place-near-players") && Helper.isBoolean(map.get("disable-place-near-players")))
+        if (map.containsKey("deny-place-near-players") && Helper.isBoolean(map.get("deny-place-near-players")))
         {
-            if ((Boolean) map.get("disable-place-near-players"))
+            if ((Boolean) map.get("deny-place-near-players"))
             {
-                defaultFlags.add(FieldFlag.DISABLE_PLACE_NEAR_PLAYERS);
+                defaultFlags.add(FieldFlag.DENY_PLACE_NEAR_PLAYERS);
             }
         }
 
@@ -562,6 +603,13 @@ public class FieldSettings
             if ((Boolean) map.get("apply-to-others"))
             {
                 defaultFlags.add(FieldFlag.APPLY_TO_OTHERS);
+            }
+        }
+        if (map.containsKey("deny-flight") && Helper.isBoolean(map.get("deny-flight")))
+        {
+            if ((Boolean) map.get("deny-flight"))
+            {
+                defaultFlags.add(FieldFlag.DENY_FLIGHT);
             }
         }
 
@@ -834,13 +882,23 @@ public class FieldSettings
         return rawTypeId > 0 ? rawTypeId : typeId;
     }
 
-    public int getAutoDisableMinutes()
+    public int getAutoDisableSeconds()
     {
-        return autoDisableMinutes;
+        return autoDisableSeconds;
     }
 
     public String getGroupOnEntry()
     {
         return groupOnEntry;
+    }
+
+    public GameMode getForceEntryGameMode()
+    {
+        return forceEntryGameMode;
+    }
+
+    public GameMode getForceLeavingGameMode()
+    {
+        return forceLeavingGameMode;
     }
 }

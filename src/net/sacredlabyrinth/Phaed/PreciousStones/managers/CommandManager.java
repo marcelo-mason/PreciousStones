@@ -129,6 +129,15 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                {
+                                    if (!field.isDisabled())
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                        return true;
+                                    }
+                                }
+
                                 for (String playerName : args)
                                 {
                                     boolean done = plugin.getForceFieldManager().addAllowed(field, playerName);
@@ -180,6 +189,15 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                {
+                                    if (!field.isDisabled())
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                        return true;
+                                    }
+                                }
+
                                 for (String playerName : args)
                                 {
                                     if (plugin.getForceFieldManager().conflictOfInterestExists(field, playerName))
@@ -289,6 +307,15 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
+                                    if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                    {
+                                        if (!field.isDisabled())
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                            return true;
+                                        }
+                                    }
+
                                     boolean done = plugin.getForceFieldManager().setNameFields(field, playerName);
 
                                     if (done)
@@ -358,6 +385,15 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                {
+                                    if (!field.isDisabled())
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                        return true;
+                                    }
+                                }
+
                                 FieldSettings fs = field.getSettings();
 
                                 if (fs.hasVeocityFlag())
@@ -394,6 +430,7 @@ public final class CommandManager implements CommandExecutor
                             if (!field.isDisabled())
                             {
                                 field.setDisabled(true);
+                                plugin.getStorageManager().offerField(field);
                                 ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been disabled");
                             }
                             else
@@ -417,6 +454,7 @@ public final class CommandManager implements CommandExecutor
                             if (field.isDisabled())
                             {
                                 field.setDisabled(false);
+                                plugin.getStorageManager().offerField(field);
                                 ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been enabled");
                             }
                             else
@@ -460,6 +498,15 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED))
+                                {
+                                    if (!field.isDisabled())
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field's flags can only be toggled while disabled");
+                                        return true;
+                                    }
+                                }
+
                                 if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
                                 {
                                     if (flagStr.equalsIgnoreCase("all"))
@@ -478,6 +525,31 @@ public final class CommandManager implements CommandExecutor
                                     }
 
                                     if (flagStr.equalsIgnoreCase("apply-to-allowed"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("deny-place-near-players"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("toggle-only-while-disabled"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("redefine-only-while-disabled"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("modify-only-while-disabled"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("breakable-when-disabled"))
                                     {
                                         return true;
                                     }
@@ -711,10 +783,20 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                {
+                                    if (!field.isDisabled())
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                        return true;
+                                    }
+                                }
+
                                 if (interval >= plugin.getSettingsManager().getGriefRevertMinInterval() || plugin.getPermissionsManager().has(player, "preciousstones.bypass.interval"))
                                 {
                                     field.setRevertSecs(interval);
                                     plugin.getGriefUndoManager().register(field);
+                                    plugin.getStorageManager().offerField(field);
                                     ChatBlock.sendMessage(sender, ChatColor.AQUA + "The grief-revert interval has been set to " + interval + " seconds");
                                 }
                                 else

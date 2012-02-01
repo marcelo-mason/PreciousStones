@@ -67,6 +67,7 @@ public final class SettingsManager
     private boolean logBypassDestroy;
     private boolean logConflictPlace;
     private boolean notifyRollback;
+    private boolean notifyFlyZones;
     private boolean notifyPlace;
     private boolean notifyDestroy;
     private boolean notifyBypassPvp;
@@ -181,6 +182,7 @@ public final class SettingsManager
         notifyBypassPvp = config.getBoolean("notify.bypass-pvp");
         notifyBypassPlace = config.getBoolean("notify.bypass-place");
         notifyBypassDestroy = config.getBoolean("notify.bypass-destroy");
+        notifyFlyZones = config.getBoolean("notify.fly-zones");
         warnInstantHeal = config.getBoolean("warn.instant-heal");
         warnSlowHeal = config.getBoolean("warn.slow-heal");
         warnSlowDamage = config.getBoolean("warn.slow-damage");
@@ -1309,5 +1311,10 @@ public final class SettingsManager
     public List<String> getAllEntryGroups()
     {
         return Collections.unmodifiableList(allEntryGroups);
+    }
+
+    public boolean isNotifyFlyZones()
+    {
+        return notifyFlyZones;
     }
 }

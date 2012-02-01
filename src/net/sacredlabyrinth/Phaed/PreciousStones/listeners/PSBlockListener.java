@@ -226,11 +226,11 @@ public class PSBlockListener implements Listener
 
         if (plugin.getForceFieldManager().isField(block))
         {
-            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
+            Field field = plugin.getForceFieldManager().getField(block);
+            FieldSettings fs = field.getSettings();
 
-            if (fs == null)
+            if (field == null)
             {
-                plugin.getForceFieldManager().queueRelease(block);
                 return;
             }
 
@@ -256,12 +256,12 @@ public class PSBlockListener implements Listener
                 }
             }
 
-            if (plugin.getForceFieldManager().isBreakable(block))
+            if (field.hasFlag(FieldFlag.BREAKABLE))
             {
                 plugin.getCommunicationManager().notifyDestroyBreakableFF(player, block);
                 release = true;
             }
-            else if (plugin.getForceFieldManager().isOwner(block, player.getName()))
+            else if (field.isOwner(player.getName()))
             {
                 plugin.getCommunicationManager().notifyDestroyFF(player, block);
                 release = true;
@@ -282,8 +282,6 @@ public class PSBlockListener implements Listener
                 event.setCancelled(true);
             }
 
-            Field field = plugin.getForceFieldManager().getField(block);
-
             if (plugin.getForceFieldManager().hasSubFields(field))
             {
                 ChatBlock.sendMessage(player, ChatColor.RED + "Cannot remove field as there are sub-fields inside of it.  You must remove them first before you can remove this field.");
@@ -293,6 +291,8 @@ public class PSBlockListener implements Listener
 
             if (release)
             {
+                plugin.getEntryManager().removeAllPlayers(field);
+
                 plugin.getForceFieldManager().release(block);
 
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
@@ -333,7 +333,7 @@ public class PSBlockListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (allowed)
+            if (!allowed)
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                 {
@@ -353,7 +353,7 @@ public class PSBlockListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isAllowed(field, player.getName());
 
-            if (allowed)
+            if (!allowed)
             {
                 if (field.hasFlag(FieldFlag.APPLY_TO_ALLOWED))
                 {
@@ -366,7 +366,7 @@ public class PSBlockListener implements Listener
                 }
             }
 
-            if (!allowed)
+            if (allowed)
             {
                 if (field.hasFlag(FieldFlag.APPLY_TO_OTHERS))
                 {
@@ -429,6 +429,18 @@ public class PSBlockListener implements Listener
             return;
         }
 
+        if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld()))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isBypassBlock(block))
+        {
+            return;
+        }
+
+        DebugTimer dt = new DebugTimer("onBlockPlace");
+
         if (plugin.getCuboidManager().hasOpenCuboid(player))
         {
             if (!plugin.getSettingsManager().isFieldType(block))
@@ -449,18 +461,6 @@ public class PSBlockListener implements Listener
                 }
             }
         }
-
-        if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld()))
-        {
-            return;
-        }
-
-        if (plugin.getSettingsManager().isBypassBlock(block))
-        {
-            return;
-        }
-
-        DebugTimer dt = new DebugTimer("onBlockPlace");
 
         plugin.getSnitchManager().recordSnitchBlockPlace(player, block);
 
@@ -520,119 +520,129 @@ public class PSBlockListener implements Listener
             {
                 event.setCancelled(true);
                 plugin.getCommunicationManager().warnConflictFF(player, block, conflictField);
+                return;
             }
-            else
+
+            if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
             {
-                if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
                 {
-                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
-                    {
-                        event.setCancelled(true);
-                        plugin.getCommunicationManager().warnFieldPlaceTouchingUnprotectable(player, block);
-                        return;
-                    }
-
-                    plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
-                }
-
-                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
-
-                if (fs == null)
-                {
+                    plugin.getCommunicationManager().warnFieldPlaceTouchingUnprotectable(player, block);
+                    event.setCancelled(true);
                     return;
                 }
 
-                if (fs.hasDefaultFlag(FieldFlag.PREVENT_UNPROTECTABLE))
+                plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
+            }
+
+            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
+
+            if (fs == null)
+            {
+                return;
+            }
+
+            if (fs.hasDefaultFlag(FieldFlag.DENY_PLACE_NEAR_PLAYERS))
+            {
+                boolean hasPlayers = plugin.getForceFieldManager().areaHasPlayers(block, player);
+
+                if (hasPlayers)
                 {
-                    Block foundblock = plugin.getUnprotectableManager().existsUnprotectableBlock(block);
-
-                    if (foundblock != null)
-                    {
-                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
-                        {
-                            event.setCancelled(true);
-                            plugin.getCommunicationManager().warnPlaceFieldInUnprotectable(player, foundblock, block);
-                            return;
-                        }
-
-                        plugin.getCommunicationManager().notifyBypassFieldInUnprotectable(player, foundblock, block);
-                    }
-                }
-
-                if (fs.hasForesterFlag())
-                {
-                    Block floor = block.getRelative(BlockFace.DOWN);
-
-                    if (!plugin.getSettingsManager().isFertileType(floor.getTypeId()) && floor.getTypeId() != 2)
-                    {
-                        player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " blocks must be placed of fertile land to activate");
-                        return;
-                    }
-                }
-
-                // if not allowed in this world then place as regular block
-
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.world"))
-                {
-                    if (!fs.allowedWorld(block.getWorld()))
-                    {
-                        return;
-                    }
-                }
-
-                // ensure placement of only those with the required permission, fail silently otherwise
-
-                if (fs.getRequiredPermission() != null)
-                {
-                    if (!plugin.getPermissionsManager().has(player, fs.getRequiredPermission()))
-                    {
-                        return;
-                    }
-                }
-
-                // ensure placement inside allowed only fields
-
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.allowed-only-inside"))
-                {
-                    if (fs.hasAllowedOnlyField())
-                    {
-                        List<Field> fields = plugin.getForceFieldManager().getAllowedSourceFields(block.getLocation(), player.getName(), FieldFlag.ALL);
-
-                        boolean allowed = false;
-
-                        for (Field allowedField : fields)
-                        {
-                            if (fs.isAllowedOnlyField(allowedField))
-                            {
-                                PreciousStones.getLog().info("allowed: " + allowedField);
-                                allowed = true;
-                                break;
-                            }
-                        }
-
-                        if (!allowed)
-                        {
-                            ChatBlock.sendMessage(player, ChatColor.RED + Helper.capitalize(fs.getTitle()) + " needs to be be placed inside a " + fs.getAllowedOnlyFieldString());
-                            event.setCancelled(true);
-                            return;
-                        }
-                    }
-                }
-
-                Field field = plugin.getForceFieldManager().add(block, player, event);
-
-                if (field != null)
-                {
-                    // allow all owners of overlapping fields into the field
-
-                    plugin.getForceFieldManager().addAllowOverlappingOwners(field);
-
-                    // start disabling process for auto-disable fields
-
-                    field.startDisabler();
+                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place field near players");
+                    event.setCancelled(true);
+                    return;
                 }
             }
-            return;
+
+            if (fs.hasDefaultFlag(FieldFlag.PREVENT_UNPROTECTABLE))
+            {
+                Block foundblock = plugin.getUnprotectableManager().existsUnprotectableBlock(block);
+
+                if (foundblock != null)
+                {
+                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                    {
+                        plugin.getCommunicationManager().warnPlaceFieldInUnprotectable(player, foundblock, block);
+                        event.setCancelled(true);
+                        return;
+                    }
+
+                    plugin.getCommunicationManager().notifyBypassFieldInUnprotectable(player, foundblock, block);
+                }
+            }
+
+            if (fs.hasForesterFlag())
+            {
+                Block floor = block.getRelative(BlockFace.DOWN);
+
+                if (!plugin.getSettingsManager().isFertileType(floor.getTypeId()) && floor.getTypeId() != 2)
+                {
+                    player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " blocks must be placed of fertile land to activate");
+                    return;
+                }
+            }
+
+            // if not allowed in this world then place as regular block
+
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.world"))
+            {
+                if (!fs.allowedWorld(block.getWorld()))
+                {
+                    return;
+                }
+            }
+
+            // ensure placement of only those with the required permission, fail silently otherwise
+
+            if (fs.getRequiredPermission() != null)
+            {
+                if (!plugin.getPermissionsManager().has(player, fs.getRequiredPermission()))
+                {
+                    return;
+                }
+            }
+
+            // ensure placement inside allowed only fields
+
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.allowed-only-inside"))
+            {
+                if (fs.hasAllowedOnlyField())
+                {
+                    List<Field> fields = plugin.getForceFieldManager().getAllowedSourceFields(block.getLocation(), player.getName(), FieldFlag.ALL);
+
+                    boolean allowed = false;
+
+                    for (Field allowedField : fields)
+                    {
+                        if (fs.isAllowedOnlyField(allowedField))
+                        {
+                            PreciousStones.getLog().info("allowed: " + allowedField);
+                            allowed = true;
+                            break;
+                        }
+                    }
+
+                    if (!allowed)
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.RED + Helper.capitalize(fs.getTitle()) + " needs to be be placed inside a " + fs.getAllowedOnlyFieldString());
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+
+            Field field = plugin.getForceFieldManager().add(block, player, event);
+
+            if (field != null)
+            {
+                // allow all owners of overlapping fields into the field
+
+                plugin.getForceFieldManager().addAllowOverlappingOwners(field);
+
+                // start disabling process for auto-disable fields
+
+                field.startDisabler();
+            }
         }
         else if (!isDisabled && plugin.getSettingsManager().isUnprotectableType(block.getTypeId()))
         {
@@ -733,7 +743,7 @@ public class PSBlockListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (allowed)
+            if (!allowed)
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                 {

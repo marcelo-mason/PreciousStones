@@ -18,11 +18,11 @@ force-field-blocks:
     welcome-message: true
     farewell-message: true
     visualize-on-shift-rightclick: true
-    apply-to-others: true
+    apply-to-allowed: true
     mixing-group: 1
     cuboid: true
--   title: Town Protection
-    block: 79
+-   title: Town Protection Example
+    block: 0
     radius: 1
     customVolume: 2000000
     prevent-fire: true
@@ -35,10 +35,10 @@ force-field-blocks:
     welcome-message: true
     farewell-message: true
     visualize-on-shift-rightclick: true
-    apply-to-others: true
+    apply-to-allowed: true
     cuboid: true
--   title: Town SubPlot
-    block: 3512
+-   title: Town SubPlot Example
+    block: 0
     radius: 10
     custom-height: 21
     allowed-only-inside: [Town Protection]
@@ -52,7 +52,7 @@ force-field-blocks:
     welcome-message: true
     farewell-message: true
     visualize-on-shift-rightclick: true
-    apply-to-others: true
+    apply-to-allowed: true
 -   title: Entry Bouncer
     block: 22
     radius: 5
@@ -64,14 +64,14 @@ force-field-blocks:
     prevent-unprotectable: true
     prevent-flow: true
     visualize-on-shift-rightclick: true
-    apply-to-others: true
+    apply-to-allowed: true
     cuboid: true
 -   title: Jack-o-Death
     block: 91
     radius: 5
     slow-damage: true
     no-conflict: true
-    apply-to-others: true
+    apply-to-allowed: true
     mixing-group: 2
 -   title: Creature Repeller
     block: 30
@@ -80,7 +80,7 @@ force-field-blocks:
     prevent-animal-spawn: true
     no-conflict: true
     additive: true
-    apply-to-others: true
+    apply-to-allowed: true
     mixing-group: 1
     cuboid: true
 -   title: Air of Atlantis
@@ -99,7 +99,7 @@ force-field-blocks:
     snitch: true
     entry-alert: true
     no-conflict: true
-    apply-to-others: true
+    apply-to-allowed: true
     mixing-group: 2
     cuboid: true
 -   title: The Shocker
@@ -110,7 +110,7 @@ force-field-blocks:
     lightning-replace-block: 0
     breakable: true
     no-conflict: true
-    apply-to-others: true
+    apply-to-allowed: true
     mixing-group: 2
     cuboid: true
 -   title: Proximity Mine
@@ -120,7 +120,7 @@ force-field-blocks:
     mine: true
     mine-replace-block: 1
     breakable: true
-    apply-to-others: true
+    apply-to-allowed: true
     mixing-group: 2
     no-conflict: true
 -   title: Launch Pad
@@ -150,7 +150,7 @@ force-field-blocks:
     welcome-message: true
     farewell-message: true
     visualize-on-shift-rightclick: true
-    apply-to-others: true
+    apply-to-allowed: true
     mixing-group: 1
     cuboid: true
 -   title: GodStone
@@ -176,7 +176,7 @@ force-field-blocks:
     radius: 10
     prevent-pvp: true
     prevent-mob-damage: true
-    apply-to-others: true
+    apply-to-allowed: true
     apply-to-allowed: true
     additive: true
     cuboid: true
@@ -243,7 +243,7 @@ cuboid:
     defining-blocktype: 49
 visualization:
     block-type: 20
-    seconds: 10
+    seconds: 60
     mark-block-type: 49
     end-on-player-move: false
     frame-block-type: 20
@@ -259,6 +259,7 @@ notify:
     bypass-place: true
     place: true
     rollback: true
+    fly-zones: true
 grief-undo:
     min-interval-secs: 30
     black-list:

@@ -224,7 +224,7 @@ public final class ForceFieldManager
 
         if (notify)
         {
-            if (plugin.getForceFieldManager().isBreakable(field.getBlock()))
+            if (field.hasFlag(FieldFlag.BREAKABLE))
             {
                 plugin.getCommunicationManager().notifyPlaceBreakableFF(player, field.getBlock());
             }
@@ -811,19 +811,6 @@ public final class ForceFieldManager
     }
 
     /**
-     * Whether the block is an unbreakable field
-     *
-     * @param block
-     * @return confirmation
-     */
-    public boolean isBreakable(Block block)
-    {
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
-
-        return fs != null && fs.hasDefaultFlag(FieldFlag.BREAKABLE);
-    }
-
-    /**
      * Returns the source block for the field
      *
      * @param field
@@ -1174,15 +1161,30 @@ public final class ForceFieldManager
         List<Field> fields = getOwnersFields(player, FieldFlag.ALL);
 
         int allowedCount = 0;
+        int notAllowed = 0;
 
         for (Field field : fields)
         {
+            if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+            {
+                if (!field.isDisabled())
+                {
+                    notAllowed++;
+                    continue;
+                }
+            }
+
             if (!field.isAllowed(allowedName))
             {
                 field.addAllowed(allowedName);
                 allowedCount++;
             }
             plugin.getStorageManager().offerField(field);
+        }
+
+        if (notAllowed > 0)
+        {
+            ChatBlock.sendMessage(player, ChatColor.RED + "" + notAllowed + " fields were skipped that can only be modified while disabled");
         }
 
         return allowedCount;
@@ -1272,9 +1274,19 @@ public final class ForceFieldManager
         List<Field> fields = getOwnersFields(player, FieldFlag.ALL);
 
         int removedCount = 0;
+        int notRemoved = 0;
 
         for (Field field : fields)
         {
+            if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+            {
+                if (!field.isDisabled())
+                {
+                    notRemoved++;
+                    continue;
+                }
+            }
+
             if (conflictOfInterestExists(field, allowedName))
             {
                 ChatBlock.sendMessage(player, ChatColor.RED + Helper.capitalize(allowedName) + " was not disallowed, one of the fields is overlapping one of yours " + field);
@@ -1289,21 +1301,12 @@ public final class ForceFieldManager
             plugin.getStorageManager().offerField(field);
         }
 
+        if (notRemoved > 0)
+        {
+            ChatBlock.sendMessage(player, ChatColor.RED + "" + notRemoved + " fields were skipped that can only be modified while disabled");
+        }
+
         return removedCount;
-    }
-
-    /**
-     * Determine whether a player is the owner of the field
-     *
-     * @param fieldBlock
-     * @param playerName
-     * @return confirmation
-     */
-    public boolean isOwner(Block fieldBlock, String playerName)
-    {
-        Field field = getField(fieldBlock);
-
-        return field != null && field.isOwner(playerName);
     }
 
     /**
@@ -2250,5 +2253,43 @@ public final class ForceFieldManager
             plugin.getPermissionsManager().playerCredit(player, amount);
             player.sendMessage(ChatColor.AQUA + "Your account has been credited");
         }
+    }
+
+    /**
+     * check if the area a field may cover has players in it
+     *
+     * @param block
+     */
+    public boolean areaHasPlayers(Block block, Player self)
+    {
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
+
+        if (fs == null)
+        {
+            return false;
+        }
+
+        // create throwaway field to test intersections
+
+        Field field = new Field(block, fs.getRadius(), fs.getHeight());
+
+        self.getNearbyEntities(fs.getRadius(), fs.getHeight(), fs.getRadius());
+
+        List<Player> players = block.getWorld().getPlayers();
+
+        for (Player player : players)
+        {
+            if (player.equals(self))
+            {
+                continue;
+            }
+
+            if (field.envelops(player.getLocation()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

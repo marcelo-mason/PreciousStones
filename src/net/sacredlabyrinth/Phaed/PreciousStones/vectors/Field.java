@@ -1,15 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.stringtree.json.JSONReader;
-import net.stringtree.json.JSONValidatingReader;
-import net.stringtree.json.JSONWriter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.util.*;
 
@@ -36,7 +36,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     private String owner;
     private String name;
     private Field parent;
-    private List<Field> subFields = new LinkedList<Field>();
     private List<Field> children = new LinkedList<Field>();
     private List<String> allowed = new ArrayList<String>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
@@ -50,6 +49,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private boolean open;
     private int revertSecs;
     private boolean disabled;
+    private int disablerId;
 
     /**
      * @param x
@@ -183,6 +183,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         {
             ret = insertedFlags.contains(flag);
         }
+
         if (disabledFlags.contains(flag))
         {
             ret = false;
@@ -983,17 +984,16 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public String getFlagsAsString()
     {
-        HashMap<String, Object> flags = new HashMap<String, Object>();
+        JSONObject json = new JSONObject();
 
         // writing the list of flags to json
 
-        flags.put("disabledFlags", getDisabledFlagsStringList());
-        flags.put("insertedFlags", getInsertedFlagsStringList());
-        flags.put("revertSecs", revertSecs);
-        flags.put("disabled", disabled);
+        json.put("disabledFlags", getDisabledFlagsStringList());
+        json.put("insertedFlags", getInsertedFlagsStringList());
+        json.put("revertSecs", revertSecs);
+        json.put("disabled", disabled);
 
-        JSONWriter jw = new JSONWriter();
-        return jw.write(flags);
+        return json.toString();
     }
 
     public LinkedList<String> getDisabledFlagsStringList()
@@ -1027,38 +1027,51 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         if (flagString != null && !flagString.isEmpty())
         {
-            JSONReader reader = new JSONValidatingReader();
-            HashMap<String, Object> flags = (HashMap<String, Object>) reader.read(flagString);
+            Object obj = JSONValue.parse(flagString);
+            JSONObject flags = (JSONObject) obj;
 
             if (flags != null)
             {
-                for (String flag : flags.keySet())
+                for (Object flag : flags.keySet())
                 {
-                    // reading the list of flags from json
-                    if (flag.equals("disabledFlags"))
+                    try
                     {
-                        List<String> disabledFlags = (List<String>) flags.get(flag);
+                        // reading the list of flags from json
+                        if (flag.equals("disabledFlags"))
+                        {
+                            JSONArray disabledFlags = (JSONArray) flags.get(flag);
 
-                        for (String flagStr : disabledFlags)
+                            for (Object flagStr : disabledFlags)
+                            {
+                                disableFlag(flagStr.toString());
+                            }
+                        }
+                        else if (flag.equals("insertedFlags"))
                         {
-                            disableFlag(flagStr);
+                            JSONArray localFlags = (JSONArray) flags.get(flag);
+
+                            for (Object flagStr : localFlags)
+                            {
+                                insertFieldFlag(flagStr.toString());
+                            }
+                        }
+                        else if (flag.equals("revertSecs"))
+                        {
+                            revertSecs = ((Long) flags.get(flag)).intValue();
+                        }
+                        else if (flag.equals("disabled"))
+                        {
+                            disabled = ((Boolean) flags.get(flag));
                         }
                     }
-                    else if (flag.equals("insertedFlags"))
+                    catch (Exception ex)
                     {
-                        List<String> localFlags = (List<String>) flags.get(flag);
-                        for (String flagStr : localFlags)
+                        for (StackTraceElement el : ex.getStackTrace())
                         {
-                            insertFieldFlag(flagStr);
+                            System.out.print("Failed reading flag: " + flag);
+                            System.out.print("Value: " + flags.get(flag));
+                            System.out.print(el.toString());
                         }
-                    }
-                    else if (flag.equals("revertSecs"))
-                    {
-                        revertSecs = ((Long) flags.get(flag)).intValue();
-                    }
-                    else if (flag.equals("disabled"))
-                    {
-                        disabled = ((Boolean) flags.get(flag));
                     }
                 }
             }
@@ -1262,6 +1275,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     public void setRevertSecs(int revertSecs)
     {
         this.revertSecs = revertSecs;
+        dirty.add(DirtyFieldReason.FLAGS);
     }
 
     /**
@@ -1288,13 +1302,39 @@ public class Field extends AbstractVec implements Comparable<Field>
             if (disabled)
             {
                 PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
+
+                if (hasFlag(FieldFlag.BREAKABLE_WHEN_DISABLED))
+                {
+                    if (!flags.contains(FieldFlag.BREAKABLE))
+                    {
+                        if (!insertedFlags.contains(FieldFlag.BREAKABLE))
+                        {
+                            insertedFlags.add(FieldFlag.BREAKABLE);
+                        }
+                    }
+                }
+
+                PreciousStones.getInstance().getEntryManager().removeAllPlayers(this);
             }
             else
             {
                 PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
                 startDisabler();
+
+                if (hasFlag(FieldFlag.BREAKABLE_WHEN_DISABLED))
+                {
+                    if (!flags.contains(FieldFlag.BREAKABLE))
+                    {
+                        if (insertedFlags.contains(FieldFlag.BREAKABLE))
+                        {
+                            insertedFlags.remove(FieldFlag.BREAKABLE);
+                        }
+                    }
+                }
             }
         }
+
+        dirty.add(DirtyFieldReason.FLAGS);
     }
 
     public byte getData()
@@ -1307,26 +1347,38 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean startDisabler()
     {
-        if (settings.getAutoDisableMinutes() > 0)
+        if (settings != null && settings.getAutoDisableSeconds() > 0)
         {
-            final Player player = Helper.matchSinglePlayer(owner);
+            Player player = Helper.matchSinglePlayer(owner);
+            final String theOwner = owner;
+            final Field thisField = this;
 
             if (player != null)
             {
-                ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field will disable itself after " + settings.getAutoDisableMinutes() + Helper.plural(settings.getAutoDisableMinutes(), " minute", "s"));
+                ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field will disable itself after " + settings.getAutoDisableSeconds() + Helper.plural(settings.getAutoDisableSeconds(), " second", "s"));
             }
 
-            PreciousStones.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
+            if (disablerId > 0)
+            {
+                PreciousStones.getInstance().getServer().getScheduler().cancelTask(disablerId);
+            }
+
+            int disablerId = PreciousStones.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
             {
                 public void run()
                 {
-                    if (player != null)
+                    if (!thisField.isDisabled())
                     {
-                        ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field at " + this.toString() + " has been disabled");
+                        Player player = Helper.matchSinglePlayer(theOwner);
+
+                        if (player != null)
+                        {
+                            ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field has been disabled");
+                        }
+                        thisField.setDisabled(true);
                     }
-                    setDisabled(true);
                 }
-            }, 20L * 60 * settings.getAutoDisableMinutes());
+            }, 20L * settings.getAutoDisableSeconds());
 
             return true;
         }

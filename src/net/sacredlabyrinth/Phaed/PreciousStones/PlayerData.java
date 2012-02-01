@@ -1,9 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import org.bukkit.Location;
-import net.stringtree.json.JSONReader;
-import net.stringtree.json.JSONValidatingReader;
-import net.stringtree.json.JSONWriter;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -158,14 +157,14 @@ public class PlayerData
      */
     public String getFlags()
     {
-        HashMap<String, Object> flags = new HashMap<String, Object>();
+        JSONObject json = new JSONObject();
 
         // writing the list of flags to json
 
-        flags.put("disabled", disabled);
-        flags.put("density", density);
+        json.put("disabled", disabled);
+        json.put("density", density);
 
-        return (new JSONWriter()).write(flags);
+        return json.toString();
     }
 
     /**
@@ -177,23 +176,35 @@ public class PlayerData
     {
         if (flagString != null && !flagString.isEmpty())
         {
-            JSONReader reader = new JSONValidatingReader();
-            HashMap<String, Object> flags = (HashMap<String, Object>) reader.read(flagString);
+            Object obj = JSONValue.parse(flagString);
+            JSONObject flags = (JSONObject) obj;
 
             if (flags != null)
             {
-                for (String flag : flags.keySet())
+                for (Object flag : flags.keySet())
                 {
-                    // reading the list of flags from json
-
-                    if (flag.equals("disabled"))
+                    try
                     {
-                        disabled = (Boolean) flags.get(flag);
+                        // reading the list of flags from json
+
+                        if (flag.equals("disabled"))
+                        {
+                            disabled = (Boolean) flags.get(flag);
+                        }
+
+                        if (flag.equals("subdivisions"))
+                        {
+                            density = ((Long) flags.get(flag)).intValue();
+                        }
                     }
-
-                    if (flag.equals("subdivisions"))
+                    catch (Exception ex)
                     {
-                        density = ((Long) flags.get(flag)).intValue();
+                        for (StackTraceElement el : ex.getStackTrace())
+                        {
+                            System.out.print("Failed reading flag: " + flag);
+                            System.out.print("Value: " + flags.get(flag));
+                            System.out.print(el.toString());
+                        }
                     }
                 }
             }
