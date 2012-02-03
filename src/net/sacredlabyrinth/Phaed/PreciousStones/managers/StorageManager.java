@@ -10,7 +10,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -792,7 +791,7 @@ public final class StorageManager
 
             for (final GriefBlock gb : grief)
             {
-                recordBlockGrief(field, gb);
+                insertBlockGrief(field, gb);
             }
         }
     }
@@ -1131,72 +1130,7 @@ public final class StorageManager
      * @param field
      * @param gb
      */
-    public void recordBlockGrief(final Field field, final GriefBlock gb)
-    {
-        final World world = plugin.getServer().getWorld(gb.getWorld());
-
-        if (world == null)
-        {
-            return;
-        }
-
-        if (!plugin.getGriefUndoManager().isDependentBlock(gb.getTypeId()))
-        {
-            final BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
-
-            for (final BlockFace face : faces)
-            {
-                final Block block = world.getBlockAt(gb.getLocation());
-                final Block rel = block.getRelative(face);
-
-                if (plugin.getGriefUndoManager().isDependentBlock(rel.getTypeId()))
-                {
-                    recordBlockGrief(field, new GriefBlock(rel.getLocation(), rel.getTypeId(), rel.getData()));
-                    rel.setTypeId(0);
-                }
-            }
-        }
-
-        if (gb.getTypeId() == 64 || gb.getTypeId() == 71)
-        {
-            // record wood doors in correct order
-
-            final Block block = world.getBlockAt(gb.getLocation());
-
-            if ((gb.getData() & 0x8) == 0x8)
-            {
-                final Block bottom = block.getRelative(BlockFace.DOWN);
-
-                recordBlockGriefClean(field, new GriefBlock(bottom));
-                recordBlockGriefClean(field, gb);
-
-                bottom.setTypeId(0);
-                block.setTypeId(0);
-            }
-            else
-            {
-                final Block top = block.getRelative(BlockFace.UP);
-
-                recordBlockGriefClean(field, gb);
-                recordBlockGriefClean(field, new GriefBlock(top));
-
-                block.setTypeId(0);
-                top.setTypeId(0);
-            }
-        }
-        else
-        {
-            recordBlockGriefClean(field, gb);
-        }
-    }
-
-    /**
-     * Record a single block grief
-     *
-     * @param field
-     * @param gb
-     */
-    public void recordBlockGriefClean(final Field field, final GriefBlock gb)
+    public void insertBlockGrief(final Field field, final GriefBlock gb)
     {
         final String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
         final String values = "VALUES ( '" + new Timestamp((new Date()).getTime()) + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
@@ -1257,7 +1191,7 @@ public final class StorageManager
 
                         final GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type_id, data);
 
-                        if (plugin.getSettingsManager().isThroughType(type_id))
+                        if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11)
                         {
                             gb.setEmpty(true);
                         }
@@ -1278,7 +1212,6 @@ public final class StorageManager
         }
 
         deleteBlockGrief(field);
-        field.clearGrief();
         return out;
     }
 

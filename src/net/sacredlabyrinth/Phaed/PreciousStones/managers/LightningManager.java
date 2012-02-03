@@ -34,7 +34,7 @@ public class LightningManager
             return;
         }
 
-        if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()))
+        if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
             FieldSettings fs = field.getSettings();
 

@@ -18,10 +18,23 @@ import static org.bukkit.Bukkit.getServer;
  */
 public class PSServerListener implements Listener
 {
+    private final PreciousStones plugin;
+
+    /**
+     *
+     */
+    public PSServerListener()
+    {
+        plugin = PreciousStones.getInstance();
+    }
+
     @EventHandler(event = PluginEnableEvent.class, priority = EventPriority.MONITOR)
     public void onPluginEnable(PluginEnableEvent event)
     {
-        getVault();
+        if (plugin.getSettingsManager().isAutoDownloadVault())
+        {
+            getVault();
+        }
     }
 
     public void getVault()

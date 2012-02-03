@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -44,6 +45,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<FieldFlag> flags = new LinkedList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new LinkedList<FieldFlag>();
     private List<FieldFlag> insertedFlags = new LinkedList<FieldFlag>();
+    private List<BlockData> fenceBlocks = new LinkedList<BlockData>();
     private long lastUsed;
     private boolean progress;
     private boolean open;
@@ -721,7 +723,10 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void addGriefBlock(GriefBlock gb)
     {
-        grief.add(gb);
+        if (!grief.contains(gb))
+        {
+            grief.add(gb);
+        }
         dirty.add(DirtyFieldReason.GRIEF_BLOCKS);
     }
 
@@ -740,6 +745,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         Queue<GriefBlock> g = new LinkedList<GriefBlock>();
         g.addAll(grief);
+        grief.clear();
         return g;
     }
 
@@ -1303,7 +1309,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             {
                 PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
 
-                if (hasFlag(FieldFlag.BREAKABLE_WHEN_DISABLED))
+                if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
                 {
                     if (!flags.contains(FieldFlag.BREAKABLE))
                     {
@@ -1321,7 +1327,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
                 startDisabler();
 
-                if (hasFlag(FieldFlag.BREAKABLE_WHEN_DISABLED))
+                if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
                 {
                     if (!flags.contains(FieldFlag.BREAKABLE))
                     {
@@ -1363,7 +1369,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 PreciousStones.getInstance().getServer().getScheduler().cancelTask(disablerId);
             }
 
-            int disablerId = PreciousStones.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
+            disablerId = PreciousStones.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
             {
                 public void run()
                 {
@@ -1383,5 +1389,240 @@ public class Field extends AbstractVec implements Comparable<Field>
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * Generate fence around the field
+     */
+    public void generateFence()
+    {
+        PreciousStones plugin = PreciousStones.getInstance();
+
+        World world = PreciousStones.getInstance().getServer().getWorld(this.getWorld());
+
+        if (world == null)
+        {
+            return;
+        }
+
+        int minx = getX() - getRadius() - 1;
+        int maxx = getX() + getRadius() + 1;
+        int minz = getZ() - getRadius() - 1;
+        int maxz = getZ() + getRadius() + 1;
+        int miny = getY() - (Math.max(getHeight() - 1, 0) / 2) - 1;
+        int maxy = getY() + (Math.max(getHeight() - 1, 0) / 2) + 1;
+
+        int mid = getY();
+
+        if (hasFlag(FieldFlag.CUBOID))
+        {
+            minx = getMinx() - 1;
+            maxx = getMaxx() + 1;
+            minz = getMinz() - 1;
+            maxz = getMaxz() + 1;
+            miny = getMiny() - 1;
+            maxy = getMaxy() + 1;
+        }
+
+        // traveling the z length
+
+        for (int z = minz; z <= maxz; z++)
+        {
+            boolean hasSideOne = false;
+            boolean hasSideTwo = false;
+
+            if (!hasSideOne)
+            {
+                int sideOneMidId = world.getBlockTypeIdAt(minx, mid, z);
+
+                if (plugin.getSettingsManager().isThroughType(sideOneMidId))
+                {
+                    // if the midId is through type then travel downwards
+
+                    for (int y = mid; y >= miny; y--)
+                    {
+                        int sideOne = world.getBlockTypeIdAt(minx, y, z);
+
+                        if (!plugin.getSettingsManager().isThroughType(sideOne))
+                        {
+                            // once we reach a solid record the block above
+                            hasSideOne = true;
+                            Block block = world.getBlockAt(minx, y + 1, z);
+                            fenceBlocks.add(new BlockData(block));
+                            block.setType(Material.FENCE);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // if the midId is solid then travel upwards
+
+                    for (int y = mid; y >= maxy; y++)
+                    {
+                        int sideOne = world.getBlockTypeIdAt(minx, y, z);
+
+                        if (plugin.getSettingsManager().isThroughType(sideOne))
+                        {
+                            // once we find a through type record the block
+                            hasSideOne = true;
+                            Block block = world.getBlockAt(minx, y, z);
+                            fenceBlocks.add(new BlockData(block));
+                            block.setType(Material.FENCE);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!hasSideTwo)
+            {
+                int sideTwoMidId = world.getBlockTypeIdAt(maxx, mid, z);
+
+                if (plugin.getSettingsManager().isThroughType(sideTwoMidId))
+                {
+                    // if the midId is through type then travel downwards
+
+                    for (int y = mid; y >= miny; y--)
+                    {
+                        int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
+
+                        if (!plugin.getSettingsManager().isThroughType(sideTwo))
+                        {
+                            // once we reach a solid record the block above
+                            hasSideTwo = true;
+                            Block block = world.getBlockAt(maxx, y + 1, z);
+                            fenceBlocks.add(new BlockData(block));
+                            block.setType(Material.FENCE);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // if the midId is solid then travel upwards
+
+                    for (int y = mid; y >= maxy; y++)
+                    {
+                        int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
+
+                        if (plugin.getSettingsManager().isThroughType(sideTwo))
+                        {
+                            // once we find a through type record the block
+                            hasSideTwo = true;
+                            Block block = world.getBlockAt(maxx, y, z);
+                            fenceBlocks.add(new BlockData(block));
+                            block.setType(Material.FENCE);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // traveling the z length
+
+        for (int x = minz; x <= maxz; x++)
+        {
+            boolean hasSideOne = false;
+            boolean hasSideTwo = false;
+
+            if (!hasSideOne)
+            {
+                int sideOneMidId = world.getBlockTypeIdAt(x, mid, minz);
+
+                if (plugin.getSettingsManager().isThroughType(sideOneMidId))
+                {
+                    // if the midId is through type then travel downwards
+
+                    for (int y = mid; y >= miny; y--)
+                    {
+                        int sideOne = world.getBlockTypeIdAt(x, y, minz);
+
+                        if (!plugin.getSettingsManager().isThroughType(sideOne))
+                        {
+                            // once we reach a solid record the block above
+                            hasSideOne = true;
+                            Block block = world.getBlockAt(x, y + 1, minz);
+                            fenceBlocks.add(new BlockData(block));
+                            block.setType(Material.FENCE);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // if the midId is solid then travel upwards
+
+                    for (int y = mid; y >= maxy; y++)
+                    {
+                        int sideOne = world.getBlockTypeIdAt(x, y, minz);
+
+                        if (plugin.getSettingsManager().isThroughType(sideOne))
+                        {
+                            // once we find a through type record the block
+                            hasSideOne = true;
+                            Block block = world.getBlockAt(x, y, minz);
+                            fenceBlocks.add(new BlockData(block));
+                            block.setType(Material.FENCE);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!hasSideTwo)
+            {
+                int sideTwoMidId = world.getBlockTypeIdAt(x, mid, maxz);
+
+                if (plugin.getSettingsManager().isThroughType(sideTwoMidId))
+                {
+                    // if the midId is through type then travel downwards
+
+                    for (int y = mid; y >= miny; y--)
+                    {
+                        int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
+
+                        if (!plugin.getSettingsManager().isThroughType(sideTwo))
+                        {
+                            // once we reach a solid record the block above
+                            hasSideTwo = true;
+                            Block block = world.getBlockAt(x, y + 1, maxz);
+                            fenceBlocks.add(new BlockData(block));
+                            block.setType(Material.FENCE);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // if the midId is solid then travel upwards
+
+                    for (int y = mid; y >= maxy; y++)
+                    {
+                        int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
+
+                        if (plugin.getSettingsManager().isThroughType(sideTwo))
+                        {
+                            // once we find a through type record the block
+                            hasSideTwo = true;
+                            Block block = world.getBlockAt(x, y, maxz);
+                            fenceBlocks.add(new BlockData(block));
+                            block.setType(Material.FENCE);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove fence from around the field
+     */
+    public void clearFence()
+    {
+
     }
 }

@@ -83,7 +83,9 @@ public final class GriefUndoManager
      */
     public void addBlock(Field field, Block block)
     {
-        if (!plugin.getGriefUndoManager().isDependentBlock(block.getTypeId()))
+        // if its not a dependent block, then look around it for dependents and add those first
+
+        if (!isDependentBlock(block.getTypeId()))
         {
             BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
 
@@ -93,58 +95,69 @@ public final class GriefUndoManager
 
                 if (plugin.getGriefUndoManager().isDependentBlock(rel.getTypeId()))
                 {
-                    field.addGriefBlock(new GriefBlock(rel.getLocation(), rel.getTypeId(), rel.getData()));
-                    rel.setTypeId(0);
+                    addBlock(field, rel);
                 }
             }
         }
+
+        // record wood doors in correct order
 
         if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR))
         {
-            // record wood doors in correct order
+            field.addGriefBlock(new GriefBlock(block));
 
-            if ((block.getData() & 0x8) == 0x8)
+            Block bottom = block.getRelative(BlockFace.DOWN);
+            Block top = block.getRelative(BlockFace.UP);
+
+            if (bottom.getType().equals(Material.WOODEN_DOOR) || bottom.getType().equals(Material.IRON_DOOR))
             {
-                Block bottom = block.getRelative(BlockFace.DOWN);
-
                 field.addGriefBlock(new GriefBlock(bottom));
-                field.addGriefBlock(new GriefBlock(block));
-
                 bottom.setTypeId(0);
                 block.setTypeId(0);
             }
-            else
+
+            if (top.getType().equals(Material.WOODEN_DOOR) || top.getType().equals(Material.IRON_DOOR))
             {
-                Block top = block.getRelative(BlockFace.UP);
-
-                field.addGriefBlock(new GriefBlock(block));
                 field.addGriefBlock(new GriefBlock(top));
-
-                block.setTypeId(0);
                 top.setTypeId(0);
+                block.setTypeId(0);
             }
+
+            return;
+        }
+
+        // record grief
+
+        if (block.getState() instanceof Sign)
+        {
+            field.addGriefBlock(handleSign(block));
         }
         else
         {
-            GriefBlock gb = new GriefBlock(block);
-
-            if (block.getState() instanceof Sign)
-            {
-                String signText = "";
-                Sign sign = (Sign) block.getState();
-
-                for (String line : sign.getLines())
-                {
-                    signText += line + "`";
-                }
-
-                signText = Helper.stripTrailing(signText, "`");
-                gb.setSignText(signText);
-            }
-
-            field.addGriefBlock(gb);
+            field.addGriefBlock(new GriefBlock(block));
         }
+        block.setTypeId(0);
     }
+
+    private GriefBlock handleSign(Block block)
+    {
+        GriefBlock gb = new GriefBlock(block);
+
+        String signText = "";
+        Sign sign = (Sign) block.getState();
+
+        for (String line : sign.getLines())
+        {
+            signText += line + "`";
+        }
+
+        signText = Helper.stripTrailing(signText, "`");
+
+        gb.setSignText(signText);
+
+        return gb;
+    }
+
 
     /**
      * Whether the block depends on an adjacent block to be placed
@@ -154,7 +167,7 @@ public final class GriefUndoManager
      */
     public boolean isDependentBlock(int type)
     {
-        if (type == 26 || type == 27 || type == 28 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 85 || type == 96)
+        if (type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119)
         {
             return true;
         }
@@ -208,8 +221,6 @@ public final class GriefUndoManager
             }
             return gbs.size();
         }
-        field.clearGrief();
-
         return 0;
     }
 
@@ -241,6 +252,9 @@ public final class GriefUndoManager
 
         boolean noConflict = false;
 
+
+        // handle sand
+
         int[] seeThrough = {0, 6, 8, 31, 32, 37, 38, 39, 40, 9, 10, 11, 12, 51, 59, 83, 81};
 
         for (int st : seeThrough)
@@ -269,7 +283,7 @@ public final class GriefUndoManager
 
         if (noConflict)
         {
-            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), true);
+            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), false);
 
             if (block.getState() instanceof Sign && gb.getSignText().length() > 0)
             {

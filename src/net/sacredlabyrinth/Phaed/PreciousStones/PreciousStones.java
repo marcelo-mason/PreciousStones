@@ -71,6 +71,14 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
+     * @return the logger
+     */
+    public static void debug(String msg)
+    {
+        logger.info(msg);
+    }
+
+    /**
      * Parameterized logger
      *
      * @param level

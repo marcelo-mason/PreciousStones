@@ -16,12 +16,15 @@ public class FieldSettings
     private int typeId;
     private int radius = 0;
     private byte data = 0;
+    private int heal = 0;
+    private int damage = 0;
+    private int feed = 0;
+    private int repair = 0;
     private int launchHeight = 0;
     private int cannonHeight = 0;
     private int customHeight = 0;
     private int customVolume = 0;
     private int mineDelaySeconds = 0;
-    private int mineReplaceBlock = 0;
     private int lightningDelaySeconds = 0;
     private int lightningReplaceBlock = 0;
     private int mixingGroup = 0;
@@ -88,9 +91,9 @@ public class FieldSettings
             groupOnEntry = (String) map.get("group-on-entry");
         }
 
-        if (map.containsKey("force-entry-game-mode") && Helper.isString(map.get("force-entry-game-mode")))
+        if (map.containsKey("entry-game-mode") && Helper.isString(map.get("entry-game-mode")))
         {
-            String gameMode = (String) map.get("force-entry-game-mode");
+            String gameMode = (String) map.get("entry-game-mode");
 
             if (gameMode.equalsIgnoreCase("creative"))
             {
@@ -103,9 +106,9 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("force-leaving-game-mode") && Helper.isString(map.get("force-leaving-game-mode")))
+        if (map.containsKey("leaving-game-mode") && Helper.isString(map.get("leaving-game-mode")))
         {
-            String gameMode = (String) map.get("force-leaving-game-mode");
+            String gameMode = (String) map.get("leaving-game-mode");
 
             if (gameMode.equalsIgnoreCase("creative"))
             {
@@ -151,19 +154,14 @@ public class FieldSettings
             customVolume = (Integer) map.get("custom-volume");
         }
 
-        if (map.containsKey("launch-height") && Helper.isInteger(map.get("launch-height")))
+        if (map.containsKey("launch-velocity") && Helper.isInteger(map.get("launch-velocity")))
         {
-            launchHeight = (Integer) map.get("launch-height");
+            launchHeight = (Integer) map.get("launch-velocity");
         }
 
-        if (map.containsKey("cannon-height") && Helper.isInteger(map.get("cannon-height")))
+        if (map.containsKey("cannon-velocity") && Helper.isInteger(map.get("cannon-velocity")))
         {
-            cannonHeight = (Integer) map.get("cannon-height");
-        }
-
-        if (map.containsKey("mine-replace-block") && Helper.isInteger(map.get("mine-replace-block")))
-        {
-            mineReplaceBlock = (Integer) map.get("mine-replace-block");
+            cannonHeight = (Integer) map.get("cannon-velocity");
         }
 
         if (map.containsKey("mine-delay-seconds") && Helper.isInteger(map.get("mine-delay-seconds")))
@@ -184,6 +182,11 @@ public class FieldSettings
         if (map.containsKey("prevent-use") && Helper.isIntList(map.get("prevent-use")))
         {
             preventUse = (List<Integer>) map.get("prevent-use");
+
+            if (!preventUse.isEmpty())
+            {
+                defaultFlags.add(FieldFlag.PREVENT_USE);
+            }
         }
 
         if (map.containsKey("allowed-worlds") && Helper.isStringList(map.get("allowed-worlds")))
@@ -310,59 +313,39 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("remove-animal") && Helper.isBoolean(map.get("remove-animal")))
+        if (map.containsKey("heal") && Helper.isInteger(map.get("heal")))
         {
-            if ((Boolean) map.get("remove-animal"))
+            if ((Integer) map.get("heal") > 0)
             {
-                defaultFlags.add(FieldFlag.REMOVE_ANIMAL);
+                defaultFlags.add(FieldFlag.HEAL);
+                heal = (Integer) map.get("heal");
             }
         }
 
-        if (map.containsKey("instant-heal") && Helper.isBoolean(map.get("instant-heal")))
+        if (map.containsKey("feed") && Helper.isInteger(map.get("feed")))
         {
-            if ((Boolean) map.get("instant-heal"))
+            if ((Integer) map.get("feed") > 0)
             {
-                defaultFlags.add(FieldFlag.INSTANT_HEAL);
+                defaultFlags.add(FieldFlag.FEED);
+                feed = (Integer) map.get("feed");
             }
         }
 
-        if (map.containsKey("slow-heal") && Helper.isBoolean(map.get("slow-heal")))
+        if (map.containsKey("repair") && Helper.isInteger(map.get("repair")))
         {
-            if ((Boolean) map.get("slow-heal"))
+            if ((Integer) map.get("repair") > 0)
             {
-                defaultFlags.add(FieldFlag.SLOW_HEAL);
+                defaultFlags.add(FieldFlag.REPAIR);
+                repair = (Integer) map.get("repair");
             }
         }
 
-        if (map.containsKey("slow-feeding") && Helper.isBoolean(map.get("slow-feeding")))
+        if (map.containsKey("damage") && Helper.isInteger(map.get("damage")))
         {
-            if ((Boolean) map.get("slow-feeding"))
+            if ((Integer) map.get("damage") > 0)
             {
-                defaultFlags.add(FieldFlag.SLOW_FEEDING);
-            }
-        }
-
-        if (map.containsKey("slow-repair") && Helper.isBoolean(map.get("slow-repair")))
-        {
-            if ((Boolean) map.get("slow-repair"))
-            {
-                defaultFlags.add(FieldFlag.SLOW_REPAIR);
-            }
-        }
-
-        if (map.containsKey("slow-damage") && Helper.isBoolean(map.get("slow-damage")))
-        {
-            if ((Boolean) map.get("slow-damage"))
-            {
-                defaultFlags.add(FieldFlag.SLOW_DAMAGE);
-            }
-        }
-
-        if (map.containsKey("fast-damage") && Helper.isBoolean(map.get("fast-damage")))
-        {
-            if ((Boolean) map.get("fast-damage"))
-            {
-                defaultFlags.add(FieldFlag.FAST_DAMAGE);
+                defaultFlags.add(FieldFlag.DAMAGE);
+                damage = (Integer) map.get("damage");
             }
         }
 
@@ -390,11 +373,11 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("give-air") && Helper.isBoolean(map.get("give-air")))
+        if (map.containsKey("air") && Helper.isBoolean(map.get("air")))
         {
-            if ((Boolean) map.get("give-air"))
+            if ((Boolean) map.get("air"))
             {
-                defaultFlags.add(FieldFlag.GIVE_AIR);
+                defaultFlags.add(FieldFlag.AIR);
             }
         }
 
@@ -510,11 +493,11 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("visualize-on-shift-rightclick") && Helper.isBoolean(map.get("visualize-on-shift-rightclick")))
+        if (map.containsKey("visualize-on-src") && Helper.isBoolean(map.get("visualize-on-src")))
         {
-            if ((Boolean) map.get("visualize-on-shift-rightclick"))
+            if ((Boolean) map.get("visualize-on-src"))
             {
-                defaultFlags.add(FieldFlag.VISUALIZE_ON_SHIFT_RIGHT_CLICK);
+                defaultFlags.add(FieldFlag.VISUALIZE_ON_SRC);
             }
         }
 
@@ -534,85 +517,109 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("grief-revert-allow-place-grief") && Helper.isBoolean(map.get("grief-revert-allow-place-grief")))
+        if (map.containsKey("place-grief") && Helper.isBoolean(map.get("place-grief")))
         {
-            if ((Boolean) map.get("grief-revert-allow-place-grief"))
+            if ((Boolean) map.get("place-grief"))
             {
-                defaultFlags.add(FieldFlag.GRIEF_REVERT_ALLOW_PLACE_GRIEF);
+                defaultFlags.add(FieldFlag.PLACE_GRIEF);
             }
         }
 
-        if (map.containsKey("toggle-only-while-disabled") && Helper.isBoolean(map.get("toggle-only-while-disabled")))
+        if (map.containsKey("toggle-on-disabled") && Helper.isBoolean(map.get("toggle-on-disabled")))
         {
-            if ((Boolean) map.get("toggle-only-while-disabled"))
+            if ((Boolean) map.get("toggle-on-disabled"))
             {
-                defaultFlags.add(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED);
+                defaultFlags.add(FieldFlag.TOGGLE_ON_DISABLED);
             }
         }
 
-        if (map.containsKey("redefine-only-while-disabled") && Helper.isBoolean(map.get("redefine-only-while-disabled")))
+        if (map.containsKey("redefine-on-disabled") && Helper.isBoolean(map.get("redefine-on-disabled")))
         {
-            if ((Boolean) map.get("redefine-only-while-disabled"))
+            if ((Boolean) map.get("redefine-on-disabled"))
             {
-                defaultFlags.add(FieldFlag.REDEFINE_ONLY_WHILE_DISABLED);
+                defaultFlags.add(FieldFlag.REDEFINE_ON_DISABLED);
             }
         }
 
-        if (map.containsKey("modify-only-while-disabled") && Helper.isBoolean(map.get("modify-only-while-disabled")))
+        if (map.containsKey("modify-on-disabled") && Helper.isBoolean(map.get("modify-on-disabled")))
         {
-            if ((Boolean) map.get("modify-only-while-disabled"))
+            if ((Boolean) map.get("modify-on-disabled"))
             {
-                defaultFlags.add(FieldFlag.MODIFY_ONLY_WHILE_DISABLED);
+                defaultFlags.add(FieldFlag.MODIFY_ON_DISABLED);
             }
         }
 
-        if (map.containsKey("enable-on-shift-right-click") && Helper.isBoolean(map.get("enable-on-shift-right-click")))
+        if (map.containsKey("enable-on-src") && Helper.isBoolean(map.get("enable-on-src")))
         {
-            if ((Boolean) map.get("enable-on-shift-right-click"))
+            if ((Boolean) map.get("enable-on-src"))
             {
-                defaultFlags.add(FieldFlag.ENABLE_ON_SHIFT_RIGHT_CLICK);
+                defaultFlags.add(FieldFlag.ENABLE_ON_SRC);
             }
         }
 
-        if (map.containsKey("breakable-when-disabled") && Helper.isBoolean(map.get("breakable-when-disabled")))
+        if (map.containsKey("breakable-on-disabled") && Helper.isBoolean(map.get("breakable-on-disabled")))
         {
-            if ((Boolean) map.get("breakable-when-disabled"))
+            if ((Boolean) map.get("breakable-on-disabled"))
             {
-                defaultFlags.add(FieldFlag.BREAKABLE_WHEN_DISABLED);
+                defaultFlags.add(FieldFlag.BREAKABLE_ON_DISABLED);
             }
         }
 
-        if (map.containsKey("deny-place-near-players") && Helper.isBoolean(map.get("deny-place-near-players")))
+        if (map.containsKey("no-player-place") && Helper.isBoolean(map.get("no-player-place")))
         {
-            if ((Boolean) map.get("deny-place-near-players"))
+            if ((Boolean) map.get("no-player-place"))
             {
-                defaultFlags.add(FieldFlag.DENY_PLACE_NEAR_PLAYERS);
+                defaultFlags.add(FieldFlag.NO_PLAYER_PLACE);
             }
         }
 
-        if (map.containsKey("apply-to-allowed") && Helper.isBoolean(map.get("apply-to-allowed")))
+        if (map.containsKey("apply-to-reverse") && Helper.isBoolean(map.get("apply-to-reverse")))
         {
-            if ((Boolean) map.get("apply-to-allowed"))
+            if ((Boolean) map.get("apply-to-reverse"))
             {
-                defaultFlags.add(FieldFlag.APPLY_TO_ALLOWED);
+                defaultFlags.add(FieldFlag.APPLY_TO_REVERSE);
             }
         }
 
-        if (map.containsKey("apply-to-others") && Helper.isBoolean(map.get("apply-to-others")))
+        if (map.containsKey("apply-to-all") && Helper.isBoolean(map.get("apply-to-all")))
         {
-            if ((Boolean) map.get("apply-to-others"))
+            if ((Boolean) map.get("apply-to-all"))
             {
-                defaultFlags.add(FieldFlag.APPLY_TO_OTHERS);
-            }
-        }
-        if (map.containsKey("deny-flight") && Helper.isBoolean(map.get("deny-flight")))
-        {
-            if ((Boolean) map.get("deny-flight"))
-            {
-                defaultFlags.add(FieldFlag.DENY_FLIGHT);
+                defaultFlags.add(FieldFlag.APPLY_TO_ALL);
             }
         }
 
+        if (map.containsKey("prevent-flight") && Helper.isBoolean(map.get("prevent-flight")))
+        {
+            if ((Boolean) map.get("prevent-flight"))
+            {
+                defaultFlags.add(FieldFlag.PREVENT_FLIGHT);
+            }
+        }
+
+        if (map.containsKey("allowed-can-break") && Helper.isBoolean(map.get("allowed-can-break")))
+        {
+            if ((Boolean) map.get("allowed-can-break"))
+            {
+                defaultFlags.add(FieldFlag.ALLOWED_CAN_BREAK);
+            }
+        }
+
+        if (map.containsKey("sneaking-bypass") && Helper.isBoolean(map.get("sneaking-bypass")))
+        {
+            if ((Boolean) map.get("sneaking-bypass"))
+            {
+                defaultFlags.add(FieldFlag.SNEAKING_BYPASS);
+            }
+        }
+
+        if (map.containsKey("place-disabled") && Helper.isBoolean(map.get("place-disabled")))
+        {
+            if ((Boolean) map.get("place-disabled"))
+            {
+                defaultFlags.add(FieldFlag.PLACE_DISABLED);
+            }
+        }
 
         defaultFlags.add(FieldFlag.ALL);
     }
@@ -806,14 +813,6 @@ public class FieldSettings
     }
 
     /**
-     * @return the mineReplaceBlock
-     */
-    public int getMineReplaceBlock()
-    {
-        return mineReplaceBlock;
-    }
-
-    /**
      * @return the lightningDelaySeconds
      */
     public int getLightningDelaySeconds()
@@ -900,5 +899,25 @@ public class FieldSettings
     public GameMode getForceLeavingGameMode()
     {
         return forceLeavingGameMode;
+    }
+
+    public int getHeal()
+    {
+        return heal;
+    }
+
+    public int getDamage()
+    {
+        return damage;
+    }
+
+    public int getFeed()
+    {
+        return feed;
+    }
+
+    public int getRepair()
+    {
+        return repair;
     }
 }

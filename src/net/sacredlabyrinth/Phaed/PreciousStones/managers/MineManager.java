@@ -4,7 +4,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -41,12 +40,10 @@ public class MineManager
             return;
         }
 
-        if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()))
+        if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
             final int delay = fs.getMineDelaySeconds();
-            final int leftbehind = fs.getMineReplaceBlock();
             final Block block = plugin.getForceFieldManager().getBlock(field);
-            block.setType(Material.getMaterial(leftbehind));
 
             plugin.getCommunicationManager().showMine(player);
 

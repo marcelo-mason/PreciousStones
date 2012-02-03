@@ -6,6 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -98,19 +99,31 @@ public class PSEntityListener implements Listener
         {
             if (event.getReason() == TargetReason.CLOSEST_PLAYER)
             {
-                if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.REMOVE_MOB))
+                if (event.getTarget() instanceof Player)
                 {
-                    Entity mob = event.getEntity();
-                    if (mob instanceof Monster)
-                    {
-                        plugin.getCommunicationManager().debug("Removed a scary monster");
-                        mob.remove();
-                    }
-                }
+                    Player player = (Player) event.getTarget();
 
-                if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE))
-                {
-                    event.setCancelled(true);
+                    Field field = plugin.getForceFieldManager().getSourceField(target.getLocation(), FieldFlag.REMOVE_MOB);
+
+                    if (field != null)
+                    {
+                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            Entity mob = event.getEntity();
+                            if (mob instanceof Monster)
+                            {
+                                plugin.getCommunicationManager().debug("Removed a scary monster");
+                                mob.remove();
+                            }
+                        }
+                    }
+
+                    if (plugin.getForceFieldManager().hasSourceField(target.getLocation(), FieldFlag.PREVENT_MOB_DAMAGE))
+                    {
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
@@ -201,7 +214,6 @@ public class PSEntityListener implements Listener
             return;
         }
 
-
         List<Block> blocks = event.blockList();
 
         for (Block block : blocks)
@@ -269,6 +281,7 @@ public class PSEntityListener implements Listener
                     // trigger any tnt that exists inside the grief field blast radius
 
                     tnts.add(new BlockData(block));
+                    block.setType(Material.AIR);
                 }
                 else
                 {
@@ -278,7 +291,7 @@ public class PSEntityListener implements Listener
                     {
                         plugin.getGriefUndoManager().addBlock(field, block);
                         saved.add(new BlockData(block));
-                        block.setTypeId(0);
+                        block.setType(Material.AIR);
                     }
                 }
 
@@ -564,7 +577,7 @@ public class PSEntityListener implements Listener
                 {
                     boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                    if (!allowed)
+                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
                         if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                         {
@@ -601,7 +614,7 @@ public class PSEntityListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (!allowed)
+            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                 {

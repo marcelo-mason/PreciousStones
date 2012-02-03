@@ -64,6 +64,14 @@ public class LimitManager
             return true;
         }
 
+        int totalCount = plugin.getPlayerManager().getPlayerData(player.getName()).getTotalFieldCount();
+
+        if (totalCount >= plugin.getSettingsManager().getGlobalFieldLimit())
+        {
+            ChatBlock.sendMessage(player, ChatColor.RED + "You have reached the total field limit of " + limit);
+            return true;
+        }
+
         return false;
     }
 

@@ -184,7 +184,7 @@ public final class ForesterManager
                     {
                         boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                        if (!allowed)
+                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                             {

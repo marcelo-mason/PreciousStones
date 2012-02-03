@@ -17,8 +17,7 @@ force-field-blocks:
     prevent-teleport: true
     welcome-message: true
     farewell-message: true
-    visualize-on-shift-rightclick: true
-    apply-to-allowed: true
+    enable-on-src: true
     mixing-group: 1
     cuboid: true
 -   title: Town Protection Example
@@ -34,8 +33,7 @@ force-field-blocks:
     prevent-teleport: true
     welcome-message: true
     farewell-message: true
-    visualize-on-shift-rightclick: true
-    apply-to-allowed: true
+    enable-on-src: true
     cuboid: true
 -   title: Town SubPlot Example
     block: 0
@@ -51,8 +49,7 @@ force-field-blocks:
     prevent-teleport: true
     welcome-message: true
     farewell-message: true
-    visualize-on-shift-rightclick: true
-    apply-to-allowed: true
+    enable-on-src: true
 -   title: Entry Bouncer
     block: 22
     radius: 5
@@ -63,15 +60,15 @@ force-field-blocks:
     prevent-explosions: true
     prevent-unprotectable: true
     prevent-flow: true
-    visualize-on-shift-rightclick: true
-    apply-to-allowed: true
+    enable-on-src: true
     cuboid: true
 -   title: Jack-o-Death
     block: 91
     radius: 5
-    slow-damage: true
+    damage: 4
     no-conflict: true
-    apply-to-allowed: true
+    sneaking-bypass: true
+    no-player-place: true
     mixing-group: 2
 -   title: Creature Repeller
     block: 30
@@ -80,17 +77,15 @@ force-field-blocks:
     prevent-animal-spawn: true
     no-conflict: true
     additive: true
-    apply-to-allowed: true
     mixing-group: 1
     cuboid: true
 -   title: Air of Atlantis
     block: 21
     radius: 10
     custom-height: 128
-    give-air: true
+    air: true
     no-conflict: true
     additive: true
-    apply-to-allowed: true
     mixing-group: 1
     cuboid: true
 -   title: Proximity Snitch
@@ -99,7 +94,6 @@ force-field-blocks:
     snitch: true
     entry-alert: true
     no-conflict: true
-    apply-to-allowed: true
     mixing-group: 2
     cuboid: true
 -   title: The Shocker
@@ -108,9 +102,9 @@ force-field-blocks:
     custom-height: 3
     lightning: true
     lightning-replace-block: 0
+    sneaking-bypass: true
     breakable: true
     no-conflict: true
-    apply-to-allowed: true
     mixing-group: 2
     cuboid: true
 -   title: Proximity Mine
@@ -118,9 +112,8 @@ force-field-blocks:
     radius: 1
     custom-height: 5
     mine: true
-    mine-replace-block: 1
     breakable: true
-    apply-to-allowed: true
+    sneaking-bypass: true
     mixing-group: 2
     no-conflict: true
 -   title: Launch Pad
@@ -128,8 +121,8 @@ force-field-blocks:
     radius: 1
     launch: true
     no-conflict: true
+    sneaking-bypass: true
     custom-volume: 20
-    apply-to-allowed: true
     mixing-group: 2
     cuboid: true
 -   title: Sky Cannon
@@ -137,9 +130,9 @@ force-field-blocks:
     radius: 0
     custom-height: 3
     custom-volume: 20
+    sneaking-bypass: true
     cannon: true
     no-conflict: true
-    apply-to-allowed: true
     mixing-group: 2
     cuboid: true
 -   title: Grief Revert
@@ -149,18 +142,16 @@ force-field-blocks:
     grief-revert: true
     welcome-message: true
     farewell-message: true
-    visualize-on-shift-rightclick: true
-    apply-to-allowed: true
+    enable-on-src: true
     mixing-group: 1
     cuboid: true
 -   title: GodStone
     block: 99
     radius: 5
-    slow-heal: true
-    slow-feed: true
-    slow-repaid: true
+    heal: 4
+    feed: 2
+    repair: 25
     no-conflict: true
-    apply-to-allowed: true
     mixing-group: 2
     cuboid: true
 -   title: forester
@@ -175,9 +166,8 @@ force-field-blocks:
     block: 19
     radius: 10
     prevent-pvp: true
+    no-player-place: true
     prevent-mob-damage: true
-    apply-to-allowed: true
-    apply-to-allowed: true
     additive: true
     cuboid: true
 warn:
@@ -187,7 +177,7 @@ warn:
     launch: true
     fast-damage: true
     use: true
-    give-air: true
+    air: true
     slow-feeding: true
     fire: true
     cannon: true
@@ -203,8 +193,11 @@ cleanup:
     player-inactivity-purge-days: 45
     snitch-unused-purge-days: 30
 settings:
+    disable-ground-info: true
+    auto-download-vault: false
+    global-field-limit: 1000000
+    no-refund-for-fields: false
     off-by-default: false
-    sneaking-bypasses-damage: true
     log-to-hawkeye: false
     lines-per-page: 12
     disable-bypass-alerts-for-admins: false
@@ -213,7 +206,6 @@ settings:
     blacklisted-worlds: [creative_world]
     debug-on: false
     drop-on-delete: true
-    allowed-can-break-pstones: false
 forester:
     trees: 60
     interval-seconds: 1

@@ -147,19 +147,14 @@ public class PSPlayerListener implements Listener
 
                     if (field == null)
                     {
-                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                        if (!allowed)
-                        {
-                            field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.GRIEF_REVERT);
-                        }
+                        field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.GRIEF_REVERT);
                     }
 
                     if (field != null)
                     {
                         boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                        if (!allowed)
+                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                             {
@@ -194,12 +189,6 @@ public class PSPlayerListener implements Listener
 
                         if (field != null)
                         {
-                            if (plugin.getForceFieldManager().hasSubFields(field))
-                            {
-                                ChatBlock.sendMessage(player, ChatColor.RED + "The field has sub-fields inside of it thus cannot be redifined.");
-                                return;
-                            }
-
                             if (field.hasFlag(FieldFlag.CUBOID))
                             {
                                 if (field.getParent() != null)
@@ -207,14 +196,23 @@ public class PSPlayerListener implements Listener
                                     field = field.getParent();
                                 }
 
-                                if (field.isOwner(player.getName()))
+                                if (field.isOwner(player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
                                 {
-                                    if (field.hasFlag(FieldFlag.REDEFINE_ONLY_WHILE_DISABLED))
+                                    if (plugin.getForceFieldManager().hasSubFields(field))
                                     {
-                                        if (!field.isDisabled())
+                                        ChatBlock.sendMessage(player, ChatColor.RED + "The field has sub-fields inside of it thus cannot be redifined.");
+                                        return;
+                                    }
+
+                                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.on-disabled"))
+                                    {
+                                        if (field.hasFlag(FieldFlag.REDEFINE_ON_DISABLED))
                                         {
-                                            ChatBlock.sendMessage(player, ChatColor.RED + "This field's cuboid can only be redefined while disabled");
-                                            return;
+                                            if (!field.isDisabled())
+                                            {
+                                                ChatBlock.sendMessage(player, ChatColor.RED + "This field's cuboid can only be redefined while disabled");
+                                                return;
+                                            }
                                         }
                                     }
 
@@ -275,34 +273,39 @@ public class PSPlayerListener implements Listener
                                 field = field.getParent();
                             }
 
+                            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
                             if (player.isSneaking())
                             {
-                                if (field.hasFlag(FieldFlag.VISUALIZE_ON_SHIFT_RIGHT_CLICK))
+                                if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
-                                    if (plugin.getCuboidManager().hasOpenCuboid(player))
+                                    if (field.hasFlag(FieldFlag.VISUALIZE_ON_SRC))
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot visualize while defining a cuboid");
-                                    }
-                                    else
-                                    {
-                                        if (field.isAllowed(player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
+                                        if (plugin.getCuboidManager().hasOpenCuboid(player))
                                         {
-                                            plugin.getVisualizationManager().visualizeSingleField(player, field);
+                                            ChatBlock.sendMessage(player, ChatColor.RED + "Cannot visualize while defining a cuboid");
+                                        }
+                                        else
+                                        {
+                                            if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
+                                            {
+                                                plugin.getVisualizationManager().visualizeSingleField(player, field);
+                                            }
                                         }
                                     }
-                                }
 
-                                if (field.hasFlag(FieldFlag.ENABLE_ON_SHIFT_RIGHT_CLICK))
-                                {
-                                    if (field.isDisabled())
+                                    if (field.hasFlag(FieldFlag.ENABLE_ON_SRC))
                                     {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been enabled");
-                                        field.setDisabled(false);
-                                    }
-                                    else
-                                    {
-                                        ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been disabled");
-                                        field.setDisabled(true);
+                                        if (field.isDisabled())
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been enabled");
+                                            field.setDisabled(false);
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been disabled");
+                                            field.setDisabled(true);
+                                        }
                                     }
                                 }
                             }
@@ -310,7 +313,7 @@ public class PSPlayerListener implements Listener
                             {
                                 if (plugin.getSettingsManager().isSnitchType(block))
                                 {
-                                    if (field.isAllowed(player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
+                                    if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
                                     {
                                         if (!plugin.getCommunicationManager().showSnitchList(player, plugin.getForceFieldManager().getField(block)))
                                         {
@@ -339,9 +342,12 @@ public class PSPlayerListener implements Listener
                                         {
                                             if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle"))
                                             {
-                                                if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED))
+                                                if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
                                                 {
-                                                    player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
+                                                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.on-disabled"))
+                                                    {
+                                                        player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
+                                                    }
                                                 }
 
                                                 ChatBlock.sendBlank(player);
@@ -370,7 +376,10 @@ public class PSPlayerListener implements Listener
                             {
                                 if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails())
                                 {
-                                    plugin.getCommunicationManager().showProtectedLocation(player, block);
+                                    if (!plugin.getSettingsManager().isDisableGroundInfo())
+                                    {
+                                        plugin.getCommunicationManager().showProtectedLocation(player, block);
+                                    }
                                 }
                                 else
                                 {
@@ -429,7 +438,7 @@ public class PSPlayerListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, event.getPlayer().getName());
 
-            if (!allowed)
+            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
                 if (!plugin.getPermissionsManager().has(event.getPlayer(), "preciousstones.bypass.teleport"))
                 {
@@ -522,7 +531,7 @@ public class PSPlayerListener implements Listener
                 {
                     boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                    if (!allowedEntry)
+                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
                         Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
                         Location outside = plugin.getPlayerManager().getOutsideLocation(player);
@@ -535,7 +544,7 @@ public class PSPlayerListener implements Listener
                             {
                                 boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                                if (!allowed)
+                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
                                     loc = outside;
                                 }
@@ -623,7 +632,7 @@ public class PSPlayerListener implements Listener
                 {
                     boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                    if (!allowedEntry)
+                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
                         Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
                         Location outside = plugin.getPlayerManager().getOutsideLocation(player);
@@ -636,7 +645,7 @@ public class PSPlayerListener implements Listener
                             {
                                 boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                                if (!allowed)
+                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
                                     loc = outside;
                                 }
@@ -703,7 +712,7 @@ public class PSPlayerListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (!allowed)
+            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.break"))
                 {
@@ -723,7 +732,7 @@ public class PSPlayerListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (!allowed)
+            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.break"))
                 {
@@ -777,7 +786,7 @@ public class PSPlayerListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (!allowed)
+            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                 {
@@ -797,9 +806,9 @@ public class PSPlayerListener implements Listener
         {
             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-            if (!allowed)
+            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
-                if (field.hasFlag(FieldFlag.GRIEF_REVERT_ALLOW_PLACE_GRIEF))
+                if (field.hasFlag(FieldFlag.PLACE_GRIEF))
                 {
                     if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                     {
@@ -856,12 +865,15 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            if (field.getSettings().getForceEntryGameMode() != null)
+            if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
-                if (!gameMode.equals(field.getSettings().getForceEntryGameMode()))
+                if (field.getSettings().getForceEntryGameMode() != null)
                 {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot change your game mode in this field");
-                    event.setCancelled(true);
+                    if (!gameMode.equals(field.getSettings().getForceEntryGameMode()))
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot change your game mode in this field");
+                        event.setCancelled(true);
+                    }
                 }
             }
         }

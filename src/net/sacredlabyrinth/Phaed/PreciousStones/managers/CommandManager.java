@@ -129,7 +129,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
                                 {
                                     if (!field.isDisabled())
                                     {
@@ -189,7 +189,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
                                 {
                                     if (!field.isDisabled())
                                     {
@@ -297,44 +297,59 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals("setname") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setname") && hasplayer)
                     {
+                        String fieldName = null;
+
                         if (args.length >= 1)
                         {
-                            String playerName = Helper.toMessage(args);
+                            fieldName = Helper.toMessage(args);
+                        }
 
-                            if (playerName.length() > 0)
+                        Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+
+                        if (field != null)
+                        {
+                            if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
                             {
-                                Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
-
-                                if (field != null)
+                                if (!field.isDisabled())
                                 {
-                                    if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
-                                    {
-                                        if (!field.isDisabled())
-                                        {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
-                                            return true;
-                                        }
-                                    }
-
-                                    boolean done = plugin.getForceFieldManager().setNameFields(field, playerName);
-
-                                    if (done)
-                                    {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed field to " + playerName);
-                                    }
-                                    else
-                                    {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "No nameable fields found");
-                                    }
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
                                     return true;
+                                }
+                            }
+
+                            if (fieldName == null)
+                            {
+                                boolean done = plugin.getForceFieldManager().setNameField(field, "");
+
+                                if (done)
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field's name has been cleared");
                                 }
                                 else
                                 {
-                                    plugin.getCommunicationManager().showNotFound(player);
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "No nameable fields found");
                                 }
-                                return true;
                             }
+                            else
+                            {
+                                boolean done = plugin.getForceFieldManager().setNameField(field, fieldName);
+
+                                if (done)
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed field to " + fieldName);
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "No nameable fields found");
+                                }
+                            }
+                            return true;
                         }
+                        else
+                        {
+                            plugin.getCommunicationManager().showNotFound(player);
+                        }
+                        return true;
                     }
                     else if (cmd.equals("setradius") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setradius") && hasplayer)
                     {
@@ -385,7 +400,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
                                 {
                                     if (!field.isDisabled())
                                     {
@@ -498,7 +513,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.hasFlag(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED))
+                                if (field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
                                 {
                                     if (!field.isDisabled())
                                     {
@@ -519,37 +534,56 @@ public final class CommandManager implements CommandExecutor
                                         return true;
                                     }
 
-                                    if (flagStr.equalsIgnoreCase("apply-to-allowed"))
+                                    if (flagStr.equalsIgnoreCase("apply-to-reverse"))
                                     {
                                         return true;
                                     }
 
-                                    if (flagStr.equalsIgnoreCase("apply-to-allowed"))
+                                    if (flagStr.equalsIgnoreCase("apply-to-all"))
                                     {
                                         return true;
                                     }
 
-                                    if (flagStr.equalsIgnoreCase("deny-place-near-players"))
+                                    if (flagStr.equalsIgnoreCase("no-player-place"))
+                                    {
+                                        return true;
+                                    }
+                                    if (flagStr.equalsIgnoreCase("no-conflict"))
                                     {
                                         return true;
                                     }
 
-                                    if (flagStr.equalsIgnoreCase("toggle-only-while-disabled"))
+                                    if (flagStr.equalsIgnoreCase("toggle-on-disabled"))
                                     {
                                         return true;
                                     }
 
-                                    if (flagStr.equalsIgnoreCase("redefine-only-while-disabled"))
+                                    if (flagStr.equalsIgnoreCase("prevent-unprotectable"))
                                     {
                                         return true;
                                     }
 
-                                    if (flagStr.equalsIgnoreCase("modify-only-while-disabled"))
+                                    if (flagStr.equalsIgnoreCase("redefine-on-disabled"))
                                     {
                                         return true;
                                     }
 
-                                    if (flagStr.equalsIgnoreCase("breakable-when-disabled"))
+                                    if (flagStr.equalsIgnoreCase("modify-on-disabled"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("breakable-on-disabled"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("sneaking-bypass"))
+                                    {
+                                        return true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("place-disabled"))
                                     {
                                         return true;
                                     }
@@ -783,7 +817,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                                if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
                                 {
                                     if (!field.isDisabled())
                                     {

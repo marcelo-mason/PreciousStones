@@ -78,9 +78,9 @@ public final class EntryManager
                         {
                             if (!hasAir)
                             {
-                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
+                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
-                                    if (field.hasFlag(FieldFlag.GIVE_AIR))
+                                    if (field.hasFlag(FieldFlag.AIR))
                                     {
                                         if (player.getRemainingAir() < 300)
                                         {
@@ -98,14 +98,14 @@ public final class EntryManager
                         {
                             if (!hasFeeding)
                             {
-                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
+                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
-                                    if (field.hasFlag(FieldFlag.SLOW_FEEDING))
+                                    if (field.hasFlag(FieldFlag.FEED))
                                     {
                                         int food = player.getFoodLevel();
                                         if (food < 20)
                                         {
-                                            player.setFoodLevel(food + 1);
+                                            player.setFoodLevel(food + field.getSettings().getFeed());
                                             plugin.getCommunicationManager().showSlowFeeding(player);
                                             hasFeeding = true;
                                             continue;
@@ -119,24 +119,13 @@ public final class EntryManager
                         {
                             if (!hasHeal)
                             {
-                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
+                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
-                                    if (field.hasFlag(FieldFlag.INSTANT_HEAL))
+                                    if (field.hasFlag(FieldFlag.HEAL))
                                     {
                                         if (player.getHealth() < 20)
                                         {
-                                            player.setHealth(20);
-                                            plugin.getCommunicationManager().showInstantHeal(player);
-                                            hasHeal = true;
-                                            continue;
-                                        }
-                                    }
-
-                                    if (field.hasFlag(FieldFlag.SLOW_HEAL))
-                                    {
-                                        if (player.getHealth() < 20)
-                                        {
-                                            player.setHealth(healthCheck(player.getHealth() + 1));
+                                            player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
                                             plugin.getCommunicationManager().showSlowHeal(player);
                                             hasHeal = true;
                                             continue;
@@ -151,9 +140,9 @@ public final class EntryManager
                         {
                             if (!hasRepair)
                             {
-                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
+                                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
-                                    if (field.hasFlag(FieldFlag.SLOW_REPAIR))
+                                    if (field.hasFlag(FieldFlag.REPAIR))
                                     {
                                         boolean updated = false;
 
@@ -165,7 +154,7 @@ public final class EntryManager
                                                 short dur = armor.getDurability();
                                                 if (dur > 0)
                                                 {
-                                                    dur -= 25;
+                                                    dur -= field.getSettings().getRepair();
                                                     if (dur < 0)
                                                     {
                                                         dur = 0;
@@ -194,7 +183,7 @@ public final class EntryManager
                                                     short dur = item.getDurability();
                                                     if (dur > 0)
                                                     {
-                                                        dur -= 25;
+                                                        dur -= field.getSettings().getRepair();
                                                         if (dur < 0)
                                                         {
                                                             dur = 0;
@@ -220,29 +209,18 @@ public final class EntryManager
 
                         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.damage"))
                         {
-                            if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
+                            if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
                             {
-                                if (!plugin.getForceFieldManager().isApplyToAllowed(field, playerName))
+                                if (!plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
                                     if (!hasDamage)
                                     {
-                                        if (field.hasFlag(FieldFlag.SLOW_DAMAGE))
+                                        if (field.hasFlag(FieldFlag.DAMAGE))
                                         {
                                             if (player.getHealth() > 0)
                                             {
-                                                player.setHealth(healthCheck(player.getHealth() - 4));
+                                                player.setHealth(healthCheck(player.getHealth() - field.getSettings().getDamage()));
                                                 plugin.getCommunicationManager().showSlowDamage(player);
-                                                hasDamage = true;
-                                                continue;
-                                            }
-                                        }
-
-                                        if (field.hasFlag(FieldFlag.FAST_DAMAGE))
-                                        {
-                                            if (player.getHealth() > 0)
-                                            {
-                                                player.setHealth(healthCheck(player.getHealth() - 8));
-                                                plugin.getCommunicationManager().showFastDamage(player);
                                                 hasDamage = true;
                                                 continue;
                                             }
@@ -290,27 +268,27 @@ public final class EntryManager
     {
         boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-        if (field.hasFlag(FieldFlag.WELCOME_MESSAGE) && field.getName().length() > 0)
+        if (field.hasFlag(FieldFlag.WELCOME_MESSAGE))
         {
-            plugin.getCommunicationManager().showWelcomeMessage(player, field.getName());
+            plugin.getCommunicationManager().showWelcomeMessage(player, field);
         }
 
-        if (allowed)
+        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
             if (field.getSettings().getGroupOnEntry() != null)
             {
                 plugin.getPermissionsManager().addGroup(player, field.getSettings().getGroupOnEntry());
             }
+        }
 
+        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        {
             if (field.getSettings().getForceEntryGameMode() != null)
             {
                 player.setGameMode(field.getSettings().getForceEntryGameMode());
             }
-        }
 
-        if (!allowed)
-        {
-            if (field.hasFlag(FieldFlag.DENY_FLIGHT))
+            if (field.hasFlag(FieldFlag.PREVENT_FLIGHT))
             {
                 if (plugin.getSettingsManager().isNotifyFlyZones())
                 {
@@ -322,7 +300,10 @@ public final class EntryManager
 
             if (field.hasFlag(FieldFlag.ENTRY_ALERT))
             {
-                plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
+                if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
+                {
+                    plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
+                }
             }
         }
     }
@@ -337,29 +318,29 @@ public final class EntryManager
     {
         boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-        if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE) && field.getName().length() > 0)
+        if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE))
         {
-            plugin.getCommunicationManager().showFarewellMessage(player, field.getName());
+            plugin.getCommunicationManager().showFarewellMessage(player, field);
         }
 
-        if (allowed)
+        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
             if (field.getSettings().getGroupOnEntry() != null)
             {
                 plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
             }
+        }
 
+        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        {
             if (field.getSettings().getForceLeavingGameMode() != null)
             {
                 player.setGameMode(field.getSettings().getForceLeavingGameMode());
             }
-        }
 
-        if (!allowed)
-        {
-            if (field.hasFlag(FieldFlag.DENY_FLIGHT))
+            if (field.hasFlag(FieldFlag.PREVENT_FLIGHT))
             {
-                Field sub = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.DENY_FLIGHT);
+                Field sub = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_FLIGHT);
 
                 if (sub == null)
                 {
@@ -407,12 +388,15 @@ public final class EntryManager
 
         if (!plugin.getForceFieldManager().isRedstoneHookedDisabled(field))
         {
-            plugin.getVelocityManager().launchPlayer(player, field);
-            plugin.getVelocityManager().shootPlayer(player, field);
+            if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
+            {
+                plugin.getVelocityManager().launchPlayer(player, field);
+                plugin.getVelocityManager().shootPlayer(player, field);
+            }
         }
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.damage"))
         {
-            if (!(plugin.getSettingsManager().isSneakingBypassesDamage() && player.isSneaking()))
+            if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
             {
                 plugin.getMineManager().enterMine(player, field);
                 plugin.getLightningManager().enterLightning(player, field);

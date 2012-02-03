@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- *
  * @author phaed
  */
 public class Rollback implements Runnable
@@ -20,7 +19,6 @@ public class Rollback implements Runnable
     private final World world;
 
     /**
-     *
      * @param griefQueue
      * @param world
      */
@@ -30,7 +28,7 @@ public class Rollback implements Runnable
         this.world = world;
         this.plugin = PreciousStones.getInstance();
 
-        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 5);
+        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 2);
     }
 
     public void run()
@@ -41,14 +39,13 @@ public class Rollback implements Runnable
         {
             GriefBlock gb = griefQueue.poll();
 
-            if (!plugin.getGriefUndoManager().isDependentBlock(gb.getTypeId()))
-            {
-                PreciousStones.getInstance().getGriefUndoManager().undoGriefBlock(gb, world);
-            }
-            else
+            if (plugin.getGriefUndoManager().isDependentBlock(gb.getTypeId()))
             {
                 dependentQueue.add(gb);
+                continue;
             }
+
+            PreciousStones.getInstance().getGriefUndoManager().undoGriefBlock(gb, world);
             i++;
         }
 
@@ -56,7 +53,7 @@ public class Rollback implements Runnable
         {
             while (i < 200 && !dependentQueue.isEmpty())
             {
-                GriefBlock gb = griefQueue.poll();
+                GriefBlock gb = dependentQueue.poll();
 
                 PreciousStones.getInstance().getGriefUndoManager().undoGriefBlock(gb, world);
                 i++;

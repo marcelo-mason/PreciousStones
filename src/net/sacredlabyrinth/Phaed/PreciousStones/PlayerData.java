@@ -87,6 +87,24 @@ public class PlayerData
     }
 
     /**
+     * Get the total number of fields the player has placed
+     *
+     * @param typeid
+     * @return
+     */
+    public int getTotalFieldCount()
+    {
+        int total = 0;
+
+        for(int count : fieldCount.values())
+        {
+            total += count;
+        }
+
+        return total;
+    }
+
+    /**
      * @return
      */
     public boolean isDisabled()

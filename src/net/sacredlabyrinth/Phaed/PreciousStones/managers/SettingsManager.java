@@ -19,6 +19,10 @@ import java.util.*;
  */
 public final class SettingsManager
 {
+    private boolean disableGroundInfo;
+    private boolean autoDownloadVault;
+    private int globalFieldLimit;
+    private boolean noRefunds;
     private int cuboidDefiningType;
     private int cuboidVisualizationType;
     private boolean logToHawkEye;
@@ -93,8 +97,6 @@ public final class SettingsManager
     private boolean warnCannon;
     private boolean warnMine;
     private boolean publicBlockDetails;
-    private boolean sneakingBypassesDamage;
-    private boolean allowedCanBreakPstones;
     private boolean dropOnDelete;
     private boolean disableAlertsForAdmins;
     private boolean disableBypassAlertsForAdmins;
@@ -158,6 +160,7 @@ public final class SettingsManager
         forceFieldBlocks = (ArrayList) config.get("force-field-blocks");
         bypassBlocks = config.getList("bypass-blocks");
         unprotectableBlocks = config.getList("unprotectable-blocks");
+        unbreakableBlocks = config.getList("unbreakable-blocks");
         toolItems = config.getList("tool-items");
         repairableItems = config.getList("repairable-items");
         logRollback = config.getBoolean("log.rollback");
@@ -189,7 +192,7 @@ public final class SettingsManager
         warnSlowFeeding = config.getBoolean("warn.slow-feeding");
         warnSlowRepair = config.getBoolean("warn.slow-repair");
         warnFastDamage = config.getBoolean("warn.fast-damage");
-        warnGiveAir = config.getBoolean("warn.give-air");
+        warnGiveAir = config.getBoolean("warn.air");
         warnFire = config.getBoolean("warn.fire");
         warnEntry = config.getBoolean("warn.entry");
         warnPlace = config.getBoolean("warn.place");
@@ -201,9 +204,11 @@ public final class SettingsManager
         warnLaunch = config.getBoolean("warn.launch");
         warnCannon = config.getBoolean("warn.cannon");
         warnMine = config.getBoolean("warn.mine");
+        disableGroundInfo = config.getBoolean("settings.disable-ground-info");
+        autoDownloadVault = config.getBoolean("settings.auto-download-vault");
+        globalFieldLimit = config.getInt("settings.global-field-limit");
+        noRefunds = config.getBoolean("settings.no-refund-for-fields");
         publicBlockDetails = config.getBoolean("settings.public-block-details");
-        sneakingBypassesDamage = config.getBoolean("settings.sneaking-bypasses-damage");
-        allowedCanBreakPstones = config.getBoolean("settings.allowed-can-break-pstones");
         dropOnDelete = config.getBoolean("settings.drop-on-delete");
         disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins");
         disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins");
@@ -482,24 +487,13 @@ public final class SettingsManager
     {
         for (FieldSettings fs : fieldDefinitions.values())
         {
-            if (fs.hasDefaultFlag(FieldFlag.SNITCH) && fs.getRawTypeId() == Helper.toRawTypeId(block))
+            if (fs.hasDefaultFlag(FieldFlag.SNITCH) && plugin.getForceFieldManager().isSameBlock(fs.getRawTypeId(), Helper.toRawTypeId(block)))
             {
                 return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * Check if a block is one of the unbreakable types
-     *
-     * @param unbreakableblock
-     * @return
-     */
-    public boolean isUnbreakableType(Block unbreakableblock)
-    {
-        return getUnbreakableBlocks().contains(unbreakableblock.getTypeId());
     }
 
     /**
@@ -510,7 +504,31 @@ public final class SettingsManager
      */
     public boolean isUnbreakableType(int typeId)
     {
-        return getUnbreakableBlocks().contains(typeId);
+        boolean contains = false;
+
+        if (typeId == 74)
+        {
+            contains = getFfBlocks().contains(73);
+        }
+
+        if (typeId == 62)
+        {
+            contains = getFfBlocks().contains(61);
+        }
+
+
+        return contains || getUnbreakableBlocks().contains(typeId);
+    }
+
+    /**
+     * Check if a block is one of the unbreakable types
+     *
+     * @param unbreakableblock
+     * @return
+     */
+    public boolean isUnbreakableType(Block unbreakableblock)
+    {
+        return isUnbreakableType(unbreakableblock.getTypeId());
     }
 
     /**
@@ -521,7 +539,7 @@ public final class SettingsManager
      */
     public boolean isUnbreakableType(String type)
     {
-        return getUnbreakableBlocks().contains(Material.getMaterial(type).getId());
+        return isUnbreakableType(Material.getMaterial(type).getId());
     }
 
     /**
@@ -532,7 +550,7 @@ public final class SettingsManager
      */
     public boolean isFieldType(Block block)
     {
-        return getFfBlocks().contains(block.getTypeId());
+        return isFieldType(block.getTypeId());
     }
 
     /**
@@ -543,7 +561,7 @@ public final class SettingsManager
      */
     public boolean isFieldType(String type)
     {
-        return getFfBlocks().contains(Material.getMaterial(type).getId());
+        return isFieldType(Material.getMaterial(type).getId());
     }
 
     /**
@@ -554,7 +572,7 @@ public final class SettingsManager
      */
     public boolean isFieldType(Material material)
     {
-        return getFfBlocks().contains(material.getId());
+        return isFieldType(material.getId());
     }
 
     /**
@@ -565,7 +583,19 @@ public final class SettingsManager
      */
     public boolean isFieldType(int typeId)
     {
-        return getFfBlocks().contains(typeId);
+        boolean contains = false;
+
+        if (typeId == 74)
+        {
+            contains = getFfBlocks().contains(73);
+        }
+
+        if (typeId == 62)
+        {
+            contains = getFfBlocks().contains(61);
+        }
+
+        return contains || getFfBlocks().contains(typeId);
     }
 
     /**
@@ -1103,22 +1133,6 @@ public final class SettingsManager
     }
 
     /**
-     * @return the sneakingBypassesDamage
-     */
-    public boolean isSneakingBypassesDamage()
-    {
-        return sneakingBypassesDamage;
-    }
-
-    /**
-     * @return the allowedCanBreakPstones
-     */
-    public boolean isAllowedCanBreakPstones()
-    {
-        return allowedCanBreakPstones;
-    }
-
-    /**
      * @return the dropOnDelete
      */
     public boolean isDropOnDelete()
@@ -1316,5 +1330,25 @@ public final class SettingsManager
     public boolean isNotifyFlyZones()
     {
         return notifyFlyZones;
+    }
+
+    public boolean isNoRefunds()
+    {
+        return noRefunds;
+    }
+
+    public int getGlobalFieldLimit()
+    {
+        return globalFieldLimit;
+    }
+
+    public boolean isAutoDownloadVault()
+    {
+        return autoDownloadVault;
+    }
+
+    public boolean isDisableGroundInfo()
+    {
+        return disableGroundInfo;
     }
 }

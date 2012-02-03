@@ -2,7 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -18,6 +17,17 @@ import java.util.List;
  */
 public class Helper
 {
+    /**
+     * Dumps stacktrace to log
+     */
+    public void dumpStackTrace()
+    {
+        for (StackTraceElement el : Thread.currentThread().getStackTrace())
+        {
+            PreciousStones.debug(el.toString());
+        }
+    }
+
     /**
      * Helper function to check for integer
      *

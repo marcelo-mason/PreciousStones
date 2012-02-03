@@ -163,7 +163,7 @@ public final class SimpleClansManager
                     return true;
                 }
 
-                if (field.isAllowed(warring.getTag()))
+                if (plugin.getForceFieldManager().isAllowed(field,warring.getTag()))
                 {
                     return true;
                 }

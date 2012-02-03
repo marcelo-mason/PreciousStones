@@ -173,7 +173,7 @@ public class CommunicatonManager
         {
             if (plugin.getSettingsManager().isNotifyRollback() && canNotify(player))
             {
-                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + count + " griefed " + Helper.plural(count, "block", "s") + " on field " + field.getCoords());
+                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Rolled back " + count + " griefed " + Helper.plural(count, "block", "s") + " " + field.getCoords());
             }
         }
 
@@ -2095,18 +2095,32 @@ public class CommunicatonManager
      * @param player
      * @param name
      */
-    public void showWelcomeMessage(Player player, String name)
+    public void showWelcomeMessage(Player player, Field field)
     {
-        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Entering: " + ChatColor.AQUA + name);
+        if (field.getName().length() > 0)
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + field.getName());
+        }
+        else
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " field");
+        }
     }
 
     /**
      * @param player
      * @param name
      */
-    public void showFarewellMessage(Player player, String name)
+    public void showFarewellMessage(Player player, Field field)
     {
-        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Leaving: " + ChatColor.AQUA + name);
+        if (field.getName().length() > 0)
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Leaving " + field.getName());
+        }
+        else
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Leaving " + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " field");
+        }
     }
 
     /**
@@ -2373,14 +2387,19 @@ public class CommunicatonManager
 
         List<String> applies = new LinkedList<String>();
 
-        if (field.hasFlag(FieldFlag.APPLY_TO_ALLOWED))
+        if (field.hasFlag(FieldFlag.APPLY_TO_REVERSE))
         {
-            applies.add("allowed");
+            applies.add("reverse");
         }
 
-        if (field.hasFlag(FieldFlag.APPLY_TO_OTHERS))
+        if (field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
-            applies.add("others");
+            applies.add("all");
+        }
+
+        if (applies.isEmpty())
+        {
+            applies.add("allowed");
         }
 
         cb.addRow("  " + color + "Applies to: ", ChatColor.WHITE + Helper.toMessage(applies, ","), "");
@@ -2430,18 +2449,24 @@ public class CommunicatonManager
 
         List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getFlags());
         List<FieldFlag> disabledFlags = field.getDisabledFlags();
+        List<FieldFlag> hardCodedFlags = new LinkedList<FieldFlag>();
 
         flags.remove(FieldFlag.ALL);
-        flags.remove(FieldFlag.APPLY_TO_ALLOWED);
-        flags.remove(FieldFlag.APPLY_TO_OTHERS);
-        flags.remove(FieldFlag.CUBOID);
-        flags.remove(FieldFlag.DENY_PLACE_NEAR_PLAYERS);
-        flags.remove(FieldFlag.BREAKABLE);
-        flags.remove(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED);
-        flags.remove(FieldFlag.REDEFINE_ONLY_WHILE_DISABLED);
-        flags.remove(FieldFlag.BREAKABLE_WHEN_DISABLED);
-        flags.remove(FieldFlag.MODIFY_ONLY_WHILE_DISABLED);
         flags.addAll(disabledFlags);
+
+        hardCodedFlags.add(FieldFlag.CUBOID);
+        hardCodedFlags.add(FieldFlag.APPLY_TO_REVERSE);
+        hardCodedFlags.add(FieldFlag.APPLY_TO_ALL);
+        hardCodedFlags.add(FieldFlag.NO_CONFLICT);
+        hardCodedFlags.add(FieldFlag.NO_PLAYER_PLACE);
+        hardCodedFlags.add(FieldFlag.BREAKABLE);
+        hardCodedFlags.add(FieldFlag.TOGGLE_ON_DISABLED);
+        hardCodedFlags.add(FieldFlag.REDEFINE_ON_DISABLED);
+        hardCodedFlags.add(FieldFlag.BREAKABLE_ON_DISABLED);
+        hardCodedFlags.add(FieldFlag.MODIFY_ON_DISABLED);
+        hardCodedFlags.add(FieldFlag.PREVENT_UNPROTECTABLE);
+        hardCodedFlags.add(FieldFlag.PLACE_DISABLED);
+        hardCodedFlags.add(FieldFlag.SNEAKING_BYPASS);
 
         int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
 
@@ -2454,7 +2479,7 @@ public class CommunicatonManager
                 title = color + "Flags: ";
             }
 
-            cb.addRow("  " + title, getFlag(disabledFlags, flags, i * 2), getFlag(disabledFlags, flags, (i * 2) + 1));
+            cb.addRow("  " + title, getFlag(disabledFlags, hardCodedFlags,flags, i * 2), getFlag(disabledFlags, hardCodedFlags, flags, (i * 2) + 1));
         }
 
         if (cb.size() > 0)
@@ -2476,24 +2501,24 @@ public class CommunicatonManager
             {
                 ChatBlock.sendBlank(player);
 
-                if (field.hasFlag(FieldFlag.BREAKABLE_WHEN_DISABLED))
+                if (field.hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
                 {
                     ChatBlock.sendMessage(player, "  " + ChatColor.WHITE + " * " + ChatColor.RED + "This field becomes breakable when disabled");
                 }
 
                 List<String> cond = new LinkedList<String>();
 
-                if (field.hasFlag(FieldFlag.MODIFY_ONLY_WHILE_DISABLED))
+                if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
                 {
                     cond.add("settings");
                 }
 
-                if (field.hasFlag(FieldFlag.TOGGLE_ONLY_WHILE_DISABLED))
+                if (field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
                 {
                     cond.add("flags");
                 }
 
-                if (field.hasFlag(FieldFlag.REDEFINE_ONLY_WHILE_DISABLED))
+                if (field.hasFlag(FieldFlag.REDEFINE_ON_DISABLED))
                 {
                     cond.add("cuboid");
                 }
@@ -2513,7 +2538,7 @@ public class CommunicatonManager
         return showMessage;
     }
 
-    private String getFlag(List<FieldFlag> disabledFlags, List<FieldFlag> flags, int index)
+    private String getFlag(List<FieldFlag> disabledFlags, List<FieldFlag> hardCodedFlags, List<FieldFlag> flags, int index)
     {
         if (index < flags.size())
         {
@@ -2525,6 +2550,12 @@ public class CommunicatonManager
             {
                 color = ChatColor.DARK_GRAY;
             }
+
+            if (hardCodedFlags.contains(flag))
+            {
+                color = ChatColor.AQUA;
+            }
+
             return color + Helper.toFlagStr(flag);
         }
 
