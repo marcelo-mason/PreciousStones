@@ -339,6 +339,7 @@ public class CuboidManager
 
     /**
      * Cancel an open cuboid and revert all visualizations
+     *
      * @param player
      */
     public void cancelOpenCuboid(Player player)
@@ -369,6 +370,28 @@ public class CuboidManager
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
                 ChatBlock.sendMessage(player, ChatColor.AQUA + "Selection reverted");
             }
+        }
+    }
+
+    /**
+     * Expand the cuboid in the direction the player is facing by one block
+     *
+     * @param player
+     */
+    public void expandDirection(Player player)
+    {
+        CuboidEntry ce = openCuboids.get(player.getName());
+
+        if (ce != null)
+        {
+            Block block = ce.getExpandedBlock(player);
+
+            if (block != null)
+            {
+                processSelectedBlock(player, block);
+            }
+
+            plugin.getVisualizationManager().displayFieldOutline(player, ce);
         }
     }
 }

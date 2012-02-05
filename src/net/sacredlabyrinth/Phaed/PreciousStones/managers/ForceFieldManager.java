@@ -248,7 +248,9 @@ public final class ForceFieldManager
 
         ChunkVec cv = field.toChunkVec();
 
-        List<FieldFlag> flags = field.getSettings().getDefaultFlags();
+        List<FieldFlag> flags = new LinkedList<FieldFlag>();
+        flags.addAll(field.getSettings().getDefaultFlags());
+        flags.addAll(field.getInsertedFlags());
 
         for (FieldFlag flag : flags)
         {
@@ -309,7 +311,9 @@ public final class ForceFieldManager
                 sf = new HashMap<FieldFlag, List<Field>>();
             }
 
-            List<FieldFlag> flags = field.getSettings().getDefaultFlags();
+            List<FieldFlag> flags = new LinkedList<FieldFlag>();
+            flags.addAll(field.getSettings().getDefaultFlags());
+            flags.addAll(field.getInsertedFlags());
 
             for (FieldFlag flag : flags)
             {
@@ -348,7 +352,9 @@ public final class ForceFieldManager
 
         if (field.getSettings() != null)
         {
-            List<FieldFlag> flags = field.getSettings().getDefaultFlags();
+            List<FieldFlag> flags = new LinkedList<FieldFlag>();
+            flags.addAll(field.getSettings().getDefaultFlags());
+            flags.addAll(field.getInsertedFlags());
 
             for (FieldFlag flag : flags)
             {
@@ -379,26 +385,33 @@ public final class ForceFieldManager
 
         FieldSettings fs = field.getSettings();
 
-        // remove from forester
-
-        if (fs.hasDefaultFlag(FieldFlag.FORESTER) || fs.hasDefaultFlag(FieldFlag.FORESTER_SHRUBS))
+        if (fs != null)
         {
-            plugin.getForesterManager().remove(field);
-        }
+            List<FieldFlag> flags = new LinkedList<FieldFlag>();
+            flags.addAll(field.getSettings().getDefaultFlags());
+            flags.addAll(field.getInsertedFlags());
 
-        // delete any snitch entries
+            // remove from forester
 
-        if (fs.hasDefaultFlag(FieldFlag.SNITCH))
-        {
-            plugin.getStorageManager().deleteSnitchEntries(field);
-        }
+            if (flags.contains(FieldFlag.FORESTER) || flags.contains(FieldFlag.FORESTER_SHRUBS))
+            {
+                plugin.getForesterManager().remove(field);
+            }
 
-        // remove from grief-undo and delete any records on the database
+            // delete any snitch entries
 
-        if (fs.hasDefaultFlag(FieldFlag.GRIEF_REVERT))
-        {
-            plugin.getGriefUndoManager().remove(field);
-            plugin.getStorageManager().deleteBlockGrief(field);
+            if (flags.contains(FieldFlag.SNITCH))
+            {
+                plugin.getStorageManager().deleteSnitchEntries(field);
+            }
+
+            // remove from grief-undo and delete any records on the database
+
+            if (flags.contains(FieldFlag.GRIEF_REVERT))
+            {
+                plugin.getGriefUndoManager().remove(field);
+                plugin.getStorageManager().deleteBlockGrief(field);
+            }
         }
 
         // remove the count from the owner
@@ -419,7 +432,7 @@ public final class ForceFieldManager
             field.clearChildren();
         }
 
-        // if the childs parent is not open, then remove the whole family
+        // if the child's parent is not open, then remove the whole family
 
         if (field.isChild())
         {
@@ -452,7 +465,9 @@ public final class ForceFieldManager
 
             if (sf != null)
             {
-                List<FieldFlag> flags = field.getSettings().getDefaultFlags();
+                List<FieldFlag> flags = new LinkedList<FieldFlag>();
+                flags.addAll(field.getSettings().getDefaultFlags());
+                flags.addAll(field.getInsertedFlags());
 
                 for (FieldFlag flag : flags)
                 {
@@ -1288,7 +1303,7 @@ public final class ForceFieldManager
 
         for (Field source : sources)
         {
-            if (source.getSettings().isAllowedOnlyField(field))
+            if (source.getSettings().isAllowedOnlyInside(field))
             {
                 return true;
             }
@@ -1406,7 +1421,7 @@ public final class ForceFieldManager
      * @param cv
      * @return
      */
-    public List<Field> getSourceFields(ChunkVec cv, FieldFlag flag)
+    public List<Field> getSourceFieldsInChunk(ChunkVec cv, FieldFlag flag)
     {
         HashMap<FieldFlag, List<Field>> flagList = sourceFields.get(cv);
 
@@ -1424,6 +1439,45 @@ public final class ForceFieldManager
     }
 
     /**
+     * Get all fields matching this flag that are touching this chunk
+     *
+     * @param cv
+     * @return
+     */
+    public List<Field> getSourceFieldsInChunk(Chunk chunk, FieldFlag flag)
+    {
+        return getSourceFieldsInChunk(new ChunkVec(chunk), flag);
+    }
+
+    /**
+     * Returns the fields that the location is in match the field flag(s)
+     *
+     * @param loc
+     * @param flags
+     * @return the fields
+     */
+    public List<Field> getSourceFields(Location loc, FieldFlag flag)
+    {
+        List<Field> sources = getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag);
+
+        for (Iterator it = sources.iterator(); it.hasNext(); )
+        {
+            Field field = (Field) it.next();
+
+            if (!field.envelops(loc))
+            {
+                it.remove();
+            }
+            else if (field.hasDisabledFlag(flag))
+            {
+                it.remove();
+            }
+        }
+
+        return sources;
+    }
+
+    /**
      * Returns a field in the location that matches the field flag(s)
      *
      * @param loc
@@ -1432,7 +1486,7 @@ public final class ForceFieldManager
      */
     public Field getSourceField(Location loc, FieldFlag flag)
     {
-        List<Field> sources = getSourceFields(loc.getBlock().getChunk(), flag);
+        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag);
 
         List<Field> out = new LinkedList<Field>();
 
@@ -1444,7 +1498,29 @@ public final class ForceFieldManager
             }
         }
 
-        return immediateField(out);
+        Field field = immediateField(out);
+
+        if (field != null)
+        {
+            if (field.hasDisabledFlag(flag))
+            {
+                return null;
+            }
+        }
+
+        return field;
+    }
+
+    /**
+     * If a field in the location that matches the field flag(s)
+     *
+     * @param loc
+     * @param flags
+     * @return result
+     */
+    public boolean hasSourceField(Location loc, FieldFlag flag)
+    {
+        return getSourceField(loc, flag) != null;
     }
 
     /**
@@ -1487,63 +1563,16 @@ public final class ForceFieldManager
     }
 
     /**
-     * If a field in the location that matches the field flag(s)
-     *
-     * @param loc
-     * @param flags
-     * @return result
-     */
-    public boolean hasSourceField(Location loc, FieldFlag flag)
-    {
-        return getSourceField(loc, flag) != null;
-    }
-
-    /**
-     * Returns the fields that the location is in match the field flag(s)
-     *
-     * @param loc
-     * @param flags
-     * @return the fields
-     */
-    public List<Field> getSourceFields(Location loc, FieldFlag flag)
-    {
-        List<Field> sources = getSourceFields(new ChunkVec(loc.getBlock().getChunk()), flag);
-
-        for (Iterator it = sources.iterator(); it.hasNext(); )
-        {
-            Field field = (Field) it.next();
-
-            if (!field.envelops(loc))
-            {
-                it.remove();
-            }
-        }
-
-        return sources;
-    }
-
-    /**
-     * Get all fields matching this flag that are touching this chunk
-     *
-     * @param cv
-     * @return
-     */
-    public List<Field> getSourceFields(Chunk chunk, FieldFlag flag)
-    {
-        return getSourceFields(new ChunkVec(chunk), flag);
-    }
-
-    /**
      * Returns the first field found in the location and that the player is not allowed in, optionally with field flags
      *
-     * @deprecated
      * @param loc
      * @param playerName
      * @return the fields
+     * @deprecated
      */
     public Field getNotAllowedSourceField(Location loc, String playerName, FieldFlag flag)
     {
-        List<Field> sources = getSourceFields(loc.getBlock().getChunk(), flag);
+        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag);
 
         List<Field> out = new LinkedList<Field>();
 
@@ -1569,7 +1598,7 @@ public final class ForceFieldManager
      */
     public Field getConflictSourceField(Location loc, String playerName, FieldFlag flag)
     {
-        List<Field> sources = getSourceFields(loc.getBlock().getChunk(), flag);
+        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag);
 
         List<Field> out = new LinkedList<Field>();
 
@@ -1595,7 +1624,7 @@ public final class ForceFieldManager
      */
     public List<Field> getAllowedSourceFields(Location loc, String playerName, FieldFlag flag)
     {
-        List<Field> sources = getSourceFields(loc.getBlock().getChunk(), flag);
+        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag);
 
         for (Iterator it = sources.iterator(); it.hasNext(); )
         {
@@ -1620,7 +1649,7 @@ public final class ForceFieldManager
      */
     public List<Field> getNotAllowedSourceFields(Location loc, String playerName, FieldFlag flag)
     {
-        List<Field> sources = getSourceFields(loc.getBlock().getChunk(), flag);
+        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag);
 
         for (Iterator it = sources.iterator(); it.hasNext(); )
         {
@@ -1655,7 +1684,7 @@ public final class ForceFieldManager
         {
             for (int z = zlow; z <= zhigh; z++)
             {
-                List<Field> fields = getSourceFields(new ChunkVec(x, z, loc.getWorld().getName()), flag);
+                List<Field> fields = getSourceFieldsInChunk(new ChunkVec(x, z, loc.getWorld().getName()), flag);
 
                 if (fields != null)
                 {
@@ -1687,7 +1716,7 @@ public final class ForceFieldManager
         {
             for (int z = zlow; z <= zhigh; z++)
             {
-                List<Field> fields = getSourceFields(new ChunkVec(x, z, loc.getWorld().getName()), flag);
+                List<Field> fields = getSourceFieldsInChunk(new ChunkVec(x, z, loc.getWorld().getName()), flag);
 
                 if (fields != null)
                 {
@@ -1713,7 +1742,7 @@ public final class ForceFieldManager
      */
     public Field getPointedField(Player player)
     {
-        if (player.getLocation().getY() < 127)
+        try
         {
             Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
@@ -1734,6 +1763,10 @@ public final class ForceFieldManager
                     }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+
         }
 
         return null;

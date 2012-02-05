@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 8.1.1
+version: 8.1.2
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag]
 commands:
@@ -101,7 +101,9 @@ permissions:
   preciousstones.bypass.world:
     description: Bypasses world limitation
   preciousstones.bypass.allowed-only-inside:
-    description: Bypasses allowed only restriction
+    description: Bypasses allowed only inside restriction
+  preciousstones.bypass.allowed-only-outside:
+    description: Bypasses allowed only outside restriction
   preciousstones.bypass.on-disabled:
     description: Bypasses on-disabled flags
   preciousstones.alert.notify.place:
@@ -266,6 +268,7 @@ permissions:
       preciousstones.bypass.teleport: true
       preciousstones.bypass.world: true
       preciousstones.bypass.allowed-only-inside: true
+      preciousstones.bypass.allowed-only-outside: true
       preciousstones.bypass.on-disabled: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)

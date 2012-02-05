@@ -110,11 +110,36 @@ public class PSPlayerListener implements Listener
             }
         }
 
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+        {
+            if (plugin.getCuboidManager().hasOpenCuboid(player))
+            {
+                if (player.isSneaking())
+                {
+                    plugin.getCuboidManager().revertLastSelection(player);
+                    return;
+                }
+            }
+        }
+
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR))
+        {
+            if (plugin.getCuboidManager().hasOpenCuboid(player))
+            {
+                if (!player.isSneaking())
+                {
+                    plugin.getCuboidManager().expandDirection(player);
+                    return;
+                }
+            }
+        }
+
+
         if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
         {
             if (plugin.getCuboidManager().hasOpenCuboid(player))
             {
-                if (player.getLocation().getY() < 127)
+                try
                 {
                     Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
@@ -171,15 +196,14 @@ public class PSPlayerListener implements Listener
                     }
                     return;
                 }
-                else
+                catch (Exception ex)
                 {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot select blocks from this height");
-                    return;
+
                 }
             }
             else
             {
-                if (player.getLocation().getY() < 127)
+                try
                 {
                     Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
@@ -223,10 +247,9 @@ public class PSPlayerListener implements Listener
                         }
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot select blocks from this height");
-                    return;
+
                 }
             }
         }
@@ -344,10 +367,7 @@ public class PSPlayerListener implements Listener
                                             {
                                                 if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
                                                 {
-                                                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.on-disabled"))
-                                                    {
-                                                        player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
-                                                    }
+                                                    player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
                                                 }
 
                                                 ChatBlock.sendBlank(player);
@@ -381,10 +401,6 @@ public class PSPlayerListener implements Listener
                                         plugin.getCommunicationManager().showProtectedLocation(player, block);
                                     }
                                 }
-                                else
-                                {
-                                    //plugin.getCommunicationManager().showProtected(player, block);
-                                }
                             }
                         }
                     }
@@ -412,7 +428,6 @@ public class PSPlayerListener implements Listener
             {
                 return false;
             }
-
         }
         else
         {
@@ -442,7 +457,7 @@ public class PSPlayerListener implements Listener
             {
                 if (!plugin.getPermissionsManager().has(event.getPlayer(), "preciousstones.bypass.teleport"))
                 {
-                    event.getPlayer().sendMessage(ChatColor.RED + "You are not allowed to teleport to that location");
+                    //event.getPlayer().sendMessage(ChatColor.RED + "You are not allowed to teleport to that location");
                     event.setCancelled(true);
                     return;
                 }
@@ -835,20 +850,6 @@ public class PSPlayerListener implements Listener
         if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
-        }
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(event = PlayerToggleSneakEvent.class, priority = EventPriority.HIGH)
-    public void onPlayerToggleSneak(PlayerToggleSneakEvent event)
-    {
-        Player player = event.getPlayer();
-
-        if (!player.isSneaking() && plugin.getCuboidManager().hasOpenCuboid(player))
-        {
-            plugin.getCuboidManager().revertLastSelection(player);
         }
     }
 

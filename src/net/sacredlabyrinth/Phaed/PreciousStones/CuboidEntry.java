@@ -1,8 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +19,7 @@ public class CuboidEntry
     private int maxx;
     private int maxy;
     private int maxz;
+    private Location expanded;
 
     public CuboidEntry(Field field)
     {
@@ -44,7 +47,7 @@ public class CuboidEntry
     }
 
     /**
-     * Removes the selected block from the lsit
+     * Removes the selected block from the list
      *
      * @param block
      */
@@ -143,6 +146,53 @@ public class CuboidEntry
                 maxz = loc.getBlockZ();
             }
         }
+    }
+
+    /**
+     * Get one block outside of the players facing direction
+     *
+     * @return
+     */
+    public Block getExpandedBlock(Player player)
+    {
+        calculate();
+
+        Location loc = player.getLocation();
+
+        if (!envelopsPlusOne(loc))
+        {
+            ChatBlock.sendMessage(player, ChatColor.RED + "Must be inside the cuboid to expand");
+            return null;
+        }
+
+        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(maxx - miny, maxz - minz), maxy - miny));
+
+        for (Block block : lineOfSight)
+        {
+            if (!envelopsPlusOne(block.getLocation()))
+            {
+                if (expanded != null)
+                {
+                    player.sendBlockChange(expanded, 0, (byte) 0);
+                }
+
+                expanded = block.getLocation();
+
+                return block;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean envelopsPlusOne(Location loc)
+    {
+        if (loc.getX() < maxx + 1 && loc.getX() > minx - 1 && loc.getY() > miny - 1 && loc.getY() < maxy + 1 && loc.getZ() > minz - 1 && loc.getZ() < maxz + 1)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**

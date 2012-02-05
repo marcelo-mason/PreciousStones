@@ -4,30 +4,16 @@
     <list default="true" id="7d7908ed-52fb-4502-9fa0-b8d3fbf94db7" name="Default" comment="6.0">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/config.yml" afterPath="$PROJECT_DIR$/src/config.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldFlag.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldFlag.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/CuboidEntry.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/CuboidEntry.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldSettings.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldSettings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Helper.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Helper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/PlayerData.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/PlayerData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/PreciousStones.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/PreciousStones.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Rollback.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Rollback.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSServerListener.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSServerListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSWorldListener.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSWorldListener.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/EntryManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/EntryManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CuboidManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CuboidManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForesterManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForesterManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/LightningManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/LightningManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/LimitManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/LimitManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/MineManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/MineManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SimpleClansManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SimpleClansManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SnitchManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SnitchManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/VelocityManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/VelocityManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/plugin.yml" afterPath="$PROJECT_DIR$/src/plugin.yml" />
     </list>
@@ -93,10 +79,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="PSBlockListener.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java">
+      <file leaf-file-name="CuboidManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CuboidManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="706" column="38" selection-start="24097" selection-end="24097" vertical-scroll-proportion="0.0">
+            <state line="196" column="53" selection-start="5659" selection-end="5659" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CuboidEntry.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/CuboidEntry.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="163" column="94" selection-start="3478" selection-end="3478" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -104,47 +99,67 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ForceFieldManager.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="PreciousStones.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/PreciousStones.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="13" selection-start="383" selection-end="383" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PSPlayerListener.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="124" column="60" selection-start="3704" selection-end="3704" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CommandManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="602" column="75" selection-start="29610" selection-end="29625" vertical-scroll-proportion="-12.52">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Field.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1145" column="33" selection-start="24902" selection-end="24902" vertical-scroll-proportion="-6.52">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SettingsManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="207" column="29" selection-start="8294" selection-end="8294" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PSBlockListener.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="655" column="47" selection-start="21799" selection-end="21799" vertical-scroll-proportion="0.559949">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ForceFieldManager.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1499" column="0" selection-start="39805" selection-end="39805" vertical-scroll-proportion="1.4391143">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SnitchManager.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SnitchManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="69" selection-start="2293" selection-end="2293" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PSWorldListener.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSWorldListener.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="59" selection-start="1276" selection-end="1276" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SimpleClansManager.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SimpleClansManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="165" column="84" selection-start="4130" selection-end="4130" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PSEntityListener.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="92" column="0" selection-start="2760" selection-end="2760" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="1769" column="9" selection-start="47462" selection-end="47513" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -168,22 +183,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/VelocityManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/MineManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/EntryManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldFlag.java" />
         <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSWorldListener.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Helper.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldFlag.java" />
         <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldSettings.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java" />
-        <option value="$PROJECT_DIR$/src/config.yml" />
         <option value="$PROJECT_DIR$/src/plugin.yml" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CuboidManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java" />
         <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/CuboidEntry.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java" />
+        <option value="$PROJECT_DIR$/src/config.yml" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java" />
       </list>
     </option>
   </component>
@@ -245,6 +260,208 @@
             <PATH_ELEMENT>
               <option name="myItemId" />
               <option name="myItemType" value="com.intellij.ide.favoritesTreeView.FavoritesTreeNodeDescriptor" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="All">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="register">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="register">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="payment">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="vectors">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="storage">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="managers">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="PreciousStones">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="listeners">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -493,208 +710,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope">
-        <subPane subId="All">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="register">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="register">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="payment">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="vectors">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="storage">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="managers">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="net/sacredlabyrinth/Phaed">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="PreciousStones">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="listeners">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -863,22 +878,22 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="84" y="76" width="1653" height="933" extended-state="0" />
+    <frame x="82" y="74" width="1708" height="950" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32950193" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2788104" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27548543" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2467208" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3276699" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21685255" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21601942" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3279099" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854465" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39537787" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19237976" sideWeight="0.7211896" order="0" side_tool="false" content_ui="tabs" x="883" y="123" width="267" height="726" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18417874" sideWeight="0.7839806" order="0" side_tool="false" content_ui="tabs" x="883" y="123" width="267" height="726" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32713756" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -935,100 +950,118 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSServerListener.java">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/BlockData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="59" selection-start="59" selection-end="59" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="546" column="84" selection-start="27020" selection-end="27020" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldSettings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="155" column="0" selection-start="4613" selection-end="4613" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/AbstractVec.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="24" selection-start="405" selection-end="410" vertical-scroll-proportion="0.29450262" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/config.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="195" column="29" selection-start="4374" selection-end="4374" vertical-scroll-proportion="0.42990655" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="206" column="56" selection-start="8278" selection-end="8297" vertical-scroll-proportion="0.41388518" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/plugin.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="268" column="45" selection-start="10414" selection-end="10414" vertical-scroll-proportion="0.72047246">
+        <state line="19" column="40" selection-start="374" selection-end="374" vertical-scroll-proportion="0.3387704">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="349" column="53" selection-start="15242" selection-end="15242" vertical-scroll-proportion="0.3911343">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1321" column="0" selection-start="28893" selection-end="28893" vertical-scroll-proportion="0.410691">
+        <state line="2502" column="24" selection-start="91356" selection-end="91356" vertical-scroll-proportion="0.37117347">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/VisualizationManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="133" column="9" selection-start="3061" selection-end="3748" vertical-scroll-proportion="0.019556714">
+        <state line="512" column="61" selection-start="16533" selection-end="16533" vertical-scroll-proportion="0.056461733">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java">
+    <entry file="jar://D:/Download/Plugins/craftbukkit-1.1-R1-20120117.215215-65.jar!/org/bukkit/entity/LivingEntity.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="0" selection-start="2760" selection-end="2760" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SimpleClansManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="165" column="84" selection-start="4130" selection-end="4130" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SnitchManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="69" selection-start="2293" selection-end="2293" vertical-scroll-proportion="0.0">
+        <state line="19" column="57" selection-start="462" selection-end="476" vertical-scroll-proportion="0.34326425">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSWorldListener.java">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CuboidManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="59" selection-start="1276" selection-end="1276" vertical-scroll-proportion="0.0">
+        <state line="196" column="53" selection-start="5659" selection-end="5659" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="706" column="38" selection-start="24097" selection-end="24097" vertical-scroll-proportion="0.0">
+        <state line="124" column="60" selection-start="3704" selection-end="3704" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/CuboidEntry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="163" column="94" selection-start="3478" selection-end="3478" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/PreciousStones.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="13" selection-start="383" selection-end="383" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="602" column="75" selection-start="29610" selection-end="29625" vertical-scroll-proportion="-12.52">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1145" column="33" selection-start="24902" selection-end="24902" vertical-scroll-proportion="-6.52">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="195" column="46" selection-start="4391" selection-end="4391" vertical-scroll-proportion="0.3537859">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/plugin.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="270" column="48" selection-start="10529" selection-end="10529" vertical-scroll-proportion="0.45294857">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1499" column="0" selection-start="39805" selection-end="39805" vertical-scroll-proportion="1.4391143">
+        <state line="1769" column="9" selection-start="47462" selection-end="47513" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="207" column="29" selection-start="8294" selection-end="8294" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldFlag.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="12" selection-start="91" selection-end="91" vertical-scroll-proportion="-0.19383825">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="655" column="47" selection-start="21799" selection-end="21799" vertical-scroll-proportion="0.559949">
           <folding />
         </state>
       </provider>

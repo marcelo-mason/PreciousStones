@@ -591,17 +591,16 @@ public class PSBlockListener implements Listener
 
             if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.allowed-only-inside"))
             {
-                if (fs.hasAllowedOnlyField())
+                if (fs.hasAllowedOnlyInside())
                 {
-                    List<Field> fields = plugin.getForceFieldManager().getAllowedSourceFields(block.getLocation(), player.getName(), FieldFlag.ALL);
+                    List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
 
                     boolean allowed = false;
 
-                    for (Field allowedField : fields)
+                    for (Field surroundingField : fields)
                     {
-                        if (fs.isAllowedOnlyField(allowedField))
+                        if (fs.isAllowedOnlyInside(surroundingField))
                         {
-                            PreciousStones.getLog().info("allowed: " + allowedField);
                             allowed = true;
                             break;
                         }
@@ -609,18 +608,53 @@ public class PSBlockListener implements Listener
 
                     if (!allowed)
                     {
-                        ChatBlock.sendMessage(player, ChatColor.RED + Helper.capitalize(fs.getTitle()) + " needs to be be placed inside a " + fs.getAllowedOnlyFieldString());
+                        ChatBlock.sendMessage(player, ChatColor.RED + Helper.capitalize(fs.getTitle()) + " needs to be be placed inside " + fs.getAllowedOnlyInsideString());
                         event.setCancelled(true);
                         return;
                     }
                 }
             }
 
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.allowed-only-outside"))
+            {
+                if (fs.hasAllowedOnlyOutside())
+                {
+                    List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
+
+                    boolean notAllowed = false;
+
+                    for (Field surroundingField : fields)
+                    {
+                        if (fs.isAllowedOnlyOutside(surroundingField))
+                        {
+                            notAllowed = true;
+                            break;
+                        }
+                    }
+
+                    if (notAllowed)
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.RED + Helper.capitalize(fs.getTitle()) + " needs to be be placed outside " + fs.getAllowedOnlyOutsideString());
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+
+
             Field field = plugin.getForceFieldManager().add(block, player, event);
 
             if (field != null)
             {
                 //field.generateFence();
+
+                // start messages disabled
+
+                if (plugin.getSettingsManager().isStartMessagesDisabled())
+                {
+                    field.disableFlag("welcome-message");
+                    field.disableFlag("farewell-message");
+                }
 
                 // places the field in a disabled state
 
@@ -694,64 +728,67 @@ public class PSBlockListener implements Listener
         {
             Field field = plugin.getForceFieldManager().getConflictSourceField(block.getLocation(), player.getName(), FieldFlag.ALL);
 
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (field != null)
             {
-                boolean conflicted = false;
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
-
-                allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field1.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                 {
-                    if (field1 != null && !field1.equals(field))
+                    boolean conflicted = false;
+
+                    Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
+
+                    allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowed || field1.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
-                        conflicted = true;
+                        if (field1 != null && !field1.equals(field))
+                        {
+                            conflicted = true;
+                        }
                     }
-                }
 
-                Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
+                    Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
 
-                allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                if (!allowed || field2.hasFlag(FieldFlag.APPLY_TO_ALL))
-                {
-                    if (field2 != null && !field2.equals(field))
+                    if (!allowed || field2.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
-                        conflicted = true;
+                        if (field2 != null && !field2.equals(field))
+                        {
+                            conflicted = true;
+                        }
                     }
-                }
 
-                Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
+                    Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
 
-                allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                if (!allowed || field3.hasFlag(FieldFlag.APPLY_TO_ALL))
-                {
-                    if (field3 != null && !field3.equals(field))
+                    if (!allowed || field3.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
-                        conflicted = true;
+                        if (field3 != null && !field3.equals(field))
+                        {
+                            conflicted = true;
+                        }
                     }
-                }
 
-                Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
+                    Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
 
-                allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                if (!allowed || field4.hasFlag(FieldFlag.APPLY_TO_ALL))
-                {
-                    if (field4 != null && !field4.equals(field))
+                    if (!allowed || field4.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
-                        conflicted = true;
+                        if (field4 != null && !field4.equals(field))
+                        {
+                            conflicted = true;
+                        }
                     }
-                }
 
-                if (conflicted)
-                {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place chest next so someone else's field");
-                    event.setCancelled(true);
+                    if (conflicted)
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place chest next so someone else's field");
+                        event.setCancelled(true);
+                    }
                 }
             }
         }

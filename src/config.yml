@@ -193,6 +193,7 @@ cleanup:
     player-inactivity-purge-days: 45
     snitch-unused-purge-days: 30
 settings:
+    welcome-farewell-disabled-by-default: true
     disable-ground-info: true
     auto-download-vault: false
     global-field-limit: 1000000
@@ -235,7 +236,7 @@ cuboid:
     defining-blocktype: 49
 visualization:
     block-type: 20
-    seconds: 60
+    seconds: 30
     mark-block-type: 49
     end-on-player-move: false
     frame-block-type: 20

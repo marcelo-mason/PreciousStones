@@ -167,6 +167,11 @@ public class CommunicatonManager
      */
     public void notifyRollBack(Field field, int count)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         Player player = plugin.getServer().getPlayerExact(field.getOwner());
 
         if (player != null)
@@ -246,6 +251,11 @@ public class CommunicatonManager
      */
     public void notifyPlaceCuboid(Player player, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyPlace() && canNotify(player))
@@ -291,6 +301,12 @@ public class CommunicatonManager
     public void notifyPlaceBreakableFF(Player player, Block fieldblock)
     {
         Field field = plugin.getForceFieldManager().getField(fieldblock);
+
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyPlace() && canNotify(player))
@@ -377,6 +393,12 @@ public class CommunicatonManager
     public void notifyDestroyFF(Player player, Block fieldblock)
     {
         Field field = plugin.getForceFieldManager().getField(fieldblock);
+
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyDestroy() && canNotify(player))
@@ -421,6 +443,12 @@ public class CommunicatonManager
     public void notifyDestroyOthersFF(Player player, Block fieldblock)
     {
         Field field = plugin.getForceFieldManager().getField(fieldblock);
+
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyDestroy() && canNotify(player))
@@ -466,6 +494,12 @@ public class CommunicatonManager
     public void notifyDestroyBreakableFF(Player player, Block fieldblock)
     {
         Field field = plugin.getForceFieldManager().getField(fieldblock);
+
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyDestroy() && canNotify(player))
@@ -511,6 +545,11 @@ public class CommunicatonManager
      */
     public void notifyBypassPlace(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyBypassPlace() && canNotify(player))
@@ -556,6 +595,11 @@ public class CommunicatonManager
      */
     public void notifyPaintingBypassPlace(Player player, Location loc, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyBypassPlace() && canNotify(player))
@@ -601,6 +645,11 @@ public class CommunicatonManager
      */
     public void notifyBypassPlaceU(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyBypassPlace() && canNotify(player))
@@ -646,6 +695,11 @@ public class CommunicatonManager
      */
     public void notifyBypassDestroy(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyBypassDestroy() && canNotify(player))
@@ -785,6 +839,11 @@ public class CommunicatonManager
      */
     public void warnEntry(Player player, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnEntry() && canWarn(player))
@@ -835,6 +894,11 @@ public class CommunicatonManager
      */
     public void warnFire(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnFire() && canWarn(player))
@@ -880,6 +944,11 @@ public class CommunicatonManager
      */
     public void warnPlace(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnPlace() && canWarn(player))
@@ -925,6 +994,11 @@ public class CommunicatonManager
      */
     public void warnUse(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnUse() && canWarn(player))
@@ -970,6 +1044,11 @@ public class CommunicatonManager
      */
     public void warnEmpty(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnPlace() && canWarn(player))
@@ -1108,6 +1187,11 @@ public class CommunicatonManager
      */
     public void warnDestroyArea(Player player, Block damagedblock, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnDestroyArea() && canWarn(player))
@@ -1153,6 +1237,11 @@ public class CommunicatonManager
      */
     public void warnConflictU(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (canWarn(player))
@@ -1205,6 +1294,11 @@ public class CommunicatonManager
      */
     public void warnConflictFF(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         FieldSettings fsconflict = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
@@ -1313,6 +1407,11 @@ public class CommunicatonManager
      */
     public void warnConflictPistonFF(Player player, Block block, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (canWarn(player))
@@ -1472,6 +1571,11 @@ public class CommunicatonManager
      */
     public void warnPvP(Player attacker, Player victim, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnPvp() && canWarn(attacker))
@@ -1538,6 +1642,11 @@ public class CommunicatonManager
      */
     public void warnBypassPvP(Player attacker, Player victim, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isNotifyBypassPvp() && canNotify(attacker))
@@ -1771,6 +1880,11 @@ public class CommunicatonManager
      */
     public void warnPlaceUnprotectableInField(Player player, Block unprotectableblock, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
@@ -2003,6 +2117,11 @@ public class CommunicatonManager
      */
     public void notifyBypassPlaceUnprotectableInField(Player player, Block unprotectableblock, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
@@ -2097,6 +2216,11 @@ public class CommunicatonManager
      */
     public void showWelcomeMessage(Player player, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         if (field.getName().length() > 0)
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + field.getName());
@@ -2113,6 +2237,11 @@ public class CommunicatonManager
      */
     public void showFarewellMessage(Player player, Field field)
     {
+        if (field == null)
+        {
+            return;
+        }
+
         if (field.getName().length() > 0)
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Leaving " + field.getName());
@@ -2369,6 +2498,11 @@ public class CommunicatonManager
      */
     public boolean showFieldDetails(Player player, Field field)
     {
+        if (field == null)
+        {
+            return false;
+        }
+
         ChatBlock cb = getNewChatBlock(player);
         FieldSettings fs = field.getSettings();
 
@@ -2399,7 +2533,7 @@ public class CommunicatonManager
 
         if (applies.isEmpty())
         {
-            applies.add("allowed");
+            applies.add("default");
         }
 
         cb.addRow("  " + color + "Applies to: ", ChatColor.WHITE + Helper.toMessage(applies, ","), "");
@@ -2501,11 +2635,6 @@ public class CommunicatonManager
             {
                 ChatBlock.sendBlank(player);
 
-                if (field.hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
-                {
-                    ChatBlock.sendMessage(player, "  " + ChatColor.WHITE + " * " + ChatColor.RED + "This field becomes breakable when disabled");
-                }
-
                 List<String> cond = new LinkedList<String>();
 
                 if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
@@ -2521,12 +2650,6 @@ public class CommunicatonManager
                 if (field.hasFlag(FieldFlag.REDEFINE_ON_DISABLED))
                 {
                     cond.add("cuboid");
-                }
-
-                if (!cond.isEmpty())
-                {
-                    ChatBlock.sendMessage(player, "  " + ChatColor.WHITE + " * " + ChatColor.RED + "This field's " + Helper.toMessage(cond, ", ") + " can only be modified");
-                    ChatBlock.sendMessage(player, "     " + ChatColor.RED + "while the field is disabled");
                 }
 
                 showMessage = false;

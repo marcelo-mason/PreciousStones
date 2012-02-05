@@ -38,7 +38,8 @@ public class FieldSettings
     private List<Integer> limits = new ArrayList<Integer>();
     private List<Integer> preventUse = new ArrayList<Integer>();
     private List<String> allowedWorlds = new ArrayList<String>();
-    private List<String> allowedOnlyFields = new ArrayList<String>();
+    private List<String> allowedOnlyInside = new ArrayList<String>();
+    private List<String> allowedOnlyOutside = new ArrayList<String>();
     private List<FieldFlag> defaultFlags = new LinkedList<FieldFlag>();
 
     /**
@@ -206,7 +207,12 @@ public class FieldSettings
 
         if (map.containsKey("allowed-only-inside") && Helper.isStringList(map.get("allowed-only-inside")))
         {
-            allowedOnlyFields = (List<String>) map.get("allowed-only-inside");
+            allowedOnlyInside = (List<String>) map.get("allowed-only-inside");
+        }
+
+        if (map.containsKey("allowed-only-outside") && Helper.isStringList(map.get("allowed-only-outside")))
+        {
+            allowedOnlyOutside = (List<String>) map.get("allowed-only-outside");
         }
 
         if (map.containsKey("prevent-fire") && Helper.isBoolean(map.get("prevent-fire")))
@@ -739,9 +745,9 @@ public class FieldSettings
      *
      * @return
      */
-    public boolean hasAllowedOnlyField()
+    public boolean hasAllowedOnlyInside()
     {
-        return allowedOnlyFields != null && !allowedOnlyFields.isEmpty();
+        return allowedOnlyInside != null && !allowedOnlyInside.isEmpty();
     }
 
     /**
@@ -749,9 +755,9 @@ public class FieldSettings
      *
      * @return
      */
-    public boolean isAllowedOnlyField(Field field)
+    public boolean isAllowedOnlyInside(Field field)
     {
-        return allowedOnlyFields.contains(field.getSettings().getTitle());
+        return allowedOnlyInside.contains(field.getSettings().getTitle());
     }
 
     /**
@@ -759,9 +765,39 @@ public class FieldSettings
      *
      * @return
      */
-    public String getAllowedOnlyFieldString()
+    public String getAllowedOnlyInsideString()
     {
-        return Helper.toMessage(allowedOnlyFields, " or ");
+        return Helper.toMessage(allowedOnlyInside, " or ");
+    }
+
+    /**
+     * Whether the field has allowed only fields set
+     *
+     * @return
+     */
+    public boolean hasAllowedOnlyOutside()
+    {
+        return allowedOnlyOutside != null && !allowedOnlyOutside.isEmpty();
+    }
+
+    /**
+     * If the field is inside and allowed field
+     *
+     * @return
+     */
+    public boolean isAllowedOnlyOutside(Field field)
+    {
+        return allowedOnlyOutside.contains(field.getSettings().getTitle());
+    }
+
+    /**
+     * Returns a formatted string with all the allowed only fields
+     *
+     * @return
+     */
+    public String getAllowedOnlyOutsideString()
+    {
+        return Helper.toMessage(allowedOnlyOutside, " or ");
     }
 
     /**

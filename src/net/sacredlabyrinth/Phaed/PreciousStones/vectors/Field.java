@@ -561,7 +561,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         for (ChunkVec ecv : envelopingChunks)
         {
-            List<Field> fields = PreciousStones.getInstance().getForceFieldManager().getSourceFields(ecv, FieldFlag.ALL);
+            List<Field> fields = PreciousStones.getInstance().getForceFieldManager().getSourceFieldsInChunk(ecv, FieldFlag.ALL);
             sources.addAll(fields);
             sources.remove(this);
         }
@@ -994,10 +994,25 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         // writing the list of flags to json
 
-        json.put("disabledFlags", getDisabledFlagsStringList());
-        json.put("insertedFlags", getInsertedFlagsStringList());
-        json.put("revertSecs", revertSecs);
-        json.put("disabled", disabled);
+        if (!disabledFlags.isEmpty())
+        {
+            json.put("disabledFlags", getDisabledFlagsStringList());
+        }
+
+        if (!insertedFlags.isEmpty())
+        {
+            json.put("insertedFlags", getInsertedFlagsStringList());
+        }
+
+        if (revertSecs > 0)
+        {
+            json.put("revertSecs", revertSecs);
+        }
+
+        if (disabled)
+        {
+            json.put("disabled", disabled);
+        }
 
         return json.toString();
     }
@@ -1022,6 +1037,16 @@ public class Field extends AbstractVec implements Comparable<Field>
             ll.add(Helper.toFlagStr(flag));
         }
         return ll;
+    }
+
+    /**
+     * Returns inserted flags
+     *
+     * @return
+     */
+    public List<FieldFlag> getInsertedFlags()
+    {
+       return insertedFlags;
     }
 
     /**
@@ -1108,6 +1133,8 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void enableFlag(String flagStr)
     {
+        boolean canEnable = false;
+
         for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
         {
             FieldFlag flag = (FieldFlag) iter.next();
@@ -1116,9 +1143,11 @@ public class Field extends AbstractVec implements Comparable<Field>
             {
                 //remove from the disableFlags list
                 iter.remove();
+                canEnable = true;
             }
         }
-        if (!flags.contains(Helper.toFieldFlag(flagStr)))
+
+        if (canEnable && !flags.contains(Helper.toFieldFlag(flagStr)))
         {
             flags.add(Helper.toFieldFlag(flagStr));
         }

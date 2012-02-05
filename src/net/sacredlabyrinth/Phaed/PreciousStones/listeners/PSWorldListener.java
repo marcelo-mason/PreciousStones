@@ -44,7 +44,7 @@ public class PSWorldListener implements Listener
             return;
         }
 
-        List<Field> fields = plugin.getForceFieldManager().getSourceFields(new ChunkVec(event.getChunk()), FieldFlag.KEEP_CHUNKS_LOADED);
+        List<Field> fields = plugin.getForceFieldManager().getSourceFieldsInChunk(new ChunkVec(event.getChunk()), FieldFlag.KEEP_CHUNKS_LOADED);
 
         if (!fields.isEmpty())
         {

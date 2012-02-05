@@ -19,6 +19,7 @@ import java.util.*;
  */
 public final class SettingsManager
 {
+    private boolean startMessagesDisabled;
     private boolean disableGroundInfo;
     private boolean autoDownloadVault;
     private int globalFieldLimit;
@@ -204,6 +205,7 @@ public final class SettingsManager
         warnLaunch = config.getBoolean("warn.launch");
         warnCannon = config.getBoolean("warn.cannon");
         warnMine = config.getBoolean("warn.mine");
+        startMessagesDisabled = config.getBoolean("settings.welcome-farewell-disabled-by-default");
         disableGroundInfo = config.getBoolean("settings.disable-ground-info");
         autoDownloadVault = config.getBoolean("settings.auto-download-vault");
         globalFieldLimit = config.getInt("settings.global-field-limit");
@@ -1350,5 +1352,10 @@ public final class SettingsManager
     public boolean isDisableGroundInfo()
     {
         return disableGroundInfo;
+    }
+
+    public boolean isStartMessagesDisabled()
+    {
+        return startMessagesDisabled;
     }
 }

@@ -513,78 +513,90 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
+                                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.on-disabled"))
                                 {
-                                    if (!field.isDisabled())
+                                    if (field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field's flags can only be toggled while disabled");
-                                        return true;
+                                        if (!field.isDisabled())
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.RED + "This field's flags can only be toggled while disabled");
+                                            return true;
+                                        }
                                     }
                                 }
 
                                 if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
                                 {
+                                    boolean unToggable = false;
+
                                     if (flagStr.equalsIgnoreCase("all"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("cuboid"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("apply-to-reverse"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("apply-to-all"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("no-player-place"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
+
                                     if (flagStr.equalsIgnoreCase("no-conflict"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("toggle-on-disabled"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("prevent-unprotectable"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("redefine-on-disabled"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("modify-on-disabled"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("breakable-on-disabled"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("sneaking-bypass"))
                                     {
-                                        return true;
+                                        unToggable = true;
                                     }
 
                                     if (flagStr.equalsIgnoreCase("place-disabled"))
                                     {
+                                        unToggable = true;
+                                    }
+
+                                    if (unToggable)
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This flag cannot be toggled");
                                         return true;
                                     }
 
@@ -771,6 +783,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (field.insertFieldFlag(flagStr))
                                     {
+                                        plugin.getForceFieldManager().addSourceField(field);
                                         ChatBlock.sendMessage(sender, ChatColor.AQUA + "The field flag inserted");
                                         plugin.getStorageManager().offerField(field);
                                     }
@@ -1095,7 +1108,7 @@ public final class CommandManager implements CommandExecutor
                                 return true;
                             }
 
-                            if (player.getLocation().getY() < 127)
+                            try
                             {
                                 Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
 
@@ -1121,6 +1134,10 @@ public final class CommandManager implements CommandExecutor
                                         return true;
                                     }
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+
                             }
 
                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "You are not pointing at a field or unbreakable block");
