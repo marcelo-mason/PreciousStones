@@ -1106,6 +1106,12 @@ public final class ForceFieldManager
             }
         }
 
+        if (plugin.getSimpleClansManager().inWar(field, playerName))
+        {
+            PreciousStones.debug("allowed war block break: " + playerName);
+            return true;
+        }
+
         boolean allowed = isAllowed(field, playerName);
 
         if (field.hasFlag(FieldFlag.APPLY_TO_REVERSE))
@@ -1113,12 +1119,22 @@ public final class ForceFieldManager
             return !allowed;
         }
 
-        if (plugin.getSimpleClansManager().inWar(field, playerName))
-        {
-            return true;
-        }
-
         return allowed;
+    }
+
+    /**
+     * Determine whether a player is allowed on a field
+     *
+     * @param fieldBlock
+     * @param playerName
+     * @return confirmation
+     */
+    public boolean isAllowed(Block fieldBlock, String playerName)
+    {
+        Field field = getField(fieldBlock);
+
+        return field != null && isAllowed(field, playerName);
+
     }
 
     /**
@@ -1146,21 +1162,6 @@ public final class ForceFieldManager
         }
 
         return field.isAllowed(playerName);
-    }
-
-    /**
-     * Determine whether a player is allowed on a field
-     *
-     * @param fieldBlock
-     * @param playerName
-     * @return confirmation
-     */
-    public boolean isAllowed(Block fieldBlock, String playerName)
-    {
-        Field field = getField(fieldBlock);
-
-        return field != null && field.isAllowed(playerName);
-
     }
 
     /**

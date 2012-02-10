@@ -49,7 +49,8 @@ public class PreciousStones extends JavaPlugin
     /*
      * Fake main to allow us to run from netbeans
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
 
 
     }
@@ -75,7 +76,10 @@ public class PreciousStones extends JavaPlugin
      */
     public static void debug(String msg)
     {
-        logger.info(msg);
+        if (getInstance().getSettingsManager().isDebugging())
+        {
+            logger.info(msg);
+        }
     }
 
     /**

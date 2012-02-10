@@ -28,7 +28,7 @@ public class PSServerListener implements Listener
         plugin = PreciousStones.getInstance();
     }
 
-    @EventHandler(event = PluginEnableEvent.class, priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPluginEnable(PluginEnableEvent event)
     {
         if (plugin.getSettingsManager().isAutoDownloadVault())

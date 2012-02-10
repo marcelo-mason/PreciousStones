@@ -994,14 +994,22 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         // writing the list of flags to json
 
+
+        JSONArray disabledFlags = new JSONArray();
+        disabledFlags.addAll(getDisabledFlagsStringList());
+
+        JSONArray insertedFlags = new JSONArray();
+        insertedFlags.addAll(getInsertedFlagsStringList());
+
+
         if (!disabledFlags.isEmpty())
         {
-            json.put("disabledFlags", getDisabledFlagsStringList());
+            json.put("disabledFlags", disabledFlags);
         }
 
         if (!insertedFlags.isEmpty())
         {
-            json.put("insertedFlags", getInsertedFlagsStringList());
+            json.put("insertedFlags", insertedFlags);
         }
 
         if (revertSecs > 0)
@@ -1058,8 +1066,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         if (flagString != null && !flagString.isEmpty())
         {
-            Object obj = JSONValue.parse(flagString);
-            JSONObject flags = (JSONObject) obj;
+            JSONObject flags = (JSONObject) JSONValue.parse(flagString);
 
             if (flags != null)
             {

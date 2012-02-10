@@ -36,7 +36,7 @@ public class PSBlockListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = BlockFadeEvent.class, priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockFade(BlockFadeEvent event)
     {
         Block affectedBlock = event.getBlock();
@@ -55,7 +55,7 @@ public class PSBlockListener implements Listener
      * @param event
      */
 
-    @EventHandler(event = BlockFromToEvent.class, priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockFromTo(BlockFromToEvent event)
     {
         if (true)
@@ -103,7 +103,7 @@ public class PSBlockListener implements Listener
      * @param event
      */
 
-    @EventHandler(event = BlockIgniteEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockIgnite(BlockIgniteEvent event)
     {
         if (event.isCancelled())
@@ -151,7 +151,7 @@ public class PSBlockListener implements Listener
      * @param event
      */
 
-    @EventHandler(event = BlockRedstoneEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockRedstoneChange(BlockRedstoneEvent event)
     {
         if (event.getNewCurrent() <= event.getOldCurrent())
@@ -186,7 +186,7 @@ public class PSBlockListener implements Listener
      * @param event
      */
 
-    @EventHandler(event = BlockBreakEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event)
     {
         if (event.isCancelled())
@@ -349,6 +349,7 @@ public class PSBlockListener implements Listener
                 {
                     event.setCancelled(true);
                     plugin.getCommunicationManager().warnDestroyArea(player, block, field);
+                    return;
                 }
             }
         }
@@ -398,7 +399,7 @@ public class PSBlockListener implements Listener
      * @param event
      */
 
-    @EventHandler(event = BlockPlaceEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent event)
     {
         if (event.isCancelled())
@@ -861,7 +862,7 @@ public class PSBlockListener implements Listener
      * @param event
      */
 
-    @EventHandler(event = BlockPistonExtendEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPistonExtend(BlockPistonExtendEvent event)
     {
         boolean unprotected = false;
@@ -908,7 +909,7 @@ public class PSBlockListener implements Listener
      * @param event
      */
 
-    @EventHandler(event = BlockPistonRetractEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPistonRetract(BlockPistonRetractEvent event)
     {
         boolean unprotected = false;

@@ -165,7 +165,7 @@ public class CuboidEntry
             return null;
         }
 
-        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(maxx - miny, maxz - minz), maxy - miny));
+        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(Math.max(maxx - miny, maxz - minz), maxy - miny), 128));
 
         for (Block block : lineOfSight)
         {

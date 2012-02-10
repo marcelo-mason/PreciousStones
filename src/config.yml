@@ -39,6 +39,7 @@ force-field-blocks:
     block: 0
     radius: 10
     custom-height: 21
+    sub-plot: true
     allowed-only-inside: [Town Protection]
     prevent-fire: true
     prevent-place: true
@@ -193,8 +194,9 @@ cleanup:
     player-inactivity-purge-days: 45
     snitch-unused-purge-days: 30
 settings:
+    show-debug-info: false
     welcome-farewell-disabled-by-default: true
-    disable-ground-info: true
+    disable-ground-info: false
     auto-download-vault: false
     global-field-limit: 1000000
     no-refund-for-fields: false
@@ -205,7 +207,6 @@ settings:
     disable-alerts-for-admins: true
     public-block-details: false
     blacklisted-worlds: [creative_world]
-    debug-on: false
     drop-on-delete: true
 forester:
     trees: 60

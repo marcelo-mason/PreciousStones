@@ -43,7 +43,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = EndermanPickupEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEndermanPickup(EndermanPickupEvent event)
     {
         if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.PREVENT_DESTROY))
@@ -60,7 +60,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = EndermanPlaceEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEndermanPlace(EndermanPlaceEvent event)
     {
         if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.PREVENT_PLACE))
@@ -78,7 +78,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = EntityTargetEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityTarget(EntityTargetEvent event)
     {
         if (event.isCancelled())
@@ -137,7 +137,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = CreatureSpawnEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
         Entity entity = event.getEntity();
@@ -168,7 +168,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = ExplosionPrimeEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onExplosionPrime(ExplosionPrimeEvent event)
     {
         if (event.isCancelled())
@@ -193,7 +193,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = EntityExplodeEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent event)
     {
         if (event.isCancelled())
@@ -400,7 +400,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = ItemSpawnEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onItemSpawn(ItemSpawnEvent event)
     {
         if (event.isCancelled())
@@ -424,7 +424,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = EntityDamageEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDamage(EntityDamageEvent event)
     {
         if (event.isCancelled())
@@ -539,7 +539,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = EntityDeathEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDeath(EntityDeathEvent event)
     {
         if (event.getEntity() instanceof Player)
@@ -552,7 +552,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = PaintingBreakEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPaintingBreak(PaintingBreakEvent event)
     {
         Painting painting = event.getPainting();
@@ -598,7 +598,7 @@ public class PSEntityListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = PaintingPlaceEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPaintingPlace(PaintingPlaceEvent event)
     {
         Painting painting = event.getPainting();

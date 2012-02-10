@@ -46,6 +46,7 @@ public final class SettingsManager
     private int visualizeSendSize;
     private int visualizeMaxFields;
     private boolean visualizeEndOnMove;
+    private boolean debugging;
     private boolean debug;
     private boolean debugdb;
     private boolean debugsql;
@@ -217,7 +218,7 @@ public final class SettingsManager
         offByDefault = config.getBoolean("settings.off-by-default");
         linesPerPage = config.getInt("settings.lines-per-page");
         logToHawkEye = config.getBoolean("settings.log-to-hawkeye");
-        debugdb = config.getBoolean("settings.debug-on");
+        debugging = config.getBoolean("settings.show-debug-info");
         blacklistedWorlds = config.getList("settings.blacklisted-worlds");
         cuboidDefiningType = config.getInt("cuboid.defining-blocktype");
         cuboidVisualizationType = config.getInt("cuboid.visualization-blocktype");
@@ -1357,5 +1358,10 @@ public final class SettingsManager
     public boolean isStartMessagesDisabled()
     {
         return startMessagesDisabled;
+    }
+
+    public boolean isDebugging()
+    {
+        return debugging;
     }
 }

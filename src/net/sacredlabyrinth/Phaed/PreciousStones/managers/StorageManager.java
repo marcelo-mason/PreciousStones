@@ -205,6 +205,8 @@ public final class StorageManager
         plugin.getForceFieldManager().clearChunkLists();
         plugin.getUnbreakableManager().clearChunkLists();
 
+        extractPlayers();
+
         final List<World> worlds = plugin.getServer().getWorlds();
 
         for (final World world : worlds)
@@ -212,8 +214,6 @@ public final class StorageManager
             loadWorldFields(world.getName());
             loadWorldUnbreakables(world.getName());
         }
-
-        extractPlayers();
     }
 
     /**

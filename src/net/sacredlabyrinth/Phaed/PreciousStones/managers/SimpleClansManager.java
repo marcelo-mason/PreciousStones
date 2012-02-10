@@ -145,25 +145,15 @@ public final class SimpleClansManager
         ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(offenderName);
         ClanPlayer cpOwner = simpleClans.getClanManager().getClanPlayer(field.getOwner());
 
-        if (cp != null)
+        if (cp != null && cpOwner != null)
         {
             List<Clan> warringClans = cp.getClan().getWarringClans();
 
-            String ownerClan = "";
-
-            if (cpOwner != null)
-            {
-                ownerClan = cpOwner.getTag();
-            }
+            String ownerClan = cpOwner.getTag();
 
             for (Clan warring : warringClans)
             {
-                if (ownerClan.equals(warring))
-                {
-                    return true;
-                }
-
-                if (plugin.getForceFieldManager().isAllowed(field,warring.getTag()))
+                if (ownerClan.equals(warring.getTag()))
                 {
                     return true;
                 }

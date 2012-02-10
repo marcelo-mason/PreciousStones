@@ -28,7 +28,7 @@ public class PSVehicleListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event = VehicleMoveEvent.class, priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onVehicleMove(VehicleMoveEvent event)
     {
         Vehicle v = event.getVehicle();

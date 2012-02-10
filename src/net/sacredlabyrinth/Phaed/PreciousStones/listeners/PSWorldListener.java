@@ -34,7 +34,7 @@ public class PSWorldListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=ChunkUnloadEvent.class, priority= EventPriority.HIGH)
+    @EventHandler(priority= EventPriority.HIGH)
     public void onChunkUnload(ChunkUnloadEvent event)
     {
         World world = event.getWorld();
@@ -55,7 +55,7 @@ public class PSWorldListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(event=WorldLoadEvent.class, priority=EventPriority.HIGH)
+    @EventHandler(priority=EventPriority.HIGH)
     public void onWorldLoad(WorldLoadEvent event)
     {
         DebugTimer dt = new DebugTimer("onWorldLoad");

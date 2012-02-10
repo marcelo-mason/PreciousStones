@@ -148,7 +148,15 @@ public class CuboidManager
                         if (newVolume != oldVolume)
                         {
                             plugin.getVisualizationManager().displayFieldOutline(player, ce);
-                            ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + newVolume + " blocks");
+
+                            if (newVolume > 0)
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + newVolume + " blocks");
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.RED + newVolume + " blocks (bypassing)");
+                            }
                         }
                     }
                     return true;
@@ -160,7 +168,7 @@ public class CuboidManager
             }
             else
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "Exceeds maximum volume");
+                ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid exceeds available volume");
             }
         }
         else
@@ -244,11 +252,14 @@ public class CuboidManager
         {
             final Field field = ce.getField();
 
-            if (ce.isExceeded() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
+            if (ce.isExceeded())
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid exceeds maximum size");
-                cancelOpenCuboid(player);
-                return false;
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
+                {
+                    ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid exceeds available volume");
+                    cancelOpenCuboid(player);
+                    return false;
+                }
             }
 
             if (plugin.getForceFieldManager().fieldConflicts(ce, player) != null)
