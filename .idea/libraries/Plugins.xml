@@ -1,11 +1,15 @@
 <component name="libraryTable">
   <library name="Plugins">
     <CLASSES>
-      <root url="file://D:/Download/Plugins" />
-      <root url="file://D:/Download/Plugins" />
+      <root url="file://C:/Plugins" />
+      <root url="file://C:/Plugins" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
-    <jarDirectory url="file://D:/Download/Plugins" recursive="false" />
+    <SOURCES>
+      <root url="file://C:/Plugins" />
+      <root url="file://C:/Plugins" />
+    </SOURCES>
+    <jarDirectory url="file://C:/Plugins" recursive="false" />
+    <jarDirectory url="file://C:/Plugins" recursive="false" type="SOURCES" />
   </library>
 </component>

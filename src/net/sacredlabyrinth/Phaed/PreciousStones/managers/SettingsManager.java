@@ -19,6 +19,7 @@ import java.util.*;
  */
 public final class SettingsManager
 {
+    private boolean sneakNormalBlock;
     private boolean startMessagesDisabled;
     private boolean disableGroundInfo;
     private boolean autoDownloadVault;
@@ -206,6 +207,7 @@ public final class SettingsManager
         warnLaunch = config.getBoolean("warn.launch");
         warnCannon = config.getBoolean("warn.cannon");
         warnMine = config.getBoolean("warn.mine");
+        sneakNormalBlock = config.getBoolean("settings.sneak-to-place-normal-block");
         startMessagesDisabled = config.getBoolean("settings.welcome-farewell-disabled-by-default");
         disableGroundInfo = config.getBoolean("settings.disable-ground-info");
         autoDownloadVault = config.getBoolean("settings.auto-download-vault");
@@ -1363,5 +1365,10 @@ public final class SettingsManager
     public boolean isDebugging()
     {
         return debugging;
+    }
+
+    public boolean isSneakNormalBlock()
+    {
+        return sneakNormalBlock;
     }
 }

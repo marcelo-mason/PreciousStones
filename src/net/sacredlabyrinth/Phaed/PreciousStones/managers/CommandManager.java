@@ -365,7 +365,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (!field.hasFlag(FieldFlag.CUBOID))
                                 {
-                                    if (radius >= 0 && radius <= fs.getRadius())
+                                    if (radius >= 0 && (radius <= fs.getRadius() || plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius")))
                                     {
                                         field.setRadius(radius);
 
@@ -1125,6 +1125,8 @@ public final class CommandManager implements CommandExecutor
 
                                         PlayerData newData = plugin.getPlayerManager().getPlayerData(owner);
                                         newData.incrementFieldCount(field.getSettings().getRawTypeId());
+
+                                        plugin.getStorageManager().offerPlayer(player.getName(), true);
 
                                         // change the owner
 

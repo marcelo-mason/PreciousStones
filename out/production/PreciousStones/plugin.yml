@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 8.1.7
+version: 8.2.1
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag]
 commands:
@@ -86,6 +86,8 @@ permissions:
     description: Can protect unprotectable blocks
   preciousstones.bypass.snitch:
     description: Wont show up on any snitch lists
+  preciousstones.bypass.setradius:
+    description: Can set larger radius than the limit
   preciousstones.bypass.mine:
     description: Bypasses proximity mine
   preciousstones.bypass.lightning:
@@ -270,6 +272,7 @@ permissions:
       preciousstones.bypass.allowed-only-inside: true
       preciousstones.bypass.allowed-only-outside: true
       preciousstones.bypass.on-disabled: true
+      preciousstones.bypass.setradius: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false

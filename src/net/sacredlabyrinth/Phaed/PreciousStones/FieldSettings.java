@@ -247,6 +247,22 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("prevent-creeper-explosions") && Helper.isBoolean(map.get("prevent-creeper-explosions")))
+        {
+            if ((Boolean) map.get("prevent-creeper-explosions"))
+            {
+                defaultFlags.add(FieldFlag.PREVENT_CREEPER_EXPLOSIONS);
+            }
+        }
+
+        if (map.containsKey("prevent-tnt-explosions") && Helper.isBoolean(map.get("prevent-tnt-explosions")))
+        {
+            if ((Boolean) map.get("prevent-tnt-explosions"))
+            {
+                defaultFlags.add(FieldFlag.PREVENT_TNT_EXPLOSIONS);
+            }
+        }
+
         if (map.containsKey("rollback-explosions") && Helper.isBoolean(map.get("rollback-explosions")))
         {
             if ((Boolean) map.get("rollback-explosions"))

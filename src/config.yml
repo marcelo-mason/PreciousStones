@@ -35,6 +35,7 @@ force-field-blocks:
     farewell-message: true
     enable-on-src: true
     cuboid: true
+    cuboid: true
 -   title: Town SubPlot Example
     block: 0
     radius: 10
@@ -194,6 +195,7 @@ cleanup:
     player-inactivity-purge-days: 45
     snitch-unused-purge-days: 30
 settings:
+    sneak-to-place-normal-block: true
     show-debug-info: false
     welcome-farewell-disabled-by-default: true
     disable-ground-info: false

@@ -165,6 +165,8 @@ public class PSEntityListener implements Listener
         }
     }
 
+
+
     /**
      * @param event
      */
@@ -183,12 +185,27 @@ public class PSEntityListener implements Listener
 
         // prevent explosion if explosion protected
 
-        if (plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_EXPLOSIONS) != null)
+        if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_EXPLOSIONS))
         {
             event.setCancelled(true);
         }
-    }
 
+        if (event.getEntity() instanceof Creeper)
+        {
+            if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_CREEPER_EXPLOSIONS))
+            {
+                event.setCancelled(true);
+            }
+        }
+
+        if (event.getEntity() instanceof TNTPrimed)
+        {
+            if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_TNT_EXPLOSIONS))
+            {
+                event.setCancelled(true);
+            }
+        }
+    }
 
     /**
      * @param event
@@ -251,6 +268,26 @@ public class PSEntityListener implements Listener
                 saved.add(new BlockData(block));
                 event.setCancelled(true);
                 continue;
+            }
+
+            if (event.getEntity() instanceof Creeper)
+            {
+                if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_CREEPER_EXPLOSIONS))
+                {
+                    saved.add(new BlockData(block));
+                    event.setCancelled(true);
+                    continue;
+                }
+            }
+
+            if (event.getEntity() instanceof TNTPrimed)
+            {
+                if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_TNT_EXPLOSIONS))
+                {
+                    saved.add(new BlockData(block));
+                    event.setCancelled(true);
+                    continue;
+                }
             }
 
             // capture blocks to roll back in rollback fields

@@ -259,20 +259,23 @@ public class PSBlockListener implements Listener
                 }
             }
 
-            if (field.hasFlag(FieldFlag.BREAKABLE))
-            {
-                plugin.getCommunicationManager().notifyDestroyBreakableFF(player, block);
-                release = true;
-            }
-            else if (field.isOwner(player.getName()))
+            if (field.isOwner(player.getName()))
             {
                 plugin.getCommunicationManager().notifyDestroyFF(player, block);
                 release = true;
             }
-            else if (field.hasFlag(FieldFlag.ALLOWED_CAN_BREAK) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
+            else if (field.hasFlag(FieldFlag.BREAKABLE))
             {
-                plugin.getCommunicationManager().notifyDestroyOthersFF(player, block);
+                plugin.getCommunicationManager().notifyDestroyBreakableFF(player, block);
                 release = true;
+            }
+            else if (field.hasFlag(FieldFlag.ALLOWED_CAN_BREAK))
+            {
+                if (plugin.getForceFieldManager().isAllowed(block, player.getName()))
+                {
+                    plugin.getCommunicationManager().notifyDestroyOthersFF(player, block);
+                    release = true;
+                }
             }
             else if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.forcefield"))
             {
@@ -294,8 +297,6 @@ public class PSBlockListener implements Listener
 
             if (release)
             {
-                plugin.getEntryManager().removeAllPlayers(field);
-
                 plugin.getForceFieldManager().release(block);
 
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
@@ -500,6 +501,14 @@ public class PSBlockListener implements Listener
         }
         else if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
         {
+            if (plugin.getSettingsManager().isSneakNormalBlock())
+            {
+                if (player.isSneaking())
+                {
+                    return;
+                }
+            }
+
             Field conflictField = plugin.getForceFieldManager().fieldConflicts(block, player);
 
             if (conflictField != null)

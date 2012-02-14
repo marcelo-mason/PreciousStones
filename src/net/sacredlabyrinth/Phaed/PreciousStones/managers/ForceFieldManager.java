@@ -195,6 +195,7 @@ public final class ForceFieldManager
 
             PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
             data.incrementFieldCount(field.getSettings().getRawTypeId());
+            plugin.getStorageManager().offerPlayer(player.getName(), true);
 
             // open cuboid definition
 
@@ -388,7 +389,7 @@ public final class ForceFieldManager
         if (fs != null)
         {
             List<FieldFlag> flags = new LinkedList<FieldFlag>();
-            flags.addAll(field.getSettings().getDefaultFlags());
+            flags.addAll(fs.getDefaultFlags());
             flags.addAll(field.getInsertedFlags());
 
             // remove from forester
@@ -414,10 +415,15 @@ public final class ForceFieldManager
             }
         }
 
+        // remove all people as having entered the field
+
+        plugin.getEntryManager().removeAllPlayers(field);
+
         // remove the count from the owner
 
         PlayerData data = plugin.getPlayerManager().getPlayerData(field.getOwner());
         data.decrementFieldCount(field.getSettings().getRawTypeId());
+        plugin.getStorageManager().offerPlayer(field.getOwner(), true);
 
         // delete siblings and parent if exists
 

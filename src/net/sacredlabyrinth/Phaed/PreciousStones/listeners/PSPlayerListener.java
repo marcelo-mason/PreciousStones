@@ -269,167 +269,168 @@ public class PSPlayerListener implements Listener
                     }
                 }
             }
+        }
 
-            if (block != null)
+        if (block != null)
+        {
+            if (event.getAction().equals(Action.PHYSICAL))
             {
-                if (event.getAction().equals(Action.PHYSICAL))
+                plugin.getSnitchManager().recordSnitchUsed(player, block);
+            }
+
+            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            {
+                if (block.getType().equals(Material.WALL_SIGN))
+                {
+                    plugin.getSnitchManager().recordSnitchShop(player, block);
+                }
+
+                if (block.getType().equals(Material.WORKBENCH) || block.getType().equals(Material.BED) || block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.JUKEBOX) || block.getType().equals(Material.STONE_BUTTON))
                 {
                     plugin.getSnitchManager().recordSnitchUsed(player, block);
                 }
 
-                if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+                if (block.getState() instanceof ContainerBlock)
                 {
-                    if (block.getType().equals(Material.WALL_SIGN))
-                    {
-                        plugin.getSnitchManager().recordSnitchShop(player, block);
-                    }
+                    plugin.getSnitchManager().recordSnitchUsed(player, block);
+                }
 
-                    if (block.getType().equals(Material.WORKBENCH) || block.getType().equals(Material.BED) || block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.LEVER) || block.getType().equals(Material.MINECART) || block.getType().equals(Material.NOTE_BLOCK) || block.getType().equals(Material.JUKEBOX) || block.getType().equals(Material.STONE_BUTTON))
+                if (is != null)
+                {
+                    if (plugin.getSettingsManager().isToolItemType(is.getTypeId()))
                     {
-                        plugin.getSnitchManager().recordSnitchUsed(player, block);
-                    }
-
-                    if (block.getState() instanceof ContainerBlock)
-                    {
-                        plugin.getSnitchManager().recordSnitchUsed(player, block);
-                    }
-
-                    if (is != null)
-                    {
-                        if (plugin.getSettingsManager().isToolItemType(is.getTypeId()))
+                        if (plugin.getSettingsManager().isBypassBlock(block))
                         {
-                            if (plugin.getSettingsManager().isBypassBlock(block))
+                            return;
+                        }
+
+                        if (plugin.getForceFieldManager().isField(block))
+                        {
+                            Field field = plugin.getForceFieldManager().getField(block);
+
+                            if (field.isChild())
                             {
-                                return;
+                                field = field.getParent();
                             }
 
-                            if (plugin.getForceFieldManager().isField(block))
+                            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                            if (player.isSneaking())
                             {
-                                Field field = plugin.getForceFieldManager().getField(block);
-
-                                if (field.isChild())
+                                if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
-                                    field = field.getParent();
-                                }
-
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (player.isSneaking())
-                                {
-                                    if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                    if (field.hasFlag(FieldFlag.VISUALIZE_ON_SRC))
                                     {
-                                        if (field.hasFlag(FieldFlag.VISUALIZE_ON_SRC))
+                                        if (plugin.getCuboidManager().hasOpenCuboid(player))
                                         {
-                                            if (plugin.getCuboidManager().hasOpenCuboid(player))
-                                            {
-                                                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot visualize while defining a cuboid");
-                                            }
-                                            else
-                                            {
-                                                if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
-                                                {
-                                                    plugin.getVisualizationManager().visualizeSingleField(player, field);
-                                                }
-                                            }
-                                        }
-
-                                        if (field.hasFlag(FieldFlag.ENABLE_ON_SRC))
-                                        {
-                                            if (field.isDisabled())
-                                            {
-                                                ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been enabled");
-                                                field.setDisabled(false);
-                                            }
-                                            else
-                                            {
-                                                ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been disabled");
-                                                field.setDisabled(true);
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    if (plugin.getSettingsManager().isSnitchType(block))
-                                    {
-                                        if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
-                                        {
-                                            if (!plugin.getCommunicationManager().showSnitchList(player, plugin.getForceFieldManager().getField(block)))
-                                            {
-                                                showInfo(field, player);
-                                                ChatBlock.sendMessage(player, ChatColor.AQUA + "There have been no intruders around here");
-                                                ChatBlock.sendBlank(player);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if ((field.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
-                                        {
-                                            int size = plugin.getGriefUndoManager().undoGrief(field);
-
-                                            if (size == 0)
-                                            {
-                                                showInfo(field, player);
-                                                player.sendMessage(ChatColor.AQUA + "No grief recorded on the field");
-                                                ChatBlock.sendBlank(player);
-                                            }
+                                            ChatBlock.sendMessage(player, ChatColor.RED + "Cannot visualize while defining a cuboid");
                                         }
                                         else
                                         {
-                                            if (showInfo(field, player))
+                                            if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
                                             {
-                                                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle"))
-                                                {
-                                                    if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
-                                                    {
-                                                        player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
-                                                    }
-
-                                                    ChatBlock.sendBlank(player);
-                                                }
+                                                plugin.getVisualizationManager().visualizeSingleField(player, field);
                                             }
                                         }
                                     }
-                                }
-                            }
-                            else if (plugin.getUnbreakableManager().isUnbreakable(block))
-                            {
-                                if (plugin.getUnbreakableManager().isOwner(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
-                                {
-                                    plugin.getCommunicationManager().showUnbreakableDetails(plugin.getUnbreakableManager().getUnbreakable(block), player);
-                                }
-                                else
-                                {
-                                    plugin.getCommunicationManager().showUnbreakableOwner(player, block);
+
+                                    if (field.hasFlag(FieldFlag.ENABLE_ON_SRC))
+                                    {
+                                        if (field.isDisabled())
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been enabled");
+                                            field.setDisabled(false);
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been disabled");
+                                            field.setDisabled(true);
+                                        }
+                                    }
                                 }
                             }
                             else
                             {
-                                Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALL);
-
-                                if (field != null)
+                                if (plugin.getSettingsManager().isSnitchType(block))
                                 {
-                                    if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails())
+                                    if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
                                     {
-                                        if (!plugin.getSettingsManager().isDisableGroundInfo())
+                                        if (!plugin.getCommunicationManager().showSnitchList(player, plugin.getForceFieldManager().getField(block)))
                                         {
-                                            plugin.getCommunicationManager().showProtectedLocation(player, block);
+                                            showInfo(field, player);
+                                            ChatBlock.sendMessage(player, ChatColor.AQUA + "There have been no intruders around here");
+                                            ChatBlock.sendBlank(player);
                                         }
+                                    }
+                                }
+                                else
+                                {
+                                    if ((field.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
+                                    {
+                                        int size = plugin.getGriefUndoManager().undoGrief(field);
+
+                                        if (size == 0)
+                                        {
+                                            showInfo(field, player);
+                                            player.sendMessage(ChatColor.AQUA + "No grief recorded on the field");
+                                            ChatBlock.sendBlank(player);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (showInfo(field, player))
+                                        {
+                                            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle"))
+                                            {
+                                                if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
+                                                {
+                                                    player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
+                                                }
+
+                                                ChatBlock.sendBlank(player);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else if (plugin.getUnbreakableManager().isUnbreakable(block))
+                        {
+                            if (plugin.getUnbreakableManager().isOwner(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
+                            {
+                                plugin.getCommunicationManager().showUnbreakableDetails(plugin.getUnbreakableManager().getUnbreakable(block), player);
+                            }
+                            else
+                            {
+                                plugin.getCommunicationManager().showUnbreakableOwner(player, block);
+                            }
+                        }
+                        else
+                        {
+                            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALL);
+
+                            if (field != null)
+                            {
+                                if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails())
+                                {
+                                    if (!plugin.getSettingsManager().isDisableGroundInfo())
+                                    {
+                                        plugin.getCommunicationManager().showProtectedLocation(player, block);
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                if (plugin.getSettingsManager().isDebug())
-                {
-                    dt.logProcessTime();
-                }
+            if (plugin.getSettingsManager().isDebug())
+            {
+                dt.logProcessTime();
             }
         }
     }
+
 
     private boolean showInfo(Field field, Player player)
     {
