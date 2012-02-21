@@ -15,14 +15,14 @@ import java.util.Queue;
 public class Visualize implements Runnable
 {
     private PreciousStones plugin;
-    private Queue<BlockData> visualizationQueue = new LinkedList<BlockData>();
+    private Queue<BlockEntry> visualizationQueue = new LinkedList<BlockEntry>();
     private final int timerID;
     private final Player player;
     private final boolean revert;
     private final boolean skipRevert;
     private final int seconds;
 
-    public Visualize(List<BlockData> blocks, Player player, boolean revert, boolean skipRevert, int seconds)
+    public Visualize(List<BlockEntry> blocks, Player player, boolean revert, boolean skipRevert, int seconds)
     {
         this.visualizationQueue.addAll(blocks);
         this.plugin = PreciousStones.getInstance();
@@ -39,7 +39,7 @@ public class Visualize implements Runnable
 
         while (i < PreciousStones.getInstance().getSettingsManager().getVisualizeSendSize() && !visualizationQueue.isEmpty())
         {
-            BlockData bd = visualizationQueue.poll();
+            BlockEntry bd = visualizationQueue.poll();
             Location loc = bd.getLocation();
 
             if (!revert)

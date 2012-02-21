@@ -104,7 +104,7 @@ public class VisualizationManager
             return;
         }
 
-        PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
+        PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
         if (data.getDensity() == 0)
         {
@@ -333,7 +333,7 @@ public class VisualizationManager
 
         // save current outline and clear out the visualization
 
-        List<BlockData> newBlocks = new LinkedList<BlockData>();
+        List<BlockEntry> newBlocks = new LinkedList<BlockEntry>();
 
         int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
 
@@ -359,46 +359,46 @@ public class VisualizationManager
         for (int x = minx; x <= maxx; x++)
         {
             Location loc = new Location(player.getWorld(), x, miny, maxz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), x, maxy, minz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), x, miny, minz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), x, maxy, maxz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
         }
 
         for (int y = miny; y <= maxy; y++)
         {
             Location loc = new Location(player.getWorld(), minx, y, maxz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, y, minz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, y, minz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, y, maxz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
         }
 
         for (int z = minz; z <= maxz; z++)
         {
             Location loc = new Location(player.getWorld(), minx, maxy, z);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, miny, z);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, miny, z);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, maxy, z);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
         }
 
         // visualize all the new blocks that are left to visualize
@@ -424,8 +424,8 @@ public class VisualizationManager
 
         // save current outline and clear out the visualization
 
-        List<BlockData> oldBlocks = new LinkedList<BlockData>(vis.getOutlineBlocks());
-        List<BlockData> newBlocks = new LinkedList<BlockData>();
+        List<BlockEntry> oldBlocks = new LinkedList<BlockEntry>(vis.getOutlineBlocks());
+        List<BlockEntry> newBlocks = new LinkedList<BlockEntry>();
 
         int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
 
@@ -443,58 +443,58 @@ public class VisualizationManager
         for (int x = minx; x <= maxx; x++)
         {
             Location loc = new Location(player.getWorld(), x, miny, maxz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), x, maxy, minz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), x, miny, minz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), x, maxy, maxz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
         }
 
         for (int y = miny; y <= maxy; y++)
         {
             Location loc = new Location(player.getWorld(), minx, y, maxz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, y, minz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, y, minz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, y, maxz);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
         }
 
         for (int z = minz; z <= maxz; z++)
         {
             Location loc = new Location(player.getWorld(), minx, maxy, z);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, miny, z);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, miny, z);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, maxy, z);
-            newBlocks.add(new BlockData(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
         }
 
         // revert the blocks that are no longer in the new set and should be reverted
 
-        List<BlockData> revertible = new LinkedList<BlockData>(oldBlocks);
+        List<BlockEntry> revertible = new LinkedList<BlockEntry>(oldBlocks);
         revertible.removeAll(newBlocks);
 
         Visualize revert = new Visualize(revertible, player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
 
         // visualize all the new blocks that are left to visualize
 
-        List<BlockData> missing = new LinkedList<BlockData>(newBlocks);
+        List<BlockEntry> missing = new LinkedList<BlockEntry>(newBlocks);
         missing.removeAll(oldBlocks);
 
         Visualize visualize = new Visualize(missing, player, false, true, plugin.getSettingsManager().getVisualizeSeconds());
@@ -519,7 +519,7 @@ public class VisualizationManager
             vis = new Visualization();
         }
 
-        return vis.getOutlineBlocks().contains(new BlockData(block));
+        return vis.getOutlineBlocks().contains(new BlockEntry(block));
     }
 
     /**
@@ -541,7 +541,7 @@ public class VisualizationManager
 
         if (world != null)
         {
-            for (int y = 0; y < 128; y++)
+            for (int y = 0; y < 256; y++)
             {
                 int typeId = world.getBlockTypeIdAt(field.getX(), y, field.getZ());
 
@@ -622,9 +622,9 @@ public class VisualizationManager
         {
             if (minusOverlap)
             {
-                for (Iterator<BlockData> iter = vis.getBlocks().iterator(); iter.hasNext(); )
+                for (Iterator<BlockEntry> iter = vis.getBlocks().iterator(); iter.hasNext(); )
                 {
-                    BlockData bd = iter.next();
+                    BlockEntry bd = iter.next();
                     Location loc = bd.getLocation();
 
                     for (Field field : vis.getFields())

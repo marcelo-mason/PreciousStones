@@ -11,6 +11,10 @@ import java.util.*;
  */
 public class FieldSettings
 {
+    private int groundBlock = 2;
+    private int treeCount = 64;
+    private int growTime = 20;
+    private int shrubDensity = 64;
     private boolean validField = true;
     private int rawTypeId;
     private int typeId;
@@ -35,6 +39,9 @@ public class FieldSettings
     private GameMode forceLeavingGameMode = null;
     private String title;
     private int price = 0;
+    private List<Integer> treeTypes = new ArrayList<Integer>();
+    private List<Integer> shrubTypes = new ArrayList<Integer>();
+    private List<Integer> fertileBlocks = new ArrayList<Integer>();
     private List<Integer> limits = new ArrayList<Integer>();
     private List<Integer> preventUse = new ArrayList<Integer>();
     private List<String> allowedWorlds = new ArrayList<String>();
@@ -180,6 +187,26 @@ public class FieldSettings
             lightningDelaySeconds = (Integer) map.get("lightning-delay-seconds");
         }
 
+        if (map.containsKey("tree-count") && Helper.isInteger(map.get("tree-count")))
+        {
+            treeCount = (Integer) map.get("tree-count");
+        }
+
+        if (map.containsKey("grow-time") && Helper.isInteger(map.get("grow-time")))
+        {
+            growTime = (Integer) map.get("grow-time");
+        }
+
+        if (map.containsKey("shrub-density") && Helper.isInteger(map.get("shrub-density")))
+        {
+            shrubDensity = (Integer) map.get("shrub-density");
+        }
+
+        if (map.containsKey("ground-block") && Helper.isInteger(map.get("ground-block")))
+        {
+            groundBlock = (Integer) map.get("ground-block");
+        }
+
         if (map.containsKey("prevent-use") && Helper.isIntList(map.get("prevent-use")))
         {
             preventUse = (List<Integer>) map.get("prevent-use");
@@ -188,6 +215,21 @@ public class FieldSettings
             {
                 defaultFlags.add(FieldFlag.PREVENT_USE);
             }
+        }
+
+        if (map.containsKey("tree-types") && Helper.isIntList(map.get("tree-types")))
+        {
+            treeTypes = (List<Integer>) map.get("tree-types");
+        }
+
+        if (map.containsKey("shrub-types") && Helper.isIntList(map.get("shrub-types")))
+        {
+            shrubTypes = (List<Integer>) map.get("shrub-types");
+        }
+
+        if (map.containsKey("fertile-blocks") && Helper.isIntList(map.get("fertile-blocks")))
+        {
+            fertileBlocks = (List<Integer>) map.get("fertile-blocks");
         }
 
         if (map.containsKey("allowed-worlds") && Helper.isStringList(map.get("allowed-worlds")))
@@ -475,14 +517,6 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("forester-shrubs") && Helper.isBoolean(map.get("forester-shrubs")))
-        {
-            if ((Boolean) map.get("forester-shrubs"))
-            {
-                defaultFlags.add(FieldFlag.FORESTER_SHRUBS);
-            }
-        }
-
         if (map.containsKey("grief-revert") && Helper.isBoolean(map.get("grief-revert")))
         {
             if ((Boolean) map.get("grief-revert"))
@@ -635,11 +669,43 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("place-disabled") && Helper.isBoolean(map.get("place-disabled")))
+        if (map.containsKey("dynmap-area") && Helper.isBoolean(map.get("dynmap-area")))
         {
-            if ((Boolean) map.get("place-disabled"))
+            if ((Boolean) map.get("dynmap-area"))
             {
-                defaultFlags.add(FieldFlag.PLACE_DISABLED);
+                defaultFlags.add(FieldFlag.DYNMAP_AREA);
+            }
+        }
+
+        if (map.containsKey("dynmap-marker") && Helper.isBoolean(map.get("dynmap-marker")))
+        {
+            if ((Boolean) map.get("dynmap-marker"))
+            {
+                defaultFlags.add(FieldFlag.DYNMAP_MARKER);
+            }
+        }
+
+        if (map.containsKey("dynmap-disabled-by-default") && Helper.isBoolean(map.get("dynmap-disabled-by-default")))
+        {
+            if ((Boolean) map.get("dynmap-disabled-by-default"))
+            {
+                defaultFlags.add(FieldFlag.DYNMAP_DISABLED_BY_DEFAULT);
+            }
+        }
+
+        if (map.containsKey("dynmap-no-toggle") && Helper.isBoolean(map.get("dynmap-no-toggle")))
+        {
+            if ((Boolean) map.get("dynmap-no-toggle"))
+            {
+                defaultFlags.add(FieldFlag.DYNMAP_NO_TOGGLE);
+            }
+        }
+
+        if (map.containsKey("can-change-owner") && Helper.isBoolean(map.get("can-change-owner")))
+        {
+            if ((Boolean) map.get("can-change-owner"))
+            {
+                defaultFlags.add(FieldFlag.CAN_CHANGE_OWNER);
             }
         }
 
@@ -689,14 +755,6 @@ public class FieldSettings
     public boolean hasVeocityFlag()
     {
         return defaultFlags.contains(FieldFlag.CANNON) || defaultFlags.contains(FieldFlag.LAUNCH);
-    }
-
-    /**
-     * @return
-     */
-    public boolean hasForesterFlag()
-    {
-        return defaultFlags.contains(FieldFlag.FORESTER) || defaultFlags.contains(FieldFlag.FORESTER_SHRUBS);
     }
 
     /**
@@ -971,5 +1029,50 @@ public class FieldSettings
     public int getRepair()
     {
         return repair;
+    }
+
+    public List<Integer> getTreeTypes()
+    {
+        if (treeTypes == null)
+        {
+            return null;
+        }
+
+        return new ArrayList<Integer>(treeTypes);
+    }
+
+    public List<Integer> getShrubTypes()
+    {
+        if (shrubTypes == null)
+        {
+            return null;
+        }
+
+        return new ArrayList<Integer>(shrubTypes);
+    }
+
+    public int getShrubDensity()
+    {
+        return shrubDensity;
+    }
+
+    public int getTreeCount()
+    {
+        return treeCount;
+    }
+
+    public int getGrowTime()
+    {
+        return growTime;
+    }
+
+    public boolean isFertileType(int type)
+    {
+        return fertileBlocks.contains(type);
+    }
+
+    public int getGroundBlock()
+    {
+        return groundBlock;
     }
 }

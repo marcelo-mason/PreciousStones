@@ -265,7 +265,7 @@ public final class GriefUndoManager
 
                 if (st == 12)
                 {
-                    for (int count = 1; count < 128; count++)
+                    for (int count = 1; count < 256; count++)
                     {
                         int type = world.getBlockTypeIdAt(gb.getX(), gb.getY() + count, gb.getZ());
 

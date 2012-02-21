@@ -54,7 +54,7 @@ public final class CommandManager implements CommandExecutor
                 }
 
                 boolean hasplayer = player != null;
-                boolean isDisabled = hasplayer ? plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled() : false;
+                boolean isDisabled = hasplayer ? plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled() : false;
 
                 if (hasplayer)
                 {
@@ -99,7 +99,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (isDisabled)
                         {
-                            plugin.getPlayerManager().getPlayerData(player.getName()).setDisabled(false);
+                            plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(false);
                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "Enabled the placing of pstones");
                         }
                         else
@@ -112,7 +112,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (!isDisabled)
                         {
-                            plugin.getPlayerManager().getPlayerData(player.getName()).setDisabled(true);
+                            plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(true);
                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "Disabled the placing of pstones");
                         }
                         else
@@ -490,16 +490,16 @@ public final class CommandManager implements CommandExecutor
                         {
                             int density = Integer.parseInt(args[0]);
 
-                            PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
+                            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
                             data.setDensity(density);
-                            plugin.getStorageManager().offerPlayer(player.getName(), true);
+                            plugin.getStorageManager().offerPlayer(player.getName());
 
                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualization density changed to " + density);
                             return true;
                         }
                         else if (args.length == 0)
                         {
-                            PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
+                            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "Your visualization density is set to " + data.getDensity());
                         }
                     }
@@ -528,6 +528,29 @@ public final class CommandManager implements CommandExecutor
                                 if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
                                 {
                                     boolean unToggable = false;
+
+                                    if (field.hasFlag(FieldFlag.DYNMAP_NO_TOGGLE))
+                                    {
+                                        if (flagStr.equalsIgnoreCase("dynmap-area"))
+                                        {
+                                            unToggable = true;
+                                        }
+
+                                        if (flagStr.equalsIgnoreCase("dynmap-marker"))
+                                        {
+                                            unToggable = true;
+                                        }
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("dynmap-no-toggle"))
+                                    {
+                                        unToggable = true;
+                                    }
+
+                                    if (flagStr.equalsIgnoreCase("dynmap-disabled-by-default"))
+                                    {
+                                        unToggable = true;
+                                    }
 
                                     if (flagStr.equalsIgnoreCase("all"))
                                     {
@@ -1110,7 +1133,7 @@ public final class CommandManager implements CommandExecutor
 
                             try
                             {
-                                Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
+                                Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
 
                                 if (targetBlock != null)
                                 {
@@ -1120,13 +1143,14 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         // transfer the count over to the new owner
 
-                                        PlayerData oldData = plugin.getPlayerManager().getPlayerData(field.getOwner());
-                                        oldData.decrementFieldCount(field.getTypeId());
+                                        PlayerEntry oldData = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
+                                        oldData.decrementFieldCount(field.getSettings().getRawTypeId());
 
-                                        PlayerData newData = plugin.getPlayerManager().getPlayerData(owner);
+                                        PlayerEntry newData = plugin.getPlayerManager().getPlayerEntry(owner);
                                         newData.incrementFieldCount(field.getSettings().getRawTypeId());
 
-                                        plugin.getStorageManager().offerPlayer(player.getName(), true);
+                                        plugin.getStorageManager().offerPlayer(field.getOwner());
+                                        plugin.getStorageManager().offerPlayer(owner);
 
                                         // change the owner
 
@@ -1134,6 +1158,58 @@ public final class CommandManager implements CommandExecutor
                                         plugin.getStorageManager().offerField(field);
                                         ChatBlock.sendMessage(sender, ChatColor.AQUA + "Owner set to " + owner);
                                         return true;
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+
+                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "You are not pointing at a field or unbreakable block");
+                            return true;
+                        }
+                    }
+                    else if (cmd.equals("changeowner") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.change-owner") && hasplayer)
+                    {
+                        if (args.length == 1)
+                        {
+                            String owner = args[0];
+
+                            if (owner.contains(":"))
+                            {
+                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Cannot assign groups or clans as owners");
+                                return true;
+                            }
+
+                            try
+                            {
+                                Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
+
+                                if (targetBlock != null)
+                                {
+                                    Field field = plugin.getForceFieldManager().getField(targetBlock);
+
+                                    if (field != null)
+                                    {
+                                        if (field.isOwner(player.getName()))
+                                        {
+                                            if (field.hasFlag(FieldFlag.CAN_CHANGE_OWNER))
+                                            {
+                                                field.setNewOwner(owner);
+
+                                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field can now be taken by " + owner + " via right-click");
+                                                return true;
+                                            }
+                                            else
+                                            {
+                                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field type does not support the changing of ownership");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Only the owner of the field can change its owner");
+                                        }
                                     }
                                 }
                             }

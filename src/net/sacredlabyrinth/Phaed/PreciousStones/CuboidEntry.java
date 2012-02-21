@@ -12,7 +12,7 @@ import java.util.List;
 public class CuboidEntry
 {
     private Field field;
-    private List<BlockData> selected = new LinkedList<BlockData>();
+    private List<BlockEntry> selected = new LinkedList<BlockEntry>();
     private int minx;
     private int miny;
     private int minz;
@@ -41,7 +41,7 @@ public class CuboidEntry
     {
         if (!selected.contains(block))
         {
-            selected.add(new BlockData(block));
+            selected.add(new BlockEntry(block));
             calculate();
         }
     }
@@ -53,7 +53,7 @@ public class CuboidEntry
      */
     public void removeSelected(Block block)
     {
-        selected.remove(new BlockData(block));
+        selected.remove(new BlockEntry(block));
         calculate();
     }
 
@@ -72,7 +72,7 @@ public class CuboidEntry
     /**
      * Gets the latest reverted block
      */
-    public BlockData getLastSelected()
+    public BlockEntry getLastSelected()
     {
         if (selected.size() > 1)
         {
@@ -90,7 +90,7 @@ public class CuboidEntry
      */
     public boolean isSelected(Block block)
     {
-        return selected.contains(new BlockData(block));
+        return selected.contains(new BlockEntry(block));
     }
 
     /**
@@ -112,7 +112,7 @@ public class CuboidEntry
         maxy = field.getY();
         maxz = field.getZ();
 
-        for (BlockData bd : selected)
+        for (BlockEntry bd : selected)
         {
             Location loc = bd.getLocation();
 
@@ -165,7 +165,7 @@ public class CuboidEntry
             return null;
         }
 
-        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(Math.max(maxx - miny, maxz - minz), maxy - miny), 128));
+        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(Math.max(maxx - miny, maxz - minz), maxy - miny), 256));
 
         for (Block block : lineOfSight)
         {

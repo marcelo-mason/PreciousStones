@@ -10,21 +10,22 @@ import java.util.Map;
 /**
  * @author phaed
  */
-public class PlayerData
+public class PlayerEntry
 {
     private String name;
     private boolean disabled;
     private boolean online;
     private int density;
+    private boolean superpickaxe;
+    private boolean superduperpickaxe;
     private Location outsideLocation;
     private Map<Integer, Integer> fieldCount = new HashMap<Integer, Integer>();
 
     /**
      * @param disabled
      */
-    public PlayerData()
+    public PlayerEntry()
     {
-
         disabled = PreciousStones.getInstance().getSettingsManager().isOffByDefault();
         density = PreciousStones.getInstance().getSettingsManager().getVisualizeDensity();
     }
@@ -96,7 +97,7 @@ public class PlayerData
     {
         int total = 0;
 
-        for(int count : fieldCount.values())
+        for (int count : fieldCount.values())
         {
             total += count;
         }
@@ -179,7 +180,22 @@ public class PlayerData
 
         // writing the list of flags to json
 
-        json.put("disabled", disabled);
+        if (superpickaxe)
+        {
+            json.put("superpickaxe", superpickaxe);
+        }
+
+        if (superduperpickaxe)
+        {
+            json.put("superduperpickaxe", superduperpickaxe);
+        }
+
+        if (disabled)
+        {
+            json.put("disabled", disabled);
+        }
+
+
         json.put("density", density);
 
         return json.toString();
@@ -210,6 +226,16 @@ public class PlayerData
                             disabled = (Boolean) flags.get(flag);
                         }
 
+                        if (flag.equals("superpickaxe"))
+                        {
+                            superpickaxe = (Boolean) flags.get(flag);
+                        }
+
+                        if (flag.equals("superduperpickaxe"))
+                        {
+                            superduperpickaxe = (Boolean) flags.get(flag);
+                        }
+
                         if (flag.equals("subdivisions"))
                         {
                             density = ((Long) flags.get(flag)).intValue();
@@ -237,5 +263,25 @@ public class PlayerData
     public void setDensity(int density)
     {
         this.density = density;
+    }
+
+    public boolean isSuperpickaxe()
+    {
+        return superpickaxe;
+    }
+
+    public boolean isSuperduperpickaxe()
+    {
+        return superduperpickaxe;
+    }
+
+    public void setSuperpickaxe(boolean superpickaxe)
+    {
+        this.superpickaxe = superpickaxe;
+    }
+
+    public void setSuperduperpickaxe(boolean superduperpickaxe)
+    {
+        this.superduperpickaxe = superduperpickaxe;
     }
 }

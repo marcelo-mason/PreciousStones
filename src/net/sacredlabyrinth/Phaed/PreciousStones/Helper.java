@@ -616,8 +616,20 @@ public class Helper
      */
     public static void dropBlock(Block block)
     {
-        World world = block.getWorld();
-        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
-        world.dropItemNaturally(block.getLocation(), is);
+        if (block.getTypeId() == 0)
+        {
+            return;
+        }
+
+        try
+        {
+            World world = block.getWorld();
+            ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+            world.dropItemNaturally(block.getLocation(), is);
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 }

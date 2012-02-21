@@ -372,7 +372,7 @@ public class CuboidManager
 
         if (ce != null)
         {
-            BlockData selected = ce.getLastSelected();
+            BlockEntry selected = ce.getLastSelected();
 
             if (selected != null)
             {

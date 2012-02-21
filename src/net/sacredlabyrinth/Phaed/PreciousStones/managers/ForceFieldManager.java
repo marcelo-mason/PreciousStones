@@ -77,7 +77,7 @@ public final class ForceFieldManager
     {
         boolean notify = true;
 
-        if (plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled())
+        if (plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled())
         {
             return null;
         }
@@ -185,17 +185,17 @@ public final class ForceFieldManager
 
         // add to database (skip foresters and activate them)
 
-        if (fs.hasDefaultFlag(FieldFlag.FORESTER) || fs.hasDefaultFlag(FieldFlag.FORESTER_SHRUBS))
+        if (fs.hasDefaultFlag(FieldFlag.FORESTER))
         {
-            plugin.getForesterManager().add(field, player.getName());
+            ForesterEntry fe = new ForesterEntry(field, player.getName());
         }
         else
         {
             // add count to player data
 
-            PlayerData data = plugin.getPlayerManager().getPlayerData(player.getName());
+            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
             data.incrementFieldCount(field.getSettings().getRawTypeId());
-            plugin.getStorageManager().offerPlayer(player.getName(), true);
+            plugin.getStorageManager().offerPlayer(player.getName());
 
             // open cuboid definition
 
@@ -392,13 +392,6 @@ public final class ForceFieldManager
             flags.addAll(fs.getDefaultFlags());
             flags.addAll(field.getInsertedFlags());
 
-            // remove from forester
-
-            if (flags.contains(FieldFlag.FORESTER) || flags.contains(FieldFlag.FORESTER_SHRUBS))
-            {
-                plugin.getForesterManager().remove(field);
-            }
-
             // delete any snitch entries
 
             if (flags.contains(FieldFlag.SNITCH))
@@ -421,9 +414,9 @@ public final class ForceFieldManager
 
         // remove the count from the owner
 
-        PlayerData data = plugin.getPlayerManager().getPlayerData(field.getOwner());
+        PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
         data.decrementFieldCount(field.getSettings().getRawTypeId());
-        plugin.getStorageManager().offerPlayer(field.getOwner(), true);
+        plugin.getStorageManager().offerPlayer(field.getOwner());
 
         // delete siblings and parent if exists
 
@@ -1751,7 +1744,7 @@ public final class ForceFieldManager
     {
         try
         {
-            Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 128);
+            Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
 
             if (targetBlock != null)
             {

@@ -2227,7 +2227,10 @@ public class CommunicatonManager
         }
         else
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " field");
+            if (plugin.getSettingsManager().isShowDefaultWelcomeFarewellMessages())
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " field");
+            }
         }
     }
 
@@ -2248,7 +2251,10 @@ public class CommunicatonManager
         }
         else
         {
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Leaving " + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " field");
+            if (plugin.getSettingsManager().isShowDefaultWelcomeFarewellMessages())
+            {
+                ChatBlock.sendMessage(player, ChatColor.AQUA + "Leaving " + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " field");
+            }
         }
     }
 
@@ -2586,6 +2592,8 @@ public class CommunicatonManager
         List<FieldFlag> hardCodedFlags = new LinkedList<FieldFlag>();
 
         flags.remove(FieldFlag.ALL);
+        flags.remove(FieldFlag.DYNMAP_DISABLED_BY_DEFAULT);
+        flags.remove(FieldFlag.DYNMAP_NO_TOGGLE);
         flags.addAll(disabledFlags);
 
         hardCodedFlags.add(FieldFlag.CUBOID);
@@ -2602,6 +2610,14 @@ public class CommunicatonManager
         hardCodedFlags.add(FieldFlag.PLACE_DISABLED);
         hardCodedFlags.add(FieldFlag.SNEAKING_BYPASS);
 
+        if (field.hasFlag(FieldFlag.DYNMAP_NO_TOGGLE))
+        {
+            hardCodedFlags.add(FieldFlag.DYNMAP_AREA);
+            hardCodedFlags.add(FieldFlag.DYNMAP_MARKER);
+        }
+
+        hardCodedFlags.add(FieldFlag.SNEAKING_BYPASS);
+
         int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
 
         for (int i = 0; i < rows; i++)
@@ -2613,7 +2629,7 @@ public class CommunicatonManager
                 title = color + "Flags: ";
             }
 
-            cb.addRow("  " + title, getFlag(disabledFlags, hardCodedFlags,flags, i * 2), getFlag(disabledFlags, hardCodedFlags, flags, (i * 2) + 1));
+            cb.addRow("  " + title, getFlag(disabledFlags, hardCodedFlags, flags, i * 2), getFlag(disabledFlags, hardCodedFlags, flags, (i * 2) + 1));
         }
 
         if (cb.size() > 0)
@@ -2756,7 +2772,7 @@ public class CommunicatonManager
             return false;
         }
 
-        TreeMap<String, PlayerData> players = plugin.getPlayerManager().getPlayers();
+        TreeMap<String, PlayerEntry> players = plugin.getPlayerManager().getPlayers();
 
         cb.setAlignment("l", "c");
 
@@ -2764,7 +2780,7 @@ public class CommunicatonManager
 
         for (String playerName : players.keySet())
         {
-            PlayerData data = players.get(playerName);
+            PlayerEntry data = players.get(playerName);
 
             int count = data.getFieldCount(type);
 
@@ -2842,7 +2858,7 @@ public class CommunicatonManager
         }
         else
         {
-            PlayerData data = plugin.getPlayerManager().getPlayerData(target);
+            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(target);
             fieldCounts = data.getFieldCount();
         }
 
@@ -3158,7 +3174,7 @@ public class CommunicatonManager
         {
             player = (Player) sender;
 
-            if (plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled())
+            if (plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled())
             {
                 disabled = true;
                 status = ChatColor.GRAY + " - disabled";
@@ -3231,6 +3247,11 @@ public class CommunicatonManager
             if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle") && hasPlayer)
             {
                 cb.addRow(color + "  /ps toggle [flag]" + colorDesc + "- Enable/Disable a field's flags");
+            }
+
+            if(plugin.getPermissionsManager().has(player, "preciousstones.benefit.change-owner") && hasPlayer)
+            {
+                cb.addRow(color + "  /ps changeowner [name] " + colorDesc + "- Change owner of field");
             }
 
             if (plugin.getSettingsManager().haveNameable() && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setname") && hasPlayer)

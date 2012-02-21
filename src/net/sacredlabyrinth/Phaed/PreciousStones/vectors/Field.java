@@ -35,6 +35,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int typeId;
     private byte data;
     private String owner;
+    private String newOwner;
     private String name;
     private Field parent;
     private List<Field> children = new LinkedList<Field>();
@@ -45,7 +46,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<FieldFlag> flags = new LinkedList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new LinkedList<FieldFlag>();
     private List<FieldFlag> insertedFlags = new LinkedList<FieldFlag>();
-    private List<BlockData> fenceBlocks = new LinkedList<BlockData>();
+    private List<BlockEntry> fenceBlocks = new LinkedList<BlockEntry>();
     private long lastUsed;
     private boolean progress;
     private boolean open;
@@ -1054,7 +1055,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public List<FieldFlag> getInsertedFlags()
     {
-       return insertedFlags;
+        return insertedFlags;
     }
 
     /**
@@ -1099,7 +1100,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                         }
                         else if (flag.equals("disabled"))
                         {
-                            disabled = ((Boolean) flags.get(flag));
+                            setDisabled(((Boolean) flags.get(flag)));
                         }
                     }
                     catch (Exception ex)
@@ -1167,15 +1168,19 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void disableFlag(String flagStr)
     {
+        boolean hasFlag = false;
+
         for (Iterator iter = flags.iterator(); iter.hasNext(); )
         {
             FieldFlag flag = (FieldFlag) iter.next();
             if (Helper.toFlagStr(flag).equals(flagStr))
             {
                 iter.remove();
+                hasFlag = true;
             }
         }
-        if (!disabledFlags.contains(Helper.toFieldFlag(flagStr)))
+
+        if (hasFlag && !disabledFlags.contains(Helper.toFieldFlag(flagStr)))
         {
             disabledFlags.add(Helper.toFieldFlag(flagStr));
         }
@@ -1485,7 +1490,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             // once we reach a solid record the block above
                             hasSideOne = true;
                             Block block = world.getBlockAt(minx, y + 1, z);
-                            fenceBlocks.add(new BlockData(block));
+                            fenceBlocks.add(new BlockEntry(block));
                             block.setType(Material.FENCE);
                             break;
                         }
@@ -1504,7 +1509,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             // once we find a through type record the block
                             hasSideOne = true;
                             Block block = world.getBlockAt(minx, y, z);
-                            fenceBlocks.add(new BlockData(block));
+                            fenceBlocks.add(new BlockEntry(block));
                             block.setType(Material.FENCE);
                             break;
                         }
@@ -1529,7 +1534,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             // once we reach a solid record the block above
                             hasSideTwo = true;
                             Block block = world.getBlockAt(maxx, y + 1, z);
-                            fenceBlocks.add(new BlockData(block));
+                            fenceBlocks.add(new BlockEntry(block));
                             block.setType(Material.FENCE);
                             break;
                         }
@@ -1548,7 +1553,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             // once we find a through type record the block
                             hasSideTwo = true;
                             Block block = world.getBlockAt(maxx, y, z);
-                            fenceBlocks.add(new BlockData(block));
+                            fenceBlocks.add(new BlockEntry(block));
                             block.setType(Material.FENCE);
                             break;
                         }
@@ -1581,7 +1586,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             // once we reach a solid record the block above
                             hasSideOne = true;
                             Block block = world.getBlockAt(x, y + 1, minz);
-                            fenceBlocks.add(new BlockData(block));
+                            fenceBlocks.add(new BlockEntry(block));
                             block.setType(Material.FENCE);
                             break;
                         }
@@ -1600,7 +1605,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             // once we find a through type record the block
                             hasSideOne = true;
                             Block block = world.getBlockAt(x, y, minz);
-                            fenceBlocks.add(new BlockData(block));
+                            fenceBlocks.add(new BlockEntry(block));
                             block.setType(Material.FENCE);
                             break;
                         }
@@ -1625,7 +1630,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             // once we reach a solid record the block above
                             hasSideTwo = true;
                             Block block = world.getBlockAt(x, y + 1, maxz);
-                            fenceBlocks.add(new BlockData(block));
+                            fenceBlocks.add(new BlockEntry(block));
                             block.setType(Material.FENCE);
                             break;
                         }
@@ -1644,7 +1649,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             // once we find a through type record the block
                             hasSideTwo = true;
                             Block block = world.getBlockAt(x, y, maxz);
-                            fenceBlocks.add(new BlockData(block));
+                            fenceBlocks.add(new BlockEntry(block));
                             block.setType(Material.FENCE);
                             break;
                         }
@@ -1660,5 +1665,21 @@ public class Field extends AbstractVec implements Comparable<Field>
     public void clearFence()
     {
 
+    }
+
+    public void changeOwner()
+    {
+        setOwner(newOwner);
+        setNewOwner(null);
+    }
+
+    public String getNewOwner()
+    {
+        return newOwner;
+    }
+
+    public void setNewOwner(String newOwner)
+    {
+        this.newOwner = newOwner;
     }
 }

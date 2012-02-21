@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.PlayerData;
+import net.sacredlabyrinth.Phaed.PreciousStones.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
@@ -16,7 +16,7 @@ import java.util.TreeMap;
 public class PlayerManager
 {
     private PreciousStones plugin;
-    private TreeMap<String, PlayerData> players = new TreeMap<String, PlayerData>();
+    private TreeMap<String, PlayerEntry> players = new TreeMap<String, PlayerEntry>();
 
     /**
      *
@@ -29,9 +29,9 @@ public class PlayerManager
     /**
      * @return the players
      */
-    public TreeMap<String, PlayerData> getPlayers()
+    public TreeMap<String, PlayerEntry> getPlayers()
     {
-        TreeMap<String, PlayerData> p = new TreeMap<String, PlayerData>();
+        TreeMap<String, PlayerEntry> p = new TreeMap<String, PlayerEntry>();
         p.putAll(players);
         return p;
     }
@@ -41,13 +41,13 @@ public class PlayerManager
      * @param playerName
      * @return
      */
-    public PlayerData getPlayerData(String playerName)
+    public PlayerEntry getPlayerEntry(String playerName)
     {
-        PlayerData data = players.get(playerName.toLowerCase());
+        PlayerEntry data = players.get(playerName.toLowerCase());
 
         if (data == null)
         {
-            data = new PlayerData();
+            data = new PlayerEntry();
             data.setName(playerName);
             players.put(playerName.toLowerCase(), data);
         }
@@ -61,7 +61,7 @@ public class PlayerManager
      */
     public void playerLogin(Player player)
     {
-        PlayerData data = getPlayerData(player.getName());
+        PlayerEntry data = getPlayerEntry(player.getName());
         data.setOnline(true);
     }
 
@@ -71,7 +71,7 @@ public class PlayerManager
      */
     public void playerLogoff(Player player)
     {
-        PlayerData data = getPlayerData(player.getName());
+        PlayerEntry data = getPlayerEntry(player.getName());
         data.setOnline(false);
         data.setOutsideLocation(null);
     }
@@ -82,7 +82,7 @@ public class PlayerManager
      */
     public void updateOutsideLocation(Player player)
     {
-        PlayerData data = getPlayerData(player.getName());
+        PlayerEntry data = getPlayerEntry(player.getName());
         data.setOutsideLocation(player.getLocation());
     }
 
@@ -93,7 +93,7 @@ public class PlayerManager
      */
     public Location getOutsideLocation(Player player)
     {
-        PlayerData data = getPlayerData(player.getName());
+        PlayerEntry data = getPlayerEntry(player.getName());
         Location loc = data.getOutsideLocation();
 
         if (loc != null)

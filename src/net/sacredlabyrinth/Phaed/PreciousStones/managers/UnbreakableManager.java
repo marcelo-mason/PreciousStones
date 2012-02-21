@@ -49,7 +49,7 @@ public final class UnbreakableManager
      */
     public boolean add(Block unbreakableblock, Player owner)
     {
-        if (plugin.getPlayerManager().getPlayerData(owner.getName()).isDisabled())
+        if (plugin.getPlayerManager().getPlayerEntry(owner.getName()).isDisabled())
         {
             return false;
         }

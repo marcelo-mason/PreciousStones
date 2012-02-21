@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.BlockData;
+import net.sacredlabyrinth.Phaed.PreciousStones.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -97,7 +97,7 @@ public class PSEntityListener implements Listener
 
         if (target instanceof Player)
         {
-            if (event.getReason() == TargetReason.CLOSEST_PLAYER)
+            if (event.getReason().equals(TargetReason.CLOSEST_PLAYER))
             {
                 if (event.getTarget() instanceof Player)
                 {
@@ -112,6 +112,7 @@ public class PSEntityListener implements Listener
                         if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             Entity mob = event.getEntity();
+
                             if (mob instanceof Monster)
                             {
                                 plugin.getCommunicationManager().debug("Removed a scary monster");
@@ -220,10 +221,10 @@ public class PSEntityListener implements Listener
 
         DebugTimer dt = new DebugTimer("onEntityExplode");
 
-        final List<BlockData> saved = new LinkedList<BlockData>();
-        final List<BlockData> unprotected = new LinkedList<BlockData>();
-        final List<BlockData> revert = new LinkedList<BlockData>();
-        final List<BlockData> tnts = new LinkedList<BlockData>();
+        final List<BlockEntry> saved = new LinkedList<BlockEntry>();
+        final List<BlockEntry> unprotected = new LinkedList<BlockEntry>();
+        final List<BlockEntry> revert = new LinkedList<BlockEntry>();
+        final List<BlockEntry> tnts = new LinkedList<BlockEntry>();
         Field rollbackField = null;
 
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getLocation().getWorld()))
@@ -239,7 +240,7 @@ public class PSEntityListener implements Listener
 
             if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
             {
-                revert.add(new BlockData(block));
+                revert.add(new BlockEntry(block));
                 block.setTypeIdAndData(0, (byte) 0, false);
                 continue;
             }
@@ -256,7 +257,7 @@ public class PSEntityListener implements Listener
                     continue;
                 }
 
-                revert.add(new BlockData(block));
+                revert.add(new BlockEntry(block));
                 block.setTypeIdAndData(0, (byte) 0, false);
                 continue;
             }
@@ -265,7 +266,7 @@ public class PSEntityListener implements Listener
 
             if (plugin.getForceFieldManager().hasSourceField(block.getLocation(), FieldFlag.PREVENT_EXPLOSIONS))
             {
-                saved.add(new BlockData(block));
+                saved.add(new BlockEntry(block));
                 event.setCancelled(true);
                 continue;
             }
@@ -274,7 +275,7 @@ public class PSEntityListener implements Listener
             {
                 if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_CREEPER_EXPLOSIONS))
                 {
-                    saved.add(new BlockData(block));
+                    saved.add(new BlockEntry(block));
                     event.setCancelled(true);
                     continue;
                 }
@@ -284,7 +285,7 @@ public class PSEntityListener implements Listener
             {
                 if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_TNT_EXPLOSIONS))
                 {
-                    saved.add(new BlockData(block));
+                    saved.add(new BlockEntry(block));
                     event.setCancelled(true);
                     continue;
                 }
@@ -302,7 +303,7 @@ public class PSEntityListener implements Listener
                 }
                 else
                 {
-                    tnts.add(new BlockData(block));
+                    tnts.add(new BlockEntry(block));
                 }
                 continue;
             }
@@ -317,7 +318,7 @@ public class PSEntityListener implements Listener
                 {
                     // trigger any tnt that exists inside the grief field blast radius
 
-                    tnts.add(new BlockData(block));
+                    tnts.add(new BlockEntry(block));
                     block.setType(Material.AIR);
                 }
                 else
@@ -327,7 +328,7 @@ public class PSEntityListener implements Listener
                     if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                     {
                         plugin.getGriefUndoManager().addBlock(field, block);
-                        saved.add(new BlockData(block));
+                        saved.add(new BlockEntry(block));
                         block.setType(Material.AIR);
                     }
                 }
@@ -341,7 +342,7 @@ public class PSEntityListener implements Listener
             {
                 // record the unprotected block
 
-                unprotected.add(new BlockData(block));
+                unprotected.add(new BlockEntry(block));
             }
         }
 
@@ -353,7 +354,7 @@ public class PSEntityListener implements Listener
             {
                 public void run()
                 {
-                    for (BlockData db : tnts)
+                    for (BlockEntry db : tnts)
                     {
                         Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
@@ -393,7 +394,7 @@ public class PSEntityListener implements Listener
             {
                 public void run()
                 {
-                    for (BlockData db : revert)
+                    for (BlockEntry db : revert)
                     {
                         Block block = db.getLocation().getBlock();
                         block.setTypeIdAndData(db.getTypeId(), db.getData(), true);
@@ -415,7 +416,7 @@ public class PSEntityListener implements Listener
                 {
                     // remove all blocks and simulate drops for the blocks not in the field
 
-                    for (BlockData db : unprotected)
+                    for (BlockEntry db : unprotected)
                     {
                         Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 

@@ -223,12 +223,22 @@ public final class StorageManager
      */
     public void loadWorldFields(final String world)
     {
+        int fieldCount = 0;
+        int cuboidCount = 0;
+
         List<Field> fields;
 
         synchronized (this)
         {
             fields = getFields(world);
-            fields.addAll(getCuboidFields(world));
+
+            fieldCount = fields.size();
+
+            Collection<Field> cuboids = getCuboidFields(world);
+
+            cuboidCount = cuboids.size();
+
+            fields.addAll(cuboids);
         }
 
         if (fields != null)
@@ -246,9 +256,14 @@ public final class StorageManager
             }
         }
 
-        if (fields.size() > 0)
+        if (fieldCount > 0)
         {
-            PreciousStones.log("({0}) fields: {1}", world, fields.size());
+            PreciousStones.log("({0}) fields: {1}", world, fieldCount);
+        }
+
+        if (cuboidCount > 0)
+        {
+            PreciousStones.log("({0}) cuboids: {1}", world, cuboidCount);
         }
     }
 
@@ -326,13 +341,28 @@ public final class StorageManager
      * @param playerName
      * @param update
      */
-    public void offerPlayer(final String playerName, final boolean update)
+    public void offerPlayer(final String playerName)
     {
         synchronized (pendingPlayers)
         {
-            pendingPlayers.put(playerName, update);
+            pendingPlayers.put(playerName, true);
         }
     }
+
+    /**
+     * Puts the player up for future storage
+     *
+     * @param playerName
+     * @param update
+     */
+    public void offerDeletePlayer(final String playerName)
+    {
+        synchronized (pendingPlayers)
+        {
+            pendingPlayers.put(playerName, false);
+        }
+    }
+
 
     /**
      * Puts the snitch list up for future storage
@@ -400,6 +430,8 @@ public final class StorageManager
 
                         final FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
+                        // check for fields to purge
+
                         if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                         {
                             if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
@@ -417,15 +449,24 @@ public final class StorageManager
                             field.setSettings(fs);
                             field.setFlags(flags);
 
-                            if(fs.getAutoDisableSeconds() > 0)
+                            if (fs.getAutoDisableSeconds() > 0)
                             {
                                 field.setDisabled(true);
                             }
 
                             out.add(field);
 
-                            final PlayerData playerdata = plugin.getPlayerManager().getPlayerData(owner);
+                            final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
                             playerdata.incrementFieldCount(rawTypeId);
+
+                            // check for fields in the wrong table
+
+                            if (fs.hasDefaultFlag(FieldFlag.CUBOID))
+                            {
+                                deleteOppositeField(field);
+                                insertField(field);
+                                System.out.print("[Precious Stones] Field found in wrong table, restart server.");
+                            }
                         }
                     }
                     catch (final Exception ex)
@@ -506,6 +547,8 @@ public final class StorageManager
 
                         final FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
+                        // check for fields to purge
+
                         if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                         {
                             if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
@@ -523,15 +566,24 @@ public final class StorageManager
                             field.setSettings(fs);
                             field.setFlags(flags);
 
-                            if(fs.getAutoDisableSeconds() > 0)
+                            if (fs.getAutoDisableSeconds() > 0)
                             {
                                 field.setDisabled(true);
                             }
 
                             out.put(id, field);
 
-                            final PlayerData playerdata = plugin.getPlayerManager().getPlayerData(owner);
+                            final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
                             playerdata.incrementFieldCount(rawTypeId);
+
+                            // check for fields in the wrong table
+
+                            if (!fs.hasDefaultFlag(FieldFlag.CUBOID))
+                            {
+                                deleteOppositeField(field);
+                                insertField(field);
+                                System.out.print("[Precious Stones] Cuboid found in wrong table, restart server.");
+                            }
                         }
                     }
                     catch (final Exception ex)
@@ -627,7 +679,7 @@ public final class StorageManager
                             field.setFlags(flags);
                             out.put(id, field);
 
-                            final PlayerData playerdata = plugin.getPlayerManager().getPlayerData(owner);
+                            final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
                             playerdata.incrementFieldCount(rawTypeId);
                         }
                     }
@@ -686,13 +738,13 @@ public final class StorageManager
                             if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
                             {
                                 deleteFields(name);
-                                offerPlayer(name, false);
+                                offerDeletePlayer(name);
                                 purged++;
                                 continue;
                             }
                         }
 
-                        final PlayerData data = plugin.getPlayerManager().getPlayerData(name);
+                        final PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(name);
                         data.setFlags(flags);
                     }
                     catch (final Exception ex)
@@ -754,7 +806,7 @@ public final class StorageManager
                             if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
                             {
                                 offerUnbreakable(ub, false);
-                                offerPlayer(owner, false);
+                                offerDeletePlayer(owner);
                                 purged++;
                                 continue;
                             }
@@ -887,7 +939,7 @@ public final class StorageManager
         if (field.hasFlag(FieldFlag.CUBOID))
         {
             query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getRawTypeId()  + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getRawTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
         }
 
         if (plugin.getSettingsManager().isDebugsql())
@@ -917,6 +969,24 @@ public final class StorageManager
 
         core.delete(query);
     }
+
+    /**
+     * Deletes the field from the opposite table, used for fixing fields in the wrong tables
+     *
+     * @param field
+     */
+    public void deleteOppositeField(final Field field)
+    {
+        String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
+
+        if (!field.hasFlag(FieldFlag.CUBOID))
+        {
+            query = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
+        }
+
+        core.delete(query);
+    }
+
 
     /**
      * Delete a field from the database that a player owns
@@ -1080,7 +1150,7 @@ public final class StorageManager
     {
         final long time = (new Date()).getTime();
 
-        final PlayerData data = plugin.getPlayerManager().getPlayerData(playerName);
+        final PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(playerName);
 
         if (plugin.getSettingsManager().isUseMysql())
         {

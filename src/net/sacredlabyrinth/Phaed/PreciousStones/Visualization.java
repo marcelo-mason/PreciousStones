@@ -12,8 +12,8 @@ import java.util.List;
  */
 public class Visualization
 {
-    private List<BlockData> blocks = new LinkedList<BlockData>();
-    private List<BlockData> outlineBlocks = new LinkedList<BlockData>();
+    private List<BlockEntry> blocks = new LinkedList<BlockEntry>();
+    private List<BlockEntry> outlineBlocks = new LinkedList<BlockEntry>();
     private List<Field> fields = new LinkedList<Field>();
 
     /**
@@ -21,12 +21,12 @@ public class Visualization
      */
     public void addBlock(Block block)
     {
-        blocks.add(new BlockData(block));
+        blocks.add(new BlockEntry(block));
     }
 
     public void addBlock(Location loc, int material, byte data)
     {
-        BlockData bd = new BlockData(loc, material, data);
+        BlockEntry bd = new BlockEntry(loc, material, data);
 
         if (!blocks.contains(bd))
         {
@@ -57,7 +57,7 @@ public class Visualization
     /**
      * @return the locations
      */
-    public List<BlockData> getBlocks()
+    public List<BlockEntry> getBlocks()
     {
         return blocks;
     }
@@ -72,17 +72,17 @@ public class Visualization
         return f;
     }
 
-    public void setBlocks(List<BlockData> bds)
+    public void setBlocks(List<BlockEntry> bds)
     {
         this.blocks = bds;
     }
 
-    public List<BlockData> getOutlineBlocks()
+    public List<BlockEntry> getOutlineBlocks()
     {
         return outlineBlocks;
     }
 
-    public void setOutlineBlocks(List<BlockData> outlineBlocks)
+    public void setOutlineBlocks(List<BlockEntry> outlineBlocks)
     {
         this.outlineBlocks = outlineBlocks;
     }

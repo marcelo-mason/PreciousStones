@@ -19,6 +19,9 @@ import java.util.*;
  */
 public final class SettingsManager
 {
+    private boolean startDynmapFlagsDisabled;
+    private boolean sneakPlaceFields;
+    private boolean showDefaultWelcomeFarewellMessages;
     private boolean sneakNormalBlock;
     private boolean startMessagesDisabled;
     private boolean disableGroundInfo;
@@ -35,9 +38,6 @@ public final class SettingsManager
     private int saveFrequency;
     private List<Object> griefUndoBlackList;
     private int griefRevertMinInterval;
-    private List<Object> foresterFertileBlocks;
-    private int foresterInterval;
-    private int foresterTrees;
     private int visualizeMarkBlock;
     private int visualizeFrameBlock;
     private int visualizeBlock;
@@ -207,8 +207,11 @@ public final class SettingsManager
         warnLaunch = config.getBoolean("warn.launch");
         warnCannon = config.getBoolean("warn.cannon");
         warnMine = config.getBoolean("warn.mine");
-        sneakNormalBlock = config.getBoolean("settings.sneak-to-place-normal-block");
+        showDefaultWelcomeFarewellMessages = config.getBoolean("settings.show-default-welcome-farewell-messages");
+        sneakNormalBlock = config.getBoolean("settings.sneak-to-place-field");
+        sneakPlaceFields = config.getBoolean("settings.sneak-to-place-normal-block");
         startMessagesDisabled = config.getBoolean("settings.welcome-farewell-disabled-by-default");
+        startDynmapFlagsDisabled = config.getBoolean("settings.dynmap-flags-disabled-by-default");
         disableGroundInfo = config.getBoolean("settings.disable-ground-info");
         autoDownloadVault = config.getBoolean("settings.auto-download-vault");
         globalFieldLimit = config.getInt("settings.global-field-limit");
@@ -237,9 +240,6 @@ public final class SettingsManager
         visualizeSendSize = config.getInt("visualization.blocks-to-send");
         visualizeMaxFields = config.getInt("visualization.max-fields-to-visualize-at-once");
         visualizeTicksBetweenSends = config.getInt("visualization.ticks-between-sends");
-        foresterInterval = config.getInt("forester.interval-seconds");
-        foresterFertileBlocks = config.getList("forester.fertile-blocks");
-        foresterTrees = config.getInt("forester.trees");
         griefRevertMinInterval = config.getInt("grief-undo.min-interval-secs");
         griefUndoBlackList = config.getList("grief-undo.black-list");
         useMysql = config.getBoolean("mysql.enable");
@@ -417,17 +417,6 @@ public final class SettingsManager
     public boolean isUnprotectableType(int type)
     {
         return getUnprotectableBlocks().contains(type);
-    }
-
-    /**
-     * Check if the id is one of forrester fertile types
-     *
-     * @param id
-     * @return
-     */
-    public boolean isFertileType(int id)
-    {
-        return getForesterFertileBlocks().contains(id);
     }
 
     /**
@@ -702,30 +691,6 @@ public final class SettingsManager
     public List<Object> getGriefUndoBlackList()
     {
         return Collections.unmodifiableList(griefUndoBlackList);
-    }
-
-    /**
-     * @return the foresterFertileBlocks
-     */
-    public List<Object> getForesterFertileBlocks()
-    {
-        return Collections.unmodifiableList(foresterFertileBlocks);
-    }
-
-    /**
-     * @return the foresterInterval
-     */
-    public int getForesterInterval()
-    {
-        return foresterInterval;
-    }
-
-    /**
-     * @return the foresterTrees
-     */
-    public int getForesterTrees()
-    {
-        return foresterTrees;
     }
 
     /**
@@ -1370,5 +1335,20 @@ public final class SettingsManager
     public boolean isSneakNormalBlock()
     {
         return sneakNormalBlock;
+    }
+
+    public boolean isShowDefaultWelcomeFarewellMessages()
+    {
+        return showDefaultWelcomeFarewellMessages;
+    }
+
+    public boolean isSneakPlaceFields()
+    {
+        return sneakPlaceFields;
+    }
+
+    public boolean isStartDynmapFlagsDisabled()
+    {
+        return startDynmapFlagsDisabled;
     }
 }

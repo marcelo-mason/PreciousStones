@@ -58,36 +58,31 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockFromTo(BlockFromToEvent event)
     {
-        if (true)
-        {
-            return;
-        }
-
-        /*
-        Block block = event.getBlock();
-        Block toBlock = event.getToBlock();
-        Block relBlock = block.getRelative(event.getFace());
-
-        if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld()))
-        {
-            return;
-        }
-
-        if (Helper.isSameBlock(block.getLocation(), toBlock.getLocation()))
-        {
-            return;
-        }
-
-        // only capture water and lava movement
-
-        if (plugin.getForceFieldManager().hasSourceField(toBlock.getLocation(), FieldFlag.PREVENT_FLOW))
-        {
-            return;
-        }
-
         DebugTimer dt = new DebugTimer("onBlockFromTo");
 
-        if (plugin.getForceFieldManager().hasSourceField(block.getLocation(), FieldFlag.PREVENT_FLOW))
+        Block source = event.getBlock();
+        Block destination = event.getToBlock();
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(source.getWorld()))
+        {
+            return;
+        }
+
+        if (Helper.isSameBlock(source.getLocation(), destination.getLocation()))
+        {
+            return;
+        }
+
+        Field destField = plugin.getForceFieldManager().getSourceField(destination.getLocation(), FieldFlag.PREVENT_FLOW);
+
+        if (destField == null)
+        {
+            return;
+        }
+
+        Field sourceField = plugin.getForceFieldManager().getSourceField(source.getLocation(), FieldFlag.PREVENT_FLOW);
+
+        if (sourceField == null || !sourceField.getOwner().equalsIgnoreCase(destField.getOwner()))
         {
             event.setCancelled(true);
         }
@@ -96,7 +91,6 @@ public class PSBlockListener implements Listener
         {
             dt.logProcessTime();
         }
-        */
     }
 
     /**
@@ -189,6 +183,9 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event)
     {
+        PreciousStones.debug(event.getBlock().getLocation().toString());
+        PreciousStones.debug(event.getBlock().getType().toString());
+
         if (event.isCancelled())
         {
             return;
@@ -292,7 +289,6 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.sendMessage(player, ChatColor.RED + "Cannot remove fields that have plot-fields inside of it.  You must remove them first before you can remove this field.");
                 event.setCancelled(true);
-                return;
             }
 
             if (release)
@@ -451,7 +447,15 @@ public class PSBlockListener implements Listener
 
         plugin.getSnitchManager().recordSnitchBlockPlace(player, block);
 
-        boolean isDisabled = plugin.getPlayerManager().getPlayerData(player.getName()).isDisabled();
+        boolean isDisabled = plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
+
+        if (plugin.getSettingsManager().isSneakPlaceFields())
+        {
+            if (player.isSneaking())
+            {
+                isDisabled = false;
+            }
+        }
 
         if (!isDisabled && plugin.getSettingsManager().isUnbreakableType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.unbreakable"))
         {
@@ -566,11 +570,11 @@ public class PSBlockListener implements Listener
                 }
             }
 
-            if (fs.hasForesterFlag())
+            if (fs.hasDefaultFlag(FieldFlag.FORESTER))
             {
                 Block floor = block.getRelative(BlockFace.DOWN);
 
-                if (!plugin.getSettingsManager().isFertileType(floor.getTypeId()) && floor.getTypeId() != 2)
+                if (!fs.isFertileType(floor.getTypeId()) && floor.getTypeId() != fs.getGroundBlock())
                 {
                     player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " blocks must be placed of fertile land to activate");
                     return;
@@ -658,12 +662,24 @@ public class PSBlockListener implements Listener
             {
                 //field.generateFence();
 
-                // start messages disabled
+                // disable flags
 
                 if (plugin.getSettingsManager().isStartMessagesDisabled())
                 {
                     field.disableFlag("welcome-message");
                     field.disableFlag("farewell-message");
+                }
+
+                if(field.hasFlag(FieldFlag.DYNMAP_DISABLED_BY_DEFAULT))
+                {
+                    field.disableFlag("dynmap-area");
+                    field.disableFlag("dynmap-marker");
+                }
+
+                if(plugin.getSettingsManager().isStartDynmapFlagsDisabled())
+                {
+                    field.disableFlag("dynmap-area");
+                    field.disableFlag("dynmap-marker");
                 }
 
                 // places the field in a disabled state

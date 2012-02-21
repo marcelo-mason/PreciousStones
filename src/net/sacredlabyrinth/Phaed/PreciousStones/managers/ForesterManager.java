@@ -2,7 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -13,8 +12,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -24,8 +21,6 @@ import java.util.Random;
 public final class ForesterManager
 {
     private PreciousStones plugin;
-    private HashSet<ForesterEntry> foresters = new HashSet<ForesterEntry>();
-    private boolean processing = false;
 
     /**
      * @param plugin
@@ -33,30 +28,53 @@ public final class ForesterManager
     public ForesterManager()
     {
         plugin = PreciousStones.getInstance();
-        scheduler();
     }
 
     /**
-     * Add forester
+     * Prepares the land inside a forrester
      *
      * @param field
+     * @param world
      */
-    public void add(Field field, String playerName)
+    public void prepareLand(Field field, World world)
     {
-        foresters.add(new ForesterEntry(field, playerName));
+        int minx = field.getX() - field.getRadius();
+        int maxx = field.getX() + field.getRadius();
+        int minz = field.getZ() - field.getRadius();
+        int maxz = field.getZ() + field.getRadius();
+        int miny = field.getY() - (Math.max(field.getHeight() - 1, 0) / 2);
+        int maxy = field.getY() + (Math.max(field.getHeight() - 1, 0) / 2);
+
+        for (int x = minx; x < maxx; x += 4)
+        {
+            for (int z = minz; z <= maxz; z += 4)
+            {
+                for (int y = maxy; y > miny; y--)
+                {
+                    int type = world.getBlockTypeIdAt(x, y, z);
+
+                    if (!isSeeThrough(type))
+                    {
+                        prepareSpot(field, world, x, y, z, 4);
+                    }
+                }
+            }
+        }
     }
+
 
     /**
-     * Remove forester
+     * Prepares a circular spot inside a forrester
      *
      * @param field
+     * @param world
+     * @param xx
+     * @param yy
+     * @param zz
+     * @param radius
+     * @return
      */
-    public void remove(Field field)
-    {
-        foresters.remove(new ForesterEntry(field, ""));
-    }
-
-    private int prepareSpot(Field field, World world, int xx, int yy, int zz, int radius, boolean shrubs)
+    public int prepareSpot(Field field, World world, int xx, int yy, int zz, int radius)
     {
         Vec pos = new Vec(xx, yy, zz, world.getName());
 
@@ -80,12 +98,12 @@ public final class ForesterManager
                     {
                         int type = world.getBlockTypeIdAt(vec.getX(), vec.getY(), vec.getZ());
 
-                        if (plugin.getSettingsManager().isFertileType(type))
+                        if (field.getSettings().isFertileType(type))
                         {
                             Block fertile = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
-                            fertile.setType(Material.GRASS);
+                            fertile.setTypeId(field.getSettings().getGroundBlock());
 
-                            if (shrubs)
+                            if (field.getSettings().getShrubTypes() != null)
                             {
                                 int typeabove = world.getBlockTypeIdAt(vec.getX(), vec.getY() + 1, vec.getZ());
 
@@ -93,10 +111,12 @@ public final class ForesterManager
                                 {
                                     Random r = new Random();
 
-                                    if (r.nextInt(36) == 7)
+                                    int density = 100 - field.getSettings().getShrubDensity();
+
+                                    if (r.nextInt(density) == 0)
                                     {
                                         Block blockAbove = world.getBlockAt(vec.getX(), vec.getY() + 1, vec.getZ());
-                                        setShrub(blockAbove);
+                                        setShrub(field.getSettings(), blockAbove);
                                     }
                                 }
                             }
@@ -109,35 +129,14 @@ public final class ForesterManager
         return affected;
     }
 
-    private void prepareLand(Field field, World world)
-    {
-        FieldSettings fs = field.getSettings();
-
-        int minx = field.getX() - field.getRadius();
-        int maxx = field.getX() + field.getRadius();
-        int minz = field.getZ() - field.getRadius();
-        int maxz = field.getZ() + field.getRadius();
-        int miny = field.getY() - (Math.max(field.getHeight() - 1, 0) / 2);
-        int maxy = field.getY() + (Math.max(field.getHeight() - 1, 0) / 2);
-
-        for (int x = minx; x < maxx; x += 4)
-        {
-            for (int z = minz; z <= maxz; z += 4)
-            {
-                for (int y = maxy; y > miny; y--)
-                {
-                    int type = world.getBlockTypeIdAt(x, y, z);
-
-                    if (!isSeeThrough(type))
-                    {
-                        prepareSpot(field, world, x, y, z, 4, field.hasFlag(FieldFlag.FORESTER_SHRUBS));
-                    }
-                }
-            }
-        }
-    }
-
-    private void generateTree(Field field, Player player, World world)
+    /**
+     * Generates a tree
+     *
+     * @param field
+     * @param player
+     * @param world
+     */
+    public void generateTree(Field field, Player player, World world)
     {
         int minx = field.getX() - field.getRadius();
         int maxx = field.getX() + field.getRadius();
@@ -158,7 +157,7 @@ public final class ForesterManager
 
             if (!isSeeThrough(type))
             {
-                if (type == 2)
+                if (type == field.getSettings().getGroundBlock())
                 {
                     Block block = world.getBlockAt(xr, y + 1, zr);
 
@@ -196,7 +195,7 @@ public final class ForesterManager
                     // create tree
                     floor.setType(Material.GRASS);
                     block.setType(Material.AIR);
-                    world.generateTree(block.getLocation(), getTree());
+                    world.generateTree(block.getLocation(), getTree(field.getSettings()));
                 }
 
                 return;
@@ -204,92 +203,27 @@ public final class ForesterManager
         }
     }
 
-    private void scheduler()
-    {
-        final List<Field> deletion = new ArrayList<Field>();
+    /**
+     * Gets a random tree from available types
+     *
+     * @param fs
+     * @return
+     */
 
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
-        {
-            public void run()
-            {
-                if (processing)
-                {
-                    return;
-                }
-
-                if (foresters.isEmpty())
-                {
-                    return;
-                }
-
-                processing = true;
-
-                for (ForesterEntry fe : foresters)
-                {
-                    if (fe.isProcessing())
-                    {
-                        continue;
-                    }
-
-                    Field field = fe.getField();
-                    fe.setProcessing(true);
-
-                    FieldSettings fs = field.getSettings();
-
-                    World world = plugin.getServer().getWorld(field.getWorld());
-                    Player player = plugin.getServer().getPlayer(fe.getPlayerName());
-
-                    if (world == null || player == null)
-                    {
-                        fe.setProcessing(false);
-                        continue;
-                    }
-
-                    if (!fe.isLandPrepared())
-                    {
-                        prepareLand(field, world);
-                        fe.setLandPrepared(true);
-                    }
-
-                    generateTree(field, player, world);
-                    fe.addCount();
-
-                    if (fe.getCount() >= plugin.getSettingsManager().getForesterTrees())
-                    {
-                        deletion.add(field);
-                        break;
-                    }
-
-                    fe.setProcessing(false);
-                }
-
-                for (Field field : deletion)
-                {
-                    World world = plugin.getServer().getWorld(field.getWorld());
-
-                    if (world != null)
-                    {
-                        Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
-                        block.setTypeId(0, false);
-                        world.generateTree(block.getLocation(), TreeType.BIRCH);
-                    }
-
-                    foresters.remove(field);
-                    plugin.getForceFieldManager().queueRelease(field);
-                }
-
-                deletion.clear();
-                plugin.getForceFieldManager().flush();
-                processing = false;
-            }
-        }, 20L * plugin.getSettingsManager().getForesterInterval(), 20L * plugin.getSettingsManager().getForesterInterval());
-    }
-
-    private static TreeType getTree()
+    public static TreeType getTree(FieldSettings fs)
     {
         Random r = new Random();
 
-        switch (r.nextInt(5))
+        List<Integer> treeTypes = fs.getTreeTypes();
+
+        int rand = r.nextInt(treeTypes.size());
+        int tree = treeTypes.get(rand);
+
+        PreciousStones.debug("size: " + treeTypes.size());
+        PreciousStones.debug("rand: " + rand);
+        PreciousStones.debug("tree: " + tree);
+
+        switch (tree)
         {
             case 0:
                 return TreeType.TREE;
@@ -301,58 +235,53 @@ public final class ForesterManager
                 return TreeType.TALL_REDWOOD;
             case 4:
                 return TreeType.BIRCH;
+            case 5:
+                return TreeType.RED_MUSHROOM;
+            case 6:
+                return TreeType.BROWN_MUSHROOM;
         }
 
         return TreeType.TREE;
     }
+    /**
+     * Gets a random shrub from available types
+     *
+     * @param fs
+     * @param block
+     */
 
-    private void setShrub(Block block)
+    public void setShrub(FieldSettings fs, Block block)
     {
         Random r = new Random();
 
-        if (r.nextInt(2) == 0)
-        {
-            block.setTypeIdAndData(31, (byte) 1, false);
-        }
-        else
-        {
-            switch (r.nextInt(3))
-            {
-                case 0:
-                    block.setTypeIdAndData(31, (byte) 1, false);
-                    break;
-                case 1:
-                    block.setTypeIdAndData(31, (byte) 2, false);
-                    break;
-                case 2:
-                    switch (r.nextInt(5))
-                    {
-                        case 0:
-                            block.setTypeId(37, false);
-                            break;
-                        case 1:
-                            block.setTypeId(38, false);
-                            break;
-                        case 2:
-                            block.setTypeId(37, false);
-                            break;
-                        case 3:
-                            block.setTypeId(38, false);
-                            break;
-                        case 4:
-                            switch (r.nextInt(2))
-                            {
-                                case 0:
-                                    block.setTypeId(39, false);
-                                    break;
-                                case 1:
-                                    block.setTypeId(40, false);
-                                    break;
-                            }
-                    }
-            }
-        }
+        List<Integer> treeTypes = fs.getShrubTypes();
 
+        int rand = r.nextInt(treeTypes.size());
+
+        switch (treeTypes.get(rand))
+        {
+            case 0:
+                block.setTypeIdAndData(31, (byte) 0, false);
+                return;
+            case 1:
+                block.setTypeIdAndData(31, (byte) 1, false);
+                return;
+            case 2:
+                block.setTypeIdAndData(31, (byte) 2, false);
+                return;
+            case 3:
+                block.setTypeId(37, false);
+                return;
+            case 4:
+                block.setTypeId(38, false);
+                return;
+            case 5:
+                block.setTypeId(40, false);
+                return;
+            case 6:
+                block.setTypeId(39, false);
+                return;
+        }
     }
 
     private boolean isSeeThrough(int type)

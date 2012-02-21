@@ -6,7 +6,7 @@ import org.bukkit.block.Block;
 /**
  * @author phaed
  */
-public class BlockData
+public class BlockEntry
 {
     private final int typeId;
     private final byte data;
@@ -15,7 +15,7 @@ public class BlockData
     /**
      * @param block
      */
-    public BlockData(Block block)
+    public BlockEntry(Block block)
     {
         this.typeId = block.getTypeId();
         this.data = block.getData();
@@ -25,7 +25,7 @@ public class BlockData
     /**
      * @param block
      */
-    public BlockData(Location loc, int typeId, byte data)
+    public BlockEntry(Location loc, int typeId, byte data)
     {
         this.typeId = typeId;
         this.data = data;
@@ -67,12 +67,12 @@ public class BlockData
     @Override
     public boolean equals(Object obj)
     {
-        if (!(obj instanceof BlockData))
+        if (!(obj instanceof BlockEntry))
         {
             return false;
         }
 
-        BlockData other = (BlockData) obj;
+        BlockEntry other = (BlockEntry) obj;
         return other.getTypeId() == this.getTypeId() && other.getData() == this.getData() && Helper.isSameBlock(this.getLocation(), other.getLocation());
     }
 

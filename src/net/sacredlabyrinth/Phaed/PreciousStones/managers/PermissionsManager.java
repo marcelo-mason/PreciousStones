@@ -1,13 +1,19 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Protection;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -22,8 +28,10 @@ public final class PermissionsManager
 {
     public static Permission permission = null;
     private static Economy economy = null;
-    private PermissionHandler handler;
-    private PermissionsPlugin pbukkit;
+    private PermissionHandler handler = null;
+    private PermissionsPlugin pbukkit = null;
+    private LWC lwc = null;
+    private WorldGuardPlugin wg = null;
     private PreciousStones plugin;
 
     /**
@@ -34,6 +42,8 @@ public final class PermissionsManager
         plugin = PreciousStones.getInstance();
         detectPermissionsBukkit();
         detectPermissions();
+        detectWorldGuard();
+        detectLWC();
 
         try
         {
@@ -46,6 +56,29 @@ public final class PermissionsManager
         {
             //SimpleClans.log("[PreciousStones] Vault.jar not found. No economy support.");
             //no need to spam everyone who doesnt use vault
+        }
+    }
+
+    private void detectWorldGuard()
+    {
+        if (wg == null)
+        {
+            Plugin test = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
+
+            if (test != null)
+            {
+                this.wg = (WorldGuardPlugin) test;
+            }
+        }
+    }
+
+    private void detectLWC()
+    {
+        Plugin lwcPlugin = plugin.getServer().getPluginManager().getPlugin("LWC");
+
+        if (lwcPlugin != null)
+        {
+            lwc = ((LWCPlugin) lwcPlugin).getLWC();
         }
     }
 
@@ -302,5 +335,38 @@ public final class PermissionsManager
     public static boolean hasMoney(Player player, double amount)
     {
         return economy.has(player.getName(), amount);
+    }
+
+
+    /**
+     * If the user has rights in the area based on WorldGuard
+     *
+     * @param loc
+     * @param player
+     * @return
+     */
+    public boolean worldGuardCanBreak(Location loc, Player player)
+    {
+        if (wg != null)
+        {
+            return wg.canBuild(player, loc);
+        }
+        return true;
+    }
+
+    public boolean lwcProtected(Block block)
+    {
+        if(lwc == null)
+        {
+            return false;
+        }
+
+        Protection protection = lwc.findProtection(block);  // also accepts x, y, z
+
+        if (protection != null)
+        {
+            return true;
+        }
+        return false;
     }
 }

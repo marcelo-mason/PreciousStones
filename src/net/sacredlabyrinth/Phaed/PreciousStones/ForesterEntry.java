@@ -1,9 +1,11 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 /**
- *
  * @author phaed
  */
 public class ForesterEntry
@@ -11,11 +13,11 @@ public class ForesterEntry
     private Field field;
     private int count;
     private String playerName;
+    private int growTime;
     private boolean landPrepared;
-    private boolean processing;
+    private PreciousStones plugin;
 
     /**
-     *
      * @param field
      * @param playerName
      */
@@ -24,6 +26,10 @@ public class ForesterEntry
         this.field = field;
         this.playerName = playerName;
         this.count = 0;
+        this.growTime = Math.max(field.getSettings().getGrowTime(), 2);
+        plugin = PreciousStones.getInstance();
+
+        scheduleNextUpdate();
     }
 
     /**
@@ -34,46 +40,16 @@ public class ForesterEntry
         return field;
     }
 
-    /**
-     * @param field the field to set
-     */
-    public void setField(Field field)
-    {
-        this.field = field;
-    }
-
-    /**
-     * @return the count
-     */
-    public int getCount()
-    {
-        return count;
-    }
-
-    /**
-     * @param count the count to set
-     */
-    public void setCount(int count)
-    {
-        this.count = count;
-    }
-
-    /**
-     * Increment count
-     */
-    public void addCount()
-    {
-        count += 1 ;
-    }
-
     @Override
     public boolean equals(Object obj)
     {
-	if (!(obj instanceof ForesterEntry))
-	    return false;
+        if (!(obj instanceof ForesterEntry))
+        {
+            return false;
+        }
 
-	ForesterEntry other = (ForesterEntry) obj;
-	return other.getField().getX() == getField().getX() && other.getField().getY() == getField().getY() && other.getField().getZ() == getField().getZ() && other.getField().getWorld().equals(getField().getWorld());
+        ForesterEntry other = (ForesterEntry) obj;
+        return other.getField().getX() == getField().getX() && other.getField().getY() == getField().getY() && other.getField().getZ() == getField().getZ() && other.getField().getWorld().equals(getField().getWorld());
     }
 
     @Override
@@ -84,52 +60,55 @@ public class ForesterEntry
         return hash;
     }
 
-    /**
-     * @return the playerName
-     */
-    public String getPlayerName()
+    private void scheduleNextUpdate()
     {
-        return playerName;
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), growTime);
     }
 
-    /**
-     * @param playerName the playerName to set
-     */
-    public void setPlayerName(String playerName)
+    private class Update implements Runnable
     {
-        this.playerName = playerName;
+        public void run()
+        {
+            if (doPlantingAttempt())
+            {
+                scheduleNextUpdate();
+            }
+        }
     }
 
-    /**
-     * @return the landPrepared
-     */
-    public boolean isLandPrepared()
+    private boolean doPlantingAttempt()
     {
-        return landPrepared;
-    }
+        World world = plugin.getServer().getWorld(field.getWorld());
+        Player player = plugin.getServer().getPlayer(playerName);
 
-    /**
-     * @param landPrepared the landPrepared to set
-     */
-    public void setLandPrepared(boolean landPrepared)
-    {
-        this.landPrepared = landPrepared;
-    }
+        if (world == null || player == null)
+        {
+            return false;
+        }
 
-    /**
-     * @return the processing
-     */
-    public boolean isProcessing()
-    {
-        return processing;
-    }
+        if (!landPrepared)
+        {
+            plugin.getForesterManager().prepareLand(field, world);
+            landPrepared = true;
+        }
 
-    /**
-     * @param processing the processing to set
-     */
-    public void setProcessing(boolean processing)
-    {
-        this.processing = processing;
-    }
+        if (field.getSettings().getTreeTypes() != null)
+        {
+            plugin.getForesterManager().generateTree(field, player, world);
+        }
 
+        count++;
+
+        if (count >= field.getSettings().getTreeCount())
+        {
+            Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
+            block.setTypeId(0, false);
+            world.generateTree(block.getLocation(), plugin.getForesterManager().getTree(field.getSettings()));
+
+            plugin.getForceFieldManager().silentRelease(field);
+            return false;
+        }
+
+        return true;
+    }
 }
