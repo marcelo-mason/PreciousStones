@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -3079,7 +3080,7 @@ public class CommunicatonManager
     {
         if (field != null)
         {
-            List<SnitchEntry> snitches = field.getSnitches();
+            List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> snitches = field.getSnitches();
 
             if (snitches.isEmpty() || snitches.get(0).getAgeInSeconds() > 10)
             {
@@ -3100,7 +3101,7 @@ public class CommunicatonManager
 
                 cb.addRow("  " + ChatColor.GRAY + "Name", "Reason", "Details");
 
-                for (SnitchEntry se : snitches)
+                for (net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry se : snitches)
                 {
                     cb.addRow("  " + ChatColor.GOLD + se.getName(), se.getReasonDisplay(), ChatColor.WHITE + se.getDetails());
                 }

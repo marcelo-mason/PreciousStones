@@ -433,7 +433,7 @@ public class PSBlockListener implements Listener
             }
             else
             {
-                CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
+                net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
                 FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
 
                 if (ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup())

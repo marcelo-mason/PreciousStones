@@ -1,7 +1,9 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import java.sql.Timestamp;
 import java.util.Date;
+
+import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
 

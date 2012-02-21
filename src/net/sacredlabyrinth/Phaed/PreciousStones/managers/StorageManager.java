@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
@@ -32,7 +33,7 @@ public final class StorageManager
     private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
     private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
     private final Set<Field> pendingGrief = new HashSet<Field>();
-    private final List<SnitchEntry> pendingSnitchEntries = new LinkedList<SnitchEntry>();
+    private final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> pendingSnitchEntries = new LinkedList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
 
     /**
      *
@@ -369,7 +370,7 @@ public final class StorageManager
      *
      * @param se
      */
-    public void offerSnitchEntry(final SnitchEntry se)
+    public void offerSnitchEntry(final net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry se)
     {
         synchronized (pendingSnitchEntries)
         {
@@ -1028,7 +1029,7 @@ public final class StorageManager
      * @param snitch
      * @param se
      */
-    public void insertSnitchEntry(final Field snitch, final SnitchEntry se)
+    public void insertSnitchEntry(final Field snitch, final net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry se)
     {
         if (plugin.getSettingsManager().isUseMysql())
         {
@@ -1072,9 +1073,9 @@ public final class StorageManager
      * @param snitch
      * @return
      */
-    public List<SnitchEntry> getSnitchEntries(final Field snitch)
+    public List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> getSnitchEntries(final Field snitch)
     {
-        final List<SnitchEntry> workingSnitchEntries = new LinkedList<SnitchEntry>();
+        final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> workingSnitchEntries = new LinkedList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
 
         synchronized (pendingSnitchEntries)
         {
@@ -1087,7 +1088,7 @@ public final class StorageManager
             processSnitches(workingSnitchEntries);
         }
 
-        final List<SnitchEntry> out = new ArrayList<SnitchEntry>();
+        final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> out = new ArrayList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
 
         final String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "' ORDER BY `id` DESC;";
 
@@ -1111,7 +1112,7 @@ public final class StorageManager
                         final String details = res.getString("details");
                         final int count = res.getInt("count");
 
-                        final SnitchEntry ub = new SnitchEntry(null, name, reason, details, count);
+                        final net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry ub = new net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry(null, name, reason, details, count);
 
                         out.add(ub);
                     }
@@ -1352,7 +1353,7 @@ public final class StorageManager
         final Map<Unbreakable, Boolean> workingUb = new HashMap<Unbreakable, Boolean>();
         final Map<String, Boolean> workingPlayers = new HashMap<String, Boolean>();
         final Set<Field> workingGrief = new HashSet<Field>();
-        final List<SnitchEntry> workingSnitchEntries = new LinkedList<SnitchEntry>();
+        final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> workingSnitchEntries = new LinkedList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
 
         synchronized (pending)
         {
@@ -1494,14 +1495,14 @@ public final class StorageManager
      *
      * @param workingSnitchEntries
      */
-    public void processSnitches(final List<SnitchEntry> workingSnitchEntries)
+    public void processSnitches(final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> workingSnitchEntries)
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingSnitchEntries.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] sending " + workingSnitchEntries.size() + " snitch queries...");
         }
 
-        for (final SnitchEntry se : workingSnitchEntries)
+        for (final net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry se : workingSnitchEntries)
         {
             insertSnitchEntry(se.getField(), se);
         }

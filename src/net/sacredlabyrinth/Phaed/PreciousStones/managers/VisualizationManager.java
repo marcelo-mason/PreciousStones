@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -413,7 +414,7 @@ public class VisualizationManager
      * @param player
      * @param field
      */
-    public void displayFieldOutline(Player player, CuboidEntry ce)
+    public void displayFieldOutline(Player player, net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce)
     {
         Visualization vis = visualizations.get(player.getName());
 

@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.BlockEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;

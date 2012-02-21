@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,7 +43,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<String> allowed = new ArrayList<String>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
     private List<GriefBlock> grief = new LinkedList<GriefBlock>();
-    private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
+    private List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> snitches = new LinkedList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
     private List<FieldFlag> flags = new LinkedList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new LinkedList<FieldFlag>();
     private List<FieldFlag> insertedFlags = new LinkedList<FieldFlag>();
@@ -761,7 +762,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     /**
      * @return the snitches
      */
-    public List<SnitchEntry> getSnitches()
+    public List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> getSnitches()
     {
         return Collections.unmodifiableList(snitches);
     }

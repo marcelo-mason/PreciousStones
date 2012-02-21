@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -132,7 +133,7 @@ public final class ForceFieldManager
 
         if (plugin.getCuboidManager().hasOpenCuboid(player))
         {
-            CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
+            net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
 
             if ((ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup() || fs.getMixingGroup() == 0) && ce.getField().getSettings().getRawTypeId() != fs.getRawTypeId())
             {
@@ -187,7 +188,7 @@ public final class ForceFieldManager
 
         if (fs.hasDefaultFlag(FieldFlag.FORESTER))
         {
-            ForesterEntry fe = new ForesterEntry(field, player.getName());
+            net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry fe = new net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry(field, player.getName());
         }
         else
         {
@@ -1930,7 +1931,7 @@ public final class ForceFieldManager
      * @param placer
      * @return the field, null if none found
      */
-    public Field fieldConflicts(CuboidEntry ce, Player placer)
+    public Field fieldConflicts(net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce, Player placer)
     {
         if (ce.getField().hasFlag(FieldFlag.NO_CONFLICT))
         {
