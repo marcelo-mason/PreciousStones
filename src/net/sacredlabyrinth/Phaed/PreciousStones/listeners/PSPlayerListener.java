@@ -554,6 +554,7 @@ public class PSPlayerListener implements Listener
                                             ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been disabled");
                                             field.setDisabled(true);
                                         }
+                                        field.dirtyFlags();
                                     }
                                 }
                             }

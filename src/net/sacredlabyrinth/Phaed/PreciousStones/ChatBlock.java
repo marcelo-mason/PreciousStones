@@ -860,7 +860,7 @@ public class ChatBlock
                         // advance x to the next character
                         x += 1;
 
-                        lastColor = ChatColor.getByCode(Integer.parseInt(msg.charAt(x) + "", 16)) + "";
+                        lastColor = ChatColor.getByChar(msg.charAt(x)) + "";
                     }
                 }
                 // Replace the message with the colorful message

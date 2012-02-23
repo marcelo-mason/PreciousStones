@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
@@ -266,6 +266,72 @@ public final class StorageManager
         {
             PreciousStones.log("({0}) cuboids: {1}", world, cuboidCount);
         }
+    }
+
+    public int enableAllFlags(String flagStr)
+    {
+        int changed = 0;
+        List<Field> fields = new LinkedList<Field>();
+
+        synchronized (this)
+        {
+            List<World> worlds = plugin.getServer().getWorlds();
+
+            for (World world : worlds)
+            {
+                fields.addAll(getFields(world.getName()));
+                fields.addAll(getCuboidFields(world.getName()));
+            }
+        }
+
+        plugin.getForceFieldManager().clearChunkLists();
+
+        for (final Field field : fields)
+        {
+            if (field.hasFlag(flagStr))
+            {
+                changed++;
+                field.disableFlag(flagStr);
+                field.dirtyFlags();
+            }
+
+            plugin.getForceFieldManager().addToCollection(field);
+        }
+
+        return changed;
+    }
+
+    public int disableAllFlags(String flagStr)
+    {
+        int changed = 0;
+        List<Field> fields = new LinkedList<Field>();
+
+        synchronized (this)
+        {
+            List<World> worlds = plugin.getServer().getWorlds();
+
+            for (World world : worlds)
+            {
+                fields.addAll(getFields(world.getName()));
+                fields.addAll(getCuboidFields(world.getName()));
+            }
+        }
+
+        plugin.getForceFieldManager().clearChunkLists();
+
+        for (final Field field : fields)
+        {
+            if (field.hasDisabledFlag(flagStr))
+            {
+                changed++;
+                field.enableFlag(flagStr);
+                field.dirtyFlags();
+            }
+
+            plugin.getForceFieldManager().addToCollection(field);
+        }
+
+        return changed;
     }
 
     /**

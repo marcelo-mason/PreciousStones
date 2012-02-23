@@ -17,6 +17,7 @@ force-field-blocks:
     prevent-teleport: true
     welcome-message: true
     farewell-message: true
+    can-change-owner: true
     enable-on-src: true
     mixing-group: 1
     cuboid: true
@@ -33,6 +34,7 @@ force-field-blocks:
     prevent-teleport: true
     welcome-message: true
     farewell-message: true
+    can-change-owner: true
     enable-on-src: true
     cuboid: true
     cuboid: true
@@ -51,6 +53,7 @@ force-field-blocks:
     prevent-teleport: true
     welcome-message: true
     farewell-message: true
+    can-change-owner: true
     enable-on-src: true
 -   title: Entry Bouncer
     block: 22
@@ -63,6 +66,7 @@ force-field-blocks:
     prevent-unprotectable: true
     prevent-flow: true
     enable-on-src: true
+    can-change-owner: true
     cuboid: true
 -   title: Jack-o-Death
     block: 91
@@ -77,17 +81,16 @@ force-field-blocks:
     radius: 20
     prevent-mob-spawn: true
     prevent-animal-spawn: true
+    remove-mob: true
     no-conflict: true
-    additive: true
     mixing-group: 1
     cuboid: true
 -   title: Air of Atlantis
     block: 21
     radius: 10
-    custom-height: 128
+    custom-height: 256
     air: true
     no-conflict: true
-    additive: true
     mixing-group: 1
     cuboid: true
 -   title: Proximity Snitch
@@ -156,12 +159,18 @@ force-field-blocks:
     no-conflict: true
     mixing-group: 2
     cuboid: true
--   title: forester
+-   title: Forester
     block: 86
     radius: 20
     custom-height: 15
     forester: true
-    forester-shrubs: true
+    ground-block: 2
+    fertile-blocks: [1, 3, 12, 87, 88]
+    tree-types: [0, 0, 0, 1, 1, 2, 3, 4, 4]
+    shrub-types: [1, 1, 1, 2, 2, 3, 4]
+    shrub-density: 64
+    tree-count: 64
+    grow-time: 10
     no-owner: true
     no-conflict: true
 -   title: Peace Keeper
@@ -170,7 +179,6 @@ force-field-blocks:
     prevent-pvp: true
     no-player-place: true
     prevent-mob-damage: true
-    additive: true
     cuboid: true
 warn:
     slow-damage: true
@@ -196,7 +204,10 @@ cleanup:
     snitch-unused-purge-days: 30
 settings:
     sneak-to-place-normal-block: true
+    sneak-to-place-field: false
     show-debug-info: false
+    show-default-welcome-farewell-messages: true
+    dynmap-flags-disabled-by-default: true
     welcome-farewell-disabled-by-default: true
     disable-ground-info: false
     auto-download-vault: false
@@ -210,14 +221,6 @@ settings:
     public-block-details: false
     blacklisted-worlds: [creative_world]
     drop-on-delete: true
-forester:
-    trees: 60
-    interval-seconds: 1
-    fertile-blocks:
-    - 2
-    - 3
-    - 13
-    - 87
 log:
     bypass-pvp: true
     pvp: true

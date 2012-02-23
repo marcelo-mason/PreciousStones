@@ -3369,6 +3369,16 @@ public class CommunicatonManager
                 cb.addRow(ChatColor.DARK_RED + "  /ps revert " + colorDesc + "- Reverts all orphan fields in the world");
             }
 
+            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.enableall"))
+            {
+                cb.addRow(ChatColor.DARK_RED + "  /ps enableall [flag] " + colorDesc + "- Enabled the flags on all fields");
+            }
+
+            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.disableall"))
+            {
+                cb.addRow(ChatColor.DARK_RED + "  /ps disableall [flag] " + colorDesc + "- Disabled the flags on all fields");
+            }
+
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
             {
                 cb.addRow(ChatColor.DARK_RED + "  /ps debug " + colorDesc + "- Prints timing info to console");

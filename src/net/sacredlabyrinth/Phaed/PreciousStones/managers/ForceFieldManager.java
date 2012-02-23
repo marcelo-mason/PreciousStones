@@ -44,6 +44,9 @@ public final class ForceFieldManager
         sourceFields.clear();
     }
 
+    /**
+     * Prints out a tree of all source fields to the log
+     */
     public void drawSourceFields()
     {
         for (ChunkVec cv : sourceFields.keySet())

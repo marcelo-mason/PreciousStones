@@ -179,15 +179,44 @@ public class PSBlockListener implements Listener
     /**
      * @param event
      */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockBreakMonitor(BlockBreakEvent event)
+    {
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
 
+        if (block == null || player == null)
+        {
+            return;
+        }
+
+        Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALLOW_DESTROY);
+
+        if (field != null)
+        {
+            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            {
+                event.setCancelled(false);
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event)
     {
-        PreciousStones.debug(event.getBlock().getLocation().toString());
-        PreciousStones.debug(event.getBlock().getType().toString());
-
         if (event.isCancelled())
         {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isPreventDestroyEverywhere())
+        {
+            event.setCancelled(true);
             return;
         }
 
@@ -395,12 +424,44 @@ public class PSBlockListener implements Listener
     /**
      * @param event
      */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockPlaceMonitor(BlockPlaceEvent event)
+    {
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
 
+        if (block == null || player == null)
+        {
+            return;
+        }
+
+        Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALLOW_PLACE);
+
+        if (field != null)
+        {
+            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            {
+                event.setCancelled(false);
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent event)
     {
         if (event.isCancelled())
         {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isPreventPlaceEverywhere())
+        {
+            event.setCancelled(true);
             return;
         }
 
@@ -670,13 +731,7 @@ public class PSBlockListener implements Listener
                     field.disableFlag("farewell-message");
                 }
 
-                if(field.hasFlag(FieldFlag.DYNMAP_DISABLED_BY_DEFAULT))
-                {
-                    field.disableFlag("dynmap-area");
-                    field.disableFlag("dynmap-marker");
-                }
-
-                if(plugin.getSettingsManager().isStartDynmapFlagsDisabled())
+                if (field.hasFlag(FieldFlag.DYNMAP_DISABLED_BY_DEFAULT) || plugin.getSettingsManager().isStartDynmapFlagsDisabled())
                 {
                     field.disableFlag("dynmap-area");
                     field.disableFlag("dynmap-marker");

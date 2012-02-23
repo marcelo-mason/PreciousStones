@@ -19,6 +19,8 @@ import java.util.*;
  */
 public final class SettingsManager
 {
+    private boolean preventDestroyEverywhere;
+    private boolean preventPlaceEverywhere;
     private boolean startDynmapFlagsDisabled;
     private boolean sneakPlaceFields;
     private boolean showDefaultWelcomeFarewellMessages;
@@ -207,6 +209,8 @@ public final class SettingsManager
         warnLaunch = config.getBoolean("warn.launch");
         warnCannon = config.getBoolean("warn.cannon");
         warnMine = config.getBoolean("warn.mine");
+        preventPlaceEverywhere = config.getBoolean("settings.prevent-place-everywhere");
+        preventDestroyEverywhere = config.getBoolean("settings.prevent-destroy-everywhere");
         showDefaultWelcomeFarewellMessages = config.getBoolean("settings.show-default-welcome-farewell-messages");
         sneakNormalBlock = config.getBoolean("settings.sneak-to-place-field");
         sneakPlaceFields = config.getBoolean("settings.sneak-to-place-normal-block");
@@ -1350,5 +1354,15 @@ public final class SettingsManager
     public boolean isStartDynmapFlagsDisabled()
     {
         return startDynmapFlagsDisabled;
+    }
+
+    public boolean isPreventDestroyEverywhere()
+    {
+        return preventDestroyEverywhere;
+    }
+
+    public boolean isPreventPlaceEverywhere()
+    {
+        return preventPlaceEverywhere;
     }
 }

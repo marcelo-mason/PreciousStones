@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -1130,6 +1130,8 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (!flags.contains(Helper.toFieldFlag(flagStr)))
         {
             flags.add(Helper.toFieldFlag(flagStr));
+            dirty.add(DirtyFieldReason.FLAGS);
+            PreciousStones.getInstance().getStorageManager().offerField(this);
             return true;
         }
         return false;
@@ -1185,7 +1187,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         {
             disabledFlags.add(Helper.toFieldFlag(flagStr));
         }
-
     }
 
     /**
@@ -1682,5 +1683,11 @@ public class Field extends AbstractVec implements Comparable<Field>
     public void setNewOwner(String newOwner)
     {
         this.newOwner = newOwner;
+    }
+
+    public void dirtyFlags()
+    {
+        dirty.add(DirtyFieldReason.FLAGS);
+        PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 }

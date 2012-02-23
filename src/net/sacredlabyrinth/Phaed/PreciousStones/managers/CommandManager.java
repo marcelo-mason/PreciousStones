@@ -635,7 +635,7 @@ public final class CommandManager implements CommandExecutor
                                         ChatBlock.sendMessage(sender, ChatColor.AQUA + "The " + flagStr + " flag has been disabled.");
                                     }
 
-                                    plugin.getStorageManager().offerField(field);
+                                    field.dirtyFlags();
                                 }
                                 else
                                 {
@@ -1261,6 +1261,48 @@ public final class CommandManager implements CommandExecutor
                     else if (cmd.equals("fields") && plugin.getPermissionsManager().has(player, "preciousstones.admin.fields"))
                     {
                         plugin.getCommunicationManager().showConfiguredFields(sender);
+                        return true;
+                    }
+                    else if (cmd.equals("enableall") && plugin.getPermissionsManager().has(player, "preciousstones.admin.enableall"))
+                    {
+                        if (args.length == 1)
+                        {
+                            String flagStr = args[0];
+
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "All fields are temporarily down while being changed");
+
+                            int count = plugin.getStorageManager().enableAllFlags(flagStr);
+
+                            if (count == 0)
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields found with that flag enabled");
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Flag enabled on " + count + " fields");
+                            }
+                        }
+                        return true;
+                    }
+                    else if (cmd.equals("disableall") && plugin.getPermissionsManager().has(player, "preciousstones.admin.disableall"))
+                    {
+                        if (args.length == 1)
+                        {
+                            String flagStr = args[0];
+
+                            ChatBlock.sendMessage(player, ChatColor.AQUA + "All fields are temporarily down while being changed");
+
+                            int count = plugin.getStorageManager().disableAllFlags(flagStr);
+
+                            if (count == 0)
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields found with that flag disabled");
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Flag disabled on " + count + " fields");
+                            }
+                        }
                         return true;
                     }
                     else if (cmd.equals("clean") && plugin.getPermissionsManager().has(player, "preciousstones.admin.clean"))

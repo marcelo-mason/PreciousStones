@@ -1,8 +1,8 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 8.2.1
+version: 8.2.7
 load: 'postworld'
-softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag]
+softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC]
 commands:
   ps:
     description: All of the PreciousStones commands
@@ -56,6 +56,8 @@ permissions:
     description: Can use /ps toggle
   preciousstones.benefit.density:
     description: Can set the visualization density
+  preciousstones.benefit.change-owner:
+    description: Can change the owner to their own fields
   preciousstones.whitelist.allow:
     description: Can use /ps allow
   preciousstones.whitelist.allowed:
@@ -136,6 +138,14 @@ permissions:
     description: Gets alert for conflict placement warnings
   preciousstones.alert.warn.unprotectable:
     description: Gets alert for unprotectable related warnings
+  preciousstones.admin.disableall:
+    description: Can disable all flags in a field
+  preciousstones.admin.enableall:
+    description: Can enable all flags in a field
+  preciousstones.admin.superpickaxe:
+    description: Can use superpickaxe
+  preciousstones.admin.superduperpickaxe:
+    description: Can use superduperpickaxe
   preciousstones.admin.mark:
     description: Can use /ps mark (Can mark everyone's fields)
   preciousstones.admin.visualize:
@@ -240,6 +250,7 @@ permissions:
       preciousstones.benefit.setinterval: true
       preciousstones.benefit.disable: true
       preciousstones.benefit.enable: true
+      preciousstones.benefit.change-owner: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: false
@@ -315,6 +326,10 @@ permissions:
       preciousstones.admin.counts: true
       preciousstones.admin.locations: true
       preciousstones.admin.insert: true
+      preciousstones.admin.superpickaxe: true
+      preciousstones.admin.superduperpickaxe: true
+      preciousstones.admin.enableall: true
+      preciousstones.admin.disableall: true
   preciousstones.override.*:
     description: These players will receive no warnings or notifications
     default: false

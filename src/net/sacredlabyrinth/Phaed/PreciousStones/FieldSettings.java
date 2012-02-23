@@ -265,6 +265,22 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("allow-place") && Helper.isBoolean(map.get("allow-place")))
+        {
+            if ((Boolean) map.get("allow-place"))
+            {
+                defaultFlags.add(FieldFlag.ALLOW_PLACE);
+            }
+        }
+
+        if (map.containsKey("allow-destroy") && Helper.isBoolean(map.get("allow-destroy")))
+        {
+            if ((Boolean) map.get("allow-destroy"))
+            {
+                defaultFlags.add(FieldFlag.ALLOW_DESTROY);
+            }
+        }
+
         if (map.containsKey("prevent-place") && Helper.isBoolean(map.get("prevent-place")))
         {
             if ((Boolean) map.get("prevent-place"))

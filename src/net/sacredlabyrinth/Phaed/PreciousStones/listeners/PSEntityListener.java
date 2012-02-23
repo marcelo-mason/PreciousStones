@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,41 +39,6 @@ public class PSEntityListener implements Listener
     {
         plugin = PreciousStones.getInstance();
     }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onEndermanPickup(EndermanPickupEvent event)
-    {
-        if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.PREVENT_DESTROY))
-        {
-            event.setCancelled(true);
-        }
-
-        if (plugin.getForceFieldManager().hasSourceField(event.getBlock().getLocation(), FieldFlag.GRIEF_REVERT))
-        {
-            event.setCancelled(true);
-        }
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onEndermanPlace(EndermanPlaceEvent event)
-    {
-        if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.PREVENT_PLACE))
-        {
-            event.setCancelled(true);
-        }
-
-        if (plugin.getForceFieldManager().hasSourceField(event.getLocation(), FieldFlag.GRIEF_REVERT))
-        {
-            event.setCancelled(true);
-        }
-    }
-
 
     /**
      * @param event
@@ -115,7 +80,6 @@ public class PSEntityListener implements Listener
 
                             if (mob instanceof Monster)
                             {
-                                plugin.getCommunicationManager().debug("Removed a scary monster");
                                 mob.remove();
                             }
                         }
@@ -165,7 +129,6 @@ public class PSEntityListener implements Listener
             }
         }
     }
-
 
 
     /**
