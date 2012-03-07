@@ -42,7 +42,6 @@ force-field-blocks:
     block: 0
     radius: 10
     custom-height: 21
-    sub-plot: true
     allowed-only-inside: [Town Protection]
     prevent-fire: true
     prevent-place: true
@@ -203,6 +202,8 @@ cleanup:
     player-inactivity-purge-days: 45
     snitch-unused-purge-days: 30
 settings:
+    prevent-place-everywhere: false
+    prevent-destroy-everywhere: false
     sneak-to-place-normal-block: true
     sneak-to-place-field: false
     show-debug-info: false

@@ -281,7 +281,7 @@ public class PSPlayerListener implements Listener
                 {
                     PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
-                    if (data.isSuperpickaxe() || data.isSuperduperpickaxe())
+                    if (data.isSuperduperpickaxe())
                     {
                         boolean canDestroy = true;
 
@@ -338,7 +338,7 @@ public class PSPlayerListener implements Listener
                                 }
                             }
 
-                            if (!plugin.getPermissionsManager().worldGuardCanBreak(block.getLocation(), player))
+                            if (!plugin.getWorldGuardManager().canBuild(player, block.getLocation()))
                             {
                                 canDestroy = false;
                             }
@@ -535,8 +535,9 @@ public class PSPlayerListener implements Listener
                                         }
                                         else
                                         {
-                                            if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
+                                            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
                                             {
+                                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Visualizing...");
                                                 plugin.getVisualizationManager().visualizeSingleField(player, field);
                                             }
                                         }
@@ -1054,7 +1055,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                     {
-                        plugin.getGriefUndoManager().addBlock(field, block);
+                        plugin.getGriefUndoManager().addBlock(field, block, true);
                         plugin.getStorageManager().offerGrief(field);
                     }
                 }
@@ -1128,28 +1129,7 @@ public class PSPlayerListener implements Listener
         Player player = event.getPlayer();
         String command = split[0];
 
-        if (command.equals("/"))
-        {
-            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.superpickaxe"))
-            {
-                PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
-
-                if (data.isSuperpickaxe())
-                {
-                    data.setSuperpickaxe(false);
-                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Super pick axe disabled");
-                }
-                else
-                {
-                    data.setSuperpickaxe(true);
-                    data.setSuperduperpickaxe(false);
-                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Super pick axe enabled");
-                }
-                plugin.getStorageManager().offerPlayer(player.getName());
-            }
-            event.setCancelled(true);
-        }
-        else if (command.equals("//"))
+        if (command.equals("//"))
         {
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.superduperpickaxe"))
             {
@@ -1163,13 +1143,11 @@ public class PSPlayerListener implements Listener
                 else
                 {
                     data.setSuperduperpickaxe(true);
-                    data.setSuperpickaxe(false);
                     ChatBlock.sendMessage(player, ChatColor.AQUA + "Super duper pick axe enabled");
                 }
                 plugin.getStorageManager().offerPlayer(player.getName());
+                event.setCancelled(true);
             }
-
-            event.setCancelled(true);
         }
     }
 }

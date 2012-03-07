@@ -1,14 +1,20 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class CuboidManager
 {
@@ -125,7 +131,7 @@ public class CuboidManager
         {
             if (openCuboid.testOverflow(block.getLocation()) || plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
             {
-                if (plugin.getWorldGuardManager().canBuild(player, block))
+                if (plugin.getWorldGuardManager().canBuild(player, block.getLocation()))
                 {
                     if (openCuboids.containsKey(player.getName()))
                     {
@@ -268,6 +274,20 @@ public class CuboidManager
                 ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid would conflict with someone else's field");
                 cancelOpenCuboid(player);
                 return false;
+            }
+
+            List<Vector> corners = field.getCorners();
+
+            for (Vector corner : corners)
+            {
+                Location location = corner.toLocation(player.getWorld());
+
+                if(!plugin.getWorldGuardManager().canBuild(player, location))
+                {
+                    ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid would conflict with a worldguard region");
+                    cancelOpenCuboid(player);
+                    return false;
+                }
             }
 
             if (field.hasFlag(FieldFlag.PREVENT_UNPROTECTABLE))

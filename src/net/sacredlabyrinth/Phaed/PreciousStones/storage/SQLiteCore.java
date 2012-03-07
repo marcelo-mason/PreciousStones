@@ -71,7 +71,14 @@ public class SQLiteCore implements DBCore
      */
     public Connection getConnection()
     {
-        if (connection == null)
+        try
+        {
+            if (connection == null || connection.isClosed())
+            {
+                initialize();
+            }
+        }
+        catch (SQLException e)
         {
             initialize();
         }

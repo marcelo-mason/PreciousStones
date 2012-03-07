@@ -36,21 +36,21 @@ public class WorldGuardManager
         }
     }
 
-    public boolean canBuild(Player player, Block block)
+    public boolean canBuild(Player player, Location loc)
     {
-        if (wg == null)
+        try
+        {
+            if (wg == null)
+            {
+                return true;
+            }
+
+            return wg.canBuild(player, loc);
+        }
+        catch (Exception ex)
         {
             return true;
         }
-
-        Location loc = block.getLocation();
-
-        World w = loc.getWorld();
-        int x = loc.getBlockX();
-        int y = loc.getBlockY();
-        int z = loc.getBlockZ();
-
-        return wg.canBuild(player, new Location(w, x, y, z));
     }
 
     public boolean canBuildField(Player player, Block block, FieldSettings fs)

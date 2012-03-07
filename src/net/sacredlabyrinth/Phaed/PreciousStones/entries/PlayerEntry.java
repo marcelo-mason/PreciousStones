@@ -17,7 +17,6 @@ public class PlayerEntry
     private boolean disabled;
     private boolean online;
     private int density;
-    private boolean superpickaxe;
     private boolean superduperpickaxe;
     private Location outsideLocation;
     private Map<Integer, Integer> fieldCount = new HashMap<Integer, Integer>();
@@ -181,11 +180,6 @@ public class PlayerEntry
 
         // writing the list of flags to json
 
-        if (superpickaxe)
-        {
-            json.put("superpickaxe", superpickaxe);
-        }
-
         if (superduperpickaxe)
         {
             json.put("superduperpickaxe", superduperpickaxe);
@@ -227,11 +221,6 @@ public class PlayerEntry
                             disabled = (Boolean) flags.get(flag);
                         }
 
-                        if (flag.equals("superpickaxe"))
-                        {
-                            superpickaxe = (Boolean) flags.get(flag);
-                        }
-
                         if (flag.equals("superduperpickaxe"))
                         {
                             superduperpickaxe = (Boolean) flags.get(flag);
@@ -265,22 +254,10 @@ public class PlayerEntry
     {
         this.density = density;
     }
-
-    public boolean isSuperpickaxe()
-    {
-        return superpickaxe;
-    }
-
     public boolean isSuperduperpickaxe()
     {
         return superduperpickaxe;
     }
-
-    public void setSuperpickaxe(boolean superpickaxe)
-    {
-        this.superpickaxe = superpickaxe;
-    }
-
     public void setSuperduperpickaxe(boolean superduperpickaxe)
     {
         this.superduperpickaxe = superduperpickaxe;

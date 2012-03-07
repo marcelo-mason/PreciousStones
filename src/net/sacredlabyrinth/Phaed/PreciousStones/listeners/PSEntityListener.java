@@ -130,7 +130,6 @@ public class PSEntityListener implements Listener
         }
     }
 
-
     /**
      * @param event
      */
@@ -262,7 +261,7 @@ public class PSEntityListener implements Listener
             {
                 if (block.getTypeId() != 46)
                 {
-                    plugin.getGriefUndoManager().addBlock(rollbackField, block);
+                    plugin.getGriefUndoManager().addBlock(rollbackField, block, true);
                 }
                 else
                 {
@@ -290,9 +289,8 @@ public class PSEntityListener implements Listener
 
                     if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                     {
-                        plugin.getGriefUndoManager().addBlock(field, block);
                         saved.add(new BlockEntry(block));
-                        block.setType(Material.AIR);
+                        plugin.getGriefUndoManager().addBlock(field, block, true);
                     }
                 }
 

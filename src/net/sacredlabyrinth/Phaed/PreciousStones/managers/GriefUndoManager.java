@@ -81,7 +81,7 @@ public final class GriefUndoManager
      * @param field
      * @param block
      */
-    public void addBlock(Field field, Block block)
+    public void addBlock(Field field, Block block, boolean clear)
     {
         // if its not a dependent block, then look around it for dependents and add those first
 
@@ -95,7 +95,7 @@ public final class GriefUndoManager
 
                 if (plugin.getGriefUndoManager().isDependentBlock(rel.getTypeId()))
                 {
-                    addBlock(field, rel);
+                    addBlock(field, rel, clear);
                 }
             }
         }
@@ -112,15 +112,21 @@ public final class GriefUndoManager
             if (bottom.getType().equals(Material.WOODEN_DOOR) || bottom.getType().equals(Material.IRON_DOOR))
             {
                 field.addGriefBlock(new GriefBlock(bottom));
-                bottom.setTypeId(0);
-                block.setTypeId(0);
+                if (clear)
+                {
+                    bottom.setTypeId(0);
+                    block.setTypeId(0);
+                }
             }
 
             if (top.getType().equals(Material.WOODEN_DOOR) || top.getType().equals(Material.IRON_DOOR))
             {
                 field.addGriefBlock(new GriefBlock(top));
-                top.setTypeId(0);
-                block.setTypeId(0);
+                if (clear)
+                {
+                    top.setTypeId(0);
+                    block.setTypeId(0);
+                }
             }
 
             return;
@@ -136,7 +142,10 @@ public final class GriefUndoManager
         {
             field.addGriefBlock(new GriefBlock(block));
         }
-        block.setTypeId(0);
+        if (clear)
+        {
+            block.setTypeId(0);
+        }
     }
 
     private GriefBlock handleSign(Block block)

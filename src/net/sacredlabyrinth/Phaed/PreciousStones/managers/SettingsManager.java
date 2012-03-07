@@ -33,12 +33,12 @@ public final class SettingsManager
     private int cuboidDefiningType;
     private int cuboidVisualizationType;
     private boolean logToHawkEye;
-    private List<Object> blacklistedWorlds;
+    private List<String> blacklistedWorlds;
     private int purgeSnitchAfterDays;
     private int purgeAfterDays;
     private int maxSnitchRecords;
     private int saveFrequency;
-    private List<Object> griefUndoBlackList;
+    private List<String> griefUndoBlackList;
     private int griefRevertMinInterval;
     private int visualizeMarkBlock;
     private int visualizeFrameBlock;
@@ -54,11 +54,11 @@ public final class SettingsManager
     private boolean debugdb;
     private boolean debugsql;
     private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
-    private List<Object> unbreakableBlocks = new ArrayList<Object>();
-    private List<Object> bypassBlocks = new ArrayList<Object>();
-    private List<Object> unprotectableBlocks = new ArrayList<Object>();
-    private List<Object> toolItems = new ArrayList<Object>();
-    private List<Object> repairableItems = new ArrayList<Object>();
+    private List<Integer> unbreakableBlocks = new ArrayList<Integer>();
+    private List<Integer> bypassBlocks = new ArrayList<Integer>();
+    private List<Integer> unprotectableBlocks = new ArrayList<Integer>();
+    private List<Integer> toolItems = new ArrayList<Integer>();
+    private List<Integer> repairableItems = new ArrayList<Integer>();
     private List<String> allEntryGroups = new ArrayList<String>();
     private boolean logRollback;
     private boolean logFire;
@@ -163,11 +163,11 @@ public final class SettingsManager
         }
 
         forceFieldBlocks = (ArrayList) config.get("force-field-blocks");
-        bypassBlocks = config.getList("bypass-blocks");
-        unprotectableBlocks = config.getList("unprotectable-blocks");
-        unbreakableBlocks = config.getList("unbreakable-blocks");
-        toolItems = config.getList("tool-items");
-        repairableItems = config.getList("repairable-items");
+        bypassBlocks = config.getIntegerList("bypass-blocks");
+        unprotectableBlocks = config.getIntegerList("unprotectable-blocks");
+        unbreakableBlocks = config.getIntegerList("unbreakable-blocks");
+        toolItems = config.getIntegerList("tool-items");
+        repairableItems = config.getIntegerList("repairable-items");
         logRollback = config.getBoolean("log.rollback");
         logFire = config.getBoolean("log.fire");
         logEntry = config.getBoolean("log.entry");
@@ -228,7 +228,7 @@ public final class SettingsManager
         linesPerPage = config.getInt("settings.lines-per-page");
         logToHawkEye = config.getBoolean("settings.log-to-hawkeye");
         debugging = config.getBoolean("settings.show-debug-info");
-        blacklistedWorlds = config.getList("settings.blacklisted-worlds");
+        blacklistedWorlds = config.getStringList("settings.blacklisted-worlds");
         cuboidDefiningType = config.getInt("cuboid.defining-blocktype");
         cuboidVisualizationType = config.getInt("cuboid.visualization-blocktype");
         purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days");
@@ -245,7 +245,7 @@ public final class SettingsManager
         visualizeMaxFields = config.getInt("visualization.max-fields-to-visualize-at-once");
         visualizeTicksBetweenSends = config.getInt("visualization.ticks-between-sends");
         griefRevertMinInterval = config.getInt("grief-undo.min-interval-secs");
-        griefUndoBlackList = config.getList("grief-undo.black-list");
+        griefUndoBlackList = config.getStringList("grief-undo.black-list");
         useMysql = config.getBoolean("mysql.enable");
         host = config.getString("mysql.host");
         port = config.getInt("mysql.port");
@@ -652,7 +652,7 @@ public final class SettingsManager
     /**
      * @return the blacklistedWorlds
      */
-    public List<Object> getBlacklistedWorlds()
+    public List<String> getBlacklistedWorlds()
     {
         return Collections.unmodifiableList(blacklistedWorlds);
     }
@@ -692,7 +692,7 @@ public final class SettingsManager
     /**
      * @return the griefUndoBlackList
      */
-    public List<Object> getGriefUndoBlackList()
+    public List<String> getGriefUndoBlackList()
     {
         return Collections.unmodifiableList(griefUndoBlackList);
     }
@@ -764,7 +764,7 @@ public final class SettingsManager
     /**
      * @return the unbreakableBlocks
      */
-    public List<Object> getUnbreakableBlocks()
+    public List<Integer> getUnbreakableBlocks()
     {
         return Collections.unmodifiableList(unbreakableBlocks);
     }
@@ -772,7 +772,7 @@ public final class SettingsManager
     /**
      * @return the bypassBlocks
      */
-    public List<Object> getBypassBlocks()
+    public List<Integer> getBypassBlocks()
     {
         return Collections.unmodifiableList(bypassBlocks);
     }
@@ -780,7 +780,7 @@ public final class SettingsManager
     /**
      * @return the unprotectableBlocks
      */
-    public List<Object> getUnprotectableBlocks()
+    public List<Integer> getUnprotectableBlocks()
     {
         return Collections.unmodifiableList(unprotectableBlocks);
     }
@@ -788,7 +788,7 @@ public final class SettingsManager
     /**
      * @return the toolItems
      */
-    public List<Object> getToolItems()
+    public List<Integer> getToolItems()
     {
         return Collections.unmodifiableList(toolItems);
     }
@@ -796,7 +796,7 @@ public final class SettingsManager
     /**
      * @return the repairableItems
      */
-    public List<Object> getRepairableItems()
+    public List<Integer> getRepairableItems()
     {
         return Collections.unmodifiableList(repairableItems);
     }

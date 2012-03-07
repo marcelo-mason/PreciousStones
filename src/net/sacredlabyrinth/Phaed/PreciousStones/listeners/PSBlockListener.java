@@ -179,44 +179,11 @@ public class PSBlockListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onBlockBreakMonitor(BlockBreakEvent event)
-    {
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
-
-        if (block == null || player == null)
-        {
-            return;
-        }
-
-        Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALLOW_DESTROY);
-
-        if (field != null)
-        {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-            {
-                event.setCancelled(false);
-            }
-        }
-    }
-
-    /**
-     * @param event
-     */
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event)
     {
         if (event.isCancelled())
         {
-            return;
-        }
-
-        if (plugin.getSettingsManager().isPreventDestroyEverywhere())
-        {
-            event.setCancelled(true);
             return;
         }
 
@@ -250,8 +217,49 @@ public class PSBlockListener implements Listener
 
         plugin.getSnitchManager().recordSnitchBlockBreak(player, block);
 
+
+        // --------------- prevent destroy everywhere
+
+        if (plugin.getSettingsManager().isPreventDestroyEverywhere())
+        {
+            boolean isAllowBlock = false;
+
+            Field field = plugin.getForceFieldManager().getField(block);
+
+            if (field != null)
+            {
+                if (field.hasFlag(FieldFlag.ALLOW_DESTROY) || field.hasFlag(FieldFlag.ALLOW_PLACE))
+                {
+                    isAllowBlock = true;
+                }
+            }
+
+            if (!isAllowBlock)
+            {
+                field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALLOW_DESTROY);
+
+                if (field != null)
+                {
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowed && !field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+                else
+                {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+
         if (plugin.getForceFieldManager().isField(block))
         {
+            // --------------- Handle field
+
             Field field = plugin.getForceFieldManager().getField(block);
             FieldSettings fs = field.getSettings();
 
@@ -339,6 +347,8 @@ public class PSBlockListener implements Listener
         }
         else if (plugin.getUnbreakableManager().isUnbreakable(block))
         {
+            // --------------- handle unbreakable
+
             if (plugin.getUnbreakableManager().isOwner(block, player.getName()))
             {
                 plugin.getCommunicationManager().notifyDestroyU(player, block);
@@ -398,12 +408,13 @@ public class PSBlockListener implements Listener
                 {
                     if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                     {
-                        plugin.getGriefUndoManager().addBlock(field, block);
+                        boolean clear = !field.hasFlag(FieldFlag.GRIEF_REVERT_DROP);
+
+                        plugin.getGriefUndoManager().addBlock(field, block, clear);
                         plugin.getStorageManager().offerGrief(field);
 
-                        if (!field.hasFlag(FieldFlag.GRIEF_REVERT_DROP))
+                        if (clear)
                         {
-                            block.setTypeId(0);
                             event.setCancelled(true);
                         }
                     }
@@ -424,51 +435,18 @@ public class PSBlockListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onBlockPlaceMonitor(BlockPlaceEvent event)
-    {
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
-
-        if (block == null || player == null)
-        {
-            return;
-        }
-
-        Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALLOW_PLACE);
-
-        if (field != null)
-        {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-            {
-                event.setCancelled(false);
-            }
-        }
-    }
-
-    /**
-     * @param event
-     */
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent event)
     {
-        if (event.isCancelled())
-        {
-            return;
-        }
-
-        if (plugin.getSettingsManager().isPreventPlaceEverywhere())
-        {
-            event.setCancelled(true);
-            return;
-        }
-
         Block block = event.getBlock();
         Player player = event.getPlayer();
 
         if (block == null || player == null)
+        {
+            return;
+        }
+
+        if (event.isCancelled())
         {
             return;
         }
@@ -518,54 +496,54 @@ public class PSBlockListener implements Listener
             }
         }
 
-        if (!isDisabled && plugin.getSettingsManager().isUnbreakableType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.unbreakable"))
-        {
-            Field conflictField = plugin.getForceFieldManager().unbreakableConflicts(block, player);
 
-            if (conflictField != null)
+        // --------------- prevent place everywhere
+
+        if (plugin.getSettingsManager().isPreventPlaceEverywhere())
+        {
+            boolean isAllowBlock = false;
+
+            if (plugin.getSettingsManager().isFieldType(block))
             {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
+
+                if (fs == null)
                 {
-                    if (plugin.getUnbreakableManager().add(block, player))
+                    return;
+                }
+
+                if (fs.hasDefaultFlag(FieldFlag.ALLOW_DESTROY) || fs.hasDefaultFlag(FieldFlag.ALLOW_PLACE))
+                {
+                    isAllowBlock = true;
+                }
+            }
+
+            if (!isAllowBlock)
+            {
+                Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALLOW_PLACE);
+
+                if (field != null)
+                {
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowed && !field.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
-                        plugin.getCommunicationManager().notifyBypassPlaceU(player, block, conflictField);
+                        event.setCancelled(true);
+                        return;
                     }
                 }
                 else
                 {
                     event.setCancelled(true);
-                    plugin.getCommunicationManager().warnConflictU(player, block, conflictField);
+                    return;
                 }
             }
-            else
-            {
-                if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
-                {
-                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
-                    {
-                        if (plugin.getUnbreakableManager().add(block, player))
-                        {
-                            plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
-                        }
-                    }
-                    else
-                    {
-                        event.setCancelled(true);
-                        plugin.getCommunicationManager().warnUnbreakablePlaceTouchingUnprotectable(player, block);
-                    }
-                }
-                else
-                {
-                    if (plugin.getUnbreakableManager().add(block, player))
-                    {
-                        plugin.getCommunicationManager().notifyPlaceU(player, block);
-                    }
-                }
-            }
-            return;
         }
-        else if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
+
+        if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
         {
+            // --------------- Handle field
+
             if (plugin.getSettingsManager().isSneakNormalBlock())
             {
                 if (player.isSneaking())
@@ -753,7 +731,58 @@ public class PSBlockListener implements Listener
                 return;
             }
         }
-        else if (!isDisabled && plugin.getSettingsManager().isUnprotectableType(block.getTypeId()))
+        else if (!isDisabled && plugin.getSettingsManager().isUnbreakableType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.unbreakable"))
+        {
+            // --------------- Handle unbreakable
+
+            Field conflictField = plugin.getForceFieldManager().unbreakableConflicts(block, player);
+
+            if (conflictField != null)
+            {
+                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                {
+                    if (plugin.getUnbreakableManager().add(block, player))
+                    {
+                        plugin.getCommunicationManager().notifyBypassPlaceU(player, block, conflictField);
+                    }
+                }
+                else
+                {
+                    event.setCancelled(true);
+                    plugin.getCommunicationManager().warnConflictU(player, block, conflictField);
+                }
+            }
+            else
+            {
+                if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
+                {
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                    {
+                        if (plugin.getUnbreakableManager().add(block, player))
+                        {
+                            plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
+                        }
+                    }
+                    else
+                    {
+                        event.setCancelled(true);
+                        plugin.getCommunicationManager().warnUnbreakablePlaceTouchingUnprotectable(player, block);
+                    }
+                }
+                else
+                {
+                    if (plugin.getUnbreakableManager().add(block, player))
+                    {
+                        plugin.getCommunicationManager().notifyPlaceU(player, block);
+                    }
+                }
+            }
+            return;
+        }
+
+        // --------------- Handle unprotectable
+
+        if (!isDisabled && plugin.getSettingsManager().isUnprotectableType(block.getTypeId()))
         {
             Block unbreakableblock = plugin.getUnbreakableManager().touchingUnbrakableBlock(block);
 
