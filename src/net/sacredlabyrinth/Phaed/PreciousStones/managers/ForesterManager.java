@@ -239,6 +239,10 @@ public final class ForesterManager
                 return TreeType.RED_MUSHROOM;
             case 6:
                 return TreeType.BROWN_MUSHROOM;
+            case 7:
+                return TreeType.JUNGLE;
+            case 8:
+                return TreeType.JUNGLE_BUSH;
         }
 
         return TreeType.TREE;

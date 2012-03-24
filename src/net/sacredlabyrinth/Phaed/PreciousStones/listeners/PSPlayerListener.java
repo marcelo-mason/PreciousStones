@@ -239,6 +239,11 @@ public class PSPlayerListener implements Listener
 
                             if (field != null)
                             {
+                                if (field.getBlock().getType().equals(Material.AIR))
+                                {
+                                    return;
+                                }
+                                
                                 if (field.hasFlag(FieldFlag.CUBOID))
                                 {
                                     if (field.getParent() != null)
