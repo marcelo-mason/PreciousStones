@@ -5,7 +5,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -359,14 +358,9 @@ public final class EntryManager
      * @param entity
      * @param field
      */
-    public void enterField(Entity entity, Field field)
+    public void enterField(Player player, Field field)
     {
-        if (!(entity instanceof Player))
-        {
-            return;
-        }
-
-        Player player = (Player) entity;
+        PreciousStones.debug(player.getName() + " entered a " + field.getSettings().getTitle() + " field");
 
         synchronized (entries)
         {
@@ -410,6 +404,8 @@ public final class EntryManager
      */
     public void leaveField(Player player, Field field)
     {
+        PreciousStones.debug(player.getName() + " left a " + field.getSettings().getTitle() + " field");
+
         synchronized (entries)
         {
             EntryFields ef = entries.get(player.getName());

@@ -27,8 +27,6 @@ public class SQLiteCore implements DBCore
         this.dbName = dbName;
         this.dbLocation = dbLocation;
         this.log = PreciousStones.getLog();
-
-        initialize();
     }
 
     private void initialize()
@@ -122,9 +120,18 @@ public class SQLiteCore implements DBCore
     {
         try
         {
-            ResultSet result = getConnection().createStatement().executeQuery(query);
+            Statement statement = getConnection().createStatement();
+            ResultSet result = null;
 
-            return result;
+            try
+            {
+                result = statement.executeQuery(query);
+            }
+            finally
+            {
+                statement.close();
+                return result;
+            }
         }
         catch (SQLException ex)
         {
@@ -144,12 +151,23 @@ public class SQLiteCore implements DBCore
         try
         {
             Statement statement = getConnection().createStatement();
-            statement.executeUpdate(query);
-            ResultSet keys = statement.executeQuery("SELECT last_insert_rowid()");
+            ResultSet keys = null;
 
-            if (keys.next())
+            try
             {
-                return keys.getLong(1);
+                keys = statement.executeQuery("SELECT last_insert_rowid()");
+            }
+            finally
+            {
+                statement.close();
+                if (keys != null)
+                {
+                    if (keys.next())
+                    {
+                        return keys.getLong(1);
+                    }
+                }
+                return 0;
             }
         }
         catch (SQLException ex)
@@ -173,7 +191,16 @@ public class SQLiteCore implements DBCore
     {
         try
         {
-            getConnection().createStatement().executeQuery(query);
+            Statement statement = getConnection().createStatement();
+
+            try
+            {
+                statement.executeQuery(query);
+            }
+            finally
+            {
+                statement.close();
+            }
         }
         catch (SQLException ex)
         {
@@ -194,7 +221,16 @@ public class SQLiteCore implements DBCore
     {
         try
         {
-            getConnection().createStatement().executeQuery(query);
+            Statement statement = getConnection().createStatement();
+
+            try
+            {
+                statement.executeQuery(query);
+            }
+            finally
+            {
+                statement.close();
+            }
         }
         catch (SQLException ex)
         {
@@ -216,8 +252,17 @@ public class SQLiteCore implements DBCore
     {
         try
         {
-            return getConnection().createStatement().execute(query);
-
+            Statement statement = getConnection().createStatement();
+            Boolean result = false;
+            try
+            {
+                result = statement.execute(query);
+            }
+            finally
+            {
+                statement.close();
+                return result;
+            }
         }
         catch (SQLException ex)
         {
@@ -258,8 +303,17 @@ public class SQLiteCore implements DBCore
     {
         try
         {
-            getConnection().createStatement().executeQuery("SELECT " + column + " FROM " + table);
-            return true;
+            Statement statement = getConnection().createStatement();
+
+            try
+            {
+                statement.executeQuery("SELECT " + column + " FROM " + table);
+            }
+            finally
+            {
+                statement.close();
+                return true;
+            }
         }
         catch (Exception ex)
         {

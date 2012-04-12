@@ -21,39 +21,6 @@ force-field-blocks:
     enable-on-src: true
     mixing-group: 1
     cuboid: true
--   title: Town Protection Example
-    block: 0
-    radius: 1
-    customVolume: 2000000
-    prevent-fire: true
-    prevent-place: true
-    prevent-destroy: true
-    prevent-explosions: true
-    prevent-unprotectable: true
-    prevent-flow: true
-    prevent-teleport: true
-    welcome-message: true
-    farewell-message: true
-    can-change-owner: true
-    enable-on-src: true
-    cuboid: true
-    cuboid: true
--   title: Town SubPlot Example
-    block: 0
-    radius: 10
-    custom-height: 21
-    allowed-only-inside: [Town Protection]
-    prevent-fire: true
-    prevent-place: true
-    prevent-destroy: true
-    prevent-explosions: true
-    prevent-unprotectable: true
-    prevent-flow: true
-    prevent-teleport: true
-    welcome-message: true
-    farewell-message: true
-    can-change-owner: true
-    enable-on-src: true
 -   title: Entry Bouncer
     block: 22
     radius: 5
@@ -222,6 +189,7 @@ settings:
     public-block-details: false
     blacklisted-worlds: [creative_world]
     drop-on-delete: true
+    version: 0
 log:
     bypass-pvp: true
     pvp: true

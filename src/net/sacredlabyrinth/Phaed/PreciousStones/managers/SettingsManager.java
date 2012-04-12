@@ -4,8 +4,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,6 +19,7 @@ import java.util.*;
  */
 public final class SettingsManager
 {
+    private double version;
     private boolean preventDestroyEverywhere;
     private boolean preventPlaceEverywhere;
     private boolean startDynmapFlagsDisabled;
@@ -54,9 +55,9 @@ public final class SettingsManager
     private boolean debugdb;
     private boolean debugsql;
     private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
-    private List<Integer> unbreakableBlocks = new ArrayList<Integer>();
-    private List<Integer> bypassBlocks = new ArrayList<Integer>();
-    private List<Integer> unprotectableBlocks = new ArrayList<Integer>();
+    private List<BlockTypeEntry> unbreakableBlocks = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> bypassBlocks = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> unprotectableBlocks = new ArrayList<BlockTypeEntry>();
     private List<Integer> toolItems = new ArrayList<Integer>();
     private List<Integer> repairableItems = new ArrayList<Integer>();
     private List<String> allEntryGroups = new ArrayList<String>();
@@ -106,8 +107,10 @@ public final class SettingsManager
     private boolean disableAlertsForAdmins;
     private boolean disableBypassAlertsForAdmins;
     private boolean offByDefault;
-    private byte[] throughFields = new byte[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106};
-    private HashSet<Byte> throughFieldsSet = new HashSet<Byte>();
+    private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106};
+    private byte[] fragileBlocks = new byte[]{7, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 123, 124};
+    private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
+    private HashSet<Integer> fragileBlockSet = new HashSet<Integer>();
     private int linesPerPage;
     private boolean useMysql;
     private String host;
@@ -115,8 +118,7 @@ public final class SettingsManager
     private String username;
     private String password;
     private int port;
-    private List<Integer> ffBlocks = new ArrayList<Integer>();
-    private final HashMap<Integer, FieldSettings> fieldDefinitions = new HashMap<Integer, FieldSettings>();
+    private final HashMap<BlockTypeEntry, FieldSettings> fieldDefinitions = new HashMap<BlockTypeEntry, FieldSettings>();
     private PreciousStones plugin;
     private File main;
     private FileConfiguration config;
@@ -138,9 +140,14 @@ public final class SettingsManager
     @SuppressWarnings("unchecked")
     public void load()
     {
-        for (byte throughField : throughFields)
+        for (int item : throughFields)
         {
-            throughFieldsSet.add(throughField);
+            throughFieldsSet.add(item);
+        }
+
+        for (int item : fragileBlocks)
+        {
+            fragileBlockSet.add(item);
         }
 
         boolean exists = (main).exists();
@@ -163,9 +170,9 @@ public final class SettingsManager
         }
 
         forceFieldBlocks = (ArrayList) config.get("force-field-blocks");
-        bypassBlocks = config.getIntegerList("bypass-blocks");
-        unprotectableBlocks = config.getIntegerList("unprotectable-blocks");
-        unbreakableBlocks = config.getIntegerList("unbreakable-blocks");
+        bypassBlocks = Helper.toTypeEntries(config.getStringList("bypass-blocks"));
+        unprotectableBlocks = Helper.toTypeEntries(config.getStringList("unprotectable-blocks"));
+        unbreakableBlocks = Helper.toTypeEntries(config.getStringList("unbreakable-blocks"));
         toolItems = config.getIntegerList("tool-items");
         repairableItems = config.getIntegerList("repairable-items");
         logRollback = config.getBoolean("log.rollback");
@@ -209,11 +216,12 @@ public final class SettingsManager
         warnLaunch = config.getBoolean("warn.launch");
         warnCannon = config.getBoolean("warn.cannon");
         warnMine = config.getBoolean("warn.mine");
+        version = config.getDouble("settings.version");
         preventPlaceEverywhere = config.getBoolean("settings.prevent-place-everywhere");
         preventDestroyEverywhere = config.getBoolean("settings.prevent-destroy-everywhere");
         showDefaultWelcomeFarewellMessages = config.getBoolean("settings.show-default-welcome-farewell-messages");
-        sneakNormalBlock = config.getBoolean("settings.sneak-to-place-field");
-        sneakPlaceFields = config.getBoolean("settings.sneak-to-place-normal-block");
+        sneakPlaceFields = config.getBoolean("settings.sneak-to-place-field");
+        sneakNormalBlock = config.getBoolean("settings.sneak-to-place-normal-block");
         startMessagesDisabled = config.getBoolean("settings.welcome-farewell-disabled-by-default");
         startDynmapFlagsDisabled = config.getBoolean("settings.dynmap-flags-disabled-by-default");
         disableGroundInfo = config.getBoolean("settings.disable-ground-info");
@@ -292,20 +300,11 @@ public final class SettingsManager
             {
                 // add field definition to our collection
 
-                fieldDefinitions.put(fs.getRawTypeId(), fs);
+                fieldDefinitions.put(fs.getTypeEntry(), fs);
 
                 if (fs.getGroupOnEntry() != null)
                 {
                     allEntryGroups.add(fs.getGroupOnEntry());
-                }
-
-                // add the type id to our reference list
-
-                ffBlocks.add(fs.getRawTypeId());
-
-                if (!ffBlocks.contains(fs.getTypeId()))
-                {
-                    ffBlocks.add(fs.getTypeId());
                 }
             }
         }
@@ -418,9 +417,20 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isUnprotectableType(int type)
+    public boolean isUnprotectableType(BlockTypeEntry type)
     {
         return getUnprotectableBlocks().contains(type);
+    }
+
+    /**
+     * Check if a type is one of the unprotectable types
+     *
+     * @param type
+     * @return
+     */
+    public boolean isUnprotectableType(Block block)
+    {
+        return getUnprotectableBlocks().contains(new BlockTypeEntry(block));
     }
 
     /**
@@ -442,15 +452,7 @@ public final class SettingsManager
      */
     public boolean isThroughType(int type)
     {
-        for (byte throughField : throughFields)
-        {
-            if (throughField == type)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return throughFieldsSet.contains(type);
     }
 
     /**
@@ -485,7 +487,7 @@ public final class SettingsManager
     {
         for (FieldSettings fs : fieldDefinitions.values())
         {
-            if (fs.hasDefaultFlag(FieldFlag.SNITCH) && plugin.getForceFieldManager().isSameBlock(fs.getRawTypeId(), Helper.toRawTypeId(block)))
+            if (fs.hasDefaultFlag(FieldFlag.SNITCH) && fs.getTypeEntry().equals(new BlockTypeEntry(block)))
             {
                 return true;
             }
@@ -500,22 +502,9 @@ public final class SettingsManager
      * @param typeId
      * @return
      */
-    public boolean isUnbreakableType(int typeId)
+    public boolean isUnbreakableType(BlockTypeEntry type)
     {
-        boolean contains = false;
-
-        if (typeId == 74)
-        {
-            contains = getFfBlocks().contains(73);
-        }
-
-        if (typeId == 62)
-        {
-            contains = getFfBlocks().contains(61);
-        }
-
-
-        return contains || getUnbreakableBlocks().contains(typeId);
+        return getUnbreakableBlocks().contains(type);
     }
 
     /**
@@ -524,20 +513,9 @@ public final class SettingsManager
      * @param unbreakableblock
      * @return
      */
-    public boolean isUnbreakableType(Block unbreakableblock)
+    public boolean isUnbreakableType(Block block)
     {
-        return isUnbreakableType(unbreakableblock.getTypeId());
-    }
-
-    /**
-     * Check if a type is one of the unbreakable types
-     *
-     * @param type
-     * @return
-     */
-    public boolean isUnbreakableType(String type)
-    {
-        return isUnbreakableType(Material.getMaterial(type).getId());
+        return isUnbreakableType(new BlockTypeEntry(block));
     }
 
     /**
@@ -548,29 +526,9 @@ public final class SettingsManager
      */
     public boolean isFieldType(Block block)
     {
-        return isFieldType(block.getTypeId());
-    }
+        PreciousStones.debug("isField: " + new BlockTypeEntry(block));
 
-    /**
-     * Check if a type is one of the forcefeld types
-     *
-     * @param type
-     * @return
-     */
-    public boolean isFieldType(String type)
-    {
-        return isFieldType(Material.getMaterial(type).getId());
-    }
-
-    /**
-     * Check if the material is one of the forcefeld types
-     *
-     * @param material
-     * @return
-     */
-    public boolean isFieldType(Material material)
-    {
-        return isFieldType(material.getId());
+        return isFieldType(new BlockTypeEntry(block));
     }
 
     /**
@@ -579,21 +537,9 @@ public final class SettingsManager
      * @param typeId
      * @return
      */
-    public boolean isFieldType(int typeId)
+    public boolean isFieldType(BlockTypeEntry type)
     {
-        boolean contains = false;
-
-        if (typeId == 74)
-        {
-            contains = getFfBlocks().contains(73);
-        }
-
-        if (typeId == 62)
-        {
-            contains = getFfBlocks().contains(61);
-        }
-
-        return contains || getFfBlocks().contains(typeId);
+        return fieldDefinitions.containsKey(type);
     }
 
     /**
@@ -604,7 +550,18 @@ public final class SettingsManager
      */
     public boolean isBypassBlock(Block block)
     {
-        return getBypassBlocks().contains(block.getTypeId());
+        return getBypassBlocks().contains(new BlockTypeEntry(block));
+    }
+
+    /**
+     * Returns the settings for a specific block
+     *
+     * @param field
+     * @return
+     */
+    public FieldSettings getFieldSettings(Block block)
+    {
+        return getFieldSettings(new BlockTypeEntry(block));
     }
 
     /**
@@ -615,7 +572,7 @@ public final class SettingsManager
      */
     public FieldSettings getFieldSettings(Field field)
     {
-        return getFieldSettings(field.getRawTypeId());
+        return getFieldSettings(field.getTypeEntry());
     }
 
     /**
@@ -624,9 +581,9 @@ public final class SettingsManager
      * @param typeId
      * @return
      */
-    public FieldSettings getFieldSettings(int typeId)
+    public FieldSettings getFieldSettings(BlockTypeEntry type)
     {
-        return fieldDefinitions.get(typeId);
+        return fieldDefinitions.get(type);
     }
 
     /**
@@ -634,9 +591,9 @@ public final class SettingsManager
      *
      * @return
      */
-    public HashMap<Integer, FieldSettings> getFieldSettings()
+    public HashMap<BlockTypeEntry, FieldSettings> getFieldSettings()
     {
-        HashMap<Integer, FieldSettings> fs = new HashMap<Integer, FieldSettings>();
+        HashMap<BlockTypeEntry, FieldSettings> fs = new HashMap<BlockTypeEntry, FieldSettings>();
         fs.putAll(fieldDefinitions);
         return fs;
     }
@@ -764,7 +721,7 @@ public final class SettingsManager
     /**
      * @return the unbreakableBlocks
      */
-    public List<Integer> getUnbreakableBlocks()
+    public List<BlockTypeEntry> getUnbreakableBlocks()
     {
         return Collections.unmodifiableList(unbreakableBlocks);
     }
@@ -772,7 +729,7 @@ public final class SettingsManager
     /**
      * @return the bypassBlocks
      */
-    public List<Integer> getBypassBlocks()
+    public List<BlockTypeEntry> getBypassBlocks()
     {
         return Collections.unmodifiableList(bypassBlocks);
     }
@@ -780,7 +737,7 @@ public final class SettingsManager
     /**
      * @return the unprotectableBlocks
      */
-    public List<Integer> getUnprotectableBlocks()
+    public List<BlockTypeEntry> getUnprotectableBlocks()
     {
         return Collections.unmodifiableList(unprotectableBlocks);
     }
@@ -1139,14 +1096,6 @@ public final class SettingsManager
     }
 
     /**
-     * @return the ffBlocks
-     */
-    public List<Integer> getFfBlocks()
-    {
-        return Collections.unmodifiableList(ffBlocks);
-    }
-
-    /**
      * @return the linesPerPage
      */
     public int getLinesPerPage()
@@ -1221,9 +1170,14 @@ public final class SettingsManager
     /**
      * @return the throughFieldsSet
      */
-    public HashSet<Byte> getThroughFieldsSet()
+    public List<Integer> getThroughFieldsSet()
     {
-        return new HashSet<Byte>(throughFieldsSet);
+        return new LinkedList<Integer>(throughFieldsSet);
+    }
+
+    public boolean isFragileBlock(Block block)
+    {
+        return fragileBlockSet.contains(block.getTypeId());
     }
 
     public int getCuboidDefiningType()
@@ -1364,5 +1318,17 @@ public final class SettingsManager
     public boolean isPreventPlaceEverywhere()
     {
         return preventPlaceEverywhere;
+    }
+
+    public double getVersion()
+    {
+        return version;
+    }
+
+    public void setVersion(double version)
+    {
+        config.set("settings.version", version);
+        save();
+        this.version = version;
     }
 }

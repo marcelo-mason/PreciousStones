@@ -1,6 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -41,7 +44,7 @@ public class SnitchManager
                 if (!plugin.getForceFieldManager().isAllowed(field,player.getName()))
                 {
                     DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
-                    plugin.getStorageManager().offerSnitchEntry(new net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry(field, player.getName(), "Entry", dateFormat.format(new Date()), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Entry", dateFormat.format(new Date()), 1));
                 }
             }
         }
@@ -63,7 +66,7 @@ public class SnitchManager
             {
                 if (!plugin.getForceFieldManager().isAllowed(field,player.getName()))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry(field, player.getName(), "Block Break", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Break", toBlockDetails(block), 1));
                 }
             }
         }
@@ -84,7 +87,7 @@ public class SnitchManager
             {
                 if (!plugin.getForceFieldManager().isAllowed(field,player.getName()))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry(field, player.getName(), "Block Place", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Place", toBlockDetails(block), 1));
                 }
             }
         }
@@ -105,7 +108,7 @@ public class SnitchManager
             {
                 if (!plugin.getForceFieldManager().isAllowed(field,player.getName()))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry(field, player.getName(), "Used", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Used", toBlockDetails(block), 1));
                 }
             }
         }
@@ -133,7 +136,7 @@ public class SnitchManager
             {
                 if (!plugin.getForceFieldManager().isAllowed(field,player.getName()))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry(field, player.getName(), "Shopped", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Shopped", toBlockDetails(block), 1));
                 }
             }
         }
@@ -154,7 +157,7 @@ public class SnitchManager
             {
                 if (!plugin.getForceFieldManager().isAllowed(field,player.getName()))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry(field, player.getName(), "Ignite", toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Ignite", toBlockDetails(block), 1));
                 }
             }
         }

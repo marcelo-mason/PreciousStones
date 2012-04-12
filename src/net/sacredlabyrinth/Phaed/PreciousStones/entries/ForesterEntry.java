@@ -79,6 +79,7 @@ public class ForesterEntry
 
     private boolean doPlantingAttempt()
     {
+        PreciousStones.debug("planting attempt");
         World world = plugin.getServer().getWorld(field.getWorld());
         Player player = plugin.getServer().getPlayer(playerName);
 
@@ -89,12 +90,15 @@ public class ForesterEntry
 
         if (!landPrepared)
         {
+            PreciousStones.debug("prepare land");
             plugin.getForesterManager().prepareLand(field, world);
+            PreciousStones.debug("land prepared");
             landPrepared = true;
         }
 
         if (field.getSettings().getTreeTypes() != null)
         {
+            PreciousStones.debug("generate tree");
             plugin.getForesterManager().generateTree(field, player, world);
         }
 

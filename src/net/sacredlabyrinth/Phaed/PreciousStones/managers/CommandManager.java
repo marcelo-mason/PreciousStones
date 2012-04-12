@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
@@ -548,6 +549,11 @@ public final class CommandManager implements CommandExecutor
                                         unToggable = true;
                                     }
 
+                                    if (flagStr.equalsIgnoreCase("tekkit-block"))
+                                    {
+                                        unToggable = true;
+                                    }
+
                                     if (flagStr.equalsIgnoreCase("dynmap-disabled-by-default"))
                                     {
                                         unToggable = true;
@@ -962,13 +968,16 @@ public final class CommandManager implements CommandExecutor
 
                         if (args.length == 1 && plugin.getPermissionsManager().has(player, "preciousstones.admin.counts"))
                         {
-                            if (Helper.isInteger(args[0]))
+                            if (Helper.isTypeEntry(args[0]))
                             {
-                                int type = Integer.parseInt(args[0]);
+                                BlockTypeEntry type = Helper.toTypeEntry(args[0]);
 
-                                if (!plugin.getCommunicationManager().showCounts(sender, type))
+                                if (type != null)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Not a valid field type");
+                                    if (!plugin.getCommunicationManager().showCounts(sender, type))
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "Not a valid field type");
+                                    }
                                 }
                             }
                             else if (Helper.isString(args[0]) && hasplayer)
@@ -1068,23 +1077,23 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (args.length == 1)
                         {
-                            if (Helper.isInteger(args[0]))
+                            if (Helper.isTypeEntry(args[0]))
                             {
-                                int typeId = Integer.parseInt(args[0]);
+                                BlockTypeEntry type = Helper.toTypeEntry(args[0]);
 
-                                if (typeId != 0)
+                                if (type != null)
                                 {
-                                    int fields = plugin.getForceFieldManager().deleteFieldsOfType(typeId);
-                                    int ubs = plugin.getUnbreakableManager().deleteUnbreakablesOfType(typeId);
+                                    int fields = plugin.getForceFieldManager().deleteFieldsOfType(type);
+                                    int ubs = plugin.getUnbreakableManager().deleteUnbreakablesOfType(type);
 
                                     if (fields > 0)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + fields + " " + Material.getMaterial(typeId) + " fields");
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + fields + " " + Material.getMaterial(type.getTypeId()) + " fields");
                                     }
 
                                     if (ubs > 0)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + fields + " " + Material.getMaterial(typeId) + " unbreakables");
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + fields + " " + Material.getMaterial(type.getTypeId()) + " unbreakables");
                                     }
 
                                     if (ubs == 0 && fields == 0)
@@ -1132,39 +1141,34 @@ public final class CommandManager implements CommandExecutor
                                 return true;
                             }
 
-                            try
-                            {
-                                Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
 
-                                if (targetBlock != null)
+                            TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                            Block targetBlock = aiming.getTargetBlock();
+
+                            if (targetBlock != null)
+                            {
+                                Field field = plugin.getForceFieldManager().getField(targetBlock);
+
+                                if (field != null)
                                 {
-                                    Field field = plugin.getForceFieldManager().getField(targetBlock);
+                                    // transfer the count over to the new owner
 
-                                    if (field != null)
-                                    {
-                                        // transfer the count over to the new owner
+                                    PlayerEntry oldData = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
+                                    oldData.decrementFieldCount(field.getSettings().getTypeEntry());
 
-                                        PlayerEntry oldData = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
-                                        oldData.decrementFieldCount(field.getSettings().getRawTypeId());
+                                    PlayerEntry newData = plugin.getPlayerManager().getPlayerEntry(owner);
+                                    newData.incrementFieldCount(field.getSettings().getTypeEntry());
 
-                                        PlayerEntry newData = plugin.getPlayerManager().getPlayerEntry(owner);
-                                        newData.incrementFieldCount(field.getSettings().getRawTypeId());
+                                    plugin.getStorageManager().offerPlayer(field.getOwner());
+                                    plugin.getStorageManager().offerPlayer(owner);
 
-                                        plugin.getStorageManager().offerPlayer(field.getOwner());
-                                        plugin.getStorageManager().offerPlayer(owner);
+                                    // change the owner
 
-                                        // change the owner
-
-                                        field.setOwner(owner);
-                                        plugin.getStorageManager().offerField(field);
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Owner set to " + owner);
-                                        return true;
-                                    }
+                                    field.setOwner(owner);
+                                    plugin.getStorageManager().offerField(field);
+                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Owner set to " + owner);
+                                    return true;
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-
                             }
 
                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "You are not pointing at a field or unbreakable block");
@@ -1183,40 +1187,34 @@ public final class CommandManager implements CommandExecutor
                                 return true;
                             }
 
-                            try
+                            TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                            Block targetBlock = aiming.getTargetBlock();
+
+                            if (targetBlock != null)
                             {
-                                Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
+                                Field field = plugin.getForceFieldManager().getField(targetBlock);
 
-                                if (targetBlock != null)
+                                if (field != null)
                                 {
-                                    Field field = plugin.getForceFieldManager().getField(targetBlock);
-
-                                    if (field != null)
+                                    if (field.isOwner(player.getName()))
                                     {
-                                        if (field.isOwner(player.getName()))
+                                        if (field.hasFlag(FieldFlag.CAN_CHANGE_OWNER))
                                         {
-                                            if (field.hasFlag(FieldFlag.CAN_CHANGE_OWNER))
-                                            {
-                                                field.setNewOwner(owner);
+                                            field.setNewOwner(owner);
 
-                                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field can now be taken by " + owner + " via right-click");
-                                                return true;
-                                            }
-                                            else
-                                            {
-                                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field type does not support the changing of ownership");
-                                            }
+                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field can now be taken by " + owner + " via right-click");
+                                            return true;
                                         }
                                         else
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Only the owner of the field can change its owner");
+                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field type does not support the changing of ownership");
                                         }
                                     }
+                                    else
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Only the owner of the field can change its owner");
+                                    }
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-
                             }
 
                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "You are not pointing at a field or unbreakable block");

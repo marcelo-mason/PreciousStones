@@ -15,6 +15,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import ru.tehkode.permissions.PermissionGroup;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +31,7 @@ public final class PermissionsManager
     private static Economy economy = null;
     private PermissionHandler handler = null;
     private PermissionsPlugin pbukkit = null;
+    private PermissionsEx pex = null;
     private LWC lwc = null;
     private PreciousStones plugin;
 
@@ -38,6 +42,7 @@ public final class PermissionsManager
     {
         plugin = PreciousStones.getInstance();
         detectPermissionsBukkit();
+        detectPermissionsEx();
         detectPermissions();
         detectLWC();
 
@@ -74,6 +79,19 @@ public final class PermissionsManager
             if (test != null)
             {
                 handler = ((Permissions) test).getHandler();
+            }
+        }
+    }
+
+    private void detectPermissionsEx()
+    {
+        if (pex == null)
+        {
+            Plugin test = plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
+
+            if (test != null)
+            {
+                pex = (PermissionsEx) test;
             }
         }
     }
@@ -161,7 +179,18 @@ public final class PermissionsManager
      */
     public boolean inGroup(String playerName, World world, String group)
     {
-        if (pbukkit != null)
+        if (pex != null)
+        {
+            PermissionUser user = PermissionsEx.getUser(playerName);
+
+            if (user != null)
+            {
+                return user.inGroup(group);
+            }
+
+            return false;
+        }
+        else if (pbukkit != null)
         {
             List<Group> groups = pbukkit.getGroups(playerName);
 
@@ -200,7 +229,21 @@ public final class PermissionsManager
     {
         List<String> groups = new LinkedList<String>();
 
-        if (pbukkit != null)
+        if (pex != null)
+        {
+            PermissionUser user = PermissionsEx.getUser(playerName);
+
+            if (user != null)
+            {
+                PermissionGroup[] pexGroups = user.getGroups();
+
+                for (PermissionGroup g : pexGroups)
+                {
+                    groups.add(g.getName());
+                }
+            }
+        }
+        else if (pbukkit != null)
         {
             List<Group> gs = pbukkit.getGroups(playerName);
 
@@ -322,7 +365,7 @@ public final class PermissionsManager
 
     public boolean lwcProtected(Block block)
     {
-        if(lwc == null)
+        if (lwc == null)
         {
             return false;
         }

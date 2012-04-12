@@ -1,7 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
@@ -53,9 +52,9 @@ public class UnprotectableManager
                         continue;
                     }
 
-                    int type = block.getWorld().getBlockTypeIdAt(block.getX() + x, block.getY() + y, block.getZ() + z);
+                    Block touching = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.getSettingsManager().isUnprotectableType(type))
+                    if (plugin.getSettingsManager().isUnprotectableType(touching))
                     {
                         return block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
                     }
@@ -74,7 +73,7 @@ public class UnprotectableManager
      */
     public Block existsUnprotectableBlock(Block fieldblock)
     {
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(fieldblock));
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(fieldblock);
 
         if (fs == null)
         {
@@ -112,9 +111,9 @@ public class UnprotectableManager
                         continue;
                     }
 
-                    int type = fieldblock.getWorld().getBlockTypeIdAt(x, y, z);
+                    Block test = fieldblock.getWorld().getBlockAt(x, y, z);
 
-                    if (plugin.getSettingsManager().isUnprotectableType(type))
+                    if (plugin.getSettingsManager().isUnprotectableType(test))
                     {
                         return fieldblock.getWorld().getBlockAt(x, y, z);
                     }
@@ -133,7 +132,7 @@ public class UnprotectableManager
      */
     public Block existsUnprotectableBlock(Field field)
     {
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field.getSettings().getRawTypeId());
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field.getSettings().getTypeEntry());
 
         if (fs == null)
         {
@@ -158,9 +157,9 @@ public class UnprotectableManager
                         continue;
                     }
 
-                    int type = field.getBlock().getWorld().getBlockTypeIdAt(x, y, z);
+                    Block test = field.getBlock().getWorld().getBlockAt(x, y, z);
 
-                    if (plugin.getSettingsManager().isUnprotectableType(type))
+                    if (plugin.getSettingsManager().isUnprotectableType(test))
                     {
                         return field.getBlock().getWorld().getBlockAt(x, y, z);
                     }

@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -343,13 +344,13 @@ public final class UnbreakableManager
                         currentChunk = cv;
                     }
 
-                    int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+                    Block block = world.getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 
-                    if (!plugin.getSettingsManager().isUnbreakableType(type))
+                    if (!plugin.getSettingsManager().isUnbreakableType(block))
                     {
                         revertedCount++;
-                        Block block = world.getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
                         block.setTypeId(unbreakable.getTypeId());
+                        block.setData(unbreakable.getData());
                     }
                 }
             }
@@ -513,7 +514,7 @@ public final class UnbreakableManager
      * @param typeId
      * @return the count of deleted unbreakables
      */
-    public int deleteUnbreakablesOfType(int typeId)
+    public int deleteUnbreakablesOfType(BlockTypeEntry type)
     {
         int deletedCount = 0;
 
@@ -527,8 +528,11 @@ public final class UnbreakableManager
                     {
                         for (Unbreakable ub : c.values())
                         {
-                            queueRelease(ub);
-                            deletedCount++;
+                            if (ub.getTypeEntry().equals(type))
+                            {
+                                queueRelease(ub);
+                                deletedCount++;
+                            }
                         }
                     }
                 }

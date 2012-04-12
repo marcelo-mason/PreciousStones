@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -9,8 +10,7 @@ import org.bukkit.block.BlockState;
  */
 public class GriefBlock extends AbstractVec
 {
-    private int typeId;
-    private byte data;
+    private BlockTypeEntry type;
     private String signText = "";
     private boolean empty = false;
 
@@ -22,11 +22,10 @@ public class GriefBlock extends AbstractVec
      * @param typeId
      * @param data
      */
-    public GriefBlock(int x, int y, int z, String world, int typeId, byte data)
+    public GriefBlock(int x, int y, int z, String world, BlockTypeEntry type)
     {
         super(x, y, z, world);
-        this.typeId = typeId;
-        this.data = data;
+        this.type = type;
     }
 
     /**
@@ -34,11 +33,10 @@ public class GriefBlock extends AbstractVec
      * @param typeId
      * @param data
      */
-    public GriefBlock(Location loc, int typeId, byte data)
+    public GriefBlock(Location loc, BlockTypeEntry type)
     {
         super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
-        this.typeId = typeId;
-        this.data = data;
+        this.type = type;
     }
 
     /**
@@ -47,8 +45,7 @@ public class GriefBlock extends AbstractVec
     public GriefBlock(Block block)
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-        this.typeId = block.getTypeId();
-        this.data = block.getData();
+        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
     }
 
     /**
@@ -57,7 +54,7 @@ public class GriefBlock extends AbstractVec
     public GriefBlock(BlockState state)
     {
         super(state.getX(), state.getY(), state.getZ(), state.getWorld().getName());
-        this.typeId = state.getTypeId();
+        this.type = new BlockTypeEntry(state.getTypeId(), state.getRawData());
         this.empty = true;
     }
 
@@ -67,15 +64,7 @@ public class GriefBlock extends AbstractVec
      */
     public int getTypeId()
     {
-        return typeId;
-    }
-
-    /**
-     * @param typeId the typeId to set
-     */
-    public void setTypeId(int typeId)
-    {
-        this.typeId = typeId;
+        return type.getTypeId();
     }
 
     /**
@@ -83,15 +72,7 @@ public class GriefBlock extends AbstractVec
      */
     public byte getData()
     {
-        return data;
-    }
-
-    /**
-     * @param data the data to set
-     */
-    public void setData(byte data)
-    {
-        this.data = data;
+        return type.getData();
     }
 
     /**

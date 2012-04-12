@@ -51,11 +51,6 @@ public class VelocityManager
                         {
                             public void run()
                             {
-                                if (player.getVehicle() != null)
-                                {
-                                    player.getVehicle().setVelocity(velocity);
-                                }
-
                                 player.setVelocity(velocity);
 
                                 plugin.getCommunicationManager().showLaunch(player);
@@ -89,11 +84,6 @@ public class VelocityManager
                         {
                             public void run()
                             {
-                                if (player.getVehicle() != null)
-                                {
-                                    player.setVelocity(new Vector(0, height, 0));
-                                }
-
                                 player.setVelocity(new Vector(0, height, 0));
 
                                 plugin.getCommunicationManager().showCannon(player);

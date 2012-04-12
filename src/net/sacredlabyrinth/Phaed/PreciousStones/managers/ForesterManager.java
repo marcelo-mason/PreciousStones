@@ -76,6 +76,7 @@ public final class ForesterManager
      */
     public int prepareSpot(Field field, World world, int xx, int yy, int zz, int radius)
     {
+        PreciousStones.debug("prepare spot");
         Vec pos = new Vec(xx, yy, zz, world.getName());
 
         int affected = 0;
@@ -113,7 +114,7 @@ public final class ForesterManager
 
                                     int density = 100 - field.getSettings().getShrubDensity();
 
-                                    if (r.nextInt(density) == 0)
+                                    if (density == 0 || r.nextInt(density) == 0)
                                     {
                                         Block blockAbove = world.getBlockAt(vec.getX(), vec.getY() + 1, vec.getZ());
                                         setShrub(field.getSettings(), blockAbove);
@@ -216,6 +217,11 @@ public final class ForesterManager
 
         List<Integer> treeTypes = fs.getTreeTypes();
 
+        if (treeTypes.isEmpty())
+        {
+            return TreeType.TREE;
+        }
+
         int rand = r.nextInt(treeTypes.size());
         int tree = treeTypes.get(rand);
 
@@ -247,6 +253,7 @@ public final class ForesterManager
 
         return TreeType.TREE;
     }
+
     /**
      * Gets a random shrub from available types
      *

@@ -1,7 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -86,7 +89,7 @@ public final class ForceFieldManager
             return null;
         }
 
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(fieldBlock));
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(fieldBlock);
 
         if (fs == null)
         {
@@ -136,9 +139,9 @@ public final class ForceFieldManager
 
         if (plugin.getCuboidManager().hasOpenCuboid(player))
         {
-            net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
+            CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
 
-            if ((ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup() || fs.getMixingGroup() == 0) && ce.getField().getSettings().getRawTypeId() != fs.getRawTypeId())
+            if ((ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup() || fs.getMixingGroup() == 0) && !ce.getField().getSettings().getTypeEntry().equals(fs.getTypeEntry()))
             {
                 plugin.getCuboidManager().cancelOpenCuboid(player);
                 ChatBlock.sendMessage(player, "Cannot mix fields that are not in the same mixing group.");
@@ -165,7 +168,7 @@ public final class ForceFieldManager
 
             // import field flags
 
-            if (ce.getField().getRawTypeId() != fs.getRawTypeId())
+            if (!ce.getField().getTypeEntry().equals(fs.getTypeEntry()))
             {
                 ce.getField().importFlags(fs.getDefaultFlags());
                 ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(fs.getTitle()) + "'s field flags imported");
@@ -191,14 +194,14 @@ public final class ForceFieldManager
 
         if (fs.hasDefaultFlag(FieldFlag.FORESTER))
         {
-            net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry fe = new net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry(field, player.getName());
+            ForesterEntry fe = new ForesterEntry(field, player.getName());
         }
         else
         {
             // add count to player data
 
             PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
-            data.incrementFieldCount(field.getSettings().getRawTypeId());
+            data.incrementFieldCount(field.getSettings().getTypeEntry());
             plugin.getStorageManager().offerPlayer(player.getName());
 
             // open cuboid definition
@@ -419,7 +422,7 @@ public final class ForceFieldManager
         // remove the count from the owner
 
         PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
-        data.decrementFieldCount(field.getSettings().getRawTypeId());
+        data.decrementFieldCount(field.getSettings().getTypeEntry());
         plugin.getStorageManager().offerPlayer(field.getOwner());
 
         // delete siblings and parent if exists
@@ -615,7 +618,7 @@ public final class ForceFieldManager
 
                 if (field != null)
                 {
-                    if (!isSameBlock(field.getRawTypeId(), Helper.toRawTypeId(block)))
+                    if (!field.getTypeEntry().equals(new BlockTypeEntry(block)))
                     {
                         deleteField(field);
                         return null;
@@ -626,23 +629,6 @@ public final class ForceFieldManager
             }
         }
         return null;
-    }
-
-    /**
-     * Check if two ids are of the same type, it accounts for shifting types
-     *
-     * @param id1
-     * @param id2
-     * @return
-     */
-    public boolean isSameBlock(int id1, int id2)
-    {
-        if (id1 == id2 || id1 == 73 && id2 == 74 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61)
-        {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -691,9 +677,9 @@ public final class ForceFieldManager
      * @param target
      * @return
      */
-    public HashMap<Integer, Integer> getFieldCounts(String target)
+    public HashMap<BlockTypeEntry, Integer> getFieldCounts(String target)
     {
-        HashMap<Integer, Integer> counts = new HashMap<Integer, Integer>();
+        HashMap<BlockTypeEntry, Integer> counts = new HashMap<BlockTypeEntry, Integer>();
         List<World> worlds = plugin.getServer().getWorlds();
 
         for (World world : worlds)
@@ -702,13 +688,13 @@ public final class ForceFieldManager
 
             for (Field field : fields)
             {
-                if (counts.containsKey(field.getRawTypeId()))
+                if (counts.containsKey(field.getTypeEntry()))
                 {
-                    counts.put(field.getRawTypeId(), counts.get(field.getRawTypeId()) + 1);
+                    counts.put(field.getTypeEntry(), counts.get(field.getTypeEntry()) + 1);
                 }
                 else
                 {
-                    counts.put(field.getRawTypeId(), 1);
+                    counts.put(field.getTypeEntry(), 1);
                 }
             }
         }
@@ -826,17 +812,13 @@ public final class ForceFieldManager
                         currentChunk = cv;
                     }
 
-                    int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
+                    Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
 
-                    if (!plugin.getSettingsManager().isFieldType(type))
+                    if (!plugin.getSettingsManager().isFieldType(block))
                     {
                         revertedCount++;
-                        Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
                         block.setTypeId(field.getTypeId());
-                        if (field.getData() > 0)
-                        {
-                            block.setData(field.getData());
-                        }
+                        block.setData(field.getData());
                     }
                 }
             }
@@ -1746,31 +1728,25 @@ public final class ForceFieldManager
      */
     public Field getPointedField(Player player)
     {
-        try
+        TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+        Block targetBlock = aiming.getTargetBlock();
+
+        if (targetBlock != null)
         {
-            Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
+            Field f = getField(targetBlock);
 
-            if (targetBlock != null)
+            if (f != null)
             {
-                Field f = getField(targetBlock);
-
-                if (f != null)
+                if (f.isChild())
                 {
-                    if (f.isChild())
-                    {
-                        f = f.getParent();
-                    }
+                    f = f.getParent();
+                }
 
-                    if (isAllowed(f, player.getName()))
-                    {
-                        return f;
-                    }
+                if (isAllowed(f, player.getName()))
+                {
+                    return f;
                 }
             }
-        }
-        catch (Exception ex)
-        {
-
         }
 
         return null;
@@ -1886,7 +1862,7 @@ public final class ForceFieldManager
      */
     public Field fieldConflicts(Block placedBlock, Player placer)
     {
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(placedBlock));
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(placedBlock);
 
         if (fs == null)
         {
@@ -1934,7 +1910,7 @@ public final class ForceFieldManager
      * @param placer
      * @return the field, null if none found
      */
-    public Field fieldConflicts(net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce, Player placer)
+    public Field fieldConflicts(CuboidEntry ce, Player placer)
     {
         if (ce.getField().hasFlag(FieldFlag.NO_CONFLICT))
         {
@@ -2006,54 +1982,6 @@ public final class ForceFieldManager
     }
 
     /**
-     * Get all touching fields
-     *
-     * @param scopedBlock
-     * @param materialInHand
-     * @return the fields
-     */
-    public HashSet<Field> getTouchingFields(Block scopedBlock, Material materialInHand)
-    {
-        HashSet<Field> out = new HashSet<Field>();
-
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(materialInHand.getId());
-
-        if (fs == null)
-        {
-            return out;
-        }
-
-        // create throwaway field to test intersection
-
-        Field placedField = new Field(scopedBlock, fs.getRadius(), fs.getHeight());
-
-        Set<Field> overlapping = placedField.getOverlappingFields();
-
-        for (Field field : overlapping)
-        {
-            FieldSettings fsArea = plugin.getSettingsManager().getFieldSettings(field.getRawTypeId());
-
-            if (fsArea == null)
-            {
-                queueRelease(field);
-                continue;
-            }
-
-            if (field.hasFlag(FieldFlag.NO_CONFLICT))
-            {
-                continue;
-            }
-
-            if (field.intersects(placedField))
-            {
-                out.add(field);
-            }
-        }
-
-        return out;
-    }
-
-    /**
      * Deletes all fields belonging to a player
      *
      * @param playerName the players
@@ -2103,22 +2031,17 @@ public final class ForceFieldManager
         Field field = getField(block);
 
         deleteField(field);
-
-        if (plugin.getSettingsManager().isDropOnDelete())
-        {
-            dropBlock(block);
-        }
+        dropBlock(block);
     }
 
     /**
-     * Deletes a field from the collection and drops it
+     * Deletes a field silently (no drop)
      *
-     * @param block
+     * @param field
      */
-    public void releaseAndDrop(Field field)
+    public void silentRelease(Block block)
     {
-        deleteField(field);
-        dropBlock(field.getBlock());
+        deleteField(getField(block));
     }
 
     /**
@@ -2129,21 +2052,6 @@ public final class ForceFieldManager
     public void silentRelease(Field field)
     {
         deleteField(field);
-    }
-
-    /**
-     * Adds a field to deletion queue
-     *
-     * @param fieldBlock
-     */
-    public void queueRelease(Block fieldBlock)
-    {
-        Field field = getField(fieldBlock);
-
-        if (!deletionQueue.contains(field))
-        {
-            deletionQueue.add(field);
-        }
     }
 
     /**
@@ -2192,6 +2100,40 @@ public final class ForceFieldManager
     }
 
     /**
+     * Drops a block
+     *
+     * @param field
+     */
+    public void dropBlock(Field field)
+    {
+        dropBlock(field.getBlock());
+    }
+
+    /**
+     * Drops a block
+     *
+     * @param block
+     */
+    public void dropBlock(Block block)
+    {
+        // prevent tekkit blocks from dropping and crashing client
+
+        if (block.getTypeId() > 124)
+        {
+            return;
+        }
+
+        World world = block.getWorld();
+        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+
+        if (plugin.getSettingsManager().isFieldType(block))
+        {
+            block.setType(Material.AIR);
+            world.dropItemNaturally(block.getLocation(), is);
+        }
+    }
+
+    /**
      * Delete fields the the player is standing on
      *
      * @param player
@@ -2221,7 +2163,7 @@ public final class ForceFieldManager
      * @param typeId
      * @return count of fields deleted
      */
-    public int deleteFieldsOfType(int typeId)
+    public int deleteFieldsOfType(BlockTypeEntry type)
     {
         int deletedCount = 0;
 
@@ -2239,7 +2181,7 @@ public final class ForceFieldManager
 
                         for (Field field : c.values())
                         {
-                            if (field.getRawTypeId() == typeId)
+                            if (field.getTypeEntry().equals(type))
                             {
                                 queueRelease(field);
                                 deletedCount++;
@@ -2255,33 +2197,6 @@ public final class ForceFieldManager
             flush();
         }
         return deletedCount;
-    }
-
-    /**
-     * Drops a block
-     *
-     * @param field
-     */
-    public void dropBlock(Field field)
-    {
-        dropBlock(field.getBlock());
-    }
-
-    /**
-     * Drops a block
-     *
-     * @param block
-     */
-    public void dropBlock(Block block)
-    {
-        World world = block.getWorld();
-        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
-
-        if (plugin.getSettingsManager().isFieldType(block))
-        {
-            block.setType(Material.AIR);
-            world.dropItemNaturally(block.getLocation(), is);
-        }
     }
 
     /**
@@ -2331,7 +2246,7 @@ public final class ForceFieldManager
      */
     public boolean areaHasPlayers(Block block, Player self)
     {
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block);
 
         if (fs == null)
         {

@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -278,7 +279,19 @@ public class PSBlockListener implements Listener
 
             if (release)
             {
-                plugin.getForceFieldManager().release(block);
+                PreciousStones.debug("releasing field");
+
+                if (plugin.getSettingsManager().isFragileBlock(block))
+                {
+                    PreciousStones.debug("fragile block broken");
+                    event.setCancelled(true);
+                    plugin.getForceFieldManager().release(block);
+                }
+                else
+                {
+                    plugin.getForceFieldManager().silentRelease(block);
+                    event.setCancelled(false);
+                }
 
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
                 {
@@ -330,7 +343,19 @@ public class PSBlockListener implements Listener
 
             if (release)
             {
-                plugin.getForceFieldManager().release(block);
+                PreciousStones.debug("releasing field");
+
+                if (plugin.getSettingsManager().isFragileBlock(block))
+                {
+                    PreciousStones.debug("fragile block broken");
+                    event.setCancelled(true);
+                    plugin.getForceFieldManager().release(block);
+                }
+                else
+                {
+                    plugin.getForceFieldManager().silentRelease(block);
+                    event.setCancelled(false);
+                }
 
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
                 {
@@ -472,8 +497,8 @@ public class PSBlockListener implements Listener
             }
             else
             {
-                net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
-                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
+                CuboidEntry ce = plugin.getCuboidManager().getOpenCuboid(player);
+                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block);
 
                 if (ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup())
                 {
@@ -505,7 +530,7 @@ public class PSBlockListener implements Listener
 
             if (plugin.getSettingsManager().isFieldType(block))
             {
-                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
+                FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block);
 
                 if (fs == null)
                 {
@@ -540,10 +565,10 @@ public class PSBlockListener implements Listener
             }
         }
 
+        // --------------- Handle field
+
         if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
         {
-            // --------------- Handle field
-
             if (plugin.getSettingsManager().isSneakNormalBlock())
             {
                 if (player.isSneaking())
@@ -573,7 +598,7 @@ public class PSBlockListener implements Listener
                 plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
             }
 
-            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(Helper.toRawTypeId(block));
+            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block);
 
             if (fs == null)
             {
@@ -782,7 +807,7 @@ public class PSBlockListener implements Listener
 
         // --------------- Handle unprotectable
 
-        if (!isDisabled && plugin.getSettingsManager().isUnprotectableType(block.getTypeId()))
+        if (!isDisabled && plugin.getSettingsManager().isUnprotectableType(block))
         {
             Block unbreakableblock = plugin.getUnbreakableManager().touchingUnbrakableBlock(block);
 
@@ -836,70 +861,73 @@ public class PSBlockListener implements Listener
 
         if (block.getType().equals(Material.CHEST))
         {
-            Field field = plugin.getForceFieldManager().getConflictSourceField(block.getLocation(), player.getName(), FieldFlag.ALL);
+            boolean conflicted = false;
 
-            if (field != null)
+            if (block.getRelative(BlockFace.EAST).getType().equals(Material.CHEST))
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
 
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field1, player.getName());
+
+                if (!allowed || field1.hasFlag(FieldFlag.APPLY_TO_ALL))
                 {
-                    boolean conflicted = false;
-
-                    Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
-
-                    allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowed || field1.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (field1 != null)
                     {
-                        if (field1 != null && !field1.equals(field))
-                        {
-                            conflicted = true;
-                        }
-                    }
-
-                    Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
-
-                    allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowed || field2.hasFlag(FieldFlag.APPLY_TO_ALL))
-                    {
-                        if (field2 != null && !field2.equals(field))
-                        {
-                            conflicted = true;
-                        }
-                    }
-
-                    Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
-
-                    allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowed || field3.hasFlag(FieldFlag.APPLY_TO_ALL))
-                    {
-                        if (field3 != null && !field3.equals(field))
-                        {
-                            conflicted = true;
-                        }
-                    }
-
-                    Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
-
-                    allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowed || field4.hasFlag(FieldFlag.APPLY_TO_ALL))
-                    {
-                        if (field4 != null && !field4.equals(field))
-                        {
-                            conflicted = true;
-                        }
-                    }
-
-                    if (conflicted)
-                    {
-                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place chest next so someone else's field");
-                        event.setCancelled(true);
+                        conflicted = true;
                     }
                 }
+            }
+
+            if (block.getRelative(BlockFace.WEST).getType().equals(Material.CHEST))
+            {
+                Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
+
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field2, player.getName());
+
+                if (!allowed || field2.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    if (field2 != null)
+                    {
+                        conflicted = true;
+                    }
+                }
+            }
+
+            if (block.getRelative(BlockFace.NORTH).getType().equals(Material.CHEST))
+            {
+                Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
+
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field3, player.getName());
+
+                if (!allowed || field3.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    if (field3 != null)
+                    {
+                        conflicted = true;
+                    }
+                }
+            }
+
+            if (block.getRelative(BlockFace.SOUTH).getType().equals(Material.CHEST))
+            {
+                Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
+
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field4, player.getName());
+
+                if (!allowed || field4.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    if (field4 != null)
+                    {
+                        conflicted = true;
+                    }
+                }
+            }
+
+            if (conflicted)
+            {
+                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place chest next so someone else's field");
+                event.setCancelled(true);
+                return;
             }
         }
 

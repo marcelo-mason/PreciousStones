@@ -47,7 +47,7 @@ public class LimitManager
         }
 
         int limit = getLimit(player, fs);
-        int count = plugin.getPlayerManager().getPlayerEntry(player.getName()).getFieldCount(fs.getRawTypeId());
+        int count = plugin.getPlayerManager().getPlayerEntry(player.getName()).getFieldCount(fs.getTypeEntry());
 
         if (limit == -1)
         {

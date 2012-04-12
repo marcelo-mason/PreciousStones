@@ -32,8 +32,6 @@ public class MySQLCore implements DBCore
         this.username = username;
         this.password = password;
         this.log = PreciousStones.getLog();
-
-        initialize();
     }
 
     private void initialize()
@@ -109,7 +107,16 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            return getConnection().createStatement().executeQuery(query);
+            Statement statement = getConnection().createStatement();
+
+            try
+            {
+                return statement.executeQuery(query);
+            }
+            finally
+            {
+                statement.close();
+            }
         }
         catch (SQLException ex)
         {
@@ -130,12 +137,24 @@ public class MySQLCore implements DBCore
         try
         {
             Statement statement = getConnection().createStatement();
-            statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-            ResultSet keys = statement.getGeneratedKeys();
+            ResultSet keys = null;
 
-            if (keys.next())
+            try
             {
-                return keys.getLong(1);
+                statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+                keys = statement.getGeneratedKeys();
+            }
+            finally
+            {
+                statement.close();
+                if (keys != null)
+                {
+                    if (keys.next())
+                    {
+                        return keys.getLong(1);
+                    }
+                }
+                return 0;
             }
         }
         catch (SQLException ex)
@@ -159,7 +178,16 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            getConnection().createStatement().executeUpdate(query);
+            Statement statement = getConnection().createStatement();
+
+            try
+            {
+                statement.executeUpdate(query);
+            }
+            finally
+            {
+                statement.close();
+            }
         }
         catch (SQLException ex)
         {
@@ -180,7 +208,16 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            getConnection().createStatement().executeUpdate(query);
+            Statement statement = getConnection().createStatement();
+
+            try
+            {
+                statement.executeUpdate(query);
+            }
+            finally
+            {
+                statement.close();
+            }
         }
         catch (SQLException ex)
         {
@@ -202,8 +239,17 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            getConnection().createStatement().execute(query);
-            return true;
+            Statement statement = getConnection().createStatement();
+
+            try
+            {
+                statement.execute(query);
+            }
+            finally
+            {
+                statement.close();
+                return true;
+            }
         }
         catch (SQLException ex)
         {
@@ -223,8 +269,24 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            ResultSet result = getConnection().createStatement().executeQuery("SELECT * FROM " + table);
-            return result != null;
+            Statement statement = getConnection().createStatement();
+            ResultSet result = null;
+
+            try
+            {
+                result = statement.executeQuery("SELECT * FROM " + table);
+            }
+            finally
+            {
+                statement.close();
+
+                if (result == null)
+                {
+                    return false;
+                }
+
+                return result != null;
+            }
         }
         catch (SQLException ex)
         {
@@ -247,8 +309,17 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            getConnection().createStatement().executeQuery("SELECT " + column + " FROM " + table);
-            return true;
+            Statement statement = getConnection().createStatement();
+
+            try
+            {
+                statement.executeQuery("SELECT " + column + " FROM " + table);
+            }
+            finally
+            {
+                statement.close();
+                return true;
+            }
         }
         catch (Exception ex)
         {

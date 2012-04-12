@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -16,10 +17,8 @@ public class FieldSettings
     private int growTime = 20;
     private int shrubDensity = 64;
     private boolean validField = true;
-    private int rawTypeId;
-    private int typeId;
+    private BlockTypeEntry type;
     private int radius = 0;
-    private byte data = 0;
     private int heal = 0;
     private int damage = 0;
     private int feed = 0;
@@ -60,18 +59,29 @@ public class FieldSettings
             return;
         }
 
-        if (map.containsKey("block") && Helper.isInteger(map.get("block")) && ((Integer) map.get("block") > 0))
+        if (map.containsKey("block"))
         {
-            typeId = (Integer) map.get("block");
+            BlockTypeEntry type = null;
+            Object item = map.get("block");
 
-            // hack for wool
-
-            if (typeId > 3500)
+            if (Helper.isString(item))
             {
-                rawTypeId = typeId;
-                data = (byte) (typeId - 3500);
-                typeId = 35;
+                String rawItem = (String) map.get("block");
+                type = Helper.toTypeEntry(rawItem);
             }
+            else if (Helper.isInteger(item))
+            {
+                int blockId = (Integer) map.get("block");
+                type = new BlockTypeEntry(blockId, ((byte)0));
+            }
+
+            if (type == null)
+            {
+                validField = false;
+                return;
+            }
+
+            this.type = type;
         }
         else
         {
@@ -891,19 +901,27 @@ public class FieldSettings
     }
 
     /**
-     * @return the typeId
+     * @return the block type id
      */
     public int getTypeId()
     {
-        return typeId;
+        return type.getTypeId();
     }
 
     /**
-     * @return the typeId
+     * @return the block data
      */
     public byte getData()
     {
-        return data;
+        return type.getData();
+    }
+
+    /**
+     * @return the type entry
+     */
+    public BlockTypeEntry getTypeEntry()
+    {
+        return type;
     }
 
     /**
@@ -1000,11 +1018,6 @@ public class FieldSettings
     public String getRequiredPermission()
     {
         return requiredPermission;
-    }
-
-    public int getRawTypeId()
-    {
-        return rawTypeId > 0 ? rawTypeId : typeId;
     }
 
     public int getAutoDisableSeconds()

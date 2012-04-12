@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
@@ -113,125 +114,102 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        // handle cuboid undo
+        boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(is.getTypeId()) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()));
 
-        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+        if (hasCuboidHand)
         {
-            if (is != null)
+            if (plugin.getCuboidManager().hasOpenCuboid(player))
             {
-                if (plugin.getSettingsManager().isToolItemType(is.getTypeId()))
+                if (player.isSneaking())
                 {
-                    if (plugin.getCuboidManager().hasOpenCuboid(player))
+                    // handle cuboid undo
+
+                    if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
                     {
-                        if (player.isSneaking())
-                        {
-                            plugin.getCuboidManager().revertLastSelection(player);
-                            return;
-                        }
+                        plugin.getCuboidManager().revertLastSelection(player);
+                        return;
                     }
                 }
-            }
-        }
 
-        // handle cuboid expand
+                // handle cuboid expand
 
-        if (event.getAction().equals(Action.RIGHT_CLICK_AIR))
-        {
-            if (is != null)
-            {
-                if (plugin.getSettingsManager().isToolItemType(is.getTypeId()))
+                if (event.getAction().equals(Action.RIGHT_CLICK_AIR))
                 {
-                    if (plugin.getCuboidManager().hasOpenCuboid(player))
+                    plugin.getCuboidManager().expandDirection(player);
+                    return;
+                }
+
+                // handle open cuboid commands
+
+                if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
+                {
+                    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                    Block target = aiming.getTargetBlock();
+
+                    // close the cuboid if the player shift clicks any block
+
+                    if (player.isSneaking())
                     {
-                        if (!player.isSneaking())
+                        plugin.getCuboidManager().closeCuboid(player);
+                        return;
+                    }
+
+                    // close the cuboid when clicking back to the origin block
+
+                    if (plugin.getCuboidManager().isOpenCuboid(player, target))
+                    {
+                        plugin.getCuboidManager().closeCuboid(player);
+                        return;
+                    }
+
+                    // do not select field blocks
+
+                    if (plugin.getForceFieldManager().getField(target) != null)
+                    {
+                        return;
+                    }
+
+                    // or add to the cuboid selection
+
+                    Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+                    if (field == null)
+                    {
+                        field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.GRIEF_REVERT);
+                    }
+
+                    if (field != null)
+                    {
+                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
-                            plugin.getCuboidManager().expandDirection(player);
-                            return;
+                            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                            {
+                                return;
+                            }
                         }
                     }
+
+                    // add to the cuboid
+
+                    if (plugin.getCuboidManager().processSelectedBlock(player, target))
+                    {
+                        event.setCancelled(true);
+                    }
+                    return;
                 }
             }
-        }
-
-        // handle left clicks
-
-        if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
-        {
-            if (is != null)
+            else
             {
-                if (plugin.getSettingsManager().isToolItemType(is.getTypeId()))
+                // handle closed cuboid commands
+
+                if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
                 {
-                    // handle open cuboid commands
-
-                    if (plugin.getCuboidManager().hasOpenCuboid(player))
+                    try
                     {
-                        try
-                        {
-                            Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
-
-                            // close the cuboid if the player shift clicks any block
-
-                            if (player.isSneaking())
-                            {
-                                plugin.getCuboidManager().closeCuboid(player);
-                                return;
-                            }
-
-                            // close the cuboid when clicking back to the origin block
-
-                            if (plugin.getCuboidManager().isOpenCuboid(player, target))
-                            {
-                                plugin.getCuboidManager().closeCuboid(player);
-                                return;
-                            }
-
-                            // do not select field blocks
-
-                            if (plugin.getForceFieldManager().getField(target) != null)
-                            {
-                                return;
-                            }
-
-                            // or add to the cuboid selection
-
-                            Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
-
-                            if (field == null)
-                            {
-                                field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.GRIEF_REVERT);
-                            }
-
-                            if (field != null)
-                            {
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                {
-                                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
-                                    {
-                                        return;
-                                    }
-                                }
-                            }
-
-                            // add to the cuboid
-
-                            if (plugin.getCuboidManager().processSelectedBlock(player, target))
-                            {
-                                event.setCancelled(true);
-                            }
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    }
-                    else
-                    {
-                        // handle closed cuboid commands
-
-                        Block target = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
+                        TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                        Block target = aiming.getTargetBlock();
 
                         if (player.isSneaking())
                         {
@@ -243,7 +221,7 @@ public class PSPlayerListener implements Listener
                                 {
                                     return;
                                 }
-                                
+
                                 if (field.hasFlag(FieldFlag.CUBOID))
                                 {
                                     if (field.getParent() != null)
@@ -278,10 +256,20 @@ public class PSPlayerListener implements Listener
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
+            }
+        }
 
-                // handle super pickaxes
+        // handle super pickaxes
 
+        if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
+        {
+            if (is != null)
+            {
                 if (is.getTypeId() == 270 || is.getTypeId() == 274 || is.getTypeId() == 278 || is.getTypeId() == 285)
                 {
                     PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
@@ -296,11 +284,19 @@ public class PSPlayerListener implements Listener
                         {
                             if (event.getAction().equals(Action.LEFT_CLICK_AIR))
                             {
-                                Block targetBlock = player.getTargetBlock(plugin.getSettingsManager().getThroughFieldsSet(), 256);
-
-                                if (targetBlock != null)
+                                try
                                 {
-                                    block = targetBlock;
+                                    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                                    Block targetBlock = aiming.getTargetBlock();
+
+                                    if (targetBlock != null)
+                                    {
+                                        block = targetBlock;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+
                                 }
                             }
                         }
@@ -501,10 +497,10 @@ public class PSPlayerListener implements Listener
                                     PreciousStones plugin = PreciousStones.getInstance();
 
                                     PlayerEntry oldData = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
-                                    oldData.decrementFieldCount(field.getSettings().getRawTypeId());
+                                    oldData.decrementFieldCount(field.getSettings().getTypeEntry());
 
                                     PlayerEntry newData = plugin.getPlayerManager().getPlayerEntry(field.getNewOwner());
-                                    newData.incrementFieldCount(field.getSettings().getRawTypeId());
+                                    newData.incrementFieldCount(field.getSettings().getTypeEntry());
 
                                     String oldOwnerName = field.getOwner();
 

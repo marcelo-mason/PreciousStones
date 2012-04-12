@@ -92,5 +92,4 @@ public class BlockEntry
     {
         return "[" + getTypeId() + ":" + getData() + " " + Helper.toLocationString(location) + "]";
     }
-
 }

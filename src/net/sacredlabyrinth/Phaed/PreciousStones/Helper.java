@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -88,6 +89,27 @@ public class Helper
         try
         {
             Integer.parseInt(input);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Helper function to check for type entry formatted strings
+     *
+     * @param input
+     * @return
+     */
+    public static boolean isTypeEntry(String input)
+    {
+        try
+        {
+            String out = input.replace(":", "");
+
+            Integer.parseInt(out);
             return true;
         }
         catch (Exception ex)
@@ -522,6 +544,11 @@ public class Helper
      */
     public static boolean isSameBlock(Location loc, Location loc2)
     {
+        if (loc == null && loc2 == null)
+        {
+            return true;
+        }
+
         if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ())
         {
             return true;
@@ -538,6 +565,11 @@ public class Helper
      */
     public static boolean isSameLocation(Location loc, Location loc2)
     {
+        if (loc == null && loc2 == null)
+        {
+            return true;
+        }
+
         if (loc.getX() == loc2.getX() && loc.getY() == loc2.getY() && loc.getZ() == loc2.getZ())
         {
             return true;
@@ -574,41 +606,6 @@ public class Helper
         }
     }
 
-    public static int toRawTypeId(Block block)
-    {
-        if (block.getTypeId() == 35)
-        {
-            if (block.getData() == 0)
-            {
-                return 35;
-            }
-
-            String str = Byte.toString(block.getData());
-
-            if (str.length() == 1)
-            {
-                str = "0" + str;
-            }
-
-            str = "35" + str;
-
-            return Integer.parseInt(str);
-        }
-
-        return block.getTypeId();
-    }
-
-    public static byte dataFromRawTypeId(int raw)
-    {
-        if (raw > 3500)
-        {
-            String str = Integer.toString(raw);
-            return Byte.parseByte(str.substring(2));
-        }
-
-        return 0;
-    }
-
     /**
      * Drop block to ground
      *
@@ -631,5 +628,49 @@ public class Helper
         {
 
         }
+    }
+
+    /**
+     * Returns a type entry from a string
+     * @param rawItem
+     * @return
+     */
+    public static BlockTypeEntry toTypeEntry(String rawItem)
+    {
+        String[] split = rawItem.split("[:]");
+
+        if (split.length == 1 && Helper.isInteger(split[0]))
+        {
+            return new BlockTypeEntry(Integer.parseInt(split[0]), (byte)0);
+        }
+
+        if (split.length == 2 && Helper.isInteger(split[0]) && Helper.isByte(split[1]))
+        {
+            return new BlockTypeEntry(Integer.parseInt(split[0]), Byte.parseByte(split[1]));
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns a list of type entries from a string list
+     * @param rawItem
+     * @return
+     */
+    public static List<BlockTypeEntry> toTypeEntries(List<String> rawList)
+    {
+        List<BlockTypeEntry> types = new ArrayList<BlockTypeEntry>();
+
+        for (String rawItem : rawList)
+        {
+            BlockTypeEntry type = Helper.toTypeEntry(rawItem);
+
+            if(type != null)
+            {
+                types.add(type);
+            }
+        }
+
+        return types;
     }
 }

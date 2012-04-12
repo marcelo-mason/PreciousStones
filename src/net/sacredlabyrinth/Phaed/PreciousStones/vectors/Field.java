@@ -2,6 +2,8 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,8 +35,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int miny;
     private int minz;
     private float velocity;
-    private int typeId;
-    private byte data;
+    private BlockTypeEntry type;
     private String owner;
     private String newOwner;
     private String name;
@@ -43,7 +44,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<String> allowed = new ArrayList<String>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
     private List<GriefBlock> grief = new LinkedList<GriefBlock>();
-    private List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> snitches = new LinkedList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
+    private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
     private List<FieldFlag> flags = new LinkedList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new LinkedList<FieldFlag>();
     private List<FieldFlag> insertedFlags = new LinkedList<FieldFlag>();
@@ -72,7 +73,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      * @param name
      * @param lastUsed
      */
-    public Field(int x, int y, int z, int minx, int miny, int minz, int maxx, int maxy, int maxz, float velocity, String world, int typeId, byte data, String owner, String name, long lastUsed)
+    public Field(int x, int y, int z, int minx, int miny, int minz, int maxx, int maxy, int maxz, float velocity, String world, BlockTypeEntry type, String owner, String name, long lastUsed)
     {
         super(x, y, z, world);
 
@@ -88,8 +89,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.velocity = velocity;
         this.owner = owner;
         this.name = name;
-        this.typeId = typeId;
-        this.data = data;
+        this.type = type;
         this.lastUsed = lastUsed;
     }
 
@@ -106,7 +106,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      * @param name
      * @param lastUsed
      */
-    public Field(int x, int y, int z, int radius, int height, float velocity, String world, int typeId, byte data, String owner, String name, long lastUsed)
+    public Field(int x, int y, int z, int radius, int height, float velocity, String world, BlockTypeEntry type, String owner, String name, long lastUsed)
     {
         super(x, y, z, world);
 
@@ -116,8 +116,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.velocity = velocity;
         this.owner = owner;
         this.name = name;
-        this.typeId = typeId;
-        this.data = data;
+        this.type = type;
         this.lastUsed = lastUsed;
 
         calculateDimensions();
@@ -137,8 +136,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.height = height;
         this.owner = owner;
         this.name = "";
-        this.typeId = block.getTypeId();
-        this.data = block.getData();
+        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
 
         calculateDimensions();
     }
@@ -156,8 +154,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.height = height;
         this.name = "";
         this.owner = "";
-        this.typeId = block.getTypeId();
-        this.data = block.getData();
+        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
 
         calculateDimensions();
     }
@@ -272,36 +269,24 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public int getTypeId()
     {
-        return this.typeId;
+        return type.getTypeId();
     }
 
     /**
-     * @return the raw type id
+     * @return the block data
      */
-    public int getRawTypeId()
+    public byte getData()
     {
-        if (typeId == 35)
-        {
-            if (data == 0)
-            {
-                return 35;
-            }
-
-            String str = Byte.toString(data);
-
-            if (str.length() == 1)
-            {
-                str = "0" + str;
-            }
-
-            str = "35" + str;
-
-            return Integer.parseInt(str);
-        }
-
-        return typeId;
+        return type.getData();
     }
 
+    /**
+     * @return the type entry
+     */
+    public BlockTypeEntry getTypeEntry()
+    {
+        return type;
+    }
 
     /**
      * @return the block type name
@@ -762,7 +747,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     /**
      * @return the snitches
      */
-    public List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> getSnitches()
+    public List<SnitchEntry> getSnitches()
     {
         return Collections.unmodifiableList(snitches);
     }
@@ -1384,11 +1369,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
 
         dirty.add(DirtyFieldReason.FLAGS);
-    }
-
-    public byte getData()
-    {
-        return data;
     }
 
     /**

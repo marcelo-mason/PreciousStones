@@ -1,7 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
@@ -33,7 +35,7 @@ public final class StorageManager
     private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
     private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
     private final Set<Field> pendingGrief = new HashSet<Field>();
-    private final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> pendingSnitchEntries = new LinkedList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
+    private final List<SnitchEntry> pendingSnitchEntries = new LinkedList<SnitchEntry>();
 
     /**
      *
@@ -49,6 +51,8 @@ public final class StorageManager
 
     private void initiateDB()
     {
+        int newTables = 0;
+
         if (plugin.getSettingsManager().isUseMysql())
         {
             core = new MySQLCore(plugin.getSettingsManager().getHost(), plugin.getSettingsManager().getPort(), plugin.getSettingsManager().getDatabase(), plugin.getSettingsManager().getUsername(), plugin.getSettingsManager().getPassword());
@@ -61,21 +65,24 @@ public final class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_cuboids");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_cuboids` (  `id` bigint(20) NOT NULL auto_increment, `parent` bigint(20) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL,  `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, `flags` TEXT NOT NULL, PRIMARY KEY  (`id`),  UNIQUE KEY `uq_cuboid_fields_1`  (`x`,`y`,`z`,`world`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_cuboids` (  `id` bigint(20) NOT NULL auto_increment, `parent` bigint(20) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL,  `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL, `data` tinyint default 0,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, `flags` TEXT NOT NULL, PRIMARY KEY  (`id`),  UNIQUE KEY `uq_cuboid_fields_1`  (`x`,`y`,`z`,`world`));");
+                    newTables++;
                 }
 
                 if (!core.existsTable("pstone_fields"))
                 {
                     PreciousStones.log("Creating table: pstone_fields");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, `flags` TEXT NOT NULL, PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_fields_1` (`x`,`y`,`z`,`world`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `data` tinyint default 0, `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, `flags` TEXT NOT NULL, PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_fields_1` (`x`,`y`,`z`,`world`));");
+                    newTables++;
                 }
 
                 if (!core.existsTable("pstone_unbreakables"))
                 {
                     PreciousStones.log("Creating table: pstone_unbreakables");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(25) default NULL,  `owner` varchar(16) NOT NULL,  `type_id` int(11) default NULL,  PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_unbreakables_1` (`x`,`y`,`z`,`world`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` bigint(20) NOT NULL auto_increment,  `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(25) default NULL,  `owner` varchar(16) NOT NULL,  `type_id` int(11) default NULL,  `data` tinyint default 0, PRIMARY KEY  (`id`),  UNIQUE KEY `uq_pstone_unbreakables_1` (`x`,`y`,`z`,`world`));");
+                    newTables++;
                 }
 
                 if (!core.existsTable("pstone_grief_undo"))
@@ -117,21 +124,24 @@ public final class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_cuboids");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_cuboids` (  `id` INTEGER PRIMARY KEY,  `parent` bigint(20) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL,  `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, `flags` TEXT NOT NULL, UNIQUE (`x`,`y`,`z`,`world`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_cuboids` (  `id` INTEGER PRIMARY KEY,  `parent` bigint(20) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL,  `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `data` tinyint default 0, `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, `flags` TEXT NOT NULL, UNIQUE (`x`,`y`,`z`,`world`));");
+                    newTables++;
                 }
 
                 if (!core.existsTable("pstone_fields"))
                 {
                     PreciousStones.log("Creating table: pstone_fields");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` INTEGER PRIMARY KEY, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, `flags` TEXT NOT NULL, UNIQUE (`x`,`y`,`z`,`world`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_fields` (  `id` INTEGER PRIMARY KEY, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL,  `radius` int(11) default NULL,  `height` int(11) default NULL,  `velocity` float default NULL,  `type_id` int(11) default NULL,  `data` tinyint default 0, `owner` varchar(16) NOT NULL,  `name` varchar(50) NOT NULL,  `packed_allowed` text NOT NULL, `last_used` bigint(20) Default NULL, `flags` TEXT NOT NULL, UNIQUE (`x`,`y`,`z`,`world`));");
+                    newTables++;
                 }
 
                 if (!core.existsTable("pstone_unbreakables"))
                 {
                     PreciousStones.log("Creating table: pstone_unbreakables");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` INTEGER PRIMARY KEY, `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(25) default NULL,  `owner` varchar(16) NOT NULL,  `type_id` int(11) default NULL, UNIQUE (`x`,`y`,`z`,`world`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_unbreakables` (  `id` INTEGER PRIMARY KEY, `x` int(11) default NULL,  `y` int(11) default NULL,  `z` int(11) default NULL,  `world` varchar(25) default NULL,  `owner` varchar(16) NOT NULL,  `type_id` int(11) default NULL,`data` tinyint default 0, UNIQUE (`x`,`y`,`z`,`world`));");
+                    newTables++;
                 }
 
                 if (!core.existsTable("pstone_grief_undo"))
@@ -162,32 +172,28 @@ public final class StorageManager
             }
         }
 
-        // fixes();
+        if (plugin.getSettingsManager().getVersion() < 9)
+        {
+            if (newTables < 3)
+            {
+                fixes();
+            }
+
+            plugin.getSettingsManager().setVersion(9);
+        }
     }
 
     @SuppressWarnings("unused")
     private void fixes()
     {
-        if (!core.existsColumn("flags", "pstone_players"))
-        {
-            PreciousStones.log("Adding flags column to pstone_players table");
+        PreciousStones.log("Adding data column to pstone_fields table");
+        core.execute("alter table pstone_fields add column data tinyint default 0");
 
-            core.execute("alter table pstone_players add column flags TEXT");
-        }
+        PreciousStones.log("Adding data column to pstone_cuboids table");
+        core.execute("alter table pstone_cuboids add column data tinyint default 0");
 
-        if (!core.existsColumn("flags", "pstone_fields"))
-        {
-            PreciousStones.log("Adding flags column to pstone_fields table");
-
-            core.execute("alter table pstone_fields add column flags TEXT");
-        }
-
-        if (!core.existsColumn("flags", "pstone_cuboids"))
-        {
-            PreciousStones.log("Adding flags column to pstone_cuboids table");
-
-            core.execute("alter table pstone_cuboids add column flags TEXT");
-        }
+        PreciousStones.log("Adding data column to pstone_unbreakables table");
+        core.execute("alter table pstone_unbreakables add column data tinyint default 0");
     }
 
     /**
@@ -436,7 +442,7 @@ public final class StorageManager
      *
      * @param se
      */
-    public void offerSnitchEntry(final net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry se)
+    public void offerSnitchEntry(final SnitchEntry se)
     {
         synchronized (pendingSnitchEntries)
         {
@@ -455,7 +461,7 @@ public final class StorageManager
         final List<Field> out = new ArrayList<Field>();
         int purged = 0;
 
-        final String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, velocity, world, owner, name, packed_allowed, last_used, flags FROM pstone_fields WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
+        final String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM pstone_fields WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
         final ResultSet res = core.select(query);
 
@@ -474,6 +480,7 @@ public final class StorageManager
                         final int radius = res.getInt("radius");
                         final int height = res.getInt("height");
                         int type_id = res.getInt("type_id");
+                        byte data = res.getByte("data");
                         final float velocity = res.getFloat("velocity");
                         final String world = res.getString("world");
                         final String owner = res.getString("owner");
@@ -482,16 +489,9 @@ public final class StorageManager
                         final String packed_allowed = res.getString("packed_allowed");
                         final long last_used = res.getLong("last_used");
 
-                        byte data = 0;
-                        int rawTypeId = type_id;
+                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        if (type_id > 3500)
-                        {
-                            data = Helper.dataFromRawTypeId(type_id);
-                            type_id = 35;
-                        }
-
-                        final Field field = new Field(x, y, z, radius, height, velocity, world, type_id, data, owner, name, last_used);
+                        final Field field = new Field(x, y, z, radius, height, velocity, world, type, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
                         field.setId(id);
 
@@ -524,7 +524,7 @@ public final class StorageManager
                             out.add(field);
 
                             final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
-                            playerdata.incrementFieldCount(rawTypeId);
+                            playerdata.incrementFieldCount(type);
 
                             // check for fields in the wrong table
 
@@ -568,7 +568,7 @@ public final class StorageManager
         final HashMap<Long, Field> out = new HashMap<Long, Field>();
         int purged = 0;
 
-        String query = "SELECT pstone_cuboids.id as id, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, velocity, world, owner, name, packed_allowed, last_used, flags  FROM  pstone_cuboids WHERE pstone_cuboids.parent = 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
+        String query = "SELECT pstone_cuboids.id as id, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags  FROM  pstone_cuboids WHERE pstone_cuboids.parent = 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
 
         ResultSet res = core.select(query);
 
@@ -591,6 +591,7 @@ public final class StorageManager
                         final int maxy = res.getInt("maxy");
                         final int maxz = res.getInt("maxz");
                         int type_id = res.getInt("type_id");
+                        byte data = res.getByte("data");
                         final float velocity = res.getFloat("velocity");
                         final String world = res.getString("world");
                         final String owner = res.getString("owner");
@@ -599,16 +600,9 @@ public final class StorageManager
                         final String packed_allowed = res.getString("packed_allowed");
                         final long last_used = res.getLong("last_used");
 
-                        byte data = 0;
-                        int rawTypeId = type_id;
+                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        if (type_id > 3500)
-                        {
-                            data = Helper.dataFromRawTypeId(type_id);
-                            type_id = 35;
-                        }
-
-                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type_id, data, owner, name, last_used);
+                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
                         field.setId(id);
 
@@ -641,7 +635,7 @@ public final class StorageManager
                             out.put(id, field);
 
                             final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
-                            playerdata.incrementFieldCount(rawTypeId);
+                            playerdata.incrementFieldCount(type);
 
                             // check for fields in the wrong table
 
@@ -667,7 +661,7 @@ public final class StorageManager
             }
         }
 
-        query = "SELECT pstone_cuboids.id as id, parent, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, velocity, world, owner, name, packed_allowed, last_used, flags FROM  pstone_cuboids WHERE pstone_cuboids.parent > 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
+        query = "SELECT pstone_cuboids.id as id, parent, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM  pstone_cuboids WHERE pstone_cuboids.parent > 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
 
         res = core.select(query);
 
@@ -691,6 +685,7 @@ public final class StorageManager
                         final int maxy = res.getInt("maxy");
                         final int maxz = res.getInt("maxz");
                         int type_id = res.getInt("type_id");
+                        byte data = res.getByte("data");
                         final float velocity = res.getFloat("velocity");
                         final String world = res.getString("world");
                         final String owner = res.getString("owner");
@@ -699,16 +694,9 @@ public final class StorageManager
                         final String packed_allowed = res.getString("packed_allowed");
                         final long last_used = res.getLong("last_used");
 
-                        byte data = 0;
-                        int rawTypeId = type_id;
+                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        if (type_id > 3500)
-                        {
-                            data = Helper.dataFromRawTypeId(type_id);
-                            type_id = 35;
-                        }
-
-                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type_id, data, owner, name, last_used);
+                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
 
                         final Field parentField = out.get(parent);
@@ -747,7 +735,7 @@ public final class StorageManager
                             out.put(id, field);
 
                             final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
-                            playerdata.incrementFieldCount(rawTypeId);
+                            playerdata.incrementFieldCount(type);
                         }
                     }
                     catch (final Exception ex)
@@ -860,11 +848,14 @@ public final class StorageManager
                         final int y = res.getInt("y");
                         final int z = res.getInt("z");
                         final int type_id = res.getInt("type_id");
+                        final byte data = res.getByte("data");
                         final String world = res.getString("world");
                         final String owner = res.getString("owner");
                         final long last_seen = res.getLong("last_seen");
 
-                        final Unbreakable ub = new Unbreakable(x, y, z, world, type_id, owner);
+                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+
+                        final Unbreakable ub = new Unbreakable(x, y, z, world, type, owner);
 
                         if (last_seen > 0)
                         {
@@ -1000,13 +991,13 @@ public final class StorageManager
             processSingleField(pending.get(field.toVec()));
         }
 
-        String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getRawTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+        String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
-            query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getRawTypeId() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+            query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
         }
 
         if (plugin.getSettingsManager().isDebugsql())
@@ -1073,8 +1064,8 @@ public final class StorageManager
      */
     public void insertUnbreakable(final Unbreakable ub)
     {
-        final String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`) ";
-        final String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + Helper.escapeQuotes(ub.getWorld()) + "','" + ub.getOwner() + "'," + ub.getTypeId() + ");";
+        final String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`, `data`) ";
+        final String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + Helper.escapeQuotes(ub.getWorld()) + "','" + ub.getOwner() + "'," + ub.getTypeId() + "," + ub.getData() + ");";
         core.insert(query + values);
     }
 
@@ -1095,7 +1086,7 @@ public final class StorageManager
      * @param snitch
      * @param se
      */
-    public void insertSnitchEntry(final Field snitch, final net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry se)
+    public void insertSnitchEntry(final Field snitch, final SnitchEntry se)
     {
         if (plugin.getSettingsManager().isUseMysql())
         {
@@ -1139,9 +1130,9 @@ public final class StorageManager
      * @param snitch
      * @return
      */
-    public List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> getSnitchEntries(final Field snitch)
+    public List<SnitchEntry> getSnitchEntries(final Field snitch)
     {
-        final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> workingSnitchEntries = new LinkedList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
+        final List<SnitchEntry> workingSnitchEntries = new LinkedList<SnitchEntry>();
 
         synchronized (pendingSnitchEntries)
         {
@@ -1154,7 +1145,7 @@ public final class StorageManager
             processSnitches(workingSnitchEntries);
         }
 
-        final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> out = new ArrayList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
+        final List<SnitchEntry> out = new ArrayList<SnitchEntry>();
 
         final String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "' ORDER BY `id` DESC;";
 
@@ -1178,7 +1169,7 @@ public final class StorageManager
                         final String details = res.getString("details");
                         final int count = res.getInt("count");
 
-                        final net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry ub = new net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry(null, name, reason, details, count);
+                        final SnitchEntry ub = new SnitchEntry(null, name, reason, details, count);
 
                         out.add(ub);
                     }
@@ -1326,7 +1317,9 @@ public final class StorageManager
                         final byte data = res.getByte("data");
                         final String signText = res.getString("sign_text");
 
-                        final GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type_id, data);
+                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+
+                        final GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type);
 
                         if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11)
                         {
@@ -1419,7 +1412,7 @@ public final class StorageManager
         final Map<Unbreakable, Boolean> workingUb = new HashMap<Unbreakable, Boolean>();
         final Map<String, Boolean> workingPlayers = new HashMap<String, Boolean>();
         final Set<Field> workingGrief = new HashSet<Field>();
-        final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> workingSnitchEntries = new LinkedList<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry>();
+        final List<SnitchEntry> workingSnitchEntries = new LinkedList<SnitchEntry>();
 
         synchronized (pending)
         {
@@ -1561,14 +1554,14 @@ public final class StorageManager
      *
      * @param workingSnitchEntries
      */
-    public void processSnitches(final List<net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry> workingSnitchEntries)
+    public void processSnitches(final List<SnitchEntry> workingSnitchEntries)
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingSnitchEntries.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] sending " + workingSnitchEntries.size() + " snitch queries...");
         }
 
-        for (final net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry se : workingSnitchEntries)
+        for (final SnitchEntry se : workingSnitchEntries)
         {
             insertSnitchEntry(se.getField(), se);
         }

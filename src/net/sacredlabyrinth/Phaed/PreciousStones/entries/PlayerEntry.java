@@ -19,7 +19,7 @@ public class PlayerEntry
     private int density;
     private boolean superduperpickaxe;
     private Location outsideLocation;
-    private Map<Integer, Integer> fieldCount = new HashMap<Integer, Integer>();
+    private Map<BlockTypeEntry, Integer> fieldCount = new HashMap<BlockTypeEntry, Integer>();
 
     /**
      * @param disabled
@@ -35,15 +35,15 @@ public class PlayerEntry
      *
      * @param typeid
      */
-    public void incrementFieldCount(int typeid)
+    public void incrementFieldCount(BlockTypeEntry type)
     {
-        if (fieldCount.containsKey(typeid))
+        if (fieldCount.containsKey(type))
         {
-            fieldCount.put(typeid, fieldCount.get(typeid) + 1);
+            fieldCount.put(type, fieldCount.get(type) + 1);
         }
         else
         {
-            fieldCount.put(typeid, 1);
+            fieldCount.put(type, 1);
         }
     }
 
@@ -52,20 +52,20 @@ public class PlayerEntry
      *
      * @param typeid
      */
-    public void decrementFieldCount(int typeid)
+    public void decrementFieldCount(BlockTypeEntry type)
     {
-        if (fieldCount.containsKey(typeid))
+        if (fieldCount.containsKey(type))
         {
-            fieldCount.put(typeid, Math.max(fieldCount.get(typeid) - 1, 0));
+            fieldCount.put(type, Math.max(fieldCount.get(type) - 1, 0));
         }
     }
 
     /**
      * @return the fieldCount
      */
-    public HashMap<Integer, Integer> getFieldCount()
+    public HashMap<BlockTypeEntry, Integer> getFieldCount()
     {
-        HashMap<Integer, Integer> counts = new HashMap<Integer, Integer>();
+        HashMap<BlockTypeEntry, Integer> counts = new HashMap<BlockTypeEntry, Integer>();
         counts.putAll(fieldCount);
 
         return counts;
@@ -77,11 +77,11 @@ public class PlayerEntry
      * @param typeid
      * @return
      */
-    public int getFieldCount(int typeid)
+    public int getFieldCount(BlockTypeEntry type)
     {
-        if (fieldCount.containsKey(typeid))
+        if (fieldCount.containsKey(type))
         {
-            return fieldCount.get(typeid);
+            return fieldCount.get(type);
         }
 
         return 0;

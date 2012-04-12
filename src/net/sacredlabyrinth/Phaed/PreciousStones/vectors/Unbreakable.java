@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -10,7 +11,7 @@ import org.bukkit.block.Block;
 public class Unbreakable extends AbstractVec
 {
     private String owner;
-    private int typeId;
+    private BlockTypeEntry type;
     private boolean dirty;
 
     /**
@@ -22,12 +23,12 @@ public class Unbreakable extends AbstractVec
      * @param typeId
      * @param owner
      */
-    public Unbreakable(int x, int y, int z, String world, int typeId, String owner)
+    public Unbreakable(int x, int y, int z, String world, BlockTypeEntry type, String owner)
     {
         super(x, y, z, world);
 
         this.owner = owner;
-        this.typeId = typeId;
+        this.type = type;
         this.dirty = true;
     }
 
@@ -41,7 +42,7 @@ public class Unbreakable extends AbstractVec
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
         this.owner = owner;
-        this.typeId = block.getTypeId();
+        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
         this.dirty = true;
     }
 
@@ -53,7 +54,7 @@ public class Unbreakable extends AbstractVec
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
-        this.typeId = block.getTypeId();
+        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
         this.dirty = true;
     }
 
@@ -63,7 +64,23 @@ public class Unbreakable extends AbstractVec
      */
     public int getTypeId()
     {
-        return this.typeId;
+        return this.type.getTypeId();
+    }
+
+    /**
+     * @return the block data
+     */
+    public byte getData()
+    {
+        return type.getData();
+    }
+
+    /**
+     * @return the type entry
+     */
+    public BlockTypeEntry getTypeEntry()
+    {
+        return type;
     }
 
     /**
@@ -107,14 +124,6 @@ public class Unbreakable extends AbstractVec
     public String toString()
     {
         return super.toString() + " [owner:" + getOwner() + "]";
-    }
-
-    /**
-     * @param typeId the typeId to set
-     */
-    public void setTypeId(int typeId)
-    {
-        this.typeId = typeId;
     }
 
     /**

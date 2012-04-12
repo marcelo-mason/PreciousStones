@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,7 +20,7 @@ import java.util.List;
 public class CuboidManager
 {
     private PreciousStones plugin;
-    private HashMap<String, net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry> openCuboids = new HashMap<String, net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry>();
+    private HashMap<String, CuboidEntry> openCuboids = new HashMap<String, CuboidEntry>();
 
     /**
      *
@@ -61,7 +62,7 @@ public class CuboidManager
      */
     public boolean isOpenCuboidField(Player player, Block block)
     {
-        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+        CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
         {
@@ -88,7 +89,7 @@ public class CuboidManager
      */
     public boolean isOpenCuboidChild(Player player, Block block)
     {
-        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+        CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
         {
@@ -112,7 +113,7 @@ public class CuboidManager
      * @param player
      * @return
      */
-    public net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry getOpenCuboid(Player player)
+    public CuboidEntry getOpenCuboid(Player player)
     {
         return openCuboids.get(player.getName());
     }
@@ -125,7 +126,7 @@ public class CuboidManager
      */
     public boolean processSelectedBlock(Player player, Block block)
     {
-        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry openCuboid = getOpenCuboid(player);
+        CuboidEntry openCuboid = getOpenCuboid(player);
 
         if (!plugin.getVisualizationManager().isOutlineBlock(player, block))
         {
@@ -135,7 +136,7 @@ public class CuboidManager
                 {
                     if (openCuboids.containsKey(player.getName()))
                     {
-                        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+                        CuboidEntry ce = openCuboids.get(player.getName());
 
                         int oldVolume = ce.getAvailableVolume();
 
@@ -195,7 +196,7 @@ public class CuboidManager
      */
     public void openCuboid(final Player player, final Field field)
     {
-        final net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = new net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry(field);
+        final CuboidEntry ce = new CuboidEntry(field);
         openCuboids.put(player.getName(), ce);
 
         field.setOpen(true);
@@ -229,7 +230,7 @@ public class CuboidManager
      */
     public void openChild(final Player player, final Field field)
     {
-        final net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+        final CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
         {
@@ -253,7 +254,7 @@ public class CuboidManager
      */
     public boolean closeCuboid(final Player player)
     {
-        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+        CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
         {
@@ -332,7 +333,7 @@ public class CuboidManager
      */
     public void removeChild(Player player, Block block)
     {
-        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+        CuboidEntry ce = openCuboids.get(player.getName());
         Field child = plugin.getForceFieldManager().getField(block);
 
         if (ce != null && child != null)
@@ -348,7 +349,7 @@ public class CuboidManager
      */
     public void cancelOpenCuboid(Player player, Block block)
     {
-        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+        CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
         {
@@ -389,7 +390,7 @@ public class CuboidManager
      */
     public void revertLastSelection(Player player)
     {
-        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+        CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
         {
@@ -412,7 +413,7 @@ public class CuboidManager
      */
     public void expandDirection(Player player)
     {
-        net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry ce = openCuboids.get(player.getName());
+        CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
         {
