@@ -14,6 +14,7 @@ public class FieldSettings
 {
     private int groundBlock = 2;
     private int treeCount = 64;
+    private int creatureCount = 6;
     private int growTime = 20;
     private int shrubDensity = 64;
     private boolean validField = true;
@@ -40,6 +41,7 @@ public class FieldSettings
     private int price = 0;
     private List<Integer> treeTypes = new ArrayList<Integer>();
     private List<Integer> shrubTypes = new ArrayList<Integer>();
+    private List<String> creatureTypes = new ArrayList<String>();
     private List<Integer> fertileBlocks = new ArrayList<Integer>();
     private List<Integer> limits = new ArrayList<Integer>();
     private List<Integer> preventUse = new ArrayList<Integer>();
@@ -61,18 +63,23 @@ public class FieldSettings
 
         if (map.containsKey("block"))
         {
-            BlockTypeEntry type = null;
             Object item = map.get("block");
+            BlockTypeEntry type = null;
 
-            if (Helper.isString(item))
+            if (Helper.isString(item) && Helper.isTypeEntry((String) item) && Helper.hasData((String) item))
             {
-                String rawItem = (String) map.get("block");
-                type = Helper.toTypeEntry(rawItem);
+                type = Helper.toTypeEntry((String) item);
             }
-            else if (Helper.isInteger(item))
+            else
             {
-                int blockId = (Integer) map.get("block");
-                type = new BlockTypeEntry(blockId, ((byte)0));
+                if (Helper.isInteger(item))
+                {
+                    type = new BlockTypeEntry((Integer) item, ((byte) 0));
+                }
+                else if (Helper.isInteger((String) item))
+                {
+                    type = new BlockTypeEntry(Integer.parseInt((String) item), ((byte) 0));
+                }
             }
 
             if (type == null)
@@ -235,6 +242,16 @@ public class FieldSettings
         if (map.containsKey("shrub-types") && Helper.isIntList(map.get("shrub-types")))
         {
             shrubTypes = (List<Integer>) map.get("shrub-types");
+        }
+
+        if (map.containsKey("creature-types") && Helper.isStringList(map.get("creature-types")))
+        {
+            creatureTypes = (List<String>) map.get("creature-types");
+        }
+
+        if (map.containsKey("creature-count") && Helper.isInteger(map.get("creature-count")))
+        {
+            creatureCount = (Integer) map.get("creature-count");
         }
 
         if (map.containsKey("fertile-blocks") && Helper.isIntList(map.get("fertile-blocks")))
@@ -1103,5 +1120,15 @@ public class FieldSettings
     public int getGroundBlock()
     {
         return groundBlock;
+    }
+
+    public List<String> getCreatureTypes()
+    {
+        return creatureTypes;
+    }
+
+    public int getCreatureCount()
+    {
+        return creatureCount;
     }
 }

@@ -40,15 +40,12 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockFade(BlockFadeEvent event)
     {
-        Block affectedBlock = event.getBlock();
-
         //If the block is going to disappear because it's a field.(leaves, ice, etc)
         //Cancel the event
 
-        if (plugin.getForceFieldManager().isField(affectedBlock))
+        if (plugin.getForceFieldManager().isField(event.getBlock()))
         {
             event.setCancelled(true);
-            return;
         }
     }
 
@@ -221,7 +218,7 @@ public class PSBlockListener implements Listener
 
         // --------------- prevent destroy everywhere
 
-        if (plugin.getSettingsManager().isPreventDestroyEverywhere())
+        if (plugin.getSettingsManager().isPreventDestroyEverywhere() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
         {
             boolean isAllowBlock = false;
 
@@ -269,42 +266,16 @@ public class PSBlockListener implements Listener
                 return;
             }
 
-            boolean release = false;
+            // cancel cuboid if still drawing it
 
             if (plugin.getCuboidManager().isOpenCuboidField(player, block))
             {
                 plugin.getCuboidManager().cancelOpenCuboid(player, block);
-                release = true;
+                removeAndRefundBlock(player, block, field, event);
+                return;
             }
 
-            if (release)
-            {
-                PreciousStones.debug("releasing field");
-
-                if (plugin.getSettingsManager().isFragileBlock(block))
-                {
-                    PreciousStones.debug("fragile block broken");
-                    event.setCancelled(true);
-                    plugin.getForceFieldManager().release(block);
-                }
-                else
-                {
-                    plugin.getForceFieldManager().silentRelease(block);
-                    event.setCancelled(false);
-                }
-
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
-                {
-                    if (!plugin.getSettingsManager().isNoRefunds())
-                    {
-                        if (fs.getPrice() > 0)
-                        {
-                            plugin.getForceFieldManager().refund(player, fs.getPrice());
-                            return;
-                        }
-                    }
-                }
-            }
+            boolean release = false;
 
             if (field.isOwner(player.getName()))
             {
@@ -339,34 +310,12 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.sendMessage(player, ChatColor.RED + "Cannot remove fields that have plot-fields inside of it.  You must remove them first before you can remove this field.");
                 event.setCancelled(true);
+                return;
             }
 
             if (release)
             {
-                PreciousStones.debug("releasing field");
-
-                if (plugin.getSettingsManager().isFragileBlock(block))
-                {
-                    PreciousStones.debug("fragile block broken");
-                    event.setCancelled(true);
-                    plugin.getForceFieldManager().release(block);
-                }
-                else
-                {
-                    plugin.getForceFieldManager().silentRelease(block);
-                    event.setCancelled(false);
-                }
-
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
-                {
-                    if (!plugin.getSettingsManager().isNoRefunds())
-                    {
-                        if (fs.getPrice() > 0)
-                        {
-                            plugin.getForceFieldManager().refund(player, fs.getPrice());
-                        }
-                    }
-                }
+                removeAndRefundBlock(player, block, field, event);
             }
             return;
         }
@@ -457,6 +406,55 @@ public class PSBlockListener implements Listener
         }
     }
 
+    private void removeAndRefundBlock(Player player, Block block, Field field, BlockBreakEvent event)
+    {
+        PreciousStones.debug("releasing field");
+
+        if (plugin.getSettingsManager().isFragileBlock(block))
+        {
+            PreciousStones.debug("fragile block broken");
+            event.setCancelled(true);
+            plugin.getForceFieldManager().release(block);
+        }
+        else
+        {
+            plugin.getForceFieldManager().silentRelease(block);
+            event.setCancelled(false);
+        }
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
+        {
+            if (!plugin.getSettingsManager().isNoRefunds())
+            {
+                if (field.getSettings().getPrice() > 0)
+                {
+                    // refund the block, account for parent/child relationships
+
+                    if (field.isChild() || field.isParent())
+                    {
+                        Field parent = field;
+
+                        if (field.isChild())
+                        {
+                            parent = field.getParent();
+                        }
+
+                        plugin.getForceFieldManager().refund(player, parent.getSettings().getPrice());
+
+                        for (Field child : parent.getChildren())
+                        {
+                            plugin.getForceFieldManager().refund(player, child.getSettings().getPrice());
+                        }
+                    }
+                    else
+                    {
+                        plugin.getForceFieldManager().refund(player, field.getSettings().getPrice());
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * @param event
      */
@@ -521,10 +519,9 @@ public class PSBlockListener implements Listener
             }
         }
 
-
         // --------------- prevent place everywhere
 
-        if (plugin.getSettingsManager().isPreventPlaceEverywhere())
+        if (plugin.getSettingsManager().isPreventPlaceEverywhere() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
         {
             boolean isAllowBlock = false;
 
@@ -719,7 +716,6 @@ public class PSBlockListener implements Listener
                 }
             }
 
-
             Field field = plugin.getForceFieldManager().add(block, player, event);
 
             if (field != null)
@@ -807,7 +803,7 @@ public class PSBlockListener implements Listener
 
         // --------------- Handle unprotectable
 
-        if (!isDisabled && plugin.getSettingsManager().isUnprotectableType(block))
+        if (plugin.getSettingsManager().isUnprotectableType(block))
         {
             Block unbreakableblock = plugin.getUnbreakableManager().touchingUnbrakableBlock(block);
 
@@ -867,11 +863,11 @@ public class PSBlockListener implements Listener
             {
                 Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
 
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field1, player.getName());
-
-                if (!allowed || field1.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (field1 != null)
                 {
-                    if (field1 != null)
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field1, player.getName());
+
+                    if (!allowed || field1.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
                         conflicted = true;
                     }
@@ -882,11 +878,11 @@ public class PSBlockListener implements Listener
             {
                 Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
 
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field2, player.getName());
-
-                if (!allowed || field2.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (field2 != null)
                 {
-                    if (field2 != null)
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field2, player.getName());
+
+                    if (!allowed || field2.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
                         conflicted = true;
                     }
@@ -897,11 +893,11 @@ public class PSBlockListener implements Listener
             {
                 Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
 
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field3, player.getName());
-
-                if (!allowed || field3.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (field3 != null)
                 {
-                    if (field3 != null)
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field3, player.getName());
+
+                    if (!allowed || field3.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
                         conflicted = true;
                     }
@@ -912,11 +908,11 @@ public class PSBlockListener implements Listener
             {
                 Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
 
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field4, player.getName());
-
-                if (!allowed || field4.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (field4 != null)
                 {
-                    if (field4 != null)
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field4, player.getName());
+
+                    if (!allowed || field4.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
                         conflicted = true;
                     }
@@ -1002,8 +998,6 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPistonExtend(BlockPistonExtendEvent event)
     {
-        boolean unprotected = false;
-
         Block piston = event.getBlock();
 
         if (plugin.getSettingsManager().isBlacklistedWorld(piston.getWorld()))
@@ -1011,12 +1005,7 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        Field field = plugin.getForceFieldManager().getSourceField(piston.getLocation(), FieldFlag.PREVENT_DESTROY);
-
-        if (field == null)
-        {
-            unprotected = true;
-        }
+        Field pistonField = plugin.getForceFieldManager().getSourceField(piston.getLocation(), FieldFlag.PREVENT_DESTROY);
 
         List<Block> blocks = event.getBlocks();
 
@@ -1030,14 +1019,20 @@ public class PSBlockListener implements Listener
             {
                 event.setCancelled(true);
             }
-            if (unprotected)
-            {
-                field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
 
-                if (field != null)
+            Field blockField = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+            if (pistonField != null)
+            {
+                if (blockField.isAllowed(pistonField.getOwner()))
                 {
-                    event.setCancelled(true);
+                    return;
                 }
+            }
+
+            if (blockField != null)
+            {
+                event.setCancelled(true);
             }
         }
     }

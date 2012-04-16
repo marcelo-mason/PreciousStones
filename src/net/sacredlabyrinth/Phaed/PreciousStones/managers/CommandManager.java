@@ -56,7 +56,6 @@ public final class CommandManager implements CommandExecutor
                 }
 
                 boolean hasplayer = player != null;
-                boolean isDisabled = hasplayer ? plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled() : false;
 
                 if (hasplayer)
                 {
@@ -99,6 +98,7 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals("on") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
+                        boolean isDisabled = hasplayer ? plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled() : false;
                         if (isDisabled)
                         {
                             plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(false);
@@ -112,6 +112,7 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals("off") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
+                        boolean isDisabled = hasplayer ? plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled() : false;
                         if (!isDisabled)
                         {
                             plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(true);
@@ -123,7 +124,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("allow") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allow") && hasplayer)
+                    else if (cmd.equals("allow") && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allow") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -162,7 +163,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("allowall") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasplayer)
+                    else if (cmd.equals("allowall") && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -183,7 +184,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("remove") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.remove") && hasplayer)
+                    else if (cmd.equals("remove") && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.remove") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -202,6 +203,12 @@ public final class CommandManager implements CommandExecutor
 
                                 for (String playerName : args)
                                 {
+                                    if (field.containsPlayer(playerName))
+                                    {
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "Cannot remove a player thats currently in your field");
+                                        return true;
+                                    }
+
                                     if (plugin.getForceFieldManager().conflictOfInterestExists(field, playerName))
                                     {
                                         ChatBlock.sendMessage(sender, ChatColor.RED + "You cannot disallow " + playerName + ", one of his fields is overlapping yours");
@@ -228,12 +235,13 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("removeall") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.removeall") && hasplayer)
+                    else if (cmd.equals("removeall") && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.removeall") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
                             for (String playerName : args)
                             {
+
                                 int count = plugin.getForceFieldManager().removeAll(player, playerName);
 
                                 if (count > 0)
@@ -249,7 +257,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("allowed") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowed") && hasplayer)
+                    else if (cmd.equals("allowed") && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowed") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -273,7 +281,7 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals("who") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.who") && hasplayer)
+                    else if (cmd.equals("who") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.who") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -297,7 +305,7 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals("setname") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setname") && hasplayer)
+                    else if (cmd.equals("setname") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setname") && hasplayer)
                     {
                         String fieldName = null;
 
@@ -353,7 +361,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("setradius") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setradius") && hasplayer)
+                    else if (cmd.equals("setradius") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setradius") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))
                         {
@@ -392,7 +400,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("setvelocity") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasplayer)
+                    else if (cmd.equals("setvelocity") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isFloat(args[0]))
                         {
@@ -438,7 +446,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("disable") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.disable") && hasplayer)
+                    else if (cmd.equals("disable") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.disable") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -462,7 +470,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("enable") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.enable") && hasplayer)
+                    else if (cmd.equals("enable") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.enable") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -486,7 +494,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("density") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.density") && hasplayer)
+                    else if (cmd.equals("density") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.density") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))
                         {
@@ -505,7 +513,7 @@ public final class CommandManager implements CommandExecutor
                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "Your visualization density is set to " + data.getDensity());
                         }
                     }
-                    else if (cmd.equals("toggle") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle") && hasplayer)
+                    else if (cmd.equals("toggle") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -655,7 +663,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if ((cmd.equals("visualize") || cmd.equals("visualise")) && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize") && hasplayer)
+                    else if ((cmd.equals("visualize") || cmd.equals("visualise")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize") && hasplayer)
                     {
                         if (!plugin.getCuboidManager().hasOpenCuboid(player))
                         {
@@ -730,7 +738,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("mark") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.mark") && hasplayer)
+                    else if (cmd.equals("mark") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.mark") && hasplayer)
                     {
                         if (!plugin.getCuboidManager().hasOpenCuboid(player))
                         {
@@ -799,7 +807,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("insert") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasplayer)
+                    else if (cmd.equals("insert") && plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -834,7 +842,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("reset") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.admin.reset") && hasplayer)
+                    else if (cmd.equals("reset") && plugin.getPermissionsManager().has(player, "preciousstones.admin.reset") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -850,7 +858,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals("setinterval") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setinterval") && hasplayer)
+                    else if (cmd.equals("setinterval") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setinterval") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))
                         {
@@ -888,7 +896,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals("snitch") && !isDisabled && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasplayer)
+                    else if (cmd.equals("snitch") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasplayer)
                     {
                         if (args.length == 0)
                         {

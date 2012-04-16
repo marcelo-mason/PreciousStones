@@ -520,6 +520,10 @@ public class PSPlayerListener implements Listener
                                     }
                                     return;
                                 }
+                                else
+                                {
+                                    ChatBlock.sendMessage(player, ChatColor.AQUA + "You cannot take ownership of this field.  It has been given to: " + field.getNewOwner());
+                                }
                             }
 
                             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
@@ -668,7 +672,7 @@ public class PSPlayerListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTeleport(PlayerTeleportEvent event)
     {
         if (event.isCancelled())

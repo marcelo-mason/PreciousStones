@@ -234,11 +234,11 @@ public final class ForceFieldManager
         {
             if (field.hasFlag(FieldFlag.BREAKABLE))
             {
-                plugin.getCommunicationManager().notifyPlaceBreakableFF(player, field.getBlock());
+                plugin.getCommunicationManager().notifyPlaceBreakableFF(player, fieldBlock);
             }
             else
             {
-                plugin.getCommunicationManager().notifyPlaceFF(player, field.getBlock());
+                plugin.getCommunicationManager().notifyPlaceFF(player, fieldBlock);
             }
         }
 
@@ -1314,6 +1314,12 @@ public final class ForceFieldManager
 
         for (Field field : fields)
         {
+            if (field.containsPlayer(allowedName))
+            {
+                ChatBlock.sendMessage(player, ChatColor.RED + "Player could not be removed from a field because he was currently inside of it");
+                continue;
+            }
+
             if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.on-disabled"))
             {
                 if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
@@ -2256,8 +2262,6 @@ public final class ForceFieldManager
         // create throwaway field to test intersections
 
         Field field = new Field(block, fs.getRadius(), fs.getHeight());
-
-        self.getNearbyEntities(fs.getRadius(), fs.getHeight(), fs.getRadius());
 
         List<Player> players = block.getWorld().getPlayers();
 

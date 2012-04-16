@@ -110,6 +110,7 @@ public class ForesterEntry
             block.setTypeId(0, false);
             world.generateTree(block.getLocation(), plugin.getForesterManager().getTree(field.getSettings()));
 
+            plugin.getForesterManager().doCreatureSpawns(field);
             plugin.getForceFieldManager().silentRelease(field);
             return false;
         }

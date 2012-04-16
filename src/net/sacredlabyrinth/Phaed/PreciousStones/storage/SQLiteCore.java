@@ -121,17 +121,7 @@ public class SQLiteCore implements DBCore
         try
         {
             Statement statement = getConnection().createStatement();
-            ResultSet result = null;
-
-            try
-            {
-                result = statement.executeQuery(query);
-            }
-            finally
-            {
-                statement.close();
-                return result;
-            }
+            return statement.executeQuery(query);
         }
         catch (SQLException ex)
         {
@@ -155,11 +145,11 @@ public class SQLiteCore implements DBCore
 
             try
             {
+                statement.executeUpdate(query);
                 keys = statement.executeQuery("SELECT last_insert_rowid()");
             }
             finally
             {
-                statement.close();
                 if (keys != null)
                 {
                     if (keys.next())
@@ -167,6 +157,7 @@ public class SQLiteCore implements DBCore
                         return keys.getLong(1);
                     }
                 }
+                statement.close();
                 return 0;
             }
         }

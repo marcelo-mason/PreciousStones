@@ -98,27 +98,6 @@ public class Helper
     }
 
     /**
-     * Helper function to check for type entry formatted strings
-     *
-     * @param input
-     * @return
-     */
-    public static boolean isTypeEntry(String input)
-    {
-        try
-        {
-            String out = input.replace(":", "");
-
-            Integer.parseInt(out);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-
-    /**
      * Helper function to check for integer list
      *
      * @param obj
@@ -635,21 +614,48 @@ public class Helper
      * @param rawItem
      * @return
      */
+    public static boolean hasData(String rawItem)
+    {
+        return rawItem.contains(":");
+    }
+
+    /**
+     * Helper function to check for type entry formatted strings
+     *
+     * @param input
+     * @return
+     */
+    public static boolean isTypeEntry(String input)
+    {
+        try
+        {
+            String out = input.replace(":", "");
+
+            Integer.parseInt(out);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Returns a type entry from a string
+     * @param rawItem
+     * @return
+     */
     public static BlockTypeEntry toTypeEntry(String rawItem)
     {
-        String[] split = rawItem.split("[:]");
-
-        if (split.length == 1 && Helper.isInteger(split[0]))
+        if (hasData(rawItem))
         {
-            return new BlockTypeEntry(Integer.parseInt(split[0]), (byte)0);
-        }
-
-        if (split.length == 2 && Helper.isInteger(split[0]) && Helper.isByte(split[1]))
-        {
+            String[] split = rawItem.split("[:]");
             return new BlockTypeEntry(Integer.parseInt(split[0]), Byte.parseByte(split[1]));
         }
-
-        return null;
+        else
+        {
+            return new BlockTypeEntry(Integer.parseInt(rawItem), (byte)0);
+        }
     }
 
     /**

@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 9.0.0
+version: 9.1.0
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC]
 commands:

@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
+import org.bukkit.EntityEffect;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -122,7 +123,7 @@ public final class EntryManager
                                 {
                                     if (field.hasFlag(FieldFlag.HEAL))
                                     {
-                                        if (player.getHealth() < 20)
+                                        if (player.getHealth() < 20 && player.getHealth() > 0)
                                         {
                                             player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
                                             plugin.getCommunicationManager().showSlowHeal(player);
@@ -218,7 +219,13 @@ public final class EntryManager
                                         {
                                             if (player.getHealth() > 0)
                                             {
-                                                player.setHealth(healthCheck(player.getHealth() - field.getSettings().getDamage()));
+                                                int health = healthCheck(player.getHealth() - field.getSettings().getDamage());
+                                                player.setHealth(health);
+
+                                                if (health <= 0)
+                                                {
+                                                    player.playEffect(EntityEffect.DEATH);
+                                                }
                                                 plugin.getCommunicationManager().showSlowDamage(player);
                                                 hasDamage = true;
                                                 continue;
@@ -548,6 +555,29 @@ public final class EntryManager
 
         return health;
     }
+
+    /**
+     * @param field
+     * @return
+     */
+    public boolean isInhabitant(Field field, String playerName)
+    {
+        HashSet<String> inhabitants = new HashSet<String>();
+
+        synchronized (entries)
+        {
+            for (String entrantName : entries.keySet())
+            {
+                EntryFields ef = entries.get(entrantName);
+                List<Field> fields = ef.getFields();
+
+                return fields.contains(field);
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * @param field

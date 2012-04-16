@@ -549,8 +549,36 @@ public class Field extends AbstractVec implements Comparable<Field>
         for (ChunkVec ecv : envelopingChunks)
         {
             List<Field> fields = PreciousStones.getInstance().getForceFieldManager().getSourceFieldsInChunk(ecv, FieldFlag.ALL);
-            sources.addAll(fields);
-            sources.remove(this);
+
+            for (Field field : fields)
+            {
+                if (field.equals(this))
+                {
+                    continue;
+                }
+
+                World world = field.getBlock().getWorld();
+
+                List<Vector> corners = field.getCorners();
+
+                for (Vector corner : corners)
+                {
+                    if (this.envelops(corner.toLocation(world)))
+                    {
+                        sources.add(field);
+                    }
+                }
+
+                corners = this.getCorners();
+
+                for (Vector corner : corners)
+                {
+                    if (field.envelops(corner.toLocation(world)))
+                    {
+                        sources.add(field);
+                    }
+                }
+            }
         }
 
         return sources;
@@ -1669,5 +1697,25 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         dirty.add(DirtyFieldReason.FLAGS);
         PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    /**
+     * check if the area a field may cover has players in it
+     *
+     * @param block
+     */
+    public boolean containsPlayer(String playerName)
+    {
+        Player player = Helper.matchSinglePlayer(playerName);
+
+        if (player != null)
+        {
+            if (envelops(player.getLocation()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

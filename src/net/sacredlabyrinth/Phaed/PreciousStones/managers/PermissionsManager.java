@@ -179,41 +179,48 @@ public final class PermissionsManager
      */
     public boolean inGroup(String playerName, World world, String group)
     {
-        if (pex != null)
+        try
         {
-            PermissionUser user = PermissionsEx.getUser(playerName);
-
-            if (user != null)
+            if (pex != null)
             {
-                return user.inGroup(group);
+                PermissionUser user = PermissionsEx.getUser(playerName);
+
+                if (user != null)
+                {
+                    return user.inGroup(group);
+                }
+
+                return false;
             }
-
-            return false;
-        }
-        else if (pbukkit != null)
-        {
-            List<Group> groups = pbukkit.getGroups(playerName);
-
-            for (Group g : groups)
+            else if (pbukkit != null)
             {
-                if (g.getName().equalsIgnoreCase(group))
+                List<Group> groups = pbukkit.getGroups(playerName);
+
+                for (Group g : groups)
+                {
+                    if (g.getName().equalsIgnoreCase(group))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else if (permission != null)
+            {
+                return permission.playerInGroup(world, playerName, group);
+            }
+            else if (handler != null)
+            {
+                if (handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group))
                 {
                     return true;
                 }
+                return false;
             }
-            return false;
         }
-        else if (permission != null)
+        catch (Exception ex)
         {
-            return permission.playerInGroup(world, playerName, group);
-        }
-        else if (handler != null)
-        {
-            if (handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group))
-            {
-                return true;
-            }
-            return false;
+            // no group support
         }
         return false;
     }
@@ -229,52 +236,59 @@ public final class PermissionsManager
     {
         List<String> groups = new LinkedList<String>();
 
-        if (pex != null)
+        try
         {
-            PermissionUser user = PermissionsEx.getUser(playerName);
-
-            if (user != null)
+            if (pex != null)
             {
-                PermissionGroup[] pexGroups = user.getGroups();
+                PermissionUser user = PermissionsEx.getUser(playerName);
 
-                for (PermissionGroup g : pexGroups)
+                if (user != null)
                 {
-                    groups.add(g.getName());
+                    PermissionGroup[] pexGroups = user.getGroups();
+
+                    for (PermissionGroup g : pexGroups)
+                    {
+                        groups.add(g.getName());
+                    }
+                }
+            }
+            else if (pbukkit != null)
+            {
+                List<Group> gs = pbukkit.getGroups(playerName);
+
+                for (Group group : gs)
+                {
+                    groups.add(group.getName().toLowerCase());
+                }
+                return groups;
+            }
+            else if (permission != null)
+            {
+                World world = plugin.getServer().getWorld(worldName);
+
+                if (world != null)
+                {
+                    String[] groupList = permission.getPlayerGroups(world, playerName);
+
+                    for (String g : groupList)
+                    {
+                        groups.add(g);
+                    }
+                }
+            }
+            else if (handler != null)
+            {
+                @SuppressWarnings("deprecation") String group = handler.getGroup(worldName, playerName);
+
+                if (group != null)
+                {
+                    groups.add(group.toLowerCase());
                 }
             }
         }
-        else if (pbukkit != null)
+        catch (Exception ex)
         {
-            List<Group> gs = pbukkit.getGroups(playerName);
-
-            for (Group group : gs)
-            {
-                groups.add(group.getName().toLowerCase());
-            }
-            return groups;
-        }
-        else if (permission != null)
-        {
-            World world = plugin.getServer().getWorld(worldName);
-
-            if (world != null)
-            {
-                String[] groupList = permission.getPlayerGroups(world, playerName);
-
-                for (String g : groupList)
-                {
-                    groups.add(g);
-                }
-            }
-        }
-        else if (handler != null)
-        {
-            @SuppressWarnings("deprecation") String group = handler.getGroup(worldName, playerName);
-
-            if (group != null)
-            {
-                groups.add(group.toLowerCase());
-            }
+            // no group support
         }
 
         return groups;

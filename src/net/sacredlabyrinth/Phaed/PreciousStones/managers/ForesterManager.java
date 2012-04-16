@@ -5,11 +5,13 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -225,8 +227,6 @@ public final class ForesterManager
         int rand = r.nextInt(treeTypes.size());
         int tree = treeTypes.get(rand);
 
-        PreciousStones.debug("size: " + treeTypes.size());
-        PreciousStones.debug("rand: " + rand);
         PreciousStones.debug("tree: " + tree);
 
         switch (tree)
@@ -303,5 +303,76 @@ public final class ForesterManager
         }
 
         return false;
+    }
+
+    /**
+     * Spawn all the creatures
+     */
+    public void doCreatureSpawns(Field field)
+    {
+        int minx = field.getX() - field.getRadius();
+        int maxx = field.getX() + field.getRadius();
+        int minz = field.getZ() - field.getRadius();
+        int maxz = field.getZ() + field.getRadius();
+        int miny = field.getY() - (int) Math.floor(((double) field.getHeight()) / 2);
+        int maxy = field.getY() + (int) Math.ceil(((double) field.getHeight()) / 2);
+
+        Random r = new Random();
+        FieldSettings fs = field.getSettings();
+
+        for (int i = 0; i < fs.getCreatureCount(); i++)
+        {
+            int x = r.nextInt(maxx - minx) + minx;
+            int z = r.nextInt(maxz - minz) + minz;
+            int y = field.getY();
+            World world = field.getBlock().getWorld();
+
+            int floorType = world.getBlockTypeIdAt(x, y, z);
+
+            while (!plugin.getSettingsManager().isThroughType(floorType) && y < 256)
+            {
+                floorType = world.getBlockTypeIdAt(x, ++y, z);
+            }
+
+            EntityType entity = getEntity(fs);
+
+            if (entity == null)
+            {
+                continue;
+            }
+
+            world.spawnCreature(new Location(world, x, y, z), entity);
+        }
+    }
+
+    /**
+     * Gets a random tree from available types
+     *
+     * @param fs
+     * @return
+     */
+
+    public static EntityType getEntity(FieldSettings fs)
+    {
+        Random r = new Random();
+
+        List<String> creatureTypes = fs.getCreatureTypes();
+
+        if (creatureTypes.isEmpty())
+        {
+            return null;
+        }
+
+        int rand = r.nextInt(creatureTypes.size());
+        String entity = creatureTypes.get(rand);
+
+        PreciousStones.debug("entity: " + entity);
+
+        if (entity.equalsIgnoreCase("None"))
+        {
+            return null;
+        }
+
+        return EntityType.fromName(entity);
     }
 }

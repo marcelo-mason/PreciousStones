@@ -108,15 +108,7 @@ public class MySQLCore implements DBCore
         try
         {
             Statement statement = getConnection().createStatement();
-
-            try
-            {
-                return statement.executeQuery(query);
-            }
-            finally
-            {
-                statement.close();
-            }
+            return statement.executeQuery(query);
         }
         catch (SQLException ex)
         {
@@ -146,7 +138,6 @@ public class MySQLCore implements DBCore
             }
             finally
             {
-                statement.close();
                 if (keys != null)
                 {
                     if (keys.next())
@@ -154,6 +145,7 @@ public class MySQLCore implements DBCore
                         return keys.getLong(1);
                     }
                 }
+                statement.close();
                 return 0;
             }
         }

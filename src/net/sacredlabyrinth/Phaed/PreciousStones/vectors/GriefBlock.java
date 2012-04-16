@@ -58,7 +58,6 @@ public class GriefBlock extends AbstractVec
         this.empty = true;
     }
 
-
     /**
      * @return the typeId
      */
