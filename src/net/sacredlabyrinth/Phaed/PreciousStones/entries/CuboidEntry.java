@@ -308,7 +308,7 @@ public class CuboidEntry
      */
     public boolean isExceeded()
     {
-        int testVolume = (maxy - miny) * (maxx - minx) * (maxz - minz);
+        int testVolume = ((maxy - miny)+1) * ((maxx - minx)+1) * ((maxz - minz)+1);
 
         return testVolume > getMaxVolume();
     }
