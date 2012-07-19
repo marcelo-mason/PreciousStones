@@ -10,14 +10,20 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -1152,6 +1158,52 @@ public class PSPlayerListener implements Listener
                 }
                 plugin.getStorageManager().offerPlayer(player.getName());
                 event.setCancelled(true);
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPotionSplash(PotionSplashEvent event)
+    {
+        boolean hasHarm = false;
+
+        ThrownPotion potion = event.getPotion();
+        Collection<PotionEffect> effects = potion.getEffects();
+
+        for (PotionEffect effect : effects)
+        {
+            if (effect.getType().equals(PotionEffectType.BLINDNESS) ||
+                    effect.getType().equals(PotionEffectType.CONFUSION) ||
+                    effect.getType().equals(PotionEffectType.HARM) ||
+                    effect.getType().equals(PotionEffectType.POISON) ||
+                    effect.getType().equals(PotionEffectType.WEAKNESS) ||
+                    effect.getType().equals(PotionEffectType.SLOW) ||
+                    effect.getType().equals(PotionEffectType.SLOW_DIGGING))
+            {
+                hasHarm = true;
+            }
+        }
+
+        if (hasHarm)
+        {
+            Collection<LivingEntity> entities = event.getAffectedEntities();
+
+            for (LivingEntity entity : entities)
+            {
+                if (entity instanceof Player)
+                {
+                    Player player = (Player) entity;
+
+                    Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_PVP);
+
+                    if (field != null)
+                    {
+                        event.setCancelled(true);
+                    }
+                }
             }
         }
     }

@@ -526,7 +526,7 @@ public final class SettingsManager
      */
     public boolean isFieldType(Block block)
     {
-        PreciousStones.debug("isField: " + new BlockTypeEntry(block));
+        //PreciousStones.debug("isField: " + new BlockTypeEntry(block));
 
         return isFieldType(new BlockTypeEntry(block));
     }

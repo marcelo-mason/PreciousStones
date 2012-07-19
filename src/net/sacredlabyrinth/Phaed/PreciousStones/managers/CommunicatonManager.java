@@ -2595,8 +2595,8 @@ public class CommunicatonManager
         List<FieldFlag> hardCodedFlags = new LinkedList<FieldFlag>();
 
         flags.remove(FieldFlag.ALL);
-        flags.remove(FieldFlag.DYNMAP_DISABLED_BY_DEFAULT);
         flags.remove(FieldFlag.DYNMAP_NO_TOGGLE);
+
         flags.addAll(disabledFlags);
 
         hardCodedFlags.add(FieldFlag.CUBOID);

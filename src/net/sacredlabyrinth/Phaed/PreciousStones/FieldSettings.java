@@ -412,6 +412,22 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("protect-animals") && Helper.isBoolean(map.get("protect-animals")))
+        {
+            if ((Boolean) map.get("protect-animals"))
+            {
+                defaultFlags.add(FieldFlag.PROTECT_ANIMALS);
+            }
+        }
+
+        if (map.containsKey("protect-mobs") && Helper.isBoolean(map.get("protect-mobs")))
+        {
+            if ((Boolean) map.get("protect-mobs"))
+            {
+                defaultFlags.add(FieldFlag.PROTECT_MOBS);
+            }
+        }
+
         if (map.containsKey("remove-mob") && Helper.isBoolean(map.get("remove-mob")))
         {
             if ((Boolean) map.get("remove-mob"))
@@ -728,11 +744,11 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("dynmap-disabled-by-default") && Helper.isBoolean(map.get("dynmap-disabled-by-default")))
+        if (map.containsKey("dynmap-disabled") && Helper.isBoolean(map.get("dynmap-disabled")))
         {
-            if ((Boolean) map.get("dynmap-disabled-by-default"))
+            if ((Boolean) map.get("dynmap-disabled"))
             {
-                defaultFlags.add(FieldFlag.DYNMAP_DISABLED_BY_DEFAULT);
+                defaultFlags.add(FieldFlag.DYNMAP_DISABLED);
             }
         }
 

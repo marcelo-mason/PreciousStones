@@ -460,6 +460,7 @@ public final class StorageManager
     {
         final List<Field> out = new ArrayList<Field>();
         int purged = 0;
+        boolean foundInWrongTable = false;
 
         final String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM pstone_fields WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
@@ -532,7 +533,7 @@ public final class StorageManager
                             {
                                 deleteOppositeField(field);
                                 insertField(field);
-                                System.out.print("[Precious Stones] Field found in wrong table, restart server.");
+                                foundInWrongTable = true;
                             }
                         }
                     }
@@ -548,6 +549,11 @@ public final class StorageManager
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
             }
+        }
+
+        if (foundInWrongTable)
+        {
+            System.out.print("[Precious Stones] Field found in wrong table, restart server.");
         }
 
         if (purged > 0)
@@ -567,6 +573,7 @@ public final class StorageManager
     {
         final HashMap<Long, Field> out = new HashMap<Long, Field>();
         int purged = 0;
+        boolean foundInWrongTable = false;
 
         String query = "SELECT pstone_cuboids.id as id, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags  FROM  pstone_cuboids WHERE pstone_cuboids.parent = 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
 
@@ -643,7 +650,7 @@ public final class StorageManager
                             {
                                 deleteOppositeField(field);
                                 insertField(field);
-                                System.out.print("[Precious Stones] Cuboid found in wrong table, restart server.");
+                                foundInWrongTable = true;
                             }
                         }
                     }
@@ -750,6 +757,11 @@ public final class StorageManager
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
             }
+        }
+
+        if (foundInWrongTable)
+        {
+            System.out.print("[Precious Stones] Field found in wrong table, restart server.");
         }
 
         if (purged > 0)

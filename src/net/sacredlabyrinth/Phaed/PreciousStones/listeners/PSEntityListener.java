@@ -438,6 +438,26 @@ public class PSEntityListener implements Listener
 
         DebugTimer dt = new DebugTimer("onEntityDamage");
 
+        if (event.getEntity() instanceof Animals)
+        {
+            Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_ANIMALS);
+
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
+        }
+
+        if (event.getEntity() instanceof Monster)
+        {
+            Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_MOBS);
+
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
+        }
+
         // prevent fall damage after cannon throws
 
         if (event.getCause().equals(DamageCause.FALL))

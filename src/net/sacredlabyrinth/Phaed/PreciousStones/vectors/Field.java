@@ -1096,6 +1096,16 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                             for (Object flagStr : disabledFlags)
                             {
+                                // do no toggle of no-toggle flags
+
+                                if (flagStr.toString().equalsIgnoreCase("dynmap-area") || flagStr.toString().equalsIgnoreCase("dynmap-marker"))
+                                {
+                                    if (hasFlag(FieldFlag.DYNMAP_NO_TOGGLE))
+                                    {
+                                        continue;
+                                    }
+                                }
+
                                 disableFlag(flagStr.toString());
                             }
                         }
@@ -1174,6 +1184,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (canEnable && !flags.contains(Helper.toFieldFlag(flagStr)))
         {
             flags.add(Helper.toFieldFlag(flagStr));
+            dirty.add(DirtyFieldReason.FLAGS);
         }
     }
 
@@ -1199,6 +1210,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (hasFlag && !disabledFlags.contains(Helper.toFieldFlag(flagStr)))
         {
             disabledFlags.add(Helper.toFieldFlag(flagStr));
+            dirty.add(DirtyFieldReason.FLAGS);
         }
     }
 
@@ -1250,7 +1262,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         boolean hasFlag = hasFlag(flagStr);
 
-        dirty.add(DirtyFieldReason.FLAGS);
         if (hasFlag)
         {
             disableFlag(flagStr);

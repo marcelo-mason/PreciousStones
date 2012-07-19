@@ -730,7 +730,7 @@ public class PSBlockListener implements Listener
                     field.disableFlag("farewell-message");
                 }
 
-                if (field.hasFlag(FieldFlag.DYNMAP_DISABLED_BY_DEFAULT) || plugin.getSettingsManager().isStartDynmapFlagsDisabled())
+                if (field.hasFlag(FieldFlag.DYNMAP_DISABLED) || plugin.getSettingsManager().isStartDynmapFlagsDisabled())
                 {
                     field.disableFlag("dynmap-area");
                     field.disableFlag("dynmap-marker");
@@ -742,6 +742,9 @@ public class PSBlockListener implements Listener
                 {
                     field.setDisabled(true);
                 }
+
+                plugin.getStorageManager().offerField(field);
+
                 // allow all owners of overlapping fields into the field
 
                 plugin.getForceFieldManager().addAllowOverlappingOwners(field);
