@@ -120,6 +120,29 @@ public class PSPlayerListener implements Listener
             }
         }
 
+        // prevent soil interaction
+
+        if (block != null)
+        {
+            if (block.getType().equals(Material.SOIL))
+            {
+                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+                if (field != null)
+                {
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                        {
+                            event.setCancelled(true);
+                        }
+                    }
+                }
+            }
+        }
+
         boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(is.getTypeId()) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()));
 
         if (hasCuboidHand)
@@ -328,7 +351,7 @@ public class PSPlayerListener implements Listener
 
                             field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
-                            if (field != null)
+                            if (field != null && !field.getSettings().canGrief(block.getTypeId()))
                             {
                                 boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
@@ -988,6 +1011,11 @@ public class PSPlayerListener implements Listener
 
             if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
+                if (field.getSettings().canGrief(block.getTypeId()))
+                {
+                    return;
+                }
+
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.break"))
                 {
                     plugin.getCommunicationManager().notifyBypassPlace(player, block, field);

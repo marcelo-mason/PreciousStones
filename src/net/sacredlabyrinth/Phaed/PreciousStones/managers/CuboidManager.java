@@ -272,12 +272,13 @@ public class CuboidManager
 
             if (plugin.getForceFieldManager().fieldConflicts(ce, player) != null)
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid would conflict with someone else's field");
+                ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid conflicts with someone else's field");
                 cancelOpenCuboid(player);
                 return false;
             }
 
             List<Vector> corners = field.getCorners();
+            corners.add(field.getLocation().toVector());
 
             for (Vector corner : corners)
             {
@@ -285,7 +286,7 @@ public class CuboidManager
 
                 if(!plugin.getWorldGuardManager().canBuild(player, location))
                 {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid would conflict with a worldguard region");
+                    ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid conflicts with a worldguard region");
                     cancelOpenCuboid(player);
                     return false;
                 }
@@ -311,8 +312,6 @@ public class CuboidManager
 
             ce.finalizeField();
             field.setOpen(false);
-
-            plugin.getForceFieldManager().addSourceField(field);
 
             openCuboids.remove(player.getName());
 

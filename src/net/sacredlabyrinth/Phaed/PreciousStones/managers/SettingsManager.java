@@ -9,6 +9,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,6 @@ public final class SettingsManager
     private boolean sneakNormalBlock;
     private boolean startMessagesDisabled;
     private boolean disableGroundInfo;
-    private boolean autoDownloadVault;
     private int globalFieldLimit;
     private boolean noRefunds;
     private int cuboidDefiningType;
@@ -225,7 +225,6 @@ public final class SettingsManager
         startMessagesDisabled = config.getBoolean("settings.welcome-farewell-disabled-by-default");
         startDynmapFlagsDisabled = config.getBoolean("settings.dynmap-flags-disabled-by-default");
         disableGroundInfo = config.getBoolean("settings.disable-ground-info");
-        autoDownloadVault = config.getBoolean("settings.auto-download-vault");
         globalFieldLimit = config.getInt("settings.global-field-limit");
         noRefunds = config.getBoolean("settings.no-refund-for-fields");
         publicBlockDetails = config.getBoolean("settings.public-block-details");
@@ -395,6 +394,24 @@ public final class SettingsManager
             {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    public boolean isHarmfulPotion(PotionEffectType pot)
+    {
+        if(pot.equals(PotionEffectType.SLOW)||
+                pot.equals(PotionEffectType.SLOW_DIGGING)||
+                pot.equals(PotionEffectType.WEAKNESS)||
+                pot.equals(PotionEffectType.BLINDNESS)||
+                pot.equals(PotionEffectType.CONFUSION)||
+                pot.equals(PotionEffectType.HARM)||
+                pot.equals(PotionEffectType.POISON)||
+                pot.equals(PotionEffectType.HUNGER)||
+                pot.equals(PotionEffectType.INCREASE_DAMAGE))
+        {
+            return true;
         }
 
         return false;
@@ -1268,11 +1285,6 @@ public final class SettingsManager
     public int getGlobalFieldLimit()
     {
         return globalFieldLimit;
-    }
-
-    public boolean isAutoDownloadVault()
-    {
-        return autoDownloadVault;
     }
 
     public boolean isDisableGroundInfo()

@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.GameMode;
 import org.bukkit.World;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -33,6 +34,8 @@ public class FieldSettings
     private int lightningReplaceBlock = 0;
     private int mixingGroup = 0;
     private int autoDisableSeconds = 0;
+    private boolean mineHasFire = false;
+    private int mineStrength = 6;
     private String groupOnEntry = null;
     private String requiredPermission = null;
     private GameMode forceEntryGameMode = null;
@@ -49,6 +52,9 @@ public class FieldSettings
     private List<String> allowedOnlyInside = new ArrayList<String>();
     private List<String> allowedOnlyOutside = new ArrayList<String>();
     private List<FieldFlag> defaultFlags = new LinkedList<FieldFlag>();
+    private List<Integer> allowGrief = new ArrayList<Integer>();
+    private HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
+    private List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();
 
     /**
      * @param map
@@ -194,6 +200,11 @@ public class FieldSettings
             mineDelaySeconds = (Integer) map.get("mine-delay-seconds");
         }
 
+        if (map.containsKey("mine-has-fire") && Helper.isBoolean(map.get("mine-has-fire")))
+        {
+            mineHasFire = (Boolean) map.get("mine-has-fire");
+        }
+
         if (map.containsKey("lightning-replace-block") && Helper.isInteger(map.get("lightning-replace-block")))
         {
             lightningReplaceBlock = (Integer) map.get("lightning-replace-block");
@@ -232,6 +243,11 @@ public class FieldSettings
             {
                 defaultFlags.add(FieldFlag.PREVENT_USE);
             }
+        }
+
+        if (map.containsKey("allow-grief") && Helper.isIntList(map.get("allow-grief")))
+        {
+            allowGrief = (List<Integer>) map.get("allow-grief");
         }
 
         if (map.containsKey("tree-types") && Helper.isIntList(map.get("tree-types")))
@@ -544,11 +560,57 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("mine") && Helper.isBoolean(map.get("mine")))
+        if (map.containsKey("mine") && Helper.isInteger(map.get("mine")))
         {
-            if ((Boolean) map.get("mine"))
+            if ((Integer) map.get("mine") > 0)
             {
                 defaultFlags.add(FieldFlag.MINE);
+                mineStrength = (Integer) map.get("mine");
+            }
+        }
+
+        if (map.containsKey("potions") && Helper.isStringList(map.get("potions")))
+        {
+            defaultFlags.add(FieldFlag.POTIONS);
+            List<String> pts = (List<String>) map.get("potions");
+
+            List<Integer> intensities = null;
+
+            if (map.containsKey("potion-intensity") && Helper.isIntList(map.get("potion-intensity")))
+            {
+                intensities = (List<Integer>) map.get("potion-intensity");
+            }
+
+            int pos = 0;
+
+            for (String name : pts)
+            {
+                int i = 1; // default intensity
+
+                if (intensities != null)
+                {
+                    i = intensities.get(pos);
+                }
+
+                if (PotionEffectType.getByName(name) != null)
+                {
+                    potions.put(PotionEffectType.getByName(name), i);
+                }
+                pos++;
+            }
+        }
+
+        if (map.containsKey("neutralize-potions") && Helper.isStringList(map.get("neutralize-potions")))
+        {
+            defaultFlags.add(FieldFlag.NEUTRALIZE_POTIONS);
+            List<String> pts = (List<String>) map.get("neutralize-potions");
+
+            for (String name : pts)
+            {
+                if (PotionEffectType.getByName(name) != null)
+                {
+                    neutralizePotions.add(PotionEffectType.getByName(name));
+                }
             }
         }
 
@@ -557,6 +619,30 @@ public class FieldSettings
             if ((Boolean) map.get("lightning"))
             {
                 defaultFlags.add(FieldFlag.LIGHTNING);
+            }
+        }
+
+        if (map.containsKey("no-fall-damage") && Helper.isBoolean(map.get("no-fall-damage")))
+        {
+            if ((Boolean) map.get("no-fall-damage"))
+            {
+                defaultFlags.add(FieldFlag.NO_FALL_DAMAGE);
+            }
+        }
+
+        if (map.containsKey("sneak-to-place") && Helper.isBoolean(map.get("sneak-to-place")))
+        {
+            if ((Boolean) map.get("sneak-to-place"))
+            {
+                defaultFlags.add(FieldFlag.SNEAK_TO_PLACE);
+            }
+        }
+
+        if (map.containsKey("plot") && Helper.isBoolean(map.get("plot")))
+        {
+            if ((Boolean) map.get("plot"))
+            {
+                defaultFlags.add(FieldFlag.PLOT);
             }
         }
 
@@ -863,6 +949,22 @@ public class FieldSettings
     }
 
     /**
+     * Whether a block type can be griefed in a grief revert field
+     *
+     * @param type
+     * @return
+     */
+    public boolean canGrief(int type)
+    {
+        if (allowGrief == null || allowGrief.isEmpty())
+        {
+            return false;
+        }
+
+        return allowGrief.contains(type);
+    }
+
+    /**
      * If the field can be placed in a world
      *
      * @param worldName
@@ -1146,5 +1248,25 @@ public class FieldSettings
     public int getCreatureCount()
     {
         return creatureCount;
+    }
+
+    public boolean isMineHasFire()
+    {
+        return mineHasFire;
+    }
+
+    public int getMineStrength()
+    {
+        return mineStrength;
+    }
+
+    public HashMap<PotionEffectType, Integer> getPotions()
+    {
+        return potions;
+    }
+
+    public List<PotionEffectType> getNeutralizePotions()
+    {
+        return neutralizePotions;
     }
 }

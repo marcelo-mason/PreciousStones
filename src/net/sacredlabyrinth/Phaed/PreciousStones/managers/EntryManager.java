@@ -8,6 +8,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -29,8 +31,7 @@ public final class EntryManager
     public EntryManager()
     {
         plugin = PreciousStones.getInstance();
-
-        startScheduler();
+        scheduleNextUpdate();
     }
 
     private boolean isUpdatable(Field field)
@@ -39,209 +40,213 @@ public final class EntryManager
                 field.hasFlag(FieldFlag.REPAIR) ||
                 field.hasFlag(FieldFlag.HEAL) ||
                 field.hasFlag(FieldFlag.FEED) ||
+                field.hasFlag(FieldFlag.POTIONS) ||
+                field.hasFlag(FieldFlag.NEUTRALIZE_POTIONS) ||
                 field.hasFlag(FieldFlag.AIR);
     }
 
-    private void startScheduler()
+    private void scheduleNextUpdate()
     {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), 20L);
+    }
+
+    private class Update implements Runnable
+    {
+        public void run()
         {
-            public void run()
+            synchronized (entries)
             {
-                if (processing)
+                doEffects();
+            }
+            scheduleNextUpdate();
+        }
+    }
+
+    private void doEffects()
+    {
+        for (String playerName : updatableEntries.keySet())
+        {
+            Player player = Helper.matchSinglePlayer(playerName);
+
+            if (player == null)
+            {
+                continue;
+            }
+
+            EntryFields ef = updatableEntries.get(playerName);
+            List<Field> fields = ef.getFields();
+
+            boolean hasDamage = false;
+            boolean hasHeal = false;
+            boolean hasFeeding = false;
+            boolean hasAir = false;
+            boolean hasRepair = false;
+            boolean hasPotion = false;
+
+            for (Field field : fields)
+            {
+                // disabled fields shouldn't be doing things
+
+                if (field.isDisabled())
                 {
-                    return;
+                    continue;
                 }
 
-                processing = true;
-
-                synchronized (entries)
+                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.giveair"))
                 {
-                    for (String playerName : updatableEntries.keySet())
+                    if (!hasAir)
                     {
-                        Player player = Helper.matchSinglePlayer(playerName);
-
-                        if (player == null)
+                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
-                            continue;
+                            if (field.hasFlag(FieldFlag.AIR))
+                            {
+                                if (player.getRemainingAir() < 300)
+                                {
+                                    player.setRemainingAir(600);
+                                    plugin.getCommunicationManager().showGiveAir(player);
+                                    hasAir = true;
+                                    continue;
+                                }
+                            }
                         }
+                    }
+                }
 
-                        EntryFields ef = updatableEntries.get(playerName);
-                        List<Field> fields = ef.getFields();
-
-                        boolean hasDamage = false;
-                        boolean hasHeal = false;
-                        boolean hasFeeding = false;
-                        boolean hasAir = false;
-                        boolean hasRepair = false;
-
-                        for (Field field : fields)
+                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.feed"))
+                {
+                    if (!hasFeeding)
+                    {
+                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
-                            // disabled fields shouldn't be doing things
-
-                            if (field.isDisabled())
+                            if (field.hasFlag(FieldFlag.FEED))
                             {
-                                continue;
-                            }
-
-                            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.giveair"))
-                            {
-                                if (!hasAir)
+                                int food = player.getFoodLevel();
+                                if (food < 20)
                                 {
-                                    if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                    player.setFoodLevel(food + field.getSettings().getFeed());
+                                    plugin.getCommunicationManager().showSlowFeeding(player);
+                                    hasFeeding = true;
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.heal"))
+                {
+                    if (!hasHeal)
+                    {
+                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            if (field.hasFlag(FieldFlag.HEAL))
+                            {
+                                if (player.getHealth() < 20 && player.getHealth() > 0)
+                                {
+                                    player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
+                                    plugin.getCommunicationManager().showSlowHeal(player);
+                                    hasHeal = true;
+                                    continue;
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.repair"))
+                {
+                    if (!hasRepair)
+                    {
+                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            if (field.hasFlag(FieldFlag.REPAIR))
+                            {
+                                boolean updated = false;
+
+                                ItemStack[] armors = player.getInventory().getArmorContents();
+                                for (ItemStack armor : armors)
+                                {
+                                    if (plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
                                     {
-                                        if (field.hasFlag(FieldFlag.AIR))
+                                        short dur = armor.getDurability();
+                                        if (dur > 0)
                                         {
-                                            if (player.getRemainingAir() < 300)
+                                            dur -= field.getSettings().getRepair();
+                                            if (dur < 0)
                                             {
-                                                player.setRemainingAir(600);
-                                                plugin.getCommunicationManager().showGiveAir(player);
-                                                hasAir = true;
-                                                continue;
+                                                dur = 0;
                                             }
+                                            armor.setDurability(dur);
+                                            plugin.getCommunicationManager().showSlowRepair(player);
+                                            updated = true;
+                                            hasRepair = true;
+                                            break;
                                         }
                                     }
                                 }
-                            }
 
-                            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.feed"))
-                            {
-                                if (!hasFeeding)
+                                if (updated)
                                 {
-                                    if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                    {
-                                        if (field.hasFlag(FieldFlag.FEED))
-                                        {
-                                            int food = player.getFoodLevel();
-                                            if (food < 20)
-                                            {
-                                                player.setFoodLevel(food + field.getSettings().getFeed());
-                                                plugin.getCommunicationManager().showSlowFeeding(player);
-                                                hasFeeding = true;
-                                                continue;
-                                            }
-                                        }
-                                    }
+                                    continue;
                                 }
-                            }
 
-                            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.heal"))
-                            {
-                                if (!hasHeal)
+                                ItemStack[] items = player.getInventory().getContents();
+                                for (ItemStack item : items)
                                 {
-                                    if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                    if (item != null)
                                     {
-                                        if (field.hasFlag(FieldFlag.HEAL))
+                                        if (plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
                                         {
-                                            if (player.getHealth() < 20 && player.getHealth() > 0)
+                                            short dur = item.getDurability();
+                                            if (dur > 0)
                                             {
-                                                player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
-                                                plugin.getCommunicationManager().showSlowHeal(player);
-                                                hasHeal = true;
-                                                continue;
-                                            }
-
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.repair"))
-                            {
-                                if (!hasRepair)
-                                {
-                                    if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                    {
-                                        if (field.hasFlag(FieldFlag.REPAIR))
-                                        {
-                                            boolean updated = false;
-
-                                            ItemStack[] armors = player.getInventory().getArmorContents();
-                                            for (ItemStack armor : armors)
-                                            {
-                                                if (plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
+                                                dur -= field.getSettings().getRepair();
+                                                if (dur < 0)
                                                 {
-                                                    short dur = armor.getDurability();
-                                                    if (dur > 0)
-                                                    {
-                                                        dur -= field.getSettings().getRepair();
-                                                        if (dur < 0)
-                                                        {
-                                                            dur = 0;
-                                                        }
-                                                        armor.setDurability(dur);
-                                                        plugin.getCommunicationManager().showSlowRepair(player);
-                                                        updated = true;
-                                                        hasRepair = true;
-                                                        break;
-                                                    }
+                                                    dur = 0;
                                                 }
-                                            }
-
-                                            if (updated)
-                                            {
-                                                continue;
-                                            }
-
-                                            ItemStack[] items = player.getInventory().getContents();
-                                            for (ItemStack item : items)
-                                            {
-                                                if (item != null)
-                                                {
-                                                    if (plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
-                                                    {
-                                                        short dur = item.getDurability();
-                                                        if (dur > 0)
-                                                        {
-                                                            dur -= field.getSettings().getRepair();
-                                                            if (dur < 0)
-                                                            {
-                                                                dur = 0;
-                                                            }
-                                                            item.setDurability(dur);
-                                                            plugin.getCommunicationManager().showSlowRepair(player);
-                                                            updated = true;
-                                                            hasRepair = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            if (updated)
-                                            {
-                                                continue;
+                                                item.setDurability(dur);
+                                                plugin.getCommunicationManager().showSlowRepair(player);
+                                                updated = true;
+                                                hasRepair = true;
+                                                break;
                                             }
                                         }
                                     }
                                 }
-                            }
 
-                            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.damage"))
-                            {
-                                if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
+                                if (updated)
                                 {
-                                    if (!plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                    {
-                                        if (!hasDamage)
-                                        {
-                                            if (field.hasFlag(FieldFlag.DAMAGE))
-                                            {
-                                                if (player.getHealth() > 0)
-                                                {
-                                                    int health = healthCheck(player.getHealth() - field.getSettings().getDamage());
-                                                    player.setHealth(health);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
 
-                                                    if (health <= 0)
-                                                    {
-                                                        player.playEffect(EntityEffect.DEATH);
-                                                    }
-                                                    plugin.getCommunicationManager().showSlowDamage(player);
-                                                    hasDamage = true;
-                                                    continue;
-                                                }
-                                            }
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.damage"))
+                {
+                    if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
+                    {
+                        if (!plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            if (!hasDamage)
+                            {
+                                if (field.hasFlag(FieldFlag.DAMAGE))
+                                {
+                                    if (player.getHealth() > 0)
+                                    {
+                                        int health = healthCheck(player.getHealth() - field.getSettings().getDamage());
+                                        player.setHealth(health);
+
+                                        if (health <= 0)
+                                        {
+                                            player.playEffect(EntityEffect.DEATH);
                                         }
+                                        plugin.getCommunicationManager().showSlowDamage(player);
+                                        hasDamage = true;
+                                        continue;
                                     }
                                 }
                             }
@@ -249,9 +254,60 @@ public final class EntryManager
                     }
                 }
 
-                processing = false;
+                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.potions"))
+                {
+                    if (!hasPotion)
+                    {
+                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            if (field.hasFlag(FieldFlag.POTIONS))
+                            {
+                                HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
+
+                                for (PotionEffectType pot : potions.keySet())
+                                {
+                                    int intensity = potions.get(pot);
+
+                                    if (!player.hasPotionEffect(pot))
+                                    {
+                                        if (plugin.getPermissionsManager().has(player, "preciousstones.manual.bypass.potions"))
+                                        {
+                                            if(plugin.getSettingsManager().isHarmfulPotion(pot))
+                                            {
+                                                continue;
+                                            }
+                                        }
+
+                                        player.addPotionEffect(new PotionEffect(pot, 72000, intensity));
+                                        plugin.getCommunicationManager().showPotion(player, pot.getName());
+                                    }
+                                }
+
+                                hasPotion = true;
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    if (field.hasFlag(FieldFlag.NEUTRALIZE_POTIONS))
+                    {
+                        List<PotionEffectType> noPotions = field.getSettings().getNeutralizePotions();
+
+                        for (PotionEffectType pot : noPotions)
+                        {
+                            if (player.hasPotionEffect(pot))
+                            {
+                                player.removePotionEffect(pot);
+                                plugin.getCommunicationManager().showNoPotion(player, pot.getName());
+                            }
+                        }
+                    }
+                }
             }
-        }, 0, 20L);
+        }
     }
 
     /**
@@ -319,7 +375,7 @@ public final class EntryManager
             {
                 if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
                 {
-                    plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " has triggered an entry alert at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
+                    plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " entry at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
                 }
             }
         }
@@ -345,6 +401,16 @@ public final class EntryManager
             if (field.getSettings().getGroupOnEntry() != null)
             {
                 plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
+            }
+
+            if (field.hasFlag(FieldFlag.POTIONS))
+            {
+                HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
+
+                for (PotionEffectType pot : potions.keySet())
+                {
+                    player.removePotionEffect(pot);
+                }
             }
         }
 

@@ -21,6 +21,25 @@ force-field-blocks:
     enable-on-src: true
     mixing-group: 1
     cuboid: true
+-   title: Plot
+    block: 999999
+    radius: 20
+    custom-height: 15
+    allowed-only-inside: ["City Protection"]
+    plot: true
+    prevent-fire: true
+    prevent-place: true
+    prevent-destroy: true
+    prevent-explosions: true
+    prevent-unprotectable: true
+    prevent-flow: true
+    prevent-teleport: true
+    welcome-message: true
+    farewell-message: true
+    can-change-owner: true
+    enable-on-src: true
+    mixing-group: 1
+    cuboid: true
 -   title: Entry Bouncer
     block: 22
     radius: 5
@@ -82,7 +101,9 @@ force-field-blocks:
     block: 73
     radius: 1
     custom-height: 5
-    mine: true
+    mine: 5
+    mine-has-fire: true
+    mine-delay-seconds: 0
     breakable: true
     sneaking-bypass: true
     mixing-group: 2
@@ -110,7 +131,9 @@ force-field-blocks:
     block: 41
     radius: 20
     custom-height: 15
+    allow-grief: [37, 38, 39, 40]
     grief-revert: true
+    apply-to-all: true
     welcome-message: true
     farewell-message: true
     enable-on-src: true
@@ -124,6 +147,15 @@ force-field-blocks:
     repair: 25
     no-conflict: true
     mixing-group: 2
+    cuboid: true
+-   title: SuperMario
+    block: 999999
+    radius: 10
+    custom-height: 11
+    potions: [SPEED, JUMP]
+    potion-intensity: [5, 10]
+    no-conflict: true
+    mixing-group: 1
     cuboid: true
 -   title: Forester
     block: 86
@@ -145,8 +177,11 @@ force-field-blocks:
     block: 19
     radius: 10
     prevent-pvp: true
+    neutralize-potions: [HARM, CONFUSION, BLINDNESS, HUNGER, WEAKNESS, POISON, SLOW, SLOW_DIGGING]
     no-player-place: true
     prevent-mob-damage: true
+    protect-animals: true
+    protect-mobs: true
     cuboid: true
 warn:
     slow-damage: true
@@ -180,7 +215,6 @@ settings:
     dynmap-flags-disabled-by-default: true
     welcome-farewell-disabled-by-default: true
     disable-ground-info: false
-    auto-download-vault: false
     global-field-limit: 1000000
     no-refund-for-fields: false
     off-by-default: false

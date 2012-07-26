@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 9.1.3
+version: 9.2.0
 dev-url: http://dev.bukkit.org/server-mods/preciousstones/
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC]
@@ -51,6 +51,8 @@ permissions:
     description: Can use /ps snitch list/clean
   preciousstones.benefit.feed:
     description: Can get feed by feed block
+  preciousstones.benefit.potions:
+    description: Will speed up in fast blocks
   preciousstones.benefit.repair:
     description: Can get rapired by feed block
   preciousstones.benefit.toggle:
@@ -88,6 +90,8 @@ permissions:
   preciousstones.bypass.unprotectable:
     description: Can protect unprotectable blocks
   preciousstones.bypass.snitch:
+    description: Wont show up on any snitch lists
+  preciousstones.bypass.damage:
     description: Wont show up on any snitch lists
   preciousstones.bypass.setradius:
     description: Can set larger radius than the limit
@@ -172,7 +176,7 @@ permissions:
   preciousstones.admin.details:
     description: Can view all details with right-click
   preciousstones.admin.bypass.log:
-    description: Can user does not show up in logs
+    description: User does not show up in logs
   preciousstones.admin.viewconflicting:
     description: Tells you locations of conflicting pstones when placing new field
   preciousstones.admin.retag:
@@ -221,6 +225,8 @@ permissions:
     description: Limit 14
   preciousstones.limit15:
     description: Limit 15
+  preciousstones.manual.bypass.potions:
+    description: bypasses potion effects
   preciousstones.benefit.*:
     default: false
     description: Can use PreciousStones
@@ -229,6 +235,7 @@ permissions:
       preciousstones.benefit.create.unbreakable: true
       preciousstones.benefit.create.protection: true
       preciousstones.benefit.heal: true
+      preciousstones.benefit.potions: true
       preciousstones.benefit.giveair: true
       preciousstones.benefit.launch: true
       preciousstones.benefit.bounce: true
@@ -283,6 +290,7 @@ permissions:
       preciousstones.bypass.allowed-only-outside: true
       preciousstones.bypass.on-disabled: true
       preciousstones.bypass.setradius: true
+      preciousstones.bypass.damage: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false

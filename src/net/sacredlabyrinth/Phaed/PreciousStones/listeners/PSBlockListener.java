@@ -372,7 +372,7 @@ public class PSBlockListener implements Listener
 
             if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy") || field.getSettings().canGrief(block.getTypeId()))
                 {
                     plugin.getCommunicationManager().notifyBypassDestroy(player, block, field);
                     plugin.getStorageManager().deleteBlockGrief(block);
@@ -511,14 +511,6 @@ public class PSBlockListener implements Listener
 
         boolean isDisabled = plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
 
-        if (plugin.getSettingsManager().isSneakPlaceFields())
-        {
-            if (player.isSneaking())
-            {
-                isDisabled = false;
-            }
-        }
-
         // --------------- prevent place everywhere
 
         if (plugin.getSettingsManager().isPreventPlaceEverywhere() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
@@ -564,9 +556,34 @@ public class PSBlockListener implements Listener
 
         // --------------- Handle field
 
+        FieldSettings settings = plugin.getSettingsManager().getFieldSettings(block);
+
+        if (settings != null)
+        {
+            if(settings.hasDefaultFlag(FieldFlag.SNEAK_TO_PLACE))
+            {
+                if (player.isSneaking())
+                {
+                    isDisabled = false;
+                }
+                else
+                {
+                    isDisabled = true;
+                }
+            }
+        }
+
+        if (plugin.getSettingsManager().isSneakPlaceFields()) //true
+        {
+            if (player.isSneaking())
+            {
+                isDisabled = false;
+            }
+        }
+
         if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
         {
-            if (plugin.getSettingsManager().isSneakNormalBlock())
+            if (plugin.getSettingsManager().isSneakNormalBlock()) //false
             {
                 if (player.isSneaking())
                 {
@@ -1018,6 +1035,7 @@ public class PSBlockListener implements Listener
             {
                 event.setCancelled(true);
             }
+
             if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
             {
                 event.setCancelled(true);
@@ -1025,7 +1043,7 @@ public class PSBlockListener implements Listener
 
             Field blockField = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
 
-            if (pistonField != null)
+            if (pistonField != null && blockField != null)
             {
                 if (blockField.isAllowed(pistonField.getOwner()))
                 {

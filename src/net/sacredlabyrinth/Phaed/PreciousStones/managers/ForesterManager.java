@@ -336,7 +336,7 @@ public final class ForesterManager
 
             EntityType entity = getEntity(fs);
 
-            if (entity == null)
+            if (entity == null || !entity.isAlive() || !entity.isSpawnable())
             {
                 continue;
             }

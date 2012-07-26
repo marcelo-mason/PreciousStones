@@ -45,6 +45,13 @@ public class WorldGuardManager
                 return true;
             }
 
+            // if null passed then pick up some random player
+
+            if (player == null)
+            {
+                player = plugin.getServer().getWorlds().get(0).getPlayers().get(0);
+            }
+
             return wg.canBuild(player, loc);
         }
         catch (Exception ex)

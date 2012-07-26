@@ -1065,7 +1065,7 @@ public final class StorageManager
      */
     public void deleteFields(final String playerName)
     {
-        final String query = "DELETE FROM `pstone_fields` WHERE owner = '" + playerName + "';";
+        final String query = "DELETE FROM `pstone_fields` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
         core.delete(query);
     }
 

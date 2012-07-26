@@ -45,6 +45,11 @@ public class MineManager
             final int delay = fs.getMineDelaySeconds();
             final Block block = plugin.getForceFieldManager().getBlock(field);
 
+            if(!plugin.getWorldGuardManager().canBuild(player, block.getLocation()))
+            {
+                return;
+            }
+
             plugin.getCommunicationManager().showMine(player);
 
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
@@ -53,8 +58,7 @@ public class MineManager
                 {
                     plugin.getForceFieldManager().silentRelease(field);
 
-                    block.getWorld().createExplosion(block.getLocation(), 4, false);
-                    block.getWorld().createExplosion(block.getLocation(), 6, true);
+                    block.getWorld().createExplosion(block.getLocation(), field.getSettings().getMineStrength(), field.getSettings().isMineHasFire());
                 }
             }, delay * 20L);
         }

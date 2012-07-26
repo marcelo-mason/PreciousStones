@@ -103,6 +103,43 @@ public class PSEntityListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityDamageByBlock(EntityDamageByBlockEvent event)
+    {
+        Entity entity = event.getEntity();
+
+        if (entity instanceof Player)
+        {
+            Player player = (Player) entity;
+
+            if (event.getCause().equals(DamageCause.FALL))
+            {
+                if (plugin.getVelocityManager().isFallDamageImmune(player))
+                {
+                    event.setCancelled(true);
+                    plugin.getCommunicationManager().showThump(player);
+                    return;
+                }
+
+                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.NO_FALL_DAMAGE);
+
+                if (field != null)
+                {
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        plugin.getCommunicationManager().showThump(player);
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
         Entity entity = event.getEntity();
@@ -274,7 +311,7 @@ public class PSEntityListener implements Listener
 
             Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
-            if (field != null)
+            if (field != null && !field.getSettings().canGrief(block.getTypeId()))
             {
                 if (block.getTypeId() == 46)
                 {
@@ -381,6 +418,11 @@ public class PSEntityListener implements Listener
                     {
                         Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
+                        if (!plugin.getWorldGuardManager().canBuild(null, block.getLocation()))
+                        {
+                            continue;
+                        }
+
                         if (block != null)
                         {
                             block.setTypeId(0);
@@ -471,6 +513,19 @@ public class PSEntityListener implements Listener
                     event.setCancelled(true);
                     plugin.getCommunicationManager().showThump(player);
                     return;
+                }
+
+                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.NO_FALL_DAMAGE);
+
+                if (field != null)
+                {
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        plugin.getCommunicationManager().showThump(player);
+                        event.setCancelled(true);
+                    }
                 }
             }
         }

@@ -2283,6 +2283,28 @@ public class CommunicatonManager
     /**
      * @param player
      */
+    public void showPotion(Player player, String potion)
+    {
+        if (canWarn(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.WHITE + "*" + potion.toLowerCase().replace("_", " ") + "*");
+        }
+    }
+
+    /**
+     * @param player
+     */
+    public void showNoPotion(Player player, String potion)
+    {
+        if (canWarn(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.WHITE + "*" + potion.toLowerCase().replace("_", " ") + " neutralized*");
+        }
+    }
+
+    /**
+     * @param player
+     */
     public void showFastDamage(Player player)
     {
         if (plugin.getSettingsManager().isWarnFastDamage() && canWarn(player))
@@ -3252,7 +3274,7 @@ public class CommunicatonManager
                 cb.addRow(color + "  /ps toggle [flag]" + colorDesc + "- Enable/Disable a field's flags");
             }
 
-            if(plugin.getPermissionsManager().has(player, "preciousstones.benefit.change-owner") && hasPlayer)
+            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.change-owner") && hasPlayer)
             {
                 cb.addRow(color + "  /ps changeowner [name] " + colorDesc + "- Change owner of field");
             }

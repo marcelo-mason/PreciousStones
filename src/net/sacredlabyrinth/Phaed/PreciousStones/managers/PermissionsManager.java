@@ -5,6 +5,8 @@ import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.object.Nation;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import net.milkbowl.vault.economy.Economy;
@@ -19,6 +21,7 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,6 +36,7 @@ public final class PermissionsManager
     private PermissionsPlugin pbukkit = null;
     private PermissionsEx pex = null;
     private LWC lwc = null;
+    private Towny towny = null;
     private PreciousStones plugin;
 
     /**
@@ -45,6 +49,7 @@ public final class PermissionsManager
         detectPermissionsEx();
         detectPermissions();
         detectLWC();
+        detectTowny();
 
         try
         {
@@ -62,11 +67,21 @@ public final class PermissionsManager
 
     private void detectLWC()
     {
-        Plugin lwcPlugin = plugin.getServer().getPluginManager().getPlugin("LWC");
+        Plugin plug = plugin.getServer().getPluginManager().getPlugin("LWC");
 
-        if (lwcPlugin != null)
+        if (plug != null)
         {
-            lwc = ((LWCPlugin) lwcPlugin).getLWC();
+            lwc = ((LWCPlugin) plug).getLWC();
+        }
+    }
+
+    private void detectTowny()
+    {
+        Plugin plug = plugin.getServer().getPluginManager().getPlugin("Towny");
+
+        if (plug != null)
+        {
+            towny = ((Towny) plug);
         }
     }
 
@@ -390,6 +405,21 @@ public final class PermissionsManager
         {
             return true;
         }
+        return false;
+    }
+
+    public boolean townyProtected(Block block, Player player)
+    {
+        if (towny != null)
+        {
+            Collection<Nation> nations = towny.getTownyUniverse().getNationsMap().values();
+
+            for(Nation nation : nations)
+            {
+                // check if a block is towny protected
+            }
+        }
+
         return false;
     }
 }
