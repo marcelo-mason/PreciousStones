@@ -486,7 +486,23 @@ public class PSEntityListener implements Listener
 
             if (field != null)
             {
+                EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+
+                if (sub.getDamager() instanceof Player)
+                {
+                    Player player = (Player) sub.getDamager();
+
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+
                 event.setCancelled(true);
+                return;
             }
         }
 
@@ -496,7 +512,23 @@ public class PSEntityListener implements Listener
 
             if (field != null)
             {
+                EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+
+                if (sub.getDamager() instanceof Player)
+                {
+                    Player player = (Player) sub.getDamager();
+
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+
                 event.setCancelled(true);
+                return;
             }
         }
 
