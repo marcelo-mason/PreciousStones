@@ -60,7 +60,7 @@ public class SnitchManager
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
@@ -81,7 +81,7 @@ public class SnitchManager
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
@@ -102,7 +102,7 @@ public class SnitchManager
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
@@ -130,7 +130,7 @@ public class SnitchManager
 
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {
@@ -151,7 +151,7 @@ public class SnitchManager
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
-            List<Field> snitchFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.SNITCH);
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
 
             for (Field field : snitchFields)
             {

@@ -127,6 +127,7 @@ force-field-blocks:
     no-conflict: true
     mixing-group: 2
     cuboid: true
+    enable-with-redstone: true
 -   title: Grief Revert
     block: 41
     radius: 20

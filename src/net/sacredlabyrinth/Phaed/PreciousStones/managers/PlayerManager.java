@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import java.util.TreeMap;
 
 /**
- *
  * @author phaed
  */
 public class PlayerManager
@@ -38,6 +37,7 @@ public class PlayerManager
 
     /**
      * Get a player's data file
+     *
      * @param playerName
      * @return
      */
@@ -57,6 +57,7 @@ public class PlayerManager
 
     /**
      * Set player as online
+     *
      * @param player
      */
     public void playerLogin(Player player)
@@ -67,6 +68,7 @@ public class PlayerManager
 
     /**
      * Set player as offline
+     *
      * @param player
      */
     public void playerLogoff(Player player)
@@ -78,6 +80,7 @@ public class PlayerManager
 
     /**
      * Updates a player's last known location outside an entry field
+     *
      * @param player
      */
     public void updateOutsideLocation(Player player)
@@ -88,6 +91,7 @@ public class PlayerManager
 
     /**
      * Get a player's last known location outside of an entry field
+     *
      * @param player
      * @return
      */
@@ -105,7 +109,6 @@ public class PlayerManager
     }
 
     /**
-     *
      * @param field
      * @param player
      * @return

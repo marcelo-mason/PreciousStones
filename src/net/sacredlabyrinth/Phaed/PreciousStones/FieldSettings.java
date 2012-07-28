@@ -48,6 +48,8 @@ public class FieldSettings
     private List<Integer> fertileBlocks = new ArrayList<Integer>();
     private List<Integer> limits = new ArrayList<Integer>();
     private List<Integer> preventUse = new ArrayList<Integer>();
+    private List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> equipItems = new ArrayList<BlockTypeEntry>();
     private List<String> allowedWorlds = new ArrayList<String>();
     private List<String> allowedOnlyInside = new ArrayList<String>();
     private List<String> allowedOnlyOutside = new ArrayList<String>();
@@ -245,6 +247,26 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("confiscate-items") && Helper.isStringList(map.get("confiscate-items")))
+        {
+            confiscatedItems = Helper.toTypeEntrieBlind((List<Object>) map.get("confiscate-items"));
+
+            if (!confiscatedItems.isEmpty())
+            {
+                defaultFlags.add(FieldFlag.CONFISCATE_ITEMS);
+            }
+        }
+
+        if (map.containsKey("equip-items") && Helper.isStringList(map.get("equip-items")))
+        {
+            equipItems = Helper.toTypeEntrieBlind((List<Object>) map.get("equip-items"));
+
+            if (!equipItems.isEmpty())
+            {
+                defaultFlags.add(FieldFlag.EQUIP_ITEMS);
+            }
+        }
+
         if (map.containsKey("allow-grief") && Helper.isIntList(map.get("allow-grief")))
         {
             allowGrief = (List<Integer>) map.get("allow-grief");
@@ -305,6 +327,14 @@ public class FieldSettings
             if ((Boolean) map.get("prevent-fire"))
             {
                 defaultFlags.add(FieldFlag.PREVENT_FIRE);
+            }
+        }
+
+        if (map.containsKey("enable-with-redstone") && Helper.isBoolean(map.get("enable-with-redstone")))
+        {
+            if ((Boolean) map.get("enable-with-redstone"))
+            {
+                defaultFlags.add(FieldFlag.ENABLE_WITH_REDSTONE);
             }
         }
 
@@ -949,6 +979,69 @@ public class FieldSettings
     }
 
     /**
+     * Whether a block type can be used in this field
+     *
+     * @param type
+     * @return
+     */
+    public boolean canCarry(int type, byte data)
+    {
+        if (confiscatedItems.isEmpty())
+        {
+            return true;
+        }
+
+        for (BlockTypeEntry entry : confiscatedItems)
+        {
+            // if the banned item has no data, then that means
+            // they want to ban all ids for that block
+
+            // otherwise match the type and data exactly
+
+            if (entry.getData() == 0)
+            {
+                if (entry.getTypeId() == type)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (entry.getTypeId() == type && entry.getData() == data)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public String getPotionString()
+    {
+        String out = "";
+
+        for(PotionEffectType potion : potions.keySet())
+        {
+            out += Helper.friendlyBlockType(potion.getName()) + ", ";
+        }
+
+        return Helper.stripTrailing(out, ", ");
+    }
+
+    public String getNeutralizePotionString()
+    {
+        String out = "";
+
+        for(PotionEffectType potion : neutralizePotions)
+        {
+            out += Helper.friendlyBlockType(potion.getName()) + ", ";
+        }
+
+        return Helper.stripTrailing(out, ", ");
+    }
+
+    /**
      * Whether a block type can be griefed in a grief revert field
      *
      * @param type
@@ -1268,5 +1361,10 @@ public class FieldSettings
     public List<PotionEffectType> getNeutralizePotions()
     {
         return neutralizePotions;
+    }
+
+    public List<BlockTypeEntry> getEquipItems()
+    {
+        return equipItems;
     }
 }

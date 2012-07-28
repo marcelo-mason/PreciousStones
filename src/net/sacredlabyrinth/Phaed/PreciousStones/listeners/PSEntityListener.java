@@ -68,7 +68,7 @@ public class PSEntityListener implements Listener
                 {
                     Player player = (Player) event.getTarget();
 
-                    Field field = plugin.getForceFieldManager().getSourceField(target.getLocation(), FieldFlag.REMOVE_MOB);
+                    Field field = plugin.getForceFieldManager().getEnabledSourceField(target.getLocation(), FieldFlag.REMOVE_MOB);
 
                     if (field != null)
                     {
@@ -120,7 +120,7 @@ public class PSEntityListener implements Listener
                     return;
                 }
 
-                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.NO_FALL_DAMAGE);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.NO_FALL_DAMAGE);
 
                 if (field != null)
                 {
@@ -152,7 +152,7 @@ public class PSEntityListener implements Listener
 
         if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid)
         {
-            if (plugin.getForceFieldManager().getSourceFields(loc, FieldFlag.PREVENT_MOB_SPAWN).size() > 0)
+            if (plugin.getForceFieldManager().getEnabledSourceFields(loc, FieldFlag.PREVENT_MOB_SPAWN).size() > 0)
             {
                 event.setCancelled(true);
             }
@@ -160,7 +160,7 @@ public class PSEntityListener implements Listener
 
         if (entity instanceof Animals)
         {
-            if (plugin.getForceFieldManager().getSourceFields(loc, FieldFlag.PREVENT_ANIMAL_SPAWN).size() > 0)
+            if (plugin.getForceFieldManager().getEnabledSourceFields(loc, FieldFlag.PREVENT_ANIMAL_SPAWN).size() > 0)
             {
                 event.setCancelled(true);
             }
@@ -292,7 +292,7 @@ public class PSEntityListener implements Listener
 
             // capture blocks to roll back in rollback fields
 
-            rollbackField = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ROLLBACK_EXPLOSIONS);
+            rollbackField = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.ROLLBACK_EXPLOSIONS);
 
             if (rollbackField != null)
             {
@@ -309,7 +309,7 @@ public class PSEntityListener implements Listener
 
             // record the blocks that are in undo fields
 
-            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
             if (field != null && !field.getSettings().canGrief(block.getTypeId()))
             {
@@ -451,7 +451,7 @@ public class PSEntityListener implements Listener
 
         // capture blocks to roll back in rollback fields
 
-        Field rollbackField = plugin.getForceFieldManager().getSourceField(event.getLocation(), FieldFlag.ROLLBACK_EXPLOSIONS);
+        Field rollbackField = plugin.getForceFieldManager().getEnabledSourceField(event.getLocation(), FieldFlag.ROLLBACK_EXPLOSIONS);
 
         if (rollbackField != null)
         {
@@ -482,22 +482,25 @@ public class PSEntityListener implements Listener
 
         if (event.getEntity() instanceof Animals)
         {
-            Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_ANIMALS);
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_ANIMALS);
 
             if (field != null)
             {
-                EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
-
-                if (sub.getDamager() instanceof Player)
+                if (event instanceof EntityDamageByEntityEvent)
                 {
-                    Player player = (Player) sub.getDamager();
+                    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
 
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (sub.getDamager() instanceof Player)
                     {
-                        event.setCancelled(true);
-                        return;
+                        Player player = (Player) sub.getDamager();
+
+                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
                 }
 
@@ -508,22 +511,25 @@ public class PSEntityListener implements Listener
 
         if (event.getEntity() instanceof Monster)
         {
-            Field field = plugin.getForceFieldManager().getSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_MOBS);
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_MOBS);
 
             if (field != null)
             {
-                EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
-
-                if (sub.getDamager() instanceof Player)
+                if (event instanceof EntityDamageByEntityEvent)
                 {
-                    Player player = (Player) sub.getDamager();
+                    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
 
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (sub.getDamager() instanceof Player)
                     {
-                        event.setCancelled(true);
-                        return;
+                        Player player = (Player) sub.getDamager();
+
+                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            event.setCancelled(true);
+                            return;
+                        }
                     }
                 }
 
@@ -547,7 +553,7 @@ public class PSEntityListener implements Listener
                     return;
                 }
 
-                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.NO_FALL_DAMAGE);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.NO_FALL_DAMAGE);
 
                 if (field != null)
                 {
@@ -589,7 +595,7 @@ public class PSEntityListener implements Listener
 
                 if (attacker != null)
                 {
-                    Field field = plugin.getForceFieldManager().getSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
+                    Field field = plugin.getForceFieldManager().getEnabledSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
 
                     if (field != null)
                     {
@@ -616,7 +622,7 @@ public class PSEntityListener implements Listener
                     }
                     else
                     {
-                        field = plugin.getForceFieldManager().getSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
+                        field = plugin.getForceFieldManager().getEnabledSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
 
                         if (field != null)
                         {
@@ -677,7 +683,7 @@ public class PSEntityListener implements Listener
             {
                 Player player = (Player) pre.getRemover();
 
-                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
 
                 if (field != null)
                 {
@@ -714,7 +720,7 @@ public class PSEntityListener implements Listener
         {
             return;
         }
-        Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_PLACE);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_PLACE);
 
         if (field != null)
         {

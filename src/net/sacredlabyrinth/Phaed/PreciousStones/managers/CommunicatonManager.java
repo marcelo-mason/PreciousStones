@@ -443,6 +443,49 @@ public class CommunicatonManager
      * @param player
      * @param fieldblock
      */
+    public void notifyDestroyFFLiquid(Player player, Field field)
+    {
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isNotifyDestroy() && canNotify(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " destroyed");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogDestroy())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Field Break", player, field.getLocation(), fs.getTitle());
+            }
+            else
+            {
+                PreciousStones.log("{0} destroyed his {1} field [{2}|{3} {4} {5}]", player.getName(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            }
+        }
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.notify.destroy") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " destroyed his " + fs.getTitle() + " field");
+            }
+        }
+    }
+
+    /**
+     * @param player
+     * @param fieldblock
+     */
     public void notifyDestroyOthersFF(Player player, Block fieldblock)
     {
         Field field = plugin.getForceFieldManager().getField(fieldblock);
@@ -2609,6 +2652,15 @@ public class CommunicatonManager
             cb.addRow("  " + color + "Interval: ", ChatColor.AQUA + "" + field.getRevertSecs(), "");
         }
 
+        if (field.hasFlag(FieldFlag.POTIONS))
+        {
+            cb.addRow("  " + color + "Potions: ", ChatColor.WHITE + field.getSettings().getPotionString());
+        }
+
+        if (field.hasFlag(FieldFlag.NEUTRALIZE_POTIONS))
+        {
+            cb.addRow("  " + color + "Neutralizes: ", ChatColor.WHITE + field.getSettings().getNeutralizePotionString());
+        }
 
         cb.addRow("  " + color + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 

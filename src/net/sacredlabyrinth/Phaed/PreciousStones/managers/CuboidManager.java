@@ -62,6 +62,11 @@ public class CuboidManager
      */
     public boolean isOpenCuboidField(Player player, Block block)
     {
+        if (block == null)
+        {
+            return false;
+        }
+
         CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null)
@@ -157,7 +162,7 @@ public class CuboidManager
                         {
                             plugin.getVisualizationManager().displayFieldOutline(player, ce);
 
-                            if (newVolume > 0)
+                            if (newVolume >= 0)
                             {
                                 ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + newVolume + " blocks");
                             }
@@ -284,7 +289,7 @@ public class CuboidManager
             {
                 Location location = corner.toLocation(player.getWorld());
 
-                if(!plugin.getWorldGuardManager().canBuild(player, location))
+                if (!plugin.getWorldGuardManager().canBuild(player, location))
                 {
                     ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid conflicts with a worldguard region");
                     cancelOpenCuboid(player);

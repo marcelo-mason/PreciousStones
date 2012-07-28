@@ -256,6 +256,8 @@ public final class StorageManager
 
                 plugin.getForceFieldManager().addToCollection(field);
 
+                // register grief reverts
+
                 if (field.hasFlag(FieldFlag.GRIEF_REVERT) && field.getRevertSecs() > 0)
                 {
                     plugin.getGriefUndoManager().register(field);
@@ -1226,14 +1228,14 @@ public final class StorageManager
         {
             final String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             final String values = "VALUES ( '" + playerName + "', " + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "') ";
-            final String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "';";
+            final String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "' WHERE player_name = '" + playerName + "';";
             core.insert(query + values + update);
         }
         else
         {
             final String query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             final String values = "VALUES ( '" + playerName + "'," + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "');";
-            final String update = "UPDATE `pstone_players` SET last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "';";
+            final String update = "UPDATE `pstone_players` SET last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "' WHERE player_name = '" + playerName + "';";
             core.insert(query + values + update);
         }
     }

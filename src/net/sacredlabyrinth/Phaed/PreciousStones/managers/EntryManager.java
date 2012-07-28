@@ -4,11 +4,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
 import org.bukkit.EntityEffect;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -23,7 +20,7 @@ public final class EntryManager
     private PreciousStones plugin;
     private final HashMap<String, EntryFields> entries = new HashMap<String, EntryFields>();
     private final HashMap<String, EntryFields> updatableEntries = new HashMap<String, EntryFields>();
-    private boolean processing = false;
+    private int updateCount = 0;
 
     /**
      *
@@ -42,6 +39,7 @@ public final class EntryManager
                 field.hasFlag(FieldFlag.FEED) ||
                 field.hasFlag(FieldFlag.POTIONS) ||
                 field.hasFlag(FieldFlag.NEUTRALIZE_POTIONS) ||
+                field.hasFlag(FieldFlag.CONFISCATE_ITEMS) ||
                 field.hasFlag(FieldFlag.AIR);
     }
 
@@ -59,6 +57,13 @@ public final class EntryManager
                 doEffects();
             }
             scheduleNextUpdate();
+
+            updateCount++;
+
+            if (updateCount > 214783640)
+            {
+                updateCount = 0;
+            }
         }
     }
 
@@ -92,11 +97,27 @@ public final class EntryManager
                     continue;
                 }
 
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, playerName);
+
+                // check players inventories for items to confiscate every five seconds
+
+                if (updateCount % 5 == 0)
+                {
+                    if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
+                    {
+                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            plugin.getConfiscationManager().confiscateItems(field, player);
+                        }
+                    }
+                }
+
+
                 if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.giveair"))
                 {
                     if (!hasAir)
                     {
-                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             if (field.hasFlag(FieldFlag.AIR))
                             {
@@ -116,7 +137,7 @@ public final class EntryManager
                 {
                     if (!hasFeeding)
                     {
-                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             if (field.hasFlag(FieldFlag.FEED))
                             {
@@ -137,7 +158,7 @@ public final class EntryManager
                 {
                     if (!hasHeal)
                     {
-                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             if (field.hasFlag(FieldFlag.HEAL))
                             {
@@ -158,7 +179,7 @@ public final class EntryManager
                 {
                     if (!hasRepair)
                     {
-                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             if (field.hasFlag(FieldFlag.REPAIR))
                             {
@@ -229,7 +250,7 @@ public final class EntryManager
                 {
                     if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
                     {
-                        if (!plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             if (!hasDamage)
                             {
@@ -258,31 +279,11 @@ public final class EntryManager
                 {
                     if (!hasPotion)
                     {
-                        if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                         {
                             if (field.hasFlag(FieldFlag.POTIONS))
                             {
-                                HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
-
-                                for (PotionEffectType pot : potions.keySet())
-                                {
-                                    int intensity = potions.get(pot);
-
-                                    if (!player.hasPotionEffect(pot))
-                                    {
-                                        if (plugin.getPermissionsManager().has(player, "preciousstones.manual.bypass.potions"))
-                                        {
-                                            if(plugin.getSettingsManager().isHarmfulPotion(pot))
-                                            {
-                                                continue;
-                                            }
-                                        }
-
-                                        player.addPotionEffect(new PotionEffect(pot, 72000, intensity));
-                                        plugin.getCommunicationManager().showPotion(player, pot.getName());
-                                    }
-                                }
-
+                                plugin.getPotionManager().applyPotions(player, field);
                                 hasPotion = true;
                                 continue;
                             }
@@ -290,20 +291,11 @@ public final class EntryManager
                     }
                 }
 
-                if (plugin.getForceFieldManager().isApplyToAllowed(field, playerName) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                 {
                     if (field.hasFlag(FieldFlag.NEUTRALIZE_POTIONS))
                     {
-                        List<PotionEffectType> noPotions = field.getSettings().getNeutralizePotions();
-
-                        for (PotionEffectType pot : noPotions)
-                        {
-                            if (player.hasPotionEffect(pot))
-                            {
-                                player.removePotionEffect(pot);
-                                plugin.getCommunicationManager().showNoPotion(player, pot.getName());
-                            }
-                        }
+                        plugin.getPotionManager().neutralizePotions(player, field);
                     }
                 }
             }
@@ -356,6 +348,14 @@ public final class EntryManager
 
         if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
+            if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
+            {
+                plugin.getConfiscationManager().confiscateItems(field, player);
+            }
+        }
+
+        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        {
             if (field.getSettings().getForceEntryGameMode() != null)
             {
                 player.setGameMode(field.getSettings().getForceEntryGameMode());
@@ -396,13 +396,24 @@ public final class EntryManager
             plugin.getCommunicationManager().showFarewellMessage(player, field);
         }
 
+        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        {
+            if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
+            {
+                plugin.getConfiscationManager().returnItems(player);
+            }
+        }
+
         if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
             if (field.getSettings().getGroupOnEntry() != null)
             {
                 plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
             }
+        }
 
+        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        {
             if (field.hasFlag(FieldFlag.POTIONS))
             {
                 HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
@@ -423,7 +434,7 @@ public final class EntryManager
 
             if (field.hasFlag(FieldFlag.PREVENT_FLIGHT))
             {
-                Field sub = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_FLIGHT);
+                Field sub = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_FLIGHT);
 
                 if (sub == null)
                 {
@@ -481,22 +492,23 @@ public final class EntryManager
 
         // entry actions
 
-        plugin.getSnitchManager().recordSnitchEntry(player, field);
-
-        if (!plugin.getForceFieldManager().isRedstoneHookedDisabled(field))
+        if (!field.isDisabled())
         {
+            plugin.getSnitchManager().recordSnitchEntry(player, field);
+
             if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
             {
                 plugin.getVelocityManager().launchPlayer(player, field);
                 plugin.getVelocityManager().shootPlayer(player, field);
             }
-        }
-        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.damage"))
-        {
-            if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
+
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.damage"))
             {
-                plugin.getMineManager().enterMine(player, field);
-                plugin.getLightningManager().enterLightning(player, field);
+                if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
+                {
+                    plugin.getMineManager().enterMine(player, field);
+                    plugin.getLightningManager().enterLightning(player, field);
+                }
             }
         }
     }
@@ -592,6 +604,13 @@ public final class EntryManager
         {
             for (String playerName : entries.keySet())
             {
+                Player player = Helper.matchSinglePlayer(playerName);
+
+                if (player == null)
+                {
+                    continue;
+                }
+
                 EntryFields ef = entries.get(playerName);
                 List<Field> fields = ef.getFields();
 
@@ -602,19 +621,20 @@ public final class EntryManager
                     if (field.equals(testfield))
                     {
                         iter.remove();
-
-                        Player player = Helper.matchSinglePlayer(playerName);
-
-                        if (player != null)
-                        {
-                            leaveOverlappedArea(player, field);
-                        }
+                        leaveOverlappedArea(player, field);
                     }
                 }
             }
 
             for (String playerName : updatableEntries.keySet())
             {
+                Player player = Helper.matchSinglePlayer(playerName);
+
+                if (player == null)
+                {
+                    continue;
+                }
+
                 EntryFields ef = updatableEntries.get(playerName);
                 List<Field> fields = ef.getFields();
 
@@ -625,13 +645,7 @@ public final class EntryManager
                     if (field.equals(testfield))
                     {
                         iter.remove();
-
-                        Player player = Helper.matchSinglePlayer(playerName);
-
-                        if (player != null)
-                        {
-                            leaveOverlappedArea(player, field);
-                        }
+                        leaveOverlappedArea(player, field);
                     }
                 }
             }
@@ -750,83 +764,6 @@ public final class EntryManager
         }
 
         return inhabitants;
-    }
-
-    /**
-     * Returns players that are standing on Redstone triggerable fields
-     *
-     * @param block
-     * @return
-     */
-    public Map<String, Field> getTriggerableEntryPlayers(Block block)
-    {
-        Map<String, Field> players = new HashMap<String, Field>();
-
-        synchronized (entries)
-        {
-            for (String playerName : entries.keySet())
-            {
-                EntryFields ef = entries.get(playerName);
-                List<Field> fields = ef.getFields();
-
-                for (Field field : fields)
-                {
-                    FieldSettings fs = field.getSettings();
-
-                    if (fs.hasVeocityFlag())
-                    {
-                        continue;
-                    }
-
-                    if (!powersField(field, block))
-                    {
-                        continue;
-                    }
-
-                    players.put(playerName, field);
-                }
-            }
-        }
-
-        return players;
-    }
-
-    /**
-     * Whether the redstone source powers the field
-     *
-     * @param field
-     * @param block
-     * @return confirmation
-     */
-    public boolean powersField(Field field, Block block)
-    {
-        BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.DOWN, BlockFace.UP};
-
-        for (BlockFace face : faces)
-        {
-            Block faceblock = block.getRelative(face);
-
-            if (field.getX() == faceblock.getX() && field.getY() == faceblock.getY() && field.getZ() == faceblock.getZ())
-            {
-                return true;
-            }
-        }
-
-        BlockFace[] downfaces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
-
-        Block upblock = block.getRelative(BlockFace.DOWN);
-
-        for (BlockFace face : downfaces)
-        {
-            Block faceblock = upblock.getRelative(face);
-
-            if (field.getX() == faceblock.getX() && field.getY() == faceblock.getY() && field.getZ() == faceblock.getZ())
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

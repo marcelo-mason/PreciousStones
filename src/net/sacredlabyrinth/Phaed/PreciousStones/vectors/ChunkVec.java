@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 /**
@@ -25,6 +26,15 @@ public class ChunkVec extends AbstractVec
     public ChunkVec(Block block)
     {
 	super(block.getChunk().getX(), 0, block.getChunk().getZ(), block.getWorld().getName());
+    }
+
+    /**
+     *
+     * @param block
+     */
+    public ChunkVec(Location location)
+    {
+        super(location.getChunk().getX(), 0, location.getChunk().getZ(), location.getWorld().getName());
     }
 
     /**

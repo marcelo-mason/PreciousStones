@@ -1374,7 +1374,6 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (disabled)
             {
-                PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
 
                 if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
                 {
@@ -1391,7 +1390,6 @@ public class Field extends AbstractVec implements Comparable<Field>
             }
             else
             {
-                PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
                 startDisabler();
 
                 if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))

@@ -5,14 +5,16 @@ import org.bukkit.block.Block;
 /**
  * @author phaed
  */
-public class BlockTypeEntry
+public class BlockTypeEntryExact
 {
     private final int typeId;
     private final byte data;
+
+
     /**
      * @param block
      */
-    public BlockTypeEntry(Block block)
+    public BlockTypeEntryExact(Block block)
     {
         this.typeId = block.getTypeId();
         this.data = block.getData();
@@ -21,7 +23,7 @@ public class BlockTypeEntry
     /**
      * @param block
      */
-    public BlockTypeEntry(int typeId, byte data)
+    public BlockTypeEntryExact(int typeId, byte data)
     {
         this.typeId = typeId;
         this.data = data;
@@ -46,36 +48,26 @@ public class BlockTypeEntry
     @Override
     public boolean equals(Object obj)
     {
-        if (!(obj instanceof BlockTypeEntry))
+        if (!(obj instanceof BlockTypeEntryExact))
         {
             return false;
         }
 
-        BlockTypeEntry other = (BlockTypeEntry) obj;
+        BlockTypeEntryExact other = (BlockTypeEntryExact) obj;
 
         int id1 = this.getTypeId();
         int id2 = other.getTypeId();
         byte data1 = this.getData();
         byte data2 = other.getData();
 
-        if (getData() == 0 || other.getData() == 0)
+        if (id1 == id2 && data1 == data2)
         {
-            if (id1 == id2)
-            {
-                return true;
-            }
-        }
-        else
-        {
-            if (id1 == id2 && data1 == data2)
-            {
-                return true;
-            }
+            return true;
         }
 
         // adjust for changing blocks
 
-        if (id1 == 8 && id2 == 9 || id1 == 10 && id2 == 11 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61)
+        if (id1 == 8 && id2 == 9 || id1 == 10 && id2 == 11 || id1 == 73 && id2 == 74 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61)
         {
             return true;
         }
@@ -91,6 +83,7 @@ public class BlockTypeEntry
         hash = 47 * hash + this.getData();
         return hash;
     }
+
 
     @Override
     public String toString()

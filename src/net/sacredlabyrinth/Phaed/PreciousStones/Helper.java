@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntryExact;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -656,6 +657,46 @@ public class Helper
         {
             return new BlockTypeEntry(Integer.parseInt(rawItem), (byte)0);
         }
+    }
+
+    /**
+     * Returns a type entry from a string
+     * @param rawItem
+     * @return
+     */
+    public static BlockTypeEntryExact toTypeEntryExact(String rawItem)
+    {
+        if (hasData(rawItem))
+        {
+            String[] split = rawItem.split("[:]");
+            return new BlockTypeEntryExact(Integer.parseInt(split[0]), Byte.parseByte(split[1]));
+        }
+        else
+        {
+            return new BlockTypeEntryExact(Integer.parseInt(rawItem), (byte)0);
+        }
+    }
+
+    /**
+     * Returns a list of type entries from a string list
+     * @param rawItem
+     * @return
+     */
+    public static List<BlockTypeEntry> toTypeEntrieBlind(List<Object> rawList)
+    {
+        List<BlockTypeEntry> types = new ArrayList<BlockTypeEntry>();
+
+        for (Object rawItem : rawList)
+        {
+            BlockTypeEntry type = Helper.toTypeEntry(rawItem.toString());
+
+            if(type != null)
+            {
+                types.add(type);
+            }
+        }
+
+        return types;
     }
 
     /**

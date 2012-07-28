@@ -180,7 +180,7 @@ public final class ForesterManager
 
                     // do not place in protected area
 
-                    Field f = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
+                    Field f = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
 
                     if (f != null)
                     {

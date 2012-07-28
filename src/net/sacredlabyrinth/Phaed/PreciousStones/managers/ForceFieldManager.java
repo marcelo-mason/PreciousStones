@@ -298,11 +298,6 @@ public final class ForceFieldManager
      */
     public void addSourceField(Field field)
     {
-        if (field.isDisabled())
-        {
-            return;
-        }
-
         Set<ChunkVec> scvs = field.getEnvelopingChunks();
 
         for (ChunkVec scv : scvs)
@@ -594,6 +589,17 @@ public final class ForceFieldManager
      */
     public Field getField(Block block)
     {
+        return getField(block.getLocation(), block.getTypeId(), block.getData());
+    }
+
+    /**
+     * Gets the field object from a block, if the block is a field
+     *
+     * @param block the block that is a field
+     * @return the field object from the block
+     */
+    public Field getField(Location location, int type, byte data)
+    {
         HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
 
         if (wLists == null)
@@ -601,19 +607,19 @@ public final class ForceFieldManager
             return null;
         }
 
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(block.getLocation().getWorld().getName());
+        HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(location.getWorld().getName());
 
         if (w != null)
         {
-            HashMap<Vec, Field> c = w.get(new ChunkVec(block));
+            HashMap<Vec, Field> c = w.get(new ChunkVec(location));
 
             if (c != null)
             {
-                Field field = c.get(new Vec(block));
+                Field field = c.get(new Vec(location));
 
                 if (field != null)
                 {
-                    if (!field.getTypeEntry().equals(new BlockTypeEntry(block)))
+                    if (!field.getTypeEntry().equals(new BlockTypeEntry(type, data)))
                     {
                         deleteField(field);
                         return null;
@@ -898,6 +904,44 @@ public final class ForceFieldManager
             Block faceblock = upblock.getRelative(face);
 
             if (faceblock.getType().equals(Material.REDSTONE_WIRE) && faceblock.getBlockPower() == 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the redstone source powers the field
+     *
+     * @param field
+     * @param block
+     * @return confirmation
+     */
+    public boolean powersField(Field field, Block block)
+    {
+        BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.DOWN, BlockFace.UP};
+
+        for (BlockFace face : faces)
+        {
+            Block faceblock = block.getRelative(face);
+
+            if (field.getX() == faceblock.getX() && field.getY() == faceblock.getY() && field.getZ() == faceblock.getZ())
+            {
+                return true;
+            }
+        }
+
+        BlockFace[] downfaces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
+
+        Block upblock = block.getRelative(BlockFace.DOWN);
+
+        for (BlockFace face : downfaces)
+        {
+            Block faceblock = upblock.getRelative(face);
+
+            if (field.getX() == faceblock.getX() && field.getY() == faceblock.getY() && field.getZ() == faceblock.getZ())
             {
                 return true;
             }
@@ -1407,18 +1451,13 @@ public final class ForceFieldManager
         return out;
     }
 
-    public interface ResultFilter
-    {
-        boolean Filter(Field field);
-    }
-
     /**
      * Get all fields matching this flag that are touching this chunk
      *
      * @param cv
      * @return
      */
-    public List<Field> getSourceFieldsInChunk(Chunk chunk, FieldFlag flag, ResultFilter... filters)
+    public List<Field> getSourceFieldsInChunk(Chunk chunk, FieldFlag flag, ResultsFilter... filters)
     {
         return getSourceFieldsInChunk(new ChunkVec(chunk), flag, filters);
     }
@@ -1429,7 +1468,7 @@ public final class ForceFieldManager
      * @param cv
      * @return
      */
-    public List<Field> getSourceFieldsInChunk(ChunkVec cv, FieldFlag flag, ResultFilter... filters)
+    public List<Field> getSourceFieldsInChunk(ChunkVec cv, FieldFlag flag, ResultsFilter... filters)
     {
         HashMap<FieldFlag, List<Field>> flagList = sourceFields.get(cv);
 
@@ -1450,7 +1489,7 @@ public final class ForceFieldManager
                         // go through each of the filters
                         // and apply the them
 
-                        for (ResultFilter filter : filters)
+                        for (ResultsFilter filter : filters)
                         {
                             if (!filter.Filter(field))
                             {
@@ -1474,7 +1513,7 @@ public final class ForceFieldManager
      * @param cv
      * @return
      */
-    public Field getSmallestSourceFieldInChunk(Chunk chunk, FieldFlag flag, ResultFilter... filters)
+    public Field getSmallestSourceFieldInChunk(Chunk chunk, FieldFlag flag, ResultsFilter... filters)
     {
         ChunkVec cv = new ChunkVec(chunk);
 
@@ -1519,7 +1558,7 @@ public final class ForceFieldManager
      */
     public List<Field> getSourceFields(final Location loc, final FieldFlag flag)
     {
-        ResultFilter envelopsFilter = new ResultFilter()
+        ResultsFilter envelopsFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1527,7 +1566,28 @@ public final class ForceFieldManager
             }
         };
 
-        ResultFilter disabledFlagFilter = new ResultFilter()
+        List<Field> sources = getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter);
+        return sources;
+    }
+
+    /**
+     * Returns the enabled fields that the location is in match the field flag(s)
+     *
+     * @param loc
+     * @param flags
+     * @return the fields
+     */
+    public List<Field> getEnabledSourceFields(final Location loc, final FieldFlag flag)
+    {
+        ResultsFilter envelopsFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return field.envelops(loc);
+            }
+        };
+
+        ResultsFilter disabledFlagFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1535,7 +1595,15 @@ public final class ForceFieldManager
             }
         };
 
-        List<Field> sources = getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter, disabledFlagFilter);
+        ResultsFilter notDisabledFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !field.isDisabled();
+            }
+        };
+
+        List<Field> sources = getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter);
         return sources;
     }
 
@@ -1546,9 +1614,9 @@ public final class ForceFieldManager
      * @param flags
      * @return the fields
      */
-    public Field getSourceField(final Location loc, final FieldFlag flag)
+    public Field getEnabledSourceField(final Location loc, final FieldFlag flag)
     {
-        ResultFilter envelopsFilter = new ResultFilter()
+        ResultsFilter envelopsFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1556,7 +1624,7 @@ public final class ForceFieldManager
             }
         };
 
-        ResultFilter disabledFlagFilter = new ResultFilter()
+        ResultsFilter disabledFlagFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1564,7 +1632,15 @@ public final class ForceFieldManager
             }
         };
 
-        Field field = getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, disabledFlagFilter);
+        ResultsFilter notDisabledFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !field.isDisabled();
+            }
+        };
+
+        Field field = getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notDisabledFilter, disabledFlagFilter);
         return field;
     }
 
@@ -1577,7 +1653,7 @@ public final class ForceFieldManager
      */
     public boolean hasSourceField(Location loc, FieldFlag flag)
     {
-        return getSourceField(loc, flag) != null;
+        return getEnabledSourceField(loc, flag) != null;
     }
 
     /**
@@ -1627,9 +1703,9 @@ public final class ForceFieldManager
      * @return the fields
      * @deprecated
      */
-    public Field getNotAllowedSourceField(final Location loc, final String playerName, FieldFlag flag)
+    public Field getNotAllowedSourceField(final Location loc, final String playerName, final FieldFlag flag)
     {
-        ResultFilter envelopsFilter = new ResultFilter()
+        ResultsFilter envelopsFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1637,7 +1713,7 @@ public final class ForceFieldManager
             }
         };
 
-        ResultFilter notAllowedFilter = new ResultFilter()
+        ResultsFilter notAllowedFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1645,7 +1721,23 @@ public final class ForceFieldManager
             }
         };
 
-        Field field = getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notAllowedFilter);
+        ResultsFilter disabledFlagFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !field.hasDisabledFlag(flag);
+            }
+        };
+
+        ResultsFilter notDisabledFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !field.isDisabled();
+            }
+        };
+
+        Field field = getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notAllowedFilter, notDisabledFilter, disabledFlagFilter);
         return field;
     }
 
@@ -1658,7 +1750,7 @@ public final class ForceFieldManager
      */
     public Field getConflictSourceField(final Location loc, final String playerName, FieldFlag flag)
     {
-        ResultFilter envelopsFilter = new ResultFilter()
+        ResultsFilter envelopsFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1666,7 +1758,7 @@ public final class ForceFieldManager
             }
         };
 
-        ResultFilter noConflictFilter = new ResultFilter()
+        ResultsFilter noConflictFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1685,9 +1777,10 @@ public final class ForceFieldManager
      * @param playerName
      * @return the fields
      */
-    public List<Field> getAllowedSourceFields(final Location loc, final String playerName, FieldFlag flag)
+    @Deprecated
+    public List<Field> getAllowedSourceFields(final Location loc, final String playerName, final FieldFlag flag)
     {
-        ResultFilter envelopsFilter = new ResultFilter()
+        ResultsFilter envelopsFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1695,7 +1788,7 @@ public final class ForceFieldManager
             }
         };
 
-        ResultFilter allowedFilter = new ResultFilter()
+        ResultsFilter allowedFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1703,7 +1796,23 @@ public final class ForceFieldManager
             }
         };
 
-        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, allowedFilter);
+        ResultsFilter disabledFlagFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !field.hasDisabledFlag(flag);
+            }
+        };
+
+        ResultsFilter notDisabledFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !field.isDisabled();
+            }
+        };
+
+        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, allowedFilter, notDisabledFilter, disabledFlagFilter);
         return sources;
     }
 
@@ -1715,9 +1824,10 @@ public final class ForceFieldManager
      * @return the fields
      * @deprecated
      */
-    public List<Field> getNotAllowedSourceFields(final Location loc, final String playerName, FieldFlag flag)
+    @Deprecated
+    public List<Field> getNotAllowedSourceFields(final Location loc, final String playerName, final FieldFlag flag)
     {
-        ResultFilter envelopsFilter = new ResultFilter()
+        ResultsFilter envelopsFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1725,7 +1835,7 @@ public final class ForceFieldManager
             }
         };
 
-        ResultFilter notAllowedFilter = new ResultFilter()
+        ResultsFilter notAllowedFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1733,7 +1843,23 @@ public final class ForceFieldManager
             }
         };
 
-        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notAllowedFilter);
+        ResultsFilter disabledFlagFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !field.hasDisabledFlag(flag);
+            }
+        };
+
+        ResultsFilter notDisabledFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !field.isDisabled();
+            }
+        };
+
+        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notAllowedFilter, notDisabledFilter);
         return sources;
     }
 
@@ -1757,7 +1883,7 @@ public final class ForceFieldManager
         {
             for (int z = zlow; z <= zhigh; z++)
             {
-                ResultFilter envelopsFilter = new ResultFilter()
+                ResultsFilter envelopsFilter = new ResultsFilter()
                 {
                     public boolean Filter(Field field)
                     {
@@ -1797,7 +1923,7 @@ public final class ForceFieldManager
         {
             for (int z = zlow; z <= zhigh; z++)
             {
-                ResultFilter envelopsFilter = new ResultFilter()
+                ResultsFilter envelopsFilter = new ResultsFilter()
                 {
                     public boolean Filter(Field field)
                     {
@@ -1871,7 +1997,7 @@ public final class ForceFieldManager
             return pointed;
         }
 
-        ResultFilter envelopsFilter = new ResultFilter()
+        ResultsFilter envelopsFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
@@ -1879,11 +2005,48 @@ public final class ForceFieldManager
             }
         };
 
-        ResultFilter allowedFilter = new ResultFilter()
+        ResultsFilter allowedFilter = new ResultsFilter()
         {
             public boolean Filter(Field field)
             {
                 return isAllowed(field, player.getName());
+            }
+        };
+
+        Field field = getSmallestSourceFieldInChunk(blockInArea.getLocation().getBlock().getChunk(), flag, envelopsFilter, allowedFilter);
+        return field;
+    }
+
+
+    /**
+     * Returns the field if he's standing in at least one owned field, optionally matching field flags
+     *
+     * @param blockInArea
+     * @param player
+     * @return the field
+     */
+    public Field getOneOwnedField(final Block blockInArea, final Player player, FieldFlag flag)
+    {
+        Field pointed = getPointedField(player);
+
+        if (pointed != null)
+        {
+            return pointed;
+        }
+
+        ResultsFilter envelopsFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return field.envelops(blockInArea.getLocation());
+            }
+        };
+
+        ResultsFilter allowedFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return field.isOwner(player.getName());
             }
         };
 
@@ -1914,7 +2077,7 @@ public final class ForceFieldManager
      */
     public Field findUseProtected(Location loc, Player player, int type_id)
     {
-        List<Field> sources = getSourceFields(loc, FieldFlag.ALL);
+        List<Field> sources = getEnabledSourceFields(loc, FieldFlag.ALL);
 
         LinkedList<Field> out = new LinkedList<Field>();
 
@@ -2140,6 +2303,17 @@ public final class ForceFieldManager
     }
 
     /**
+     * Deletes a liquid based field from the collection
+     *
+     * @param block
+     */
+    public void releaseLiquid(Field field)
+    {
+        deleteField(field);
+        dropBlockSilent(field);
+    }
+
+    /**
      * Deletes a field from the collection
      *
      * @param block
@@ -2225,6 +2399,26 @@ public final class ForceFieldManager
     public void dropBlock(Field field)
     {
         dropBlock(field.getBlock());
+    }
+
+    /**
+     * Drops a block
+     *
+     * @param block
+     */
+    public void dropBlockSilent(Field field)
+    {
+        // prevent tekkit blocks from dropping and crashing client
+
+        if (field.getTypeId() > 124)
+        {
+            return;
+        }
+
+        World world = field.getLocation().getWorld();
+        ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, field.getData());
+
+        world.dropItemNaturally(field.getLocation(), is);
     }
 
     /**
@@ -2362,7 +2556,7 @@ public final class ForceFieldManager
      *
      * @param block
      */
-    public boolean areaHasPlayers(Block block, Player self)
+    public boolean fieldTouchesPlayers(Block block, Player self)
     {
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block);
 
@@ -2397,4 +2591,26 @@ public final class ForceFieldManager
 
         return false;
     }
+
+    /**
+     * Returns all of a fields inhabitants
+     *
+     * @param block
+     */
+    public Set<Player> getFieldInhabitants(Field field)
+    {
+        Set<Player> out = new HashSet<Player>();
+        List<Player> players = field.getLocation().getWorld().getPlayers();
+
+        for (Player player : players)
+        {
+            if (field.envelops(player.getLocation()))
+            {
+                out.add(player);
+            }
+        }
+
+        return out;
+    }
+
 }

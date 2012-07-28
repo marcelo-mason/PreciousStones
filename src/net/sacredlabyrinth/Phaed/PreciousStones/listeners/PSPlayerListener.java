@@ -68,7 +68,7 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerRespawn(PlayerRespawnEvent event)
+    public void onPlayerRespawn(final PlayerRespawnEvent event)
     {
         handlePlayerSpawn(event.getPlayer());
     }
@@ -77,7 +77,7 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerJoin(PlayerJoinEvent event)
+    public void onPlayerJoin(final PlayerJoinEvent event)
     {
         handlePlayerSpawn(event.getPlayer());
     }
@@ -103,7 +103,7 @@ public class PSPlayerListener implements Listener
             return;
         }
 
-        // handle use protection
+        // -------------------------------------------------------------------------------- interacting with use protected block
 
         if (block != null)
         {
@@ -126,7 +126,7 @@ public class PSPlayerListener implements Listener
         {
             if (block.getType().equals(Material.SOIL))
             {
-                Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
 
                 if (field != null)
                 {
@@ -200,11 +200,11 @@ public class PSPlayerListener implements Listener
 
                     // or add to the cuboid selection
 
-                    Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
+                    Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
 
                     if (field == null)
                     {
-                        field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.GRIEF_REVERT);
+                        field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.GRIEF_REVERT);
                     }
 
                     if (field != null)
@@ -334,7 +334,7 @@ public class PSPlayerListener implements Listener
                         {
                             // check for protections
 
-                            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
+                            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
 
                             if (field != null)
                             {
@@ -349,7 +349,7 @@ public class PSPlayerListener implements Listener
                                 }
                             }
 
-                            field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
+                            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
                             if (field != null && !field.getSettings().canGrief(block.getTypeId()))
                             {
@@ -651,7 +651,7 @@ public class PSPlayerListener implements Listener
                         }
                         else
                         {
-                            Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.ALL);
+                            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.ALL);
 
                             if (field != null)
                             {
@@ -709,7 +709,7 @@ public class PSPlayerListener implements Listener
             return;
         }
 
-        Field field = plugin.getForceFieldManager().getSourceField(event.getTo(), FieldFlag.PREVENT_TELEPORT);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getTo(), FieldFlag.PREVENT_TELEPORT);
 
         if (field != null)
         {
@@ -796,7 +796,7 @@ public class PSPlayerListener implements Listener
 
         // get all the fields the player is currently standing in
 
-        List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ALL);
+        List<Field> currentfields = plugin.getForceFieldManager().getEnabledSourceFields(player.getLocation(), FieldFlag.ALL);
 
         // check for prevent-entry fields and teleport him away if hes not allowed in it
 
@@ -815,7 +815,7 @@ public class PSPlayerListener implements Listener
 
                         if (outside != null)
                         {
-                            Field f = plugin.getForceFieldManager().getSourceField(outside, FieldFlag.PREVENT_ENTRY);
+                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
 
                             if (f != null)
                             {
@@ -862,6 +862,15 @@ public class PSPlayerListener implements Listener
 
     private void handlePlayerSpawn(Player player)
     {
+        // refund confiscated items if not in confiscation fields
+
+        Field confField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.CONFISCATE_ITEMS);
+
+        if (confField == null)
+        {
+            plugin.getConfiscationManager().returnItems(player);
+        }
+
         // undo a player's visualization if it exists
 
         if (plugin.getSettingsManager().isVisualizeEndOnMove())
@@ -897,7 +906,7 @@ public class PSPlayerListener implements Listener
 
         // get all the fields the player is currently standing in
 
-        List<Field> currentfields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ALL);
+        List<Field> currentfields = plugin.getForceFieldManager().getEnabledSourceFields(player.getLocation(), FieldFlag.ALL);
 
         // check for prevent-entry fields and teleport him away if hes not allowed in it
 
@@ -916,7 +925,7 @@ public class PSPlayerListener implements Listener
 
                         if (outside != null)
                         {
-                            Field f = plugin.getForceFieldManager().getSourceField(outside, FieldFlag.PREVENT_ENTRY);
+                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
 
                             if (f != null)
                             {
@@ -983,7 +992,7 @@ public class PSPlayerListener implements Listener
 
         DebugTimer dt = new DebugTimer("onPlayerBucketFill");
 
-        Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
 
         if (field != null)
         {
@@ -1003,7 +1012,7 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
+        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
         if (field != null)
         {
@@ -1062,7 +1071,7 @@ public class PSPlayerListener implements Listener
 
         DebugTimer dt = new DebugTimer("onPlayerBucketEmpty");
 
-        Field field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
 
         if (field != null)
         {
@@ -1082,7 +1091,7 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        field = plugin.getForceFieldManager().getSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
+        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
         if (field != null)
         {
@@ -1129,7 +1138,7 @@ public class PSPlayerListener implements Listener
         Player player = event.getPlayer();
         GameMode gameMode = event.getNewGameMode();
 
-        Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.ALL);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.ALL);
 
         if (field != null)
         {
@@ -1225,7 +1234,7 @@ public class PSPlayerListener implements Listener
                 {
                     Player player = (Player) entity;
 
-                    Field field = plugin.getForceFieldManager().getSourceField(player.getLocation(), FieldFlag.PREVENT_PVP);
+                    Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_PVP);
 
                     if (field != null)
                     {

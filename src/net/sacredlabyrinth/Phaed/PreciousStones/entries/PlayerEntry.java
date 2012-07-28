@@ -2,10 +2,13 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +23,11 @@ public class PlayerEntry
     private boolean superduperpickaxe;
     private Location outsideLocation;
     private Map<BlockTypeEntry, Integer> fieldCount = new HashMap<BlockTypeEntry, Integer>();
+    private JSONArray confiscatedInventory = new JSONArray();
+    private ItemStackEntry confiscatedHelmet = null;
+    private ItemStackEntry confiscatedChestplate = null;
+    private ItemStackEntry confiscatedLeggings = null;
+    private ItemStackEntry confiscatedBoots = null;
 
     /**
      * @param disabled
@@ -28,6 +36,109 @@ public class PlayerEntry
     {
         disabled = PreciousStones.getInstance().getSettingsManager().isOffByDefault();
         density = PreciousStones.getInstance().getSettingsManager().getVisualizeDensity();
+    }
+
+    /**
+     * Adds in the confiscated inventory and items
+     *
+     * @param items
+     * @param helmet
+     * @param chestplate
+     * @param leggings
+     * @param boots
+     */
+    public void confiscate(List<ItemStackEntry> items, ItemStackEntry helmet, ItemStackEntry chestplate, ItemStackEntry leggings, ItemStackEntry boots)
+    {
+        for (ItemStackEntry entry : items)
+        {
+            confiscatedInventory.add(entry.serialize());
+        }
+
+        if (helmet != null)
+        {
+            confiscatedHelmet = helmet;
+        }
+
+        if (chestplate != null)
+        {
+            confiscatedChestplate = chestplate;
+        }
+
+        if (leggings != null)
+        {
+            confiscatedLeggings = leggings;
+        }
+
+        if (boots != null)
+        {
+            confiscatedBoots = boots;
+        }
+    }
+
+    /**
+     * Returns the list of confiscated items, and removes them from the entry
+     *
+     * @return
+     */
+    public List<ItemStackEntry> returnInventory()
+    {
+        List<ItemStackEntry> out = new ArrayList<ItemStackEntry>();
+
+        for(Object stackEntry : confiscatedInventory)
+        {
+            out.add(new ItemStackEntry((JSONObject) stackEntry));
+        }
+
+        confiscatedInventory.clear();
+        return out;
+    }
+
+    /**
+     * Returns confiscated helmet
+     *
+     * @return
+     */
+    public ItemStackEntry returnHelmet()
+    {
+        ItemStackEntry out = confiscatedHelmet;
+        confiscatedHelmet = null;
+        return out;
+    }
+
+    /**
+     * Returns confiscated chestplate
+     *
+     * @return
+     */
+    public ItemStackEntry returnChestplate()
+    {
+        ItemStackEntry out = confiscatedChestplate;
+        confiscatedChestplate = null;
+        return out;
+    }
+
+    /**
+     * Returns confiscated leggings
+     *
+     * @return
+     */
+    public ItemStackEntry returnLeggings()
+    {
+        ItemStackEntry out = confiscatedLeggings;
+        confiscatedLeggings = null;
+        return out;
+    }
+
+    /**
+     * Returns confiscated boots
+     *
+     * @return
+     */
+    public ItemStackEntry returnBoots()
+    {
+        ItemStackEntry out = confiscatedBoots;
+        confiscatedBoots = null;
+        return out;
     }
 
     /**
@@ -190,6 +301,30 @@ public class PlayerEntry
             json.put("disabled", disabled);
         }
 
+        if (!confiscatedInventory.isEmpty())
+        {
+            json.put("confiscated", confiscatedInventory);
+        }
+
+        if (confiscatedHelmet != null)
+        {
+            json.put("helmet", confiscatedHelmet.serialize());
+        }
+
+        if (confiscatedChestplate != null)
+        {
+            json.put("chestplate", confiscatedChestplate.serialize());
+        }
+
+        if (confiscatedLeggings != null)
+        {
+            json.put("leggings", confiscatedLeggings.serialize());
+        }
+
+        if (confiscatedBoots != null)
+        {
+            json.put("boots", confiscatedBoots.serialize());
+        }
 
         json.put("density", density);
 
@@ -226,17 +361,44 @@ public class PlayerEntry
                             superduperpickaxe = (Boolean) flags.get(flag);
                         }
 
-                        if (flag.equals("subdivisions"))
+                        if (flag.equals("density"))
                         {
                             density = ((Long) flags.get(flag)).intValue();
+                        }
+
+                        if (flag.equals("confiscated"))
+                        {
+                            confiscatedInventory = ((JSONArray) flags.get(flag));
+                        }
+
+                        if (flag.equals("helmet"))
+                        {
+                            confiscatedHelmet = new ItemStackEntry((JSONObject)flags.get(flag));
+                        }
+
+                        if (flag.equals("chestplate"))
+                        {
+                            confiscatedChestplate = new ItemStackEntry((JSONObject)flags.get(flag));
+                        }
+
+                        if (flag.equals("leggings"))
+                        {
+                            confiscatedLeggings = new ItemStackEntry((JSONObject)flags.get(flag));
+                        }
+
+                        if (flag.equals("boots"))
+                        {
+                            confiscatedBoots = new ItemStackEntry((JSONObject)flags.get(flag));
                         }
                     }
                     catch (Exception ex)
                     {
+                        System.out.print("Failed reading flag: " + flag);
+                        System.out.print("Value: " + flags.get(flag));
+                        System.out.print("Error: " + ex.getMessage());
+
                         for (StackTraceElement el : ex.getStackTrace())
                         {
-                            System.out.print("Failed reading flag: " + flag);
-                            System.out.print("Value: " + flags.get(flag));
                             System.out.print(el.toString());
                         }
                     }
@@ -254,10 +416,12 @@ public class PlayerEntry
     {
         this.density = density;
     }
+
     public boolean isSuperduperpickaxe()
     {
         return superduperpickaxe;
     }
+
     public void setSuperduperpickaxe(boolean superduperpickaxe)
     {
         this.superduperpickaxe = superduperpickaxe;
