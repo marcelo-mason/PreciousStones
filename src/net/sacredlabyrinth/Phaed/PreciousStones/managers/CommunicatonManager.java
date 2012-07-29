@@ -2652,16 +2652,6 @@ public class CommunicatonManager
             cb.addRow("  " + color + "Interval: ", ChatColor.AQUA + "" + field.getRevertSecs(), "");
         }
 
-        if (field.hasFlag(FieldFlag.POTIONS))
-        {
-            cb.addRow("  " + color + "Potions: ", ChatColor.WHITE + field.getSettings().getPotionString());
-        }
-
-        if (field.hasFlag(FieldFlag.NEUTRALIZE_POTIONS))
-        {
-            cb.addRow("  " + color + "Neutralizes: ", ChatColor.WHITE + field.getSettings().getNeutralizePotionString());
-        }
-
         cb.addRow("  " + color + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 
         List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getFlags());
@@ -2707,6 +2697,16 @@ public class CommunicatonManager
             }
 
             cb.addRow("  " + title, getFlag(disabledFlags, hardCodedFlags, flags, i * 2), getFlag(disabledFlags, hardCodedFlags, flags, (i * 2) + 1));
+        }
+         
+        if (field.hasFlag(FieldFlag.POTIONS))
+        {
+            cb.addRow("  " + color + "Potions: ", ChatColor.WHITE + field.getSettings().getPotionString(), "");
+        }
+
+        if (field.hasFlag(FieldFlag.NEUTRALIZE_POTIONS))
+        {
+            cb.addRow("  " + color + "Neutralizes: ", ChatColor.WHITE + field.getSettings().getNeutralizePotionString(), "");
         }
 
         if (cb.size() > 0)

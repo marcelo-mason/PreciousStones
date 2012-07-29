@@ -12,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author phaed
  */
 public class ChatBlock
@@ -31,7 +30,6 @@ public class ChatBlock
     public static final Logger log = Logger.getLogger("Minecraft");
 
     /**
-     *
      * @param columnAlignment
      */
     public void setAlignment(String... columnAlignment)
@@ -40,7 +38,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param columnSpacings
      */
     public void setSpacing(int... columnSpacings)
@@ -52,7 +49,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param columnPercentages
      * @param prefix
      */
@@ -72,7 +68,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @return
      */
     public boolean hasContent()
@@ -81,7 +76,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param contents
      */
     public void addRow(String... contents)
@@ -90,7 +84,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @return
      */
     public int size()
@@ -107,7 +100,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param sender
      * @param amount
      * @return
@@ -231,7 +223,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param sender
      * @param prefix
      */
@@ -336,7 +327,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param sender
      */
     public void sendBlock(CommandSender sender)
@@ -346,6 +336,7 @@ public class ChatBlock
 
     /**
      * Outputs a message to everybody
+     *
      * @param sender
      * @param msg
      */
@@ -355,7 +346,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param col
      * @return
      */
@@ -365,14 +355,16 @@ public class ChatBlock
 
         for (String[] row : rows)
         {
-            maxWidth = Math.max(maxWidth, msgLength(row[(int) col]));
+            if (col < row.length)
+            {
+                maxWidth = Math.max(maxWidth, msgLength(row[(int) col]));
+            }
         }
 
         return maxWidth;
     }
 
     /**
-     *
      * @param msg
      * @return
      */
@@ -382,7 +374,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param msg
      * @param lineLength
      * @return
@@ -413,7 +404,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param str
      * @return
      */
@@ -428,7 +418,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param msg
      * @param length
      * @return
@@ -449,7 +438,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param msg
      * @param length
      * @return
@@ -471,6 +459,7 @@ public class ChatBlock
 
     /**
      * Padds left til the string is a certain size
+     *
      * @param msg
      * @param length
      * @return
@@ -492,6 +481,7 @@ public class ChatBlock
 
     /**
      * Pads right til the string is a certain size
+     *
      * @param msg
      * @param length
      * @return
@@ -513,6 +503,7 @@ public class ChatBlock
 
     /**
      * Finds the length on the screen of a string. Ignores colors.
+     *
      * @param str
      * @return
      */
@@ -539,7 +530,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param str
      * @return
      */
@@ -557,6 +547,7 @@ public class ChatBlock
 
     /**
      * Finds the visual length of the character on the screen.
+     *
      * @param x
      * @return
      */
@@ -597,7 +588,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param msg
      * @return
      */
@@ -608,6 +598,7 @@ public class ChatBlock
 
     /**
      * Cuts the message apart into whole words short enough to fit on one line
+     *
      * @param msg
      * @param prefixLn
      * @return
@@ -667,7 +658,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param startIndex
      * @param string
      * @param seperator
@@ -688,6 +678,7 @@ public class ChatBlock
 
     /**
      * Cuts apart a word that is too long to fit on one line
+     *
      * @param lengthBefore
      * @param str
      * @return
@@ -730,6 +721,7 @@ public class ChatBlock
 
     /**
      * Outputs a single line out, crops overflow
+     *
      * @param receiver
      * @param msg
      */
@@ -740,11 +732,12 @@ public class ChatBlock
             return;
         }
 
-        receiver.sendMessage(cropRightToFit(colorize(new String[] { msg })[0], lineLength));
+        receiver.sendMessage(cropRightToFit(colorize(new String[]{msg})[0], lineLength));
     }
 
     /**
      * Outputs a message to a user
+     *
      * @param receiver
      * @param msg
      */
@@ -755,6 +748,7 @@ public class ChatBlock
 
     /**
      * Outputs a message to a user
+     *
      * @param receiver
      * @param prefix
      * @param msg
@@ -778,6 +772,7 @@ public class ChatBlock
 
     /**
      * Send blank lie
+     *
      * @param color
      */
     public void startColor(String color)
@@ -787,6 +782,7 @@ public class ChatBlock
 
     /**
      * Send blank lie
+     *
      * @param receiver
      */
     public static void sendBlank(CommandSender receiver)
@@ -801,6 +797,7 @@ public class ChatBlock
 
     /**
      * Colors each line
+     *
      * @param message
      * @return
      */
@@ -810,7 +807,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param message
      * @return
      */
@@ -820,20 +816,15 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param message
      * @return
      */
     public static String colorize(String message)
     {
-        return colorizeBase((new String[]
-                {
-                    message
-                }), 167)[0];
+        return colorizeBase((new String[]{message}), 167)[0];
     }
 
     /**
-     *
      * @param message
      * @param charcode
      * @return
@@ -875,7 +866,6 @@ public class ChatBlock
     }
 
     /**
-     *
      * @param prefix
      * @return
      */

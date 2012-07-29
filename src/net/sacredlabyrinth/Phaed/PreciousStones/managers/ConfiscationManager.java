@@ -35,91 +35,6 @@ public class ConfiscationManager
     }
 
     /**
-     * Returns confiscated items to the player
-     *
-     * @param player
-     */
-    public void returnItems(Player player)
-    {
-        PlayerInventory inventory = player.getInventory();
-
-        if (inventory == null)
-        {
-            return;
-        }
-
-        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
-
-        List<ItemStackEntry> confiscated = entry.returnInventory();
-        ItemStackEntry helmet = entry.returnHelmet();
-        ItemStackEntry chestplate = entry.returnChestplate();
-        ItemStackEntry leggings = entry.returnLeggings();
-        ItemStackEntry boots = entry.returnBoots();
-
-        plugin.getStorageManager().updatePlayer(player.getName());
-
-        if (helmet != null)
-        {
-            inventory.setHelmet(new ItemStack(helmet.getTypeId(), 1, (short) 0, helmet.getData()));
-        }
-
-        if (chestplate != null)
-        {
-            inventory.setChestplate(new ItemStack(chestplate.getTypeId(), 1, (short) 0, chestplate.getData()));
-        }
-
-        if (leggings != null)
-        {
-            inventory.setLeggings(new ItemStack(leggings.getTypeId(), 1, (short) 0, leggings.getData()));
-        }
-
-        if (boots != null)
-        {
-            inventory.setBoots(new ItemStack(boots.getTypeId(), 1, (short) 0, boots.getData()));
-        }
-
-        for (ItemStackEntry item : confiscated)
-        {
-            inventory.addItem(item.toItemStack());
-        }
-
-        if (!confiscated.isEmpty() || helmet != null || chestplate != null || leggings != null || boots != null)
-        {
-            String msg = "";
-
-            for (ItemStackEntry e : confiscated)
-            {
-                msg += e.getAmount() + " " + Helper.friendlyBlockType(Material.getMaterial(e.getTypeId()).name()) + ", ";
-            }
-
-            if (helmet != null)
-            {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(helmet.getTypeId()).name()) + ", ";
-            }
-
-            if (chestplate != null)
-            {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(chestplate.getTypeId()).name()) + ", ";
-            }
-
-            if (leggings != null)
-            {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(leggings.getTypeId()).name()) + ", ";
-            }
-
-            if (boots != null)
-            {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(boots.getTypeId()).name()) + ", ";
-            }
-
-            msg = Helper.stripTrailing(msg, ", ");
-
-            PreciousStones.log("Returned {0} to {1}", msg, player.getName());
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Returned: " + ChatColor.WHITE + msg);
-        }
-    }
-
-    /**
      * Confiscates items from a player and places them on a chest ontop of the field
      *
      * @param player
@@ -214,6 +129,7 @@ public class ConfiscationManager
             PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
             entry.confiscate(confiscated, helmet, chestplate, leggings, boots);
             plugin.getStorageManager().updatePlayer(player.getName());
+            player.updateInventory();
 
             String msg = "";
 
@@ -246,6 +162,92 @@ public class ConfiscationManager
 
             PreciousStones.log("Confiscated {0} from {1} at {2}", msg, player.getName(), field.toString());
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Confiscated: " + ChatColor.WHITE + msg);
+        }
+    }
+
+    /**
+     * Returns confiscated items to the player
+     *
+     * @param player
+     */
+    public void returnItems(Player player)
+    {
+        PlayerInventory inventory = player.getInventory();
+
+        if (inventory == null)
+        {
+            return;
+        }
+
+        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+
+        List<ItemStackEntry> confiscated = entry.returnInventory();
+        ItemStackEntry helmet = entry.returnHelmet();
+        ItemStackEntry chestplate = entry.returnChestplate();
+        ItemStackEntry leggings = entry.returnLeggings();
+        ItemStackEntry boots = entry.returnBoots();
+
+        plugin.getStorageManager().updatePlayer(player.getName());
+        player.updateInventory();
+
+        if (helmet != null)
+        {
+            inventory.setHelmet(helmet.toItemStack());
+        }
+
+        if (chestplate != null)
+        {
+            inventory.setChestplate(chestplate.toItemStack());
+        }
+
+        if (leggings != null)
+        {
+            inventory.setLeggings(leggings.toItemStack());
+        }
+
+        if (boots != null)
+        {
+            inventory.setBoots(boots.toItemStack());
+        }
+
+        for (ItemStackEntry item : confiscated)
+        {
+            inventory.addItem(item.toItemStack());
+        }
+
+        if (!confiscated.isEmpty() || helmet != null || chestplate != null || leggings != null || boots != null)
+        {
+            String msg = "";
+
+            for (ItemStackEntry e : confiscated)
+            {
+                msg += e.getAmount() + " " + Helper.friendlyBlockType(Material.getMaterial(e.getTypeId()).name()) + ", ";
+            }
+
+            if (helmet != null)
+            {
+                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(helmet.getTypeId()).name()) + ", ";
+            }
+
+            if (chestplate != null)
+            {
+                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(chestplate.getTypeId()).name()) + ", ";
+            }
+
+            if (leggings != null)
+            {
+                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(leggings.getTypeId()).name()) + ", ";
+            }
+
+            if (boots != null)
+            {
+                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(boots.getTypeId()).name()) + ", ";
+            }
+
+            msg = Helper.stripTrailing(msg, ", ");
+
+            PreciousStones.log("Returned {0} to {1}", msg, player.getName());
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Returned: " + ChatColor.WHITE + msg);
         }
     }
 }

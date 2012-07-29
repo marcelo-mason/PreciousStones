@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
@@ -51,6 +52,27 @@ public class ItemStackEntry
                 this.enchantments.put(Enchantment.getById(id), level);
             }
         }
+    }
+
+    public JSONObject serialize()
+    {
+        JSONObject ench = new JSONObject();
+
+        for (Enchantment e : enchantments.keySet())
+        {
+            Integer integer = enchantments.get(e);
+            ench.put(e.getId(), integer);
+        }
+
+        JSONObject out = new JSONObject();
+
+        out.put("id", getTypeId());
+        out.put("data", getData());
+        out.put("durability", getDurability());
+        out.put("amount", getAmount());
+        out.put("enchantments", ench);
+
+        return out;
     }
 
     /**
@@ -118,28 +140,6 @@ public class ItemStackEntry
         return hash;
     }
 
-    public JSONObject serialize()
-    {
-        JSONObject ench = new JSONObject();
-
-        for (Enchantment e : enchantments.keySet())
-        {
-            Integer integer = enchantments.get(e);
-
-            ench.put(e.getId(), integer);
-        }
-
-        JSONObject out = new JSONObject();
-
-        out.put("id", getTypeId());
-        out.put("data", getData());
-        out.put("durability", getDurability());
-        out.put("amount", getAmount());
-        out.put("enchantments", ench);
-
-        return out;
-    }
-
     /**
      * Returns a real itemstack
      *
@@ -151,7 +151,7 @@ public class ItemStackEntry
 
         for (Enchantment ench : enchantments.keySet())
         {
-            is.addEnchantment(ench, enchantments.get(ench));
+            is.addUnsafeEnchantment(ench, Math.min(enchantments.get(ench), ench.getMaxLevel()));
         }
 
         return is;
