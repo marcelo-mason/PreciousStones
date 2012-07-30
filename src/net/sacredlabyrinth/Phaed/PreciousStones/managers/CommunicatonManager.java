@@ -164,7 +164,7 @@ public class CommunicatonManager
         }
     }
 
-    /**
+        /**
      * @param player
      * @param field
      */
@@ -199,6 +199,80 @@ public class CommunicatonManager
             else
             {
                 PreciousStones.log(ChatColor.AQUA + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " block reverted " + count + " blocks " + field.getCoords());
+            }
+        }
+    }
+
+    /**
+     * @param player
+     * @param field
+     */
+    public void notifyTranslocation(Field field, Player player, int count)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        if (player != null)
+        {
+            if (plugin.getSettingsManager().isNotifyTranslocation() && canNotify(player))
+            {
+                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Translocated " + count + " " + Helper.plural(count, "block", "s") + " " + field.getCoords());
+            }
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogTranslocation())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Translocation", player, field.getLocation(), "blocks:" + count);
+            }
+            else
+            {
+                PreciousStones.log(ChatColor.AQUA + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " block translocated " + count + " blocks " + field.getCoords());
+            }
+        }
+    }
+
+    /**
+     * @param player
+     * @param field
+     */
+    public void notifyTranslocationClean(Field field, Player player, int count)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        if (player != null)
+        {
+            if (plugin.getSettingsManager().isNotifyTranslocation() && canNotify(player))
+            {
+                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Stored " + count + " " + Helper.plural(count, "block", "s") + " " + field.getCoords());
+            }
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogTranslocation())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Stored", player, field.getLocation(), "blocks:" + count);
+            }
+            else
+            {
+                PreciousStones.log(ChatColor.AQUA + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " block stored " + count + " blocks " + field.getCoords());
             }
         }
     }
@@ -2698,7 +2772,7 @@ public class CommunicatonManager
 
             cb.addRow("  " + title, getFlag(disabledFlags, hardCodedFlags, flags, i * 2), getFlag(disabledFlags, hardCodedFlags, flags, (i * 2) + 1));
         }
-         
+
         if (field.hasFlag(FieldFlag.POTIONS))
         {
             cb.addRow("  " + color + "Potions: ", ChatColor.WHITE + field.getSettings().getPotionString(), "");

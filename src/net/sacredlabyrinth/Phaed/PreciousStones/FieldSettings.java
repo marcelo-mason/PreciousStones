@@ -47,6 +47,7 @@ public class FieldSettings
     private List<String> creatureTypes = new ArrayList<String>();
     private List<Integer> fertileBlocks = new ArrayList<Integer>();
     private List<Integer> limits = new ArrayList<Integer>();
+    private List<BlockTypeEntry> translocatorBlacklist = new ArrayList<BlockTypeEntry>();
     private List<Integer> preventUse = new ArrayList<Integer>();
     private List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> equipItems = new ArrayList<BlockTypeEntry>();
@@ -310,6 +311,11 @@ public class FieldSettings
         if (map.containsKey("limits") && Helper.isIntList(map.get("limits")))
         {
             limits = (List<Integer>) map.get("limits");
+        }
+
+        if (map.containsKey("translocator-blacklist") && Helper.isStringList(map.get("translocator-blacklists")))
+        {
+            translocatorBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("translocator-blacklist"));
         }
 
         if (map.containsKey("allowed-only-inside") && Helper.isStringList(map.get("allowed-only-inside")))
@@ -804,6 +810,14 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("translocator") && Helper.isBoolean(map.get("translocator")))
+        {
+            if ((Boolean) map.get("translocator"))
+            {
+                defaultFlags.add(FieldFlag.TRANSLOCATOR);
+            }
+        }
+
         if (map.containsKey("apply-to-reverse") && Helper.isBoolean(map.get("apply-to-reverse")))
         {
             if ((Boolean) map.get("apply-to-reverse"))
@@ -964,6 +978,17 @@ public class FieldSettings
         }
 
         return (this.getRadius() * 2) + 1;
+    }
+
+    /**
+     * Whether the block can be translocated or not based on the blacklist
+     *
+     * @param type
+     * @return
+     */
+    public boolean canTranslocate(BlockTypeEntry type)
+    {
+        return !translocatorBlacklist.contains(type);
     }
 
     /**

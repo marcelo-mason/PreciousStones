@@ -367,7 +367,7 @@ public class PSEntityListener implements Listener
             }, 10);
         }
 
-        // revert blocks from rollback fields
+        // revert blocks from rollback fields (notice this is running after other tnts have been triggered)
 
         if (rollbackField != null)
         {

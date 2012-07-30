@@ -62,6 +62,7 @@ public final class SettingsManager
     private List<Integer> repairableItems = new ArrayList<Integer>();
     private List<String> allEntryGroups = new ArrayList<String>();
     private boolean logRollback;
+    private boolean logTranslocation;
     private boolean logFire;
     private boolean logEntry;
     private boolean logPlace;
@@ -76,6 +77,7 @@ public final class SettingsManager
     private boolean logBypassPlace;
     private boolean logBypassDestroy;
     private boolean logConflictPlace;
+    private boolean notifyTranslocation;
     private boolean notifyRollback;
     private boolean notifyFlyZones;
     private boolean notifyPlace;
@@ -175,6 +177,7 @@ public final class SettingsManager
         unbreakableBlocks = Helper.toTypeEntries(config.getStringList("unbreakable-blocks"));
         toolItems = config.getIntegerList("tool-items");
         repairableItems = config.getIntegerList("repairable-items");
+        logTranslocation = config.getBoolean("log.translocation");
         logRollback = config.getBoolean("log.rollback");
         logFire = config.getBoolean("log.fire");
         logEntry = config.getBoolean("log.entry");
@@ -190,6 +193,7 @@ public final class SettingsManager
         logBypassPlace = config.getBoolean("log.bypass-place");
         logBypassDestroy = config.getBoolean("log.bypass-destroy");
         logConflictPlace = config.getBoolean("log.conflict-place");
+        notifyTranslocation = config.getBoolean("notify.translocation");
         notifyRollback = config.getBoolean("notify.rollback");
         notifyPlace = config.getBoolean("notify.place");
         notifyDestroy = config.getBoolean("notify.destroy");
@@ -1347,5 +1351,15 @@ public final class SettingsManager
         config.set("settings.version", version);
         save();
         this.version = version;
+    }
+
+    public boolean isLogTranslocation()
+    {
+        return logTranslocation;
+    }
+
+    public boolean isNotifyTranslocation()
+    {
+        return notifyTranslocation;
     }
 }

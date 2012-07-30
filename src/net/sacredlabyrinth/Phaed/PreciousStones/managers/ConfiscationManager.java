@@ -35,7 +35,7 @@ public class ConfiscationManager
     }
 
     /**
-     * Confiscates items from a player and places them on a chest ontop of the field
+     * Confiscates items from a player and places them on a chest on top of the field
      *
      * @param player
      */

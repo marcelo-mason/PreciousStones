@@ -28,7 +28,7 @@ public class Rollback implements Runnable
         this.world = world;
         this.plugin = PreciousStones.getInstance();
 
-        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, 2);
+        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 5, 5);
     }
 
     public void run()

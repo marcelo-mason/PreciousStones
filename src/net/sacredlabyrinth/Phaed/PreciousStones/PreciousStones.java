@@ -40,6 +40,7 @@ public class PreciousStones extends JavaPlugin
     private WorldGuardManager worldGuardManager;
     private CombatTagManager combatTagManager;
     private ConfiscationManager confiscationManager;
+    private TranslocationManager translocationManager;
     private PotionManager potionManager;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
@@ -140,6 +141,7 @@ public class PreciousStones extends JavaPlugin
         combatTagManager = new CombatTagManager();
         confiscationManager = new ConfiscationManager();
         potionManager = new PotionManager();
+        translocationManager = new TranslocationManager();
 
         playerListener = new PSPlayerListener();
         blockListener = new PSBlockListener();
@@ -179,6 +181,7 @@ public class PreciousStones extends JavaPlugin
     public void onDisable()
     {
         getVisualizationManager().revertAll();
+        getForceFieldManager().finalize();
         getStorageManager().processQueue();
         getServer().getScheduler().cancelTasks(this);
         getStorageManager().closeConnection();
@@ -389,5 +392,10 @@ public class PreciousStones extends JavaPlugin
     public PotionManager getPotionManager()
     {
         return potionManager;
+    }
+
+    public TranslocationManager getTranslocationManager()
+    {
+        return translocationManager;
     }
 }

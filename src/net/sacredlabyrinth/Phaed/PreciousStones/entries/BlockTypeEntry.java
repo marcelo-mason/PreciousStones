@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 /**
  * @author phaed
@@ -16,6 +17,15 @@ public class BlockTypeEntry
     {
         this.typeId = block.getTypeId();
         this.data = block.getData();
+    }
+
+    /**
+     * @param block
+     */
+    public BlockTypeEntry(BlockState block)
+    {
+        this.typeId = block.getTypeId();
+        this.data = block.getRawData();
     }
 
     /**
@@ -101,6 +111,18 @@ public class BlockTypeEntry
         }
 
         return getTypeId() + ":" + getData();
+    }
+
+    public BlockTypeEntry(String packed)
+    {
+        String[] unpacked = packed.split("[|]");
+        this.typeId = Integer.parseInt(unpacked[0]);
+        this.data = Byte.parseByte(unpacked[1]);
+    }
+
+    public String serialize()
+    {
+        return getTypeId() + "|" + getData();
     }
 }
 

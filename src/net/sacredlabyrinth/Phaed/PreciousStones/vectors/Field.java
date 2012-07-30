@@ -44,6 +44,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<String> allowed = new ArrayList<String>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
     private List<GriefBlock> grief = new LinkedList<GriefBlock>();
+    private List<TranslocationBlock> translocation = new LinkedList<TranslocationBlock>();
     private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
     private List<FieldFlag> flags = new LinkedList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new LinkedList<FieldFlag>();
@@ -745,13 +746,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         dirty.add(DirtyFieldReason.GRIEF_BLOCKS);
     }
 
-    /**
-     * Clear grief blocks
-     */
-    public void clearGrief()
-    {
-        grief.clear();
-    }
 
     /**
      * @return the grief
@@ -834,6 +828,18 @@ public class Field extends AbstractVec implements Comparable<Field>
     public boolean isDirty(DirtyFieldReason dirtyType)
     {
         return dirty.contains(dirtyType);
+    }
+
+
+    /**
+     * Whether the item is dirty
+     *
+     * @param dirtyType
+     * @return
+     */
+    public boolean isDirty()
+    {
+        return !dirty.isEmpty();
     }
 
     /**
@@ -1015,12 +1021,6 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         JSONArray insertedFlags = new JSONArray();
         insertedFlags.addAll(getInsertedFlagsStringList());
-
-
-        if (!disabledFlags.isEmpty())
-        {
-            json.put("disabledFlags", disabledFlags);
-        }
 
         if (!insertedFlags.isEmpty())
         {
@@ -1726,5 +1726,37 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
 
         return false;
+    }
+
+    /**
+     * Add a translocation block to the collection
+     *
+     * @param gb
+     */
+    public void addTranslocationBlock(final TranslocationBlock tb)
+    {
+        PreciousStones.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
+        {
+            public void run()
+            {
+                if (!translocation.contains(tb))
+                {
+                    translocation.add(tb);
+                }
+
+                dirty.add(DirtyFieldReason.TRANSLOCATION);
+            }
+        }, 20);
+    }
+
+    /**
+     * @return the translocation
+     */
+    public Queue<TranslocationBlock> getTranslocation()
+    {
+        Queue<TranslocationBlock> t = new LinkedList<TranslocationBlock>();
+        t.addAll(translocation);
+        translocation.clear();
+        return t;
     }
 }

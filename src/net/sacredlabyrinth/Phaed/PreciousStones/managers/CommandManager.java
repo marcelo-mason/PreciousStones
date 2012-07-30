@@ -965,7 +965,7 @@ public final class CommandManager implements CommandExecutor
                             }
                         }
                     }
-                    else if (cmd.equals("more") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasplayer)
+                    else if (cmd.equals("more") && hasplayer)
                     {
                         ChatBlock cb = plugin.getCommunicationManager().getChatBlock(player);
 
@@ -1192,6 +1192,7 @@ public final class CommandManager implements CommandExecutor
                                     PlayerEntry newData = plugin.getPlayerManager().getPlayerEntry(owner);
                                     newData.incrementFieldCount(field.getSettings().getTypeEntry());
 
+                                    plugin.getStorageManager().changeTranslocationOwner(field, owner);
                                     plugin.getStorageManager().offerPlayer(field.getOwner());
                                     plugin.getStorageManager().offerPlayer(owner);
 
@@ -1234,7 +1235,6 @@ public final class CommandManager implements CommandExecutor
                                         if (field.hasFlag(FieldFlag.CAN_CHANGE_OWNER))
                                         {
                                             field.setNewOwner(owner);
-
                                             ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field can now be taken by " + owner + " via right-click");
                                             return true;
                                         }

@@ -240,6 +240,7 @@ log:
     unprotectable: true
     bypass-place: true
     place: true
+    translocation: true
     rollback: true
     bypass-delete: true
     conflict-place: true
@@ -264,6 +265,7 @@ notify:
     bypass-place: true
     place: true
     rollback: true
+    translocation: true
     fly-zones: true
 grief-undo:
     min-interval-secs: 30

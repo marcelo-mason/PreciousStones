@@ -120,7 +120,7 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        // prevent soil interaction
+        // -------------------------------------------------------------------------------- soil interaction
 
         if (block != null)
         {
@@ -142,6 +142,9 @@ public class PSPlayerListener implements Listener
                 }
             }
         }
+
+
+        // -------------------------------------------------------------------------------- actions during an open cuboid
 
         boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(is.getTypeId()) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()));
 
@@ -293,7 +296,7 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        // handle super pickaxes
+        // -------------------------------------------------------------------------------- super pickaxes
 
         if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
         {
@@ -473,7 +476,7 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        // handle right clicks
+        // -------------------------------------------------------------------------------- snitch record right click actions
 
         if (block != null)
         {
@@ -508,6 +511,25 @@ public class PSPlayerListener implements Listener
                             return;
                         }
 
+                        // -------------------------------------------------------------------------------- right clicking on fields
+
+                        try
+                        {
+                            // makes sure water/see-through fields can be right clicked
+
+                            TargetBlock aiming = new TargetBlock(player, 1000, 0.2, new int[]{0});
+                            Block targetBlock = aiming.getTargetBlock();
+
+                            if (targetBlock != null && plugin.getForceFieldManager().isField(targetBlock))
+                            {
+                                block = targetBlock;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
                         if (plugin.getForceFieldManager().isField(block))
                         {
                             Field field = plugin.getForceFieldManager().getField(block);
@@ -517,7 +539,7 @@ public class PSPlayerListener implements Listener
                                 field = field.getParent();
                             }
 
-                            // handle changing owners
+                            // -------------------------------------------------------------------------------- handle changing owners
 
                             if (field.getNewOwner() != null)
                             {
@@ -530,6 +552,8 @@ public class PSPlayerListener implements Listener
 
                                     PlayerEntry newData = plugin.getPlayerManager().getPlayerEntry(field.getNewOwner());
                                     newData.incrementFieldCount(field.getSettings().getTypeEntry());
+
+                                    PreciousStones.getInstance().getStorageManager().changeTranslocationOwner(field, field.getNewOwner());
 
                                     String oldOwnerName = field.getOwner();
 
@@ -554,6 +578,8 @@ public class PSPlayerListener implements Listener
                                     ChatBlock.sendMessage(player, ChatColor.AQUA + "You cannot take ownership of this field.  It has been given to: " + field.getNewOwner());
                                 }
                             }
+
+                            // -------------------------------------------------------------------------------- visualize/enable on sneaking right click
 
                             boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
@@ -595,6 +621,8 @@ public class PSPlayerListener implements Listener
                             }
                             else
                             {
+                                // -------------------------------------------------------------------------------- snitch block right click action
+
                                 if (plugin.getSettingsManager().isSnitchType(block))
                                 {
                                     if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
@@ -605,41 +633,62 @@ public class PSPlayerListener implements Listener
                                             ChatBlock.sendMessage(player, ChatColor.AQUA + "There have been no intruders around here");
                                             ChatBlock.sendBlank(player);
                                         }
+                                        return;
                                     }
                                 }
-                                else
-                                {
-                                    if ((field.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
-                                    {
-                                        int size = plugin.getGriefUndoManager().undoGrief(field);
 
-                                        if (size == 0)
-                                        {
-                                            showInfo(field, player);
-                                            player.sendMessage(ChatColor.AQUA + "No grief recorded on the field");
-                                            ChatBlock.sendBlank(player);
-                                        }
+                                // -------------------------------------------------------------------------------- grief revert right click action
+
+                                if ((field.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
+                                {
+                                    int size = plugin.getGriefUndoManager().undoGrief(field);
+
+                                    if (size == 0)
+                                    {
+                                        showInfo(field, player);
+                                        player.sendMessage(ChatColor.AQUA + "No grief recorded on the field");
+                                        ChatBlock.sendBlank(player);
+                                    }
+                                    return;
+                                }
+
+                                // -------------------------------------------------------------------------------- right click translocator
+
+                                if (field.hasFlag(FieldFlag.TRANSLOCATOR) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
+                                {
+                                    if (plugin.getStorageManager().hasTranslocation(field))
+                                    {
+                                        int size = plugin.getTranslocationManager().revertTranslocation(field);
+                                        plugin.getCommunicationManager().notifyTranslocation(field, player, size);
                                     }
                                     else
                                     {
-                                        if (showInfo(field, player))
-                                        {
-                                            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle"))
-                                            {
-                                                if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
-                                                {
-                                                    player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
-                                                }
+                                        int size = plugin.getTranslocationManager().clearTranslocation(field);
+                                        plugin.getCommunicationManager().notifyTranslocationClean(field, player, size);
+                                    }
+                                    return;
+                                }
 
-                                                ChatBlock.sendBlank(player);
-                                            }
+                                // -------------------------------------------------------------------------------- show info right click action
+
+                                if (showInfo(field, player))
+                                {
+                                    if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle"))
+                                    {
+                                        if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
+                                        {
+                                            player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
                                         }
+
+                                        ChatBlock.sendBlank(player);
                                     }
                                 }
                             }
                         }
                         else if (plugin.getUnbreakableManager().isUnbreakable(block))
                         {
+                            // -------------------------------------------------------------------------------- unbreakable info right click
+
                             if (plugin.getUnbreakableManager().isOwner(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
                             {
                                 plugin.getCommunicationManager().showUnbreakableDetails(plugin.getUnbreakableManager().getUnbreakable(block), player);
@@ -651,6 +700,8 @@ public class PSPlayerListener implements Listener
                         }
                         else
                         {
+                            // -------------------------------------------------------------------------------- protected surface right click action
+
                             Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.ALL);
 
                             if (field != null)
@@ -667,11 +718,11 @@ public class PSPlayerListener implements Listener
                     }
                 }
             }
+        }
 
-            if (plugin.getSettingsManager().isDebug())
-            {
-                dt.logProcessTime();
-            }
+        if (plugin.getSettingsManager().isDebug())
+        {
+            dt.logProcessTime();
         }
     }
 

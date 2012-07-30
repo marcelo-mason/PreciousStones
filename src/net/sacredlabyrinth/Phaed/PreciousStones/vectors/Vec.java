@@ -1,16 +1,14 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
-import org.bukkit.block.Block;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 
 /**
- *
  * @author phaed
  */
 public class Vec extends AbstractVec
 {
     /**
-     *
      * @param x
      * @param y
      * @param world
@@ -22,7 +20,6 @@ public class Vec extends AbstractVec
     }
 
     /**
-     *
      * @param block
      */
     public Vec(Block block)
@@ -31,7 +28,6 @@ public class Vec extends AbstractVec
     }
 
     /**
-     *
      * @param av
      */
     public Vec(AbstractVec av)
@@ -40,7 +36,6 @@ public class Vec extends AbstractVec
     }
 
     /**
-     *
      * @param loc
      */
     public Vec(Location loc)
@@ -49,7 +44,6 @@ public class Vec extends AbstractVec
     }
 
     /**
-     *
      * @param vec
      * @return
      */
@@ -59,7 +53,6 @@ public class Vec extends AbstractVec
     }
 
     /**
-     *
      * @param x
      * @param y
      * @param z
@@ -71,7 +64,6 @@ public class Vec extends AbstractVec
     }
 
     /**
-     *
      * @param x
      * @param y
      * @param z
@@ -80,5 +72,15 @@ public class Vec extends AbstractVec
     public Vec subtract(int x, int y, int z)
     {
         return new Vec(this.getX() - x, this.getY() - y, this.getZ() - z, this.getWorld());
+    }
+
+    public Vec(String packed)
+    {
+        super(Integer.parseInt(packed.split("[|]")[0]), Integer.parseInt(packed.split("[|]")[1]), Integer.parseInt(packed.split("[|]")[2]), packed.split("[|]")[3]);
+    }
+
+    public String serialize()
+    {
+        return getX() + "|" + getY() + "|" + getZ() + "|" + getBlock();
     }
 }

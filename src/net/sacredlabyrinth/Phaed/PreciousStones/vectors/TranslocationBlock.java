@@ -9,7 +9,7 @@ import org.bukkit.block.BlockState;
 /**
  * @author phaed
  */
-public class GriefBlock extends AbstractVec
+public class TranslocationBlock extends AbstractVec
 {
     private BlockTypeEntry type;
     private String signText = "";
@@ -23,7 +23,7 @@ public class GriefBlock extends AbstractVec
      * @param typeId
      * @param data
      */
-    public GriefBlock(int x, int y, int z, String world, BlockTypeEntry type)
+    public TranslocationBlock(int x, int y, int z, String world, BlockTypeEntry type)
     {
         super(x, y, z, world);
         this.type = type;
@@ -34,7 +34,7 @@ public class GriefBlock extends AbstractVec
      * @param typeId
      * @param data
      */
-    public GriefBlock(Location loc, BlockTypeEntry type)
+    public TranslocationBlock(Location loc, BlockTypeEntry type)
     {
         super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
         this.type = type;
@@ -43,7 +43,7 @@ public class GriefBlock extends AbstractVec
     /**
      * @param block
      */
-    public GriefBlock(Block block)
+    public TranslocationBlock(Block block)
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
@@ -52,7 +52,7 @@ public class GriefBlock extends AbstractVec
     /**
      * @param block
      */
-    public GriefBlock(BlockState state)
+    public TranslocationBlock(BlockState state)
     {
         super(state.getX(), state.getY(), state.getZ(), state.getWorld().getName());
         this.type = new BlockTypeEntry(state.getTypeId(), state.getRawData());
@@ -101,7 +101,7 @@ public class GriefBlock extends AbstractVec
         this.empty = empty;
     }
 
-    public GriefBlock(String packed)
+    public TranslocationBlock(String packed)
     {
         super(Helper.locationFromPacked(packed).getBlockX(), Helper.locationFromPacked(packed).getBlockY(), Helper.locationFromPacked(packed).getBlockZ(), Helper.locationFromPacked(packed).getWorld().getName());
 

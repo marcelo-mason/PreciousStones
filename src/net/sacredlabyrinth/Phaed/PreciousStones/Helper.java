@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntryExact;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeExact;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -664,16 +664,16 @@ public class Helper
      * @param rawItem
      * @return
      */
-    public static BlockTypeEntryExact toTypeEntryExact(String rawItem)
+    public static BlockTypeExact toTypeEntryExact(String rawItem)
     {
         if (hasData(rawItem))
         {
             String[] split = rawItem.split("[:]");
-            return new BlockTypeEntryExact(Integer.parseInt(split[0]), Byte.parseByte(split[1]));
+            return new BlockTypeExact(Integer.parseInt(split[0]), Byte.parseByte(split[1]));
         }
         else
         {
-            return new BlockTypeEntryExact(Integer.parseInt(rawItem), (byte)0);
+            return new BlockTypeExact(Integer.parseInt(rawItem), (byte)0);
         }
     }
 
@@ -719,5 +719,25 @@ public class Helper
         }
 
         return types;
+    }
+
+    /**
+     * Used in GriefBlock
+     *
+     * @param packed
+     * @return
+     */
+    public static Location locationFromPacked(String packed)
+    {
+        String[] unpacked = packed.split("[|]");
+
+        int x = Integer.parseInt(unpacked[2]);
+        int y = Integer.parseInt(unpacked[3]);
+        int z = Integer.parseInt(unpacked[4]);
+        String world = unpacked[5].toString();
+
+        World w = PreciousStones.getInstance().getServer().getWorld(world);
+
+        return new Location(w, x, y, z);
     }
 }

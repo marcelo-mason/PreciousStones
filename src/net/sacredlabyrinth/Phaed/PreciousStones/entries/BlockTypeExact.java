@@ -5,7 +5,7 @@ import org.bukkit.block.Block;
 /**
  * @author phaed
  */
-public class BlockTypeEntryExact
+public class BlockTypeExact
 {
     private final int typeId;
     private final byte data;
@@ -14,7 +14,7 @@ public class BlockTypeEntryExact
     /**
      * @param block
      */
-    public BlockTypeEntryExact(Block block)
+    public BlockTypeExact(Block block)
     {
         this.typeId = block.getTypeId();
         this.data = block.getData();
@@ -23,7 +23,7 @@ public class BlockTypeEntryExact
     /**
      * @param block
      */
-    public BlockTypeEntryExact(int typeId, byte data)
+    public BlockTypeExact(int typeId, byte data)
     {
         this.typeId = typeId;
         this.data = data;
@@ -48,12 +48,12 @@ public class BlockTypeEntryExact
     @Override
     public boolean equals(Object obj)
     {
-        if (!(obj instanceof BlockTypeEntryExact))
+        if (!(obj instanceof BlockTypeExact))
         {
             return false;
         }
 
-        BlockTypeEntryExact other = (BlockTypeEntryExact) obj;
+        BlockTypeExact other = (BlockTypeExact) obj;
 
         int id1 = this.getTypeId();
         int id2 = other.getTypeId();

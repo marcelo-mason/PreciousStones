@@ -16,5 +16,6 @@ public enum DirtyFieldReason
     DELETE,
     LASTUSED,
     DIMENSIONS,
-    FLAGS
+    FLAGS,
+    TRANSLOCATION
 }

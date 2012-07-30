@@ -673,6 +673,36 @@ public final class ForceFieldManager
     }
 
     /**
+     * things to do before shutdown
+     */
+    public void finalize()
+    {
+        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
+
+        if (wLists == null)
+        {
+            return;
+        }
+
+        for (HashMap<ChunkVec, HashMap<Vec, Field>> w : wLists.values())
+        {
+            if (w != null)
+            {
+                for (HashMap<Vec, Field> c : w.values())
+                {
+                    for (Field f : c.values())
+                    {
+                        if (f.isDirty())
+                        {
+                            plugin.getStorageManager().offerField(f);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Gets field counts for player/g:group/c:clan/*
      *
      * @param target

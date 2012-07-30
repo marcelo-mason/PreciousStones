@@ -1,7 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 /**
@@ -91,5 +93,27 @@ public class BlockEntry
     public String toString()
     {
         return "[" + getTypeId() + ":" + getData() + " " + Helper.toLocationString(location) + "]";
+    }
+
+    public BlockEntry(String packed)
+    {
+        String[] unpacked = packed.split("[|]");
+
+        this.typeId = Integer.parseInt(unpacked[0]);
+        this.data = Byte.parseByte(unpacked[1]);
+
+        int x = Integer.parseInt(unpacked[2]);
+        int y = Integer.parseInt(unpacked[3]);
+        int z = Integer.parseInt(unpacked[4]);
+        String world = unpacked[5].toString();
+
+        World w = PreciousStones.getInstance().getServer().getWorld(world);
+
+        this.location = new Location(w, x, y, z);
+    }
+
+    public String serialize()
+    {
+        return getTypeId() + "|" + getData() + "|" + location.getBlockX() + "|" + location.getBlockY() + "|" + location.getBlockZ() + "|" + location.getWorld();
     }
 }
