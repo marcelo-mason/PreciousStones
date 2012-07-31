@@ -143,7 +143,6 @@ public class PSPlayerListener implements Listener
             }
         }
 
-
         // -------------------------------------------------------------------------------- actions during an open cuboid
 
         boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(is.getTypeId()) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()));
@@ -234,7 +233,7 @@ public class PSPlayerListener implements Listener
             }
             else
             {
-                // handle closed cuboid commands
+                // -------------------------------------------------------------------------------- creating a cuboid
 
                 if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
                 {
@@ -263,6 +262,18 @@ public class PSPlayerListener implements Listener
 
                                     if (field.isOwner(player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
                                     {
+                                        if (field.hasFlag(FieldFlag.TRANSLOCATOR))
+                                        {
+                                            if (field.getName().length() > 0)
+                                            {
+                                                if (plugin.getStorageManager().existsTranslocatior(field))
+                                                {
+                                                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot reshape a translocation cuboid once its in use");
+                                                    return;
+                                                }
+                                            }
+                                        }
+
                                         if (plugin.getForceFieldManager().hasSubFields(field))
                                         {
                                             ChatBlock.sendMessage(player, ChatColor.RED + "The field has sub-fields inside of it thus cannot be redifined.");
@@ -603,19 +614,22 @@ public class PSPlayerListener implements Listener
                                         }
                                     }
 
-                                    if (field.hasFlag(FieldFlag.ENABLE_ON_SRC))
+                                    if (!field.hasFlag(FieldFlag.TRANSLOCATOR))
                                     {
-                                        if (field.isDisabled())
+                                        if (field.hasFlag(FieldFlag.ENABLE_ON_SRC))
                                         {
-                                            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been enabled");
-                                            field.setDisabled(false);
+                                            if (field.isDisabled())
+                                            {
+                                                ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been enabled");
+                                                field.setDisabled(false);
+                                            }
+                                            else
+                                            {
+                                                ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been disabled");
+                                                field.setDisabled(true);
+                                            }
+                                            field.dirtyFlags();
                                         }
-                                        else
-                                        {
-                                            ChatBlock.sendMessage(player, ChatColor.AQUA + Helper.capitalize(field.getSettings().getTitle()) + " field has been disabled");
-                                            field.setDisabled(true);
-                                        }
-                                        field.dirtyFlags();
                                     }
                                 }
                             }
@@ -654,19 +668,57 @@ public class PSPlayerListener implements Listener
 
                                 // -------------------------------------------------------------------------------- right click translocator
 
-                                if (field.hasFlag(FieldFlag.TRANSLOCATOR) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
+                                boolean showTranslocations = false;
+
+                                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.translocator"))
                                 {
-                                    if (plugin.getStorageManager().hasTranslocation(field))
+                                    if (field.hasFlag(FieldFlag.TRANSLOCATOR) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
                                     {
-                                        int size = plugin.getTranslocationManager().revertTranslocation(field);
-                                        plugin.getCommunicationManager().notifyTranslocation(field, player, size);
+                                        if (!field.isTranslocating())
+                                        {
+                                            if (field.getName().length() > 0)
+                                            {
+                                                if (field.isApplied())
+                                                {
+                                                    if (plugin.getStorageManager().appliedTranslocationCount(field) > 0)
+                                                    {
+                                                        int size = plugin.getTranslocationManager().clearTranslocation(field);
+                                                        plugin.getCommunicationManager().notifyClearTranslocation(field, player, size);
+                                                        return;
+                                                    }
+                                                    else
+                                                    {
+                                                        player.sendMessage(ChatColor.AQUA + "Translocator is empty. Nothing to store.");
+
+                                                        if (plugin.getStorageManager().unappliedTranslocationCount(field) > 0)
+                                                        {
+                                                            plugin.getStorageManager().updateTranslocationApplyMode(field, false);
+                                                        }
+                                                        return;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (plugin.getStorageManager().unappliedTranslocationCount(field) > 0)
+                                                    {
+                                                        int size = plugin.getTranslocationManager().applyTranslocation(field);
+                                                        plugin.getCommunicationManager().notifyApplyTranslocation(field, player, size);
+                                                        return;
+                                                    }
+                                                    else
+                                                    {
+                                                        player.sendMessage(ChatColor.AQUA + "Translocator is empty. Nothing to translocate.");
+                                                        plugin.getStorageManager().updateTranslocationApplyMode(field, true);
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                showTranslocations = true;
+                                            }
+                                        }
                                     }
-                                    else
-                                    {
-                                        int size = plugin.getTranslocationManager().clearTranslocation(field);
-                                        plugin.getCommunicationManager().notifyTranslocationClean(field, player, size);
-                                    }
-                                    return;
                                 }
 
                                 // -------------------------------------------------------------------------------- show info right click action
@@ -675,7 +727,11 @@ public class PSPlayerListener implements Listener
                                 {
                                     if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle"))
                                     {
-                                        if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
+                                        if (showTranslocations)
+                                        {
+                                            plugin.getCommunicationManager().notifyStoredTranslocations(player);
+                                        }
+                                        else if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
                                         {
                                             player.sendMessage(ChatColor.DARK_GRAY + "Use '/ps toggle [flag]' to disable individual flags");
                                         }
@@ -1021,15 +1077,16 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerBucketFill(PlayerBucketFillEvent event)
+    public void onPlayerBucketFill(final PlayerBucketFillEvent event)
     {
         if (event.isCancelled())
         {
             return;
         }
 
-        Player player = event.getPlayer();
-        Block block = event.getBlockClicked();
+        final Player player = event.getPlayer();
+        final Block block = event.getBlockClicked();
+        final Block liquid = block.getRelative(event.getBlockFace());
 
         if (block == null)
         {
@@ -1043,7 +1100,17 @@ public class PSPlayerListener implements Listener
 
         DebugTimer dt = new DebugTimer("onPlayerBucketFill");
 
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
+        // -------------------------------------------------------------------------------------- prevent pickup up fields
+
+        if (plugin.getForceFieldManager().isField(block))
+        {
+            event.setCancelled(true);
+            return;
+        }
+
+        // -------------------------------------------------------------------------------------- breaking in a prevent-destroy area
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
 
         if (field != null)
         {
@@ -1053,7 +1120,7 @@ public class PSPlayerListener implements Listener
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.break"))
                 {
-                    plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
+                    plugin.getCommunicationManager().notifyBypassDestroy(player, block, field);
                 }
                 else
                 {
@@ -1062,6 +1129,8 @@ public class PSPlayerListener implements Listener
                 }
             }
         }
+
+        // -------------------------------------------------------------------------------------- breaking in a grief revert area
 
         field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
@@ -1089,9 +1158,28 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        if (plugin.getSettingsManager().isDebug())
+        // -------------------------------------------------------------------------------------- breaking in a translocator area
+
+        if (liquid.isLiquid())
         {
-            dt.logProcessTime();
+            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATOR);
+
+            if (field != null)
+            {
+                if (field.getName().length() > 0)
+                {
+                    if (field.isApplied())
+                    {
+                        plugin.getTranslocationManager().removeBlock(field, block);
+                        plugin.getTranslocationManager().flashFieldBlock(field, player);
+                    }
+                }
+            }
+
+            if (plugin.getSettingsManager().isDebug())
+            {
+                dt.logProcessTime();
+            }
         }
     }
 
@@ -1099,15 +1187,17 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event)
+    public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event)
     {
         if (event.isCancelled())
         {
             return;
         }
 
-        Player player = event.getPlayer();
-        Block block = event.getBlockClicked();
+        final Player player = event.getPlayer();
+        final Block block = event.getBlockClicked();
+        final Block liquid = block.getRelative(event.getBlockFace());
+
         Material mat = event.getBucket();
 
         if (block == null)
@@ -1119,6 +1209,8 @@ public class PSPlayerListener implements Listener
         {
             return;
         }
+
+        // -------------------------------------------------------------------------------------- placing in a prevent-place area
 
         DebugTimer dt = new DebugTimer("onPlayerBucketEmpty");
 
@@ -1141,6 +1233,8 @@ public class PSPlayerListener implements Listener
                 }
             }
         }
+
+        // -------------------------------------------------------------------------------------- placing in a grief revert area
 
         field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
@@ -1173,6 +1267,51 @@ public class PSPlayerListener implements Listener
                 }
             }
         }
+
+        // -------------------------------------------------------------------------------------- placing in a translocator area
+
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            public void run()
+            {
+                if (!liquid.isLiquid())
+                {
+                    return;
+                }
+
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(liquid.getLocation(), FieldFlag.TRANSLOCATOR);
+
+                if (field != null)
+                {
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        if (field.getSettings().canTranslocate(new BlockTypeEntry(liquid)))
+                        {
+                            if (field.getName().length() == 0)
+                            {
+                                ChatBlock.sendMessage(player, ChatColor.YELLOW + "To begin storage, you must first choose a name for your translocation with /ps setname");
+                                event.setCancelled(true);
+                            }
+
+                            if (field.isApplied())
+                            {
+                                final Field finalField = field;
+                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                {
+                                    public void run()
+                                    {
+                                        plugin.getTranslocationManager().addBlock(finalField, liquid);
+                                        plugin.getTranslocationManager().flashFieldBlock(finalField, player);
+                                    }
+                                }, 10);
+                            }
+                        }
+                    }
+                }
+            }
+        }, 2);
 
         if (plugin.getSettingsManager().isDebug())
         {

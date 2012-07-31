@@ -162,107 +162,144 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockRedstoneChange(BlockRedstoneEvent event)
     {
-        List<Field> fields = plugin.getForceFieldManager().getSourceFields(event.getBlock().getLocation(), FieldFlag.ENABLE_WITH_REDSTONE);
+        Block block = plugin.getForceFieldManager().touchingFieldBlock(event.getBlock());
 
-        for (final Field field : fields)
+        if (block == null)
         {
-            // looking only for actionable fields
+            return;
+        }
 
-            if (!field.getSettings().hasDefaultFlag(FieldFlag.LAUNCH) &&
-                    !field.getSettings().hasDefaultFlag(FieldFlag.CANNON) &&
-                    !field.getSettings().hasDefaultFlag(FieldFlag.POTIONS) &&
-                    !field.getSettings().hasDefaultFlag(FieldFlag.CONFISCATE_ITEMS))
+        final Field field = plugin.getForceFieldManager().getField(block);
+
+        // only act on fields that are being touched by this wire
+
+        if (!plugin.getForceFieldManager().powersField(field, event.getBlock()))
+        {
+            return;
+        }
+
+        // enable/disable the field (except translocator fields)
+
+        if (!field.getSettings().hasDefaultFlag(FieldFlag.TRANSLOCATOR))
+        {
+            if (event.getNewCurrent() > event.getOldCurrent())
             {
-                continue;
-            }
-
-            // only act on fields that are being touched by this wire
-
-            if (!plugin.getForceFieldManager().powersField(field, event.getBlock()))
-            {
-                continue;
-            }
-
-            Set<Player> inhabitants = plugin.getForceFieldManager().getFieldInhabitants(field);
-
-            for (final Player player : inhabitants)
-            {
-                if (player != null)
+                if (field.isDisabled())
                 {
-                    if (event.getNewCurrent() > event.getOldCurrent())
+                    field.setDisabled(false);
+                }
+
+                PreciousStones.debug("redstone enabled");
+            }
+            else if (event.getNewCurrent() == 0)
+            {
+                if (!field.isDisabled())
+                {
+                    field.setDisabled(true);
+                }
+
+                PreciousStones.debug("redstone disabled");
+            }
+        }
+        // after this point we only care about actionable fields
+
+        if (!field.getSettings().hasDefaultFlag(FieldFlag.LAUNCH) &&
+                !field.getSettings().hasDefaultFlag(FieldFlag.CANNON) &&
+                !field.getSettings().hasDefaultFlag(FieldFlag.POTIONS) &&
+                !field.getSettings().hasDefaultFlag(FieldFlag.TRANSLOCATOR) &&
+                !field.getSettings().hasDefaultFlag(FieldFlag.CONFISCATE_ITEMS))
+        {
+            return;
+        }
+
+        // toggle translocator fields
+
+        if (field.hasFlag(FieldFlag.TRANSLOCATOR))
+        {
+            if (field.isTranslocating())
+            {
+                return;
+            }
+
+            if (field.getName().length() > 0)
+            {
+                if (!field.isDisabled())
+                {
+                    if (field.isApplied())
                     {
+                        plugin.getTranslocationManager().clearTranslocation(field);
+                    }
+                    else
+                    {
+                        plugin.getTranslocationManager().applyTranslocation(field);
+                    }
+                }
+            }
+            return;
+        }
+
+        // act on the players inside the fields after enabling/disaling
+
+        Set<Player> inhabitants = plugin.getForceFieldManager().getFieldInhabitants(field);
+
+        for (final Player player : inhabitants)
+        {
+            if (player != null)
+            {
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                {
+                    public void run()
+                    {
+                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
                         if (field.isDisabled())
                         {
-                            field.setDisabled(false);
-                        }
-
-                        PreciousStones.debug("redstone enabled");
-                    }
-                    else if (event.getNewCurrent() == 0)
-                    {
-                        if (!field.isDisabled())
-                        {
-                            field.setDisabled(true);
-                        }
-
-                        PreciousStones.debug("redstone disabled");
-                    }
-
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                    {
-                        public void run()
-                        {
-                            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                            if (field.isDisabled())
+                            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                             {
-                                if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                if (field.hasFlag(FieldFlag.POTIONS))
                                 {
-                                    if (field.hasFlag(FieldFlag.POTIONS))
-                                    {
-                                        plugin.getPotionManager().removePotions(player, field);
-                                    }
-                                }
-
-                                if (!allowed)
-                                {
-                                    if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
-                                    {
-                                        plugin.getConfiscationManager().returnItems(player);
-                                    }
+                                    plugin.getPotionManager().removePotions(player, field);
                                 }
                             }
-                            else
+
+                            if (!allowed)
                             {
-                                if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
                                 {
-                                    if (field.hasFlag(FieldFlag.LAUNCH))
-                                    {
-                                        plugin.getVelocityManager().launchPlayer(player, field);
-                                    }
-
-                                    if (field.hasFlag(FieldFlag.CANNON))
-                                    {
-                                        plugin.getVelocityManager().shootPlayer(player, field);
-                                    }
-
-                                    if (field.hasFlag(FieldFlag.POTIONS))
-                                    {
-                                        plugin.getPotionManager().applyPotions(player, field);
-                                    }
-                                }
-
-                                if (!allowed)
-                                {
-                                    if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
-                                    {
-                                        plugin.getConfiscationManager().confiscateItems(field, player);
-                                    }
+                                    plugin.getConfiscationManager().returnItems(player);
                                 }
                             }
                         }
-                    }, 0);
-                }
+                        else
+                        {
+                            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                            {
+                                if (field.hasFlag(FieldFlag.LAUNCH))
+                                {
+                                    plugin.getVelocityManager().launchPlayer(player, field);
+                                }
+
+                                if (field.hasFlag(FieldFlag.CANNON))
+                                {
+                                    plugin.getVelocityManager().shootPlayer(player, field);
+                                }
+
+                                if (field.hasFlag(FieldFlag.POTIONS))
+                                {
+                                    plugin.getPotionManager().applyPotions(player, field);
+                                }
+                            }
+
+                            if (!allowed)
+                            {
+                                if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
+                                {
+                                    plugin.getConfiscationManager().confiscateItems(field, player);
+                                }
+                            }
+                        }
+                    }
+                }, 0);
             }
         }
     }
@@ -445,7 +482,14 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            plugin.getStorageManager().deleteTranslocation(field, player, block);
+            if (field.getName().length() > 0)
+            {
+                if (field.isApplied())
+                {
+                    plugin.getTranslocationManager().removeBlock(field, block);
+                    plugin.getTranslocationManager().flashFieldBlock(field, player);
+                }
+            }
         }
 
         // --------------------------------------------------------------------------------
@@ -512,6 +556,26 @@ public class PSBlockListener implements Listener
             ChatBlock.sendMessage(player, ChatColor.RED + "Cannot remove fields that have plot-fields inside of it.  You must remove them first before you can remove this field.");
             event.setCancelled(true);
             return false;
+        }
+
+        if (field.hasFlag(FieldFlag.TRANSLOCATOR))
+        {
+            if (field.getName().length() > 0)
+            {
+                int count = plugin.getStorageManager().appliedTranslocationCount(field);
+
+                if (count > 0)
+                {
+                    plugin.getStorageManager().deleteAppliedTranslocation(field);
+
+                    if (!plugin.getStorageManager().existsTranslocationDataWithName(field.getName(), field.getOwner()))
+                    {
+                        plugin.getStorageManager().deleteTranslocatorHead(field.getName(), field.getOwner());
+                    }
+
+                    ChatBlock.sendMessage(player, ChatColor.GRAY + " * " + ChatColor.YELLOW + "Translocation " + field.getName() + " unlinked from " + count + " blocks");
+                }
+            }
         }
 
         if (release)
@@ -594,8 +658,8 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent event)
     {
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
+        final Block block = event.getBlock();
+        final Player player = event.getPlayer();
 
         if (block == null || player == null)
         {
@@ -620,7 +684,7 @@ public class PSBlockListener implements Listener
         DebugTimer dt = new DebugTimer("onBlockPlace");
 
 
-        // -------------------------------------------------------------------------------------- placing blocks in place of a field
+        // -------------------------------------------------------------------------------------- placing a block ion top of a field
 
         BlockState state = event.getBlockReplacedState();
 
@@ -798,16 +862,6 @@ public class PSBlockListener implements Listener
                     }
 
                     // sets the initial state of redstone enabled fields
-
-                    /*
-                    if (field.hasFlag(FieldFlag.ENABLE_WITH_REDSTONE))
-                    {
-                        if (!plugin.getForceFieldManager().isAnywayPowered(block))
-                        {
-                            field.setDisabled(true);
-                        }
-                    }
-                    */
 
                     plugin.getStorageManager().offerField(field);
 
@@ -1080,8 +1134,25 @@ public class PSBlockListener implements Listener
             {
                 if (field.getSettings().canTranslocate(new BlockTypeEntry(block)))
                 {
-                    plugin.getTranslocationManager().addBlock(field, block);
-                    plugin.getStorageManager().offerTranslocation(field);
+                    if (field.getName().length() == 0)
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.YELLOW + "To begin storage, you must first choose a name for your translocation with /ps setname");
+                        event.setCancelled(true);
+                        return;
+                    }
+
+                    if (field.isApplied())
+                    {
+                        final Field finalField = field;
+                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                        {
+                            public void run()
+                            {
+                                plugin.getTranslocationManager().addBlock(finalField, block);
+                                plugin.getTranslocationManager().flashFieldBlock(finalField, player);
+                            }
+                        }, 10);
+                    }
                 }
             }
         }

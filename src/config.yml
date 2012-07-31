@@ -21,6 +21,7 @@ force-field-blocks:
     enable-on-src: true
     mixing-group: 1
     cuboid: true
+    mask-on-disabled: 49
 -   title: Plot
     block: 999999
     radius: 20
@@ -40,6 +41,7 @@ force-field-blocks:
     enable-on-src: true
     mixing-group: 1
     cuboid: true
+    mask-on-disabled: 49
 -   title: Entry Bouncer
     block: 22
     radius: 5
@@ -53,6 +55,7 @@ force-field-blocks:
     enable-on-src: true
     can-change-owner: true
     cuboid: true
+    mask-on-disabled: 49
 -   title: Jack-o-Death
     block: 91
     radius: 5
@@ -61,6 +64,7 @@ force-field-blocks:
     sneaking-bypass: true
     no-player-place: true
     mixing-group: 2
+    mask-on-disabled: 49
 -   title: Creature Repeller
     block: 30
     radius: 20
@@ -70,6 +74,7 @@ force-field-blocks:
     no-conflict: true
     mixing-group: 1
     cuboid: true
+    mask-on-disabled: 49
 -   title: Air of Atlantis
     block: 21
     radius: 10
@@ -78,6 +83,7 @@ force-field-blocks:
     no-conflict: true
     mixing-group: 1
     cuboid: true
+    mask-on-disabled: 49
 -   title: Proximity Snitch
     block: 25
     radius: 5
@@ -86,6 +92,7 @@ force-field-blocks:
     no-conflict: true
     mixing-group: 2
     cuboid: true
+    mask-on-disabled: 49
 -   title: The Shocker
     block: 97
     radius: 0
@@ -97,6 +104,7 @@ force-field-blocks:
     no-conflict: true
     mixing-group: 2
     cuboid: true
+    mask-on-disabled: 49
 -   title: Proximity Mine
     block: 73
     radius: 1
@@ -108,6 +116,7 @@ force-field-blocks:
     sneaking-bypass: true
     mixing-group: 2
     no-conflict: true
+    mask-on-disabled: 49
 -   title: Launch Pad
     block: 15
     radius: 1
@@ -117,6 +126,7 @@ force-field-blocks:
     custom-volume: 20
     mixing-group: 2
     cuboid: true
+    mask-on-disabled: 49
 -   title: Sky Cannon
     block: 16
     radius: 0
@@ -128,6 +138,7 @@ force-field-blocks:
     mixing-group: 2
     cuboid: true
     enable-with-redstone: true
+    mask-on-disabled: 49
 -   title: Grief Revert
     block: 41
     radius: 20
@@ -140,6 +151,7 @@ force-field-blocks:
     enable-on-src: true
     mixing-group: 1
     cuboid: true
+    mask-on-disabled: 49
 -   title: GodStone
     block: 99
     radius: 5
@@ -149,6 +161,7 @@ force-field-blocks:
     no-conflict: true
     mixing-group: 2
     cuboid: true
+    mask-on-disabled: 49
 -   title: SuperMario
     block: 999999
     radius: 10
@@ -158,6 +171,7 @@ force-field-blocks:
     no-conflict: true
     mixing-group: 1
     cuboid: true
+    mask-on-disabled: 49
 -   title: Forester
     block: 86
     radius: 20
@@ -174,6 +188,7 @@ force-field-blocks:
     creature-count: 12
     no-owner: true
     no-conflict: true
+    mask-on-disabled: 49
 -   title: Peace Keeper
     block: 19
     radius: 10
@@ -184,6 +199,7 @@ force-field-blocks:
     protect-animals: true
     protect-mobs: true
     cuboid: true
+    mask-on-disabled: 49
 warn:
     slow-damage: true
     pvp: true
@@ -207,6 +223,7 @@ cleanup:
     player-inactivity-purge-days: 45
     snitch-unused-purge-days: 30
 settings:
+    min-seconds-between-translocations: 1
     prevent-place-everywhere: false
     prevent-destroy-everywhere: false
     sneak-to-place-normal-block: true

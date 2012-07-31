@@ -342,6 +342,21 @@ public class PSEntityListener implements Listener
 
                 unprotected.add(new BlockEntry(block));
             }
+
+            // remove the blocks
+
+            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATOR);
+
+            if (field != null)
+            {
+                if (field.getName().length() > 0)
+                {
+                    if (field.isApplied())
+                    {
+                        plugin.getTranslocationManager().removeBlock(field, block);
+                    }
+                }
+            }
         }
 
         // trigger any tnts in the field
@@ -360,6 +375,7 @@ public class PSEntityListener implements Listener
                         {
                             Location midloc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
                             block.getWorld().spawn(midloc, TNTPrimed.class);
+                            block.setTypeId(0);
                         }
                     }
                     tnts.clear();

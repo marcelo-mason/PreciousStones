@@ -61,6 +61,8 @@ permissions:
     description: Can set the visualization density
   preciousstones.benefit.change-owner:
     description: Can change the owner to their own fields
+  preciousstones.benefit.translocator:
+    description: Can use translocator fields
   preciousstones.whitelist.allow:
     description: Can use /ps allow
   preciousstones.whitelist.allowed:
@@ -257,6 +259,7 @@ permissions:
       preciousstones.benefit.disable: true
       preciousstones.benefit.enable: true
       preciousstones.benefit.change-owner: true
+      preciousstones.benefit.translocator: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: false

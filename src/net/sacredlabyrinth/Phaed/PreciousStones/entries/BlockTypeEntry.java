@@ -9,7 +9,7 @@ import org.bukkit.block.BlockState;
 public class BlockTypeEntry
 {
     private final int typeId;
-    private final byte data;
+    private byte data;
     /**
      * @param block
      */
@@ -123,6 +123,11 @@ public class BlockTypeEntry
     public String serialize()
     {
         return getTypeId() + "|" + getData();
+    }
+
+    public void setData(byte data)
+    {
+        this.data = data;
     }
 }
 

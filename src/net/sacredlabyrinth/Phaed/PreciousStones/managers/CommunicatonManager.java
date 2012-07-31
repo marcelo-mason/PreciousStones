@@ -164,7 +164,7 @@ public class CommunicatonManager
         }
     }
 
-        /**
+    /**
      * @param player
      * @param field
      */
@@ -207,7 +207,51 @@ public class CommunicatonManager
      * @param player
      * @param field
      */
-    public void notifyTranslocation(Field field, Player player, int count)
+    public boolean notifyStoredTranslocations(Player player)
+    {
+        ChatBlock cb = getNewChatBlock(player);
+
+        cb.setAlignment("l", "c");
+        cb.addRow("  " + ChatColor.YELLOW + "Name", "Blocks");
+
+        Map<String, Integer> details = plugin.getStorageManager().getTranslocationDetails(player.getName());
+
+        for (String name : details.keySet())
+        {
+            int count = details.get(name);
+
+            cb.addRow("  " + ChatColor.WHITE + name, ChatColor.WHITE + " " + count);
+        }
+
+        if (cb.size() > 1)
+        {
+            ChatBlock.sendBlank(player);
+            ChatBlock.saySingle(player, ChatColor.WHITE + "Stored Translocations" + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
+            ChatBlock.sendBlank(player);
+
+            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+
+            if (more)
+            {
+                ChatBlock.sendBlank(player);
+                ChatBlock.sendMessage(player, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+            }
+
+            ChatBlock.sendBlank(player);
+            return true;
+        }
+        else
+        {
+            ChatBlock.sendMessage(player, ChatColor.YELLOW + "To begin storage, give the field a name with /ps setname");
+            return false;
+        }
+    }
+
+    /**
+     * @param player
+     * @param field
+     */
+    public void notifyApplyTranslocation(Field field, Player player, int count)
     {
         if (field == null)
         {
@@ -218,7 +262,7 @@ public class CommunicatonManager
         {
             if (plugin.getSettingsManager().isNotifyTranslocation() && canNotify(player))
             {
-                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Translocated " + count + " " + Helper.plural(count, "block", "s") + " " + field.getCoords());
+                player.sendMessage(ChatColor.AQUA + Helper.capitalize(field.getName()) + " restored.  Recording changes...");
             }
         }
 
@@ -235,7 +279,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(ChatColor.AQUA + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " block translocated " + count + " blocks " + field.getCoords());
+                PreciousStones.log(Helper.capitalize(field.getOwner()) + "''s translocator " + field.getName() + " translocated " + count + " blocks " + field.getCoords());
             }
         }
     }
@@ -244,7 +288,7 @@ public class CommunicatonManager
      * @param player
      * @param field
      */
-    public void notifyTranslocationClean(Field field, Player player, int count)
+    public void notifyClearTranslocation(Field field, Player player, int count)
     {
         if (field == null)
         {
@@ -255,7 +299,7 @@ public class CommunicatonManager
         {
             if (plugin.getSettingsManager().isNotifyTranslocation() && canNotify(player))
             {
-                player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + "Stored " + count + " " + Helper.plural(count, "block", "s") + " " + field.getCoords());
+                player.sendMessage(ChatColor.AQUA + "Translocation stored");
             }
         }
 
@@ -268,11 +312,11 @@ public class CommunicatonManager
         {
             if (useHawkEye)
             {
-                HawkEyeAPI.addCustomEntry(plugin, "Stored", player, field.getLocation(), "blocks:" + count);
+                HawkEyeAPI.addCustomEntry(plugin, "Stored", player, field.getLocation(), "");
             }
             else
             {
-                PreciousStones.log(ChatColor.AQUA + Helper.capitalize(field.getOwner()) + "'s " + field.getSettings().getTitle() + " block stored " + count + " blocks " + field.getCoords());
+                PreciousStones.log(Helper.capitalize(field.getOwner()) + "''s translocatior " + field.getName() + " stored " + count + " blocks " + field.getCoords() );
             }
         }
     }
@@ -2662,9 +2706,16 @@ public class CommunicatonManager
 
         cb.addRow("  " + color + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
 
-        if (fs.hasNameableFlag() && field.getName().length() > 0)
+        if (fs.hasNameableFlag())
         {
-            cb.addRow("  " + color + "Name: ", ChatColor.AQUA + field.getName(), "");
+            if (field.getName().length() > 0)
+            {
+                cb.addRow("  " + color + "Name: ", ChatColor.AQUA + field.getName(), "");
+            }
+            else
+            {
+                cb.addRow("  " + color + "Name: ", ChatColor.GRAY + "NONE", "");
+            }
         }
 
         List<String> applies = new LinkedList<String>();
@@ -2982,7 +3033,6 @@ public class CommunicatonManager
         }
         else
         {
-            //sender = new ColouredConsoleSender((CraftServer)PreciousStones.getInstance().getServer());
             sender = PreciousStones.getInstance().getServer().getConsoleSender();
         }
 

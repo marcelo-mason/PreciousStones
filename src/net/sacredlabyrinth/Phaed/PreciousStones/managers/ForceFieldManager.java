@@ -214,6 +214,17 @@ public final class ForceFieldManager
             plugin.getStorageManager().insertField(field);
         }
 
+        // set the initial applied status to the field form the database
+
+        if (field.hasFlag(FieldFlag.TRANSLOCATOR))
+        {
+            if (field.getName().length() > 0)
+            {
+                boolean applied = plugin.getStorageManager().isTranslocationApplied(field.getName(), field.getOwner());
+                field.setApplied(applied);
+            }
+        }
+
         // add to collection
 
         addToCollection(field);

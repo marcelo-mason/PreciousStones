@@ -39,7 +39,7 @@ public class Rollback implements Runnable
         {
             GriefBlock gb = griefQueue.poll();
 
-            if (plugin.getGriefUndoManager().isDependentBlock(gb.getTypeId()))
+            if (plugin.getSettingsManager().isDependentBlock(gb.getTypeId()))
             {
                 dependentQueue.add(gb);
                 continue;

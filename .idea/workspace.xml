@@ -9,38 +9,7 @@
     <bookmark url="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java" mnemonic="9" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d7908ed-52fb-4502-9fa0-b8d3fbf94db7" name="Default" comment="6.0">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationClearRollback.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationRollback.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/TranslocationManager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/TranslocationBlock.java" />
-      <change type="MOVED" beforePath="C:\workspace\PreciousStones\src\net\sacredlabyrinth\Phaed\PreciousStones\entries\BlockTypeEntryExact.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/entries/BlockTypeExact.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/config.yml" afterPath="$PROJECT_DIR$/src/config.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/DirtyFieldReason.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/DirtyFieldReason.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldFlag.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldFlag.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldSettings.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/FieldSettings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Helper.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Helper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/PreciousStones.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/PreciousStones.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Rollback.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Rollback.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/entries/BlockEntry.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/entries/BlockEntry.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/entries/BlockTypeEntry.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/entries/BlockTypeEntry.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ConfiscationManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ConfiscationManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/GriefBlock.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/GriefBlock.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Vec.java" afterPath="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Vec.java" />
-    </list>
-    <ignored path="PreciousStones.iws" />
-    <ignored path=".idea/workspace.xml" />
+    <list id="7d7908ed-52fb-4502-9fa0-b8d3fbf94db7" name="Default" comment="6.0" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,10 +73,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="PSPlayerListener.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java">
+      <file leaf-file-name="PSBlockListener.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="208" column="21" selection-start="7009" selection-end="7009" vertical-scroll-proportion="0.0">
+            <state line="227" column="42" selection-start="6296" selection-end="6296" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -115,13 +84,40 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PSBlockListener.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java">
+      <file leaf-file-name="EntryManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/EntryManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="771" column="0" selection-start="25941" selection-end="25941" vertical-scroll-proportion="0.8959044">
+            <state line="17" column="19" selection-start="457" selection-end="457" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PSEntityListener.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="353" column="42" selection-start="11338" selection-end="11338" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PSPlayerListener.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="621" column="45" selection-start="27900" selection-end="27900" vertical-scroll-proportion="-0.64194006">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CommandManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="375" column="0" selection-start="18510" selection-end="18510" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -129,36 +125,19 @@
       <file leaf-file-name="TranslocationManager.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/TranslocationManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="185" column="95" selection-start="5597" selection-end="5597" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CommunicatonManager.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="218" column="65" selection-start="6545" selection-end="6545" vertical-scroll-proportion="0.0">
+            <state line="183" column="69" selection-start="5295" selection-end="5295" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Field.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java">
+      <file leaf-file-name="TranslocationApplier.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationApplier.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1729" column="0" selection-start="42478" selection-end="42478" vertical-scroll-proportion="0.0">
+            <state line="52" column="112" selection-start="1600" selection-end="1623" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="e#1222#1229#0" expanded="true" />
-                <element signature="e#1281#1289#0" expanded="true" />
-                <element signature="e#1419#1431#0" expanded="true" />
-                <element signature="e#1502#1522#0" expanded="true" />
-                <element signature="e#1794#1805#0" expanded="true" />
-                <element signature="e#1866#1878#0" expanded="true" />
-                <element signature="e#16907#16919#0" expanded="true" />
-                <element signature="e#43218#43238#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#539#559#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -167,33 +146,45 @@
       <file leaf-file-name="StorageManager.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1495" column="77" selection-start="57846" selection-end="57846" vertical-scroll-proportion="0.0">
+            <state line="2150" column="19" selection-start="78605" selection-end="78605" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1044#1056#0" expanded="true" />
-                <element signature="e#1127#1149#0" expanded="true" />
-                <element signature="e#1220#1237#0" expanded="true" />
-                <element signature="e#1296#1303#0" expanded="true" />
-                <element signature="e#1370#1377#0" expanded="true" />
-                <element signature="e#1454#1467#0" expanded="true" />
-                <element signature="e#12270#12297#0" expanded="true" />
-                <element signature="e#14791#14798#0" expanded="true" />
-                <element signature="e#15623#15630#0" expanded="true" />
-                <element signature="e#19142#19149#0" expanded="true" />
-                <element signature="e#23635#23648#0" expanded="true" />
-                <element signature="e#34329#34342#0" expanded="true" />
-                <element signature="e#46926#46939#0" expanded="true" />
-                <element signature="e#47265#47278#0" expanded="true" />
-                <element signature="e#52489#52496#0" expanded="true" />
-                <element signature="e#52780#52792#0" expanded="true" />
-                <element signature="e#58658#58665#0" expanded="true" />
-                <element signature="e#59005#59025#0" expanded="true" />
-                <element signature="e#65147#65159#0" expanded="true" />
-                <element signature="e#65226#65248#0" expanded="true" />
-                <element signature="e#65315#65332#0" expanded="true" />
-                <element signature="e#65387#65394#0" expanded="true" />
-                <element signature="e#65457#65464#0" expanded="true" />
-                <element signature="e#65537#65550#0" expanded="true" />
+                <element signature="e#1039#1051#0" expanded="true" />
+                <element signature="e#1110#1117#0" expanded="true" />
+                <element signature="e#1188#1210#0" expanded="true" />
+                <element signature="e#13161#13188#0" expanded="true" />
+                <element signature="e#53373#53380#0" expanded="true" />
+                <element signature="e#61582#61602#0" expanded="true" />
+                <element signature="e#64112#64132#0" expanded="true" />
+                <element signature="e#66609#66626#0" expanded="true" />
+                <element signature="e#81306#81318#0" expanded="true" />
+                <element signature="e#81385#81407#0" expanded="true" />
+                <element signature="e#81474#81491#0" expanded="true" />
+                <element signature="e#81546#81553#0" expanded="true" />
+                <element signature="e#81626#81639#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ForceFieldManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="203" column="61" selection-start="6420" selection-end="6434" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CommunicatonManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="312" column="27" selection-start="9492" selection-end="9492" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#98021#98029#0" expanded="true" />
+                <element signature="e#100050#100061#0" expanded="true" />
+                <element signature="e#100202#100213#0" expanded="true" />
+                <element signature="e#102887#102895#0" expanded="true" />
+                <element signature="e#112323#112330#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -218,22 +209,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Throttler.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationRollback.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Rollback.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java" />
         <option value="$PROJECT_DIR$/src/config.yml" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/EntryManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationApplier.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/entries/BlockTypeEntry.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationClearer.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/TranslocationBlock.java" />
         <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationClearRollback.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java" />
         <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/TranslocationManager.java" />
-        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java" />
         <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java" />
+        <option value="$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java" />
       </list>
     </option>
   </component>
@@ -248,10 +239,10 @@
     <option name="LAST_EDITED_TAB_NAME" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="39" />
-    <option name="y" value="26" />
-    <option name="width" value="1703" />
-    <option name="height" value="934" />
+    <option name="x" value="46" />
+    <option name="y" value="53" />
+    <option name="width" value="1527" />
+    <option name="height" value="900" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -298,6 +289,138 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org.json.simple" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vectors" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="storage" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="managers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="listeners" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="entries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -438,138 +561,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="listeners" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="org.json.simple" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vectors" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="storage" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="managers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="listeners" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="net.sacredlabyrinth.Phaed.PreciousStones" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="entries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -791,17 +782,17 @@
   <component name="PropertiesComponent">
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="205" />
-    <property name="OverrideImplement.combined" value="true" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="203" />
     <property name="project.structure.proportion" value="0.15" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="203" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="options.splitter.main.proportions" value="0.23083335" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="211" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
     <property name="MemberChooser.sorted" value="false" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="211" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="209" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="823" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="821" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="823" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="207" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="201" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -972,32 +963,32 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="39" y="26" width="1703" height="934" extended-state="1" />
+    <frame x="46" y="53" width="1527" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941988" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Data Sources" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32941988" sideWeight="0.5" order="18" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287483" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27805486" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24483204" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2699869" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24483204" sideWeight="0.5" order="16" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22608696" sideWeight="0.50066936" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32737276" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22194514" sideWeight="0.49464524" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.13499345" sideWeight="0.49464524" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32919255" sideWeight="0.49732262" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19557706" sideWeight="0.3122421" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3270903" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39460954" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19804996" sideWeight="0.77805483" order="0" side_tool="false" content_ui="tabs" x="883" y="123" width="267" height="726" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1970608" sideWeight="0.13520408" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3270903" sideWeight="0.5" order="17" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3937375" sideWeight="0.7780612" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19838601" sideWeight="0.86500657" order="0" side_tool="false" content_ui="tabs" x="883" y="123" width="267" height="726" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32713756" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24946237" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3279099" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Module Dependencies" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0" sideWeight="0.0" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Module Dependencies" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3985765" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1059,162 +1050,151 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/TranslocationBlock.java">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationClearer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="13" selection-start="321" selection-end="321" vertical-scroll-proportion="0.09960681">
+        <state line="67" column="74" selection-start="2125" selection-end="2125" vertical-scroll-proportion="0.7212682">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#485#505#0" expanded="true" />
+            <element signature="e#578#598#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="225" column="41" selection-start="5264" selection-end="5264" vertical-scroll-proportion="0.66481996">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/TranslocationBlock.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2510" column="0" selection-start="67064" selection-end="67064" vertical-scroll-proportion="0.25032765">
+        <state line="158" column="39" selection-start="3836" selection-end="3855" vertical-scroll-proportion="0.5734072">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/entries/BlockTypeEntry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="90" column="9" selection-start="1629" selection-end="1803" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationApplier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="112" selection-start="1600" selection-end="1623" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#14210#14217#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#539#559#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="40" selection-start="2387" selection-end="2387" vertical-scroll-proportion="-2.340336">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/EntryManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="19" selection-start="457" selection-end="457" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="23" selection-start="2087" selection-end="2087" vertical-scroll-proportion="0.51355207">
+          <folding>
+            <element signature="e#1291#1298#0" expanded="true" />
+            <element signature="e#1415#1433#0" expanded="true" />
+            <element signature="e#1488#1500#0" expanded="true" />
+            <element signature="e#1559#1572#0" expanded="true" />
+            <element signature="e#1844#1856#0" expanded="true" />
+            <element signature="e#43166#43174#0" expanded="true" />
+            <element signature="e#43674#43682#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSEntityListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="369" column="107" selection-start="11965" selection-end="11965" vertical-scroll-proportion="0.0">
+        <state line="353" column="42" selection-start="11338" selection-end="11338" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/Rollback.java">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="96" selection-start="856" selection-end="856" vertical-scroll-proportion="0.48262548">
-          <folding />
+        <state line="227" column="42" selection-start="6296" selection-end="6296" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/config.yml">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/ForceFieldManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="267" column="17" selection-start="6313" selection-end="6313" vertical-scroll-proportion="0.5967742">
+        <state line="203" column="61" selection-start="6420" selection-end="6434" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1495" column="77" selection-start="57846" selection-end="57846" vertical-scroll-proportion="0.0">
+        <state line="2150" column="19" selection-start="78605" selection-end="78605" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1044#1056#0" expanded="true" />
-            <element signature="e#1127#1149#0" expanded="true" />
-            <element signature="e#1220#1237#0" expanded="true" />
-            <element signature="e#1296#1303#0" expanded="true" />
-            <element signature="e#1370#1377#0" expanded="true" />
-            <element signature="e#1454#1467#0" expanded="true" />
-            <element signature="e#12270#12297#0" expanded="true" />
-            <element signature="e#14791#14798#0" expanded="true" />
-            <element signature="e#15623#15630#0" expanded="true" />
-            <element signature="e#19142#19149#0" expanded="true" />
-            <element signature="e#23635#23648#0" expanded="true" />
-            <element signature="e#34329#34342#0" expanded="true" />
-            <element signature="e#46926#46939#0" expanded="true" />
-            <element signature="e#47265#47278#0" expanded="true" />
-            <element signature="e#52489#52496#0" expanded="true" />
-            <element signature="e#52780#52792#0" expanded="true" />
-            <element signature="e#58658#58665#0" expanded="true" />
-            <element signature="e#59005#59025#0" expanded="true" />
-            <element signature="e#65147#65159#0" expanded="true" />
-            <element signature="e#65226#65248#0" expanded="true" />
-            <element signature="e#65315#65332#0" expanded="true" />
-            <element signature="e#65387#65394#0" expanded="true" />
-            <element signature="e#65457#65464#0" expanded="true" />
-            <element signature="e#65537#65550#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/vectors/Field.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1729" column="0" selection-start="42478" selection-end="42478" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#1222#1229#0" expanded="true" />
-            <element signature="e#1281#1289#0" expanded="true" />
-            <element signature="e#1419#1431#0" expanded="true" />
-            <element signature="e#1502#1522#0" expanded="true" />
-            <element signature="e#1794#1805#0" expanded="true" />
-            <element signature="e#1866#1878#0" expanded="true" />
-            <element signature="e#16907#16919#0" expanded="true" />
-            <element signature="e#43218#43238#0" expanded="true" />
+            <element signature="e#1039#1051#0" expanded="true" />
+            <element signature="e#1110#1117#0" expanded="true" />
+            <element signature="e#1188#1210#0" expanded="true" />
+            <element signature="e#13161#13188#0" expanded="true" />
+            <element signature="e#53373#53380#0" expanded="true" />
+            <element signature="e#61582#61602#0" expanded="true" />
+            <element signature="e#64112#64132#0" expanded="true" />
+            <element signature="e#66609#66626#0" expanded="true" />
+            <element signature="e#81306#81318#0" expanded="true" />
+            <element signature="e#81385#81407#0" expanded="true" />
+            <element signature="e#81474#81491#0" expanded="true" />
+            <element signature="e#81546#81553#0" expanded="true" />
+            <element signature="e#81626#81639#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="218" column="65" selection-start="6545" selection-end="6545" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/GriefUndoManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="294" column="70" selection-start="7997" selection-end="7997" vertical-scroll-proportion="0.7782258">
-          <folding />
+        <state line="312" column="27" selection-start="9492" selection-end="9492" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#98021#98029#0" expanded="true" />
+            <element signature="e#100050#100061#0" expanded="true" />
+            <element signature="e#100202#100213#0" expanded="true" />
+            <element signature="e#102887#102895#0" expanded="true" />
+            <element signature="e#112323#112330#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/TranslocationManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="185" column="95" selection-start="5597" selection-end="5597" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/SettingsManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="111" column="174" selection-start="4281" selection-end="4421" vertical-scroll-proportion="0.29301074">
-          <folding>
-            <element signature="e#2068#2099#0" expanded="true" />
-            <element signature="e#2169#2185#0" expanded="true" />
-            <element signature="e#4616#4625#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TargetBlock.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="368" column="16" selection-start="12732" selection-end="12732" vertical-scroll-proportion="1.201613">
+        <state line="183" column="69" selection-start="5295" selection-end="5295" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationClearRollback.java">
+    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommandManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="13" selection-start="1325" selection-end="1325" vertical-scroll-proportion="0.47556144">
+        <state line="375" column="0" selection-start="18510" selection-end="18510" vertical-scroll-proportion="0.0">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/TranslocationRollback.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="0" selection-start="1633" selection-end="1633" vertical-scroll-proportion="0.6525096">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#477#497#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSPlayerListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="208" column="21" selection-start="7009" selection-end="7009" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sacredlabyrinth/Phaed/PreciousStones/listeners/PSBlockListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="771" column="0" selection-start="25941" selection-end="25941" vertical-scroll-proportion="0.8959044">
+        <state line="621" column="45" selection-start="27900" selection-end="27900" vertical-scroll-proportion="-0.64194006">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

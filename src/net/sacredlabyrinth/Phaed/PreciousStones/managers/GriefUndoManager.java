@@ -85,7 +85,7 @@ public final class GriefUndoManager
     {
         // if its not a dependent block, then look around it for dependents and add those first
 
-        if (!isDependentBlock(block.getTypeId()))
+        if (!plugin.getSettingsManager().isDependentBlock(block.getTypeId()))
         {
             BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
 
@@ -93,7 +93,7 @@ public final class GriefUndoManager
             {
                 Block rel = block.getRelative(face);
 
-                if (plugin.getGriefUndoManager().isDependentBlock(rel.getTypeId()))
+                if (plugin.getSettingsManager().isDependentBlock(rel.getTypeId()))
                 {
                     addBlock(field, rel, clear);
                 }
@@ -167,23 +167,7 @@ public final class GriefUndoManager
         return gb;
     }
 
-
     /**
-     * Whether the block depends on an adjacent block to be placed
-     *
-     * @param type
-     * @return
-     */
-    public boolean isDependentBlock(int type)
-    {
-        if (type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Undo the grief recorded in one field
      *
@@ -255,7 +239,7 @@ public final class GriefUndoManager
 
         if (gb.isEmpty())
         {
-            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), false);
+            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), true);
             return;
         }
 
@@ -292,7 +276,7 @@ public final class GriefUndoManager
 
         if (noConflict)
         {
-            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), false);
+            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), true);
 
             if (block.getState() instanceof Sign && gb.getSignText().length() > 0)
             {

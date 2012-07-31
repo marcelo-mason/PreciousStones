@@ -23,6 +23,7 @@ public class FieldSettings
     private int radius = 0;
     private int heal = 0;
     private int damage = 0;
+    private int maskOnDisabledBlock = 49;
     private int feed = 0;
     private int repair = 0;
     private int launchHeight = 0;
@@ -524,6 +525,15 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("mask-on-disabled") && Helper.isInteger(map.get("mask-on-disabled")))
+        {
+            if ((Integer) map.get("mask-on-disabled") > 0)
+            {
+                defaultFlags.add(FieldFlag.MASK_ON_DISABLED);
+                maskOnDisabledBlock = (Integer) map.get("mask-on-disabled");
+            }
+        }
+
         if (map.containsKey("breakable") && Helper.isBoolean(map.get("breakable")))
         {
             if ((Boolean) map.get("breakable"))
@@ -935,7 +945,7 @@ public class FieldSettings
      */
     public boolean hasNameableFlag()
     {
-        return defaultFlags.contains(FieldFlag.WELCOME_MESSAGE) || defaultFlags.contains(FieldFlag.FAREWELL_MESSAGE) || defaultFlags.contains(FieldFlag.ENTRY_ALERT);
+        return defaultFlags.contains(FieldFlag.WELCOME_MESSAGE) || defaultFlags.contains(FieldFlag.FAREWELL_MESSAGE) || defaultFlags.contains(FieldFlag.ENTRY_ALERT) || defaultFlags.contains(FieldFlag.TRANSLOCATOR);
     }
 
     /**
@@ -1391,5 +1401,10 @@ public class FieldSettings
     public List<BlockTypeEntry> getEquipItems()
     {
         return equipItems;
+    }
+
+    public int getMaskOnDisabledBlock()
+    {
+        return maskOnDisabledBlock;
     }
 }

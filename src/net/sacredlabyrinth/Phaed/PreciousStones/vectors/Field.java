@@ -16,6 +16,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A field object
@@ -35,6 +36,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int miny;
     private int minz;
     private float velocity;
+    private TimeUnit timeUnit;
     private BlockTypeEntry type;
     private String owner;
     private String newOwner;
@@ -44,7 +46,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<String> allowed = new ArrayList<String>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
     private List<GriefBlock> grief = new LinkedList<GriefBlock>();
-    private List<TranslocationBlock> translocation = new LinkedList<TranslocationBlock>();
     private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
     private List<FieldFlag> flags = new LinkedList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new LinkedList<FieldFlag>();
@@ -56,6 +57,8 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int revertSecs;
     private boolean disabled;
     private int disablerId;
+    private boolean translocating;
+    private boolean applied;
 
     /**
      * @param x
@@ -1374,6 +1377,10 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (disabled)
             {
+                if (hasFlag(FieldFlag.MASK_ON_DISABLED))
+                {
+                    mask();
+                }
 
                 if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
                 {
@@ -1390,6 +1397,11 @@ public class Field extends AbstractVec implements Comparable<Field>
             }
             else
             {
+                if (hasFlag(FieldFlag.MASK_ON_DISABLED))
+                {
+                    unmask();
+                }
+
                 startDisabler();
 
                 if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
@@ -1728,35 +1740,71 @@ public class Field extends AbstractVec implements Comparable<Field>
         return false;
     }
 
-    /**
-     * Add a translocation block to the collection
-     *
-     * @param gb
-     */
-    public void addTranslocationBlock(final TranslocationBlock tb)
+    public boolean isTranslocating()
     {
-        PreciousStones.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
-        {
-            public void run()
-            {
-                if (!translocation.contains(tb))
-                {
-                    translocation.add(tb);
-                }
-
-                dirty.add(DirtyFieldReason.TRANSLOCATION);
-            }
-        }, 20);
+        return translocating;
     }
 
-    /**
-     * @return the translocation
-     */
-    public Queue<TranslocationBlock> getTranslocation()
+    public void setTranslocating(boolean translocating)
     {
-        Queue<TranslocationBlock> t = new LinkedList<TranslocationBlock>();
-        t.addAll(translocation);
-        translocation.clear();
-        return t;
+        this.translocating = translocating;
+    }
+
+    public void mask()
+    {
+        mask(null);
+    }
+
+    public void unmask()
+    {
+        unmask(null);
+    }
+
+    public void mask(Player actor)
+    {
+        Set<Player> fieldInhabitants = new HashSet<Player>();
+
+        if (actor != null)
+        {
+            fieldInhabitants.add(actor);
+        }
+        else
+        {
+            fieldInhabitants = PreciousStones.getInstance().getForceFieldManager().getFieldInhabitants(this);
+        }
+
+        for (Player player : fieldInhabitants)
+        {
+            player.sendBlockChange(getLocation(), settings.getMaskOnDisabledBlock(), (byte) 0);
+        }
+    }
+
+    public void unmask(Player actor)
+    {
+        Set<Player> fieldInhabitants = new HashSet<Player>();
+
+        if (actor != null)
+        {
+            fieldInhabitants.add(actor);
+        }
+        else
+        {
+            fieldInhabitants = PreciousStones.getInstance().getForceFieldManager().getFieldInhabitants(this);
+        }
+
+        for (Player player : fieldInhabitants)
+        {
+            player.sendBlockChange(getLocation(), getTypeId(), getData());
+        }
+    }
+
+    public boolean isApplied()
+    {
+        return applied;
+    }
+
+    public void setApplied(boolean applied)
+    {
+        this.applied = applied;
     }
 }

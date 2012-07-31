@@ -511,6 +511,18 @@ public final class EntryManager
                 }
             }
         }
+
+        if (field.hasFlag(FieldFlag.MASK_ON_DISABLED))
+        {
+            if (field.isDisabled())
+            {
+                field.mask(player);
+            }
+            else
+            {
+                field.unmask(player);
+            }
+        }
     }
 
     /**
