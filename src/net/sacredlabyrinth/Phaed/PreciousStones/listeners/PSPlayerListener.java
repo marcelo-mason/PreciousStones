@@ -685,13 +685,14 @@ public class PSPlayerListener implements Listener
                                                 {
                                                     if (plugin.getStorageManager().appliedTranslocationCount(field) > 0)
                                                     {
+                                                        PreciousStones.debug("clearing");
                                                         int size = plugin.getTranslocationManager().clearTranslocation(field);
                                                         plugin.getCommunicationManager().notifyClearTranslocation(field, player, size);
                                                         return;
                                                     }
                                                     else
                                                     {
-                                                        plugin.getStorageManager().updateTranslocationApplyMode(field, false);
+                                                        PreciousStones.debug("nothign to clean(record), disabling");
                                                         field.setDisabled(true);
                                                         plugin.getStorageManager().offerField(field);
                                                         return;
@@ -701,13 +702,14 @@ public class PSPlayerListener implements Listener
                                                 {
                                                     if (plugin.getStorageManager().unappliedTranslocationCount(field) > 0)
                                                     {
+                                                        PreciousStones.debug("applying");
                                                         int size = plugin.getTranslocationManager().applyTranslocation(field);
                                                         plugin.getCommunicationManager().notifyApplyTranslocation(field, player, size);
                                                         return;
                                                     }
                                                     else
                                                     {
-                                                        plugin.getStorageManager().updateTranslocationApplyMode(field, true);
+                                                        PreciousStones.debug("nothign to apply(revert), enabling");
                                                         field.setDisabled(false);
                                                         plugin.getStorageManager().offerField(field);
                                                         return;

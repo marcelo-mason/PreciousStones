@@ -12,9 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author phaed
@@ -220,7 +218,6 @@ public final class TranslocationManager
 
             if (!tbs.isEmpty())
             {
-                field.setTranslocating(true);
                 TranslocationApplier rollback = new TranslocationApplier(field, tbs, world);
             }
             return tbs.size();
@@ -390,8 +387,7 @@ public final class TranslocationManager
 
             if (!tbs.isEmpty())
             {
-                field.setTranslocating(true);
-                TranslocationClearer rollback = new TranslocationClearer(field, tbs, world);
+                TranslocationUpdater rollback = new TranslocationUpdater(field, tbs, world);
             }
             return tbs.size();
         }
@@ -415,7 +411,6 @@ public final class TranslocationManager
         {
             // wipe the block
             addBlock(field, block, true);
-
             block.setTypeIdAndData(0, (byte) 0, true);
             return true;
         }
@@ -429,7 +424,7 @@ public final class TranslocationManager
      * @param tb
      * @param world
      */
-    public boolean clearTranslocationBlock(Field field, TranslocationBlock tb)
+    public boolean updateTranslationBlock(Field field, TranslocationBlock tb, boolean clear)
     {
         Block block = tb.getBlock();
 
@@ -450,6 +445,11 @@ public final class TranslocationManager
             if (tb.hasItemStacks())
             {
                 plugin.getStorageManager().updateTranslocationBlockContents(field, tb);
+            }
+
+            if (clear)
+            {
+                block.setTypeIdAndData(0, (byte) 0, true);
             }
             return true;
         }
@@ -559,7 +559,80 @@ public final class TranslocationManager
      * @param player
      * @return
      */
-    public void importBlocks(Field field, Player player)
+    public void importBlocks(Field field, Player player, List<BlockTypeEntry> entries)
+    {
+        ProcessResult result = processBlocks(field, player, entries);
+        Queue<TranslocationBlock> tbs = result.tbs;
+        int notImported = result.notImported;
+
+        int imported = tbs.size();
+
+        if (!tbs.isEmpty())
+        {
+            TranslocationImporter importer = new TranslocationImporter(field, tbs, player);
+
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Importing " + imported + " blocks into the translocation...");
+
+            if (notImported > 0)
+            {
+                ChatBlock.sendMessage(player, ChatColor.RED + "" + notImported + " blocks skipped due to the max translocation limit");
+            }
+        }
+        else
+        {
+            ChatBlock.sendMessage(player, ChatColor.RED + "No blocks to import");
+        }
+
+        field.setDisabled(true);
+    }
+
+    /**
+     * Imports the contets of the field into the translocation
+     *
+     * @param fioeld
+     * @param player
+     * @return
+     */
+    public void removeBlocks(Field field, Player player, List<BlockTypeEntry> entries)
+    {
+        ProcessResult result = processBlocks(field, player, entries);
+        Queue<TranslocationBlock> tbs = result.tbs;
+        int notImported = result.notImported;
+
+        int imported = tbs.size();
+
+        if (!tbs.isEmpty())
+        {
+            TranslocationRemover remover = new TranslocationRemover(field, tbs, player);
+
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Removing " + imported + " blocks from the translocation...");
+
+            if (notImported > 0)
+            {
+                ChatBlock.sendMessage(player, ChatColor.RED + "" + notImported + " blocks skipped due to the max translocation limit");
+            }
+        }
+        else
+        {
+            ChatBlock.sendMessage(player, ChatColor.RED + "No blocks to remove");
+        }
+
+        field.setDisabled(true);
+    }
+
+    private final class ProcessResult
+    {
+        public Queue<TranslocationBlock> tbs;
+        public int notImported;
+
+        public ProcessResult(Queue<TranslocationBlock> tbs, int notImported)
+        {
+            this.tbs = tbs;
+            this.notImported = notImported;
+        }
+    }
+
+    private ProcessResult processBlocks(Field field, Player player, List<BlockTypeEntry> entries)
     {
         int minx = field.getMinx();
         int maxx = field.getMaxx();
@@ -570,10 +643,16 @@ public final class TranslocationManager
 
         int count = plugin.getStorageManager().totalTranslocationCount(field.getName(), field.getOwner());
         int maxCount = plugin.getSettingsManager().getMaxSizeTranslocation();
-
         int notImported = 0;
 
         Queue<TranslocationBlock> tbs = new LinkedList<TranslocationBlock>();
+
+        Map<Integer, BlockTypeEntry> map = new HashMap<Integer, BlockTypeEntry>();
+
+        for (BlockTypeEntry e : entries)
+        {
+            map.put(e.getTypeId(), e);
+        }
 
         for (int x = minx; x <= maxx; x++)
         {
@@ -590,14 +669,36 @@ public final class TranslocationManager
                     {
                         int id = player.getWorld().getBlockTypeIdAt(x, y, z);
 
-                        if (id != 0)
+                        if (entries != null)
                         {
-                            Block block = player.getWorld().getBlockAt(x, y, z);
-
-                            if (field.getSettings().canTranslocate(new BlockTypeEntry(block)))
+                            if (map.containsKey(id))
                             {
-                                tbs.add(new TranslocationBlock(field, block));
-                                count++;
+                                Block block = player.getWorld().getBlockAt(x, y, z);
+
+                                BlockTypeEntry entry = map.get(id);
+                                BlockTypeEntry actual = new BlockTypeEntry(block);
+
+                                if (entry.equals(actual))
+                                {
+                                    if (field.getSettings().canTranslocate(actual))
+                                    {
+                                        tbs.add(new TranslocationBlock(field, block));
+                                        count++;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (id != 0)
+                            {
+                                Block block = player.getWorld().getBlockAt(x, y, z);
+
+                                if (field.getSettings().canTranslocate(new BlockTypeEntry(block)))
+                                {
+                                    tbs.add(new TranslocationBlock(field, block));
+                                    count++;
+                                }
                             }
                         }
                     }
@@ -609,26 +710,6 @@ public final class TranslocationManager
             }
         }
 
-        int imported = tbs.size();
-
-        if (!tbs.isEmpty())
-        {
-            field.setTranslocating(true);
-            TranslocationWiper wiper = new TranslocationWiper(field, tbs, player);
-
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Importing " + imported + " blocks into the translocation...");
-
-            if (notImported > 0)
-            {
-                ChatBlock.sendMessage(player, ChatColor.RED + "" + notImported + " blocks skipped due to the max translocation limit");
-            }
-        }
-        else
-        {
-            ChatBlock.sendMessage(player, ChatColor.RED + "No blocks to import");
-        }
-
-        plugin.getStorageManager().updateTranslocationApplyMode(field, false);
-        field.setDisabled(true);
+        return new ProcessResult(tbs, notImported);
     }
 }

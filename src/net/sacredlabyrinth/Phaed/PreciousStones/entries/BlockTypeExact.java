@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 /**
@@ -94,6 +95,12 @@ public class BlockTypeExact
         }
 
         return getTypeId() + ":" + getData();
+    }
+
+    public boolean isValid()
+    {
+        Material material = Material.getMaterial(getTypeId());
+        return material != null;
     }
 }
 

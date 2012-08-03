@@ -262,7 +262,7 @@ public class CommunicatonManager
         {
             if (plugin.getSettingsManager().isNotifyTranslocation() && canNotify(player))
             {
-                player.sendMessage(ChatColor.AQUA + Helper.capitalize(field.getName()) + " enabled.  Recording all changes...");
+                player.sendMessage(ChatColor.AQUA + "Translocator " + field.getName() + " enabled.  (Recording)");
             }
         }
 
@@ -299,7 +299,7 @@ public class CommunicatonManager
         {
             if (plugin.getSettingsManager().isNotifyTranslocation() && canNotify(player))
             {
-                player.sendMessage(ChatColor.AQUA + Helper.capitalize(field.getName()) + " disabled.  Blocks stored.");
+                player.sendMessage(ChatColor.AQUA + "Translocator " + field.getName() + " disabled. (Safe to break)");
             }
         }
 

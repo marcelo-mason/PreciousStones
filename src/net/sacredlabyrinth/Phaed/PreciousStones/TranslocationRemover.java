@@ -3,7 +3,8 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.TranslocationBlock;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,24 +12,26 @@ import java.util.Queue;
 /**
  * @author phaed
  */
-public class TranslocationApplier implements Runnable
+public class TranslocationRemover implements Runnable
 {
     private PreciousStones plugin;
     private Queue<TranslocationBlock> translocationQueue;
     private Queue<TranslocationBlock> dependentQueue = new LinkedList<TranslocationBlock>();
     private final int timerID;
-    private final World world;
+    private final Player player;
     private final Field field;
+    private int count;
+    private int notRemovedCount;
 
     /**
      * @param griefQueue
      * @param world
      */
-    public TranslocationApplier(Field field, Queue<TranslocationBlock> translocationQueue, World world)
+    public TranslocationRemover(Field field, Queue<TranslocationBlock> translocationQueue, Player player)
     {
         this.field = field;
         this.translocationQueue = translocationQueue;
-        this.world = world;
+        this.player = player;
         this.plugin = PreciousStones.getInstance();
         field.setTranslocating(true);
 
@@ -51,7 +54,7 @@ public class TranslocationApplier implements Runnable
                     continue;
                 }
 
-                boolean applied = PreciousStones.getInstance().getTranslocationManager().applyTranslocationBlock(tb, world);
+                boolean applied = PreciousStones.getInstance().getTranslocationManager().applyTranslocationBlock(tb, player.getWorld());
 
                 // if the block could not be applied, due to another block being in the way
                 // then don't apply it nad set it on the database as not-applied
@@ -59,6 +62,14 @@ public class TranslocationApplier implements Runnable
                 if (!applied)
                 {
                     plugin.getStorageManager().updateTranslocationBlockApplied(field, tb, false);
+                    notRemovedCount++;
+                }
+                else
+                {
+                    plugin.getStorageManager().deleteTranslocation(field, tb);
+                    count++;
+                    announce();
+
                 }
             }
             i++;
@@ -70,7 +81,7 @@ public class TranslocationApplier implements Runnable
             {
                 TranslocationBlock tb = dependentQueue.poll();
 
-                boolean applied = PreciousStones.getInstance().getTranslocationManager().applyTranslocationBlock(tb, world);
+                boolean applied = PreciousStones.getInstance().getTranslocationManager().applyTranslocationBlock(tb, player.getWorld());
 
                 // if the block could not be applied, due to another block being in the way
                 // then don't apply it nad set it on the database as not-applied
@@ -78,6 +89,13 @@ public class TranslocationApplier implements Runnable
                 if (!applied)
                 {
                     plugin.getStorageManager().updateTranslocationBlockApplied(field, tb, false);
+                    notRemovedCount++;
+                }
+                else
+                {
+                    plugin.getStorageManager().deleteTranslocation(field, tb);
+                    count++;
+                    announce();
                 }
 
                 i++;
@@ -88,6 +106,24 @@ public class TranslocationApplier implements Runnable
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 field.setDisabled(false);
                 field.setTranslocating(false);
+                player.sendMessage(ChatColor.AQUA + "Removal complete");
+
+                if(notRemovedCount > 0)
+                {
+                    ChatBlock.sendMessage(player, ChatColor.RED + "" + count + " blocks skipped.");
+                    ChatBlock.sendMessage(player, ChatColor.RED + "(Their destination locations already had blocks on them)");
+                }
+            }
+        }
+    }
+
+    public void announce()
+    {
+        if (count % 25 == 0 && count != 0)
+        {
+            if (player != null)
+            {
+                player.sendMessage(ChatColor.AQUA + "Removed " + count + " blocks");
             }
         }
     }

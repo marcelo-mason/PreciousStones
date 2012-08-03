@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -115,5 +116,11 @@ public class BlockEntry
     public String serialize()
     {
         return getTypeId() + "|" + getData() + "|" + location.getBlockX() + "|" + location.getBlockY() + "|" + location.getBlockZ() + "|" + location.getWorld();
+    }
+
+    public boolean isValid()
+    {
+        Material material = Material.getMaterial(getTypeId());
+        return material != null;
     }
 }

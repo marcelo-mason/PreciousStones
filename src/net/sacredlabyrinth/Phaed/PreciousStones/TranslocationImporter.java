@@ -3,7 +3,8 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.TranslocationBlock;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,21 +12,22 @@ import java.util.Queue;
 /**
  * @author phaed
  */
-public class TranslocationClearer implements Runnable
+public class TranslocationImporter implements Runnable
 {
     private PreciousStones plugin;
     private Queue<TranslocationBlock> translocationQueue = new LinkedList<TranslocationBlock>();
     private Queue<TranslocationBlock> dependentQueue = new LinkedList<TranslocationBlock>();
     private Queue<TranslocationBlock> clearDependentQueue = new LinkedList<TranslocationBlock>();
     private final int timerID;
-    private final World world;
+    private final Player player;
     private final Field field;
+    private int count;
 
     /**
      * @param griefQueue
      * @param world
      */
-    public TranslocationClearer(Field field, Queue<TranslocationBlock> translocationQueue, World world)
+    public TranslocationImporter(Field field, Queue<TranslocationBlock> translocationQueue, Player player)
     {
         this.plugin = PreciousStones.getInstance();
 
@@ -45,9 +47,10 @@ public class TranslocationClearer implements Runnable
         }
 
         this.field = field;
-        this.world = world;
+        this.player = player;
+        field.setTranslocating(true);
 
-        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 5, 5);
+        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 2, 1);
     }
 
     public void run()
@@ -58,7 +61,7 @@ public class TranslocationClearer implements Runnable
         {
             TranslocationBlock tb = dependentQueue.poll();
 
-            boolean cleared = plugin.getTranslocationManager().clearTranslocationBlock(field, tb);
+            boolean cleared = plugin.getTranslocationManager().wipeTranslocationBlock(field, tb);
 
             // when it comes time to clear the blocks off the world, if a block
             // doesn't match whats in the database, then cancel the translocation of it
@@ -67,6 +70,8 @@ public class TranslocationClearer implements Runnable
             if (cleared)
             {
                 this.clearDependentQueue.add(tb);
+                count++;
+                announce();
             }
             else
             {
@@ -91,7 +96,7 @@ public class TranslocationClearer implements Runnable
                 {
                     TranslocationBlock tb = translocationQueue.poll();
 
-                    boolean cleared = plugin.getTranslocationManager().clearTranslocationBlock(field, tb);
+                    boolean cleared = plugin.getTranslocationManager().wipeTranslocationBlock(field, tb);
 
                     // when it comes time to clear the blocks off the world, if a block
                     // doesn't match whats in the database, then cancel the translocation of it
@@ -101,17 +106,32 @@ public class TranslocationClearer implements Runnable
                     {
                         plugin.getStorageManager().deleteTranslocation(field, tb);
                     }
-
+                    else
+                    {
+                        count++;
+                        announce();
+                    }
                     i++;
                 }
 
                 if (!translocationQueue.iterator().hasNext())
                 {
                     Bukkit.getServer().getScheduler().cancelTask(timerID);
-                    plugin.getStorageManager().updateTranslocationApplyMode(field, false);
                     field.setDisabled(true);
                     field.setTranslocating(false);
+                    player.sendMessage(ChatColor.AQUA + "Import complete");
                 }
+            }
+        }
+    }
+
+    public void announce()
+    {
+        if (count % 25 == 0 && count != 0)
+        {
+            if (player != null)
+            {
+                player.sendMessage(ChatColor.AQUA + "Imported " + count + " blocks");
             }
         }
     }

@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
@@ -128,6 +129,12 @@ public class BlockTypeEntry
     public void setData(byte data)
     {
         this.data = data;
+    }
+
+    public boolean isValid()
+    {
+        Material material = Material.getMaterial(getTypeId());
+        return material != null;
     }
 }
 

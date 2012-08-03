@@ -1522,13 +1522,6 @@ public class Field extends AbstractVec implements Comparable<Field>
                             ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field has been disabled");
                         }
 
-                        if (hasFlag(FieldFlag.TRANSLOCATION))
-                        {
-                            if (isNamed())
-                            {
-                                PreciousStones.getInstance().getStorageManager().updateTranslocationApplyMode(thisField, false);
-                            }
-                        }
                         thisField.setDisabled(true);
                     }
                 }
