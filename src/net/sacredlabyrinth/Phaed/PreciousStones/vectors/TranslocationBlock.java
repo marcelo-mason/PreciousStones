@@ -3,10 +3,20 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.ItemStackEntry;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.inventory.ItemStack;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author phaed
@@ -19,6 +29,7 @@ public class TranslocationBlock extends AbstractVec
     private int rx;
     private int ry;
     private int rz;
+    private List<ItemStackEntry> contents = new LinkedList<ItemStackEntry>();
 
 
     /**
@@ -178,19 +189,9 @@ public class TranslocationBlock extends AbstractVec
         return rx;
     }
 
-    public void setRx(int rx)
-    {
-        this.rx = rx;
-    }
-
     public int getRy()
     {
         return ry;
-    }
-
-    public void setRy(int ry)
-    {
-        this.ry = ry;
     }
 
     public int getRz()
@@ -198,8 +199,67 @@ public class TranslocationBlock extends AbstractVec
         return rz;
     }
 
-    public void setRz(int rz)
+    private void extractContents()
     {
-        this.rz = rz;
+
+    }
+
+    public ItemStack[] getItemStacks()
+    {
+        List<ItemStack> out = new ArrayList<ItemStack>();
+
+        for (ItemStackEntry entry : contents)
+        {
+            out.add(entry.toItemStack());
+        }
+
+        return out.toArray(new ItemStack[]{});
+    }
+
+    public boolean hasItemStacks()
+    {
+        return !contents.isEmpty();
+    }
+
+    public void setContents(ItemStack[] stacks)
+    {
+        contents.clear();
+        for (ItemStack stack : stacks)
+        {
+            if(stack == null)
+            {
+                contents.add(new ItemStackEntry(new ItemStack(Material.AIR)));
+                continue;
+            }
+            contents.add(new ItemStackEntry(stack));
+        }
+    }
+
+    public String getContents()
+    {
+        JSONArray out = new JSONArray();
+
+        for (ItemStackEntry entry : contents)
+        {
+            out.add(entry.serialize());
+        }
+
+        return out.toString();
+    }
+
+    public void setContents(String contents)
+    {
+        if (contents.length() == 0)
+        {
+            return;
+        }
+
+        JSONArray in = (JSONArray) JSONValue.parse(contents);
+
+        this.contents.clear();
+        for (Object item : in)
+        {
+            this.contents.add(new ItemStackEntry((JSONObject) item));
+        }
     }
 }

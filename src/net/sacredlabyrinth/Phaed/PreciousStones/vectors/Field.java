@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
@@ -58,7 +59,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private boolean disabled;
     private int disablerId;
     private boolean translocating;
-    private boolean applied;
+    private int translocationSize;
 
     /**
      * @param x
@@ -266,6 +267,63 @@ public class Field extends AbstractVec implements Comparable<Field>
         dirty.add(DirtyFieldReason.DIMENSIONS);
 
         PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
+    }
+
+    /**
+     * Sets the cuboid data using relative dimensions
+     *
+     * @param minX
+     * @param minY
+     * @param minZ
+     * @param maxX
+     * @param maxY
+     * @param maxZ
+     */
+    public void setRelativeCuboidDimensions(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
+    {
+        PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
+
+        World world = getBlock().getWorld();
+
+        Location min = new Location(world, minX, minY, minZ);
+        min = min.add(getLocation());
+
+        Location max = new Location(world, maxX, maxY, maxZ);
+        max = max.add(getLocation());
+
+        PreciousStones.debug(min.toVector().toBlockVector().toString());
+        PreciousStones.debug(max.toVector().toBlockVector().toString());
+
+        this.minx = min.getBlockX();
+        this.miny = min.getBlockY();
+        this.minz = min.getBlockZ();
+
+        this.maxx = max.getBlockX();
+        this.maxy = max.getBlockY();
+        this.maxz = max.getBlockZ();
+
+        this.radius = ((maxx - minx) - 1) / 2;
+        this.height = maxy - miny;
+
+        dirty.add(DirtyFieldReason.DIMENSIONS);
+
+        PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
+    }
+
+    public Location getRelativeMin()
+    {
+        World world = getBlock().getWorld();
+        Location min = new Location(world, minx, miny, minz);
+        min.subtract(getLocation());
+        return min;
+    }
+
+    public Location getRelativeMax()
+    {
+        World world = getBlock().getWorld();
+        Location max = new Location(world, maxx, maxy, maxz);
+        max.subtract(getLocation());
+        return max;
     }
 
     /**
@@ -1382,6 +1440,11 @@ public class Field extends AbstractVec implements Comparable<Field>
                     mask();
                 }
 
+                if (hasFlag(FieldFlag.MASK_ON_ENABLED))
+                {
+                    unmask();
+                }
+
                 if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
                 {
                     if (!flags.contains(FieldFlag.BREAKABLE))
@@ -1400,6 +1463,11 @@ public class Field extends AbstractVec implements Comparable<Field>
                 if (hasFlag(FieldFlag.MASK_ON_DISABLED))
                 {
                     unmask();
+                }
+
+                if (hasFlag(FieldFlag.MASK_ON_ENABLED))
+                {
+                    mask();
                 }
 
                 startDisabler();
@@ -1452,6 +1520,14 @@ public class Field extends AbstractVec implements Comparable<Field>
                         if (player != null)
                         {
                             ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field has been disabled");
+                        }
+
+                        if (hasFlag(FieldFlag.TRANSLOCATION))
+                        {
+                            if (isNamed())
+                            {
+                                PreciousStones.getInstance().getStorageManager().updateTranslocationApplyMode(thisField, false);
+                            }
                         }
                         thisField.setDisabled(true);
                     }
@@ -1773,9 +1849,26 @@ public class Field extends AbstractVec implements Comparable<Field>
             fieldInhabitants = PreciousStones.getInstance().getForceFieldManager().getFieldInhabitants(this);
         }
 
+        Entity[] entities = getBlock().getChunk().getEntities();
+
+        for (Entity entity : entities)
+        {
+            if (entity instanceof Player)
+            {
+                fieldInhabitants.add((Player) entity);
+            }
+        }
+
         for (Player player : fieldInhabitants)
         {
-            player.sendBlockChange(getLocation(), settings.getMaskOnDisabledBlock(), (byte) 0);
+            if (hasFlag(FieldFlag.MASK_ON_ENABLED))
+            {
+                player.sendBlockChange(getLocation(), settings.getMaskOnEnabledBlock(), (byte) 0);
+            }
+            else
+            {
+                player.sendBlockChange(getLocation(), settings.getMaskOnDisabledBlock(), (byte) 0);
+            }
         }
     }
 
@@ -1792,19 +1885,44 @@ public class Field extends AbstractVec implements Comparable<Field>
             fieldInhabitants = PreciousStones.getInstance().getForceFieldManager().getFieldInhabitants(this);
         }
 
+        Entity[] entities = getBlock().getChunk().getEntities();
+
+        for (Entity entity : entities)
+        {
+            if (entity instanceof Player)
+            {
+                fieldInhabitants.add((Player) entity);
+            }
+        }
+
         for (Player player : fieldInhabitants)
         {
             player.sendBlockChange(getLocation(), getTypeId(), getData());
         }
     }
 
-    public boolean isApplied()
+    public boolean isNamed()
     {
-        return applied;
+        return getName().length() > 0;
     }
 
-    public void setApplied(boolean applied)
+    public void setTranslocationSize(int translocationSize)
     {
-        this.applied = applied;
+        this.translocationSize = translocationSize;
+    }
+
+    public boolean isOverRedstoneMax()
+    {
+        return translocationSize > PreciousStones.getInstance().getSettingsManager().getMaxSizeTranslocationForRedstone();
+    }
+
+    public boolean isOverTranslocationMax()
+    {
+        return isOverTranslocationMax(0);
+    }
+
+    public boolean isOverTranslocationMax(int extra)
+    {
+        return translocationSize + extra > PreciousStones.getInstance().getSettingsManager().getMaxSizeTranslocation();
     }
 }

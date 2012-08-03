@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 9.2.1
+version: 9.2.2
 dev-url: http://dev.bukkit.org/server-mods/preciousstones/
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC]
@@ -61,8 +61,6 @@ permissions:
     description: Can set the visualization density
   preciousstones.benefit.change-owner:
     description: Can change the owner to their own fields
-  preciousstones.benefit.translocator:
-    description: Can use translocator fields
   preciousstones.whitelist.allow:
     description: Can use /ps allow
   preciousstones.whitelist.allowed:
@@ -197,6 +195,14 @@ permissions:
     description: Can users will not be shown any notifications
   preciousstones.override.warn:
     description: Can users will not be shown any warnings
+  preciousstones.translocation.use:
+    description: Can use translocation fields
+  preciousstones.translocation.delete:
+    description: Can delete translocation fields
+  preciousstones.translocation.remove:
+    description: Can remove specific block types form their translocations
+  preciousstones.translocation.import:
+    description: Can import into translocation fields
   preciousstones.limit1:
     description: Limit 1
   preciousstones.limit2:
@@ -259,7 +265,6 @@ permissions:
       preciousstones.benefit.disable: true
       preciousstones.benefit.enable: true
       preciousstones.benefit.change-owner: true
-      preciousstones.benefit.translocator: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: false
@@ -269,6 +274,14 @@ permissions:
       preciousstones.whitelist.allowall: true
       preciousstones.whitelist.remove: true
       preciousstones.whitelist.removeall: true
+  preciousstones.translocation.*:
+    description: Can do translocation related things
+    default: false
+    children:
+      preciousstones.translocation.use: true
+      preciousstones.translocation.import: true
+      preciousstones.translocation.delete: true
+      preciousstones.translocation.remove: true
   preciousstones.bypass.*:
     description: Permissions for moderators
     default: op

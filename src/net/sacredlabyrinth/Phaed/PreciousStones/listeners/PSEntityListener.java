@@ -345,16 +345,13 @@ public class PSEntityListener implements Listener
 
             // remove the blocks
 
-            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATOR);
+            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
             if (field != null)
             {
-                if (field.getName().length() > 0)
+                if (field.isNamed())
                 {
-                    if (field.isApplied())
-                    {
-                        plugin.getTranslocationManager().removeBlock(field, block);
-                    }
+                    plugin.getTranslocationManager().removeBlock(field, block);
                 }
             }
         }

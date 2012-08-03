@@ -57,7 +57,6 @@ public class TranslocationApplier implements Runnable
 
                 if (!applied)
                 {
-                    PreciousStones.debug("not-applied:" + tb);
                     plugin.getStorageManager().updateTranslocationBlockApplied(field, tb, false);
                 }
             }
@@ -87,6 +86,7 @@ public class TranslocationApplier implements Runnable
             {
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 plugin.getStorageManager().updateTranslocationApplyMode(field, true);
+                field.setDisabled(false);
                 field.setTranslocating(false);
             }
         }

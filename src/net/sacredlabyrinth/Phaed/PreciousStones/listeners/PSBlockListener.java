@@ -178,61 +178,58 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        // enable/disable the field (except translocator fields)
+        // enable/disable the field (except translocation fields)
 
-        if (!field.getSettings().hasDefaultFlag(FieldFlag.TRANSLOCATOR))
+        if (event.getNewCurrent() > event.getOldCurrent())
         {
-            if (event.getNewCurrent() > event.getOldCurrent())
+            if (field.isDisabled())
             {
-                if (field.isDisabled())
-                {
-                    field.setDisabled(false);
-                }
-
-                PreciousStones.debug("redstone enabled");
+                field.setDisabled(false);
             }
-            else if (event.getNewCurrent() == 0)
-            {
-                if (!field.isDisabled())
-                {
-                    field.setDisabled(true);
-                }
 
-                PreciousStones.debug("redstone disabled");
-            }
+            PreciousStones.debug("redstone enabled");
         }
+        else if (event.getNewCurrent() == 0)
+        {
+            if (!field.isDisabled())
+            {
+                field.setDisabled(true);
+            }
+
+            PreciousStones.debug("redstone disabled");
+        }
+
         // after this point we only care about actionable fields
 
         if (!field.getSettings().hasDefaultFlag(FieldFlag.LAUNCH) &&
                 !field.getSettings().hasDefaultFlag(FieldFlag.CANNON) &&
                 !field.getSettings().hasDefaultFlag(FieldFlag.POTIONS) &&
-                !field.getSettings().hasDefaultFlag(FieldFlag.TRANSLOCATOR) &&
+                !field.getSettings().hasDefaultFlag(FieldFlag.TRANSLOCATION) &&
                 !field.getSettings().hasDefaultFlag(FieldFlag.CONFISCATE_ITEMS))
         {
             return;
         }
 
-        // toggle translocator fields
+        // toggle translocation fields
 
-        if (field.hasFlag(FieldFlag.TRANSLOCATOR))
+        if (field.hasFlag(FieldFlag.TRANSLOCATION) && !field.isTranslocating())
         {
-            if (field.isTranslocating())
+            if (field.isNamed())
             {
-                return;
-            }
-
-            if (field.getName().length() > 0)
-            {
-                if (!field.isDisabled())
+                if (field.isDisabled())
                 {
-                    if (field.isApplied())
-                    {
-                        plugin.getTranslocationManager().clearTranslocation(field);
-                    }
-                    else
+                    // only apply via redstone if were not over the max
+
+                    if (!field.isOverRedstoneMax())
                     {
                         plugin.getTranslocationManager().applyTranslocation(field);
+                        field.setDisabled(false);
                     }
+                }
+                else
+                {
+                    plugin.getTranslocationManager().clearTranslocation(field);
+                    field.setDisabled(true);
                 }
             }
             return;
@@ -476,19 +473,16 @@ public class PSBlockListener implements Listener
             }
         }
 
-        // -------------------------------------------------------------------------------- breaking inside a translocator revert area
+        // -------------------------------------------------------------------------------- breaking inside a translocation revert area
 
-        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATOR);
+        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
         if (field != null)
         {
-            if (field.getName().length() > 0)
+            if (field.isNamed())
             {
-                if (field.isApplied())
-                {
-                    plugin.getTranslocationManager().removeBlock(field, block);
-                    plugin.getTranslocationManager().flashFieldBlock(field, player);
-                }
+                plugin.getTranslocationManager().removeBlock(field, block);
+                plugin.getTranslocationManager().flashFieldBlock(field, player);
             }
         }
 
@@ -558,9 +552,9 @@ public class PSBlockListener implements Listener
             return false;
         }
 
-        if (field.hasFlag(FieldFlag.TRANSLOCATOR))
+        if (field.hasFlag(FieldFlag.TRANSLOCATION))
         {
-            if (field.getName().length() > 0)
+            if (field.isNamed())
             {
                 int count = plugin.getStorageManager().appliedTranslocationCount(field);
 
@@ -570,7 +564,7 @@ public class PSBlockListener implements Listener
 
                     if (!plugin.getStorageManager().existsTranslocationDataWithName(field.getName(), field.getOwner()))
                     {
-                        plugin.getStorageManager().deleteTranslocatorHead(field.getName(), field.getOwner());
+                        plugin.getStorageManager().deleteTranslocationHead(field.getName(), field.getOwner());
                     }
 
                     ChatBlock.sendMessage(player, ChatColor.GRAY + " * " + ChatColor.YELLOW + "Translocation " + field.getName() + " unlinked from " + count + " blocks");
@@ -834,7 +828,7 @@ public class PSBlockListener implements Listener
             {
                 // *** ADD THE FIELD
 
-                Field field = plugin.getForceFieldManager().add(block, player, event);
+                final Field field = plugin.getForceFieldManager().add(block, player, event);
 
                 if (field != null)
                 {
@@ -860,6 +854,23 @@ public class PSBlockListener implements Listener
                     {
                         field.setDisabled(true);
                     }
+
+                    // set the enabled mask
+
+                    /*
+                    if (!field.isDisabled())
+                    {
+                        if (field.hasFlag(FieldFlag.MASK_ON_ENABLED))
+                        {
+                            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                            {
+                                public void run()
+                                {
+                                    player.sendBlockChange(field.getLocation(), field.getSettings().getMaskOnEnabledBlock(), (byte) 0);
+                                }
+                            }, 1);
+                        }
+                    }*/
 
                     // sets the initial state of redstone enabled fields
 
@@ -977,11 +988,11 @@ public class PSBlockListener implements Listener
                 }
             }
 
-            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATOR);
+            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
             if (field != null)
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place unbreakable blocks inside translocator fields");
+                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place unbreakable blocks inside translocation fields");
                 event.setCancelled(true);
             }
         }
@@ -1122,9 +1133,9 @@ public class PSBlockListener implements Listener
             }
         }
 
-        // -------------------------------------------------------------------------------------- placing in a translocator area
+        // -------------------------------------------------------------------------------------- placing in a translocation area
 
-        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATOR);
+        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
         if (field != null)
         {
@@ -1141,18 +1152,22 @@ public class PSBlockListener implements Listener
                         return;
                     }
 
-                    if (field.isApplied())
+                    if (field.isOverTranslocationMax(1))
                     {
-                        final Field finalField = field;
-                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                        {
-                            public void run()
-                            {
-                                plugin.getTranslocationManager().addBlock(finalField, block);
-                                plugin.getTranslocationManager().flashFieldBlock(finalField, player);
-                            }
-                        }, 10);
+                        ChatBlock.sendMessage(player, ChatColor.RED + "You have reached the server-wide max translocation size.");
+                        event.setCancelled(true);
+                        return;
                     }
+
+                    final Field finalField = field;
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    {
+                        public void run()
+                        {
+                            plugin.getTranslocationManager().addBlock(finalField, block);
+                            plugin.getTranslocationManager().flashFieldBlock(finalField, player);
+                        }
+                    }, 10);
                 }
             }
         }
@@ -1344,11 +1359,11 @@ public class PSBlockListener implements Listener
             }
         }
 
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATOR);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
         if (field != null)
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place field blocks inside translocator fields");
+            ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place field blocks inside translocation fields");
             event.setCancelled(true);
             return false;
         }

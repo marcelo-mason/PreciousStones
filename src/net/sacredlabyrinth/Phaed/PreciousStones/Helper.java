@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeExact;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -612,6 +613,7 @@ public class Helper
 
     /**
      * Returns a type entry from a string
+     *
      * @param rawItem
      * @return
      */
@@ -643,6 +645,7 @@ public class Helper
 
     /**
      * Returns a type entry from a string
+     *
      * @param rawItem
      * @return
      */
@@ -655,12 +658,18 @@ public class Helper
         }
         else
         {
-            return new BlockTypeEntry(Integer.parseInt(rawItem), (byte)0);
+            if (!isInteger(rawItem))
+            {
+                return null;
+            }
+
+            return new BlockTypeEntry(Integer.parseInt(rawItem), (byte) 0);
         }
     }
 
     /**
      * Returns a type entry from a string
+     *
      * @param rawItem
      * @return
      */
@@ -673,12 +682,13 @@ public class Helper
         }
         else
         {
-            return new BlockTypeExact(Integer.parseInt(rawItem), (byte)0);
+            return new BlockTypeExact(Integer.parseInt(rawItem), (byte) 0);
         }
     }
 
     /**
      * Returns a list of type entries from a string list
+     *
      * @param rawItem
      * @return
      */
@@ -690,7 +700,7 @@ public class Helper
         {
             BlockTypeEntry type = Helper.toTypeEntry(rawItem.toString());
 
-            if(type != null)
+            if (type != null)
             {
                 types.add(type);
             }
@@ -701,6 +711,7 @@ public class Helper
 
     /**
      * Returns a list of type entries from a string list
+     *
      * @param rawItem
      * @return
      */
@@ -712,7 +723,7 @@ public class Helper
         {
             BlockTypeEntry type = Helper.toTypeEntry(rawItem);
 
-            if(type != null)
+            if (type != null)
             {
                 types.add(type);
             }
@@ -739,5 +750,10 @@ public class Helper
         World w = PreciousStones.getInstance().getServer().getWorld(world);
 
         return new Location(w, x, y, z);
+    }
+
+    public static boolean isDoor(Block block)
+    {
+        return block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR);
     }
 }

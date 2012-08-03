@@ -262,14 +262,17 @@ public class PSPlayerListener implements Listener
 
                                     if (field.isOwner(player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
                                     {
-                                        if (field.hasFlag(FieldFlag.TRANSLOCATOR))
+                                        if (field.hasFlag(FieldFlag.TRANSLOCATION))
                                         {
-                                            if (field.getName().length() > 0)
+                                            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
                                             {
-                                                if (plugin.getStorageManager().existsTranslocatior(field))
+                                                if (field.isNamed())
                                                 {
-                                                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot reshape a translocation cuboid once its in use");
-                                                    return;
+                                                    if (plugin.getStorageManager().existsTranslocatior(field.getName(), field.getOwner()))
+                                                    {
+                                                        ChatBlock.sendMessage(player, ChatColor.RED + "Cannot reshape a translocation cuboid once its in use");
+                                                        return;
+                                                    }
                                                 }
                                             }
                                         }
@@ -614,7 +617,7 @@ public class PSPlayerListener implements Listener
                                         }
                                     }
 
-                                    if (!field.hasFlag(FieldFlag.TRANSLOCATOR))
+                                    if (!field.hasFlag(FieldFlag.TRANSLOCATION))
                                     {
                                         if (field.hasFlag(FieldFlag.ENABLE_ON_SRC))
                                         {
@@ -666,19 +669,19 @@ public class PSPlayerListener implements Listener
                                     return;
                                 }
 
-                                // -------------------------------------------------------------------------------- right click translocator
+                                // -------------------------------------------------------------------------------- right click translocation
 
                                 boolean showTranslocations = false;
 
-                                if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.translocator"))
+                                if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.use"))
                                 {
-                                    if (field.hasFlag(FieldFlag.TRANSLOCATOR) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
+                                    if (field.hasFlag(FieldFlag.TRANSLOCATION) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
                                     {
                                         if (!field.isTranslocating())
                                         {
-                                            if (field.getName().length() > 0)
+                                            if (field.isNamed())
                                             {
-                                                if (field.isApplied())
+                                                if (!field.isDisabled())
                                                 {
                                                     if (plugin.getStorageManager().appliedTranslocationCount(field) > 0)
                                                     {
@@ -688,12 +691,9 @@ public class PSPlayerListener implements Listener
                                                     }
                                                     else
                                                     {
-                                                        player.sendMessage(ChatColor.AQUA + "Translocator is empty. Nothing to store.");
-
-                                                        if (plugin.getStorageManager().unappliedTranslocationCount(field) > 0)
-                                                        {
-                                                            plugin.getStorageManager().updateTranslocationApplyMode(field, false);
-                                                        }
+                                                        plugin.getStorageManager().updateTranslocationApplyMode(field, false);
+                                                        field.setDisabled(true);
+                                                        plugin.getStorageManager().offerField(field);
                                                         return;
                                                     }
                                                 }
@@ -707,8 +707,9 @@ public class PSPlayerListener implements Listener
                                                     }
                                                     else
                                                     {
-                                                        player.sendMessage(ChatColor.AQUA + "Translocator is empty. Nothing to translocate.");
                                                         plugin.getStorageManager().updateTranslocationApplyMode(field, true);
+                                                        field.setDisabled(false);
+                                                        plugin.getStorageManager().offerField(field);
                                                         return;
                                                     }
                                                 }
@@ -1158,21 +1159,18 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        // -------------------------------------------------------------------------------------- breaking in a translocator area
+        // -------------------------------------------------------------------------------------- breaking in a translocation area
 
         if (liquid.isLiquid())
         {
-            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATOR);
+            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
             if (field != null)
             {
-                if (field.getName().length() > 0)
+                if (field.isNamed())
                 {
-                    if (field.isApplied())
-                    {
-                        plugin.getTranslocationManager().removeBlock(field, block);
-                        plugin.getTranslocationManager().flashFieldBlock(field, player);
-                    }
+                    plugin.getTranslocationManager().removeBlock(field, block);
+                    plugin.getTranslocationManager().flashFieldBlock(field, player);
                 }
             }
 
@@ -1268,50 +1266,50 @@ public class PSPlayerListener implements Listener
             }
         }
 
-        // -------------------------------------------------------------------------------------- placing in a translocator area
+        // -------------------------------------------------------------------------------------- placing in a translocation area
 
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+
+        if (!liquid.isLiquid())
         {
-            public void run()
+            return;
+        }
+
+        field = plugin.getForceFieldManager().getEnabledSourceField(liquid.getLocation(), FieldFlag.TRANSLOCATION);
+
+        if (field != null)
+        {
+            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
             {
-                if (!liquid.isLiquid())
+                if (field.getSettings().canTranslocate(new BlockTypeEntry(liquid)))
                 {
-                    return;
-                }
-
-                Field field = plugin.getForceFieldManager().getEnabledSourceField(liquid.getLocation(), FieldFlag.TRANSLOCATOR);
-
-                if (field != null)
-                {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (field.getName().length() == 0)
                     {
-                        if (field.getSettings().canTranslocate(new BlockTypeEntry(liquid)))
-                        {
-                            if (field.getName().length() == 0)
-                            {
-                                ChatBlock.sendMessage(player, ChatColor.YELLOW + "To begin storage, you must first choose a name for your translocation with /ps setname");
-                                event.setCancelled(true);
-                            }
-
-                            if (field.isApplied())
-                            {
-                                final Field finalField = field;
-                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                                {
-                                    public void run()
-                                    {
-                                        plugin.getTranslocationManager().addBlock(finalField, liquid);
-                                        plugin.getTranslocationManager().flashFieldBlock(finalField, player);
-                                    }
-                                }, 10);
-                            }
-                        }
+                        ChatBlock.sendMessage(player, ChatColor.YELLOW + "To begin storage, you must first choose a name for your translocation with /ps setname");
+                        event.setCancelled(true);
                     }
+
+                    if (field.isOverTranslocationMax(1))
+                    {
+                        ChatBlock.sendMessage(player, ChatColor.RED + "You have reached the server-wide max translocation size.");
+                        event.setCancelled(true);
+                        return;
+                    }
+
+                    final Field finalField = field;
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    {
+                        public void run()
+                        {
+                            plugin.getTranslocationManager().addBlock(finalField, liquid);
+                            plugin.getTranslocationManager().flashFieldBlock(finalField, player);
+                        }
+                    }, 5);
                 }
             }
-        }, 2);
+        }
+
 
         if (plugin.getSettingsManager().isDebug())
         {

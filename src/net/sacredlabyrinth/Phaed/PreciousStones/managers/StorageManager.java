@@ -90,18 +90,18 @@ public final class StorageManager
                     core.execute("CREATE TABLE IF NOT EXISTS `pstone_grief_undo` (  `id` bigint(20) NOT NULL auto_increment,  `date_griefed` datetime NOT NULL, `field_x` int(11) default NULL,  `field_y` int(11) default NULL, `field_z` int(11) default NULL, `world` varchar(25) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL, PRIMARY KEY  (`id`));");
                 }
 
-                if (!core.existsTable("pstone_translocators"))
+                if (!core.existsTable("pstone_translocations"))
                 {
-                    PreciousStones.log("Creating table: pstone_translocators");
+                    PreciousStones.log("Creating table: pstone_translocations");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_translocators` (  `id` bigint(20) NOT NULL auto_increment,  `name` varchar(36) NOT NULL, `player_name` varchar(16) NOT NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL, `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL, `applied` bit default 0, PRIMARY KEY  (`id`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_translocations` (  `id` bigint(20) NOT NULL auto_increment,  `name` varchar(36) NOT NULL, `player_name` varchar(16) NOT NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL, `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL, `applied` bit default 0, PRIMARY KEY  (`id`),  UNIQUE KEY `uq_trans_1` (`name`,`player_name`));");
                 }
 
                 if (!core.existsTable("pstone_storedblocks"))
                 {
                     PreciousStones.log("Creating table: pstone_storedblocks");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_storedblocks` (  `id` bigint(20) NOT NULL auto_increment, `name` varchar(36) NOT NULL, `player_name` varchar(16) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL, `world` varchar(25) NOT NULL, `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL, `applied` bit default 0, PRIMARY KEY  (`id`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_storedblocks` (  `id` bigint(20) NOT NULL auto_increment, `name` varchar(36) NOT NULL, `player_name` varchar(16) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL, `world` varchar(25) NOT NULL, `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL, `applied` bit default 0, `contents` TEXT NOT NULL, PRIMARY KEY  (`id`),  UNIQUE KEY `uq_trans_2` (`x`,`y`,`z`,`world`));");
                 }
 
                 if (!core.existsTable("pstone_players"))
@@ -163,18 +163,18 @@ public final class StorageManager
                     core.execute("CREATE TABLE IF NOT EXISTS `pstone_grief_undo` (  `id` INTEGER PRIMARY KEY,  `date_griefed` datetime NOT NULL, `field_x` int(11) default NULL,  `field_y` int(11) default NULL, `field_z` int(11) default NULL, `world` varchar(25) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL, `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL);");
                 }
 
-                if (!core.existsTable("pstone_translocators"))
+                if (!core.existsTable("pstone_translocations"))
                 {
-                    PreciousStones.log("Creating table: pstone_translocators");
+                    PreciousStones.log("Creating table: pstone_translocations");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_translocators` (  `id` INTEGER PRIMARY KEY,  `name` varchar(36) NOT NULL, `player_name` varchar(16) NOT NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL, `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL, `applied` bit default 0);");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_translocations` (  `id` INTEGER PRIMARY KEY,  `name` varchar(36) NOT NULL, `player_name` varchar(16) NOT NULL,  `minx` int(11) default NULL,  `maxx` int(11) default NULL, `miny` int(11) default NULL,  `maxy` int(11) default NULL,  `minz` int(11) default NULL,  `maxz` int(11) default NULL, `applied` bit default 0, UNIQUE (`name`,`player_name`));");
                 }
 
                 if (!core.existsTable("pstone_storedblocks"))
                 {
                     PreciousStones.log("Creating table: pstone_storedblocks");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_storedblocks` (  `id` INTEGER PRIMARY KEY,  `name` varchar(36) NOT NULL, `player_name` varchar(16) NOT NULL,  `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL, `world` varchar(25) NOT NULL, `type_id` int(11) NOT NULL, `data` TINYINT NOT NULL, `sign_text` varchar(75) NOT NULL, `applied` bit default 0);");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_storedblocks` (  `id` INTEGER PRIMARY KEY,  `name` varchar(36) NOT NULL, `player_name` varchar(16) NOT NULL,  `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL, `world` varchar(25) NOT NULL, `type_id` int(11) NOT NULL, `data` TINYINT NOT NULL, `sign_text` varchar(75) NOT NULL, `applied` bit default 0, `contents` TEXT NOT NULL, UNIQUE (`x`,`y`,`z`,`world`));");
                 }
 
                 if (!core.existsTable("pstone_players"))
@@ -241,8 +241,14 @@ public final class StorageManager
         extractPlayers();
 
         final List<World> worlds = plugin.getServer().getWorlds();
+        Map<String, World> filtered = new HashMap<String, World>();
 
         for (final World world : worlds)
+        {
+            filtered.put(world.getName(), world);
+        }
+
+        for (final World world : filtered.values())
         {
             loadWorldFields(world.getName());
             loadWorldUnbreakables(world.getName());
@@ -287,6 +293,20 @@ public final class StorageManager
                 if (field.hasFlag(FieldFlag.GRIEF_REVERT) && field.getRevertSecs() > 0)
                 {
                     plugin.getGriefUndoManager().register(field);
+                }
+
+                // set the initial applied status to the field form the database
+
+                if (field.hasFlag(FieldFlag.TRANSLOCATION))
+                {
+                    if (field.isNamed())
+                    {
+                        boolean applied = isTranslocationApplied(field.getName(), field.getOwner());
+                        field.setDisabled(!applied);
+
+                        int count = totalTranslocationCount(field.getName(), field.getOwner());
+                        field.setTranslocationSize(count);
+                    }
                 }
             }
         }
@@ -1454,14 +1474,14 @@ public final class StorageManager
     }
 
     /**
-     * Checks if the translocator head record exists
+     * Checks if the translocation head record exists
      *
      * @param field
      * @return
      */
-    public boolean existsTranslocatior(final Field field)
+    public boolean existsTranslocatior(String name, String playerName)
     {
-        final String query = "SELECT COUNT(*) FROM `pstone_translocators` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "'";
+        final String query = "SELECT COUNT(*) FROM `pstone_translocations` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "'";
         ResultSet res;
         boolean exists = false;
 
@@ -1489,15 +1509,64 @@ public final class StorageManager
     }
 
     /**
+     * Sets the size of the field
+     *
+     * @param field
+     * @return
+     */
+    public boolean changeSizeTranslocatiorField(final Field field, String fieldName)
+    {
+        final String query = "SELECT * FROM `pstone_translocations` WHERE `name` ='" + Helper.escapeQuotes(fieldName) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' LIMIT 1";
+        ResultSet res;
+        boolean exists = false;
+
+        synchronized (this)
+        {
+            res = core.select(query);
+        }
+
+        if (res != null)
+        {
+            try
+            {
+                while (res.next())
+                {
+                    try
+                    {
+                        field.setRelativeCuboidDimensions(res.getInt("minx"), res.getInt("miny"), res.getInt("minz"), res.getInt("maxx"), res.getInt("maxy"), res.getInt("maxz"));
+                    }
+                    catch (final Exception ex)
+                    {
+                        PreciousStones.getLog().info(ex.getMessage());
+                    }
+                }
+            }
+            catch (final SQLException ex)
+            {
+                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return exists;
+    }
+
+    /**
      * Add the head record for the translocation
      *
      * @param field
      * @param gb
      */
-    public void insertTranslocatorHead(final Field field, String name)
+    public void insertTranslocationHead(final Field field, String name)
     {
-        final String query = "INSERT INTO `pstone_translocators` ( `name`, `player_name`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `applied`) ";
-        final String values = "VALUES ( '" + Helper.escapeQuotes(name) + "','" + Helper.escapeQuotes(field.getOwner()) +  "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + ", 1);";
+        boolean exists = existsTranslocatior(name, field.getOwner());
+
+        if (exists)
+        {
+            return;
+        }
+
+        final String query = "INSERT INTO `pstone_translocations` ( `name`, `player_name`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `applied`) ";
+        final String values = "VALUES ( '" + Helper.escapeQuotes(name) + "','" + Helper.escapeQuotes(field.getOwner()) + "'," + field.getRelativeMin().getBlockX() + "," + field.getRelativeMin().getBlockY() + "," + field.getRelativeMin().getBlockZ() + "," + field.getRelativeMax().getBlockX() + "," + field.getRelativeMax().getBlockY() + "," + field.getRelativeMax().getBlockZ() + ", 1);";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -1508,15 +1577,26 @@ public final class StorageManager
     }
 
     /**
-     * Record a single translocator block
+     * Record a single translocation block
      *
      * @param field
      * @param gb
      */
-    public void insertTranslocatorBlock(final Field field, final TranslocationBlock tb)
+    public void insertTranslocationBlock(final Field field, final TranslocationBlock tb)
     {
-        final String query = "INSERT INTO `pstone_storedblocks` ( `name`, `player_name`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`, `applied`) ";
-        final String values = "VALUES ( '" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getOwner()) + "','" + Helper.escapeQuotes(field.getWorld()) + "'," + tb.getRx() + "," + tb.getRy() + "," + tb.getRz() + "," + tb.getTypeId() + "," + tb.getData() + ",'" + Helper.escapeQuotes(tb.getSignText()) + "', 1);";
+        insertTranslocationBlock(field, tb, true);
+    }
+
+    /**
+     * Record a single translocation block
+     *
+     * @param field
+     * @param gb
+     */
+    public void insertTranslocationBlock(final Field field, final TranslocationBlock tb, boolean applied)
+    {
+        final String query = "INSERT INTO `pstone_storedblocks` ( `name`, `player_name`, `world`, `x` , `y`, `z`, `type_id`, `data`, `contents`, `sign_text`, `applied`) ";
+        final String values = "VALUES ( '" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getOwner()) + "','" + Helper.escapeQuotes(field.getWorld()) + "'," + tb.getRx() + "," + tb.getRy() + "," + tb.getRz() + "," + tb.getTypeId() + "," + tb.getData() + ",'" + tb.getContents() + "','" + Helper.escapeQuotes(tb.getSignText()) + "', " + (applied ? 1 : 0) + ");";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -1535,6 +1615,41 @@ public final class StorageManager
     public int appliedTranslocationCount(final Field field)
     {
         final String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1";
+        ResultSet res;
+        int count = 0;
+
+        synchronized (this)
+        {
+            res = core.select(query);
+        }
+
+        if (res != null)
+        {
+            try
+            {
+                while (res.next())
+                {
+                    count = res.getInt(1);
+                }
+            }
+            catch (final SQLException ex)
+            {
+                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Retrieves the count of applied translocation blocks
+     *
+     * @param field
+     * @return
+     */
+    public int totalTranslocationCount(String name, String playerName)
+    {
+        final String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "'";
         ResultSet res;
         int count = 0;
 
@@ -1640,6 +1755,7 @@ public final class StorageManager
                         final int type_id = res.getInt("type_id");
                         final byte data = res.getByte("data");
                         final String signText = res.getString("sign_text");
+                        final String contents = res.getString("contents");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
@@ -1650,6 +1766,7 @@ public final class StorageManager
                             tb.setEmpty(true);
                         }
 
+                        tb.setContents(contents);
                         tb.setRelativeCoords(x, y, z);
                         tb.setSignText(signText);
                         out.add(tb);
@@ -1714,6 +1831,7 @@ public final class StorageManager
                         final int type_id = res.getInt("type_id");
                         final byte data = res.getByte("data");
                         final String signText = res.getString("sign_text");
+                        final String contents = res.getString("contents");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
@@ -1724,6 +1842,7 @@ public final class StorageManager
                             tb.setEmpty(true);
                         }
 
+                        tb.setContents(contents);
                         tb.setRelativeCoords(x, y, z);
                         tb.setSignText(signText);
                         out.add(tb);
@@ -1802,9 +1921,9 @@ public final class StorageManager
      * @param field
      * @return
      */
-    public boolean existsFieldWithName(String translocationName, String playerName)
+    public boolean existsFieldWithName(String name, String playerName)
     {
-        String query = "SELECT COUNT(*) FROM  `pstone_fields` WHERE `owner` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(translocationName) + "'";
+        String query = "SELECT COUNT(*) FROM  `pstone_fields` WHERE `owner` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(name) + "'";
         ResultSet res;
         boolean exists = false;
 
@@ -1841,7 +1960,7 @@ public final class StorageManager
             }
         }
 
-        query = "SELECT COUNT(*) FROM  `pstone_cuboids` WHERE `owner` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(translocationName) + "'";
+        query = "SELECT COUNT(*) FROM  `pstone_cuboids` WHERE `owner` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(name) + "'";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -1885,9 +2004,9 @@ public final class StorageManager
      * @param field
      * @return
      */
-    public boolean existsTranslocationDataWithName(String translocationName, String playerName)
+    public boolean existsTranslocationDataWithName(String name, String playerName)
     {
-        String query = "SELECT COUNT(*) FROM  `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(translocationName) + "'";
+        String query = "SELECT COUNT(*) FROM  `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(name) + "'";
         ResultSet res;
         boolean exists = false;
 
@@ -2004,7 +2123,7 @@ public final class StorageManager
     }
 
     /**
-     * Deletes a specific block from a translocator field
+     * Deletes a specific block from a translocation field
      *
      * @param block
      */
@@ -2048,9 +2167,9 @@ public final class StorageManager
      *
      * @param block
      */
-    public void deleteTranslocation(String translocationName, final String playerName)
+    public void deleteTranslocation(String name, final String playerName)
     {
-        final String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(translocationName) + "';";
+        final String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "';";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -2067,9 +2186,9 @@ public final class StorageManager
      *
      * @param block
      */
-    public void deleteTranslocatorHead(String translocationName, final String playerName)
+    public void deleteTranslocationHead(String name, final String playerName)
     {
-        final String query = "DELETE FROM `pstone_translocators` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(translocationName) + "';";
+        final String query = "DELETE FROM `pstone_translocations` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "';";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -2079,6 +2198,36 @@ public final class StorageManager
         {
             core.delete(query);
         }
+    }
+
+    /**
+     * Deletes the translocation's head record
+     *
+     * @param block
+     */
+    public int deleteBlockTypeFromTranslocation(String name, final String playerName, BlockTypeEntry block)
+    {
+        int beforeCount = totalTranslocationCount(name, playerName);
+
+        String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "' AND `type_id` = " + block.getTypeId() + ";";
+
+        if (block.getData() > 0)
+        {
+            query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "' AND `type_id` = " + block.getTypeId() + " AND `data` = " + block.getData() + ";";
+        }
+
+        if (plugin.getSettingsManager().isDebugsql())
+        {
+            PreciousStones.getLog().info(query);
+        }
+        synchronized (this)
+        {
+            core.delete(query);
+        }
+
+        int afterCount = totalTranslocationCount(name, playerName);
+
+        return beforeCount - afterCount;
     }
 
     /**
@@ -2128,9 +2277,7 @@ public final class StorageManager
      */
     public void updateTranslocationApplyMode(Field field, boolean applied)
     {
-        field.setApplied(applied);
-
-        final String query = "UPDATE `pstone_translocators` SET `applied` = " + (applied ? 1 : 0) + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "';";
+        final String query = "UPDATE `pstone_translocations` SET `applied` = " + (applied ? 1 : 0) + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "';";
 
         if (plugin.getSettingsManager().isDebugsql())
         {
@@ -2148,9 +2295,9 @@ public final class StorageManager
      * @param field
      * @return
      */
-    public boolean isTranslocationApplied(String translocationName, String playerName)
+    public boolean isTranslocationApplied(String name, String playerName)
     {
-        String query = "SELECT applied FROM `pstone_translocators` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(translocationName) + "' LIMIT 1;";
+        String query = "SELECT applied FROM `pstone_translocations` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(name) + "' LIMIT 1;";
         ResultSet res;
         boolean applied = true;
 
@@ -2199,6 +2346,27 @@ public final class StorageManager
         Location location = tb.getRelativeLocation();
 
         final String query = "UPDATE `pstone_storedblocks` SET `data` = " + tb.getData() + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
+
+        if (plugin.getSettingsManager().isDebugsql())
+        {
+            PreciousStones.getLog().info(query);
+        }
+        synchronized (this)
+        {
+            core.update(query);
+        }
+    }
+
+    /**
+     * Mark a single translocation block as applied in a field
+     *
+     * @param field
+     */
+    public void updateTranslocationBlockContents(Field field, TranslocationBlock tb)
+    {
+        Location location = tb.getRelativeLocation();
+
+        final String query = "UPDATE `pstone_storedblocks` SET `contents` = '" + tb.getContents() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
         if (plugin.getSettingsManager().isDebugsql())
         {

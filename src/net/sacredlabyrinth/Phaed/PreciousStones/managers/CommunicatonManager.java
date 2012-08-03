@@ -242,7 +242,7 @@ public class CommunicatonManager
         }
         else
         {
-            ChatBlock.sendMessage(player, ChatColor.YELLOW + "To begin storage, give the field a name with /ps setname");
+            ChatBlock.sendMessage(player, ChatColor.RED + "No translocations found");
             return false;
         }
     }
@@ -262,7 +262,7 @@ public class CommunicatonManager
         {
             if (plugin.getSettingsManager().isNotifyTranslocation() && canNotify(player))
             {
-                player.sendMessage(ChatColor.AQUA + Helper.capitalize(field.getName()) + " restored.  Recording changes...");
+                player.sendMessage(ChatColor.AQUA + Helper.capitalize(field.getName()) + " enabled.  Recording all changes...");
             }
         }
 
@@ -279,7 +279,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Helper.capitalize(field.getOwner()) + "''s translocator " + field.getName() + " translocated " + count + " blocks " + field.getCoords());
+                PreciousStones.log(Helper.capitalize(field.getOwner()) + "''s translocation " + field.getName() + " translocated " + count + " blocks " + field.getCoords());
             }
         }
     }
@@ -299,7 +299,7 @@ public class CommunicatonManager
         {
             if (plugin.getSettingsManager().isNotifyTranslocation() && canNotify(player))
             {
-                player.sendMessage(ChatColor.AQUA + "Translocation stored");
+                player.sendMessage(ChatColor.AQUA + Helper.capitalize(field.getName()) + " disabled.  Blocks stored.");
             }
         }
 
@@ -316,7 +316,7 @@ public class CommunicatonManager
             }
             else
             {
-                PreciousStones.log(Helper.capitalize(field.getOwner()) + "''s translocatior " + field.getName() + " stored " + count + " blocks " + field.getCoords() );
+                PreciousStones.log(Helper.capitalize(field.getOwner()) + "''s translocatior " + field.getName() + " stored " + count + " blocks " + field.getCoords());
             }
         }
     }
@@ -2385,7 +2385,7 @@ public class CommunicatonManager
             return;
         }
 
-        if (field.getName().length() > 0)
+        if (field.isNamed())
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Entering " + field.getName());
         }
@@ -2409,7 +2409,7 @@ public class CommunicatonManager
             return;
         }
 
-        if (field.getName().length() > 0)
+        if (field.isNamed())
         {
             ChatBlock.sendMessage(player, ChatColor.AQUA + "Leaving " + field.getName());
         }
@@ -2656,7 +2656,7 @@ public class CommunicatonManager
 
             cb.addRow("  " + color + "Type: ", ChatColor.AQUA + fs.getTitle(), "");
 
-            if (fs.hasNameableFlag() && field.getName().length() > 0)
+            if (fs.hasNameableFlag() && field.isNamed())
             {
                 cb.addRow("  " + color + "Name: ", ChatColor.AQUA + field.getName(), "");
             }
@@ -2708,7 +2708,7 @@ public class CommunicatonManager
 
         if (fs.hasNameableFlag())
         {
-            if (field.getName().length() > 0)
+            if (field.isNamed())
             {
                 cb.addRow("  " + color + "Name: ", ChatColor.AQUA + field.getName(), "");
             }
@@ -2926,12 +2926,18 @@ public class CommunicatonManager
 
         for (FieldSettings fs : fss.values())
         {
-            cb.addRow(ChatColor.YELLOW + "Type: " + ChatColor.AQUA + "" + Material.getMaterial(fs.getTypeId()) + " " + ChatColor.YELLOW + "Title: " + ChatColor.AQUA + fs.getTitle());
+            String customHeight = fs.getHeight() > 0 ? ChatColor.YELLOW + "h:" + ChatColor.WHITE + "" + fs.getHeight() : "";
 
-            String customHeight = fs.getHeight() > 0 ? ChatColor.YELLOW + "Height: " + ChatColor.AQUA + "" + fs.getHeight() : "";
+            int id = fs.getTypeId();
+            PreciousStones.debug(id + "");
+            Material material = Material.getMaterial(id);
 
-            cb.addRow(ChatColor.YELLOW + "Radius: " + ChatColor.AQUA + "" + fs.getRadius() + " " + customHeight);
-            cb.addRow("");
+            if (material == null)
+            {
+                continue;
+            }
+
+            cb.addRow(ChatColor.AQUA + fs.getTitle() + ChatColor.GRAY + " (" +Helper.friendlyBlockType(material.toString()) + ") " + ChatColor.YELLOW + "id:" + ChatColor.WHITE + "" + fs.getTypeId() + " " + ChatColor.YELLOW + "r:" + ChatColor.WHITE + "" + fs.getRadius() + " " + customHeight);
         }
 
         if (cb.size() > 0)

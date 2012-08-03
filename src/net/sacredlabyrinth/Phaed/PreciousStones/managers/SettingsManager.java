@@ -21,7 +21,8 @@ import java.util.*;
 public final class SettingsManager
 {
     private double version;
-    private int minSecsBetweenTranslocations;
+    private int maxSizeTranslocation;
+    private int maxSizeTranslocationForRedstone;
     private boolean preventDestroyEverywhere;
     private boolean preventPlaceEverywhere;
     private boolean startDynmapFlagsDisabled;
@@ -111,7 +112,7 @@ public final class SettingsManager
     private boolean disableBypassAlertsForAdmins;
     private boolean offByDefault;
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106};
-    private byte[] fragileBlocks = new byte[]{7, 8, 9, 10, 11, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 123, 124};
+    private byte[] fragileBlocks = new byte[]{7, 8, 9, 10, 11, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 97,  123, 124};
     private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
     private HashSet<Integer> fragileBlockSet = new HashSet<Integer>();
     private int linesPerPage;
@@ -221,8 +222,9 @@ public final class SettingsManager
         warnLaunch = config.getBoolean("warn.launch");
         warnCannon = config.getBoolean("warn.cannon");
         warnMine = config.getBoolean("warn.mine");
+        maxSizeTranslocation = config.getInt("settings.max-size-translocation");
+        maxSizeTranslocationForRedstone = config.getInt("settings.max-size-translocation-for-redstone");
         version = config.getDouble("settings.version");
-        minSecsBetweenTranslocations = config.getInt("settings.min-seconds-between-translocations");
         preventPlaceEverywhere = config.getBoolean("settings.prevent-place-everywhere");
         preventDestroyEverywhere = config.getBoolean("settings.prevent-destroy-everywhere");
         showDefaultWelcomeFarewellMessages = config.getBoolean("settings.show-default-welcome-farewell-messages");
@@ -1380,8 +1382,23 @@ public final class SettingsManager
         return notifyTranslocation;
     }
 
-    public int getMinSecsBetweenTranslocations()
+    public int getMaxSizeTranslocation()
     {
-        return minSecsBetweenTranslocations;
+        return maxSizeTranslocation;
+    }
+
+    public void setMaxSizeTranslocation(int maxSizeTranslocation)
+    {
+        this.maxSizeTranslocation = maxSizeTranslocation;
+    }
+
+    public int getMaxSizeTranslocationForRedstone()
+    {
+        return maxSizeTranslocationForRedstone;
+    }
+
+    public void setMaxSizeTranslocationForRedstone(int maxSizeTranslocationForRedstone)
+    {
+        this.maxSizeTranslocationForRedstone = maxSizeTranslocationForRedstone;
     }
 }

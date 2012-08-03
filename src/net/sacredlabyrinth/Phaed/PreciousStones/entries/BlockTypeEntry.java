@@ -85,7 +85,7 @@ public class BlockTypeEntry
 
         // adjust for changing blocks
 
-        if (id1 == 8 && id2 == 9 || id1 == 10 && id2 == 11 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61)
+        if (id1 == 8 && id2 == 9 || id1 == 9 && id2 == 8 || id1 == 11 && id2 == 10 || id1 == 10 && id2 == 11 || id1 == 73 && id2 == 74 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61)
         {
             return true;
         }
@@ -115,14 +115,14 @@ public class BlockTypeEntry
 
     public BlockTypeEntry(String packed)
     {
-        String[] unpacked = packed.split("[|]");
+        String[] unpacked = packed.split("[:]");
         this.typeId = Integer.parseInt(unpacked[0]);
         this.data = Byte.parseByte(unpacked[1]);
     }
 
     public String serialize()
     {
-        return getTypeId() + "|" + getData();
+        return getTypeId() + ":" + getData();
     }
 
     public void setData(byte data)

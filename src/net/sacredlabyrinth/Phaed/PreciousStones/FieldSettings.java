@@ -24,6 +24,7 @@ public class FieldSettings
     private int heal = 0;
     private int damage = 0;
     private int maskOnDisabledBlock = 49;
+    private int maskOnEnabledBlock = 49;
     private int feed = 0;
     private int repair = 0;
     private int launchHeight = 0;
@@ -48,7 +49,7 @@ public class FieldSettings
     private List<String> creatureTypes = new ArrayList<String>();
     private List<Integer> fertileBlocks = new ArrayList<Integer>();
     private List<Integer> limits = new ArrayList<Integer>();
-    private List<BlockTypeEntry> translocatorBlacklist = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> translocationBlacklist = new ArrayList<BlockTypeEntry>();
     private List<Integer> preventUse = new ArrayList<Integer>();
     private List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> equipItems = new ArrayList<BlockTypeEntry>();
@@ -314,9 +315,9 @@ public class FieldSettings
             limits = (List<Integer>) map.get("limits");
         }
 
-        if (map.containsKey("translocator-blacklist") && Helper.isStringList(map.get("translocator-blacklists")))
+        if (map.containsKey("translocation-blacklist") && Helper.isStringList(map.get("translocation-blacklists")))
         {
-            translocatorBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("translocator-blacklist"));
+            translocationBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("translocation-blacklist"));
         }
 
         if (map.containsKey("allowed-only-inside") && Helper.isStringList(map.get("allowed-only-inside")))
@@ -531,6 +532,15 @@ public class FieldSettings
             {
                 defaultFlags.add(FieldFlag.MASK_ON_DISABLED);
                 maskOnDisabledBlock = (Integer) map.get("mask-on-disabled");
+            }
+        }
+
+        if (map.containsKey("mask-on-enabled") && Helper.isInteger(map.get("mask-on-enabled")))
+        {
+            if ((Integer) map.get("mask-on-enabled") > 0)
+            {
+                defaultFlags.add(FieldFlag.MASK_ON_ENABLED);
+                maskOnEnabledBlock = (Integer) map.get("mask-on-enabled");
             }
         }
 
@@ -820,11 +830,11 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("translocator") && Helper.isBoolean(map.get("translocator")))
+        if (map.containsKey("translocation") && Helper.isBoolean(map.get("translocation")))
         {
-            if ((Boolean) map.get("translocator"))
+            if ((Boolean) map.get("translocation"))
             {
-                defaultFlags.add(FieldFlag.TRANSLOCATOR);
+                defaultFlags.add(FieldFlag.TRANSLOCATION);
             }
         }
 
@@ -945,7 +955,7 @@ public class FieldSettings
      */
     public boolean hasNameableFlag()
     {
-        return defaultFlags.contains(FieldFlag.WELCOME_MESSAGE) || defaultFlags.contains(FieldFlag.FAREWELL_MESSAGE) || defaultFlags.contains(FieldFlag.ENTRY_ALERT) || defaultFlags.contains(FieldFlag.TRANSLOCATOR);
+        return defaultFlags.contains(FieldFlag.WELCOME_MESSAGE) || defaultFlags.contains(FieldFlag.FAREWELL_MESSAGE) || defaultFlags.contains(FieldFlag.ENTRY_ALERT) || defaultFlags.contains(FieldFlag.TRANSLOCATION);
     }
 
     /**
@@ -998,7 +1008,7 @@ public class FieldSettings
      */
     public boolean canTranslocate(BlockTypeEntry type)
     {
-        return !translocatorBlacklist.contains(type);
+        return !translocationBlacklist.contains(type);
     }
 
     /**
@@ -1406,5 +1416,10 @@ public class FieldSettings
     public int getMaskOnDisabledBlock()
     {
         return maskOnDisabledBlock;
+    }
+
+    public int getMaskOnEnabledBlock()
+    {
+        return maskOnEnabledBlock;
     }
 }
