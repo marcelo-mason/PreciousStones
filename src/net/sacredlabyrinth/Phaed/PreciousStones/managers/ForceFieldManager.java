@@ -1160,10 +1160,21 @@ public final class ForceFieldManager
             }
         }
 
+        // always allow if in war
+
         if (plugin.getSimpleClansManager().inWar(field, playerName))
         {
-            PreciousStones.debug("allowed war block break: " + playerName);
             return true;
+        }
+
+        // ensure placement of only those with the required permission, fail silently otherwise
+
+        if (field.getSettings().getRequiredPermission() != null)
+        {
+            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermission()))
+            {
+                return false;
+            }
         }
 
         boolean allowed = isAllowed(field, playerName);
@@ -1214,6 +1225,8 @@ public final class ForceFieldManager
                 return true;
             }
         }
+
+        // always allow if in war
 
         if (plugin.getSimpleClansManager().inWar(field, playerName))
         {

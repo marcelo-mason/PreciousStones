@@ -111,16 +111,11 @@ public final class TranslocationManager
 
         // record translocation
 
-        TranslocationBlock tb;
+        TranslocationBlock tb = new TranslocationBlock(field, block);
 
-        if (block.getState() instanceof Sign)
+        if (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN))
         {
-            tb = handleSign(block);
-            tb.setRelativeCoords(field);
-        }
-        else
-        {
-            tb = new TranslocationBlock(field, block);
+            tb.setSignText(getSignText(block));
         }
 
         if (block.getType().equals(Material.CHEST))
@@ -183,10 +178,8 @@ public final class TranslocationManager
         field.setTranslocationSize(count);
     }
 
-    private TranslocationBlock handleSign(Block block)
+    private String getSignText(Block block)
     {
-        TranslocationBlock tb = new TranslocationBlock(block);
-
         String signText = "";
         Sign sign = (Sign) block.getState();
 
@@ -197,9 +190,7 @@ public final class TranslocationManager
 
         signText = Helper.stripTrailing(signText, "`");
 
-        tb.setSignText(signText);
-
-        return tb;
+        return signText;
     }
 
     /**
@@ -252,46 +243,6 @@ public final class TranslocationManager
         if (tb.isEmpty())
         {
             block.setTypeIdAndData(tb.getTypeId(), tb.getData(), true);
-
-            if (tb.hasItemStacks())
-            {
-                if (tb.getTypeId() == 54)
-                {
-                    Chest chest = (Chest) block.getState();
-                    Inventory inventory = chest.getBlockInventory();
-                    ItemStack[] itemStacks = tb.getItemStacks();
-
-                    for (ItemStack stack : itemStacks)
-                    {
-                        inventory.addItem(stack);
-                    }
-                }
-
-                if (tb.getTypeId() == 23)
-                {
-                    Dispenser dispenser = (Dispenser) block.getState();
-                    Inventory inventory = dispenser.getInventory();
-                    ItemStack[] itemStacks = tb.getItemStacks();
-
-                    for (ItemStack stack : itemStacks)
-                    {
-                        inventory.addItem(stack);
-                    }
-                }
-
-                if (tb.getTypeId() == 61 || tb.getTypeId() == 62)
-                {
-                    Furnace furnace = (Furnace) block.getState();
-                    Inventory inventory = furnace.getInventory();
-                    ItemStack[] itemStacks = tb.getItemStacks();
-
-                    for (ItemStack stack : itemStacks)
-                    {
-                        inventory.addItem(stack);
-                    }
-                }
-            }
-
             return true;
         }
 
@@ -329,7 +280,7 @@ public final class TranslocationManager
         {
             block.setTypeIdAndData(tb.getTypeId(), tb.getData(), true);
 
-            if (block.getState() instanceof Sign && tb.getSignText().length() > 0)
+            if (block.getState() instanceof Sign && !tb.getSignText().isEmpty())
             {
                 Sign sign = (Sign) block.getState();
                 String[] lines = tb.getSignText().split("[`]");
@@ -337,34 +288,35 @@ public final class TranslocationManager
                 for (int i = 0; i < lines.length; i++)
                 {
                     sign.setLine(i, lines[i]);
+                    sign.update();
                 }
             }
-        }
 
-        if (tb.hasItemStacks())
-        {
-            if (tb.getTypeId() == 54)
+            if (tb.hasItemStacks())
             {
-                Chest chest = (Chest) block.getState();
-                Inventory inventory = chest.getBlockInventory();
-                ItemStack[] itemStacks = tb.getItemStacks();
-                inventory.setContents(itemStacks);
-            }
+                if (tb.getTypeId() == 54)
+                {
+                    Chest chest = (Chest) block.getState();
+                    Inventory inventory = chest.getBlockInventory();
+                    ItemStack[] itemStacks = tb.getItemStacks();
+                    inventory.setContents(itemStacks);
+                }
 
-            if (tb.getTypeId() == 23)
-            {
-                Dispenser dispenser = (Dispenser) block.getState();
-                Inventory inventory = dispenser.getInventory();
-                ItemStack[] itemStacks = tb.getItemStacks();
-                inventory.setContents(itemStacks);
-            }
+                if (tb.getTypeId() == 23)
+                {
+                    Dispenser dispenser = (Dispenser) block.getState();
+                    Inventory inventory = dispenser.getInventory();
+                    ItemStack[] itemStacks = tb.getItemStacks();
+                    inventory.setContents(itemStacks);
+                }
 
-            if (tb.getTypeId() == 61 || tb.getTypeId() == 62)
-            {
-                Furnace furnace = (Furnace) block.getState();
-                Inventory inventory = furnace.getInventory();
-                ItemStack[] itemStacks = tb.getItemStacks();
-                inventory.setContents(itemStacks);
+                if (tb.getTypeId() == 61 || tb.getTypeId() == 62)
+                {
+                    Furnace furnace = (Furnace) block.getState();
+                    Inventory inventory = furnace.getInventory();
+                    ItemStack[] itemStacks = tb.getItemStacks();
+                    inventory.setContents(itemStacks);
+                }
             }
         }
 
@@ -447,6 +399,13 @@ public final class TranslocationManager
                 plugin.getStorageManager().updateTranslocationBlockContents(field, tb);
             }
 
+            // update the sign text
+
+            if (!tb.getSignText().isEmpty())
+            {
+                plugin.getStorageManager().updateTranslocationSignText(field, tb);
+            }
+
             if (clear)
             {
                 block.setTypeIdAndData(0, (byte) 0, true);
@@ -478,6 +437,11 @@ public final class TranslocationManager
         {
             PreciousStones.debug("translocation block rejected, it's id changed since it was recorded: " + block.getTypeId() + " " + tb.getTypeId());
             return null;
+        }
+
+        if (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN))
+        {
+            tb.setSignText(getSignText(block));
         }
 
         // extract the block's contents

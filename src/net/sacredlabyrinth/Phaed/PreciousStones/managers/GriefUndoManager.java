@@ -286,6 +286,7 @@ public final class GriefUndoManager
                 for (int i = 0; i < lines.length; i++)
                 {
                     sign.setLine(i, lines[i]);
+                    sign.update();
                 }
             }
         }

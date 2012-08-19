@@ -33,6 +33,7 @@ public final class StorageManager
     private final Set<Field> pendingGrief = new HashSet<Field>();
     private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
     private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
+    private final Map<String, Integer> purged = new HashMap<String, Integer>();
     private final List<SnitchEntry> pendingSnitchEntries = new LinkedList<SnitchEntry>();
 
     /**
@@ -508,8 +509,8 @@ public final class StorageManager
     public List<Field> getFields(final String worldName)
     {
         final List<Field> out = new ArrayList<Field>();
-        int purged = 0;
         boolean foundInWrongTable = false;
+        int purged = 0;
 
         final String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM pstone_fields WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
@@ -547,7 +548,7 @@ public final class StorageManager
 
                         final FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
-                        // check for fields to purge
+                        // check for snitch fields to purge
 
                         if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                         {
@@ -607,7 +608,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log("({0}) fields purged: {1}", worldName, purged);
+            PreciousStones.log("({0}) unused snitches purged: {1}", worldName, purged);
         }
         return out;
     }
@@ -815,7 +816,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log("({0}) cuboids purged: {1}", worldName, purged);
+            PreciousStones.log("({0}) unused snitches purged: {1}", worldName, purged);
         }
 
         return out.values();
@@ -829,10 +830,7 @@ public final class StorageManager
      */
     public void extractPlayers()
     {
-        int purged = 0;
-
         final String query = "SELECT * FROM pstone_players;";
-
         final ResultSet res = core.select(query);
 
         if (res != null)
@@ -853,8 +851,21 @@ public final class StorageManager
 
                             if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
                             {
+                                int purged = plugin.getForceFieldManager().deleteBelonging(name);
+
+                                if (purged > 0)
+                                {
+                                    PreciousStones.log("({0}) inactivity purge: {1} fields", name, purged);
+                                }
+
+                                purged = plugin.getUnbreakableManager().deleteBelonging(name);
+
+                                if (purged > 0)
+                                {
+                                    PreciousStones.log("({0}) inactivity purge: {1} unbreakables", name, purged);
+                                }
+
                                 offerDeletePlayer(name);
-                                purged++;
                                 continue;
                             }
                         }
@@ -873,11 +884,6 @@ public final class StorageManager
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
             }
-        }
-
-        if (purged > 0)
-        {
-            PreciousStones.log("players purged: {0}", purged);
         }
     }
 
@@ -2304,7 +2310,7 @@ public final class StorageManager
     }
 
     /**
-     * Mark a single translocation block as applied in a field
+     * Update a block's data on the database
      *
      * @param field
      */
@@ -2325,7 +2331,7 @@ public final class StorageManager
     }
 
     /**
-     * Mark a single translocation block as applied in a field
+     * Update a block's content on the database
      *
      * @param field
      */
@@ -2334,6 +2340,27 @@ public final class StorageManager
         Location location = tb.getRelativeLocation();
 
         final String query = "UPDATE `pstone_storedblocks` SET `contents` = '" + tb.getContents() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
+
+        if (plugin.getSettingsManager().isDebugsql())
+        {
+            PreciousStones.getLog().info(query);
+        }
+        synchronized (this)
+        {
+            core.update(query);
+        }
+    }
+
+    /**
+     * Update a block's signtext on the database
+     *
+     * @param field
+     */
+    public void updateTranslocationSignText(Field field, TranslocationBlock tb)
+    {
+        Location location = tb.getRelativeLocation();
+
+        final String query = "UPDATE `pstone_storedblocks` SET `sign_text` = '" + tb.getSignText() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
         if (plugin.getSettingsManager().isDebugsql())
         {

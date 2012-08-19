@@ -5,7 +5,7 @@ repairable-items: [256,257,258,259,267,268,269,270,271,272,273,274,275,276,277,2
 tool-items: [256,257,258,269,270,271,273,274,275,277,278,279,284,285,286,290,291,292,293,294]
 force-field-blocks:
 -   title: City Protection
-    block: 57
+    block: 133
     radius: 20
     custom-height: 15
     prevent-fire: true
@@ -22,8 +22,8 @@ force-field-blocks:
     mixing-group: 1
     cuboid: true
     mask-on-disabled: 80
--   title: Plot
-    block: 999999
+-   title: City Plot
+    block: 57
     radius: 20
     custom-height: 15
     allowed-only-inside: ["City Protection"]
@@ -46,14 +46,34 @@ force-field-blocks:
     block: 22
     radius: 5
     prevent-entry: true
-    prevent-fire: true
-    prevent-place: true
-    prevent-destroy: true
-    prevent-explosions: true
     prevent-unprotectable: true
     prevent-flow: true
     enable-on-src: true
     can-change-owner: true
+    cuboid: true
+    mask-on-disabled: 80
+-   title: Grief Revert
+    block: 41
+    radius: 20
+    custom-height: 15
+    allow-grief: [37, 38, 39, 40]
+    grief-revert: true
+    apply-to-all: true
+    welcome-message: true
+    farewell-message: true
+    enable-on-src: true
+    can-change-owner: true
+    mixing-group: 1
+    cuboid: true
+    mask-on-disabled: 80
+-   title: Peace Keeper
+    block: 19
+    radius: 10
+    prevent-pvp: true
+    no-player-place: true
+    prevent-mob-damage: true
+    protect-animals: true
+    protect-mobs: true
     cuboid: true
     mask-on-disabled: 80
 -   title: Jack-o-Death
@@ -103,7 +123,6 @@ force-field-blocks:
     breakable: true
     no-conflict: true
     mixing-group: 2
-    cuboid: true
     mask-on-disabled: 80
 -   title: Proximity Mine
     block: 73
@@ -139,67 +158,162 @@ force-field-blocks:
     cuboid: true
     enable-with-redstone: true
     mask-on-disabled: 80
--   title: Grief Revert
-    block: 41
-    radius: 20
-    custom-height: 15
-    allow-grief: [37, 38, 39, 40]
-    grief-revert: true
-    apply-to-all: true
-    welcome-message: true
-    farewell-message: true
-    enable-on-src: true
-    mixing-group: 1
+-   title: Translocator
+    block: '100:14'
+    radius: 8
+    custom-volume: 5000
+    enable-with-redstone: true
+    translocation: true
+    dynmap-area: true
+    dynmap-disabled: true
+    translocation-blacklist:
+    - 57
+    - 41
     cuboid: true
-    mask-on-disabled: 80
+    mask-on-disabled: 17
 -   title: GodStone
     block: 99
     radius: 5
     heal: 4
     feed: 2
     repair: 25
+    neutralize-potions: [HARM, CONFUSION, BLINDNESS, HUNGER, WEAKNESS, POISON, SLOW]
     no-conflict: true
     mixing-group: 2
     cuboid: true
     mask-on-disabled: 80
--   title: SuperMario
-    block: 999999
+-   title: Miner's Haste
+    block: 8
     radius: 10
-    custom-height: 11
-    potions: [SPEED, JUMP]
-    potion-intensity: [5, 10]
-    no-conflict: true
-    mixing-group: 1
+    custom-height: 128
     cuboid: true
-    mask-on-disabled: 80
--   title: Forester
-    block: 86
+    dynmap-area: true
+    potions:
+    - FAST_DIGGING
+    - SPEED
+    - JUMP
+    potion-intensity:
+    - 5
+    - 3
+    - 5
+    enable-with-redstone: true
+    apply-to-all: true
+    no-fall-damage: true
+    mask-on-disabled: 17
+-   title: Mild Forester
+    block: '18:4'
     radius: 20
     custom-height: 15
     forester: true
     ground-block: 2
-    fertile-blocks: [1, 3, 12, 87, 88]
-    tree-types: [0, 0, 0, 1, 1, 2, 3, 4, 4]
+    fertile-blocks:
+    - 3
+    - 2
+    - 13
+    - 87
+    - 80
+    - 88
+    tree-types:
+    - 0
+    - 0
+    - 0
+    - 1
+    - 1
+    - 4
+    shrub-types:
+    - 1
+    - 1
+    - 1
+    - 2
+    - 2
+    - 3
+    - 4
+    shrub-density: 64
+    tree-count: 32
+    grow-time: 10
+    no-owner: true
+    no-conflict: false
+-   title: Redwood Forester
+    block: '18:5'
+    radius: 20
+    custom-height: 15
+    forester: true
+    ground-block: 2
+    fertile-blocks:
+    - 3
+    - 2
+    - 13
+    - 87
+    - 80
+    - 88
+    tree-types:
+    - 2
+    - 2
+    - 2
+    - 3
+    shrub-types:
+    - 1
+    shrub-density: 64
+    tree-count: 32
+    grow-time: 10
+    no-owner: true
+    no-conflict: false
+-   title: Jungle Forester
+    block: '18:6'
+    radius: 20
+    custom-height: 15
+    forester: true
+    ground-block: 2
+    fertile-blocks:
+    - 3
+    - 2
+    - 13
+    - 87
+    - 80
+    - 88
+    tree-types:
+    - 0
+    - 0
+    - 7
+    - 7
+    - 7
+    - 8
+    - 8
+    - 8
+    - 8
+    shrub-types:
+    - 2
+    shrub-density: 30
     tree-count: 64
     grow-time: 10
-    shrub-types: [1, 1, 1, 2, 2, 3, 4]
-    shrub-density: 64
-    creature-types: [ None, None, None, None, None, Sheep, Pig, Cow ]
-    creature-count: 12
     no-owner: true
-    no-conflict: true
-    mask-on-disabled: 80
--   title: Peace Keeper
-    block: 19
-    radius: 10
-    prevent-pvp: true
-    neutralize-potions: [HARM, CONFUSION, BLINDNESS, HUNGER, WEAKNESS, POISON, SLOW, SLOW_DIGGING]
-    no-player-place: true
-    prevent-mob-damage: true
-    protect-animals: true
-    protect-mobs: true
-    cuboid: true
-    mask-on-disabled: 80
+    no-conflict: false
+-   title: Birch Forester
+    block: '18:7'
+    radius: 20
+    custom-height: 15
+    forester: true
+    ground-block: 2
+    fertile-blocks:
+    - 3
+    - 2
+    - 13
+    - 87
+    - 80
+    - 88
+    tree-types:
+    - 4
+    - 4
+    - 8
+    - 8
+    - 7
+    shrub-types:
+    - 2
+    shrub-density: 85
+    tree-count: 64
+    grow-time: 10
+    no-owner: true
+    no-conflict: false
 warn:
     slow-damage: true
     pvp: true

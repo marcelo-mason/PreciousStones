@@ -2929,15 +2929,15 @@ public class CommunicatonManager
             String customHeight = fs.getHeight() > 0 ? ChatColor.YELLOW + "h:" + ChatColor.WHITE + "" + fs.getHeight() : "";
 
             int id = fs.getTypeId();
-            PreciousStones.debug(id + "");
             Material material = Material.getMaterial(id);
+            BlockTypeEntry entry = new BlockTypeEntry(fs.getTypeId(), fs.getData());
 
             if (material == null)
             {
                 continue;
             }
 
-            cb.addRow(ChatColor.AQUA + fs.getTitle() + ChatColor.GRAY + " (" +Helper.friendlyBlockType(material.toString()) + ") " + ChatColor.YELLOW + "id:" + ChatColor.WHITE + "" + fs.getTypeId() + " " + ChatColor.YELLOW + "r:" + ChatColor.WHITE + "" + fs.getRadius() + " " + customHeight);
+            cb.addRow(ChatColor.AQUA + fs.getTitle() + ChatColor.GRAY + " (" +Helper.friendlyBlockType(material.toString()) + ") " + ChatColor.YELLOW + "id:" + ChatColor.WHITE + "" + entry.toString() + " " + ChatColor.YELLOW + "r:" + ChatColor.WHITE + "" + fs.getRadius() + " " + customHeight);
         }
 
         if (cb.size() > 0)
@@ -3504,6 +3504,28 @@ public class CommunicatonManager
             if ((plugin.getPermissionsManager().has(player, "preciousstones.benefit.mark") && !plugin.getPermissionsManager().has(player, "preciousstones.admin.mark")) && hasPlayer)
             {
                 cb.addRow(color + "  /ps mark" + colorDesc + "- Marks the location of fields");
+            }
+
+            if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.use"))
+            {
+                cb.addRow(color + "  /ps translocation list " + colorDesc + "- Lists stored translocations");
+            }
+
+            if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.import"))
+            {
+                cb.addRow(color + "  /ps translocation import " + colorDesc + "- Import all blocks in field");
+                cb.addRow(color + "  /ps translocation import [id] [id] ... " + colorDesc + "- Import specific blocks");
+            }
+
+            if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.delete"))
+            {
+                cb.addRow(color + "  /ps translocation delete " + colorDesc + "- Delete all blocks in field");
+                cb.addRow(color + "  /ps translocation delete [id] [id] ... " + colorDesc + "- Delete specific blocks");
+            }
+
+            if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.remove"))
+            {
+                cb.addRow(color + "  /ps translocation remove [id] [id] ... " + colorDesc + "- Remove specific blocks");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasPlayer)

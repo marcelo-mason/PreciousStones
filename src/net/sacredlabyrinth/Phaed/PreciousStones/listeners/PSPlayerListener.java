@@ -644,6 +644,16 @@ public class PSPlayerListener implements Listener
                                 {
                                     if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
                                     {
+                                        // only those with permission can use
+
+                                        if (field.getSettings().getRequiredPermission() != null)
+                                        {
+                                            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermission()))
+                                            {
+                                                return;
+                                            }
+                                        }
+
                                         if (!plugin.getCommunicationManager().showSnitchList(player, plugin.getForceFieldManager().getField(block)))
                                         {
                                             showInfo(field, player);
@@ -658,6 +668,16 @@ public class PSPlayerListener implements Listener
 
                                 if ((field.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
                                 {
+                                    // only those with permission can use
+
+                                    if (field.getSettings().getRequiredPermission() != null)
+                                    {
+                                        if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermission()))
+                                        {
+                                            return;
+                                        }
+                                    }
+
                                     int size = plugin.getGriefUndoManager().undoGrief(field);
 
                                     if (size == 0)
@@ -677,6 +697,16 @@ public class PSPlayerListener implements Listener
                                 {
                                     if (field.hasFlag(FieldFlag.TRANSLOCATION) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
                                     {
+                                        // only those with permission can use
+
+                                        if (field.getSettings().getRequiredPermission() != null)
+                                        {
+                                            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermission()))
+                                            {
+                                                return;
+                                            }
+                                        }
+
                                         if (!field.isTranslocating())
                                         {
                                             if (field.isNamed())

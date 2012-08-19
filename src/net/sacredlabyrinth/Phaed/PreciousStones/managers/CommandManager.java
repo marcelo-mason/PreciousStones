@@ -1071,8 +1071,8 @@ public final class CommandManager implements CommandExecutor
                         {
                             ChatBlock.sendMessage(sender, ChatColor.GRAY + "* All commands (except for list) require you to be pointing at a field block or standing in the field");
                             ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation list");
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation import " + ChatColor.GRAY + "* imports everything)");
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation delete " + ChatColor.GRAY + "* deletes everything)");
+                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation import " + ChatColor.GRAY + "* imports everything");
+                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation delete " + ChatColor.GRAY + "* deletes everything");
                             ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation import [id] [id] ...");
                             ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation remove [id] [id] ...");
                             ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation delete [id] [id] ...");
@@ -1141,127 +1141,133 @@ public final class CommandManager implements CommandExecutor
                             }
                             return true;
                         }
-                    }
 
-                    if (args[0].equals("remove") && plugin.getPermissionsManager().has(player, "preciousstones.translocation.remove"))
-                    {
-                        args = Helper.removeFirst(args);
-
-                        Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.TRANSLOCATION);
-
-                        if (field != null)
+                        if (args[0].equals("remove") && plugin.getPermissionsManager().has(player, "preciousstones.translocation.remove"))
                         {
-                            if (field.isTranslocating())
-                            {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
-                                return true;
-                            }
+                            args = Helper.removeFirst(args);
 
-                            if (!field.isNamed())
-                            {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
-                                return true;
-                            }
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.TRANSLOCATION);
 
-                            if (field.isDisabled())
+                            if (field != null)
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "Translocation field must be enabled to remove blocks");
-                                return true;
-                            }
-
-                            if (args.length > 0)
-                            {
-                                List<BlockTypeEntry> entries = new LinkedList<BlockTypeEntry>();
-
-                                for (String arg : args)
+                                if (field.isTranslocating())
                                 {
-                                    BlockTypeEntry entry = Helper.toTypeEntry(arg);
-
-                                    if (entry == null || !entry.isValid())
-                                    {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is not a valid block id, skipped.");
-                                        continue;
-                                    }
-
-                                    entries.add(entry);
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
+                                    return true;
                                 }
 
-                                if (!entries.isEmpty())
+                                if (!field.isNamed())
                                 {
-                                    plugin.getTranslocationManager().removeBlocks(field, player, entries);
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
+                                    return true;
+                                }
+
+                                if (field.isDisabled())
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Translocation field must be enabled to remove blocks");
+                                    return true;
+                                }
+
+                                if (args.length > 0)
+                                {
+                                    List<BlockTypeEntry> entries = new LinkedList<BlockTypeEntry>();
+
+                                    for (String arg : args)
+                                    {
+                                        BlockTypeEntry entry = Helper.toTypeEntry(arg);
+
+                                        if (entry == null || !entry.isValid())
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is not a valid block id, skipped.");
+                                            continue;
+                                        }
+
+                                        entries.add(entry);
+                                    }
+
+                                    if (!entries.isEmpty())
+                                    {
+                                        plugin.getTranslocationManager().removeBlocks(field, player, entries);
+                                    }
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation remove [id] [id] ...");
                                 }
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation remove [id] [id] ...");
+                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
                             }
+                            return true;
                         }
-                        else
+
+                        if (args[0].equals("import") && plugin.getPermissionsManager().has(player, "preciousstones.translocation.import"))
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
-                        }
-                        return true;
-                    }
+                            args = Helper.removeFirst(args);
 
-                    if (args[0].equals("import") && plugin.getPermissionsManager().has(player, "preciousstones.translocation.import"))
-                    {
-                        args = Helper.removeFirst(args);
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.TRANSLOCATION);
 
-                        Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.TRANSLOCATION);
-
-                        if (field != null)
-                        {
-                            if (field.isTranslocating())
+                            if (field != null)
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
-                                return true;
-                            }
+                                if (field.isTranslocating())
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
+                                    return true;
+                                }
 
-                            if (!field.isNamed())
-                            {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
-                                return true;
-                            }
+                                if (!field.isNamed())
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
+                                    return true;
+                                }
 
-                            if (field.isDisabled())
-                            {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "Translocation field must be enabled to import blocks");
-                                return true;
-                            }
+                                if (field.isDisabled())
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Translocation field must be enabled to import blocks");
+                                    return true;
+                                }
 
-                            if (args.length == 0)
-                            {
-                                plugin.getTranslocationManager().importBlocks(field, player, null);
+                                if (args.length == 0)
+                                {
+                                    plugin.getTranslocationManager().importBlocks(field, player, null);
+                                }
+                                else
+                                {
+                                    List<BlockTypeEntry> entries = new LinkedList<BlockTypeEntry>();
+
+                                    for (String arg : args)
+                                    {
+                                        BlockTypeEntry entry = Helper.toTypeEntry(arg);
+
+                                        if (entry == null || !entry.isValid())
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is not a valid block id, skipped.");
+                                            continue;
+                                        }
+
+                                        if (!field.getSettings().canTranslocate(entry))
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is blacklisted, skipped.");
+                                            continue;
+                                        }
+
+                                        entries.add(entry);
+                                    }
+
+                                    if (!entries.isEmpty())
+                                    {
+                                        plugin.getTranslocationManager().importBlocks(field, player, entries);
+                                    }
+                                }
                             }
                             else
                             {
-                                List<BlockTypeEntry> entries = new LinkedList<BlockTypeEntry>();
-
-                                for (String arg : args)
-                                {
-                                    BlockTypeEntry entry = Helper.toTypeEntry(arg);
-
-                                    if (entry == null || !entry.isValid())
-                                    {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is not a valid block id, skipped.");
-                                        continue;
-                                    }
-
-                                    entries.add(entry);
-                                }
-
-                                if (!entries.isEmpty())
-                                {
-                                    plugin.getTranslocationManager().importBlocks(field, player, entries);
-                                }
+                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
                             }
-                        }
-                        else
-                        {
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
-                        }
-                        return true;
+                            return true;
 
+                        }
                     }
                     else if (cmd.equals("more") && hasplayer)
                     {
