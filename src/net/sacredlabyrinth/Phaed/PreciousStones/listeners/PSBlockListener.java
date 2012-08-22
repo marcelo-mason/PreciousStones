@@ -564,11 +564,11 @@ public class PSBlockListener implements Listener
         {
             if (field.isNamed())
             {
-                int count = plugin.getStorageManager().unappliedTranslocationCount(field);
+                int count = plugin.getStorageManager().appliedTranslocationCount(field);
 
                 if (count > 0)
                 {
-                    plugin.getTranslocationManager().applyTranslocation(field);
+                    plugin.getTranslocationManager().clearTranslocation(field);
                 }
             }
         }

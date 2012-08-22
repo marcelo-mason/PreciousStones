@@ -126,6 +126,11 @@ public class MySQLCore implements DBCore
      */
     public long insert(String query)
     {
+        if (PreciousStones.getInstance().getSettingsManager().isDebugsql())
+        {
+            PreciousStones.getLog().info(query);
+        }
+
         try
         {
             Statement statement = getConnection().createStatement();
@@ -168,6 +173,11 @@ public class MySQLCore implements DBCore
      */
     public void update(String query)
     {
+        if (PreciousStones.getInstance().getSettingsManager().isDebugsql())
+        {
+            PreciousStones.getLog().info(query);
+        }
+
         try
         {
             Statement statement = getConnection().createStatement();
@@ -198,6 +208,11 @@ public class MySQLCore implements DBCore
      */
     public void delete(String query)
     {
+        if (PreciousStones.getInstance().getSettingsManager().isDebugsql())
+        {
+            PreciousStones.getLog().info(query);
+        }
+
         try
         {
             Statement statement = getConnection().createStatement();
@@ -229,6 +244,11 @@ public class MySQLCore implements DBCore
      */
     public Boolean execute(String query)
     {
+        if (PreciousStones.getInstance().getSettingsManager().isDebugsql())
+        {
+            PreciousStones.getLog().info(query);
+        }
+
         try
         {
             Statement statement = getConnection().createStatement();

@@ -770,6 +770,11 @@ public final class CommandManager implements CommandExecutor
                                         unToggable = true;
                                     }
 
+                                    if (flagStr.equalsIgnoreCase("worldguard-repellent"))
+                                    {
+                                        unToggable = true;
+                                    }
+
                                     if (unToggable)
                                     {
                                         ChatBlock.sendMessage(sender, ChatColor.RED + "This flag cannot be toggled");

@@ -707,7 +707,7 @@ public class PSPlayerListener implements Listener
                                                     }
                                                     else
                                                     {
-                                                        PreciousStones.debug("nothing to store, disabling");
+                                                        PreciousStones.debug("disabled");
                                                         field.setDisabled(true);
                                                         plugin.getStorageManager().offerField(field);
                                                         return;
@@ -724,7 +724,7 @@ public class PSPlayerListener implements Listener
                                                     }
                                                     else
                                                     {
-                                                        PreciousStones.debug("nothing to revert, enabling");
+                                                        PreciousStones.debug("recording");
                                                         field.setDisabled(false);
                                                         plugin.getStorageManager().offerField(field);
                                                         return;

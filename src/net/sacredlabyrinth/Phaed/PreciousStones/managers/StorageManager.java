@@ -1016,17 +1016,8 @@ public final class StorageManager
                 query = "UPDATE `pstone_cuboids` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
             }
 
-            if (plugin.getSettingsManager().isDebugsql())
-            {
-                PreciousStones.getLog().info(query);
-            }
+            core.execute(query);
 
-            if (!core.execute(query))
-            {
-                // this can happen when the data didn't change
-                // PreciousStones.getLog().info(query +
-                // " error");
-            }
         }
 
         field.clearDirty();
@@ -1051,11 +1042,6 @@ public final class StorageManager
         {
             query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
             values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
-        }
-
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query + values);
         }
 
         synchronized (this)
@@ -1128,10 +1114,6 @@ public final class StorageManager
         final String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`, `data`) ";
         final String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + Helper.escapeQuotes(ub.getWorld()) + "','" + ub.getOwner() + "'," + ub.getTypeId() + "," + ub.getData() + ");";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query + values);
-        }
         synchronized (this)
         {
             core.insert(query + values);
@@ -1147,10 +1129,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 {
     final String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + Helper.escapeQuotes(ub.getWorld()) + "';";
 
-    if (plugin.getSettingsManager().isDebugsql())
-    {
-        PreciousStones.getLog().info(query);
-    }
     synchronized (this)
     {
         core.delete(query);
@@ -1189,11 +1167,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     public void deleteSnitchEntries(final Field snitch)
     {
         final String query = "DELETE FROM `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "';";
-
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
 
         synchronized (this)
         {
@@ -1274,11 +1247,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "DELETE FROM `pstone_players` WHERE player_name = '" + playerName + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
-
         core.delete(query);
     }
 
@@ -1297,7 +1265,7 @@ public void deleteUnbreakable(final Unbreakable ub)
         {
             final String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             final String values = "VALUES ( '" + playerName + "', " + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "') ";
-            final String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "' WHERE player_name = '" + playerName + "';";
+            final String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "'";
             core.insert(query + values + update);
         }
         else
@@ -1345,12 +1313,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
         final String values = "VALUES ( '" + new Timestamp((new Date()).getTime()) + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
-
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query + values);
-        }
-
         core.insert(query + values);
     }
 
@@ -1378,11 +1340,6 @@ public void deleteUnbreakable(final Unbreakable ub)
         final Queue<GriefBlock> out = new LinkedList<GriefBlock>();
 
         final String query = "SELECT * FROM  `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "' ORDER BY y ASC;";
-
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
 
         ResultSet res;
 
@@ -1445,10 +1402,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 
         final String query = "DELETE FROM `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -1464,10 +1417,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "DELETE FROM `pstone_grief_undo` WHERE x = " + block.getX() + " AND y = " + block.getY() + " AND z = " + block.getZ() + " AND world = '" + block.getWorld().getName() + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -1569,11 +1518,6 @@ public void deleteUnbreakable(final Unbreakable ub)
         final String query = "INSERT INTO `pstone_translocations` ( `name`, `player_name`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`) ";
         final String values = "VALUES ( '" + Helper.escapeQuotes(name) + "','" + Helper.escapeQuotes(field.getOwner()) + "'," + field.getRelativeMin().getBlockX() + "," + field.getRelativeMin().getBlockY() + "," + field.getRelativeMin().getBlockZ() + "," + field.getRelativeMax().getBlockX() + "," + field.getRelativeMax().getBlockY() + "," + field.getRelativeMax().getBlockZ() + ");";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query + values);
-        }
-
         core.insert(query + values);
     }
 
@@ -1598,12 +1542,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "INSERT INTO `pstone_storedblocks` ( `name`, `player_name`, `world`, `x` , `y`, `z`, `type_id`, `data`, `contents`, `sign_text`, `applied`) ";
         final String values = "VALUES ( '" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getOwner()) + "','" + Helper.escapeQuotes(field.getWorld()) + "'," + tb.getRx() + "," + tb.getRy() + "," + tb.getRz() + "," + tb.getTypeId() + "," + tb.getData() + ",'" + tb.getContents() + "','" + Helper.escapeQuotes(tb.getSignText()) + "', " + (applied ? 1 : 0) + ");";
-
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query + values);
-        }
-
         core.insert(query + values);
     }
 
@@ -1746,11 +1684,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 
         final String query = "SELECT * FROM  `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1 ORDER BY y ASC;";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
-
         ResultSet res;
 
         synchronized (this)
@@ -1821,11 +1754,6 @@ public void deleteUnbreakable(final Unbreakable ub)
         final Queue<TranslocationBlock> out = new LinkedList<TranslocationBlock>();
 
         final String query = "SELECT * FROM  `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 0 ORDER BY y ASC;";
-
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
 
         ResultSet res;
 
@@ -1898,11 +1826,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 
         final String query = "SELECT name, COUNT(name) FROM  `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' GROUP BY `name`;";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
-
         ResultSet res;
 
         synchronized (this)
@@ -1950,11 +1873,6 @@ public void deleteUnbreakable(final Unbreakable ub)
         ResultSet res;
         boolean exists = false;
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
-
         synchronized (this)
         {
             res = core.select(query);
@@ -1984,11 +1902,6 @@ public void deleteUnbreakable(final Unbreakable ub)
         }
 
         query = "SELECT COUNT(*) FROM  `pstone_cuboids` WHERE `owner` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(name) + "'";
-
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
 
         synchronized (this)
         {
@@ -2033,11 +1946,6 @@ public void deleteUnbreakable(final Unbreakable ub)
         ResultSet res;
         boolean exists = false;
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
-
         synchronized (this)
         {
             res = core.select(query);
@@ -2078,10 +1986,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "UPDATE `pstone_storedblocks` SET `applied` = 1 WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 0;";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.update(query);
@@ -2097,10 +2001,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "UPDATE `pstone_storedblocks` SET `applied` = 0 WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1;";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.update(query);
@@ -2116,10 +2016,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "DELETE FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1;";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -2135,10 +2031,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "DELETE FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "'";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -2156,10 +2048,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 
         final String query = "DELETE FROM `pstone_storedblocks` WHERE x = " + location.getBlockX() + " AND y = " + location.getBlockY() + " AND z = " + location.getBlockZ() + " AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `name` = '" + Helper.escapeQuotes(field.getName()) + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -2175,10 +2063,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -2194,10 +2078,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -2213,10 +2093,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "DELETE FROM `pstone_translocations` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -2239,10 +2115,6 @@ public void deleteUnbreakable(final Unbreakable ub)
             query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "' AND `type_id` = " + block.getTypeId() + " AND `data` = " + block.getData() + ";";
         }
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -2262,10 +2134,6 @@ public void deleteUnbreakable(final Unbreakable ub)
     {
         final String query = "UPDATE `pstone_storedblocks` SET `player_name` = '" + Helper.escapeQuotes(newOwner) + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.delete(query);
@@ -2283,10 +2151,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 
         final String query = "UPDATE `pstone_storedblocks` SET `applied` = " + (applied ? 1 : 0) + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.update(query);
@@ -2315,10 +2179,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 
         final String query = "UPDATE `pstone_storedblocks` SET `data` = " + tb.getData() + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.update(query);
@@ -2336,10 +2196,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 
         final String query = "UPDATE `pstone_storedblocks` SET `contents` = '" + tb.getContents() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.update(query);
@@ -2357,10 +2213,6 @@ public void deleteUnbreakable(final Unbreakable ub)
 
         final String query = "UPDATE `pstone_storedblocks` SET `sign_text` = '" + tb.getSignText() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
         synchronized (this)
         {
             core.update(query);
@@ -2378,10 +2230,6 @@ public void deleteUnbreakable(final Unbreakable ub)
         {
             public void run()
             {
-                if (plugin.getSettingsManager().isDebugsql())
-                {
-                    //PreciousStones.getLog().info("[Queue] processing queue...");
-                }
                 processQueue();
             }
         }, 0, 20L * plugin.getSettingsManager().getSaveFrequency());

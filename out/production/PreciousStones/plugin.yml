@@ -1,6 +1,6 @@
 name: PreciousStones
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
-version: 9.3.3
+version: 9.4.0
 dev-url: http://dev.bukkit.org/server-mods/preciousstones/
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC, Lockette]
@@ -203,6 +203,8 @@ permissions:
     description: Can remove specific block types form their translocations
   preciousstones.translocation.import:
     description: Can import into translocation fields
+  preciousstones.translocation.unlink:
+    description: Can unlink a translocation
   preciousstones.limit1:
     description: Limit 1
   preciousstones.limit2:
@@ -282,6 +284,7 @@ permissions:
       preciousstones.translocation.import: true
       preciousstones.translocation.delete: true
       preciousstones.translocation.remove: true
+      preciousstones.translocation.unlink: true
   preciousstones.bypass.*:
     description: Permissions for moderators
     default: op

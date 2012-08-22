@@ -1076,12 +1076,16 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         // writing the list of flags to json
 
-
         JSONArray disabledFlags = new JSONArray();
         disabledFlags.addAll(getDisabledFlagsStringList());
 
         JSONArray insertedFlags = new JSONArray();
         insertedFlags.addAll(getInsertedFlagsStringList());
+
+        if (!disabledFlags.isEmpty())
+        {
+            json.put("disabledFlags", disabledFlags);
+        }
 
         if (!insertedFlags.isEmpty())
         {
