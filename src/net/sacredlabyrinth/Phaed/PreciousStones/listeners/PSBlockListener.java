@@ -441,35 +441,41 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (!plugin.getPermissionsManager().lwcProtected(player, block))
             {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy") || field.getSettings().canGrief(block.getTypeId()))
+                if (!plugin.getPermissionsManager().locketteProtected(player, block))
                 {
-                    plugin.getCommunicationManager().notifyBypassDestroy(player, block, field);
-                    plugin.getStorageManager().deleteBlockGrief(block);
-                    return;
-                }
-                else
-                {
-                    if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
+                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
-                        boolean clear = !field.hasFlag(FieldFlag.GRIEF_REVERT_DROP);
-
-                        plugin.getGriefUndoManager().addBlock(field, block, clear);
-                        plugin.getStorageManager().offerGrief(field);
-
-                        if (clear)
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy") || field.getSettings().canGrief(block.getTypeId()))
                         {
-                            event.setCancelled(true);
+                            plugin.getCommunicationManager().notifyBypassDestroy(player, block, field);
+                            plugin.getStorageManager().deleteBlockGrief(block);
+                            return;
+                        }
+                        else
+                        {
+                            if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
+                            {
+                                boolean clear = !field.hasFlag(FieldFlag.GRIEF_REVERT_DROP);
+
+                                plugin.getGriefUndoManager().addBlock(field, block, clear);
+                                plugin.getStorageManager().offerGrief(field);
+
+                                if (clear)
+                                {
+                                    event.setCancelled(true);
+                                }
+                            }
                         }
                     }
+                    else
+                    {
+                        plugin.getStorageManager().deleteBlockGrief(block);
+                    }
                 }
-            }
-            else
-            {
-                plugin.getStorageManager().deleteBlockGrief(block);
             }
         }
 
@@ -552,22 +558,17 @@ public class PSBlockListener implements Listener
             return false;
         }
 
+        // -------------------------------------------------------------------------------- breaking a transloctor block
+
         if (field.hasFlag(FieldFlag.TRANSLOCATION))
         {
             if (field.isNamed())
             {
-                int count = plugin.getStorageManager().appliedTranslocationCount(field);
+                int count = plugin.getStorageManager().unappliedTranslocationCount(field);
 
                 if (count > 0)
                 {
-                    plugin.getStorageManager().deleteAppliedTranslocation(field);
-
-                    if (!plugin.getStorageManager().existsTranslocationDataWithName(field.getName(), field.getOwner()))
-                    {
-                        plugin.getStorageManager().deleteTranslocationHead(field.getName(), field.getOwner());
-                    }
-
-                    ChatBlock.sendMessage(player, ChatColor.GRAY + " * " + ChatColor.YELLOW + "Translocation " + field.getName() + " unlinked from " + count + " blocks");
+                    plugin.getTranslocationManager().applyTranslocation(field);
                 }
             }
         }
@@ -676,7 +677,6 @@ public class PSBlockListener implements Listener
         }
 
         DebugTimer dt = new DebugTimer("onBlockPlace");
-
 
         // -------------------------------------------------------------------------------------- placing a block ion top of a field
 
@@ -1202,6 +1202,26 @@ public class PSBlockListener implements Listener
             return false;
         }
 
+        // if not allowed in this world then place as regular block
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.world"))
+        {
+            if (!fs.allowedWorld(block.getWorld()))
+            {
+                return false;
+            }
+        }
+
+        // ensure placement of only those with the required permission, fail silently otherwise
+
+        if (fs.getRequiredPermission() != null)
+        {
+            if (!plugin.getPermissionsManager().has(player, fs.getRequiredPermission()))
+            {
+                return false;
+            }
+        }
+
         // cannot place a field touching an unprotectable block
 
         if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
@@ -1251,6 +1271,18 @@ public class PSBlockListener implements Listener
             }
         }
 
+        // cannot place a field that contains players inside of worldguard regions
+
+        if (fs.hasDefaultFlag(FieldFlag.WORLDGUARD_REPELLENT))
+        {
+            if (plugin.getWorldGuardManager().isWGRegion(block))
+            {
+                ChatBlock.sendMessage(player, ChatColor.RED + "Cannot place field in worldguard regions");
+                event.setCancelled(true);
+                return false;
+            }
+        }
+
         // cannot place a field that contains unprotectable blocks inside of it if prevent-unprotectable flag exists
 
         if (fs.hasDefaultFlag(FieldFlag.PREVENT_UNPROTECTABLE))
@@ -1279,26 +1311,6 @@ public class PSBlockListener implements Listener
             if (!fs.isFertileType(floor.getTypeId()) && floor.getTypeId() != fs.getGroundBlock())
             {
                 player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " blocks must be placed of fertile land to activate");
-                return false;
-            }
-        }
-
-        // if not allowed in this world then place as regular block
-
-        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.world"))
-        {
-            if (!fs.allowedWorld(block.getWorld()))
-            {
-                return false;
-            }
-        }
-
-        // ensure placement of only those with the required permission, fail silently otherwise
-
-        if (fs.getRequiredPermission() != null)
-        {
-            if (!plugin.getPermissionsManager().has(player, fs.getRequiredPermission()))
-            {
                 return false;
             }
         }

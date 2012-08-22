@@ -142,6 +142,19 @@ public final class CommandManager implements CommandExecutor
 
                                 for (String playerName : args)
                                 {
+                                    Player allowed = Helper.matchSinglePlayer(playerName);
+
+                                    // only those with permission can be allowed
+
+                                    if (field.getSettings().getRequiredPermissionAllow() != null)
+                                    {
+                                        if (!plugin.getPermissionsManager().has(allowed, field.getSettings().getRequiredPermissionAllow()))
+                                        {
+                                            ChatBlock.sendMessage(sender, ChatColor.RED + Helper.capitalize(playerName) + " does not have permissions to be allowed");
+                                            continue;
+                                        }
+                                    }
+
                                     boolean done = plugin.getForceFieldManager().addAllowed(field, playerName);
 
                                     if (done)
@@ -1193,6 +1206,58 @@ public final class CommandManager implements CommandExecutor
                                 else
                                 {
                                     ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation remove [id] [id] ...");
+                                }
+                            }
+                            else
+                            {
+                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
+                            }
+                            return true;
+                        }
+
+                        if (args[0].equals("unlink") && plugin.getPermissionsManager().has(player, "preciousstones.translocation.unlink"))
+                        {
+                            args = Helper.removeFirst(args);
+
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.TRANSLOCATION);
+
+                            if (field != null)
+                            {
+                                if (field.isTranslocating())
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
+                                    return true;
+                                }
+
+                                if (!field.isNamed())
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
+                                    return true;
+                                }
+
+                                if (field.isDisabled())
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Translocation field must be enabled to unlink");
+                                    return true;
+                                }
+
+                                int count = plugin.getStorageManager().appliedTranslocationCount(field);
+
+                                if (count > 0)
+                                {
+                                    plugin.getStorageManager().deleteAppliedTranslocation(field);
+
+                                    if (!plugin.getStorageManager().existsTranslocationDataWithName(field.getName(), field.getOwner()))
+                                    {
+                                        plugin.getStorageManager().deleteTranslocationHead(field.getName(), field.getOwner());
+                                    }
+
+                                    ChatBlock.sendMessage(player, ChatColor.GRAY + " * " + ChatColor.YELLOW + "Translocation " + field.getName() + " unlinked from " + count + " blocks");
+                                }
+                                else
+                                {
+                                    ChatBlock.sendMessage(sender, ChatColor.RED + "No blocks to unlink");
+                                    return true;
                                 }
                             }
                             else

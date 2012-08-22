@@ -566,6 +566,11 @@ public class Helper
      */
     public static String toFlagStr(FieldFlag flag)
     {
+        if (flag == null)
+        {
+            return "";
+        }
+
         return flag.toString().toLowerCase().replace("_", "-");
     }
 

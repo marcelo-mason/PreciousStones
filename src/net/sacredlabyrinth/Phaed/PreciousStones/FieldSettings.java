@@ -39,6 +39,8 @@ public class FieldSettings
     private boolean mineHasFire = false;
     private int mineStrength = 6;
     private String groupOnEntry = null;
+    private String requiredPermissionAllow = null;
+    private String requiredPermissionUse = null;
     private String requiredPermission = null;
     private GameMode forceEntryGameMode = null;
     private GameMode forceLeavingGameMode = null;
@@ -120,6 +122,16 @@ public class FieldSettings
         if (map.containsKey("required-permission") && Helper.isString(map.get("required-permission")))
         {
             requiredPermission = (String) map.get("required-permission");
+        }
+
+        if (map.containsKey("required-permission-use") && Helper.isString(map.get("required-permission-use")))
+        {
+            requiredPermissionUse = (String) map.get("required-permission-use");
+        }
+
+        if (map.containsKey("required-permission-allow") && Helper.isString(map.get("required-permission-allow")))
+        {
+            requiredPermissionAllow = (String) map.get("required-permission-allow");
         }
 
         if (map.containsKey("group-on-entry") && Helper.isString(map.get("group-on-entry")))
@@ -378,6 +390,14 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("prevent-vehicle-destroy") && Helper.isBoolean(map.get("prevent-vehicle-destroy")))
+        {
+            if ((Boolean) map.get("prevent-vehicle-destroy"))
+            {
+                defaultFlags.add(FieldFlag.PREVENT_VEHICLE_DESTROY);
+            }
+        }
+
         if (map.containsKey("prevent-explosions") && Helper.isBoolean(map.get("prevent-explosions")))
         {
             if ((Boolean) map.get("prevent-explosions"))
@@ -487,6 +507,14 @@ public class FieldSettings
             if ((Boolean) map.get("remove-mob"))
             {
                 defaultFlags.add(FieldFlag.REMOVE_MOB);
+            }
+        }
+
+        if (map.containsKey("worldguard-repellent") && Helper.isBoolean(map.get("worldguard-repellent")))
+        {
+            if ((Boolean) map.get("worldguard-repellent"))
+            {
+                defaultFlags.add(FieldFlag.WORLDGUARD_REPELLENT);
             }
         }
 
@@ -1421,5 +1449,15 @@ public class FieldSettings
     public int getMaskOnEnabledBlock()
     {
         return maskOnEnabledBlock;
+    }
+
+    public String getRequiredPermissionAllow()
+    {
+        return requiredPermissionAllow;
+    }
+
+    public String getRequiredPermissionUse()
+    {
+        return requiredPermissionUse;
     }
 }

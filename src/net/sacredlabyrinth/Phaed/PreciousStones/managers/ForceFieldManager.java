@@ -436,6 +436,19 @@ public final class ForceFieldManager
             {
                 queueRelease(field.getParent());
             }
+            else
+            {
+                Field parent = field.getParent();
+
+                for (Field s : parent.getChildren())
+                {
+                    s.clearParent();
+                    queueRelease(s);
+                }
+
+                parent.clearChildren();
+                queueRelease(parent);
+            }
         }
 
         flushDrop();
@@ -1167,11 +1180,11 @@ public final class ForceFieldManager
             return true;
         }
 
-        // ensure placement of only those with the required permission, fail silently otherwise
+        // ensure allow of only those with the required permission, fail silently otherwise
 
-        if (field.getSettings().getRequiredPermission() != null)
+        if (field.getSettings().getRequiredPermissionAllow() != null)
         {
-            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermission()))
+            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionAllow()))
             {
                 return false;
             }

@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.plugin.Plugin;
 import uk.co.oliwali.HawkEye.util.HawkEyeAPI;
 
@@ -904,6 +905,56 @@ public class CommunicatonManager
 
     /**
      * @param player
+     * @param block
+     * @param field
+     */
+    public void notifyBypassDestroyVehicle(Player player, Vehicle block, Field field)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isNotifyBypassDestroy() && canNotify(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Vehicle bypass-destroyed in " + Helper.posessive(field.getOwner()) + " " + fs.getTitle() + " field");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogBypassDestroy())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Bypass Destroy in Field", player, block.getLocation(), block.getType().toString() + " (conflict: " + Helper.posessive(field.getOwner()) + " " + fs.getTitle() + " " + field.toString() + ")");
+            }
+            else
+            {
+                PreciousStones.log("{0} bypass-destroyed a vehicle {1} in {2}s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(block.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            }
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.notify.bypass-destroy") && canBypassAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " bypass-destroyed a vehicle " + (new Vec(block.getLocation())).toString() + " in " + Helper.posessive(field.getOwner()) + " " + fs.getTitle() + " field");
+            }
+        }
+    }
+
+    /**
+     * @param player
      * @param unbreakableblock
      */
     public void notifyBypassDestroyU(Player player, Block unbreakableblock)
@@ -1390,6 +1441,56 @@ public class CommunicatonManager
             if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.destroyarea") && canAlert(pl))
             {
                 ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to destroy a block " + (new Vec(damagedblock)).toString() + " inside " + Helper.posessive(field.getOwner()) + " " + fs.getTitle() + " field");
+            }
+        }
+    }
+
+    /**
+     * @param player
+     * @param damagedblock
+     * @param field
+     */
+    public void warnDestroyVehicle(Player player, Vehicle vehicle, Field field)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isWarnDestroyArea() && canWarn(player))
+        {
+            ChatBlock.sendMessage(player, ChatColor.AQUA + "Cannot destroy this vehicle");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogDestroyArea())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Vehicle destroy Attempt", player, vehicle.getLocation(), vehicle.getType().toString() + " (field: " + Helper.posessive(field.getOwner()) + " " + fs.getTitle() + ")");
+            }
+            else
+            {
+                PreciousStones.log("{0} attempted to destroy a vehicle {1} inside {2}s {3} field [{4}|{5} {6} {7}]", player.getName(), (new Vec(vehicle.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getType(), field.getX(), field.getY(), field.getZ());
+            }
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.destroyarea") && canAlert(pl))
+            {
+                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + "[ps] " + ChatColor.GRAY + player.getName() + " attempted to destroy a vehicle " + (new Vec(vehicle.getLocation())).toString() + " inside " + Helper.posessive(field.getOwner()) + " " + fs.getTitle() + " field");
             }
         }
     }
@@ -2617,7 +2718,8 @@ public class CommunicatonManager
         List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
 
         ChatBlock.sendBlank(player);
-        ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected: " + ChatColor.GRAY + Helper.toLocationString(block.getLocation()));
+        ChatBlock.sendMessage(player, ChatColor.WHITE + "Protected");
+
         for (Field field : fields)
         {
             ChatBlock.sendMessage(player, ChatColor.YELLOW + field.getSettings().getTitle() + ": " + ChatColor.AQUA + field.getX() + " " + field.getY() + " " + field.getZ());
@@ -3526,6 +3628,11 @@ public class CommunicatonManager
             if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.remove"))
             {
                 cb.addRow(color + "  /ps translocation remove [id] [id] ... " + colorDesc + "- Remove specific blocks");
+            }
+
+            if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.unlink"))
+            {
+                cb.addRow(color + "  /ps translocation unlink " + colorDesc + "- Unlinks the blocks");
             }
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasPlayer)

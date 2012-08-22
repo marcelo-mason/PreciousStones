@@ -390,7 +390,12 @@ public class PSPlayerListener implements Listener
                                 canDestroy = false;
                             }
 
-                            if (plugin.getPermissionsManager().lwcProtected(block))
+                            if (plugin.getPermissionsManager().lwcProtected(player, block))
+                            {
+                                canDestroy = false;
+                            }
+
+                            if (plugin.getPermissionsManager().locketteProtected(player, block))
                             {
                                 canDestroy = false;
                             }
@@ -553,6 +558,16 @@ public class PSPlayerListener implements Listener
                                 field = field.getParent();
                             }
 
+                            // only those with permission can use fields
+
+                            if (field.getSettings().getRequiredPermissionUse() != null)
+                            {
+                                if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionUse()))
+                                {
+                                    return;
+                                }
+                            }
+
                             // -------------------------------------------------------------------------------- handle changing owners
 
                             if (field.getNewOwner() != null)
@@ -644,16 +659,6 @@ public class PSPlayerListener implements Listener
                                 {
                                     if (plugin.getForceFieldManager().isAllowed(field, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
                                     {
-                                        // only those with permission can use
-
-                                        if (field.getSettings().getRequiredPermission() != null)
-                                        {
-                                            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermission()))
-                                            {
-                                                return;
-                                            }
-                                        }
-
                                         if (!plugin.getCommunicationManager().showSnitchList(player, plugin.getForceFieldManager().getField(block)))
                                         {
                                             showInfo(field, player);
@@ -668,16 +673,6 @@ public class PSPlayerListener implements Listener
 
                                 if ((field.hasFlag(FieldFlag.GRIEF_REVERT)) && (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getPermissionsManager().has(player, "preciousstones.admin.undo")))
                                 {
-                                    // only those with permission can use
-
-                                    if (field.getSettings().getRequiredPermission() != null)
-                                    {
-                                        if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermission()))
-                                        {
-                                            return;
-                                        }
-                                    }
-
                                     int size = plugin.getGriefUndoManager().undoGrief(field);
 
                                     if (size == 0)
@@ -697,16 +692,6 @@ public class PSPlayerListener implements Listener
                                 {
                                     if (field.hasFlag(FieldFlag.TRANSLOCATION) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
                                     {
-                                        // only those with permission can use
-
-                                        if (field.getSettings().getRequiredPermission() != null)
-                                        {
-                                            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermission()))
-                                            {
-                                                return;
-                                            }
-                                        }
-
                                         if (!field.isTranslocating())
                                         {
                                             if (field.isNamed())
@@ -722,7 +707,7 @@ public class PSPlayerListener implements Listener
                                                     }
                                                     else
                                                     {
-                                                        PreciousStones.debug("nothign to clean(record), disabling");
+                                                        PreciousStones.debug("nothing to store, disabling");
                                                         field.setDisabled(true);
                                                         plugin.getStorageManager().offerField(field);
                                                         return;
@@ -739,7 +724,7 @@ public class PSPlayerListener implements Listener
                                                     }
                                                     else
                                                     {
-                                                        PreciousStones.debug("nothign to apply(revert), enabling");
+                                                        PreciousStones.debug("nothing to revert, enabling");
                                                         field.setDisabled(false);
                                                         plugin.getStorageManager().offerField(field);
                                                         return;

@@ -1918,4 +1918,9 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         return translocationSize + extra > PreciousStones.getInstance().getSettingsManager().getMaxSizeTranslocation();
     }
+
+    public int getTranslocationSize()
+    {
+        return translocationSize;
+    }
 }

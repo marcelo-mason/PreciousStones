@@ -581,7 +581,7 @@ public final class StorageManager
 
                             if (fs.hasDefaultFlag(FieldFlag.CUBOID))
                             {
-                                deleteOppositeField(field);
+                                deleteFieldFromBothTables(field);
                                 insertField(field);
                                 foundInWrongTable = true;
                             }
@@ -603,7 +603,7 @@ public final class StorageManager
 
         if (foundInWrongTable)
         {
-            System.out.print("[Precious Stones] Field found in wrong table, restart server.");
+            System.out.print("[Precious Stones] Fields found in wrong table, moving...");
         }
 
         if (purged > 0)
@@ -698,7 +698,7 @@ public final class StorageManager
 
                             if (!fs.hasDefaultFlag(FieldFlag.CUBOID))
                             {
-                                deleteOppositeField(field);
+                                deleteFieldFromBothTables(field);
                                 insertField(field);
                                 foundInWrongTable = true;
                             }
@@ -811,7 +811,7 @@ public final class StorageManager
 
         if (foundInWrongTable)
         {
-            System.out.print("[Precious Stones] Field found in wrong table, restart server.");
+            System.out.print("[Precious Stones] Fields found in wrong table, moving..");
         }
 
         if (purged > 0)
@@ -849,7 +849,8 @@ public final class StorageManager
                         {
                             final int lastSeenDays = (int) Dates.differenceInDays(new Date(), new Date(last_seen));
 
-                            if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
+                            if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays() &&
+                                    lastSeenDays < plugin.getSettingsManager().getPurgeAfterDays() * 2)
                             {
                                 int purged = plugin.getForceFieldManager().deleteBelonging(name);
 
@@ -898,7 +899,7 @@ public final class StorageManager
         final List<Unbreakable> out = new ArrayList<Unbreakable>();
         int purged = 0;
 
-        final String query = "SELECT * FROM  `pstone_unbreakables` LEFT JOIN pstone_players ON pstone_unbreakables.owner = pstone_players.player_name WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
+        final String query = "SELECT * FROM  `pstone_unbreakables` WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
         final ResultSet res = core.select(query);
 
@@ -917,24 +918,10 @@ public final class StorageManager
                         final byte data = res.getByte("data");
                         final String world = res.getString("world");
                         final String owner = res.getString("owner");
-                        final long last_seen = res.getLong("last_seen");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
                         final Unbreakable ub = new Unbreakable(x, y, z, world, type, owner);
-
-                        if (last_seen > 0)
-                        {
-                            final int lastSeenDays = (int) Dates.differenceInDays(new Date(), new Date(last_seen));
-
-                            if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
-                            {
-                                offerUnbreakable(ub, false);
-                                offerDeletePlayer(owner);
-                                purged++;
-                                continue;
-                            }
-                        }
 
                         out.add(ub);
                     }
@@ -1095,20 +1082,17 @@ public final class StorageManager
     }
 
     /**
-     * Deletes the field from the opposite table, used for fixing fields in the wrong tables
+     * Deletes the field/cuboid from both tables
      *
      * @param field
      */
-    public void deleteOppositeField(final Field field)
+    public void deleteFieldFromBothTables(final Field field)
     {
         String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
-
-        if (!field.hasFlag(FieldFlag.CUBOID))
-        {
-            query = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
-        }
+        String query2 = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
         core.delete(query);
+        core.delete(query2);
     }
 
 
@@ -1120,6 +1104,17 @@ public final class StorageManager
     public void deleteFields(final String playerName)
     {
         final String query = "DELETE FROM `pstone_fields` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
+        core.delete(query);
+    }
+
+    /**
+     * Delete a unbreakables from the database that a player owns
+     *
+     * @param playerName
+     */
+    public void deleteUnbreakables(final String playerName)
+    {
+        final String query = "DELETE FROM `pstone_unbreakables` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
         core.delete(query);
     }
 
@@ -1144,23 +1139,23 @@ public final class StorageManager
     }
 
     /**
-     * Delete an unbreakable from the database
-     *
-     * @param ub
-     */
-    public void deleteUnbreakable(final Unbreakable ub)
-    {
-        final String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + Helper.escapeQuotes(ub.getWorld()) + "';";
+ * Delete an unbreakable from the database
+ *
+ * @param ub
+ */
+public void deleteUnbreakable(final Unbreakable ub)
+{
+    final String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + Helper.escapeQuotes(ub.getWorld()) + "';";
 
-        if (plugin.getSettingsManager().isDebugsql())
-        {
-            PreciousStones.getLog().info(query);
-        }
-        synchronized (this)
-        {
-            core.delete(query);
-        }
+    if (plugin.getSettingsManager().isDebugsql())
+    {
+        PreciousStones.getLog().info(query);
     }
+    synchronized (this)
+    {
+        core.delete(query);
+    }
+}
 
     /**
      * Insert snitch entry into the database
@@ -2536,6 +2531,7 @@ public final class StorageManager
                 deletePlayer(playerName);
                 deleteTranslocation(playerName);
                 deleteFields(playerName);
+                deleteUnbreakables(playerName);
             }
         }
     }

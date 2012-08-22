@@ -6,7 +6,6 @@ import com.griefcraft.model.Protection;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.object.Nation;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import net.milkbowl.vault.economy.Economy;
@@ -17,11 +16,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.yi.acru.bukkit.Lockette.Lockette;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +35,7 @@ public final class PermissionsManager
     private PermissionsPlugin pbukkit = null;
     private PermissionsEx pex = null;
     private LWC lwc = null;
+    private Lockette lockette = null;
     private Towny towny = null;
     private PreciousStones plugin;
 
@@ -49,6 +49,7 @@ public final class PermissionsManager
         detectPermissionsEx();
         detectPermissions();
         detectLWC();
+        detectLockette();
         detectTowny();
 
         try
@@ -72,6 +73,16 @@ public final class PermissionsManager
         if (plug != null)
         {
             lwc = ((LWCPlugin) plug).getLWC();
+        }
+    }
+
+    private void detectLockette()
+    {
+        Plugin plug = plugin.getServer().getPluginManager().getPlugin("Lockette");
+
+        if (plug != null)
+        {
+            lockette = ((Lockette) plug);
         }
     }
 
@@ -317,7 +328,16 @@ public final class PermissionsManager
      */
     public void addGroup(Player player, String group)
     {
-        if (permission != null)
+        if (pex != null)
+        {
+            PermissionUser user = PermissionsEx.getUser(player.getName());
+
+            if (user != null)
+            {
+                user.addGroup(player.getName(), group);
+            }
+        }
+        else if (permission != null)
         {
             if (player != null)
             {
@@ -392,24 +412,43 @@ public final class PermissionsManager
         return economy.has(player.getName(), amount);
     }
 
-    public boolean lwcProtected(Block block)
+    public boolean lwcProtected(Player player, Block block)
     {
         if (lwc == null)
         {
             return false;
         }
 
-        Protection protection = lwc.findProtection(block);  // also accepts x, y, z
+        Protection protection = lwc.findProtection(block);
 
         if (protection != null)
         {
-            return true;
+            return !lwc.canAccessProtection(player, block);
         }
+
+        return false;
+    }
+
+    public boolean locketteProtected(Player player, Block block)
+    {
+        if (lockette == null)
+        {
+            return false;
+        }
+
+        if (Lockette.isProtected(block))
+        {
+            String owner = Lockette.getProtectedOwner(block);
+            return !owner.equalsIgnoreCase(player.getName());
+        }
+
         return false;
     }
 
     public boolean townyProtected(Block block, Player player)
     {
+        /*
+
         if (towny != null)
         {
             Collection<Nation> nations = towny.getTownyUniverse().getNationsMap().values();
@@ -419,7 +458,7 @@ public final class PermissionsManager
                 // check if a block is towny protected
             }
         }
-
+        */
         return false;
     }
 }
