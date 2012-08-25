@@ -1,0 +1,363 @@
+name: PreciousStones
+main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
+version: ${project.version}
+dev-url: http://dev.bukkit.org/server-mods/preciousstones/
+load: 'postworld'
+softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC, Lockette]
+commands:
+  ps:
+    description: All of the PreciousStones commands
+    usage: Syntax error, verify the command usage and try again
+permissions:
+  preciousstones.benefit.create.forcefield:
+    description: Can create forcefield blocks
+  preciousstones.benefit.create.unbreakable:
+    description: Can create unbreakable blocks
+  preciousstones.benefit.create.protection:
+    description: Can create protection blocks
+  preciousstones.benefit.disable:
+    description: Can disable his own fields
+  preciousstones.benefit.enable:
+    description: Can enable his own fields
+  preciousstones.benefit.heal:
+    description: Can be healed in healing zones
+  preciousstones.benefit.giveair:
+    description: Can be get air in air zones
+  preciousstones.benefit.launch:
+    description: Can use launch fields
+  preciousstones.benefit.bounce:
+    description: Can use bounce fields
+  preciousstones.benefit.setname:
+    description: Can use /ps setname
+  preciousstones.benefit.setradius:
+    description: Can use /ps setradius
+  preciousstones.benefit.setvelocity:
+    description: Can use /ps setvelocity
+  preciousstones.benefit.setinterval:
+    description: Can use /ps setinterval
+  preciousstones.benefit.mark:
+    description: Can use /ps mark
+  preciousstones.benefit.visualize:
+    description: Can use /ps visualize
+  preciousstones.benefit.who:
+    description: Can use /ps who
+  preciousstones.benefit.onoff:
+    description: Can use /ps on and /ps off
+  preciousstones.benefit.counts:
+    description: Can use /ps counts
+  preciousstones.benefit.locations:
+    description: Can use /ps locations
+  preciousstones.benefit.snitch:
+    description: Can use /ps snitch list/clean
+  preciousstones.benefit.feed:
+    description: Can get feed by feed block
+  preciousstones.benefit.potions:
+    description: Will speed up in fast blocks
+  preciousstones.benefit.repair:
+    description: Can get rapired by feed block
+  preciousstones.benefit.toggle:
+    description: Can use /ps toggle
+  preciousstones.benefit.density:
+    description: Can set the visualization density
+  preciousstones.benefit.change-owner:
+    description: Can change the owner to their own fields
+  preciousstones.whitelist.allow:
+    description: Can use /ps allow
+  preciousstones.whitelist.allowed:
+    description: Can use /ps allowed
+  preciousstones.whitelist.allowall:
+    description: Can use /ps allowall
+  preciousstones.whitelist.remove:
+    description: Can use /ps remove
+  preciousstones.whitelist.removeall:
+    description: Can use /ps removeall
+  preciousstones.bypass.purchase:
+    description: Can place fields without purchasing them
+  preciousstones.bypass.entry:
+    description: Can enter entry-protected fields
+  preciousstones.bypass.pvp:
+    description: Can hit peple in pvp free fields
+  preciousstones.bypass.place:
+    description: Can place blocks in place-protected fields
+  preciousstones.bypass.use:
+    description: Canuse blocks in use-protected fields
+  preciousstones.bypass.destroy:
+    description: Can destroy blocks in destroy-protected fields
+  preciousstones.bypass.protection:
+    description: Can break other peoples protection blocks
+  preciousstones.bypass.unbreakable:
+    description: Can break other peoples unbreakable blocks
+  preciousstones.bypass.unprotectable:
+    description: Can protect unprotectable blocks
+  preciousstones.bypass.snitch:
+    description: Wont show up on any snitch lists
+  preciousstones.bypass.damage:
+    description: Wont show up on any snitch lists
+  preciousstones.bypass.setradius:
+    description: Can set larger radius than the limit
+  preciousstones.bypass.mine:
+    description: Bypasses proximity mine
+  preciousstones.bypass.lightning:
+    description: Bypasses lightning fields
+  preciousstones.bypass.limits:
+    description: Bypasses limits
+  preciousstones.bypass.cuboid:
+    description: Bypasses cuboid size limits
+  preciousstones.bypass.interval:
+    description: Bypasses interval configured minimum
+  preciousstones.bypass.teleport:
+    description: Bypasses teleport block
+  preciousstones.bypass.world:
+    description: Bypasses world limitation
+  preciousstones.bypass.allowed-only-inside:
+    description: Bypasses allowed only inside restriction
+  preciousstones.bypass.allowed-only-outside:
+    description: Bypasses allowed only outside restriction
+  preciousstones.bypass.on-disabled:
+    description: Bypasses on-disabled flags
+  preciousstones.alert.notify.place:
+    description: Gets alert for block placement notifys
+  preciousstones.alert.notify.destroy:
+    description: Gets alert for block destroy notifys
+  preciousstones.alert.notify.bypass-place:
+    description: Gets alert for block bypass-place notifys
+  preciousstones.alert.notify.bypass-destroy:
+    description: Gets alert for block bypass-destroy notifys
+  preciousstones.alert.warn.entry:
+    description: Gets alert for entry warnings
+  preciousstones.alert.warn.fire:
+    description: Gets alert for fire warnings
+  preciousstones.alert.warn.pvp:
+    description: Gets alert for pvp warnings
+  preciousstones.alert.warn.use:
+    description: Gets alert for use warnings
+  preciousstones.alert.warn.place:
+    description: Gets alert for place warnings
+  preciousstones.alert.warn.destroy:
+    description: Gets alert for destroy warnings
+  preciousstones.alert.warn.noplace:
+    description: Gets alert for noplace warnings
+  preciousstones.alert.warn.destroyarea:
+    description: Gets alert for destroy area warnings
+  preciousstones.alert.warn.conflict:
+    description: Gets alert for conflict placement warnings
+  preciousstones.alert.warn.unprotectable:
+    description: Gets alert for unprotectable related warnings
+  preciousstones.admin.disableall:
+    description: Can disable all flags in a field
+  preciousstones.admin.enableall:
+    description: Can enable all flags in a field
+  preciousstones.admin.superduperpickaxe:
+    description: Can use superduperpickaxe
+  preciousstones.admin.mark:
+    description: Can use /ps mark (Can mark everyone's fields)
+  preciousstones.admin.visualize:
+    description: Can use /ps visualize (Can visualize everyone's fields)
+  preciousstones.admin.allowed:
+    description: Allows the player in everyone elses fields
+  preciousstones.admin.undo:
+    description: Can trigger anyone's undo grief blocks
+  preciousstones.admin.delete:
+    description: Can use /ps delete
+  preciousstones.admin.info:
+    description: Can use /ps info
+  preciousstones.admin.list:
+    description: Can use /ps list
+  preciousstones.admin.reload:
+    description: Can use /ps reload
+  preciousstones.admin.setowner:
+    description: Can use /ps setowner
+  preciousstones.admin.fields:
+    description: Can use /ps fields
+  preciousstones.admin.clean:
+    description: Can use /ps clean
+  preciousstones.admin.revert:
+    description: Can use /ps revert
+  preciousstones.admin.details:
+    description: Can view all details with right-click
+  preciousstones.admin.bypass.log:
+    description: User does not show up in logs
+  preciousstones.admin.viewconflicting:
+    description: Tells you locations of conflicting pstones when placing new field
+  preciousstones.admin.retag:
+    description: Can use /ps retag
+  preciousstones.admin.insert:
+    description: Can use /ps insert
+  preciousstones.admin.reset:
+    description: Can use /ps reset
+  preciousstones.admin.isadmin:
+    description: Can used internally to detect admins
+  preciousstones.admin.counts:
+    description: Gives you the counts of pstones each player hass
+  preciousstones.admin.locations:
+    description: Gives you the locations of pstones each player hass
+  preciousstones.override.notify:
+    description: Can users will not be shown any notifications
+  preciousstones.override.warn:
+    description: Can users will not be shown any warnings
+  preciousstones.translocation.use:
+    description: Can use translocation fields
+  preciousstones.translocation.delete:
+    description: Can delete translocation fields
+  preciousstones.translocation.remove:
+    description: Can remove specific block types form their translocations
+  preciousstones.translocation.import:
+    description: Can import into translocation fields
+  preciousstones.translocation.unlink:
+    description: Can unlink a translocation
+  preciousstones.limit1:
+    description: Limit 1
+  preciousstones.limit2:
+    description: Limit 2
+  preciousstones.limit3:
+    description: Limit 3
+  preciousstones.limit4:
+    description: Limit 4
+  preciousstones.limit5:
+    description: Limit 5
+  preciousstones.limit6:
+    description: Limit 6
+  preciousstones.limit7:
+    description: Limit 7
+  preciousstones.limit8:
+    description: Limit 8
+  preciousstones.limit9:
+    description: Limit 9
+  preciousstones.limit10:
+    description: Limit 10
+  preciousstones.limit11:
+    description: Limit 11
+  preciousstones.limit12:
+    description: Limit 12
+  preciousstones.limit13:
+    description: Limit 13
+  preciousstones.limit14:
+    description: Limit 14
+  preciousstones.limit15:
+    description: Limit 15
+  preciousstones.manual.bypass.potions:
+    description: bypasses potion effects
+  preciousstones.benefit.*:
+    default: false
+    description: Can use PreciousStones
+    children:
+      preciousstones.benefit.create.forcefield: true
+      preciousstones.benefit.create.unbreakable: true
+      preciousstones.benefit.create.protection: true
+      preciousstones.benefit.heal: true
+      preciousstones.benefit.potions: true
+      preciousstones.benefit.giveair: true
+      preciousstones.benefit.launch: true
+      preciousstones.benefit.bounce: true
+      preciousstones.benefit.setname: true
+      preciousstones.benefit.setradius: true
+      preciousstones.benefit.setvelocity: true
+      preciousstones.benefit.mark: true
+      preciousstones.benefit.visualize: true
+      preciousstones.benefit.counts: true
+      preciousstones.benefit.locations: true
+      preciousstones.benefit.who: true
+      preciousstones.benefit.onoff: true
+      preciousstones.benefit.snitch: true
+      preciousstones.benefit.repair: true
+      preciousstones.benefit.feed: true
+      preciousstones.benefit.density: true
+      preciousstones.benefit.toggle: true
+      preciousstones.benefit.setinterval: true
+      preciousstones.benefit.disable: true
+      preciousstones.benefit.enable: true
+      preciousstones.benefit.change-owner: true
+  preciousstones.whitelist.*:
+    description: Can whitelist others into fields
+    default: false
+    children:
+      preciousstones.whitelist.allow: true
+      preciousstones.whitelist.allowed: true
+      preciousstones.whitelist.allowall: true
+      preciousstones.whitelist.remove: true
+      preciousstones.whitelist.removeall: true
+  preciousstones.translocation.*:
+    description: Can do translocation related things
+    default: false
+    children:
+      preciousstones.translocation.use: true
+      preciousstones.translocation.import: true
+      preciousstones.translocation.delete: true
+      preciousstones.translocation.remove: true
+      preciousstones.translocation.unlink: true
+  preciousstones.bypass.*:
+    description: Permissions for moderators
+    default: op
+    children:
+      preciousstones.bypass.purchase: true
+      preciousstones.bypass.entry: true
+      preciousstones.bypass.pvp: true
+      preciousstones.bypass.place: true
+      preciousstones.bypass.use: true
+      preciousstones.bypass.destroy: true
+      preciousstones.bypass.protection: true
+      preciousstones.bypass.unbreakable: true
+      preciousstones.bypass.unprotectable: true
+      preciousstones.bypass.snitch: true
+      preciousstones.bypass.mine: true
+      preciousstones.bypass.lightning: true
+      preciousstones.bypass.cuboid: true
+      preciousstones.bypass.interval: true
+      preciousstones.bypass.teleport: true
+      preciousstones.bypass.world: true
+      preciousstones.bypass.allowed-only-inside: true
+      preciousstones.bypass.allowed-only-outside: true
+      preciousstones.bypass.on-disabled: true
+      preciousstones.bypass.setradius: true
+      preciousstones.bypass.damage: true
+  preciousstones.alert.*:
+    description: Receives in-game alert on notifys and warnings (mods)
+    default: false
+    children:
+      preciousstones.alert.notify.place: true
+      preciousstones.alert.notify.destroy: true
+      preciousstones.alert.notify.bypass-place: true
+      preciousstones.alert.notify.bypass-destroy: true
+      preciousstones.alert.warn.entry: true
+      preciousstones.alert.warn.fire: true
+      preciousstones.alert.warn.pvp: true
+      preciousstones.alert.warn.use: true
+      preciousstones.alert.warn.place: true
+      preciousstones.alert.warn.destroy: true
+      preciousstones.alert.warn.noplace: true
+      preciousstones.alert.warn.destroyarea: true
+      preciousstones.alert.warn.conflict: true
+      preciousstones.alert.warn.unprotectable: true
+  preciousstones.admin.*:
+    description: Permissions for admins
+    default: op
+    children:
+      preciousstones.admin.mark: true
+      preciousstones.admin.visualize: true
+      preciousstones.admin.allowed: true
+      preciousstones.admin.undo: true
+      preciousstones.admin.delete: true
+      preciousstones.admin.info: true
+      preciousstones.admin.list: true
+      preciousstones.admin.reload: true
+      preciousstones.admin.setowner: true
+      preciousstones.admin.fields: true
+      preciousstones.admin.clean: true
+      preciousstones.admin.revert: true
+      preciousstones.admin.details: true
+      preciousstones.admin.bypass.log: true
+      preciousstones.admin.viewconflicting: true
+      preciousstones.admin.retag: true
+      preciousstones.admin.isadmin: true
+      preciousstones.admin.counts: true
+      preciousstones.admin.locations: true
+      preciousstones.admin.insert: true
+      preciousstones.admin.superduperpickaxe: true
+      preciousstones.admin.enableall: true
+      preciousstones.admin.disableall: true
+  preciousstones.override.*:
+    description: These players will receive no warnings or notifications
+    default: false
+    children:
+      preciousstones.override.notify: true
+      preciousstones.override.warn: true

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: ru.tehkode:PermissionsEx:1.18">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/LWC.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/ru/tehkode/PermissionsEx/1.18/PermissionsEx-1.18-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/ru/tehkode/PermissionsEx/1.18/PermissionsEx-1.18-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

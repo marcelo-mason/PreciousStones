@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>PreciousStones</groupId>
+    <artifactId>PreciousStones</artifactId>
+    <version>9.4.0</version>
+    <name>PreciousStones</name>
+    <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- plugin versions -->
+
+        <minecraft.version>1.3.1</minecraft.version>
+        <craftbukkit.version>1.3.1-R1.1-SNAPSHOT</craftbukkit.version>
+        <vault.version>1.2.16</vault.version>
+        <worldguard.version>5.4</worldguard.version>
+        <permissionsbukkit.version>1.1</permissionsbukkit.version>
+
+        <combattag.version>3.3</combattag.version>
+        <lwc.version>4.0.2</lwc.version>
+        <lockette.version>1.7.4</lockette.version>
+        <simpleclans.version>2.3.4</simpleclans.version>
+        <hawkeye.version>1.0.7b</hawkeye.version>
+        <pex.version>1.20-SNAPSHOT</pex.version>
+
+    </properties>
+
+
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://sacredlabyrinth.net:8080</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:git:git://github.com/SacredCoding/PreciousStones.git</connection>
+        <developerConnection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</developerConnection>
+        <url>https://github.com/SacredCoding/PreciousStones.git/tree/master/</url>
+    </scm>
+
+    <build>
+        <finalName>${project.name}</finalName>
+
+        <!-- Resources -->
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources</directory>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>config.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <!-- Plugins -->
+        <plugins>
+            <!-- Compilation plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+
+            <!-- JAR creation plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <outputDirectory>${basedir}/out/</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Dependencies -->
+
+    <dependencies>
+
+        <!-- From Repos -->
+
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>minecraft-server</artifactId>
+            <version>${minecraft.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>${craftbukkit.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <version>${vault.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldguard</artifactId>
+            <version>${worldguard.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.tehkode</groupId>
+            <artifactId>PermissionsEx</artifactId>
+            <version>${pex.version}</version>
+        </dependency>
+
+        <!-- Local -->
+
+        <dependency>
+            <groupId>com.trc202</groupId>
+            <artifactId>CombatTag</artifactId>
+            <version>${combattag.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.griefcraft</groupId>
+            <artifactId>LWC</artifactId>
+            <version>${lwc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yi.acru.bukkit</groupId>
+            <artifactId>Lockette</artifactId>
+            <version>${lockette.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sacredlabyrinth.Phaed</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>${simpleclans.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.oliwali</groupId>
+            <artifactId>HawkEye</artifactId>
+            <version>${hawkeye.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.platymuus.bukkit.permissions</groupId>
+            <artifactId>PermissionsBukkit</artifactId>
+            <version>${permissionsbukkit.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <!-- Repositories -->
+
+    <repositories>
+        <repository>
+            <id>bukkit-repo</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/bukkit-repo</url>
+        </repository>
+        <repository>
+            <id>bukkit-plugins</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/bukkit-plugins</url>
+        </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/sk89q-repo</url>
+        </repository>
+        <repository>
+            <id>ext-release-local</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/ext-release-local</url>
+        </repository>
+    </repositories>
+</project>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.platymuus.bukkit.permissions:PermissionsBukkit:1.18">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/PermissionsBukkit.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/platymuus/bukkit/permissions/PermissionsBukkit/1.18/PermissionsBukkit-1.18-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/platymuus/bukkit/permissions/PermissionsBukkit/1.18/PermissionsBukkit-1.18-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
