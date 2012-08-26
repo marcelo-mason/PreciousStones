@@ -132,9 +132,9 @@
             <version>1.0.7b</version>
         </dependency>
         <dependency>
-            <groupId>com.platymuus.bukkit.permissions</groupId>
-            <artifactId>PermissionsBukkit</artifactId>
-            <version>1.2</version>
+            <groupId>com.platymuus</groupId>
+            <artifactId>bukkit-permissions</artifactId>
+            <version>1.5</version>
         </dependency>
 
     </dependencies>
@@ -143,24 +143,8 @@
 
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.sacredlabyrinth.net:8081/artifactory/bukkit-repo</url>
-        </repository>
-        <repository>
-            <id>bukkit-plugins</id>
-            <url>http://repo.sacredlabyrinth.net:8081/artifactory/bukkit-plugins</url>
-        </repository>
-        <repository>
-            <id>sk89q-repo</id>
-            <url>http://repo.sacredlabyrinth.net:8081/artifactory/sk89q-repo</url>
-        </repository>
-        <repository>
-            <id>ext-release-local</id>
-            <url>http://repo.sacredlabyrinth.net:8081/artifactory/ext-release-local</url>
-        </repository>
-        <repository>
-            <id>gestdown</id>
-            <url>http://repo.sacredlabyrinth.net:8081/artifactory/gestdown</url>
+            <id>remote-repos</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/remote-repos</url>
         </repository>
     </repositories>
 </project>
