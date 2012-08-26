@@ -134,7 +134,7 @@
         <dependency>
             <groupId>com.platymuus.bukkit.permissions</groupId>
             <artifactId>PermissionsBukkit</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
 
     </dependencies>
