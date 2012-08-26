@@ -34,7 +34,11 @@
     <orderEntry type="library" name="Maven: org.yi.acru.bukkit:Lockette:1.7.4" level="project" />
     <orderEntry type="library" name="Maven: net.sacredlabyrinth.Phaed:SimpleClans:2.3.4" level="project" />
     <orderEntry type="library" name="Maven: uk.co.oliwali:HawkEye:1.0.7b" level="project" />
+<<<<<<< HEAD
     <orderEntry type="library" name="Maven: com.platymuus:PermissionsBukkit:1.2" level="project" />
+=======
+    <orderEntry type="library" name="Maven: com.platymuus.bukkit.permissions:PermissionsBukkit:1.2" level="project" />
+>>>>>>> b7c3ae6fec796d3ba3439d27589b1492e4528faf
   </component>
 </module>
 
