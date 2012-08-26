@@ -61,7 +61,11 @@
       <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state line="136" column="24" selection-start="4633" selection-end="4633" vertical-scroll-proportion="0.58158994">
+=======
+            <state line="100" column="20" selection-start="3434" selection-end="3434" vertical-scroll-proportion="-0.17154811">
+>>>>>>> b7c3ae6fec796d3ba3439d27589b1492e4528faf
               <folding />
             </state>
           </provider>
@@ -874,7 +878,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="136" column="24" selection-start="4633" selection-end="4633" vertical-scroll-proportion="0.58158994">
+=======
+        <state line="100" column="20" selection-start="3434" selection-end="3434" vertical-scroll-proportion="-0.17154811">
+>>>>>>> b7c3ae6fec796d3ba3439d27589b1492e4528faf
           <folding />
         </state>
       </provider>
