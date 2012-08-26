@@ -58,10 +58,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="173" column="20" selection-start="6025" selection-end="6025" vertical-scroll-proportion="0.0">
+            <state line="162" column="75" selection-start="5535" selection-end="5535" vertical-scroll-proportion="0.79079497">
               <folding />
             </state>
           </provider>
@@ -76,11 +76,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SimpleClansManager.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="SimpleClansManager.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/SimpleClansManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="0" selection-start="475" selection-end="475" vertical-scroll-proportion="0.20509194">
-              <folding />
+            <state line="41" column="31" selection-start="979" selection-end="979" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -131,8 +133,8 @@
         <option value="$PROJECT_DIR$/src/main/resources/plugin.yml" />
         <option value="$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/CombatTagManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/SimpleClansManager.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -191,10 +193,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="56" />
-    <option name="y" value="141" />
+    <option name="x" value="27" />
+    <option name="y" value="28" />
     <option name="width" value="1745" />
-    <option name="height" value="877" />
+    <option name="height" value="874" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -258,6 +260,10 @@
               <option name="myItemId" value="PreciousStones" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -280,10 +286,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -502,8 +504,8 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -700,13 +702,12 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="56" y="141" width="1745" height="877" extended-state="0" />
+    <frame x="27" y="28" width="1745" height="874" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32810616" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -714,15 +715,16 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33557048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293124" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14792176" sideWeight="0.6972256" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21568628" sideWeight="0.66442955" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22341058" sideWeight="0.66442955" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32810616" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33557048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
     </layout>
@@ -795,12 +797,12 @@
           <OriginalElement>PreciousStones:PreciousStones:9.4.0</OriginalElement>
           <nodes>
             <node x="" y="">ru.tehkode:PermissionsEx:jar:1.20-20120209.040323-4/org.yaml:snakeyaml:jar:1.9</node>
-            <node x="" y="">org.yi.acru.bukkit:Lockette:jar:1.7.4</node>
             <node x="" y="">ru.tehkode:PermissionsEx:jar:1.20-20120209.040323-4</node>
+            <node x="" y="">org.yi.acru.bukkit:Lockette:jar:1.7.4</node>
             <node x="" y="">ru.tehkode:PermissionsEx:jar:1.20-20120209.040323-4/org.bukkit:bukkit:jar:1.1-R3</node>
             <node x="" y="">com.sk89q:worldguard:jar:5.4/com.sk89q:worldedit:jar:4.7/org.bukkit:bukkit:jar:0.0.1-SNAPSHOT</node>
-            <node x="" y="">com.trc202:CombatTag:jar:3.3</node>
             <node x="" y="">com.sk89q:worldguard:jar:5.4/org.bukkit:bukkit:jar:1.0.0-R1-20111212.183817-47</node>
+            <node x="" y="">com.trc202:CombatTag:jar:3.3</node>
             <node x="" y="">com.sk89q:worldguard:jar:5.4/com.sk89q:worldedit:jar:4.7/com.sk89q:jchronic:jar:0.2.4a/junit:junit:jar:4.8.1</node>
             <node x="" y="">net.milkbowl.vault:Vault:jar:1.2.16</node>
             <node x="" y="">com.sk89q:worldguard:jar:5.4/com.sk89q:worldedit:jar:4.7/com.sk89q:dummypermscompat:jar:1.4</node>
@@ -831,56 +833,48 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/PermissionsManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="24" selection-start="1130" selection-end="1130" vertical-scroll-proportion="0.22980501" />
+      </provider>
+    </entry>
+    <entry file="file://$MAVEN_REPOSITORY$/net/sacredlabyrinth/Phaed/SimpleClans/2.3.4/SimpleClans-2.3.4.pom">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/SnitchManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="13" selection-start="618" selection-end="618" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="28" selection-start="971" selection-end="971" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="5" selection-start="257" selection-end="257" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/CombatTagManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="28" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/StorageManager.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/SimpleClansManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="28" selection-start="971" selection-end="971" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/CommunicatonManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="5" selection-start="257" selection-end="257" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/PermissionsManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="24" selection-start="1130" selection-end="1130" vertical-scroll-proportion="0.22980501">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$MAVEN_REPOSITORY$/net/sacredlabyrinth/Phaed/SimpleClans/2.3.4/SimpleClans-2.3.4.pom">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="41" column="31" selection-start="979" selection-end="979" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="173" column="20" selection-start="6025" selection-end="6025" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/SnitchManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="13" selection-start="618" selection-end="618" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/net/sacredlabyrinth/Phaed/PreciousStones/managers/SimpleClansManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="475" selection-end="475" vertical-scroll-proportion="0.20509194">
+        <state line="162" column="75" selection-start="5535" selection-end="5535" vertical-scroll-proportion="0.79079497">
           <folding />
         </state>
       </provider>
