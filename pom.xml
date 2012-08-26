@@ -159,8 +159,8 @@
             <url>http://repo.sacredlabyrinth.net:8081/artifactory/ext-release-local</url>
         </repository>
         <repository>
-            <id>getsdown</id>
-            <url>http://repo.sacredlabyrinth.net:8081/artifactory/getsdown</url>
+            <id>gestdown</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/gestdown</url>
         </repository>
     </repositories>
 </project>
