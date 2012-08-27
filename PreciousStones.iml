@@ -33,7 +33,7 @@
     <orderEntry type="library" name="Maven: com.trc202:CombatTag:3.3" level="project" />
     <orderEntry type="library" name="Maven: com.griefcraft:LWC:4.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.yi.acru.bukkit:Lockette:1.7.4" level="project" />
-    <orderEntry type="library" name="Maven: net.sacredlabyrinth.Phaed:SimpleClans:2.3.4" level="project" />
+    <orderEntry type="library" name="Maven: net.sacredlabyrinth.phaed:simpleclans:2.3.3" level="project" />
     <orderEntry type="library" name="Maven: uk.co.oliwali:HawkEye:1.0.7b" level="project" />
     <orderEntry type="library" name="Maven: com.platymuus:bukkit-permissions:1.5" level="project" />
   </component>
