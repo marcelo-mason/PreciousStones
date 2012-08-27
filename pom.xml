@@ -122,7 +122,7 @@
             <version>1.7.4</version>
         </dependency>
         <dependency>
-            <groupId>net.sacredlabyrinth.Phaed</groupId>
+            <groupId>net.sacredlabyrinth.phaed</groupId>
             <artifactId>SimpleClans</artifactId>
             <version>2.3.4</version>
         </dependency>

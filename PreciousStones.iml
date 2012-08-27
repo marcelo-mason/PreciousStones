@@ -6,7 +6,8 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/target" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target/classes" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -34,11 +35,7 @@
     <orderEntry type="library" name="Maven: org.yi.acru.bukkit:Lockette:1.7.4" level="project" />
     <orderEntry type="library" name="Maven: net.sacredlabyrinth.Phaed:SimpleClans:2.3.4" level="project" />
     <orderEntry type="library" name="Maven: uk.co.oliwali:HawkEye:1.0.7b" level="project" />
-<<<<<<< HEAD
-    <orderEntry type="library" name="Maven: com.platymuus:PermissionsBukkit:1.2" level="project" />
-=======
-    <orderEntry type="library" name="Maven: com.platymuus.bukkit.permissions:PermissionsBukkit:1.2" level="project" />
->>>>>>> b7c3ae6fec796d3ba3439d27589b1492e4528faf
+    <orderEntry type="library" name="Maven: com.platymuus:bukkit-permissions:1.5" level="project" />
   </component>
 </module>
 
