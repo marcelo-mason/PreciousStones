@@ -123,7 +123,7 @@
         </dependency>
         <dependency>
             <groupId>net.sacredlabyrinth.phaed</groupId>
-            <artifactId>SimpleClans</artifactId>
+            <artifactId>simpleclans</artifactId>
             <version>2.3.3</version>
         </dependency>
         <dependency>
