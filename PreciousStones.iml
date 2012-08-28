@@ -25,18 +25,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sacredlabyrinth.phaed:simpleclans:2.3.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: uk.co.oliwali:HawkEye:1.0.7b" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.platymuus:bukkit-permissions:1.5" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:minecraft-server:1.3.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:Vault:1.2.16" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldguard:5.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:4.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:dummypermscompat:1.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:jchronic:0.2.4a" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: junit:junit:4.8.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun:iconomy:5.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.khelekore:prtree:1.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.opencsv:opencsv:2.0" level="project" />
   </component>
 </module>
 
