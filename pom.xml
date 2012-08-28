@@ -6,12 +6,11 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>${ARTIFACTORY_VERSION}</version>
+    <version>9.4.0-${ARTIFACTORY_VERSION}</version>
     <name>PreciousStones</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
     <properties>
-        <version>9.4.0</version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
