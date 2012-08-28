@@ -2272,11 +2272,30 @@ public final class StorageManager
 
         synchronized (this)
         {
-            processFields(working);
-            processUnbreakable(workingUb);
-            processGrief(workingGrief);
-            processPlayers(workingPlayers);
-            processSnitches(workingSnitchEntries);
+            if (!working.isEmpty())
+            {
+                processFields(working);
+            }
+
+            if (!workingUb.isEmpty())
+            {
+                processUnbreakable(workingUb);
+            }
+
+            if (!workingGrief.isEmpty())
+            {
+                processGrief(workingGrief);
+            }
+
+            if (!workingPlayers.isEmpty())
+            {
+                processPlayers(workingPlayers);
+            }
+
+            if (!workingSnitchEntries.isEmpty())
+            {
+                processSnitches(workingSnitchEntries);
+            }
         }
     }
 
