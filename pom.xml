@@ -6,7 +6,7 @@
 
     <groupId>PreciousStones</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>${BUILD_NUMBER}-SNAPSHOT</version>
+    <version>9.4.1-${BUILD_NUMBER}-SNAPSHOT</version>
     <name>PreciousStones</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
