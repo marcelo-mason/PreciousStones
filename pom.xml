@@ -4,7 +4,7 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>9.4.1-${BUILD_NUMBER}</version>
+    <version>9.4.2${BUILD_NUMBER}-SNAPSHOT</version>
     <name>PreciousStones</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
@@ -160,7 +160,7 @@
         <connection>scm:git:git@github.com:SacredCoding/PreciousStones.git</connection>
         <url>http://github.com/SacredCoding/PreciousStones.git</url>
         <developerConnection>scm:git:git@github.com:SacredCoding/PreciousStones.git</developerConnection>
-      <tag>PreciousStones-9.4.1-${BUILD_NUMBER}</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <!--Nexus -->
