@@ -163,23 +163,4 @@
             <url>http://repo.sacredlabyrinth.net:8081/nexus/content/groups/public</url>
         </repository>
     </repositories>
-
-    <!-- Distribution -->
-
-    <distributionManagement>
-        <repository>
-            <uniqueVersion>true</uniqueVersion>
-            <id>releases</id>
-            <name>releases</name>
-            <url>http://repo.sacredlabyrinth.net:8081/nexus/content/repositories/releases</url>
-        </repository>
-
-        <snapshotRepository>
-            <uniqueVersion>true</uniqueVersion>
-            <id>snapshots</id>
-            <name>snapshots</name>
-            <url>http://repo.sacredlabyrinth.net:8081/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
 </project>
