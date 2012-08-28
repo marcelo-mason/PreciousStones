@@ -83,6 +83,7 @@
     <dependencies>
 
         <!-- From Repos -->
+
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>minecraft-server</artifactId>
@@ -110,6 +111,7 @@
         </dependency>
 
         <!-- Local -->
+
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
