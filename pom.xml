@@ -163,4 +163,24 @@
             <url>http://repo.sacredlabyrinth.net:8081/nexus/content/groups/public</url>
         </repository>
     </repositories>
+
+
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>releases</id>
+            <name>PreciousStones Repository</name>
+            <url>http://repo.sacredlabyrinth.net:8081/nexus/content/repositories/releases/</url>
+            <layout>default</layout>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>true</uniqueVersion>
+            <id>snapshots</id>
+            <name>PreciousStones Snapshots</name>
+            <url>http://repo.sacredlabyrinth.net:8081/nexus/content/repositories/snapshots/</url>
+            <layout>legacy</layout>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
