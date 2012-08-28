@@ -108,14 +108,14 @@
             <version>5.4</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Local -->
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
             <version>1.19.3</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Local -->
         <dependency>
             <groupId>com.trc202</groupId>
             <artifactId>CombatTag</artifactId>
@@ -159,8 +159,8 @@
 
     <repositories>
         <repository>
-            <id>remote-repos</id>
-            <url>http://repo.sacredlabyrinth.net:8081/artifactory/remote-repos</url>
+            <id>sacredlabyrinth repo</id>
+            <url>http://repo.sacredlabyrinth.net:8081/nexus/content/groups/public</url>
         </repository>
     </repositories>
 </project>
