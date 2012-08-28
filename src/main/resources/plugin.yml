@@ -205,6 +205,8 @@ permissions:
     description: Can import into translocation fields
   preciousstones.translocation.unlink:
     description: Can unlink a translocation
+  preciousstones.manual.bypass.potions:
+    description: bypasses potion effects
   preciousstones.limit1:
     description: Limit 1
   preciousstones.limit2:
@@ -235,8 +237,6 @@ permissions:
     description: Limit 14
   preciousstones.limit15:
     description: Limit 15
-  preciousstones.manual.bypass.potions:
-    description: bypasses potion effects
   preciousstones.benefit.*:
     default: false
     description: Can use PreciousStones
