@@ -1310,7 +1310,7 @@ public class PSBlockListener implements Listener
 
             if (!fs.isFertileType(floor.getTypeId()) && floor.getTypeId() != fs.getGroundBlock())
             {
-                player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " blocks must be placed of fertile land to activate");
+                player.sendMessage(ChatColor.AQUA + Helper.capitalize(fs.getTitle()) + " blocks must be placed on fertile land to activate");
                 return false;
             }
         }
