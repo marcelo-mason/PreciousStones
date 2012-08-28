@@ -33,7 +33,6 @@ public final class StorageManager
     private final Set<Field> pendingGrief = new HashSet<Field>();
     private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
     private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
-    private final Map<String, Integer> purged = new HashMap<String, Integer>();
     private final List<SnitchEntry> pendingSnitchEntries = new LinkedList<SnitchEntry>();
 
     /**
@@ -232,7 +231,7 @@ public final class StorageManager
     }
 
     /**
-     * Load pstones for any world that is loaded
+     * Load all pstones for any world that is loaded
      */
     public void loadWorldData()
     {
@@ -263,8 +262,8 @@ public final class StorageManager
      */
     public void loadWorldFields(final String world)
     {
-        int fieldCount = 0;
-        int cuboidCount = 0;
+        int fieldCount;
+        int cuboidCount;
 
         List<Field> fields;
 
@@ -281,33 +280,30 @@ public final class StorageManager
             fields.addAll(cuboids);
         }
 
-        if (fields != null)
+        for (final Field field : fields)
         {
-            for (final Field field : fields)
+            // add to collection
+
+            plugin.getForceFieldManager().addToCollection(field);
+
+            // register grief reverts
+
+            if (field.hasFlag(FieldFlag.GRIEF_REVERT) && field.getRevertSecs() > 0)
             {
-                // add to collection
+                plugin.getGriefUndoManager().register(field);
+            }
 
-                plugin.getForceFieldManager().addToCollection(field);
+            // set the initial applied status to the field form the database
 
-                // register grief reverts
-
-                if (field.hasFlag(FieldFlag.GRIEF_REVERT) && field.getRevertSecs() > 0)
+            if (field.hasFlag(FieldFlag.TRANSLOCATION))
+            {
+                if (field.isNamed())
                 {
-                    plugin.getGriefUndoManager().register(field);
-                }
+                    boolean applied = isTranslocationApplied(field.getName(), field.getOwner());
+                    field.setDisabled(!applied);
 
-                // set the initial applied status to the field form the database
-
-                if (field.hasFlag(FieldFlag.TRANSLOCATION))
-                {
-                    if (field.isNamed())
-                    {
-                        boolean applied = isTranslocationApplied(field.getName(), field.getOwner());
-                        field.setDisabled(!applied);
-
-                        int count = totalTranslocationCount(field.getName(), field.getOwner());
-                        field.setTranslocationSize(count);
-                    }
+                    int count = totalTranslocationCount(field.getName(), field.getOwner());
+                    field.setTranslocationSize(count);
                 }
             }
         }
@@ -409,11 +405,11 @@ public final class StorageManager
             {
                 plugin.getUnbreakableManager().addToCollection(ub);
             }
-        }
 
-        if (unbreakables.size() > 0)
-        {
-            PreciousStones.log("({0}) unbreakables: {1}", world, unbreakables.size());
+            if (unbreakables.size() > 0)
+            {
+                PreciousStones.log("({0}) unbreakables: {1}", world, unbreakables.size());
+            }
         }
     }
 
@@ -462,7 +458,6 @@ public final class StorageManager
      * Puts the player up for future storage
      *
      * @param playerName
-     * @param update
      */
     public void offerPlayer(final String playerName)
     {
@@ -476,7 +471,6 @@ public final class StorageManager
      * Puts the player up for future storage
      *
      * @param playerName
-     * @param update
      */
     public void offerDeletePlayer(final String playerName)
     {
@@ -824,9 +818,6 @@ public final class StorageManager
 
     /**
      * Retrieves all players from the database
-     *
-     * @param worldName
-     * @return
      */
     public void extractPlayers()
     {
@@ -849,8 +840,7 @@ public final class StorageManager
                         {
                             final int lastSeenDays = (int) Dates.differenceInDays(new Date(), new Date(last_seen));
 
-                            if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays() &&
-                                    lastSeenDays < plugin.getSettingsManager().getPurgeAfterDays() * 2)
+                            if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays() && lastSeenDays < plugin.getSettingsManager().getPurgeAfterDays() * 2)
                             {
                                 int purged = plugin.getForceFieldManager().deleteBelonging(name);
 
@@ -1030,7 +1020,9 @@ public final class StorageManager
      */
     public void insertField(final Field field)
     {
-        if (pending.containsValue(field.toVec()))
+        Vec vec = field.toVec();
+
+        if (pending.containsKey(vec))
         {
             processSingleField(pending.get(field.toVec()));
         }
@@ -1121,19 +1113,19 @@ public final class StorageManager
     }
 
     /**
- * Delete an unbreakable from the database
- *
- * @param ub
- */
-public void deleteUnbreakable(final Unbreakable ub)
-{
-    final String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + Helper.escapeQuotes(ub.getWorld()) + "';";
-
-    synchronized (this)
+     * Delete an unbreakable from the database
+     *
+     * @param ub
+     */
+    public void deleteUnbreakable(final Unbreakable ub)
     {
-        core.delete(query);
+        final String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + Helper.escapeQuotes(ub.getWorld()) + "';";
+
+        synchronized (this)
+        {
+            core.delete(query);
+        }
     }
-}
 
     /**
      * Insert snitch entry into the database
@@ -1426,7 +1418,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Checks if the translocation head record exists
      *
-     * @param field
+     * @param name
+     * @param playerName
      * @return
      */
     public boolean existsTranslocatior(String name, String playerName)
@@ -1462,6 +1455,7 @@ public void deleteUnbreakable(final Unbreakable ub)
      * Sets the size of the field
      *
      * @param field
+     * @param fieldName
      * @return
      */
     public boolean changeSizeTranslocatiorField(final Field field, String fieldName)
@@ -1504,7 +1498,7 @@ public void deleteUnbreakable(final Unbreakable ub)
      * Add the head record for the translocation
      *
      * @param field
-     * @param gb
+     * @param name
      */
     public void insertTranslocationHead(final Field field, String name)
     {
@@ -1525,7 +1519,7 @@ public void deleteUnbreakable(final Unbreakable ub)
      * Record a single translocation block
      *
      * @param field
-     * @param gb
+     * @param tb
      */
     public void insertTranslocationBlock(final Field field, final TranslocationBlock tb)
     {
@@ -1536,7 +1530,8 @@ public void deleteUnbreakable(final Unbreakable ub)
      * Record a single translocation block
      *
      * @param field
-     * @param gb
+     * @param tb
+     * @param applied
      */
     public void insertTranslocationBlock(final Field field, final TranslocationBlock tb, boolean applied)
     {
@@ -1559,7 +1554,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Retrieves the count of applied translocation blocks
      *
-     * @param field
+     * @param name
+     * @param playerName
      * @return
      */
     public int appliedTranslocationCount(String name, String playerName)
@@ -1594,7 +1590,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Retrieves the count of applied translocation blocks
      *
-     * @param field
+     * @param name
+     * @param playerName
      * @return
      */
     public int totalTranslocationCount(String name, String playerName)
@@ -1640,7 +1637,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Retrieves the count of unapplied translocation blocks
      *
-     * @param field
+     * @param name
+     * @param playerName
      * @return
      */
     public int unappliedTranslocationCount(String name, String playerName)
@@ -1817,7 +1815,7 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Returns the players stored translocations and their sizes
      *
-     * @param field
+     * @param playerName
      * @return
      */
     public Map<String, Integer> getTranslocationDetails(String playerName)
@@ -1864,7 +1862,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Returns whether a field with that name by that player exists
      *
-     * @param field
+     * @param name
+     * @param playerName
      * @return
      */
     public boolean existsFieldWithName(String name, String playerName)
@@ -1937,7 +1936,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Returns whether there is data witht tha name for that player
      *
-     * @param field
+     * @param name
+     * @param playerName
      * @return
      */
     public boolean existsTranslocationDataWithName(String name, String playerName)
@@ -2023,24 +2023,10 @@ public void deleteUnbreakable(final Unbreakable ub)
     }
 
     /**
-     * Deletes all records from a specific field
-     *
-     * @param field
-     */
-    public void deleteTranslocation(final Field field)
-    {
-        final String query = "DELETE FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "'";
-
-        synchronized (this)
-        {
-            core.delete(query);
-        }
-    }
-
-    /**
      * Deletes a specific block from a translocation field
      *
-     * @param block
+     * @param field
+     * @param tb
      */
     public void deleteTranslocation(final Field field, final TranslocationBlock tb)
     {
@@ -2057,7 +2043,7 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Deletes all records from a player
      *
-     * @param block
+     * @param playerName
      */
     public void deleteTranslocation(final String playerName)
     {
@@ -2072,7 +2058,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Deletes all of a translocation's blocks
      *
-     * @param block
+     * @param name
+     * @param playerName
      */
     public void deleteTranslocation(String name, final String playerName)
     {
@@ -2087,7 +2074,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Deletes the translocation's head record
      *
-     * @param block
+     * @param name
+     * @param playerName
      */
     public void deleteTranslocationHead(String name, final String playerName)
     {
@@ -2102,7 +2090,10 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Deletes the translocation's head record
      *
+     * @param name
+     * @param playerName
      * @param block
+     * @return
      */
     public int deleteBlockTypeFromTranslocation(String name, final String playerName, BlockTypeEntry block)
     {
@@ -2128,7 +2119,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Changes the owner of a translocation block
      *
-     * @param block
+     * @param field
+     * @param newOwner
      */
     public void changeTranslocationOwner(Field field, String newOwner)
     {
@@ -2144,6 +2136,8 @@ public void deleteUnbreakable(final Unbreakable ub)
      * Mark a single translocation block as applied in a field
      *
      * @param field
+     * @param tb
+     * @param applied
      */
     public void updateTranslocationBlockApplied(Field field, TranslocationBlock tb, boolean applied)
     {
@@ -2160,7 +2154,8 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Returns whether the translocation is applied or not
      *
-     * @param field
+     * @param name
+     * @param playerName
      * @return
      */
     public boolean isTranslocationApplied(String name, String playerName)
@@ -2172,6 +2167,7 @@ public void deleteUnbreakable(final Unbreakable ub)
      * Update a block's data on the database
      *
      * @param field
+     * @param tb
      */
     public void updateTranslocationBlockData(Field field, TranslocationBlock tb)
     {
@@ -2189,6 +2185,7 @@ public void deleteUnbreakable(final Unbreakable ub)
      * Update a block's content on the database
      *
      * @param field
+     * @param tb
      */
     public void updateTranslocationBlockContents(Field field, TranslocationBlock tb)
     {
@@ -2206,6 +2203,7 @@ public void deleteUnbreakable(final Unbreakable ub)
      * Update a block's signtext on the database
      *
      * @param field
+     * @param tb
      */
     public void updateTranslocationSignText(Field field, TranslocationBlock tb)
     {
@@ -2285,7 +2283,7 @@ public void deleteUnbreakable(final Unbreakable ub)
     /**
      * Process suingle field
      *
-     * @param working
+     * @param field
      */
     public void processSingleField(final Field field)
     {
