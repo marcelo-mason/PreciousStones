@@ -185,7 +185,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Miner's Haste
-    block: 8
+    block: 79
     radius: 10
     custom-height: 128
     cuboid: true
