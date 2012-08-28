@@ -164,6 +164,15 @@
         <developerConnection>scm:git:git@github.com:SacredCoding/PreciousStones.git</developerConnection>
     </scm>
 
+    <!--Nexus -->
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://repo.sacredlabyrinth.net:8081/nexus/content/repositories/releases</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
