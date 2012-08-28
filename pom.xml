@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>9.4.2${BUILD_NUMBER}-SNAPSHOT</version>
+    <version>9.4.1-${BUILD_NUMBER}-SNAPSHOT</version>
     <name>PreciousStones</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://sacredlabyrinth.net:8080</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</connection>
+        <developerConnection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</developerConnection>
+        <url>http://github.com/SacredCoding/PreciousStones.git/tree/master/</url>
+    </scm>
 
     <build>
         <finalName>${project.name}</finalName>
@@ -66,7 +83,6 @@
     <dependencies>
 
         <!-- From Repos -->
-
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>minecraft-server</artifactId>
@@ -94,7 +110,6 @@
         </dependency>
 
         <!-- Local -->
-
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
@@ -144,36 +159,8 @@
 
     <repositories>
         <repository>
-            <id>public</id>
-            <url>http://repo.sacredlabyrinth.net:8081/nexus/content/groups/public</url>
+            <id>remote-repos</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/remote-repos</url>
         </repository>
     </repositories>
-
-    <!-- CI/GitHub -->
-
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://sacredlabyrinth.net:8080</url>
-    </ciManagement>
-
-    <scm>
-        <connection>scm:git:git@github.com:SacredCoding/PreciousStones.git</connection>
-        <url>http://github.com/SacredCoding/PreciousStones.git</url>
-        <developerConnection>scm:git:git@github.com:SacredCoding/PreciousStones.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
-
-    <!--Nexus -->
-
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <url>http://repo.sacredlabyrinth.net:8081/nexus/content/repositories/releases</url>
-        </repository>
-    </distributionManagement>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
 </project>
