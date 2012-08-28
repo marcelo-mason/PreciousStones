@@ -160,7 +160,7 @@
 
     <scm>
         <connection>scm:git:git@github.com:SacredCoding/PreciousStones.git</connection>
-        <url>scm:git:git@github.com:SacredCoding/PreciousStones.git</url>
+        <url>http://github.com/SacredCoding/PreciousStones.git</url>
         <developerConnection>scm:git:git@github.com:SacredCoding/PreciousStones.git</developerConnection>
     </scm>
 
