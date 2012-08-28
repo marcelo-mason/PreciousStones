@@ -29,6 +29,7 @@
         <finalName>${project.name}</finalName>
 
         <!-- Resources -->
+
         <resources>
             <resource>
                 <targetPath>.</targetPath>
@@ -42,6 +43,7 @@
         </resources>
 
         <!-- Plugins -->
+
         <plugins>
             <!-- Compilation plugin -->
             <plugin>
@@ -66,6 +68,13 @@
                     <outputDirectory>${basedir}/out/</outputDirectory>
                 </configuration>
             </plugin>
+
+            <!-- Release plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.2</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -74,7 +83,6 @@
     <dependencies>
 
         <!-- From Repos -->
-
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>minecraft-server</artifactId>
@@ -108,7 +116,6 @@
         </dependency>
 
         <!-- Local -->
-
         <dependency>
             <groupId>com.trc202</groupId>
             <artifactId>CombatTag</artifactId>
