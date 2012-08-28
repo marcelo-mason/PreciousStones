@@ -80,7 +80,7 @@
             <artifactId>minecraft-server</artifactId>
             <version>1.3.1</version>
             <type>jar</type>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
@@ -92,16 +92,19 @@
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
             <version>1.2.16</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>
             <version>5.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
             <version>1.19.3</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Local -->
@@ -110,31 +113,37 @@
             <groupId>com.trc202</groupId>
             <artifactId>CombatTag</artifactId>
             <version>3.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.griefcraft</groupId>
             <artifactId>LWC</artifactId>
             <version>4.0.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.yi.acru.bukkit</groupId>
             <artifactId>Lockette</artifactId>
             <version>1.7.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.sacredlabyrinth.phaed</groupId>
             <artifactId>simpleclans</artifactId>
             <version>2.3.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>uk.co.oliwali</groupId>
             <artifactId>HawkEye</artifactId>
             <version>1.0.7b</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.platymuus</groupId>
             <artifactId>bukkit-permissions</artifactId>
             <version>1.5</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
