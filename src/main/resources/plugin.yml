@@ -7,7 +7,7 @@ softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, Combat
 commands:
   ps:
     description: All of the PreciousStones commands
-    usage: Syntax error, verify the command usage and try again
+    usage: Command not recognized, please try again
 permissions:
   preciousstones.benefit.create.forcefield:
     description: Can create forcefield blocks
