@@ -620,7 +620,7 @@ public class PSBlockListener implements Listener
             {
                 if (field.getSettings().getPrice() > 0)
                 {
-                    // refund the block, account for parent/child relationships
+                    // refund the block, accounts for parent/child relationships
 
                     if (field.isChild() || field.isParent())
                     {

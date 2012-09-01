@@ -81,6 +81,54 @@ public class SnitchManager
      * @param player
      * @param block
      */
+    public void recordSnitchBlucketEmpty(Player player, Block block, String type)
+    {
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
+        {
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
+
+            for (Field field : snitchFields)
+            {
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    String details = Helper.friendlyBlockType(type) + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
+
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Bucket Empty", details, 1));
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param block
+     */
+    public void recordSnitchBlucketFill(Player player, Block block)
+    {
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
+        {
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
+
+            for (Field field : snitchFields)
+            {
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Bucket Filled", toBlockDetails(block), 1));
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param block
+     */
     public void recordSnitchBlockPlace(Player player, Block block)
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))

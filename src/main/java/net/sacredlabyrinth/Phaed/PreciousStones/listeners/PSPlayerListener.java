@@ -1118,6 +1118,10 @@ public class PSPlayerListener implements Listener
 
         DebugTimer dt = new DebugTimer("onPlayerBucketFill");
 
+        // snitch
+
+        plugin.getSnitchManager().recordSnitchBlucketFill(player, block);
+
         // -------------------------------------------------------------------------------------- prevent pickup up fields
 
         if (plugin.getForceFieldManager().isField(block))
@@ -1223,6 +1227,23 @@ public class PSPlayerListener implements Listener
         if (plugin.getSettingsManager().isBlacklistedWorld(player.getLocation().getWorld()))
         {
             return;
+        }
+
+        // snitch
+
+        if (mat.equals(Material.LAVA_BUCKET))
+        {
+            plugin.getSnitchManager().recordSnitchBlucketEmpty(player, block, "LAVA");
+        }
+
+        if (mat.equals(Material.WATER_BUCKET))
+        {
+            plugin.getSnitchManager().recordSnitchBlucketEmpty(player, block, "WATER");
+        }
+
+        if (mat.equals(Material.MILK_BUCKET))
+        {
+            plugin.getSnitchManager().recordSnitchBlucketEmpty(player, block, "MILK");
         }
 
         // -------------------------------------------------------------------------------------- placing in a prevent-place area

@@ -76,7 +76,7 @@ public final class ForceFieldManager
      * Add a brand new field
      *
      * @param fieldBlock
-     * @param owner
+     * @param player
      * @param event
      * @return confirmation
      */
@@ -341,12 +341,12 @@ public final class ForceFieldManager
      */
     public void deleteField(final Field field)
     {
-        // remove from fields collection
-
         if (field == null)
         {
             return;
         }
+
+        // remove from fields collection
 
         if (field.getSettings() != null)
         {
@@ -608,7 +608,8 @@ public final class ForceFieldManager
     /**
      * Gets the field object from a block, if the block is a field
      *
-     * @param block the block that is a field
+     * @param type the block type id
+     * @param data the data value
      * @return the field object from the block
      */
     public Field getField(Location location, int type, byte data)
@@ -1102,7 +1103,6 @@ public final class ForceFieldManager
     /**
      * Clean up snitch lists of the field
      *
-     * @param player
      * @param field
      * @return confirmation
      */
@@ -1123,7 +1123,6 @@ public final class ForceFieldManager
     /**
      * Sets the name of the field and all intersecting fields
      *
-     * @param player
      * @param field
      * @param name
      * @return count of fields set
@@ -1145,7 +1144,6 @@ public final class ForceFieldManager
     /**
      * Returns a list of players who are inside the field
      *
-     * @param player
      * @param field
      * @return list of player names
      */
@@ -1250,22 +1248,8 @@ public final class ForceFieldManager
     }
 
     /**
-     * Get allowed players on a field
-     *
-     * @param player
-     * @param field
-     * @param overlapped
-     * @return allowed entry object per user
-     */
-    public List<String> getAllowed(Player player, Field field)
-    {
-        return field.getAllAllowed();
-    }
-
-    /**
      * Add allowed player to a field
      *
-     * @param player
      * @param field
      * @param allowedName
      * @return count of fields the player was allowed in
@@ -1329,7 +1313,6 @@ public final class ForceFieldManager
     /**
      * Remove allowed player from a field
      *
-     * @param player
      * @param allowedName
      * @param field
      * @return count of fields the player was removed from
@@ -1510,7 +1493,9 @@ public final class ForceFieldManager
     /**
      * Get all fields matching this flag that are touching this chunk
      *
-     * @param cv
+     * @param chunk
+     * @param flag
+     * @param filters
      * @return
      */
     public List<Field> getSourceFieldsInChunk(Chunk chunk, FieldFlag flag, ResultsFilter... filters)
@@ -1566,7 +1551,9 @@ public final class ForceFieldManager
     /**
      * Get the smallest source field in the chunk
      *
-     * @param cv
+     * @param chunk
+     * @param flag
+     * @param filters
      * @return
      */
     public Field getSmallestSourceFieldInChunk(Chunk chunk, FieldFlag flag, ResultsFilter... filters)
@@ -1609,7 +1596,7 @@ public final class ForceFieldManager
      * Returns the fields that the location is in match the field flag(s)
      *
      * @param loc
-     * @param flags
+     * @param flag
      * @return the fields
      */
     public List<Field> getSourceFields(final Location loc, final FieldFlag flag)
@@ -1630,7 +1617,7 @@ public final class ForceFieldManager
      * Returns the enabled fields that the location is in match the field flag(s)
      *
      * @param loc
-     * @param flags
+     * @param flag
      * @return the fields
      */
     public List<Field> getEnabledSourceFields(final Location loc, final FieldFlag flag)
@@ -1667,7 +1654,7 @@ public final class ForceFieldManager
      * Returns a field in the location that matches the field flag(s)
      *
      * @param loc
-     * @param flags
+     * @param flag
      * @return the fields
      */
     public Field getEnabledSourceField(final Location loc, final FieldFlag flag)
@@ -1704,7 +1691,7 @@ public final class ForceFieldManager
      * If a field in the location that matches the field flag(s)
      *
      * @param loc
-     * @param flags
+     * @param flag
      * @return result
      */
     public boolean hasSourceField(Location loc, FieldFlag flag)
@@ -2243,7 +2230,7 @@ public final class ForceFieldManager
     /**
      * Return the first field that conflicts with the cuboid entry
      *
-     * @param placedBlock
+     * @param ce
      * @param placer
      * @return the field, null if none found
      */
@@ -2361,7 +2348,7 @@ public final class ForceFieldManager
     /**
      * Deletes a liquid based field from the collection
      *
-     * @param block
+     * @param field
      */
     public void releaseLiquid(Field field)
     {
@@ -2385,7 +2372,7 @@ public final class ForceFieldManager
     /**
      * Deletes a field silently (no drop)
      *
-     * @param field
+     * @param block
      */
     public void silentRelease(Block block)
     {
@@ -2460,7 +2447,7 @@ public final class ForceFieldManager
     /**
      * Drops a block
      *
-     * @param block
+     * @param field
      */
     public void dropBlockSilent(Field field)
     {
@@ -2504,8 +2491,7 @@ public final class ForceFieldManager
     /**
      * Delete fields the the player is standing on
      *
-     * @param player
-     * @param field
+     * @param sourceFields
      * @return count of fields deleted
      */
     public int deleteFields(List<Field> sourceFields)
@@ -2528,7 +2514,7 @@ public final class ForceFieldManager
     /**
      * Delete fields of a certain type
      *
-     * @param typeId
+     * @param type
      * @return count of fields deleted
      */
     public int deleteFieldsOfType(BlockTypeEntry type)
@@ -2651,7 +2637,7 @@ public final class ForceFieldManager
     /**
      * Returns all of a fields inhabitants
      *
-     * @param block
+     * @param field
      */
     public Set<Player> getFieldInhabitants(Field field)
     {
