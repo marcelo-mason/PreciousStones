@@ -97,7 +97,7 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals("on") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
-                        boolean isDisabled = hasplayer ? plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled() : false;
+                        boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
                         if (isDisabled)
                         {
                             plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(false);
@@ -111,7 +111,7 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals("off") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
-                        boolean isDisabled = hasplayer ? plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled() : false;
+                        boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
                         if (!isDisabled)
                         {
                             plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(true);
@@ -275,7 +275,7 @@ public final class CommandManager implements CommandExecutor
 
                         if (field != null)
                         {
-                            List<String> allowed = plugin.getForceFieldManager().getAllowed(player, field);
+                            List<String> allowed = field.getAllAllowed();
 
                             if (allowed.size() > 0)
                             {
@@ -818,7 +818,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         int radius = Math.min(Integer.parseInt(args[0]), plugin.getServer().getViewDistance());
 
-                                        Set<Field> fieldsInArea = null;
+                                        Set<Field> fieldsInArea ;
 
                                         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
                                         {
@@ -1222,8 +1222,6 @@ public final class CommandManager implements CommandExecutor
 
                         if (args[0].equals("unlink") && plugin.getPermissionsManager().has(player, "preciousstones.translocation.unlink"))
                         {
-                            args = Helper.removeFirst(args);
-
                             Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.TRANSLOCATION);
 
                             if (field != null)
@@ -1389,7 +1387,7 @@ public final class CommandManager implements CommandExecutor
                             }
                             else if (Helper.isString(args[0]) && hasplayer)
                             {
-                                String target = args[0].toString();
+                                String target = args[0];
 
                                 if (!plugin.getCommunicationManager().showFieldCounts(player, target))
                                 {
@@ -1412,13 +1410,13 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (args.length == 1 && Helper.isString(args[0]))
                             {
-                                String targetName = args[0].toString();
+                                String targetName = args[0];
                                 plugin.getCommunicationManager().showFieldLocations(sender, -1, targetName);
                             }
 
                             if (args.length == 2 && Helper.isString(args[0]) && Helper.isInteger(args[1]))
                             {
-                                String targetName = args[0].toString();
+                                String targetName = args[0];
                                 int type = Integer.parseInt(args[1]);
                                 plugin.getCommunicationManager().showFieldLocations(sender, type, targetName);
                             }

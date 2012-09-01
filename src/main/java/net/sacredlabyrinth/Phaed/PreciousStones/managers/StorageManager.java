@@ -116,7 +116,7 @@ public final class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_snitches");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_snitches` ( `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL, `name` varchar(16) NOT NULL, `reason` varchar(20) default NULL, `details` varchar(50) default NULL, `count` int(11) default NULL, PRIMARY KEY  (`x`, `y`, `z`, `world`, `name`, `reason`, `details`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_snitches` ( `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL, `name` varchar(16) NOT NULL, `reason` varchar(20) default NULL, `details` varchar(50) default NULL, `count` int(11) default NULL, `date` varchar(25) default NULL, PRIMARY KEY  (`x`, `y`, `z`, `world`, `name`, `reason`, `details`));");
                 }
             }
             else
@@ -189,7 +189,7 @@ public final class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_snitches");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_snitches` ( `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL, `name` varchar(16) NOT NULL, `reason` varchar(20) default NULL, `details` varchar(50) default NULL, `count` int(11) default NULL, PRIMARY KEY  (`x`, `y`, `z`, `world`, `name`, `reason`, `details`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_snitches` ( `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL, `name` varchar(16) NOT NULL, `reason` varchar(20) default NULL, `details` varchar(50) default NULL, `count` int(11) default NULL, `date` varchar(25) default NULL, PRIMARY KEY  (`x`, `y`, `z`, `world`, `name`, `reason`, `details`));");
                 }
             }
             else
@@ -202,15 +202,20 @@ public final class StorageManager
         {
             if (newTables < 3)
             {
-                fixes();
+                addData();
             }
 
             plugin.getSettingsManager().setVersion(9);
         }
+
+        if (plugin.getSettingsManager().getVersion() < 10)
+        {
+            addSnitchDate();
+            plugin.getSettingsManager().setVersion(10);
+        }
     }
 
-    @SuppressWarnings("unused")
-    private void fixes()
+    private void addData()
     {
         PreciousStones.log("Adding data column to pstone_fields table");
         core.execute("alter table pstone_fields add column data tinyint default 0");
@@ -220,6 +225,12 @@ public final class StorageManager
 
         PreciousStones.log("Adding data column to pstone_unbreakables table");
         core.execute("alter table pstone_unbreakables add column data tinyint default 0");
+    }
+
+    private void addSnitchDate()
+    {
+        PreciousStones.log("Adding data column to pstone_snitches table");
+        core.execute("alter table pstone_snitches add column date varchar(25) default NULL");
     }
 
     /**
@@ -1137,15 +1148,15 @@ public final class StorageManager
     {
         if (plugin.getSettingsManager().isUseMysql())
         {
-            final String query = "INSERT INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`) ";
-            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1) ";
+            final String query = "INSERT INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
+            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + new Date().getTime() + "') ";
             final String update = "ON DUPLICATE KEY UPDATE count = count+1;";
             core.insert(query + values + update);
         }
         else
         {
-            final String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`) ";
-            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1);";
+            final String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
+            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + new Date().getTime() + "');";
             final String update = "UPDATE `pstone_snitches` SET count = count+1;";
             core.insert(query + values + update);
         }
@@ -1189,7 +1200,7 @@ public final class StorageManager
 
         final List<SnitchEntry> out = new ArrayList<SnitchEntry>();
 
-        final String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "' ORDER BY `id` DESC;";
+        final String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "' ORDER BY `date` DESC;";
 
         ResultSet res;
 
