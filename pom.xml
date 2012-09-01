@@ -166,4 +166,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!-- Artifactory -->
+
+    <distributionManagement>
+        <repository>
+            <id>SacredCoding</id>
+            <name>SacredCoding-releases</name>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>SacredCoding</id>
+            <name>SacredCoding-snapshots</name>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
