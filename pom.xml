@@ -179,4 +179,11 @@
             <url>http://repo.sacredlabyrinth.net:8081/artifactory/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <server>
+        <id>SacredCoding</id>
+        <username>admin</username>
+        <password>\{DESede\}hfydadVlLzbF1NiNkFKGFwrphmBBB0zc</password>
+    </server>
+
 </project>
