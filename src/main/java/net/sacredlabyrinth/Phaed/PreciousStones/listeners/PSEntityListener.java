@@ -436,10 +436,7 @@ public class PSEntityListener implements Listener
                             continue;
                         }
 
-                        if (block != null)
-                        {
-                            block.setTypeId(0);
-                        }
+                        block.setTypeId(0);
                     }
                 }
             }, 1);
@@ -516,9 +513,6 @@ public class PSEntityListener implements Listener
                         }
                     }
                 }
-
-                event.setCancelled(true);
-                return;
             }
         }
 
