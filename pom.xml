@@ -4,7 +4,7 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>9.4.1-SNAPSHOT</version>
+    <version>9.4.0-1-SNAPSHOT</version>
     <name>PreciousStones</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
@@ -179,11 +179,5 @@
             <url>http://repo.sacredlabyrinth.net:8081/artifactory/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <server>
-        <id>SacredCoding</id>
-        <username>admin</username>
-        <password>\{DESede\}hfydadVlLzbF1NiNkFKGFwrphmBBB0zc</password>
-    </server>
 
 </project>
