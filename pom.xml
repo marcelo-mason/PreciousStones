@@ -65,12 +65,10 @@
 
     <dependencies>
 
-        <!-- From Repos -->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>minecraft-server</artifactId>
             <version>1.3.1</version>
-            <type>jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -91,8 +89,6 @@
             <version>5.4</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Local -->
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>

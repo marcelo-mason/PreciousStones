@@ -360,7 +360,7 @@ settings:
     public-block-details: false
     blacklisted-worlds: [creative_world]
     drop-on-delete: true
-    version: 0
+    version: 10
 log:
     bypass-pvp: true
     pvp: true
