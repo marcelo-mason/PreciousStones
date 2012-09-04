@@ -952,7 +952,7 @@ public class FieldSettings
     /**
      * Check if the setting has a flag
      *
-     * @param flag
+     * @param flagStr
      * @return
      */
     public boolean hasDefaultFlag(String flagStr)
@@ -999,6 +999,11 @@ public class FieldSettings
      */
     public boolean hasLimit()
     {
+        if (limits == null)
+        {
+            return false;
+        }
+
         return !limits.isEmpty();
     }
 
@@ -1094,7 +1099,7 @@ public class FieldSettings
     {
         String out = "";
 
-        for(PotionEffectType potion : potions.keySet())
+        for (PotionEffectType potion : potions.keySet())
         {
             out += Helper.friendlyBlockType(potion.getName()) + ", ";
         }
@@ -1106,7 +1111,7 @@ public class FieldSettings
     {
         String out = "";
 
-        for(PotionEffectType potion : neutralizePotions)
+        for (PotionEffectType potion : neutralizePotions)
         {
             out += Helper.friendlyBlockType(potion.getName()) + ", ";
         }
@@ -1133,7 +1138,7 @@ public class FieldSettings
     /**
      * If the field can be placed in a world
      *
-     * @param worldName
+     * @param world
      * @return
      */
     public boolean allowedWorld(World world)
