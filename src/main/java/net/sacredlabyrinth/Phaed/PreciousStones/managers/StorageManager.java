@@ -608,7 +608,7 @@ public final class StorageManager
 
         if (foundInWrongTable)
         {
-            System.out.print("[Precious Stones] Fields found in wrong table, moving...");
+            System.out.print("[PreciousStones] Fields found in wrong table, moving...");
         }
 
         if (purged > 0)
@@ -816,7 +816,7 @@ public final class StorageManager
 
         if (foundInWrongTable)
         {
-            System.out.print("[Precious Stones] Fields found in wrong table, moving..");
+            System.out.print("[PreciousStones] Fields found in wrong table, moving..");
         }
 
         if (purged > 0)

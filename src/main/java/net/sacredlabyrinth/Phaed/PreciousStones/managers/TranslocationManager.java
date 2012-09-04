@@ -163,7 +163,7 @@ public final class TranslocationManager
      * Removes a block from the traslocation
      *
      * @param field
-     * @param tb
+     * @param block
      */
     public void removeBlock(Field field, Block block)
     {
@@ -350,8 +350,8 @@ public final class TranslocationManager
     /**
      * Wipes a single translocation block from the world
      *
+     * @param field
      * @param tb
-     * @param world
      */
     public boolean wipeTranslocationBlock(Field field, TranslocationBlock tb)
     {
@@ -373,8 +373,9 @@ public final class TranslocationManager
     /**
      * Clears a single translocation block from the world
      *
+     * @param field
      * @param tb
-     * @param world
+     * @param clear
      */
     public boolean updateTranslationBlock(Field field, TranslocationBlock tb, boolean clear)
     {
@@ -480,7 +481,6 @@ public final class TranslocationManager
      * Clears a single translocation block from the world
      *
      * @param tb
-     * @param world
      */
     public void zeroOutBlock(TranslocationBlock tb)
     {
@@ -519,8 +519,9 @@ public final class TranslocationManager
     /**
      * Imports the contets of the field into the translocation
      *
-     * @param fioeld
+     * @param field
      * @param player
+     * @param entries
      * @return
      */
     public void importBlocks(Field field, Player player, List<BlockTypeEntry> entries)
@@ -553,8 +554,9 @@ public final class TranslocationManager
     /**
      * Imports the contets of the field into the translocation
      *
-     * @param fioeld
+     * @param field
      * @param player
+     * @param entries
      * @return
      */
     public void removeBlocks(Field field, Player player, List<BlockTypeEntry> entries)

@@ -37,8 +37,7 @@ public class TranslocationBlock extends AbstractVec
      * @param y
      * @param z
      * @param world
-     * @param typeId
-     * @param data
+     * @param type
      */
     public TranslocationBlock(int x, int y, int z, String world, BlockTypeEntry type)
     {
@@ -48,8 +47,7 @@ public class TranslocationBlock extends AbstractVec
 
     /**
      * @param loc
-     * @param typeId
-     * @param data
+     * @param type
      */
     public TranslocationBlock(Location loc, BlockTypeEntry type)
     {
@@ -77,7 +75,7 @@ public class TranslocationBlock extends AbstractVec
     }
 
     /**
-     * @param block
+     * @param state
      */
     public TranslocationBlock(BlockState state)
     {

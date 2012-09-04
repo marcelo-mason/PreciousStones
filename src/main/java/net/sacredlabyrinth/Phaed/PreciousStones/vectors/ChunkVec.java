@@ -30,7 +30,7 @@ public class ChunkVec extends AbstractVec
 
     /**
      *
-     * @param block
+     * @param location
      */
     public ChunkVec(Location location)
     {

@@ -451,7 +451,7 @@ public final class ForceFieldManager
             }
         }
 
-        flushDrop();
+        dropBlock(field);
 
         // delete from database
 

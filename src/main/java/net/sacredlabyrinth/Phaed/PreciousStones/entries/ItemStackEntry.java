@@ -19,7 +19,7 @@ public class ItemStackEntry
     private Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
 
     /**
-     * @param block
+     * @param item
      */
     public ItemStackEntry(ItemStack item)
     {
@@ -31,7 +31,7 @@ public class ItemStackEntry
     }
 
     /**
-     * @param block
+     * @param o
      */
     public ItemStackEntry(JSONObject o)
     {
