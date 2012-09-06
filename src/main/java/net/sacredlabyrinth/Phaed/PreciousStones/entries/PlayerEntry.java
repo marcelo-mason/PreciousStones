@@ -30,7 +30,6 @@ public class PlayerEntry
     private ItemStackEntry confiscatedBoots = null;
 
     /**
-     * @param disabled
      */
     public PlayerEntry()
     {
@@ -144,7 +143,7 @@ public class PlayerEntry
     /**
      * Increment the field count of a specific field
      *
-     * @param typeid
+     * @param type
      */
     public void incrementFieldCount(BlockTypeEntry type)
     {
@@ -161,7 +160,7 @@ public class PlayerEntry
     /**
      * Decrement the field count of a specific field
      *
-     * @param typeid
+     * @param type
      */
     public void decrementFieldCount(BlockTypeEntry type)
     {
@@ -185,7 +184,7 @@ public class PlayerEntry
     /**
      * Get the number of fields the player has placed
      *
-     * @param typeid
+     * @param type
      * @return
      */
     public int getFieldCount(BlockTypeEntry type)
@@ -201,7 +200,6 @@ public class PlayerEntry
     /**
      * Get the total number of fields the player has placed
      *
-     * @param typeid
      * @return
      */
     public int getTotalFieldCount()

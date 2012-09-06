@@ -18,7 +18,7 @@ public class Visualization
     private List<Field> fields = new LinkedList<Field>();
 
     /**
-     * @param loc
+     * @param block
      */
     public void addBlock(Block block)
     {

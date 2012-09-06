@@ -694,7 +694,7 @@ public class Helper
     /**
      * Returns a list of type entries from a string list
      *
-     * @param rawItem
+     * @param rawList
      * @return
      */
     public static List<BlockTypeEntry> toTypeEntrieBlind(List<Object> rawList)
@@ -717,7 +717,7 @@ public class Helper
     /**
      * Returns a list of type entries from a string list
      *
-     * @param rawItem
+     * @param rawList
      * @return
      */
     public static List<BlockTypeEntry> toTypeEntries(List<String> rawList)

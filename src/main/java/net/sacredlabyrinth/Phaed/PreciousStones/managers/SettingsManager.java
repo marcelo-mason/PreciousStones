@@ -465,7 +465,7 @@ public final class SettingsManager
     /**
      * Check if a type is one of the unprotectable types
      *
-     * @param type
+     * @param block
      * @return
      */
     public boolean isUnprotectableType(Block block)
@@ -539,7 +539,7 @@ public final class SettingsManager
     /**
      * Check if a type is one of the unbreakable types
      *
-     * @param typeId
+     * @param type
      * @return
      */
     public boolean isUnbreakableType(BlockTypeEntry type)
@@ -550,7 +550,7 @@ public final class SettingsManager
     /**
      * Check if a block is one of the unbreakable types
      *
-     * @param unbreakableblock
+     * @param block
      * @return
      */
     public boolean isUnbreakableType(Block block)
@@ -574,7 +574,7 @@ public final class SettingsManager
     /**
      * Check if a type is one of the forcefeld types
      *
-     * @param typeId
+     * @param type
      * @return
      */
     public boolean isFieldType(BlockTypeEntry type)
@@ -596,7 +596,7 @@ public final class SettingsManager
     /**
      * Returns the settings for a specific block
      *
-     * @param field
+     * @param block
      * @return
      */
     public FieldSettings getFieldSettings(Block block)
@@ -618,7 +618,7 @@ public final class SettingsManager
     /**
      * Returns the settings for a specific block type
      *
-     * @param typeId
+     * @param type
      * @return
      */
     public FieldSettings getFieldSettings(BlockTypeEntry type)

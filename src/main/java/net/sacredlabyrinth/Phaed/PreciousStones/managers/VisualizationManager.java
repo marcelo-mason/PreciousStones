@@ -414,7 +414,7 @@ public class VisualizationManager
      * Adds a fields outline to a player's visualization buffer
      *
      * @param player
-     * @param field
+     * @param ce
      */
     public void displayFieldOutline(Player player, CuboidEntry ce)
     {
@@ -562,7 +562,8 @@ public class VisualizationManager
      * Adds and displays a visualized block to the player
      *
      * @param player
-     * @param field
+     * @param material
+     * @param block
      */
     public void displaySingle(Player player, Material material, Block block)
     {
@@ -583,7 +584,7 @@ public class VisualizationManager
      * Revert a single a visualized block to the player
      *
      * @param player
-     * @param field
+     * @param block
      */
     public void revertSingle(Player player, Block block)
     {

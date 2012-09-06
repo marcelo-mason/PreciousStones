@@ -27,7 +27,9 @@ public class BlockEntry
     }
 
     /**
-     * @param block
+     * @param loc
+     * @param typeId
+     * @param data
      */
     public BlockEntry(Location loc, int typeId, byte data)
     {
