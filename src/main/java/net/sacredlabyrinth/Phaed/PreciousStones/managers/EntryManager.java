@@ -393,7 +393,7 @@ public final class EntryManager
      * Runs when a player leaves an overlapped area
      *
      * @param player
-     * @param entryField
+     * @param field
      */
     public void leaveOverlappedArea(Player player, Field field)
     {
@@ -466,7 +466,7 @@ public final class EntryManager
     }
 
     /**
-     * @param entity
+     * @param player
      * @param field
      */
     public void enterField(Player player, Field field)
@@ -624,7 +624,7 @@ public final class EntryManager
     /**
      * Remove all players from field
      *
-     * @param player
+     * @param field
      */
     public void removeAllPlayers(Field field)
     {
