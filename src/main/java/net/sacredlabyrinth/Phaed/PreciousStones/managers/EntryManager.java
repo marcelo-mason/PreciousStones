@@ -364,7 +364,7 @@ public final class EntryManager
 
         if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
-            if (field.getSettings().getForceEntryGameMode() != null)
+            if (field.hasFlag(FieldFlag.ENTRY_GAME_MODE))
             {
                 player.setGameMode(field.getSettings().getForceEntryGameMode());
             }
@@ -443,7 +443,7 @@ public final class EntryManager
 
         if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
-            if (field.getSettings().getForceLeavingGameMode() != null)
+            if (field.hasFlag(FieldFlag.LEAVING_GAME_MODE))
             {
                 player.setGameMode(field.getSettings().getForceLeavingGameMode());
             }

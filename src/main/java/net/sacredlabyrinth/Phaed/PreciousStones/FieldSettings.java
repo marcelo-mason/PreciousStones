@@ -138,10 +138,10 @@ public class FieldSettings
         {
             groupOnEntry = (String) map.get("group-on-entry");
 
-            if (groupOnEntry.length() > 0)
-            {
-                defaultFlags.add(FieldFlag.GROUP_ON_ENTRY);
-            }
+            if (groupOnEntry != null && groupOnEntry.length() > 0)
+        {
+            defaultFlags.add(FieldFlag.GROUP_ON_ENTRY);
+        }
         }
 
         if (map.containsKey("entry-game-mode") && Helper.isString(map.get("entry-game-mode")))
@@ -157,6 +157,11 @@ public class FieldSettings
             {
                 forceEntryGameMode = GameMode.SURVIVAL;
             }
+
+            if (forceEntryGameMode.equals(GameMode.CREATIVE) || forceEntryGameMode.equals(GameMode.SURVIVAL))
+            {
+                defaultFlags.add(FieldFlag.ENTRY_GAME_MODE);
+            }
         }
 
         if (map.containsKey("leaving-game-mode") && Helper.isString(map.get("leaving-game-mode")))
@@ -171,6 +176,11 @@ public class FieldSettings
             if (gameMode.equalsIgnoreCase("survival"))
             {
                 forceLeavingGameMode = GameMode.SURVIVAL;
+            }
+
+            if (forceLeavingGameMode.equals(GameMode.CREATIVE) || forceLeavingGameMode.equals(GameMode.SURVIVAL))
+            {
+                defaultFlags.add(FieldFlag.LEAVING_GAME_MODE);
             }
         }
 
