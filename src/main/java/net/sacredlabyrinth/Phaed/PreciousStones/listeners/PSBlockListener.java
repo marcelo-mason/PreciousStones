@@ -178,6 +178,13 @@ public class PSBlockListener implements Listener
             return;
         }
 
+        // only act on fields wth the enable-with-redstone flag
+
+        if (!field.hasFlag(FieldFlag.ENABLE_WITH_REDSTONE))
+        {
+            return;
+        }
+
         // enable/disable the field (except translocation fields)
 
         if (event.getNewCurrent() > event.getOldCurrent())
