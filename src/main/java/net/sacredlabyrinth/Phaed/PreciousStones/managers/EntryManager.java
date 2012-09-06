@@ -338,6 +338,14 @@ public final class EntryManager
             plugin.getCommunicationManager().showWelcomeMessage(player, field);
         }
 
+        if (field.hasFlag(FieldFlag.GROUP_ON_ENTRY))
+        {
+            if (!plugin.getPermissionsManager().inGroup(player.getName(), player.getWorld(), field.getSettings().getGroupOnEntry()))
+            {
+                plugin.getPermissionsManager().addGroup(player, field.getSettings().getGroupOnEntry());
+            }
+        }
+
         if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
             if (field.getSettings().getGroupOnEntry() != null)
@@ -394,6 +402,14 @@ public final class EntryManager
         if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE))
         {
             plugin.getCommunicationManager().showFarewellMessage(player, field);
+        }
+
+        if (field.hasFlag(FieldFlag.GROUP_ON_ENTRY))
+        {
+            if (plugin.getPermissionsManager().inGroup(player.getName(), player.getWorld(), field.getSettings().getGroupOnEntry()))
+            {
+                plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
+            }
         }
 
         if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))

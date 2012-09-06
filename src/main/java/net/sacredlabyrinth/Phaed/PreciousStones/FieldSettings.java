@@ -137,6 +137,11 @@ public class FieldSettings
         if (map.containsKey("group-on-entry") && Helper.isString(map.get("group-on-entry")))
         {
             groupOnEntry = (String) map.get("group-on-entry");
+
+            if (groupOnEntry.length() > 0)
+            {
+                defaultFlags.add(FieldFlag.GROUP_ON_ENTRY);
+            }
         }
 
         if (map.containsKey("entry-game-mode") && Helper.isString(map.get("entry-game-mode")))
