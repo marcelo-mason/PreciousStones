@@ -1089,9 +1089,12 @@ public final class ForceFieldManager
 
                     Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (isField(surroundingblock))
+                    if (plugin.getSettingsManager().isFieldType(surroundingblock))
                     {
-                        return surroundingblock;
+                        if (isField(surroundingblock))
+                        {
+                            return surroundingblock;
+                        }
                     }
                 }
             }
