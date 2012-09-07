@@ -176,33 +176,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
     }
 
-    /**
-     * Check if the field has certain certain properties
-     *
-     * @param flag
-     * @return
-     */
-    public boolean hasFlag(FieldFlag flag)
-    {
-        boolean ret = flags.contains(flag);
-        if (!ret)
-        {
-            ret = insertedFlags.contains(flag);
-        }
-
-        if (disabledFlags.contains(flag))
-        {
-            ret = false;
-        }
-
-        return ret;
-    }
-
-    public boolean hasFlag(String flagStr)
-    {
-        return hasFlag(Helper.toFieldFlag(flagStr));
-    }
-
 
     private void calculateDimensions()
     {
@@ -1064,6 +1037,32 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.open = open;
     }
 
+    /**
+     * Check if the field has certain certain properties
+     *
+     * @param flag
+     * @return
+     */
+    public boolean hasFlag(FieldFlag flag)
+    {
+        boolean ret = flags.contains(flag);
+        if (!ret)
+        {
+            ret = insertedFlags.contains(flag);
+        }
+
+        if (disabledFlags.contains(flag))
+        {
+            ret = false;
+        }
+
+        return ret;
+    }
+
+    public boolean hasFlag(String flagStr)
+    {
+        return hasFlag(Helper.toFieldFlag(flagStr));
+    }
     /**
      * Return the list of flags and their data as a json string
      *
