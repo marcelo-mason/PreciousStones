@@ -1204,7 +1204,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
     }
 
-
     /**
      * Force insert a flag if it doesn't exist.
      * This can suck

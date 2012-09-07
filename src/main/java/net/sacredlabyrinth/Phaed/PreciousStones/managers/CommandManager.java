@@ -970,7 +970,7 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "The field flag entered doesn not exist");
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + "The field flag entered does not exist");
                                     }
                                 }
                                 else
