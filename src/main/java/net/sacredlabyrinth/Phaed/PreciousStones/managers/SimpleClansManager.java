@@ -164,8 +164,8 @@ public final class SimpleClansManager
     }
 
     /**
-     * @param field
-     * @param player
+     * @param owner
+     * @param playerName
      * @return
      */
     public boolean isAllyOwner(String owner, String playerName)
