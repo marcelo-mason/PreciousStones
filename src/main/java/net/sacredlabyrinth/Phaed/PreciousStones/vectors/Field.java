@@ -433,6 +433,17 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
+     * Check whether a target (name, g:group, c:clan) is in the allowed list on this field
+     *
+     * @param target
+     * @return
+     */
+    public boolean isInAllowedList(String target)
+    {
+        return allowed.contains(target.toLowerCase());
+    }
+
+    /**
      * Check whether a target (name, g:group, c:clan) is allowed on this field
      *
      * @param target

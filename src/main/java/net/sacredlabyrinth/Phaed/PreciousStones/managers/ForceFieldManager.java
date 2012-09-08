@@ -1251,21 +1251,40 @@ public final class ForceFieldManager
     }
 
     /**
-     * Add allowed player to a field
+     * Allow a target (name, g:group, c:clan) into a field
      *
      * @param field
-     * @param allowedName
+     * @param target
      * @return whether he got allowed
      */
-    public boolean addAllowed(Field field, String allowedName)
+    public boolean addAllowed(Field field, String target)
     {
-        if (!isAllowed(field, allowedName))
+        if (!field.isInAllowedList(target))
         {
-            field.addAllowed(allowedName);
+            field.addAllowed(target);
             plugin.getStorageManager().offerField(field);
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Disallow a target (name, g:group, c:clan) from a field
+     *
+     * @param field
+     * @param target
+     * @return count of fields the player was removed from
+     */
+    public boolean removeAllowed(Field field, String target)
+    {
+        if (field.isInAllowedList(target))
+        {
+            field.removeAllowed(target);
+
+            plugin.getStorageManager().offerField(field);
+            return true;
+        }
         return false;
     }
 
@@ -1311,25 +1330,6 @@ public final class ForceFieldManager
         }
 
         return allowedCount;
-    }
-
-    /**
-     * Remove allowed player from a field
-     *
-     * @param allowedName
-     * @param field
-     * @return count of fields the player was removed from
-     */
-    public boolean removeAllowed(Field field, String allowedName)
-    {
-        if (isAllowed(field, allowedName))
-        {
-            field.removeAllowed(allowedName);
-
-            plugin.getStorageManager().offerField(field);
-            return true;
-        }
-        return false;
     }
 
     /**
