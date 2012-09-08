@@ -235,7 +235,7 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + Helper.capitalize(playerName) + " not found or is the last player on the list");
+                                        ChatBlock.sendMessage(sender, ChatColor.RED + Helper.capitalize(playerName) + " not found");
                                     }
                                 }
                             }

@@ -1255,7 +1255,7 @@ public final class ForceFieldManager
      *
      * @param field
      * @param allowedName
-     * @return count of fields the player was allowed in
+     * @return whether he got allowed
      */
     public boolean addAllowed(Field field, String allowedName)
     {
