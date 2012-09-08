@@ -111,6 +111,12 @@ public final class SettingsManager
     private boolean disableAlertsForAdmins;
     private boolean disableBypassAlertsForAdmins;
     private boolean offByDefault;
+
+    private String[] unToggable = new String[]{"worldguard-repellent", "place-disabled", "sneaking-bypass", "breakable-on-disabled", "modify-on-disabled",
+            "redefine-on-disabled", "prevent-unprotectable", "toggle-on-disabled", "no-conflict", "no-player-place", "apply-to-all", "apply-to-reverse",
+            "cuboid", "all", "dynmap-disabled-by-default", "tekkit-block", "dynmap-no-toggle"
+    };
+
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106};
     private int[] fragileBlocks = new int[]{7, 8, 9, 10, 11, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 97, 100, 123, 124, 129};
     private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
@@ -435,6 +441,25 @@ public final class SettingsManager
     {
         if (type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119 || type == 127 || type == 131 || type == 132)        {
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the flag is un-toggable
+     *
+     * @param flagStr
+     * @return
+     */
+    public boolean isUnToggable(String flagStr)
+    {
+        for(String flag : unToggable)
+        {
+            if(flag.equalsIgnoreCase(flagStr))
+            {
+                return true;
+            }
         }
 
         return false;
