@@ -23,8 +23,8 @@ public final class SettingsManager
     private double version;
     private int maxSizeTranslocation;
     private int maxSizeTranslocationForRedstone;
-    private boolean preventDestroyEverywhere;
-    private boolean preventPlaceEverywhere;
+    private List<String> preventDestroyEverywhere;
+    private List<String> preventPlaceEverywhere;
     private boolean startDynmapFlagsDisabled;
     private boolean sneakPlaceFields;
     private boolean showDefaultWelcomeFarewellMessages;
@@ -231,8 +231,8 @@ public final class SettingsManager
         maxSizeTranslocation = config.getInt("settings.max-size-translocation");
         maxSizeTranslocationForRedstone = config.getInt("settings.max-size-translocation-for-redstone");
         version = config.getDouble("settings.version");
-        preventPlaceEverywhere = config.getBoolean("settings.prevent-place-everywhere");
-        preventDestroyEverywhere = config.getBoolean("settings.prevent-destroy-everywhere");
+        preventPlaceEverywhere = config.getStringList("settings.prevent-place-everywhere");
+        preventDestroyEverywhere = config.getStringList("settings.prevent-destroy-everywhere");
         showDefaultWelcomeFarewellMessages = config.getBoolean("settings.show-default-welcome-farewell-messages");
         sneakPlaceFields = config.getBoolean("settings.sneak-to-place-field");
         sneakNormalBlock = config.getBoolean("settings.sneak-to-place-normal-block");
@@ -1375,14 +1375,14 @@ public final class SettingsManager
         return startDynmapFlagsDisabled;
     }
 
-    public boolean isPreventDestroyEverywhere()
+    public boolean isPreventDestroyEverywhere(String world)
     {
-        return preventDestroyEverywhere;
+        return preventDestroyEverywhere.contains(world);
     }
 
-    public boolean isPreventPlaceEverywhere()
+    public boolean isPreventPlaceEverywhere(String world)
     {
-        return preventPlaceEverywhere;
+        return preventPlaceEverywhere.contains(world);
     }
 
     public double getVersion()

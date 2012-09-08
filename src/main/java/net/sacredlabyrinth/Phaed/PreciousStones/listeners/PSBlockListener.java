@@ -352,7 +352,7 @@ public class PSBlockListener implements Listener
 
         // -------------------------------------------------------------------------------- prevent destroy everywhere
 
-        if (plugin.getSettingsManager().isPreventDestroyEverywhere() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+        if (plugin.getSettingsManager().isPreventDestroyEverywhere(block.getWorld().getName()) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
         {
             boolean isAllowBlock = false;
 
@@ -752,7 +752,7 @@ public class PSBlockListener implements Listener
 
         boolean isDisabled = plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
 
-        if (plugin.getSettingsManager().isPreventPlaceEverywhere() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+        if (plugin.getSettingsManager().isPreventPlaceEverywhere(block.getWorld().getName()) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
         {
             boolean isAllowBlock = false;
 

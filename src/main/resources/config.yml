@@ -341,8 +341,8 @@ cleanup:
 settings:
     max-size-translocation: 100000
     max-size-translocation-for-redstone: 1000
-    prevent-place-everywhere: false
-    prevent-destroy-everywhere: false
+    prevent-place-everywhere: [cretiveWorld]
+    prevent-destroy-everywhere: [cretiveWorld]
     sneak-to-place-normal-block: true
     sneak-to-place-field: false
     show-debug-info: false
