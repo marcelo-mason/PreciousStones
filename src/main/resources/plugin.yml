@@ -1,4 +1,5 @@
 name: PreciousStones
+author: Phaed
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
 version: ${project.version}
 dev-url: http://dev.bukkit.org/server-mods/preciousstones/
