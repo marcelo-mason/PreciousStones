@@ -490,9 +490,35 @@ public class PSEntityListener implements Listener
 
         DebugTimer dt = new DebugTimer("onEntityDamage");
 
-        if (event.getEntity() instanceof NPC || event.getEntity() instanceof Ageable)
+        if (event.getEntity() instanceof Ageable)
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_ANIMALS);
+
+            if (field != null)
+            {
+                if (event instanceof EntityDamageByEntityEvent)
+                {
+                    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+
+                    if (sub.getDamager() instanceof Player)
+                    {
+                        Player player = (Player) sub.getDamager();
+
+                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (event.getEntity() instanceof NPC)
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_NPCS);
 
             if (field != null)
             {

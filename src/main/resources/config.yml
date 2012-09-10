@@ -16,6 +16,7 @@ force-field-blocks:
     prevent-unprotectable: true
     prevent-flow: true
     prevent-teleport: true
+    protect-crops: true
     welcome-message: true
     farewell-message: true
     can-change-owner: true
@@ -37,6 +38,7 @@ force-field-blocks:
     prevent-unprotectable: true
     prevent-flow: true
     prevent-teleport: true
+    protect-crops: true
     welcome-message: true
     farewell-message: true
     can-change-owner: true
@@ -76,6 +78,7 @@ force-field-blocks:
     prevent-mob-damage: true
     protect-animals: true
     protect-mobs: true
+    protect-nps: true
     cuboid: true
     mask-on-disabled: 80
 -   title: Jack-o-Death

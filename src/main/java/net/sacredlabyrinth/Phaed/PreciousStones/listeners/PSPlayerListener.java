@@ -126,7 +126,7 @@ public class PSPlayerListener implements Listener
         {
             if (block.getType().equals(Material.SOIL))
             {
-                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PROTECT_CROPS);
 
                 if (field != null)
                 {
@@ -134,10 +134,7 @@ public class PSPlayerListener implements Listener
 
                     if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
-                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
-                        {
-                            event.setCancelled(true);
-                        }
+                        event.setCancelled(true);
                     }
                 }
             }

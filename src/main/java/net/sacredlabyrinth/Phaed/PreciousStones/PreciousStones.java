@@ -49,6 +49,8 @@ public class PreciousStones extends JavaPlugin
     private PSVehicleListener vehicleListener;
     private PSServerListener serverListener;
 
+    //TODO use a better pattern when scanning grief
+
     /*
      * Fake main to allow us to run from netbeans
      */

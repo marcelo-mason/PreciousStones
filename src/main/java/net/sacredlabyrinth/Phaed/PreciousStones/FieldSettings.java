@@ -509,6 +509,22 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("protect-npcs") && Helper.isBoolean(map.get("protect-npcs")))
+        {
+            if ((Boolean) map.get("protect-npcs"))
+            {
+                defaultFlags.add(FieldFlag.PROTECT_NPCS);
+            }
+        }
+
+        if (map.containsKey("protect-crops") && Helper.isBoolean(map.get("protect-crops")))
+        {
+            if ((Boolean) map.get("protect-crops"))
+            {
+                defaultFlags.add(FieldFlag.PROTECT_CROPS);
+            }
+        }
+
         if (map.containsKey("protect-mobs") && Helper.isBoolean(map.get("protect-mobs")))
         {
             if ((Boolean) map.get("protect-mobs"))
