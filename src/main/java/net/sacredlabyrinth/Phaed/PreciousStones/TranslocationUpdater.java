@@ -22,7 +22,7 @@ public class TranslocationUpdater implements Runnable
     private final Field field;
 
     /**
-     * @param griefQueue
+     * @param translocationQueue
      * @param world
      */
     public TranslocationUpdater(Field field, Queue<TranslocationBlock> translocationQueue, World world)

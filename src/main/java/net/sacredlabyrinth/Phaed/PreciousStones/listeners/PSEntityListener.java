@@ -490,7 +490,7 @@ public class PSEntityListener implements Listener
 
         DebugTimer dt = new DebugTimer("onEntityDamage");
 
-        if (event.getEntity() instanceof Animals)
+        if (event.getEntity() instanceof NPC || event.getEntity() instanceof Ageable)
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_ANIMALS);
 
@@ -516,7 +516,7 @@ public class PSEntityListener implements Listener
             }
         }
 
-        if (event.getEntity() instanceof Monster)
+        if (event.getEntity() instanceof Monster || event.getEntity() instanceof Golem || event.getEntity() instanceof WaterMob)
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_MOBS);
 

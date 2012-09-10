@@ -24,8 +24,8 @@ public class TranslocationRemover implements Runnable
     private int notRemovedCount;
 
     /**
-     * @param griefQueue
-     * @param world
+     * @param translocationQueue
+     * @param player
      */
     public TranslocationRemover(Field field, Queue<TranslocationBlock> translocationQueue, Player player)
     {
