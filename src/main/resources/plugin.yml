@@ -116,6 +116,8 @@ permissions:
     description: Bypasses allowed only outside restriction
   preciousstones.bypass.on-disabled:
     description: Bypasses on-disabled flags
+  preciousstones.bypass.entryalert:
+    description: Bypasses entry alert messages
   preciousstones.alert.notify.place:
     description: Gets alert for block placement notifys
   preciousstones.alert.notify.destroy:
@@ -311,6 +313,7 @@ permissions:
       preciousstones.bypass.on-disabled: true
       preciousstones.bypass.setradius: true
       preciousstones.bypass.damage: true
+      preciousstones.bypass.entryalert: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false

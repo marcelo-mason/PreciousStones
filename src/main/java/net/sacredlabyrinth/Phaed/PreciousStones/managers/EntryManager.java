@@ -381,9 +381,12 @@ public final class EntryManager
 
             if (field.hasFlag(FieldFlag.ENTRY_ALERT))
             {
-                if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entryalert"))
                 {
-                    plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " entry at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
+                    if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
+                    {
+                        plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " entry at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
+                    }
                 }
             }
         }

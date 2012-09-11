@@ -349,7 +349,6 @@ public class PSBlockListener implements Listener
 
         plugin.getSnitchManager().recordSnitchBlockBreak(player, block);
 
-
         // -------------------------------------------------------------------------------- prevent destroy everywhere
 
         if (plugin.getSettingsManager().isPreventDestroyEverywhere(block.getWorld().getName()) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
