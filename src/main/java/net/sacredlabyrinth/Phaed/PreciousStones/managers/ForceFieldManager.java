@@ -251,7 +251,7 @@ public final class ForceFieldManager
 
         ChunkVec cv = field.toChunkVec();
 
-        List<FieldFlag> flags = new LinkedList<FieldFlag>();
+        List<FieldFlag> flags = new ArrayList<FieldFlag>();
         flags.addAll(field.getSettings().getDefaultFlags());
         flags.addAll(field.getInsertedFlags());
 
@@ -309,7 +309,7 @@ public final class ForceFieldManager
                 sf = new HashMap<FieldFlag, List<Field>>();
             }
 
-            List<FieldFlag> flags = new LinkedList<FieldFlag>();
+            List<FieldFlag> flags = new ArrayList<FieldFlag>();
             flags.addAll(field.getSettings().getDefaultFlags());
             flags.addAll(field.getInsertedFlags());
 
@@ -319,7 +319,7 @@ public final class ForceFieldManager
 
                 if (fields == null)
                 {
-                    fields = new LinkedList<Field>();
+                    fields = new ArrayList<Field>();
                 }
 
                 if (!fields.contains(field))
@@ -350,7 +350,7 @@ public final class ForceFieldManager
 
         if (field.getSettings() != null)
         {
-            List<FieldFlag> flags = new LinkedList<FieldFlag>();
+            List<FieldFlag> flags = new ArrayList<FieldFlag>();
             flags.addAll(field.getSettings().getDefaultFlags());
             flags.addAll(field.getInsertedFlags());
 
@@ -385,7 +385,7 @@ public final class ForceFieldManager
 
         if (fs != null)
         {
-            List<FieldFlag> flags = new LinkedList<FieldFlag>();
+            List<FieldFlag> flags = new ArrayList<FieldFlag>();
             flags.addAll(fs.getDefaultFlags());
             flags.addAll(field.getInsertedFlags());
 
@@ -474,7 +474,7 @@ public final class ForceFieldManager
 
             if (sf != null)
             {
-                List<FieldFlag> flags = new LinkedList<FieldFlag>();
+                List<FieldFlag> flags = new ArrayList<FieldFlag>();
                 flags.addAll(field.getSettings().getDefaultFlags());
                 flags.addAll(field.getInsertedFlags());
 
@@ -510,7 +510,7 @@ public final class ForceFieldManager
      */
     public List<Field> getFields(String target, World world)
     {
-        List<Field> out = new LinkedList<Field>();
+        List<Field> out = new ArrayList<Field>();
 
         HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
 
@@ -1465,7 +1465,7 @@ public final class ForceFieldManager
      */
     public List<Field> getOwnersFields(Player player, FieldFlag flag)
     {
-        List<Field> out = new LinkedList<Field>();
+        List<Field> out = new ArrayList<Field>();
 
         HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
 
@@ -1522,7 +1522,7 @@ public final class ForceFieldManager
 
             if (fields != null && fields.size() > 0)
             {
-                fields = new LinkedList<Field>(fields);
+                fields = new ArrayList<Field>(fields);
 
                 if (fields.size() > 0)
                 {
@@ -1548,7 +1548,7 @@ public final class ForceFieldManager
             }
         }
 
-        return new LinkedList<Field>();
+        return new ArrayList<Field>();
     }
 
     /**
@@ -2125,7 +2125,7 @@ public final class ForceFieldManager
     {
         List<Field> sources = getEnabledSourceFields(loc, FieldFlag.ALL);
 
-        LinkedList<Field> out = new LinkedList<Field>();
+        ArrayList<Field> out = new ArrayList<Field>();
 
         for (Field field : sources)
         {
@@ -2157,7 +2157,7 @@ public final class ForceFieldManager
     {
         List<Field> sources = getSourceFields(placedBlock.getLocation(), FieldFlag.ALL);
 
-        LinkedList<Field> out = new LinkedList<Field>();
+        ArrayList<Field> out = new ArrayList<Field>();
 
         for (Field field : sources)
         {
@@ -2207,7 +2207,7 @@ public final class ForceFieldManager
 
         Set<Field> overlapping = placedField.getOverlappingFields();
 
-        LinkedList<Field> out = new LinkedList<Field>();
+        ArrayList<Field> out = new ArrayList<Field>();
 
         for (Field field : overlapping)
         {
@@ -2248,7 +2248,7 @@ public final class ForceFieldManager
 
         Set<Field> overlapping = ce.getField().getOverlappingFields();
 
-        LinkedList<Field> out = new LinkedList<Field>();
+        ArrayList<Field> out = new ArrayList<Field>();
 
         for (Field field : overlapping)
         {

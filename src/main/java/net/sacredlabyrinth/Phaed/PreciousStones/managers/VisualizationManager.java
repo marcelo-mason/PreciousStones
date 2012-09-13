@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -336,7 +336,7 @@ public class VisualizationManager
 
         // save current outline and clear out the visualization
 
-        List<BlockEntry> newBlocks = new LinkedList<BlockEntry>();
+        List<BlockEntry> newBlocks = new ArrayList<BlockEntry>();
 
         int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
 
@@ -427,8 +427,8 @@ public class VisualizationManager
 
         // save current outline and clear out the visualization
 
-        List<BlockEntry> oldBlocks = new LinkedList<BlockEntry>(vis.getOutlineBlocks());
-        List<BlockEntry> newBlocks = new LinkedList<BlockEntry>();
+        List<BlockEntry> oldBlocks = new ArrayList<BlockEntry>(vis.getOutlineBlocks());
+        List<BlockEntry> newBlocks = new ArrayList<BlockEntry>();
 
         int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
 
@@ -490,14 +490,14 @@ public class VisualizationManager
 
         // revert the blocks that are no longer in the new set and should be reverted
 
-        List<BlockEntry> revertible = new LinkedList<BlockEntry>(oldBlocks);
+        List<BlockEntry> revertible = new ArrayList<BlockEntry>(oldBlocks);
         revertible.removeAll(newBlocks);
 
         Visualize revert = new Visualize(revertible, player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
 
         // visualize all the new blocks that are left to visualize
 
-        List<BlockEntry> missing = new LinkedList<BlockEntry>(newBlocks);
+        List<BlockEntry> missing = new ArrayList<BlockEntry>(newBlocks);
         missing.removeAll(oldBlocks);
 
         Visualize visualize = new Visualize(missing, player, false, true, plugin.getSettingsManager().getVisualizeSeconds());

@@ -9,10 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Handles unbreakable blocks
@@ -401,9 +398,9 @@ public final class UnbreakableManager
      * @param chunkradius
      * @return the unbreakables
      */
-    public LinkedList<Unbreakable> getUnbreakablesInArea(Vec vec, int chunkradius)
+    public ArrayList<Unbreakable> getUnbreakablesInArea(Vec vec, int chunkradius)
     {
-        LinkedList<Unbreakable> out = new LinkedList<Unbreakable>();
+        ArrayList<Unbreakable> out = new ArrayList<Unbreakable>();
 
         int xlow = (vec.getX() >> 4) - chunkradius;
         int xhigh = (vec.getX() >> 4) + chunkradius;
@@ -433,7 +430,7 @@ public final class UnbreakableManager
      * @param chunkradius
      * @return the unbreakables
      */
-    public LinkedList<Unbreakable> getUnbreakablesInArea(Player player, int chunkradius)
+    public ArrayList<Unbreakable> getUnbreakablesInArea(Player player, int chunkradius)
     {
         return getUnbreakablesInArea(new Vec(player.getLocation()), chunkradius);
     }

@@ -33,7 +33,7 @@ public final class StorageManager
     private final Set<Field> pendingGrief = new HashSet<Field>();
     private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
     private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
-    private final List<SnitchEntry> pendingSnitchEntries = new LinkedList<SnitchEntry>();
+    private final List<SnitchEntry> pendingSnitchEntries = new ArrayList<SnitchEntry>();
 
     /**
      *
@@ -333,7 +333,7 @@ public final class StorageManager
     public int enableAllFlags(String flagStr)
     {
         int changed = 0;
-        List<Field> fields = new LinkedList<Field>();
+        List<Field> fields = new ArrayList<Field>();
 
         synchronized (this)
         {
@@ -366,7 +366,7 @@ public final class StorageManager
     public int disableAllFlags(String flagStr)
     {
         int changed = 0;
-        List<Field> fields = new LinkedList<Field>();
+        List<Field> fields = new ArrayList<Field>();
 
         synchronized (this)
         {
@@ -1185,7 +1185,7 @@ public final class StorageManager
      */
     public List<SnitchEntry> getSnitchEntries(final Field snitch)
     {
-        final List<SnitchEntry> workingSnitchEntries = new LinkedList<SnitchEntry>();
+        final List<SnitchEntry> workingSnitchEntries = new ArrayList<SnitchEntry>();
 
         synchronized (pendingSnitchEntries)
         {
@@ -2253,7 +2253,7 @@ public final class StorageManager
         final Map<Unbreakable, Boolean> workingUb = new HashMap<Unbreakable, Boolean>();
         final Map<String, Boolean> workingPlayers = new HashMap<String, Boolean>();
         final Set<Field> workingGrief = new HashSet<Field>();
-        final List<SnitchEntry> workingSnitchEntries = new LinkedList<SnitchEntry>();
+        final List<SnitchEntry> workingSnitchEntries = new ArrayList<SnitchEntry>();
 
         synchronized (pending)
         {

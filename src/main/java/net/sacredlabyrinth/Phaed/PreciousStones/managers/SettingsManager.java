@@ -1237,7 +1237,7 @@ public final class SettingsManager
      */
     public List<Integer> getThroughFieldsSet()
     {
-        return new LinkedList<Integer>(throughFieldsSet);
+        return new ArrayList<Integer>(throughFieldsSet);
     }
 
     public boolean isFragileBlock(Block block)

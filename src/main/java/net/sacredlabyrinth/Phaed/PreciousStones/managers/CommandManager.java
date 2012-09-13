@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -279,7 +279,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (allowed.size() > 0)
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Allowed: " + ChatColor.AQUA + Helper.toMessage(new LinkedList<String>(allowed), ", "));
+                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Allowed: " + ChatColor.AQUA + Helper.toMessage(new ArrayList<String>(allowed), ", "));
                             }
                             else
                             {
@@ -328,7 +328,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (inhabitants.size() > 0)
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Inhabitants: " + ChatColor.AQUA + Helper.toMessage(new LinkedList<String>(inhabitants), ", "));
+                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Inhabitants: " + ChatColor.AQUA + Helper.toMessage(new ArrayList<String>(inhabitants), ", "));
                             }
                             else
                             {
@@ -1108,7 +1108,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (args.length > 0)
                                 {
-                                    List<BlockTypeEntry> entries = new LinkedList<BlockTypeEntry>();
+                                    List<BlockTypeEntry> entries = new ArrayList<BlockTypeEntry>();
 
                                     for (String arg : args)
                                     {
@@ -1222,7 +1222,7 @@ public final class CommandManager implements CommandExecutor
                                 }
                                 else
                                 {
-                                    List<BlockTypeEntry> entries = new LinkedList<BlockTypeEntry>();
+                                    List<BlockTypeEntry> entries = new ArrayList<BlockTypeEntry>();
 
                                     for (String arg : args)
                                     {

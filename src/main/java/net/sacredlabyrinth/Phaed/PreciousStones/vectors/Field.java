@@ -43,15 +43,15 @@ public class Field extends AbstractVec implements Comparable<Field>
     private String newOwner;
     private String name;
     private Field parent;
-    private List<Field> children = new LinkedList<Field>();
+    private List<Field> children = new ArrayList<Field>();
     private List<String> allowed = new ArrayList<String>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
-    private List<GriefBlock> grief = new LinkedList<GriefBlock>();
-    private List<SnitchEntry> snitches = new LinkedList<SnitchEntry>();
-    private List<FieldFlag> flags = new LinkedList<FieldFlag>();
-    private List<FieldFlag> disabledFlags = new LinkedList<FieldFlag>();
-    private List<FieldFlag> insertedFlags = new LinkedList<FieldFlag>();
-    private List<BlockEntry> fenceBlocks = new LinkedList<BlockEntry>();
+    private List<GriefBlock> grief = new ArrayList<GriefBlock>();
+    private List<SnitchEntry> snitches = new ArrayList<SnitchEntry>();
+    private List<FieldFlag> flags = new ArrayList<FieldFlag>();
+    private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
+    private List<FieldFlag> insertedFlags = new ArrayList<FieldFlag>();
+    private List<BlockEntry> fenceBlocks = new ArrayList<BlockEntry>();
     private long lastUsed;
     private boolean progress;
     private boolean open;
@@ -1114,9 +1114,9 @@ public class Field extends AbstractVec implements Comparable<Field>
         return json.toString();
     }
 
-    public LinkedList<String> getDisabledFlagsStringList()
+    public ArrayList<String> getDisabledFlagsStringList()
     {
-        LinkedList<String> ll = new LinkedList();
+        ArrayList<String> ll = new ArrayList();
         for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
         {
             FieldFlag flag = (FieldFlag) iter.next();
@@ -1125,9 +1125,9 @@ public class Field extends AbstractVec implements Comparable<Field>
         return ll;
     }
 
-    public LinkedList<String> getInsertedFlagsStringList()
+    public ArrayList<String> getInsertedFlagsStringList()
     {
-        LinkedList<String> ll = new LinkedList();
+        ArrayList<String> ll = new ArrayList();
         for (Iterator iter = insertedFlags.iterator(); iter.hasNext(); )
         {
             FieldFlag flag = (FieldFlag) iter.next();

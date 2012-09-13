@@ -19,7 +19,7 @@ import org.yi.acru.bukkit.Lockette.Lockette;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -246,7 +246,7 @@ public final class PermissionsManager
      */
     public List<String> getGroups(String worldName, String playerName)
     {
-        List<String> groups = new LinkedList<String>();
+        List<String> groups = new ArrayList<String>();
 
         try
         {

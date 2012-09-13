@@ -2819,7 +2819,7 @@ public class CommunicatonManager
             }
         }
 
-        List<String> applies = new LinkedList<String>();
+        List<String> applies = new ArrayList<String>();
 
         if (field.hasFlag(FieldFlag.APPLY_TO_REVERSE))
         {
@@ -2880,9 +2880,9 @@ public class CommunicatonManager
 
         cb.addRow("  " + color + "Location: ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 
-        List<FieldFlag> flags = new LinkedList<FieldFlag>(field.getFlags());
+        List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlags());
         List<FieldFlag> disabledFlags = field.getDisabledFlags();
-        List<FieldFlag> hardCodedFlags = new LinkedList<FieldFlag>();
+        List<FieldFlag> hardCodedFlags = new ArrayList<FieldFlag>();
 
         flags.remove(FieldFlag.ALL);
         flags.remove(FieldFlag.DYNMAP_NO_TOGGLE);
@@ -2954,7 +2954,7 @@ public class CommunicatonManager
             {
                 ChatBlock.sendBlank(player);
 
-                List<String> cond = new LinkedList<String>();
+                List<String> cond = new ArrayList<String>();
 
                 if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
                 {
@@ -3273,7 +3273,7 @@ public class CommunicatonManager
             cb.addRow("  " + ChatColor.GRAY + "Field", "Distance", "Coords");
         }
 
-        List<Field> fields = new LinkedList<Field>();
+        List<Field> fields = new ArrayList<Field>();
 
         if (player != null)
         {

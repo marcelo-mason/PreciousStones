@@ -5,7 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class Visualization
 {
-    private List<BlockEntry> blocks = new LinkedList<BlockEntry>();
-    private List<BlockEntry> outlineBlocks = new LinkedList<BlockEntry>();
-    private List<Field> fields = new LinkedList<Field>();
+    private List<BlockEntry> blocks = new ArrayList<BlockEntry>();
+    private List<BlockEntry> outlineBlocks = new ArrayList<BlockEntry>();
+    private List<Field> fields = new ArrayList<Field>();
 
     /**
      * @param block
@@ -68,7 +68,7 @@ public class Visualization
      */
     public List<Field> getFields()
     {
-        List<Field> f = new LinkedList<Field>();
+        List<Field> f = new ArrayList<Field>();
         f.addAll(fields);
         return f;
     }

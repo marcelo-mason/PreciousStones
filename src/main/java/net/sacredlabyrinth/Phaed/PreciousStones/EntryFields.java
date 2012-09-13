@@ -2,7 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class EntryFields
 {
-    private LinkedList<Field> fields = new LinkedList<Field>();
+    private ArrayList<Field> fields = new ArrayList<Field>();
 
     /**
      * @param field

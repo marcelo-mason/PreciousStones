@@ -58,7 +58,7 @@ public class FieldSettings
     private List<String> allowedWorlds = new ArrayList<String>();
     private List<String> allowedOnlyInside = new ArrayList<String>();
     private List<String> allowedOnlyOutside = new ArrayList<String>();
-    private List<FieldFlag> defaultFlags = new LinkedList<FieldFlag>();
+    private List<FieldFlag> defaultFlags = new ArrayList<FieldFlag>();
     private List<Integer> allowGrief = new ArrayList<Integer>();
     private HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
     private List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();

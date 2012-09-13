@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,7 +29,7 @@ public class TranslocationBlock extends AbstractVec
     private int rx;
     private int ry;
     private int rz;
-    private List<ItemStackEntry> contents = new LinkedList<ItemStackEntry>();
+    private List<ItemStackEntry> contents = new ArrayList<ItemStackEntry>();
 
 
     /**

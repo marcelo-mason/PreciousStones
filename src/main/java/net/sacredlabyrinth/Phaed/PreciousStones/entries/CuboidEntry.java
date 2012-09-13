@@ -7,13 +7,13 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CuboidEntry
 {
     private Field field;
-    private List<BlockEntry> selected = new LinkedList<BlockEntry>();
+    private List<BlockEntry> selected = new ArrayList<BlockEntry>();
     private int minx;
     private int miny;
     private int minz;

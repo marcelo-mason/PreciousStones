@@ -20,7 +20,7 @@ import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -220,10 +220,10 @@ public class PSEntityListener implements Listener
 
         DebugTimer dt = new DebugTimer("onEntityExplode");
 
-        final List<BlockEntry> saved = new LinkedList<BlockEntry>();
-        final List<BlockEntry> unprotected = new LinkedList<BlockEntry>();
-        final List<BlockEntry> revert = new LinkedList<BlockEntry>();
-        final List<BlockEntry> tnts = new LinkedList<BlockEntry>();
+        final List<BlockEntry> saved = new ArrayList<BlockEntry>();
+        final List<BlockEntry> unprotected = new ArrayList<BlockEntry>();
+        final List<BlockEntry> revert = new ArrayList<BlockEntry>();
+        final List<BlockEntry> tnts = new ArrayList<BlockEntry>();
         Field rollbackField = null;
 
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getLocation().getWorld()))

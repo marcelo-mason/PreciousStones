@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,9 +19,9 @@ public class ChatBlock
 {
     private final int colspacing = 12;
     private static final int lineLength = 320;
-    private ArrayList<Double> columnSizes = new ArrayList<Double>();
-    private ArrayList<Integer> columnSpaces = new ArrayList<Integer>();
-    private ArrayList<String> columnAlignments = new ArrayList<String>();
+    private List<Double> columnSizes = new ArrayList<Double>();
+    private List<Integer> columnSpaces = new ArrayList<Integer>();
+    private List<String> columnAlignments = new ArrayList<String>();
     private LinkedList<String[]> rows = new LinkedList<String[]>();
     private boolean prefix_used = false;
     private String color = "";

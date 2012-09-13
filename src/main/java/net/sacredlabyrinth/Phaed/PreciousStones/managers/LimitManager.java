@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -93,7 +93,7 @@ public class LimitManager
             return -1;
         }
 
-        List<Integer> playersLimits = new LinkedList<Integer>();
+        List<Integer> playersLimits = new ArrayList<Integer>();
 
         // get all the counts for all limits the player has
 
