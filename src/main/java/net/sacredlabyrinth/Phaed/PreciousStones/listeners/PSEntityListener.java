@@ -565,10 +565,8 @@ public class PSEntityListener implements Listener
                         }
                     }
                 }
-
-                event.setCancelled(true);
-                return;
             }
+            return;
         }
 
         // prevent fall damage after cannon throws
