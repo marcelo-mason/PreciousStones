@@ -508,7 +508,7 @@ public final class UnbreakableManager
     /**
      * Deletes all unbreakables of a certain type
      *
-     * @param typeId
+     * @param type
      * @return the count of deleted unbreakables
      */
     public int deleteUnbreakablesOfType(BlockTypeEntry type)

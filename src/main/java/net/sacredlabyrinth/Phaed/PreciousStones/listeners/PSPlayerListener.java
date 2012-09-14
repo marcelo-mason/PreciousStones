@@ -9,7 +9,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
@@ -19,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -513,7 +513,7 @@ public class PSPlayerListener implements Listener
                     plugin.getSnitchManager().recordSnitchUsed(player, block);
                 }
 
-                if (block.getState() instanceof ContainerBlock)
+                if (block.getState() instanceof InventoryHolder)
                 {
                     plugin.getSnitchManager().recordSnitchUsed(player, block);
                 }
