@@ -1240,6 +1240,18 @@ public final class ForceFieldManager
             }
         }
 
+        // handle sllowed/denied lists flags
+
+        if (field.getSettings().inAllowedList(playerName))
+        {
+            return true;
+        }
+
+        if (field.getSettings().inDeniedList(playerName))
+        {
+            return false;
+        }
+
         // always allow if in war
 
         if (plugin.getSimpleClansManager().inWar(field, playerName))

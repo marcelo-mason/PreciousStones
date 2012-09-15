@@ -62,6 +62,8 @@ public class FieldSettings
     private List<Integer> allowGrief = new ArrayList<Integer>();
     private HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
     private List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();
+    private List<String> allowedPlayers = new ArrayList<String>();
+    private List<String> deniedPlayers = new ArrayList<String>();
 
     /**
      * @param map
@@ -139,9 +141,9 @@ public class FieldSettings
             groupOnEntry = (String) map.get("group-on-entry");
 
             if (groupOnEntry != null && groupOnEntry.length() > 0)
-        {
-            defaultFlags.add(FieldFlag.GROUP_ON_ENTRY);
-        }
+            {
+                defaultFlags.add(FieldFlag.GROUP_ON_ENTRY);
+            }
         }
 
         if (map.containsKey("entry-game-mode") && Helper.isString(map.get("entry-game-mode")))
@@ -285,6 +287,16 @@ public class FieldSettings
             {
                 defaultFlags.add(FieldFlag.CONFISCATE_ITEMS);
             }
+        }
+
+        if (map.containsKey("always-allow-players") && Helper.isStringList(map.get("always-allow-players")))
+        {
+            allowedPlayers = (List<String>) map.get("always-allow-players");
+        }
+
+        if (map.containsKey("always-deny-players") && Helper.isStringList(map.get("always-deny-players")))
+        {
+            deniedPlayers = (List<String>) map.get("always-deny-players");
         }
 
         if (map.containsKey("equip-items") && Helper.isStringList(map.get("equip-items")))
@@ -1126,6 +1138,11 @@ public class FieldSettings
         return true;
     }
 
+    /**
+     * Retuns a string with all the potions
+     *
+     * @return
+     */
     public String getPotionString()
     {
         String out = "";
@@ -1138,6 +1155,11 @@ public class FieldSettings
         return Helper.stripTrailing(out, ", ");
     }
 
+    /**
+     * Returns a tring with all the neutralized potions
+     *
+     * @return
+     */
     public String getNeutralizePotionString()
     {
         String out = "";
@@ -1148,6 +1170,28 @@ public class FieldSettings
         }
 
         return Helper.stripTrailing(out, ", ");
+    }
+
+    /**
+     * Whether the player is in the allowed list
+     *
+     * @param playerName
+     * @return
+     */
+    public boolean inAllowedList(String playerName)
+    {
+        return allowedPlayers.contains(playerName);
+    }
+
+    /**
+     * Whether th eplayer is in the denied list
+     *
+     * @param playerName
+     * @return
+     */
+    public boolean inDeniedList(String playerName)
+    {
+        return deniedPlayers.contains(playerName);
     }
 
     /**
