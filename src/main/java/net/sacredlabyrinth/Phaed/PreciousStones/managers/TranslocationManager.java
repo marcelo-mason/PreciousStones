@@ -7,10 +7,12 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.TranslocationBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.InventoryHolder;
 
 import java.util.*;
 
@@ -118,27 +120,11 @@ public final class TranslocationManager
             tb.setSignText(getSignText(block));
         }
 
-        if (block.getType().equals(Material.CHEST))
+        if (block.getState() instanceof InventoryHolder)
         {
-            Chest chest = (Chest) block.getState();
-            Inventory inventory = chest.getBlockInventory();
-            ItemStack[] contents = inventory.getContents();
-            tb.setContents(contents);
-        }
-        if (block.getType().equals(Material.DISPENSER))
-        {
-            Dispenser dispenser = (Dispenser) block.getState();
-            Inventory inventory = dispenser.getInventory();
-            ItemStack[] contents = inventory.getContents();
-            tb.setContents(contents);
-        }
-
-        if (block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
-        {
-            Furnace furnace = (Furnace) block.getState();
-            Inventory inventory = furnace.getInventory();
-            ItemStack[] contents = inventory.getContents();
-            tb.setContents(contents);
+            InventoryHolder holder = (InventoryHolder) block.getState();
+            Inventory inv = holder.getInventory();
+            tb.setContents(inv.getContents());
         }
 
         boolean isApplied = !isImport;
@@ -294,29 +280,9 @@ public final class TranslocationManager
 
             if (tb.hasItemStacks())
             {
-                if (tb.getTypeId() == 54)
-                {
-                    Chest chest = (Chest) block.getState();
-                    Inventory inventory = chest.getBlockInventory();
-                    ItemStack[] itemStacks = tb.getItemStacks();
-                    inventory.setContents(itemStacks);
-                }
-
-                if (tb.getTypeId() == 23)
-                {
-                    Dispenser dispenser = (Dispenser) block.getState();
-                    Inventory inventory = dispenser.getInventory();
-                    ItemStack[] itemStacks = tb.getItemStacks();
-                    inventory.setContents(itemStacks);
-                }
-
-                if (tb.getTypeId() == 61 || tb.getTypeId() == 62)
-                {
-                    Furnace furnace = (Furnace) block.getState();
-                    Inventory inventory = furnace.getInventory();
-                    ItemStack[] itemStacks = tb.getItemStacks();
-                    inventory.setContents(itemStacks);
-                }
+                InventoryHolder holder = (InventoryHolder) block.getState();
+                Inventory inv = holder.getInventory();
+                inv.setContents(tb.getItemStacks());
             }
         }
 
@@ -447,31 +413,12 @@ public final class TranslocationManager
 
         // extract the block's contents
 
-        if (block.getType().equals(Material.CHEST))
+        if (block.getState() instanceof InventoryHolder)
         {
-            Chest chest = (Chest) block.getState();
-            Inventory inventory = chest.getBlockInventory();
-            ItemStack[] contents = inventory.getContents();
-            tb.setContents(contents);
-            inventory.clear();
-        }
-
-        if (block.getType().equals(Material.DISPENSER))
-        {
-            Dispenser dispenser = (Dispenser) block.getState();
-            Inventory inventory = dispenser.getInventory();
-            ItemStack[] contents = inventory.getContents();
-            tb.setContents(contents);
-            inventory.clear();
-        }
-
-        if (block.getType().equals(Material.FURNACE) || block.getType().equals(Material.BURNING_FURNACE))
-        {
-            Furnace furnace = (Furnace) block.getState();
-            Inventory inventory = furnace.getInventory();
-            ItemStack[] contents = inventory.getContents();
-            tb.setContents(contents);
-            inventory.clear();
+            InventoryHolder holder = (InventoryHolder) block.getState();
+            Inventory inv = holder.getInventory();
+            tb.setContents(inv.getContents());
+            inv.clear();
         }
 
         return tb;
