@@ -875,6 +875,11 @@ public class PSPlayerListener implements Listener
         DebugTimer dt = new DebugTimer("onPlayerMove");
         Player player = event.getPlayer();
 
+        if (event.getFrom() == null || event.getTo() == null)
+        {
+            return;
+        }
+
         if (Helper.isSameLocation(event.getFrom(), event.getTo()))
         {
             return;
@@ -1215,11 +1220,6 @@ public class PSPlayerListener implements Listener
         final Block liquid = block.getRelative(event.getBlockFace());
 
         Material mat = event.getBucket();
-
-        if (block == null)
-        {
-            return;
-        }
 
         if (plugin.getSettingsManager().isBlacklistedWorld(player.getLocation().getWorld()))
         {
