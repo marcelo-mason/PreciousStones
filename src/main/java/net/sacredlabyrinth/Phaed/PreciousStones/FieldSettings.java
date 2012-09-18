@@ -1180,6 +1180,11 @@ public class FieldSettings
      */
     public boolean inAllowedList(String playerName)
     {
+        if (allowedPlayers == null)
+        {
+            return false;
+        }
+
         return allowedPlayers.contains(playerName);
     }
 
@@ -1191,6 +1196,11 @@ public class FieldSettings
      */
     public boolean inDeniedList(String playerName)
     {
+        if (deniedPlayers == null)
+        {
+            return false;
+        }
+
         return deniedPlayers.contains(playerName);
     }
 
