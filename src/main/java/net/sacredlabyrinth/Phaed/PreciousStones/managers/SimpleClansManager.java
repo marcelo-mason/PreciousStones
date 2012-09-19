@@ -35,6 +35,11 @@ public final class SimpleClansManager
      */
     public boolean hasSimpleClans()
     {
+        if (plugin.getSettingsManager().isDisableSimpleClanHook())
+        {
+            return false;
+        }
+
         return simpleClans != null;
     }
 
@@ -46,7 +51,7 @@ public final class SimpleClansManager
      */
     public void clanAnnounce(String playerName, String message)
     {
-        if (simpleClans == null)
+        if (!hasSimpleClans())
         {
             return;
         }
@@ -67,7 +72,7 @@ public final class SimpleClansManager
      */
     public void bypassAnnounce(Field field, String rivalName)
     {
-        if (simpleClans == null)
+        if (!hasSimpleClans())
         {
             return;
         }
@@ -89,7 +94,7 @@ public final class SimpleClansManager
      */
     public void addBB(Player player, String message)
     {
-        if (simpleClans == null)
+        if (!hasSimpleClans())
         {
             return;
         }
@@ -110,7 +115,7 @@ public final class SimpleClansManager
      */
     public boolean isAnyOnline(String playerName)
     {
-        if (simpleClans == null)
+        if (!hasSimpleClans())
         {
             return false;
         }
@@ -137,7 +142,7 @@ public final class SimpleClansManager
      */
     public boolean inWar(Field field, String offenderName)
     {
-        if (simpleClans == null)
+        if (!hasSimpleClans())
         {
             return false;
         }
@@ -170,6 +175,11 @@ public final class SimpleClansManager
      */
     public boolean isAllyOwner(String owner, String playerName)
     {
+        if (!hasSimpleClans())
+        {
+            return false;
+        }
+
         Player player = plugin.getServer().getPlayerExact(playerName);
 
         if (player != null)
@@ -194,7 +204,7 @@ public final class SimpleClansManager
      */
     public boolean isClanMate(String playerOne, String playerTwo)
     {
-        if (simpleClans == null)
+        if (!hasSimpleClans())
         {
             return false;
         }
@@ -222,7 +232,7 @@ public final class SimpleClansManager
      */
     public boolean isInClan(String playerName, String clanName)
     {
-        if (simpleClans == null)
+        if (!hasSimpleClans())
         {
             return false;
         }
@@ -246,7 +256,7 @@ public final class SimpleClansManager
      */
     public String getClan(String playerName)
     {
-        if (simpleClans == null)
+        if (!hasSimpleClans())
         {
             return null;
         }

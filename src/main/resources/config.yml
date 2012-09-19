@@ -355,6 +355,7 @@ settings:
     dynmap-flags-disabled-by-default: true
     welcome-farewell-disabled-by-default: true
     disable-ground-info: false
+    disable-simpleclans-hook: false
     global-field-limit: 1000000
     no-refund-for-fields: false
     off-by-default: false

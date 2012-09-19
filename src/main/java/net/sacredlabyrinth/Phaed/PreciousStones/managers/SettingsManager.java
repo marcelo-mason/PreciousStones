@@ -110,6 +110,7 @@ public final class SettingsManager
     private boolean dropOnDelete;
     private boolean disableAlertsForAdmins;
     private boolean disableBypassAlertsForAdmins;
+    private boolean disableSimpleClanHook;
     private boolean offByDefault;
 
     private String[] unToggable = new String[]{"worldguard-repellent", "place-disabled", "sneaking-bypass", "breakable-on-disabled", "modify-on-disabled",
@@ -228,6 +229,7 @@ public final class SettingsManager
         warnLaunch = config.getBoolean("warn.launch");
         warnCannon = config.getBoolean("warn.cannon");
         warnMine = config.getBoolean("warn.mine");
+        disableSimpleClanHook = config.getBoolean("settings.disable-simpleclans-hook");
         maxSizeTranslocation = config.getInt("settings.max-size-translocation");
         maxSizeTranslocationForRedstone = config.getInt("settings.max-size-translocation-for-redstone");
         version = config.getDouble("settings.version");
@@ -1425,5 +1427,10 @@ public final class SettingsManager
     public void setMaxSizeTranslocationForRedstone(int maxSizeTranslocationForRedstone)
     {
         this.maxSizeTranslocationForRedstone = maxSizeTranslocationForRedstone;
+    }
+
+    public boolean isDisableSimpleClanHook()
+    {
+        return disableSimpleClanHook;
     }
 }
