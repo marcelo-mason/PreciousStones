@@ -497,9 +497,13 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (radius >= 0 && (radius <= fs.getRadius() || plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius")))
                                     {
-                                        field.setRadius(radius);
+                                        plugin.getForceFieldManager().removeSourceField(field);
 
+                                        field.setRadius(radius);
                                         plugin.getStorageManager().offerField(field);
+
+                                        plugin.getForceFieldManager().addSourceField(field);
+
                                         ChatBlock.sendMessage(sender, ChatColor.AQUA + "Radius set to " + radius);
                                     }
                                     else
