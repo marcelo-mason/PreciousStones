@@ -352,13 +352,16 @@ public class PSPlayerListener implements Listener
 
                             if (field != null)
                             {
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                if (!field.getSettings().inDestroyBlacklist(block))
                                 {
-                                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                                     {
-                                        canDestroy = false;
+                                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                                        {
+                                            canDestroy = false;
+                                        }
                                     }
                                 }
                             }
@@ -1138,18 +1141,21 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (!field.getSettings().inDestroyBlacklist(block))
             {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.break"))
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                 {
-                    plugin.getCommunicationManager().notifyBypassDestroy(player, block, field);
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.getCommunicationManager().warnDestroyArea(player, block, field);
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                    {
+                        plugin.getCommunicationManager().notifyBypassDestroy(player, block, field);
+                    }
+                    else
+                    {
+                        event.setCancelled(true);
+                        plugin.getCommunicationManager().warnDestroyArea(player, block, field);
+                    }
                 }
             }
         }
@@ -1169,7 +1175,7 @@ public class PSPlayerListener implements Listener
                     return;
                 }
 
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.break"))
+                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                 {
                     plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
                 }
@@ -1251,18 +1257,21 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (!field.getSettings().inPlaceBlacklist(block))
             {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
                 {
-                    plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.getCommunicationManager().warnEmpty(player, block, field);
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                    {
+                        plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
+                    }
+                    else
+                    {
+                        event.setCancelled(true);
+                        plugin.getCommunicationManager().warnEmpty(player, block, field);
+                    }
                 }
             }
         }

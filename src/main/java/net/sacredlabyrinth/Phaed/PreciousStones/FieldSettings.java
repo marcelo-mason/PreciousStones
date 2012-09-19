@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.GameMode;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -52,6 +53,8 @@ public class FieldSettings
     private List<Integer> fertileBlocks = new ArrayList<Integer>();
     private List<Integer> limits = new ArrayList<Integer>();
     private List<BlockTypeEntry> translocationBlacklist = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> preventPlaceBlacklist = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> preventDestroyBlacklist = new ArrayList<BlockTypeEntry>();
     private List<Integer> preventUse = new ArrayList<Integer>();
     private List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> equipItems = new ArrayList<BlockTypeEntry>();
@@ -357,6 +360,16 @@ public class FieldSettings
         if (map.containsKey("translocation-blacklist") && Helper.isStringList(map.get("translocation-blacklists")))
         {
             translocationBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("translocation-blacklist"));
+        }
+
+        if (map.containsKey("prevent-place-blacklist") && Helper.isStringList(map.get("prevent-place-blacklists")))
+        {
+            preventPlaceBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("prevent-place-blacklist"));
+        }
+
+        if (map.containsKey("prevent-destroy-blacklist") && Helper.isStringList(map.get("prevent-destroy-blacklists")))
+        {
+            preventDestroyBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("prevent-destroy-blacklist"));
         }
 
         if (map.containsKey("allowed-only-inside") && Helper.isStringList(map.get("allowed-only-inside")))
@@ -1092,7 +1105,48 @@ public class FieldSettings
      */
     public boolean canTranslocate(BlockTypeEntry type)
     {
+        if (translocationBlacklist == null)
+        {
+            return true;
+        }
+
         return !translocationBlacklist.contains(type);
+    }
+
+    /**
+     * Can destroy (not in blacklist)
+     *
+     * @param block
+     * @return
+     */
+    public boolean inDestroyBlacklist(Block block)
+    {
+        if (preventDestroyBlacklist == null)
+        {
+            return false;
+        }
+
+        BlockTypeEntry type = new BlockTypeEntry(block);
+
+        return preventDestroyBlacklist.contains(type);
+    }
+
+    /**
+     * Can place (not in blacklist)
+     *
+     * @param block
+     * @return
+     */
+    public boolean inPlaceBlacklist(Block block)
+    {
+        if (preventPlaceBlacklist == null)
+        {
+            return false;
+        }
+
+        BlockTypeEntry type = new BlockTypeEntry(block);
+
+        return preventPlaceBlacklist.contains(type);
     }
 
     /**
