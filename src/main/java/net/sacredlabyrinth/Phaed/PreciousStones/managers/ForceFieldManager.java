@@ -2427,11 +2427,7 @@ public final class ForceFieldManager
             Field pending = deletionQueue.poll();
 
             deleteField(pending);
-
-            if (plugin.getSettingsManager().isDropOnDelete())
-            {
-                dropBlock(pending);
-            }
+            dropBlock(pending);
         }
     }
 
@@ -2456,7 +2452,10 @@ public final class ForceFieldManager
      */
     public void dropBlock(Field field)
     {
-        dropBlock(field.getBlock());
+        if (!plugin.getSettingsManager().isDropOnDelete())
+        {
+            dropBlock(field.getBlock());
+        }
     }
 
     /**
@@ -2473,10 +2472,13 @@ public final class ForceFieldManager
             return;
         }
 
-        World world = field.getLocation().getWorld();
-        ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, field.getData());
+        if (!plugin.getSettingsManager().isDropOnDelete())
+        {
+            World world = field.getLocation().getWorld();
+            ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, field.getData());
 
-        world.dropItemNaturally(field.getLocation(), is);
+            world.dropItemNaturally(field.getLocation(), is);
+        }
     }
 
     /**
@@ -2493,13 +2495,16 @@ public final class ForceFieldManager
             return;
         }
 
-        World world = block.getWorld();
-        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
-
-        if (plugin.getSettingsManager().isFieldType(block))
+        if (!plugin.getSettingsManager().isDropOnDelete())
         {
-            block.setType(Material.AIR);
-            world.dropItemNaturally(block.getLocation(), is);
+            World world = block.getWorld();
+            ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+
+            if (plugin.getSettingsManager().isFieldType(block))
+            {
+                block.setType(Material.AIR);
+                world.dropItemNaturally(block.getLocation(), is);
+            }
         }
     }
 
@@ -2579,7 +2584,7 @@ public final class ForceFieldManager
     {
         if (plugin.getPermissionsManager().hasEconomy())
         {
-            if (plugin.getPermissionsManager().hasMoney(player, amount))
+            if (PermissionsManager.hasMoney(player, amount))
             {
                 plugin.getPermissionsManager().playerCharge(player, amount);
             }
