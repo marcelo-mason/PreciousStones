@@ -12,6 +12,7 @@ force-field-blocks:
     prevent-place: true
     prevent-destroy: true
     prevent-vehicle-destroy: true
+    prevent-enderman-destroy: true
     prevent-explosions: true
     prevent-unprotectable: true
     prevent-flow: true
@@ -34,6 +35,7 @@ force-field-blocks:
     prevent-place: true
     prevent-destroy: true
     prevent-vehicle-destroy: true
+    prevent-enderman-destroy: true
     prevent-explosions: true
     prevent-unprotectable: true
     prevent-flow: true

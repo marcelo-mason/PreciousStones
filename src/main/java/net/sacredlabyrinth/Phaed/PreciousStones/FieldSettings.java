@@ -425,6 +425,14 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("prevent-enderman-destroy") && Helper.isBoolean(map.get("prevent-enderman-destroy")))
+        {
+            if ((Boolean) map.get("prevent-enderman-destroy"))
+            {
+                defaultFlags.add(FieldFlag.PREVENT_ENDERMAN_DESTROY);
+            }
+        }
+
         if (map.containsKey("prevent-explosions") && Helper.isBoolean(map.get("prevent-explosions")))
         {
             if ((Boolean) map.get("prevent-explosions"))

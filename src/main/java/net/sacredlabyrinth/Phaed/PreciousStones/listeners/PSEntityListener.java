@@ -712,6 +712,36 @@ public class PSEntityListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityChangeBlock(EntityChangeBlockEvent event)
+    {
+        Block block = event.getBlock();
+        Entity entity = event.getEntity();
+
+        if (entity == null || block == null)
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(block.getLocation().getWorld()))
+        {
+            return;
+        }
+
+        if (entity instanceof Enderman)
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_VEHICLE_DESTROY);
+
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPaintingBreak(PaintingBreakEvent event)
     {
         Painting painting = event.getPainting();
