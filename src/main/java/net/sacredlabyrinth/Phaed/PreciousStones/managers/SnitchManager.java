@@ -7,6 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.text.DateFormat;
@@ -28,6 +29,52 @@ public class SnitchManager
     public SnitchManager()
     {
         plugin = PreciousStones.getInstance();
+    }
+
+    /**
+     *
+     * @param player
+     * @param entity
+     */
+    public void recordSnitchEntityKill(Player player, Entity entity)
+    {
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
+        {
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(entity.getLocation(), FieldFlag.SNITCH);
+
+            for (Field field : snitchFields)
+            {
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Kill", entity.getType().getName(), 1));
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param victim
+     */
+    public void recordSnitchPlayerKill(Player player, Player victim)
+    {
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
+        {
+            List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(victim.getLocation(), FieldFlag.SNITCH);
+
+            for (Field field : snitchFields)
+            {
+                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Kill", victim.getName(), 1));
+                }
+            }
+        }
     }
 
     /**
@@ -81,7 +128,7 @@ public class SnitchManager
      * @param player
      * @param block
      */
-    public void recordSnitchBlucketEmpty(Player player, Block block, String type)
+    public void recordSnitchBucketEmpty(Player player, Block block, String type)
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
@@ -106,7 +153,7 @@ public class SnitchManager
      * @param player
      * @param block
      */
-    public void recordSnitchBlucketFill(Player player, Block block)
+    public void recordSnitchBucketFill(Player player, Block block)
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {

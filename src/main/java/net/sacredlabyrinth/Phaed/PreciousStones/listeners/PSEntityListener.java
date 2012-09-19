@@ -689,6 +689,22 @@ public class PSEntityListener implements Listener
         {
             Player player = (Player) event.getEntity();
             plugin.getEntryManager().leaveAllFields(player);
+
+            Player killer = event.getEntity().getKiller();
+
+            if (killer != null)
+            {
+                plugin.getSnitchManager().recordSnitchPlayerKill(killer, player);
+            }
+        }
+        else
+        {
+            Player killer = event.getEntity().getKiller();
+
+            if (killer != null)
+            {
+                plugin.getSnitchManager().recordSnitchEntityKill(killer, event.getEntity());
+            }
         }
     }
 
