@@ -627,7 +627,9 @@ public class PSBlockListener implements Listener
         {
             if (!plugin.getSettingsManager().isNoRefunds())
             {
-                if (field.getSettings().getPrice() > 0)
+                int refund = field.getSettings().getRefund();
+
+                if (refund > -1)
                 {
                     // refund the block, accounts for parent/child relationships
 
@@ -640,16 +642,18 @@ public class PSBlockListener implements Listener
                             parent = field.getParent();
                         }
 
-                        plugin.getForceFieldManager().refund(player, parent.getSettings().getPrice());
+                        plugin.getForceFieldManager().refund(player, refund);
 
                         for (Field child : parent.getChildren())
                         {
-                            plugin.getForceFieldManager().refund(player, child.getSettings().getPrice());
+                            refund = child.getSettings().getRefund();
+
+                            plugin.getForceFieldManager().refund(player, refund);
                         }
                     }
                     else
                     {
-                        plugin.getForceFieldManager().refund(player, field.getSettings().getPrice());
+                        plugin.getForceFieldManager().refund(player, refund);
                     }
                 }
             }

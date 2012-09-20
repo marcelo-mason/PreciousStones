@@ -47,6 +47,7 @@ public class FieldSettings
     private GameMode forceLeavingGameMode = null;
     private String title;
     private int price = 0;
+    private int refund = -1;
     private List<Integer> treeTypes = new ArrayList<Integer>();
     private List<Integer> shrubTypes = new ArrayList<Integer>();
     private List<String> creatureTypes = new ArrayList<String>();
@@ -350,6 +351,11 @@ public class FieldSettings
         if (map.containsKey("price") && Helper.isInteger(map.get("price")))
         {
             price = (Integer) map.get("price");
+        }
+
+        if (map.containsKey("refund") && Helper.isInteger(map.get("refund")))
+        {
+            refund = (Integer) map.get("refund");
         }
 
         if (map.containsKey("limits") && Helper.isIntList(map.get("limits")))
@@ -1611,5 +1617,24 @@ public class FieldSettings
     public String getRequiredPermissionUse()
     {
         return requiredPermissionUse;
+    }
+
+    public int getRefund()
+    {
+        int refunded = -1;
+
+        if (refund > -1)
+        {
+            refunded = refund;
+        }
+        else
+        {
+            if (price > 0)
+            {
+                refund = price;
+            }
+        }
+
+        return refunded;
     }
 }

@@ -459,9 +459,11 @@ public class PSPlayerListener implements Listener
                                         {
                                             if (!plugin.getSettingsManager().isNoRefunds())
                                             {
-                                                if (fs.getPrice() > 0)
+                                                int refund = fs.getRefund();
+
+                                                if (refund > -1)
                                                 {
-                                                    plugin.getForceFieldManager().refund(player, fs.getPrice());
+                                                    plugin.getForceFieldManager().refund(player, refund);
                                                 }
                                             }
                                         }
