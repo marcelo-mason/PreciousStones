@@ -30,12 +30,22 @@ public class BlockTypeEntry
     }
 
     /**
-     * @param block
+     * @param typeId
+     * @param data
      */
     public BlockTypeEntry(int typeId, byte data)
     {
         this.typeId = typeId;
         this.data = data;
+    }
+
+    /**
+     * @param typeId
+     */
+    public BlockTypeEntry(int typeId)
+    {
+        this.typeId = typeId;
+        this.data = 0;
     }
 
     /**
