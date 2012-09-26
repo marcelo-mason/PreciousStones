@@ -239,7 +239,7 @@ public class ChatBlock
             return;
         }
 
-        prefix_used = prefix == null ? true : false;
+        prefix_used = prefix == null;
 
         String empty_prefix = ChatBlock.makeEmpty(prefix);
 
@@ -721,54 +721,70 @@ public class ChatBlock
     }
 
     /**
-     * Outputs a single line out, crops overflow
+     * Outputs a message to a user
      *
      * @param receiver
      * @param msg
      */
-    public static void saySingle(CommandSender receiver, String msg)
+    public static void send(CommandSender receiver, String msg, Object... args)
     {
         if (receiver == null)
         {
             return;
         }
 
-        receiver.sendMessage(cropRightToFit(colorize(new String[]{msg})[0], lineLength));
+        msg = Helper.format(Helper.capitalize(msg), args);
+
+        String[] message = colorize(wordWrap(msg, 0));
+
+        for (String out : message)
+        {
+            receiver.sendMessage(out);
+        }
     }
 
     /**
-     * Outputs a message to a user
-     *
-     * @param receiver
-     * @param msg
-     */
-    public static void sendMessage(CommandSender receiver, String msg)
-    {
-        sendPrefixedMessage(receiver, null, msg);
-    }
-
-    /**
-     * Outputs a message to a user
+     * Outputs a prefixed message to a user
      *
      * @param receiver
      * @param prefix
      * @param msg
      */
-    public static void sendPrefixedMessage(CommandSender receiver, String prefix, String msg)
+    public static void sendPrefixedMessage(CommandSender receiver, String prefix, String msg, Object... args)
     {
         if (receiver == null)
         {
             return;
         }
 
-        int prefix_width = prefix == null ? 0 : (int) msgLength(prefix);
+        msg = Helper.format(msg, args);
+
+        int prefix_width = (int) msgLength(prefix);
 
         String[] message = colorize(wordWrap(msg, prefix_width));
 
         for (String out : message)
         {
-            receiver.sendMessage((prefix == null ? "" : prefix + " ") + out);
+            receiver.sendMessage(prefix + " " + out);
         }
+    }
+
+    /**
+     * Outputs a single line out, crops overflow
+     *
+     * @param receiver
+     * @param msg
+     */
+    public static void saySingle(CommandSender receiver, String msg, Object... args)
+    {
+        if (receiver == null)
+        {
+            return;
+        }
+
+        msg = Helper.format(msg, args);
+
+        receiver.sendMessage(cropRightToFit(colorize(new String[]{msg})[0], lineLength));
     }
 
     /**

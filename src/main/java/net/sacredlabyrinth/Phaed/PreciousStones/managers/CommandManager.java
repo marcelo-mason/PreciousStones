@@ -5,7 +5,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -14,8 +13,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -60,7 +59,7 @@ public final class CommandManager implements CommandExecutor
                 {
                     if (plugin.getSettingsManager().isBlacklistedWorld(player.getWorld()))
                     {
-                        ChatBlock.sendMessage(player, ChatColor.RED + "PreciousStones disabled in this world");
+                        ChatBlock.send(player, "{red}PreciousStones disabled in this world");
                         return true;
                     }
                 }
@@ -80,19 +79,41 @@ public final class CommandManager implements CommandExecutor
                     else if (cmd.equals("debug") && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
                     {
                         plugin.getSettingsManager().setDebug(!plugin.getSettingsManager().isDebug());
-                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Debug output " + (plugin.getSettingsManager().isDebug() ? "enabled" : "disabled"));
+
+                        if(plugin.getSettingsManager().isDebug())
+                        {
+                            ChatBlock.send(sender, "{aqua}Debug output enabled");
+                        }
+                        else
+                        {
+                            ChatBlock.send(sender, "{aqua}Debug output disabled");
+                        }
                         return true;
                     }
                     else if (cmd.equals("debugdb") && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
                     {
                         plugin.getSettingsManager().setDebugdb(!plugin.getSettingsManager().isDebugdb());
-                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Debug db output " + (plugin.getSettingsManager().isDebugdb() ? "enabled" : "disabled"));
+                        if(plugin.getSettingsManager().isDebugdb())
+                        {
+                            ChatBlock.send(sender, "{aqua}Debug db output enabled");
+                        }
+                        else
+                        {
+                            ChatBlock.send(sender, "{aqua}Debug db output disabled");
+                        }
                         return true;
                     }
                     else if (cmd.equals("debugsql") && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
                     {
                         plugin.getSettingsManager().setDebugsql(!plugin.getSettingsManager().isDebugsql());
-                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Debug sql output " + (plugin.getSettingsManager().isDebugsql() ? "enabled" : "disabled"));
+                        if(plugin.getSettingsManager().isDebugsql())
+                        {
+                            ChatBlock.send(sender, "{aqua}Debug sql output enabled");
+                        }
+                        else
+                        {
+                            ChatBlock.send(sender, "{aqua}Debug sql output disabled");
+                        }
                         return true;
                     }
                     else if (cmd.equals("on") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
@@ -101,11 +122,11 @@ public final class CommandManager implements CommandExecutor
                         if (isDisabled)
                         {
                             plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(false);
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Enabled the placing of pstones");
+                            ChatBlock.send(sender, "{aqua}Enabled the placing of pstones");
                         }
                         else
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Pstone placement is already enabled");
+                            ChatBlock.send(sender, "{red}Pstone placement is already enabled");
                         }
                         return true;
                     }
@@ -115,11 +136,11 @@ public final class CommandManager implements CommandExecutor
                         if (!isDisabled)
                         {
                             plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(true);
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Disabled the placing of pstones");
+                            ChatBlock.send(sender, "{aqua}Disabled the placing of pstones");
                         }
                         else
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Pstone placement is already disabled");
+                            ChatBlock.send(sender, "{red}Pstone placement is already disabled");
                         }
                         return true;
                     }
@@ -135,7 +156,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isDisabled())
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                        ChatBlock.send(sender, "{red}This field can only be modified while disabled");
                                         return true;
                                     }
                                 }
@@ -150,7 +171,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (!plugin.getPermissionsManager().has(allowed, field.getSettings().getRequiredPermissionAllow()))
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + Helper.capitalize(playerName) + " does not have permissions to be allowed");
+                                            ChatBlock.send(sender, "{red}{1.player} does not have permissions to be allowed", playerName);
                                             continue;
                                         }
                                     }
@@ -159,11 +180,11 @@ public final class CommandManager implements CommandExecutor
 
                                     if (done)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in the field");
+                                        ChatBlock.send(sender, "{aqua}{1.player} has been allowed in the field", playerName);
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " is already on the list");
+                                        ChatBlock.send(sender, "{aqua}{1.player} is already on the list", playerName);
                                     }
                                 }
                             }
@@ -185,11 +206,11 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " has been allowed in " + count + Helper.plural(count, " field", "s"));
+                                    ChatBlock.send(sender, "{aqua}{1.player} has been allowed in {2.count} fields", playerName, count);
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " is already on all your lists");
+                                    ChatBlock.send(sender, "{aqua}{1.player} is already on all your lists", playerName);
                                 }
                             }
 
@@ -208,7 +229,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isDisabled())
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                        ChatBlock.send(sender, "{red}This field can only be modified while disabled");
                                         return true;
                                     }
                                 }
@@ -217,13 +238,13 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (field.containsPlayer(playerName))
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "Cannot remove a player thats currently in your field");
+                                        ChatBlock.send(sender, "{red}Cannot remove a player that's currently in your field");
                                         return true;
                                     }
 
                                     if (plugin.getForceFieldManager().conflictOfInterestExists(field, playerName))
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "You cannot disallow " + playerName + ", one of his fields is overlapping yours");
+                                        ChatBlock.send(sender, "{red}You cannot disallow {1.player}, one of his fields is overlapping yours", playerName);
                                         return true;
                                     }
 
@@ -231,11 +252,11 @@ public final class CommandManager implements CommandExecutor
 
                                     if (done)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed from the field");
+                                        ChatBlock.send(sender, "{aqua}{1.player} was removed from the field", playerName);
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + Helper.capitalize(playerName) + " not found");
+                                        ChatBlock.send(sender, "{red}{1.player} not found", playerName);
                                     }
                                 }
                             }
@@ -258,11 +279,11 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(playerName) + " was removed " + count + Helper.plural(count, " field", "s"));
+                                    ChatBlock.send(sender, "{aqua}{1.player} was removed {2.count} fields", playerName, count);
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Nothing to be done");
+                                    ChatBlock.send(sender, "{aqua}Nothing to be done");
                                 }
                             }
 
@@ -279,11 +300,11 @@ public final class CommandManager implements CommandExecutor
 
                             if (allowed.size() > 0)
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Allowed: " + ChatColor.AQUA + Helper.toMessage(new ArrayList<String>(allowed), ", "));
+                                ChatBlock.send(sender, "{yellow}Allowed: {aqua}{1.allowed}", Helper.toMessage(new ArrayList<String>(allowed), ", "));
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "No players allowed in this field");
+                                ChatBlock.send(sender, "{red}No players allowed in this field");
                             }
                         }
                         else
@@ -328,11 +349,11 @@ public final class CommandManager implements CommandExecutor
 
                             if (inhabitants.size() > 0)
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.YELLOW + "Inhabitants: " + ChatColor.AQUA + Helper.toMessage(new ArrayList<String>(inhabitants), ", "));
+                                ChatBlock.send(sender, "{yellow}Inhabitants: {aqua}{1.inhabitants}", Helper.toMessage(new ArrayList<String>(inhabitants), ", "));
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "No players found in the field");
+                                ChatBlock.send(sender, "{red}No players found in the field");
                             }
                         }
                         else
@@ -374,7 +395,7 @@ public final class CommandManager implements CommandExecutor
                                             plugin.getStorageManager().deleteTranslocationHead(field.getName(), field.getOwner());
                                         }
 
-                                        ChatBlock.sendMessage(player, ChatColor.GRAY + " * " + ChatColor.YELLOW + "Translocation " + field.getName() + " unlinked from " + count + " blocks");
+                                        ChatBlock.send(player, "{yellow}Translocation {1.field} unlinked from {2.count} blocks", field.getName(), count);
                                     }
                                 }
 
@@ -382,7 +403,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (plugin.getStorageManager().existsFieldWithName(fieldName, player.getName()))
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation block already exists with that name");
+                                    ChatBlock.send(sender, "{red}A translocation block already exists with that name");
                                     return true;
                                 }
 
@@ -414,7 +435,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (!field.isDisabled())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                    ChatBlock.send(sender, "{red}This field can only be modified while disabled");
                                     return true;
                                 }
                             }
@@ -425,11 +446,11 @@ public final class CommandManager implements CommandExecutor
 
                                 if (done)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field's name has been cleared");
+                                    ChatBlock.send(sender, "{aqua}Field's name has been cleared");
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "No nameable fields found");
+                                    ChatBlock.send(sender, "{red}No nameable fields found");
                                 }
                             }
                             else
@@ -444,21 +465,21 @@ public final class CommandManager implements CommandExecutor
 
                                         if (count > 0)
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Translocation " + fieldName + " has " + count + " stored blocks");
+                                            ChatBlock.send(sender, "{aqua}Translocation {1.field} has {2.count} stored blocks", fieldName, count);
                                         }
                                         else
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Translocation " + fieldName + " created.  Recoding changes...");
+                                            ChatBlock.send(sender, "{aqua}Translocation {1.field} created. Recoding changes...", fieldName);
                                         }
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Renamed field to " + fieldName);
+                                        ChatBlock.send(sender, "{aqua}Renamed field to {1.field}", fieldName);
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "No nameable fields found");
+                                    ChatBlock.send(sender, "{red}No nameable fields found");
                                 }
                             }
                             return true;
@@ -487,7 +508,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (plugin.getStorageManager().existsTranslocatior(field.getName(), field.getOwner()))
                                         {
-                                            ChatBlock.sendMessage(player, ChatColor.RED + "Cannot reshape a translocation cuboid once its in use");
+                                            ChatBlock.send(player, "{red}Cannot reshape a translocation cuboid once its in use");
                                             return true;
                                         }
                                     }
@@ -504,16 +525,16 @@ public final class CommandManager implements CommandExecutor
 
                                         plugin.getForceFieldManager().addSourceField(field);
 
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Radius set to " + radius);
+                                        ChatBlock.send(sender, "{aqua}Radius set to {1.radius}", radius);
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "Radius must be less than or equal to " + fs.getRadius());
+                                        ChatBlock.send(sender, "{red}Radius must be less than or equal to {1.radius}", fs.getRadius());
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Cannot change radius of a cuboid");
+                                    ChatBlock.send(sender, "{red}Cannot change radius of a cuboid");
                                 }
                                 return true;
                             }
@@ -538,7 +559,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isDisabled())
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                        ChatBlock.send(sender, "{red}This field can only be modified while disabled");
                                         return true;
                                     }
                                 }
@@ -549,13 +570,13 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (velocity < 0 || velocity > 5)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "Velocity must be from 0 to 5");
+                                        ChatBlock.send(sender, "{red}Velocity must be from 0 to 5");
                                         return true;
                                     }
 
                                     field.setVelocity(velocity);
                                     plugin.getStorageManager().offerField(field);
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Velocity set to " + velocity);
+                                    ChatBlock.send(sender, "{aqua}Velocity set to {1.velocity}", velocity);
                                 }
                                 else
                                 {
@@ -588,11 +609,11 @@ public final class CommandManager implements CommandExecutor
 
                                 field.setDisabled(true);
                                 plugin.getStorageManager().offerField(field);
-                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been disabled");
+                                ChatBlock.send(sender, "{aqua}Field has been disabled");
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "Field is already disabled");
+                                ChatBlock.send(sender, "{red}Field is already disabled");
                             }
                             return true;
                         }
@@ -622,11 +643,11 @@ public final class CommandManager implements CommandExecutor
 
                                 field.setDisabled(false);
                                 plugin.getStorageManager().offerField(field);
-                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field has been enabled");
+                                ChatBlock.send(sender, "{aqua}Field has been enabled");
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "Field is already enabled");
+                                ChatBlock.send(sender, "{red}Field is already enabled");
                             }
                             return true;
                         }
@@ -646,13 +667,13 @@ public final class CommandManager implements CommandExecutor
                             data.setDensity(density);
                             plugin.getStorageManager().offerPlayer(player.getName());
 
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualization density changed to " + density);
+                            ChatBlock.send(sender, "{aqua}Visualization density changed to {1.density}", density);
                             return true;
                         }
                         else if (args.length == 0)
                         {
                             PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Your visualization density is set to " + data.getDensity());
+                            ChatBlock.send(sender, "{aqua}Your visualization density is set to {1.density}", data.getDensity());
                         }
                     }
                     else if (cmd.equals("toggle") && plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle") && hasplayer)
@@ -671,7 +692,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (!field.isDisabled())
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + "This field's flags can only be toggled while disabled");
+                                            ChatBlock.send(sender, "{red}This field's flags can only be toggled while disabled");
                                             return true;
                                         }
                                     }
@@ -701,7 +722,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (unToggable)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This flag cannot be toggled");
+                                        ChatBlock.send(sender, "{red}This flag cannot be toggled");
                                         return true;
                                     }
 
@@ -709,18 +730,18 @@ public final class CommandManager implements CommandExecutor
 
                                     if (enabled)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "The " + flagStr + " flag has been enabled.");
+                                        ChatBlock.send(sender, "{aqua}The {1.flag} flag has been enabled.", flagStr);
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "The " + flagStr + " flag has been disabled.");
+                                        ChatBlock.send(sender, "{aqua}The {1.flag} flag has been disabled.", flagStr);
                                     }
 
                                     field.dirtyFlags();
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "The field does not contain this flag");
+                                    ChatBlock.send(sender, "{red}The field does not contain this flag");
                                 }
                             }
                             else
@@ -755,7 +776,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (fieldsInArea != null && fieldsInArea.size() > 0)
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualizing...");
+                                            ChatBlock.send(sender, "{aqua}Visualizing...");
 
                                             int count = 0;
                                             for (Field f : fieldsInArea)
@@ -773,7 +794,7 @@ public final class CommandManager implements CommandExecutor
                                         }
                                         else
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + "No fields in area");
+                                            ChatBlock.send(sender, "{red}No fields in area");
                                         }
                                     }
                                     else
@@ -782,26 +803,26 @@ public final class CommandManager implements CommandExecutor
 
                                         if (field != null)
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Visualizing...");
+                                            ChatBlock.send(sender, "{aqua}Visualizing...");
 
                                             plugin.getVisualizationManager().addVisualizationField(player, field);
                                             plugin.getVisualizationManager().displayVisualization(player, true);
                                         }
                                         else
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + "You are not inside of a field");
+                                            ChatBlock.send(sender, "{red}You are not inside of a field");
                                         }
                                     }
                                 }
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "A visualization is already taking place");
+                                ChatBlock.send(sender, "{red}A visualization is already taking place");
                             }
                         }
                         else
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Cannot visualize while defining a cuboid");
+                            ChatBlock.send(sender, "{red}Cannot visualize while defining a cuboid");
                         }
                         return true;
                     }
@@ -817,7 +838,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fieldsInArea.size() > 0)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Marking " + fieldsInArea.size() + " field blocks...");
+                                        ChatBlock.send(sender, "{aqua}Marking {1.count} field blocks...", fieldsInArea.size());
 
                                         for (Field f : fieldsInArea)
                                         {
@@ -828,7 +849,7 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "No fields in the area");
+                                        ChatBlock.send(sender, "{aqua}No fields in the area");
                                     }
                                 }
                                 else
@@ -849,28 +870,28 @@ public final class CommandManager implements CommandExecutor
 
                                         if (count > 0)
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Marking " + count + " field blocks...");
+                                            ChatBlock.send(sender, "{aqua}Marking {1.count} field blocks...", count);
                                             plugin.getVisualizationManager().displayVisualization(player, false);
                                         }
                                         else
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "No fields in the area");
+                                            ChatBlock.send(sender, "{aqua}No fields in the area");
                                         }
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "No fields in the area");
+                                        ChatBlock.send(sender, "{aqua}No fields in the area");
                                     }
                                 }
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "A visualization is already taking place");
+                                ChatBlock.send(sender, "{red}A visualization is already taking place");
                             }
                         }
                         else
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Cannot mark fields while defining a cuboid");
+                            ChatBlock.send(sender, "{red}Cannot mark fields while defining a cuboid");
                         }
                         return true;
                     }
@@ -889,17 +910,17 @@ public final class CommandManager implements CommandExecutor
                                     if (field.insertFieldFlag(flagStr))
                                     {
                                         plugin.getForceFieldManager().addSourceField(field);
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "The field flag inserted");
+                                        ChatBlock.send(sender, "{aqua}The field flag inserted");
                                         plugin.getStorageManager().offerField(field);
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "The field flag entered does not exist");
+                                        ChatBlock.send(sender, "{red}The field flag entered does not exist");
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "The field already contains this flag");
+                                    ChatBlock.send(sender, "{red}The field already contains this flag");
                                 }
                             }
                             else
@@ -917,7 +938,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             field.RevertFlags();
                             plugin.getStorageManager().offerField(field);
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "The field flags have been reverted to default.");
+                            ChatBlock.send(sender, "{aqua}The field flags have been reverted to default.");
                         }
                         else
                         {
@@ -939,7 +960,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isDisabled())
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "This field can only be modified while disabled");
+                                        ChatBlock.send(sender, "{red}This field can only be modified while disabled");
                                         return true;
                                     }
                                 }
@@ -949,16 +970,16 @@ public final class CommandManager implements CommandExecutor
                                     field.setRevertSecs(interval);
                                     plugin.getGriefUndoManager().register(field);
                                     plugin.getStorageManager().offerField(field);
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "The grief-revert interval has been set to " + interval + " seconds");
+                                    ChatBlock.send(sender, "{aqua}The grief-revert interval has been set to {1.count} seconds", interval);
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "The minimum interval is " + plugin.getSettingsManager().getGriefRevertMinInterval() + " seconds");
+                                    ChatBlock.send(sender, "{red}The minimum interval is {1.count} seconds", plugin.getSettingsManager().getGriefRevertMinInterval());
                                 }
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a grief-revert block");
+                                ChatBlock.send(sender, "{red}You are not pointing at a grief-revert block");
                             }
                             return true;
                         }
@@ -975,7 +996,7 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a snitch block");
+                                ChatBlock.send(sender, "{red}You are not pointing at a snitch block");
                             }
 
                             return true;
@@ -992,11 +1013,11 @@ public final class CommandManager implements CommandExecutor
 
                                     if (cleaned)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Cleared the snitch list");
+                                        ChatBlock.send(sender, "{aqua}Cleared the snitch list");
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "Snitch list is empty");
+                                        ChatBlock.send(sender, "{red}Snitch list is empty");
                                     }
                                 }
                                 else
@@ -1011,13 +1032,13 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length == 0)
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.GRAY + "* All commands (except for list) require you to be pointing at a field block or standing in the field");
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation list");
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation import " + ChatColor.GRAY + "* imports everything");
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation delete " + ChatColor.GRAY + "* deletes everything");
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation import [id] [id] ...");
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation remove [id] [id] ...");
-                            ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation delete [id] [id] ...");
+                            ChatBlock.send(sender,  "* All commands (except for list) require you to be pointing at a field block or standing in the field");
+                            ChatBlock.send(sender, "{red}Usage: /ps translocation list");
+                            ChatBlock.send(sender, "{red}Usage: /ps translocation import {gray}* imports everything");
+                            ChatBlock.send(sender, "{red}Usage: /ps translocation delete {gray}* deletes everything");
+                            ChatBlock.send(sender, "{red}Usage: /ps translocation import [id] [id] ...");
+                            ChatBlock.send(sender, "{red}Usage: /ps translocation remove [id] [id] ...");
+                            ChatBlock.send(sender, "{red}Usage: /ps translocation delete [id] [id] ...");
                             return true;
                         }
 
@@ -1037,20 +1058,20 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.isTranslocating())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
+                                    ChatBlock.send(sender, "{red}A translocation is currently taking place");
                                     return true;
                                 }
 
                                 if (!field.isNamed())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
+                                    ChatBlock.send(sender, "{red}You must name your translocation field first");
                                     return true;
                                 }
 
                                 if (args.length == 0)
                                 {
                                     plugin.getStorageManager().deleteTranslocation(args[1], player.getName());
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + Helper.capitalize(args[0]) + " has been deleted");
+                                    ChatBlock.send(sender, "{aqua}{1.translocation} has been deleted", args[0]);
                                 }
                                 else
                                 {
@@ -1060,7 +1081,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (entry == null || !entry.isValid())
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is not a valid block id, skipped.");
+                                            ChatBlock.send(sender, "{red}{1.blockid} is not a valid block id, skipped.", arg);
                                             continue;
                                         }
 
@@ -1068,18 +1089,18 @@ public final class CommandManager implements CommandExecutor
 
                                         if (count > 0)
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + count + " " + Helper.friendlyBlockType(Material.getMaterial(entry.getTypeId()).toString()) + " from " + field.getName());
+                                            ChatBlock.send(sender, "{aqua}Deleted {1.count} {2.blockid} from {3.field}",count, Helper.friendlyBlockType(Material.getMaterial(entry.getTypeId()).toString()), field.getName());
                                         }
                                         else
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + "No blocks matched " + arg);
+                                            ChatBlock.send(sender, "{red}No blocks matched ", arg);
                                         }
                                     }
                                 }
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
+                                ChatBlock.send(sender, "{red}You are not pointing at a translocation block");
                             }
                             return true;
                         }
@@ -1094,19 +1115,19 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.isTranslocating())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
+                                    ChatBlock.send(sender, "{red}A translocation is currently taking place");
                                     return true;
                                 }
 
                                 if (!field.isNamed())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
+                                    ChatBlock.send(sender, "{red}You must name your translocation field first");
                                     return true;
                                 }
 
                                 if (field.isDisabled())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Translocation field must be enabled to remove blocks");
+                                    ChatBlock.send(sender, "{red}Translocation field must be enabled to remove blocks");
                                     return true;
                                 }
 
@@ -1120,7 +1141,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (entry == null || !entry.isValid())
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is not a valid block id, skipped.");
+                                            ChatBlock.send(sender, "{red}{1.blockid} is not a valid block id, skipped.", arg);
                                             continue;
                                         }
 
@@ -1134,12 +1155,12 @@ public final class CommandManager implements CommandExecutor
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Usage: /ps translocation remove [id] [id] ...");
+                                    ChatBlock.send(sender, "{red}Usage: /ps translocation remove [id] [id] ...");
                                 }
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
+                                ChatBlock.send(sender, "{red}You are not pointing at a translocation block");
                             }
                             return true;
                         }
@@ -1152,19 +1173,19 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.isTranslocating())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
+                                    ChatBlock.send(sender, "{red}A translocation is currently taking place");
                                     return true;
                                 }
 
                                 if (!field.isNamed())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
+                                    ChatBlock.send(sender, "{red}You must name your translocation field first");
                                     return true;
                                 }
 
                                 if (field.isDisabled())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Translocation field must be enabled to unlink");
+                                    ChatBlock.send(sender, "{red}Translocation field must be enabled to unlink");
                                     return true;
                                 }
 
@@ -1179,17 +1200,17 @@ public final class CommandManager implements CommandExecutor
                                         plugin.getStorageManager().deleteTranslocationHead(field.getName(), field.getOwner());
                                     }
 
-                                    ChatBlock.sendMessage(player, ChatColor.GRAY + " * " + ChatColor.YELLOW + "Translocation " + field.getName() + " unlinked from " + count + " blocks");
+                                    ChatBlock.send(player, "{yellow}Translocation {1.field} unlinked from {2.count} blocks", field.getName(), count);
                                 }
                                 else
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "No blocks to unlink");
+                                    ChatBlock.send(sender, "{red}No blocks to unlink");
                                     return true;
                                 }
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
+                                ChatBlock.send(sender, "{red}You are not pointing at a translocation block");
                             }
                             return true;
                         }
@@ -1204,19 +1225,19 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.isTranslocating())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "A translocation is currently taking place");
+                                    ChatBlock.send(sender, "{red}A translocation is currently taking place");
                                     return true;
                                 }
 
                                 if (!field.isNamed())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "You must name your translocation field first");
+                                    ChatBlock.send(sender, "{red}You must name your translocation field first");
                                     return true;
                                 }
 
                                 if (field.isDisabled())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Translocation field must be enabled to import blocks");
+                                    ChatBlock.send(sender, "{red}Translocation field must be enabled to import blocks");
                                     return true;
                                 }
 
@@ -1234,13 +1255,13 @@ public final class CommandManager implements CommandExecutor
 
                                         if (entry == null || !entry.isValid())
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is not a valid block id, skipped.");
+                                            ChatBlock.send(sender, "{red}{1.blockid} is not a valid block id, skipped.", arg);
                                             continue;
                                         }
 
                                         if (!field.getSettings().canTranslocate(entry))
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.RED + arg + " is blacklisted, skipped.");
+                                            ChatBlock.send(sender, "{red}{1.blockid} is blacklisted, skipped.", arg);
                                             continue;
                                         }
 
@@ -1255,7 +1276,7 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "You are not pointing at a translocation block");
+                                ChatBlock.send(sender, "{red}You are not pointing at a translocation block");
                             }
                             return true;
 
@@ -1274,14 +1295,14 @@ public final class CommandManager implements CommandExecutor
                             if (cb.size() > 0)
                             {
                                 ChatBlock.sendBlank(player);
-                                ChatBlock.sendMessage(sender, ChatColor.DARK_GRAY + "Type /ps more to view next page.");
+                                ChatBlock.send(sender, "{dark-gray}Type /ps more to view next page.");
                             }
                             ChatBlock.sendBlank(player);
 
                             return true;
                         }
 
-                        ChatBlock.sendMessage(sender, ChatColor.GOLD + "Nothing more to see.");
+                        ChatBlock.send(sender, "{gold}Nothing more to see.");
                         return true;
                     }
                     else if (cmd.equals("counts"))
@@ -1290,7 +1311,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (!plugin.getCommunicationManager().showFieldCounts(player, player.getName()))
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.RED + "Player does not have any fields");
+                                ChatBlock.send(sender, "{red}Player does not have any fields");
                             }
                             return true;
                         }
@@ -1305,7 +1326,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!plugin.getCommunicationManager().showCounts(sender, type))
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.RED + "Not a valid field type");
+                                        ChatBlock.send(sender, "{red}Not a valid field type");
                                     }
                                 }
                             }
@@ -1315,7 +1336,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (!plugin.getCommunicationManager().showFieldCounts(player, target))
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.RED + "Player does not have any fields");
+                                    ChatBlock.send(sender, "{red}Player does not have any fields");
                                 }
                             }
                             return true;
@@ -1385,11 +1406,11 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Protective field removed from the field");
+                                    ChatBlock.send(sender, "{aqua}Protective field removed from the field");
 
                                     if (plugin.getSettingsManager().isLogBypassDelete())
                                     {
-                                        PreciousStones.log("Protective field removed from {0} {1}", count, Helper.plural(count, "field", "'s"));
+                                        PreciousStones.log("Protective field removed from {1.count} fields", count);
                                     }
                                 }
                                 else
@@ -1417,17 +1438,17 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fields > 0)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + fields + " " + Material.getMaterial(type.getTypeId()) + " fields");
+                                        ChatBlock.send(sender, "{aqua}Deleted {1.count} {2.block-type} fields", fields, Material.getMaterial(type.getTypeId()));
                                     }
 
                                     if (ubs > 0)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + fields + " " + Material.getMaterial(type.getTypeId()) + " unbreakables");
+                                        ChatBlock.send(sender, "{aqua}Deleted {1.count} {2.block-type} unbreakables", ubs, Material.getMaterial(type.getTypeId()));
                                     }
 
                                     if (ubs == 0 && fields == 0)
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "No pstones of the type found");
+                                        ChatBlock.send(sender, "{aqua}No pstones of the type found");
                                     }
                                 }
                                 else
@@ -1442,17 +1463,17 @@ public final class CommandManager implements CommandExecutor
 
                                 if (fields > 0)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + args[0] + "'s " + fields + " fields");
+                                    ChatBlock.send(sender, "{aqua}Deleted {1.player}'s {2.count} fields", args[0], fields);
                                 }
 
                                 if (ubs > 0)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Deleted " + args[0] + "'s " + fields + " unbreakables");
+                                    ChatBlock.send(sender, "{aqua}Deleted {1.player}'s {2.count} unbreakables", args[0], ubs);
                                 }
 
                                 if (ubs == 0 && fields == 0)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "The player had no pstones");
+                                    ChatBlock.send(sender, "{aqua}The player had no pstones");
                                 }
                             }
                             return true;
@@ -1466,7 +1487,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (owner.contains(":"))
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Cannot assign groups or clans as owners");
+                                ChatBlock.send(sender, "{aqua}Cannot assign groups or clans as owners");
                                 return true;
                             }
 
@@ -1496,12 +1517,12 @@ public final class CommandManager implements CommandExecutor
 
                                     field.setOwner(owner);
                                     plugin.getStorageManager().offerField(field);
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "Owner set to " + owner);
+                                    ChatBlock.send(sender, "{aqua}Owner set to {1.player}", owner);
                                     return true;
                                 }
                             }
 
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "You are not pointing at a field or unbreakable block");
+                            ChatBlock.send(sender, "{aqua}You are not pointing at a field or unbreakable block");
                             return true;
                         }
                     }
@@ -1513,7 +1534,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (owner.contains(":"))
                             {
-                                ChatBlock.sendMessage(sender, ChatColor.AQUA + "Cannot assign groups or clans as owners");
+                                ChatBlock.send(sender, "{aqua}Cannot assign groups or clans as owners");
                                 return true;
                             }
 
@@ -1531,22 +1552,22 @@ public final class CommandManager implements CommandExecutor
                                         if (field.hasFlag(FieldFlag.CAN_CHANGE_OWNER))
                                         {
                                             field.setNewOwner(owner);
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field can now be taken by " + owner + " via right-click");
+                                            ChatBlock.send(sender, "{aqua}Field can now be taken by {1.player} via right-click", owner);
                                             return true;
                                         }
                                         else
                                         {
-                                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Field type does not support the changing of ownership");
+                                            ChatBlock.send(sender, "{aqua}Field type does not support the changing of ownership");
                                         }
                                     }
                                     else
                                     {
-                                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Only the owner of the field can change its owner");
+                                        ChatBlock.send(sender, "{aqua}Only the owner of the field can change its owner");
                                     }
                                 }
                             }
 
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "You are not pointing at a field or unbreakable block");
+                            ChatBlock.send(sender, "{aqua}You are not pointing at a field or unbreakable block");
                             return true;
                         }
                     }
@@ -1563,17 +1584,17 @@ public final class CommandManager implements CommandExecutor
 
                                 for (Unbreakable u : unbreakables)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + u.toString());
+                                    ChatBlock.send(sender, "{aqua}{unbreakable}", u.toString());
                                 }
 
                                 for (Field f : fields)
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + f.toString());
+                                    ChatBlock.send(sender, "{aqua}{field}", f.toString());
                                 }
 
                                 if (unbreakables.isEmpty() && fields.isEmpty())
                                 {
-                                    ChatBlock.sendMessage(sender, ChatColor.AQUA + "No field or unbreakable blocks found");
+                                    ChatBlock.send(sender, "{aqua}No field or unbreakable blocks found");
                                 }
                                 return true;
                             }
@@ -1582,7 +1603,7 @@ public final class CommandManager implements CommandExecutor
                     else if (cmd.equals("reload") && plugin.getPermissionsManager().has(player, "preciousstones.admin.reload"))
                     {
                         plugin.getSettingsManager().load();
-                        ChatBlock.sendMessage(sender, ChatColor.AQUA + "Configuration reloaded");
+                        ChatBlock.send(sender, "{aqua}Configuration reloaded");
                         return true;
                     }
                     else if (cmd.equals("fields") && plugin.getPermissionsManager().has(player, "preciousstones.admin.fields"))
@@ -1596,17 +1617,17 @@ public final class CommandManager implements CommandExecutor
                         {
                             String flagStr = args[0];
 
-                            ChatBlock.sendMessage(player, ChatColor.AQUA + "All fields are temporarily down while being changed");
+                            ChatBlock.send(player, "{aqua}All fields are temporarily down while being changed");
 
                             int count = plugin.getStorageManager().enableAllFlags(flagStr);
 
                             if (count == 0)
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields found with that flag enabled");
+                                ChatBlock.send(player, "{aqua}No fields found with that flag enabled");
                             }
                             else
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Flag enabled on " + count + " fields");
+                                ChatBlock.send(player, "{aqua}Flag enabled on {1.count} fields", count);
                             }
                         }
                         return true;
@@ -1617,17 +1638,17 @@ public final class CommandManager implements CommandExecutor
                         {
                             String flagStr = args[0];
 
-                            ChatBlock.sendMessage(player, ChatColor.AQUA + "All fields are temporarily down while being changed");
+                            ChatBlock.send(player, "{aqua}All fields are temporarily down while being changed");
 
                             int count = plugin.getStorageManager().disableAllFlags(flagStr);
 
                             if (count == 0)
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "No fields found with that flag disabled");
+                                ChatBlock.send(player, "{aqua}No fields found with that flag disabled");
                             }
                             else
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Flag disabled on " + count + " fields");
+                                ChatBlock.send(player, "{aqua}Flag disabled on {1.count} fields", count);
                             }
                         }
                         return true;
@@ -1646,15 +1667,15 @@ public final class CommandManager implements CommandExecutor
                         }
                         if (cleandFF > 0)
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Cleaned " + cleandFF + " orphaned fields");
+                            ChatBlock.send(sender, "{aqua}Cleaned {1.count} orphaned fields", cleandFF);
                         }
                         if (cleandU > 0)
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Cleaned " + cleandU + " orphaned unbreakable blocks");
+                            ChatBlock.send(sender, "{aqua}Cleaned {1.count} orphaned unbreakable blocks", cleandU);
                         }
                         if (cleandFF == 0 && cleandU == 0)
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "No orphans found");
+                            ChatBlock.send(sender, "{aqua}No orphans found");
                         }
                         return true;
                     }
@@ -1673,21 +1694,21 @@ public final class CommandManager implements CommandExecutor
 
                         if (cleandFF > 0)
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Reverted " + cleandFF + " orphaned fields");
+                            ChatBlock.send(sender, "{aqua}Reverted {1.count} orphaned fields", cleandFF);
                         }
                         if (cleandU > 0)
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "Reverted " + cleandU + " orphaned unbreakable blocks");
+                            ChatBlock.send(sender, "{aqua}Reverted {1.count} orphaned unbreakable blocks", cleandU);
                         }
 
                         if (cleandFF == 0 && cleandU == 0)
                         {
-                            ChatBlock.sendMessage(sender, ChatColor.AQUA + "No orphan fields/unbreakables found");
+                            ChatBlock.send(sender, "{aqua}No orphan fields/unbreakables found");
                         }
                         return true;
                     }
 
-                    ChatBlock.sendMessage(sender, ChatColor.RED + "Not a valid command or insufficient permissions");
+                    ChatBlock.send(sender, "{red}Not a valid command or insufficient permissions");
 
                     return true;
                 }

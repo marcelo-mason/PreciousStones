@@ -3,11 +3,10 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,13 +55,13 @@ public class LimitManager
 
         if (limit == 0)
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "You cannot place any " + fs.getTitle());
+            ChatBlock.send(player, "{red}You cannot place any {1.field-type}", fs.getTitle());
             return true;
         }
 
         if (count >= limit)
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "You have reached the " + fs.getTitle() + " limit of " + limit);
+            ChatBlock.send(player, "{red}You have reached the {1.field-type} limit of {2.limit}", fs.getTitle(), limit);
             return true;
         }
 
@@ -70,7 +69,7 @@ public class LimitManager
 
         if (totalCount >= plugin.getSettingsManager().getGlobalFieldLimit())
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "You have reached the total field limit of " + limit);
+            ChatBlock.send(player, "{red}You have reached the total field limit of {1.limit}", limit);
             return true;
         }
 

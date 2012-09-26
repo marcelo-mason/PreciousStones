@@ -162,7 +162,7 @@ public class CuboidEntry
 
         if (!envelopsPlusOne(loc))
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "Must be inside the cuboid to expand");
+            ChatBlock.send(player, "{red}Must be inside the cuboid to expand");
             return null;
         }
 

@@ -321,12 +321,12 @@ public final class StorageManager
 
         if (fieldCount > 0)
         {
-            PreciousStones.log("({0}) fields: {1}", world, fieldCount);
+            PreciousStones.log("({1.world}) fields: {2.count}", world, fieldCount);
         }
 
         if (cuboidCount > 0)
         {
-            PreciousStones.log("({0}) cuboids: {1}", world, cuboidCount);
+            PreciousStones.log("({1.world}) cuboids: {2.count}", world, cuboidCount);
         }
     }
 
@@ -419,7 +419,7 @@ public final class StorageManager
 
             if (unbreakables.size() > 0)
             {
-                PreciousStones.log("({0}) unbreakables: {1}", world, unbreakables.size());
+                PreciousStones.log("({1.world}) unbreakables: {2.count}", world, unbreakables.size());
             }
         }
     }
@@ -613,7 +613,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log("({0}) unused snitches purged: {1}", worldName, purged);
+            PreciousStones.log("({1.world}) unused snitches purged: {2.count}", worldName, purged);
         }
         return out;
     }
@@ -821,7 +821,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log("({0}) unused snitches purged: {1}", worldName, purged);
+            PreciousStones.log("({1.world}) unused snitches purged: {2.count}", worldName, purged);
         }
 
         return out.values();
@@ -857,14 +857,14 @@ public final class StorageManager
 
                                 if (purged > 0)
                                 {
-                                    PreciousStones.log("({0}) inactivity purge: {1} fields", name, purged);
+                                    PreciousStones.log("({1.player}) inactivity purge: {2.count} fields", name, purged);
                                 }
 
                                 purged = plugin.getUnbreakableManager().deleteBelonging(name);
 
                                 if (purged > 0)
                                 {
-                                    PreciousStones.log("({0}) inactivity purge: {1} unbreakables", name, purged);
+                                    PreciousStones.log("({1.player}) inactivity purge: {2.count} unbreakables", name, purged);
                                 }
 
                                 offerDeletePlayer(name);
@@ -941,7 +941,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log("({0}) unbreakables purged: {1}", worldName, purged);
+            PreciousStones.log("({1.world}) unbreakables purged: {2.count}", worldName, purged);
         }
 
         return out;

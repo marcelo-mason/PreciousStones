@@ -10,7 +10,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ItemStackEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -160,8 +159,8 @@ public class ConfiscationManager
 
             msg = Helper.stripTrailing(msg, ", ");
 
-            PreciousStones.log("Confiscated {0} from {1} at {2}", msg, player.getName(), field.toString());
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Confiscated: " + ChatColor.WHITE + msg);
+            PreciousStones.log("Confiscated {1.items} from {2.player} at {3.coords}", msg, player.getName(), field.toString());
+            ChatBlock.send(player, "{aqua}Confiscated: {white}{1.image}", msg);
         }
     }
 
@@ -246,8 +245,8 @@ public class ConfiscationManager
 
             msg = Helper.stripTrailing(msg, ", ");
 
-            PreciousStones.log("Returned {0} to {1}", msg, player.getName());
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Returned: " + ChatColor.WHITE + msg);
+            PreciousStones.log("Returned {1.items} to {2.player}", msg, player.getName());
+            ChatBlock.send(player, "{aqua}Returned: {white}{1.items}", msg);
         }
     }
 }

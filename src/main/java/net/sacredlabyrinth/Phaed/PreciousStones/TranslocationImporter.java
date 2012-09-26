@@ -3,7 +3,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.TranslocationBlock;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
@@ -24,8 +23,8 @@ public class TranslocationImporter implements Runnable
     private int count;
 
     /**
-     * @param griefQueue
-     * @param world
+     * @param field
+     * @param player
      */
     public TranslocationImporter(Field field, Queue<TranslocationBlock> translocationQueue, Player player)
     {
@@ -119,7 +118,7 @@ public class TranslocationImporter implements Runnable
                     Bukkit.getServer().getScheduler().cancelTask(timerID);
                     field.setDisabled(true);
                     field.setTranslocating(false);
-                    player.sendMessage(ChatColor.AQUA + "Import complete");
+                    ChatBlock.send(player, "{aqua}Import complete");
                 }
             }
         }
@@ -131,7 +130,7 @@ public class TranslocationImporter implements Runnable
         {
             if (player != null)
             {
-                player.sendMessage(ChatColor.AQUA + "Imported " + count + " blocks");
+                ChatBlock.send(player, "{aqua}Imported {1.count} blocks", count);
             }
         }
     }

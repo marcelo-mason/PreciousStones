@@ -2,7 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.ChatColor;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -145,7 +144,7 @@ public final class EntryManager
                                 if (food < 20)
                                 {
                                     player.setFoodLevel(food + field.getSettings().getFeed());
-                                    plugin.getCommunicationManager().showSlowFeeding(player);
+                                    plugin.getCommunicationManager().showFeeding(player);
                                     hasFeeding = true;
                                     continue;
                                 }
@@ -165,7 +164,7 @@ public final class EntryManager
                                 if (player.getHealth() < 20 && player.getHealth() > 0)
                                 {
                                     player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
-                                    plugin.getCommunicationManager().showSlowHeal(player);
+                                    plugin.getCommunicationManager().showHeal(player);
                                     hasHeal = true;
                                     continue;
                                 }
@@ -199,7 +198,7 @@ public final class EntryManager
                                                 dur = 0;
                                             }
                                             armor.setDurability(dur);
-                                            plugin.getCommunicationManager().showSlowRepair(player);
+                                            plugin.getCommunicationManager().showRepair(player);
                                             updated = true;
                                             hasRepair = true;
                                             break;
@@ -228,7 +227,7 @@ public final class EntryManager
                                                     dur = 0;
                                                 }
                                                 item.setDurability(dur);
-                                                plugin.getCommunicationManager().showSlowRepair(player);
+                                                plugin.getCommunicationManager().showRepair(player);
                                                 updated = true;
                                                 hasRepair = true;
                                                 break;
@@ -265,7 +264,7 @@ public final class EntryManager
                                         {
                                             player.playEffect(EntityEffect.DEATH);
                                         }
-                                        plugin.getCommunicationManager().showSlowDamage(player);
+                                        plugin.getCommunicationManager().showDamage(player);
                                         hasDamage = true;
                                         continue;
                                     }
@@ -373,7 +372,7 @@ public final class EntryManager
             {
                 if (plugin.getSettingsManager().isNotifyFlyZones())
                 {
-                    ChatBlock.sendMessage(player, ChatColor.YELLOW + "Entering no fly zone");
+                    ChatBlock.send(player, "{yellow}Entering no fly zone");
                 }
 
                 player.setAllowFlight(false);
@@ -385,7 +384,7 @@ public final class EntryManager
                 {
                     if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
                     {
-                        plugin.getForceFieldManager().announceAllowedPlayers(field, Helper.capitalize(player.getName()) + " entry at " + field.getName() + " " + ChatColor.DARK_GRAY + field.getCoords());
+                        plugin.getForceFieldManager().announceAllowedPlayers(field, String.format("{1.player} entry at {2.field} {dark-gray}{3.coords}", player.getName(), field.getName(), field.getCoords()));
                     }
                 }
             }
@@ -459,7 +458,7 @@ public final class EntryManager
                 {
                     if (plugin.getSettingsManager().isNotifyFlyZones())
                     {
-                        ChatBlock.sendMessage(player, ChatColor.YELLOW + "Leaving no fly zone");
+                        ChatBlock.send(player, "{yellow}Leaving no fly zone");
                     }
 
                     player.setAllowFlight(true);

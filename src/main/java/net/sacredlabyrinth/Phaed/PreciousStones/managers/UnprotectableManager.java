@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 /**
@@ -101,6 +102,8 @@ public class UnprotectableManager
             maxy = field.getMaxy();
         }
 
+        World world = fieldblock.getWorld();
+
         for (int x = minx; x <= maxx; x++)
         {
             for (int z = minz; z <= maxz; z++)
@@ -112,7 +115,7 @@ public class UnprotectableManager
                         continue;
                     }
 
-                    int type = field.getBlock().getWorld().getBlockTypeIdAt(x, y, z);
+                    int type = world.getBlockTypeIdAt(x, y, z);
 
                     if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type)))
                     {
@@ -147,27 +150,31 @@ public class UnprotectableManager
         int miny = field.getMiny();
         int maxy = field.getMaxy();
 
-        for (int x = minx; x <= maxx; x++)
+        World world = plugin.getServer().getWorld(field.getWorld());
+
+        if (world != null)
         {
-            for (int z = minz; z <= maxz; z++)
+            for (int x = minx; x <= maxx; x++)
             {
-                for (int y = miny; y <= maxy; y++)
+                for (int z = minz; z <= maxz; z++)
                 {
-                    if (x == 0 && y == 0 && z == 0)
+                    for (int y = miny; y <= maxy; y++)
                     {
-                        continue;
-                    }
+                        if (x == 0 && y == 0 && z == 0)
+                        {
+                            continue;
+                        }
 
-                    int type = field.getBlock().getWorld().getBlockTypeIdAt(x, y, z);
+                        int type = world.getBlockTypeIdAt(x, y, z);
 
-                    if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type)))
-                    {
-                        return field.getBlock().getWorld().getBlockAt(x, y, z);
+                        if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type)))
+                        {
+                            return field.getBlock().getWorld().getBlockAt(x, y, z);
+                        }
                     }
                 }
             }
         }
-
         return null;
     }
 }

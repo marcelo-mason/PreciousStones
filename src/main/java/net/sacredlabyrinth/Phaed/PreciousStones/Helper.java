@@ -281,23 +281,10 @@ public class Helper
     /**
      * Return plural word if count is bigger than one
      *
-     * @param count
-     * @param word
-     * @param ending
-     * @return
-     */
-    public static String plural(int count, String word, String ending)
-    {
-        return count == 1 ? word : word + ending;
-    }
-
-    /**
-     * Return plural word if count is bigger than one
-     *
      * @param word
      * @return
      */
-    public static String posessive(String word)
+    public static String possessive(String word)
     {
         if (word.substring(word.length() - 1).equalsIgnoreCase("s"))
         {
@@ -750,7 +737,7 @@ public class Helper
         int x = Integer.parseInt(unpacked[2]);
         int y = Integer.parseInt(unpacked[3]);
         int z = Integer.parseInt(unpacked[4]);
-        String world = unpacked[5].toString();
+        String world = unpacked[5];
 
         World w = PreciousStones.getInstance().getServer().getWorld(world);
 
@@ -760,5 +747,81 @@ public class Helper
     public static boolean isDoor(Block block)
     {
         return block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR);
+    }
+
+    public static String getDetails(Block block)
+    {
+        return "[" + block.getType() + "|" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
+    }
+
+    public static String format(String msg, Object... args)
+    {
+        msg = msg.replace("{aqua}", ChatColor.AQUA.toString());
+        msg = msg.replace("{black}", ChatColor.BLACK.toString());
+        msg = msg.replace("{blue}", ChatColor.BLUE.toString());
+        msg = msg.replace("{bold}", ChatColor.BOLD.toString());
+        msg = msg.replace("{white}", ChatColor.WHITE.toString());
+        msg = msg.replace("{yellow}", ChatColor.YELLOW.toString());
+        msg = msg.replace("{gold}", ChatColor.GOLD.toString());
+        msg = msg.replace("{gray}", ChatColor.GRAY.toString());
+        msg = msg.replace("{green}", ChatColor.GREEN.toString());
+        msg = msg.replace("{red}", ChatColor.RED.toString());
+        msg = msg.replace("{dark-aqua}", ChatColor.DARK_AQUA.toString());
+        msg = msg.replace("{dark-blue}", ChatColor.DARK_BLUE.toString());
+        msg = msg.replace("{dark-gray}", ChatColor.DARK_GRAY.toString());
+        msg = msg.replace("{dark-green}", ChatColor.DARK_GREEN.toString());
+        msg = msg.replace("{dark-purple}", ChatColor.DARK_PURPLE.toString());
+        msg = msg.replace("{dark-red}", ChatColor.DARK_RED.toString());
+        msg = msg.replace("{light-purple}", ChatColor.LIGHT_PURPLE.toString());
+        msg = msg.replace("{magic}", ChatColor.MAGIC.toString());
+        msg = msg.replace("{bold}", ChatColor.BOLD.toString());
+        msg = msg.replace("{italic}", ChatColor.ITALIC.toString());
+        msg = msg.replace("{reset}", ChatColor.RESET.toString());
+        msg = msg.replace("{strikethrough}", ChatColor.STRIKETHROUGH.toString());
+        msg = msg.replace("{underline}", ChatColor.UNDERLINE.toString());
+
+        if (args.length > 0)
+        {
+            msg = msg.replaceAll("\\{1.*?\\}", args[0].toString());
+        }
+        if (args.length > 1)
+        {
+            msg = msg.replaceAll("\\{2.*?\\}", args[1].toString());
+        }
+        if (args.length > 2)
+        {
+            msg = msg.replaceAll("\\{3.*?\\}", args[2].toString());
+        }
+        if (args.length > 3)
+        {
+            msg = msg.replaceAll("\\{4.*?\\}", args[3].toString());
+        }
+        if (args.length > 4)
+        {
+            msg = msg.replaceAll("\\{5.*?\\}", args[4].toString());
+        }
+        if (args.length > 5)
+        {
+            msg = msg.replaceAll("\\{6.*?\\}", args[5].toString());
+        }
+        if (args.length > 6)
+        {
+            msg = msg.replaceAll("\\{7.*?\\}", args[6].toString());
+        }
+        if (args.length > 7)
+        {
+            msg = msg.replaceAll("\\{8.*?\\}", args[7].toString());
+        }
+        if (args.length > 8)
+        {
+            msg = msg.replaceAll("\\{9.*?\\}", args[8].toString());
+        }
+
+        if (args.length == 1)
+        {
+            msg = msg.replaceAll("\\{.*?\\}", args[0].toString());
+        }
+
+        return String.format(msg, args);
     }
 }

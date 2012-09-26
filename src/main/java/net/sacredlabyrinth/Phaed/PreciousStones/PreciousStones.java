@@ -4,7 +4,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -79,11 +78,11 @@ public class PreciousStones extends JavaPlugin
     /**
      * @return the logger
      */
-    public static void debug(String msg)
+    public static void debug(String msg, Object... arg)
     {
         if (getInstance().getSettingsManager().isDebugging())
         {
-            logger.info(msg);
+            logger.info(Helper.format(msg, arg));
         }
     }
 
@@ -96,7 +95,7 @@ public class PreciousStones extends JavaPlugin
      */
     public static void log(Level level, String msg, Object... arg)
     {
-        logger.log(level, new StringBuilder().append("[PreciousStones] ").append(MessageFormat.format(msg, arg)).toString());
+        logger.log(level, new StringBuilder().append("[PreciousStones] ").append(Helper.format(Helper.capitalize(msg), arg)).toString());
     }
 
     /**
@@ -158,7 +157,7 @@ public class PreciousStones extends JavaPlugin
 
     private void displayStatusInfo()
     {
-        log("Version {0} loaded", getDescription().getVersion());
+        log("Version {1.version} loaded", getDescription().getVersion());
     }
 
     private void registerEvents()

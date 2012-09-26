@@ -7,7 +7,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -164,11 +163,11 @@ public class CuboidManager
 
                             if (newVolume >= 0)
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + newVolume + " blocks");
+                                ChatBlock.send(player, "{aqua}Available protection: {yellow}{1.volume} blocks", newVolume);
                             }
                             else
                             {
-                                ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.RED + newVolume + " blocks (bypassing)");
+                                ChatBlock.send(player, "{aqua}Available protection: {red}{1.volume} blocks (bypassing)", newVolume);
                             }
                         }
                     }
@@ -176,17 +175,17 @@ public class CuboidManager
                 }
                 else
                 {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Cannot extend inside WorldGuard region");
+                    ChatBlock.send(player, "{red}Cannot extend inside WorldGuard region");
                 }
             }
             else
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid exceeds available volume");
+                ChatBlock.send(player, "{red}Cuboid exceeds available volume");
             }
         }
         else
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "Cannot click on the outline");
+            ChatBlock.send(player, "{red}Cannot click on the outline");
         }
 
         return false;
@@ -221,8 +220,8 @@ public class CuboidManager
                 PreciousStones.getInstance().getForceFieldManager().removeSourceField(field);
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
 
-                ChatBlock.sendMessage(player, ChatColor.AQUA + "You are in drawing mode. Click on the block to finish.");
-                ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + ce.getAvailableVolume() + " blocks");
+                ChatBlock.send(player, "{aqua}You are in drawing mode. Click on the block to finish.");
+                ChatBlock.send(player, "{aqua}Available protection: {yellow}{1.volume} blocks", ce.getAvailableVolume());
             }
         }, 1L);
     }
@@ -245,7 +244,7 @@ public class CuboidManager
                 {
                     ce.addSelected(field.getBlock());
                     PreciousStones.getInstance().getForceFieldManager().addSourceField(field);
-                    ChatBlock.sendMessage(player, ChatColor.AQUA + "Available protection: " + ChatColor.YELLOW + ce.getAvailableVolume() + " blocks");
+                    ChatBlock.send(player, "{aqua}Available protection: {yellow}{1.volume} blocks", ce.getAvailableVolume());
                 }
             }, 1L);
         }
@@ -269,7 +268,7 @@ public class CuboidManager
             {
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
                 {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid exceeds available volume");
+                    ChatBlock.send(player, "{red}Cuboid exceeds available volume");
                     cancelOpenCuboid(player);
                     return false;
                 }
@@ -277,7 +276,7 @@ public class CuboidManager
 
             if (plugin.getForceFieldManager().fieldConflicts(ce, player) != null)
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid conflicts with someone else's field");
+                ChatBlock.send(player, "{red}The cuboid conflicts with someone else's field");
                 cancelOpenCuboid(player);
                 return false;
             }
@@ -291,7 +290,7 @@ public class CuboidManager
 
                 if (!plugin.getWorldGuardManager().canBuild(player, location))
                 {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "The cuboid conflicts with a worldguard region");
+                    ChatBlock.send(player, "{red}The cuboid conflicts with a worldguard region");
                     cancelOpenCuboid(player);
                     return false;
                 }
@@ -384,7 +383,7 @@ public class CuboidManager
         plugin.getVisualizationManager().revertVisualization(player);
         plugin.getVisualizationManager().revertOutline(player);
         openCuboids.remove(player.getName());
-        ChatBlock.sendMessage(player, ChatColor.RED + "Cuboid has been cancelled.");
+        ChatBlock.send(player, "{red}Cuboid has been cancelled.");
     }
 
     /**
@@ -405,7 +404,7 @@ public class CuboidManager
                 ce.revertLastSelected();
                 plugin.getVisualizationManager().revertSingle(player, selected.getBlock());
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
-                ChatBlock.sendMessage(player, ChatColor.AQUA + "Selection reverted");
+                ChatBlock.send(player, "{aqua}Selection reverted");
             }
         }
     }

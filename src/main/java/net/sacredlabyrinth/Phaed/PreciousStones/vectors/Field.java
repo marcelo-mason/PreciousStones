@@ -4,7 +4,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -529,12 +528,21 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * @return coordinates string
+     * @return coordinates string format [x y z world]
      */
     public String getCoords()
     {
         return super.toString();
     }
+
+    /**
+     * @return coordinates string format x y z
+     */
+    public String getCleanCoords()
+    {
+        return getX() + " " + getY() + " " + getZ();
+    }
+
 
     @Override
     public String toString()
@@ -1074,6 +1082,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         return hasFlag(Helper.toFieldFlag(flagStr));
     }
+
     /**
      * Return the list of flags and their data as a json string
      *
@@ -1513,7 +1522,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (player != null)
             {
-                ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field will disable itself after " + settings.getAutoDisableSeconds() + Helper.plural(settings.getAutoDisableSeconds(), " second", "s"));
+                ChatBlock.send(player, "{yellow}{1.field-type} field will disable itself after {2.count} seconds", settings.getTitle(), settings.getAutoDisableSeconds());
             }
 
             if (disablerId > 0)
@@ -1531,7 +1540,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                         if (player != null)
                         {
-                            ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(settings.getTitle()) + " field has been disabled");
+                            ChatBlock.send(player, "{yellow}{1.field-type} field has been disabled", settings.getTitle());
                         }
 
                         thisField.setDisabled(true);
@@ -1934,5 +1943,10 @@ public class Field extends AbstractVec implements Comparable<Field>
     public int getTranslocationSize()
     {
         return translocationSize;
+    }
+
+    public String getDetails()
+    {
+        return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
     }
 }

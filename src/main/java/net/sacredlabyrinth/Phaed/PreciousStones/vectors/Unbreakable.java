@@ -20,7 +20,6 @@ public class Unbreakable extends AbstractVec
      * @param y
      * @param z
      * @param world
-     * @param typeId
      * @param owner
      */
     public Unbreakable(int x, int y, int z, String world, BlockTypeEntry type, String owner)
@@ -140,5 +139,10 @@ public class Unbreakable extends AbstractVec
     public void setDirty(boolean dirty)
     {
         this.dirty = dirty;
+    }
+
+    public String getDetails()
+    {
+        return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
     }
 }

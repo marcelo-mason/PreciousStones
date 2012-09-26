@@ -102,7 +102,7 @@ public final class ForceFieldManager
 
         if (!plugin.getWorldGuardManager().canBuildField(player, fieldBlock, fs))
         {
-            ChatBlock.sendMessage(player, "The field intersects with a WorldGuard region you are not allowed in.");
+            ChatBlock.send(player, "The field intersects with a WorldGuard region you are not allowed in.");
             event.setCancelled(true);
             return null;
         }
@@ -139,7 +139,7 @@ public final class ForceFieldManager
             if ((ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup() || fs.getMixingGroup() == 0) && !ce.getField().getSettings().getTypeEntry().equals(fs.getTypeEntry()))
             {
                 plugin.getCuboidManager().cancelOpenCuboid(player);
-                ChatBlock.sendMessage(player, "Cannot mix fields that are not in the same mixing group.");
+                ChatBlock.send(player, "Cannot mix fields that are not in the same mixing group.");
                 event.setCancelled(true);
                 return null;
             }
@@ -147,7 +147,7 @@ public final class ForceFieldManager
             if (fs.getPrice() > ce.getField().getSettings().getPrice())
             {
                 plugin.getCuboidManager().cancelOpenCuboid(player);
-                ChatBlock.sendMessage(player, "Cannot add on properties of more valuable fields");
+                ChatBlock.send(player, "Cannot add on properties of more valuable fields");
                 event.setCancelled(true);
                 return null;
             }
@@ -166,7 +166,7 @@ public final class ForceFieldManager
             if (!ce.getField().getTypeEntry().equals(fs.getTypeEntry()))
             {
                 ce.getField().importFlags(fs.getDefaultFlags());
-                ChatBlock.sendMessage(player, ChatColor.YELLOW + Helper.capitalize(fs.getTitle()) + "'s field flags imported");
+                ChatBlock.send(player, "{yellow}{1.field-type}'s flags imported", fs.getTitle());
                 isImport = true;
             }
 
@@ -808,7 +808,7 @@ public final class ForceFieldManager
 
         if (cleanedCount != 0)
         {
-            PreciousStones.log("({0}) orphan-fields: {1}", world.getName(), cleanedCount);
+            PreciousStones.log("({1.world}) orphan-fields: {2.count}", world.getName(), cleanedCount);
         }
         return cleanedCount;
     }
@@ -1058,7 +1058,7 @@ public final class ForceFieldManager
 
             if (pl != null)
             {
-                ChatBlock.sendMessage(pl, ChatColor.DARK_GRAY + " * " + ChatColor.AQUA + msg);
+                ChatBlock.send(pl, " {dark-gray}* {aqua}{message}", msg);
             }
         }
     }
@@ -1338,7 +1338,7 @@ public final class ForceFieldManager
 
         if (notAllowed > 0)
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "" + notAllowed + " fields were skipped that can only be modified while disabled");
+            ChatBlock.send(player, "{red}{1.not-allowed} fields were skipped that can only be modified while disabled", notAllowed);
         }
 
         return allowedCount;
@@ -1414,7 +1414,7 @@ public final class ForceFieldManager
         {
             if (field.containsPlayer(allowedName))
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "Player could not be removed from a field because he was currently inside of it");
+                ChatBlock.send(player, "{red}Player could not be removed from a field because he was currently inside of it");
                 continue;
             }
 
@@ -1432,7 +1432,7 @@ public final class ForceFieldManager
 
             if (conflictOfInterestExists(field, allowedName))
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + Helper.capitalize(allowedName) + " was not disallowed, one of the fields is overlapping one of yours " + field);
+                ChatBlock.send(player, "{red}{1.player} was not disallowed, one of the fields is overlapping one of yours {2.coords}",allowedName, field);
                 continue;
             }
 
@@ -1446,7 +1446,7 @@ public final class ForceFieldManager
 
         if (notRemoved > 0)
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "" + notRemoved + " fields were skipped that can only be modified while disabled");
+            ChatBlock.send(player, "{red}{1.not-removed} fields were skipped that can only be modified while disabled", notRemoved);
         }
 
         return removedCount;
@@ -2590,7 +2590,7 @@ public final class ForceFieldManager
             }
             else
             {
-                player.sendMessage(ChatColor.RED + "You do not have sufficient money in your account");
+                ChatBlock.send(player, "{red}You do not have sufficient money in your account");
                 return false;
             }
         }
@@ -2609,7 +2609,7 @@ public final class ForceFieldManager
         if (plugin.getPermissionsManager().hasEconomy())
         {
             plugin.getPermissionsManager().playerCredit(player, amount);
-            player.sendMessage(ChatColor.AQUA + "Your account has been credited");
+            ChatBlock.send(player, "{aqua}Your account has been credited");
         }
     }
 

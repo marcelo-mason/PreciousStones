@@ -3,7 +3,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.TranslocationBlock;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
@@ -106,12 +105,12 @@ public class TranslocationRemover implements Runnable
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 field.setDisabled(false);
                 field.setTranslocating(false);
-                player.sendMessage(ChatColor.AQUA + "Removal complete");
+                ChatBlock.send(player, "{aqua}Removal complete");
 
                 if(notRemovedCount > 0)
                 {
-                    ChatBlock.sendMessage(player, ChatColor.RED + "" + count + " blocks skipped.");
-                    ChatBlock.sendMessage(player, ChatColor.RED + "(Their destination locations already had blocks on them)");
+                    ChatBlock.send(player, "{red}{1.count} blocks skipped.", count);
+                    ChatBlock.send(player, "{red}(Their destination locations already had blocks on them)");
                 }
             }
         }
@@ -123,7 +122,7 @@ public class TranslocationRemover implements Runnable
         {
             if (player != null)
             {
-                player.sendMessage(ChatColor.AQUA + "Removed " + count + " blocks");
+                ChatBlock.send(player, "{aqua}Removed {1.count} blocks", count);
             }
         }
     }

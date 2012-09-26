@@ -292,7 +292,7 @@ public final class UnbreakableManager
 
         if (cleanedCount != 0)
         {
-            PreciousStones.log("({0}) orphan-unbreakables: {1}", world.getName(), cleanedCount);
+            PreciousStones.log("({1.world}) orphan-unbreakables: {2.count}", world.getName(), cleanedCount);
         }
         return cleanedCount;
     }

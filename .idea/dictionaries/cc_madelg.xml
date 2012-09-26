@@ -1,9 +1,21 @@
 <component name="ProjectDictionaryState">
   <dictionary name="cc_madelg">
     <words>
+      <w>blockid</w>
+      <w>coords</w>
       <w>enderman</w>
+      <w>griefed</w>
+      <w>posessive</w>
       <w>preciousstones</w>
+      <w>pstones</w>
+      <w>strikethrough</w>
       <w>translocate</w>
+      <w>translocated</w>
+      <w>translocations</w>
+      <w>translocator</w>
+      <w>unbreakables</w>
+      <w>unprotectable</w>
+      <w>unprotectableblock</w>
     </words>
   </dictionary>
 </component>

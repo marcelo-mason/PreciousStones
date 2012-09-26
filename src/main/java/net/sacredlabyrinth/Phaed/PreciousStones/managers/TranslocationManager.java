@@ -4,7 +4,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.TranslocationBlock;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -483,16 +482,16 @@ public final class TranslocationManager
         {
             TranslocationImporter importer = new TranslocationImporter(field, tbs, player);
 
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Importing " + imported + " blocks into the translocation...");
+            ChatBlock.send(player, "{aqua}Importing {1.count} blocks into the translocation...", imported);
 
             if (notImported > 0)
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "" + notImported + " blocks skipped due to the max translocation limit");
+                ChatBlock.send(player, "{red}{1.count} blocks skipped due to the max translocation limit", notImported);
             }
         }
         else
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "No blocks to import");
+            ChatBlock.send(player, "{red}No blocks to import");
         }
 
         field.setDisabled(true);
@@ -518,16 +517,16 @@ public final class TranslocationManager
         {
             TranslocationRemover remover = new TranslocationRemover(field, tbs, player);
 
-            ChatBlock.sendMessage(player, ChatColor.AQUA + "Removing " + imported + " blocks from the translocation...");
+            ChatBlock.send(player, "{aqua}Removing {1.count} blocks from the translocation...", imported);
 
             if (notImported > 0)
             {
-                ChatBlock.sendMessage(player, ChatColor.RED + "" + notImported + " blocks skipped due to the max translocation limit");
+                ChatBlock.send(player, "{red}{1.count} blocks skipped due to the max translocation limit", notImported);
             }
         }
         else
         {
-            ChatBlock.sendMessage(player, ChatColor.RED + "No blocks to remove");
+            ChatBlock.send(player, "{red}No blocks to remove");
         }
 
         field.setDisabled(true);

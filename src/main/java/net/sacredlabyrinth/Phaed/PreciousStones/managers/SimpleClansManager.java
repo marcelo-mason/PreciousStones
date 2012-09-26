@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
@@ -61,28 +60,6 @@ public final class SimpleClansManager
         if (cp != null)
         {
             cp.getClan().clanAnnounce("PreciousStones", message);
-        }
-    }
-
-    /**
-     * Announce to players that a rival is in their base
-     *
-     * @param field
-     * @param rivalName
-     */
-    public void bypassAnnounce(Field field, String rivalName)
-    {
-        if (!hasSimpleClans())
-        {
-            return;
-        }
-
-        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(field.getOwner());
-        ClanPlayer rivalCp = simpleClans.getClanManager().getClanPlayer(rivalName);
-
-        if (cp != null && rivalCp != null)
-        {
-            cp.getClan().audioAnnounce("PreciousStones", Helper.capitalize(rivalName) + " of rival clan " + Helper.stripColors(rivalCp.getClan().getColorTag()) + " has entered one of " + Helper.posessive(Helper.stripColors(cp.getClan().getColorTag())) + " bases [" + field.getX() + " " + field.getY() + " " + field.getZ() + " " + field.getWorld() + "]");
         }
     }
 
