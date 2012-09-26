@@ -279,24 +279,6 @@ public class Helper
     }
 
     /**
-     * Return plural word if count is bigger than one
-     *
-     * @param word
-     * @return
-     */
-    public static String possessive(String word)
-    {
-        if (word.substring(word.length() - 1).equalsIgnoreCase("s"))
-        {
-            return word + "'";
-        }
-        else
-        {
-            return word + "'s";
-        }
-    }
-
-    /**
      * Removes color codes from strings
      *
      * @param msg
@@ -817,11 +799,6 @@ public class Helper
             msg = msg.replaceAll("\\{9.*?\\}", args[8].toString());
         }
 
-        if (args.length == 1)
-        {
-            msg = msg.replaceAll("\\{.*?\\}", args[0].toString());
-        }
-
-        return String.format(msg, args);
+        return msg;
     }
 }

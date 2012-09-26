@@ -16,6 +16,7 @@ public class PreciousStones extends JavaPlugin
 {
     private static PreciousStones instance;
     private static Logger logger = Logger.getLogger("Minecraft");
+    private LanguageManager languageManager;
     private SettingsManager settingsManager;
     private SimpleClansManager simpleClansManager;
     private CommandManager commandManager;
@@ -118,6 +119,7 @@ public class PreciousStones extends JavaPlugin
 
         instance = this;
 
+        languageManager = new LanguageManager();
         settingsManager = new SettingsManager();
         simpleClansManager = new SimpleClansManager();
         commandManager = new CommandManager();
@@ -398,5 +400,10 @@ public class PreciousStones extends JavaPlugin
     public TranslocationManager getTranslocationManager()
     {
         return translocationManager;
+    }
+
+    public LanguageManager getLanguageManager()
+    {
+        return languageManager;
     }
 }
