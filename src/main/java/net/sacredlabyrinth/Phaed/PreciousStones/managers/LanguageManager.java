@@ -1,56 +1,123 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.util.HashMap;
 
+@SuppressWarnings("unchecked")
 public class LanguageManager
 {
     private PreciousStones plugin;
-    private File language;
+    private File file;
+    private HashMap<String, Object> language = new HashMap<String, Object>();
 
     public LanguageManager()
     {
         plugin = PreciousStones.getInstance();
-        language = new File(plugin.getDataFolder() + File.separator + "language.yml");
+        file = new File(plugin.getDataFolder() + File.separator + "language.yml");
+
         check();
     }
 
     private void check()
     {
-        boolean exists = (language).exists();
+        boolean exists = (file).exists();
 
-        if (!exists)
+        if (exists)
         {
-            copyFile();
+            loadDefaults();
+            loadFile();
+            saveFile();
         }
-
-        load();
+        else
+        {
+            copyDefaults();
+            loadDefaults();
+        }
     }
 
-    private void load()
+    private void loadDefaults()
     {
-
+        InputStream defaultLanguage = getClass().getResourceAsStream("/language.yml");
+        HashMap<String, Object> objects = (HashMap<String, Object>) new Yaml().load(defaultLanguage);
+        if (objects != null)
+        {
+            language.putAll(objects);
+        }
     }
 
-    private void copyFile()
+    private void loadFile()
     {
         try
         {
-            InputStream stream = getClass().getResourceAsStream("/language.yml");
-            OutputStream out = new FileOutputStream(language);
+            InputStream fileLanguage = new FileInputStream(file);
+            HashMap<String, Object> objects = (HashMap<String, Object>) new Yaml().load(fileLanguage);
+            if (objects != null)
+            {
+                language.putAll(objects);
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            // file not found
+            copyDefaults();
+        }
+    }
+
+    private void saveFile()
+    {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setAllowUnicode(true);
+
+        try
+        {
+            FileWriter fw = new FileWriter(file);
+            StringWriter writer = new StringWriter();
+            new Yaml(options).dump(language, writer);
+            fw.write(writer.toString());
+            fw.close();
+        }
+        catch (IOException e)
+        {
+            // could not save
+            e.printStackTrace();
+        }
+    }
+
+    private void copyDefaults()
+    {
+        try
+        {
+            InputStream defaultLanguage = getClass().getResourceAsStream("/language.yml");
+            OutputStream out = new FileOutputStream(file);
             byte buf[] = new byte[1024];
             int len;
-            while ((len = stream.read(buf)) > 0)
+            while ((len = defaultLanguage.read(buf)) > 0)
             {
                 out.write(buf, 0, len);
             }
             out.close();
-            stream.close();
+            defaultLanguage.close();
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    public String get(String key)
+    {
+        Object o = language.get(key);
+
+        if (o != null)
+        {
+            return o.toString();
+        }
+
+        return "";
     }
 }
