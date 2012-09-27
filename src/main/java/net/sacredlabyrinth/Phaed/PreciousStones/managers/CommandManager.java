@@ -148,7 +148,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length >= 1)
                         {
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                             if (field != null)
                             {
@@ -221,7 +221,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length >= 1)
                         {
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                             if (field != null)
                             {
