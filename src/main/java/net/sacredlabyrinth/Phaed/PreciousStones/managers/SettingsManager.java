@@ -115,7 +115,7 @@ public final class SettingsManager
 
     private String[] unToggable = new String[]{"worldguard-repellent", "place-disabled", "sneaking-bypass", "breakable-on-disabled", "modify-on-disabled",
             "redefine-on-disabled", "prevent-unprotectable", "toggle-on-disabled", "no-conflict", "no-player-place", "apply-to-all", "apply-to-reverse",
-            "cuboid", "all", "dynmap-disabled-by-default", "tekkit-block", "dynmap-no-toggle"
+            "cuboid", "all", "dynmap-disabled-by-default", "tekkit-block", "dynmap-no-toggle", "no-allowing"
     };
 
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};

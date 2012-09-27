@@ -8,7 +8,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.*;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -1328,6 +1331,14 @@ public final class ForceFieldManager
                 }
             }
 
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-allowing"))
+            {
+                if (field.hasFlag(FieldFlag.NO_ALLOWING))
+                {
+                    continue;
+                }
+            }
+
             if (!isAllowed(field, allowedName))
             {
                 field.addAllowed(allowedName);
@@ -1432,7 +1443,7 @@ public final class ForceFieldManager
 
             if (conflictOfInterestExists(field, allowedName))
             {
-                ChatBlock.send(player, "playerNotDisallowed",allowedName, field);
+                ChatBlock.send(player, "playerNotDisallowed", allowedName, field);
                 continue;
             }
 

@@ -96,6 +96,8 @@ permissions:
     description: Wont show up on any snitch lists
   preciousstones.bypass.setradius:
     description: Can set larger radius than the limit
+  preciousstones.bypass.no-allowing:
+    description: Can add players to allowed lists
   preciousstones.bypass.mine:
     description: Bypasses proximity mine
   preciousstones.bypass.lightning:
@@ -314,6 +316,7 @@ permissions:
       preciousstones.bypass.setradius: true
       preciousstones.bypass.damage: true
       preciousstones.bypass.entryalert: true
+      preciousstones.bypass.no-allowing: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false

@@ -42,6 +42,7 @@ public enum FieldFlag
     FAREWELL_MESSAGE,
     SNITCH,
     NO_CONFLICT,
+    NO_ALLOWING,
     LAUNCH,
     CANNON,
     MINE,

@@ -152,6 +152,15 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-allowing"))
+                                {
+                                    if (field.hasFlag(FieldFlag.NO_ALLOWING))
+                                    {
+                                        ChatBlock.send(sender, "noSharing");
+                                        return true;
+                                    }
+                                }
+
                                 if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
                                 {
                                     if (!field.isDisabled())

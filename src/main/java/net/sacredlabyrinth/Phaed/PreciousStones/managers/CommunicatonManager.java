@@ -2602,6 +2602,7 @@ public class CommunicatonManager
         hardCodedFlags.add(FieldFlag.PREVENT_UNPROTECTABLE);
         hardCodedFlags.add(FieldFlag.PLACE_DISABLED);
         hardCodedFlags.add(FieldFlag.SNEAKING_BYPASS);
+        hardCodedFlags.add(FieldFlag.SNEAKING_BYPASS);
 
         if (field.hasFlag(FieldFlag.DYNMAP_NO_TOGGLE))
         {
@@ -2738,7 +2739,7 @@ public class CommunicatonManager
                 continue;
             }
 
-            cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(),Helper.friendlyBlockType(material.toString()), entry.toString(), fs.getRadius()));
+            cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(),Helper.friendlyBlockType(material.toString()), entry.toString(), fs.getRadius()) + customHeight);
         }
 
         if (cb.size() > 0)

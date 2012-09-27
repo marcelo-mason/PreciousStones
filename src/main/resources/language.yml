@@ -437,7 +437,7 @@ commandEnableall: "enableall"
 commandDisableall: "disableall"
 commandClean: "clean"
 commandRevert: "revert"
-
+noSharing: "You cannot allow others into this field"
 
 
 

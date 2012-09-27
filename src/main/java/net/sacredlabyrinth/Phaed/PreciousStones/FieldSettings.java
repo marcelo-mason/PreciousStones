@@ -1016,6 +1016,14 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("no-allowing") && Helper.isBoolean(map.get("no-allowing")))
+        {
+            if ((Boolean) map.get("no-allowing"))
+            {
+                defaultFlags.add(FieldFlag.NO_ALLOWING);
+            }
+        }
+
         defaultFlags.add(FieldFlag.ALL);
     }
 
