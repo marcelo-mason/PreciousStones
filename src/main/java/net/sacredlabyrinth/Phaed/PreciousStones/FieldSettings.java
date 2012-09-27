@@ -1631,7 +1631,7 @@ public class FieldSettings
         {
             if (price > 0)
             {
-                refund = price;
+                refunded = price;
             }
         }
 
