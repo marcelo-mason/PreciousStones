@@ -81,7 +81,14 @@ public class ChatBlock
      */
     public void addRow(String... contents)
     {
-        rows.add(contents);
+        List<String> out = new ArrayList<String>();
+
+        for(String content : contents)
+        {
+            out.add(format(content));
+        }
+
+        rows.add(out.toArray(new String[out.size()]));
     }
 
     /**
@@ -733,7 +740,7 @@ public class ChatBlock
             return;
         }
 
-        msg = Helper.format(Helper.capitalize(msg), args);
+        msg = format(msg, args);
 
         String[] message = colorize(wordWrap(msg, 0));
 
@@ -744,28 +751,48 @@ public class ChatBlock
     }
 
     /**
-     * Outputs a prefixed message to a user
+     * Outputs a message to a user with a prefix
      *
      * @param receiver
-     * @param prefix
      * @param msg
      */
-    public static void sendPrefixedMessage(CommandSender receiver, String prefix, String msg, Object... args)
+    public static void sendPrefixed(CommandSender receiver, String prefix, String msg, Object... args)
     {
         if (receiver == null)
         {
             return;
         }
 
-        msg = Helper.format(msg, args);
+        msg = formatPrefixed(prefix, msg, args);
 
-        int prefix_width = (int) msgLength(prefix);
-
-        String[] message = colorize(wordWrap(msg, prefix_width));
+        String[] message = colorize(wordWrap(msg, 0));
 
         for (String out : message)
         {
-            receiver.sendMessage(prefix + " " + out);
+            receiver.sendMessage(out);
+        }
+    }
+
+    /**
+     * Outputs a message to a user with [ps] prefix
+     *
+     * @param receiver
+     * @param msg
+     */
+    public static void sendPs(CommandSender receiver, String msg, Object... args)
+    {
+        if (receiver == null)
+        {
+            return;
+        }
+
+        msg = formatPrefixed("{dark-gray}[ps]{gray}", msg, args);
+
+        String[] message = colorize(wordWrap(msg, 0));
+
+        for (String out : message)
+        {
+            receiver.sendMessage(out);
         }
     }
 
@@ -782,7 +809,7 @@ public class ChatBlock
             return;
         }
 
-        msg = Helper.format(msg, args);
+        msg = format(msg, args);
 
         receiver.sendMessage(cropRightToFit(colorize(new String[]{msg})[0], lineLength));
     }
@@ -882,20 +909,92 @@ public class ChatBlock
         return message;
     }
 
-    /**
-     * @param prefix
-     * @return
-     */
-    public String firstPrefix(String prefix)
+    public static String format(String msg, Object... args)
     {
-        if (prefix_used)
+        String lang = PreciousStones.getInstance().getLanguageManager().get(msg);
+
+        if (lang != null)
         {
-            return ChatBlock.makeEmpty(prefix);
+            msg = lang;
         }
-        else
+
+        return replaceFormatting(msg, args);
+    }
+
+    public static String formatPrefixed(String prefix, String msg, Object... args)
+    {
+        String lang = PreciousStones.getInstance().getLanguageManager().get(msg);
+
+        if (lang != null)
         {
-            prefix_used = true;
-            return prefix;
+            msg = prefix + lang;
         }
+
+        return replaceFormatting(msg, args);
+    }
+
+    private static String replaceFormatting(String msg, Object[] args)
+    {
+        msg = msg.replace("{aqua}", ChatColor.AQUA.toString());
+        msg = msg.replace("{black}", ChatColor.BLACK.toString());
+        msg = msg.replace("{blue}", ChatColor.BLUE.toString());
+        msg = msg.replace("{white}", ChatColor.WHITE.toString());
+        msg = msg.replace("{yellow}", ChatColor.YELLOW.toString());
+        msg = msg.replace("{gold}", ChatColor.GOLD.toString());
+        msg = msg.replace("{gray}", ChatColor.GRAY.toString());
+        msg = msg.replace("{green}", ChatColor.GREEN.toString());
+        msg = msg.replace("{red}", ChatColor.RED.toString());
+        msg = msg.replace("{dark-aqua}", ChatColor.DARK_AQUA.toString());
+        msg = msg.replace("{dark-blue}", ChatColor.DARK_BLUE.toString());
+        msg = msg.replace("{dark-gray}", ChatColor.DARK_GRAY.toString());
+        msg = msg.replace("{dark-green}", ChatColor.DARK_GREEN.toString());
+        msg = msg.replace("{dark-purple}", ChatColor.DARK_PURPLE.toString());
+        msg = msg.replace("{dark-red}", ChatColor.DARK_RED.toString());
+        msg = msg.replace("{light-purple}", ChatColor.LIGHT_PURPLE.toString());
+        msg = msg.replace("{magic}", ChatColor.MAGIC.toString());
+        msg = msg.replace("{bold}", ChatColor.BOLD.toString());
+        msg = msg.replace("{italic}", ChatColor.ITALIC.toString());
+        msg = msg.replace("{reset}", ChatColor.RESET.toString());
+        msg = msg.replace("{strikethrough}", ChatColor.STRIKETHROUGH.toString());
+        msg = msg.replace("{underline}", ChatColor.UNDERLINE.toString());
+
+        if (args.length > 0)
+        {
+            msg = msg.replaceAll("\\{1.*?\\}", args[0].toString());
+        }
+        if (args.length > 1)
+        {
+            msg = msg.replaceAll("\\{2.*?\\}", args[1].toString());
+        }
+        if (args.length > 2)
+        {
+            msg = msg.replaceAll("\\{3.*?\\}", args[2].toString());
+        }
+        if (args.length > 3)
+        {
+            msg = msg.replaceAll("\\{4.*?\\}", args[3].toString());
+        }
+        if (args.length > 4)
+        {
+            msg = msg.replaceAll("\\{5.*?\\}", args[4].toString());
+        }
+        if (args.length > 5)
+        {
+            msg = msg.replaceAll("\\{6.*?\\}", args[5].toString());
+        }
+        if (args.length > 6)
+        {
+            msg = msg.replaceAll("\\{7.*?\\}", args[6].toString());
+        }
+        if (args.length > 7)
+        {
+            msg = msg.replaceAll("\\{8.*?\\}", args[7].toString());
+        }
+        if (args.length > 8)
+        {
+            msg = msg.replaceAll("\\{9.*?\\}", args[8].toString());
+        }
+
+        return Helper.capitalize(msg);
     }
 }

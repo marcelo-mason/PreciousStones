@@ -525,14 +525,7 @@ public class PSBlockListener implements Listener
 
         if (field.isOwner(player.getName()))
         {
-            if (isLiquid)
-            {
-                plugin.getCommunicationManager().notifyDestroyFFLiquid(player, field);
-            }
-            else
-            {
-                plugin.getCommunicationManager().notifyDestroyFF(player, block);
-            }
+            plugin.getCommunicationManager().notifyDestroyFF(player, block);
             release = true;
         }
         else if (field.hasFlag(FieldFlag.BREAKABLE))
@@ -561,7 +554,7 @@ public class PSBlockListener implements Listener
 
         if (plugin.getForceFieldManager().hasSubFields(field))
         {
-            ChatBlock.send(player, "{red}Cannot remove fields that have plot-fields inside of it.  You must remove them first before you can remove this field.");
+            ChatBlock.send(player, "cannotRemoveWithSubplots");
             event.setCancelled(true);
             return false;
         }
@@ -723,7 +716,7 @@ public class PSBlockListener implements Listener
 
                 if (!allowed)
                 {
-                    ChatBlock.send(player, "{red}Cannot place blocks next to a redstone-enabled field you don't own");
+                    ChatBlock.send(player, "cannotPlaceNextToRedstone");
                     event.setCancelled(true);
                     return;
                 }
@@ -747,7 +740,7 @@ public class PSBlockListener implements Listener
                 if (ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup())
                 {
                     event.setCancelled(true);
-                    ChatBlock.send(player, "{red}The field type does not mix");
+                    ChatBlock.send(player, "fieldsDontMix");
                     return;
                 }
             }
@@ -1004,7 +997,7 @@ public class PSBlockListener implements Listener
 
             if (field != null)
             {
-                ChatBlock.send(player, "{red}Cannot place unbreakable blocks inside translocation fields");
+                ChatBlock.send(player, "noUnbreakableInsideTranslocation");
                 event.setCancelled(true);
             }
         }
@@ -1077,7 +1070,7 @@ public class PSBlockListener implements Listener
 
             if (conflicted)
             {
-                ChatBlock.send(player, "{red}Cannot place chest next so someone else's field");
+                ChatBlock.send(player, "noChestNextToField");
                 event.setCancelled(true);
                 return;
             }
@@ -1162,14 +1155,14 @@ public class PSBlockListener implements Listener
                 {
                     if (field.getName().length() == 0)
                     {
-                        ChatBlock.send(player, "{yellow}To begin storage, you must first choose a name for your translocation with /ps setname");
+                        ChatBlock.send(player, "translocatorNameToBegin");
                         event.setCancelled(true);
                         return;
                     }
 
                     if (field.isOverTranslocationMax(1))
                     {
-                        ChatBlock.send(player, "{red}You have reached the server-wide max translocation size.");
+                        ChatBlock.send(player, "translocationReachedSize");
                         event.setCancelled(true);
                         return;
                     }
@@ -1259,14 +1252,14 @@ public class PSBlockListener implements Listener
 
             if (plugin.getForceFieldManager().isField(north))
             {
-                ChatBlock.send(player, "{red}Cannot place a confiscating field below a field block");
+                ChatBlock.send(player, "noConfiscatingBelowField");
                 event.setCancelled(true);
                 return false;
             }
 
             if (plugin.getUnbreakableManager().isUnbreakable(north))
             {
-                ChatBlock.send(player, "{red}Cannot place a confiscating field below an unbreakable");
+                ChatBlock.send(player, "noConfiscatingBelowUnbreakable");
                 event.setCancelled(true);
                 return false;
             }
@@ -1280,7 +1273,7 @@ public class PSBlockListener implements Listener
 
             if (hasPlayers)
             {
-                ChatBlock.send(player, "{red}Cannot place field near players");
+                ChatBlock.send(player, "noFieldNearPlayer");
                 event.setCancelled(true);
                 return false;
             }
@@ -1292,7 +1285,7 @@ public class PSBlockListener implements Listener
         {
             if (plugin.getWorldGuardManager().isWGRegion(block))
             {
-                ChatBlock.send(player, "{red}Cannot place field in worldguard regions");
+                ChatBlock.send(player, "noPlaceInWG");
                 event.setCancelled(true);
                 return false;
             }
@@ -1325,7 +1318,7 @@ public class PSBlockListener implements Listener
 
             if (!fs.isFertileType(floor.getTypeId()) && floor.getTypeId() != fs.getGroundBlock())
             {
-                ChatBlock.send(player, "{aqua}{1.field-type} blocks must be placed on fertile land to activate", fs.getTitle());
+                ChatBlock.send(player, "foresterNeedsFertile", fs.getTitle());
                 return false;
             }
         }
@@ -1351,7 +1344,7 @@ public class PSBlockListener implements Listener
 
                 if (!allowed)
                 {
-                    ChatBlock.send(player, "{red}{1.field-type} needs to be be placed inside {2.allowed-inside-fields}", fs.getTitle(), fs.getAllowedOnlyInsideString());
+                    ChatBlock.send(player, "fieldInsideAllowedInside", fs.getTitle(), fs.getAllowedOnlyInsideString());
                     event.setCancelled(true);
                     return false;
                 }
@@ -1379,7 +1372,7 @@ public class PSBlockListener implements Listener
 
                 if (notAllowed)
                 {
-                    ChatBlock.send(player, "{red}{1.field-type} needs to be be placed inside {2.allowed-outisde-fields}", fs.getTitle(), fs.getAllowedOnlyOutsideString());
+                    ChatBlock.send(player, "fieldOutsideAllowedOutside", fs.getTitle(), fs.getAllowedOnlyOutsideString());
                     event.setCancelled(true);
                     return false;
                 }
@@ -1390,7 +1383,7 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            ChatBlock.send(player, "{red}Cannot place field blocks inside translocation fields");
+            ChatBlock.send(player, "translocationNoFields");
             event.setCancelled(true);
             return false;
         }

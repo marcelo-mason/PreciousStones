@@ -83,7 +83,7 @@ public class PreciousStones extends JavaPlugin
     {
         if (getInstance().getSettingsManager().isDebugging())
         {
-            logger.info(Helper.format(msg, arg));
+            logger.info(String.format(msg, arg));
         }
     }
 
@@ -96,7 +96,7 @@ public class PreciousStones extends JavaPlugin
      */
     public static void log(Level level, String msg, Object... arg)
     {
-        logger.log(level, new StringBuilder().append("[PreciousStones] ").append(Helper.format(Helper.capitalize(msg), arg)).toString());
+        logger.log(level, new StringBuilder().append("[PreciousStones] ").append(ChatBlock.format(msg, arg)).toString());
     }
 
     /**
@@ -115,12 +115,12 @@ public class PreciousStones extends JavaPlugin
      */
     public void onEnable()
     {
+        instance = this;
+        settingsManager = new SettingsManager();
+        languageManager = new LanguageManager();
+
         displayStatusInfo();
 
-        instance = this;
-
-        languageManager = new LanguageManager();
-        settingsManager = new SettingsManager();
         simpleClansManager = new SimpleClansManager();
         commandManager = new CommandManager();
         limitManager = new LimitManager();
@@ -159,7 +159,7 @@ public class PreciousStones extends JavaPlugin
 
     private void displayStatusInfo()
     {
-        log("Version {1.version} loaded", getDescription().getVersion());
+        log("psLoaded", getDescription().getVersion());
     }
 
     private void registerEvents()

@@ -57,7 +57,7 @@ public final class StorageManager
 
             if (core.checkConnection())
             {
-                PreciousStones.log("MySQL Connection successful");
+                PreciousStones.log("dbMysqlConnected");
 
                 if (!core.existsTable("pstone_cuboids"))
                 {
@@ -121,7 +121,7 @@ public final class StorageManager
             }
             else
             {
-                PreciousStones.log("MySQL Connection failed");
+                PreciousStones.log("dbMysqlFailed");
             }
         }
         else
@@ -130,7 +130,7 @@ public final class StorageManager
 
             if (core.checkConnection())
             {
-                PreciousStones.log("SQLite Connection successful");
+                PreciousStones.log("dbSqliteConnected");
 
                 if (!core.existsTable("pstone_cuboids"))
                 {
@@ -194,7 +194,7 @@ public final class StorageManager
             }
             else
             {
-                PreciousStones.log("SQLite Connection failed");
+                PreciousStones.log("dbSqliteFailed");
             }
         }
 
@@ -321,12 +321,12 @@ public final class StorageManager
 
         if (fieldCount > 0)
         {
-            PreciousStones.log("({1.world}) fields: {2.count}", world, fieldCount);
+            PreciousStones.log("countsFields", world, fieldCount);
         }
 
         if (cuboidCount > 0)
         {
-            PreciousStones.log("({1.world}) cuboids: {2.count}", world, cuboidCount);
+            PreciousStones.log("countsCuboids", world, cuboidCount);
         }
     }
 
@@ -419,7 +419,7 @@ public final class StorageManager
 
             if (unbreakables.size() > 0)
             {
-                PreciousStones.log("({1.world}) unbreakables: {2.count}", world, unbreakables.size());
+                PreciousStones.log("countsUnbreakables", world, unbreakables.size());
             }
         }
     }
@@ -613,7 +613,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log("({1.world}) unused snitches purged: {2.count}", worldName, purged);
+            PreciousStones.log("countsPurgedSnitches", worldName, purged);
         }
         return out;
     }
@@ -816,12 +816,12 @@ public final class StorageManager
 
         if (foundInWrongTable)
         {
-            System.out.print("[PreciousStones] Fields found in wrong table, moving..");
+            PreciousStones.log("fieldsInWrongTable");
         }
 
         if (purged > 0)
         {
-            PreciousStones.log("({1.world}) unused snitches purged: {2.count}", worldName, purged);
+            PreciousStones.log("countsPurgedSnitches", worldName, purged);
         }
 
         return out.values();
@@ -857,14 +857,14 @@ public final class StorageManager
 
                                 if (purged > 0)
                                 {
-                                    PreciousStones.log("({1.player}) inactivity purge: {2.count} fields", name, purged);
+                                    PreciousStones.log("countsPurgedFields", name, purged);
                                 }
 
                                 purged = plugin.getUnbreakableManager().deleteBelonging(name);
 
                                 if (purged > 0)
                                 {
-                                    PreciousStones.log("({1.player}) inactivity purge: {2.count} unbreakables", name, purged);
+                                    PreciousStones.log("countsPurgedUnbreakables", name, purged);
                                 }
 
                                 offerDeletePlayer(name);
@@ -941,7 +941,7 @@ public final class StorageManager
 
         if (purged > 0)
         {
-            PreciousStones.log("({1.world}) unbreakables purged: {2.count}", worldName, purged);
+            PreciousStones.log("countsPurgedUnbreakabes2", worldName, purged);
         }
 
         return out;

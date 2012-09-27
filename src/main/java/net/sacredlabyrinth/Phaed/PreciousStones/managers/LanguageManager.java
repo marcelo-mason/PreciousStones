@@ -6,19 +6,30 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 @SuppressWarnings("unchecked")
 public class LanguageManager
 {
-    private PreciousStones plugin;
     private File file;
-    private HashMap<String, Object> language = new HashMap<String, Object>();
+    private TreeMap<String, Object> language = new TreeMap<String, Object>();
+    private String[] comments = new String[]{
+            "# Guidelines",
+            "\n#",
+            "\n# 1. Never change the contents inside the variables { }",
+            "\n# 2. You can rearrange the order that the variables appear on the sentences to best suit your language",
+            "\n# 3. You can add/remove colors as you please",
+            "\n# 4. If you change a command, make sure it's corresponding menu item matches",
+            "\n# 5. When new text is added on future versions, they will be added automatically to your language.yml file",
+            "\n#",
+            "\n# Colors: {black}, {blue}, {white}, {yellow}, {gold}, {gray}, {green}, {red} ",
+            "\n#         {dark-aqua}, {dark-blue}, {dark-gray}, {dark-green}, {dark-purple}, {dark-red}, {light-purple}",
+            "\n#         {magic}, {bold}, {italic}, {reset}, {strikethrough}, {underline}\n\n",
+    };
 
     public LanguageManager()
     {
-        plugin = PreciousStones.getInstance();
-        file = new File(plugin.getDataFolder() + File.separator + "language.yml");
-
+        file = new File(PreciousStones.getInstance().getDataFolder() + File.separator + "language.yml");
         check();
     }
 
@@ -26,17 +37,14 @@ public class LanguageManager
     {
         boolean exists = (file).exists();
 
+        loadDefaults();
+
         if (exists)
         {
-            loadDefaults();
             loadFile();
-            saveFile();
         }
-        else
-        {
-            copyDefaults();
-            loadDefaults();
-        }
+
+        saveFile();
     }
 
     private void loadDefaults()
@@ -63,7 +71,6 @@ public class LanguageManager
         catch (FileNotFoundException e)
         {
             // file not found
-            copyDefaults();
         }
     }
 
@@ -78,33 +85,18 @@ public class LanguageManager
             FileWriter fw = new FileWriter(file);
             StringWriter writer = new StringWriter();
             new Yaml(options).dump(language, writer);
+
+            for(String comment: comments)
+            {
+                fw.write(comment);
+            }
+
             fw.write(writer.toString());
             fw.close();
         }
         catch (IOException e)
         {
             // could not save
-            e.printStackTrace();
-        }
-    }
-
-    private void copyDefaults()
-    {
-        try
-        {
-            InputStream defaultLanguage = getClass().getResourceAsStream("/language.yml");
-            OutputStream out = new FileOutputStream(file);
-            byte buf[] = new byte[1024];
-            int len;
-            while ((len = defaultLanguage.read(buf)) > 0)
-            {
-                out.write(buf, 0, len);
-            }
-            out.close();
-            defaultLanguage.close();
-        }
-        catch (IOException e)
-        {
             e.printStackTrace();
         }
     }
@@ -118,6 +110,6 @@ public class LanguageManager
             return o.toString();
         }
 
-        return "";
+        return null;
     }
 }

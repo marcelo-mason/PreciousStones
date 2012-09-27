@@ -482,16 +482,16 @@ public final class TranslocationManager
         {
             TranslocationImporter importer = new TranslocationImporter(field, tbs, player);
 
-            ChatBlock.send(player, "{aqua}Importing {1.count} blocks into the translocation...", imported);
+            ChatBlock.send(player, "translocationImportingBlocks", imported);
 
             if (notImported > 0)
             {
-                ChatBlock.send(player, "{red}{1.count} blocks skipped due to the max translocation limit", notImported);
+                ChatBlock.send(player, "translocationSkippedDueToLimit", notImported);
             }
         }
         else
         {
-            ChatBlock.send(player, "{red}No blocks to import");
+            ChatBlock.send(player, "nothingToImport");
         }
 
         field.setDisabled(true);
@@ -517,16 +517,16 @@ public final class TranslocationManager
         {
             TranslocationRemover remover = new TranslocationRemover(field, tbs, player);
 
-            ChatBlock.send(player, "{aqua}Removing {1.count} blocks from the translocation...", imported);
+            ChatBlock.send(player, "translocationRemovingBlocks", imported);
 
             if (notImported > 0)
             {
-                ChatBlock.send(player, "{red}{1.count} blocks skipped due to the max translocation limit", notImported);
+                ChatBlock.send(player, "translocationSkippedDueToLimit", notImported);
             }
         }
         else
         {
-            ChatBlock.send(player, "{red}No blocks to remove");
+            ChatBlock.send(player, "nothingToRemove");
         }
 
         field.setDisabled(true);

@@ -166,7 +166,7 @@ public final class ForceFieldManager
             if (!ce.getField().getTypeEntry().equals(fs.getTypeEntry()))
             {
                 ce.getField().importFlags(fs.getDefaultFlags());
-                ChatBlock.send(player, "{yellow}{1.field-type}'s flags imported", fs.getTitle());
+                ChatBlock.send(player, "flagsImported", fs.getTitle());
                 isImport = true;
             }
 
@@ -808,7 +808,7 @@ public final class ForceFieldManager
 
         if (cleanedCount != 0)
         {
-            PreciousStones.log("({1.world}) orphan-fields: {2.count}", world.getName(), cleanedCount);
+            PreciousStones.log("countsOrphan", world.getName(), cleanedCount);
         }
         return cleanedCount;
     }
@@ -1058,7 +1058,7 @@ public final class ForceFieldManager
 
             if (pl != null)
             {
-                ChatBlock.send(pl, " {dark-gray}* {aqua}{message}", msg);
+                ChatBlock.send(pl, "announceToAllowedPlayers", msg);
             }
         }
     }
@@ -1338,7 +1338,7 @@ public final class ForceFieldManager
 
         if (notAllowed > 0)
         {
-            ChatBlock.send(player, "{red}{1.not-allowed} fields were skipped that can only be modified while disabled", notAllowed);
+            ChatBlock.send(player, "fieldsSkipped", notAllowed);
         }
 
         return allowedCount;
@@ -1414,7 +1414,7 @@ public final class ForceFieldManager
         {
             if (field.containsPlayer(allowedName))
             {
-                ChatBlock.send(player, "{red}Player could not be removed from a field because he was currently inside of it");
+                ChatBlock.send(player, "playerInsideNotRemoved");
                 continue;
             }
 
@@ -1432,7 +1432,7 @@ public final class ForceFieldManager
 
             if (conflictOfInterestExists(field, allowedName))
             {
-                ChatBlock.send(player, "{red}{1.player} was not disallowed, one of the fields is overlapping one of yours {2.coords}",allowedName, field);
+                ChatBlock.send(player, "playerNotDisallowed",allowedName, field);
                 continue;
             }
 
@@ -1446,7 +1446,7 @@ public final class ForceFieldManager
 
         if (notRemoved > 0)
         {
-            ChatBlock.send(player, "{red}{1.not-removed} fields were skipped that can only be modified while disabled", notRemoved);
+            ChatBlock.send(player, "fieldsSkipped", notRemoved);
         }
 
         return removedCount;
@@ -2590,7 +2590,7 @@ public final class ForceFieldManager
             }
             else
             {
-                ChatBlock.send(player, "{red}You do not have sufficient money in your account");
+                ChatBlock.send(player, "economyNotEnoughMoney");
                 return false;
             }
         }
@@ -2609,7 +2609,7 @@ public final class ForceFieldManager
         if (plugin.getPermissionsManager().hasEconomy())
         {
             plugin.getPermissionsManager().playerCredit(player, amount);
-            ChatBlock.send(player, "{aqua}Your account has been credited");
+            ChatBlock.send(player, "economyAccountCredited");
         }
     }
 

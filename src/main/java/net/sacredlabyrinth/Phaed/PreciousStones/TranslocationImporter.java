@@ -118,7 +118,7 @@ public class TranslocationImporter implements Runnable
                     Bukkit.getServer().getScheduler().cancelTask(timerID);
                     field.setDisabled(true);
                     field.setTranslocating(false);
-                    ChatBlock.send(player, "{aqua}Import complete");
+                    ChatBlock.send(player, "importComplete");
                 }
             }
         }
@@ -130,7 +130,7 @@ public class TranslocationImporter implements Runnable
         {
             if (player != null)
             {
-                ChatBlock.send(player, "{aqua}Imported {1.count} blocks", count);
+                ChatBlock.send(player, "importedBlocks", count);
             }
         }
     }

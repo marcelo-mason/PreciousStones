@@ -159,8 +159,8 @@ public class ConfiscationManager
 
             msg = Helper.stripTrailing(msg, ", ");
 
-            PreciousStones.log("Confiscated {1.items} from {2.player} at {3.coords}", msg, player.getName(), field.toString());
-            ChatBlock.send(player, "{aqua}Confiscated: {white}{1.image}", msg);
+            PreciousStones.log("confiscatedFrom", msg, player.getName(), field.toString());
+            ChatBlock.send(player, "confiscated", msg);
         }
     }
 
@@ -245,8 +245,8 @@ public class ConfiscationManager
 
             msg = Helper.stripTrailing(msg, ", ");
 
-            PreciousStones.log("Returned {1.items} to {2.player}", msg, player.getName());
-            ChatBlock.send(player, "{aqua}Returned: {white}{1.items}", msg);
+            PreciousStones.log("returnedTo", msg, player.getName());
+            ChatBlock.send(player, "returned", msg);
         }
     }
 }

@@ -1522,7 +1522,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (player != null)
             {
-                ChatBlock.send(player, "{yellow}{1.field-type} field will disable itself after {2.count} seconds", settings.getTitle(), settings.getAutoDisableSeconds());
+                ChatBlock.send(player, "fieldWillDisable" , settings.getTitle(), settings.getAutoDisableSeconds());
             }
 
             if (disablerId > 0)
@@ -1540,7 +1540,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                         if (player != null)
                         {
-                            ChatBlock.send(player, "{yellow}{1.field-type} field has been disabled", settings.getTitle());
+                            ChatBlock.send(player, "fieldHasDisabled", settings.getTitle());
                         }
 
                         thisField.setDisabled(true);

@@ -163,11 +163,11 @@ public class CuboidManager
 
                             if (newVolume >= 0)
                             {
-                                ChatBlock.send(player, "{aqua}Available protection: {yellow}{1.volume} blocks", newVolume);
+                                ChatBlock.send(player, "cuboidAvailableProtection", newVolume);
                             }
                             else
                             {
-                                ChatBlock.send(player, "{aqua}Available protection: {red}{1.volume} blocks (bypassing)", newVolume);
+                                ChatBlock.send(player, "cuboidAvailableProtectionBypass", newVolume);
                             }
                         }
                     }
@@ -175,17 +175,17 @@ public class CuboidManager
                 }
                 else
                 {
-                    ChatBlock.send(player, "{red}Cannot extend inside WorldGuard region");
+                    ChatBlock.send(player, "cuboidCannotExtendWG");
                 }
             }
             else
             {
-                ChatBlock.send(player, "{red}Cuboid exceeds available volume");
+                ChatBlock.send(player, "cuboidExceeds");
             }
         }
         else
         {
-            ChatBlock.send(player, "{red}Cannot click on the outline");
+            ChatBlock.send(player, "cuboidOutline");
         }
 
         return false;
@@ -220,8 +220,8 @@ public class CuboidManager
                 PreciousStones.getInstance().getForceFieldManager().removeSourceField(field);
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
 
-                ChatBlock.send(player, "{aqua}You are in drawing mode. Click on the block to finish.");
-                ChatBlock.send(player, "{aqua}Available protection: {yellow}{1.volume} blocks", ce.getAvailableVolume());
+                ChatBlock.send(player, "cuboidDrawingMode");
+                ChatBlock.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
             }
         }, 1L);
     }
@@ -244,7 +244,7 @@ public class CuboidManager
                 {
                     ce.addSelected(field.getBlock());
                     PreciousStones.getInstance().getForceFieldManager().addSourceField(field);
-                    ChatBlock.send(player, "{aqua}Available protection: {yellow}{1.volume} blocks", ce.getAvailableVolume());
+                    ChatBlock.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
                 }
             }, 1L);
         }
@@ -268,7 +268,7 @@ public class CuboidManager
             {
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
                 {
-                    ChatBlock.send(player, "{red}Cuboid exceeds available volume");
+                    ChatBlock.send(player, "cuboidExceedsMax");
                     cancelOpenCuboid(player);
                     return false;
                 }
@@ -276,7 +276,7 @@ public class CuboidManager
 
             if (plugin.getForceFieldManager().fieldConflicts(ce, player) != null)
             {
-                ChatBlock.send(player, "{red}The cuboid conflicts with someone else's field");
+                ChatBlock.send(player, "cuboidConflicts");
                 cancelOpenCuboid(player);
                 return false;
             }
@@ -290,7 +290,7 @@ public class CuboidManager
 
                 if (!plugin.getWorldGuardManager().canBuild(player, location))
                 {
-                    ChatBlock.send(player, "{red}The cuboid conflicts with a worldguard region");
+                    ChatBlock.send(player, "cuboidConflictsWG");
                     cancelOpenCuboid(player);
                     return false;
                 }
@@ -383,7 +383,7 @@ public class CuboidManager
         plugin.getVisualizationManager().revertVisualization(player);
         plugin.getVisualizationManager().revertOutline(player);
         openCuboids.remove(player.getName());
-        ChatBlock.send(player, "{red}Cuboid has been cancelled.");
+        ChatBlock.send(player, "cuboidCancelled");
     }
 
     /**
@@ -404,7 +404,7 @@ public class CuboidManager
                 ce.revertLastSelected();
                 plugin.getVisualizationManager().revertSingle(player, selected.getBlock());
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
-                ChatBlock.send(player, "{aqua}Selection reverted");
+                ChatBlock.send(player, "cuboidReverted");
             }
         }
     }

@@ -55,13 +55,13 @@ public class LimitManager
 
         if (limit == 0)
         {
-            ChatBlock.send(player, "{red}You cannot place any {1.field-type}", fs.getTitle());
+            ChatBlock.send(player, "limitsCannotPlace", fs.getTitle());
             return true;
         }
 
         if (count >= limit)
         {
-            ChatBlock.send(player, "{red}You have reached the {1.field-type} limit of {2.limit}", fs.getTitle(), limit);
+            ChatBlock.send(player, "limitsReached", fs.getTitle(), limit);
             return true;
         }
 
@@ -69,7 +69,7 @@ public class LimitManager
 
         if (totalCount >= plugin.getSettingsManager().getGlobalFieldLimit())
         {
-            ChatBlock.send(player, "{red}You have reached the total field limit of {1.limit}", limit);
+            ChatBlock.send(player, "limitsReachedGlobal", limit);
             return true;
         }
 

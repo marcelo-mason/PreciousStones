@@ -266,7 +266,7 @@ public class PSPlayerListener implements Listener
                                                 {
                                                     if (plugin.getStorageManager().existsTranslocatior(field.getName(), field.getOwner()))
                                                     {
-                                                        ChatBlock.send(player, "{red}Cannot reshape a translocation cuboid once its in use");
+                                                        ChatBlock.send(player, "cannotReshapeWhileCuboid");
                                                         return;
                                                     }
                                                 }
@@ -275,7 +275,7 @@ public class PSPlayerListener implements Listener
 
                                         if (plugin.getForceFieldManager().hasSubFields(field))
                                         {
-                                            ChatBlock.send(player, "{red}The field has sub-fields inside of it thus cannot be redifined.");
+                                            ChatBlock.send(player, "cannotRedefineWhileCuboid");
                                             return;
                                         }
 
@@ -285,7 +285,7 @@ public class PSPlayerListener implements Listener
                                             {
                                                 if (!field.isDisabled())
                                                 {
-                                                    ChatBlock.send(player, "{red}This field's cuboid can only be redefined while disabled");
+                                                    ChatBlock.send(player, "redefineWhileDisabled");
                                                     return;
                                                 }
                                             }
@@ -447,7 +447,7 @@ public class PSPlayerListener implements Listener
 
                                     if (plugin.getForceFieldManager().hasSubFields(field))
                                     {
-                                        ChatBlock.send(player, "{red}Cannot remove fields that have plot-fields inside of it.  You must remove them first before you can remove this field.");
+                                        ChatBlock.send(player, "cannotRemoveWithSubplots");
                                     }
 
                                     if (release)
@@ -593,19 +593,19 @@ public class PSPlayerListener implements Listener
                                     plugin.getStorageManager().offerPlayer(field.getNewOwner());
                                     PreciousStones.getInstance().getStorageManager().offerField(field);
 
-                                    ChatBlock.send(player, "{aqua}You have taken ownership of {1.old-owner}'s field", oldOwnerName);
+                                    ChatBlock.send(player, "takenFieldOwnership", oldOwnerName);
 
                                     Player oldOwner = Helper.matchSinglePlayer(oldOwnerName);
 
                                     if (oldOwner != null)
                                     {
-                                        ChatBlock.send(oldOwner, "{aqua}{1.player} has taken ownership of your field", player.getName());
+                                        ChatBlock.send(oldOwner, "tookOwnership", player.getName());
                                     }
                                     return;
                                 }
                                 else
                                 {
-                                    ChatBlock.send(player, "{aqua}You cannot take ownership of this field.  It has been given to: {1.new-owner}", field.getNewOwner());
+                                    ChatBlock.send(player, "cannotTakeOwnership", field.getNewOwner());
                                 }
                             }
 
@@ -621,13 +621,13 @@ public class PSPlayerListener implements Listener
                                     {
                                         if (plugin.getCuboidManager().hasOpenCuboid(player))
                                         {
-                                            ChatBlock.send(player, "{red}Cannot visualize while defining a cuboid");
+                                            ChatBlock.send(player, "visualizationNotWhileCuboid");
                                         }
                                         else
                                         {
                                             if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
                                             {
-                                                ChatBlock.send(player, "{aqua}Visualizing...");
+                                                ChatBlock.send(player, "visualizing");
                                                 plugin.getVisualizationManager().visualizeSingleField(player, field);
                                             }
                                         }
@@ -639,12 +639,12 @@ public class PSPlayerListener implements Listener
                                         {
                                             if (field.isDisabled())
                                             {
-                                                ChatBlock.send(player, "{aqua}{1.field-type} field has been enabled", field.getSettings().getTitle());
+                                                ChatBlock.send(player, "fieldTypeEnabled", field.getSettings().getTitle());
                                                 field.setDisabled(false);
                                             }
                                             else
                                             {
-                                                ChatBlock.send(player, "{aqua}{1.field-type} field has been disabled", field.getSettings().getTitle());
+                                                ChatBlock.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
                                                 field.setDisabled(true);
                                             }
                                             field.dirtyFlags();
@@ -663,7 +663,7 @@ public class PSPlayerListener implements Listener
                                         if (!plugin.getCommunicationManager().showSnitchList(player, plugin.getForceFieldManager().getField(block)))
                                         {
                                             showInfo(field, player);
-                                            ChatBlock.send(player, "{aqua}There have been no intruders around here");
+                                            ChatBlock.send(player, "noIntruders");
                                             ChatBlock.sendBlank(player);
                                         }
                                         return;
@@ -679,7 +679,7 @@ public class PSPlayerListener implements Listener
                                     if (size == 0)
                                     {
                                         showInfo(field, player);
-                                        ChatBlock.send(player, "{aqua}No grief recorded on the field");
+                                        ChatBlock.send(player, "noGriefRecorded");
                                         ChatBlock.sendBlank(player);
                                     }
                                     return;
@@ -752,7 +752,7 @@ public class PSPlayerListener implements Listener
                                         }
                                         else if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
                                         {
-                                            ChatBlock.send(player, "{dark-gray}Use '/ps toggle [flag]' to disable individual flags");
+                                            ChatBlock.send(player, "usageToggle");
                                         }
 
                                         ChatBlock.sendBlank(player);
@@ -770,7 +770,7 @@ public class PSPlayerListener implements Listener
                             }
                             else
                             {
-                                plugin.getCommunicationManager().showUnbreakableOwner(player, block);
+                                plugin.getCommunicationManager().showUnbreakableDetails(player, block);
                             }
                         }
                         else
@@ -1330,13 +1330,13 @@ public class PSPlayerListener implements Listener
                 {
                     if (field.getName().length() == 0)
                     {
-                        ChatBlock.send(player, "{yellow}To begin storage, you must first choose a name for your translocation with /ps setname");
+                        ChatBlock.send(player, "translocatorNameToBegin");
                         event.setCancelled(true);
                     }
 
                     if (field.isOverTranslocationMax(1))
                     {
-                        ChatBlock.send(player, "{red}You have reached the server-wide max translocation size.");
+                        ChatBlock.send(player, "translocationReachedSize");
                         event.setCancelled(true);
                         return;
                     }
@@ -1380,7 +1380,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (!gameMode.equals(field.getSettings().getForceEntryGameMode()))
                     {
-                        ChatBlock.send(player, "{red}Cannot change your game mode in this field");
+                        ChatBlock.send(player, "cannotChangeGameMode");
                         event.setCancelled(true);
                     }
                 }
@@ -1418,12 +1418,12 @@ public class PSPlayerListener implements Listener
                 if (data.isSuperduperpickaxe())
                 {
                     data.setSuperduperpickaxe(false);
-                    ChatBlock.send(player, "{aqua}Super duper pick axe disabled");
+                    ChatBlock.send(player, "pickaxeDisabled");
                 }
                 else
                 {
                     data.setSuperduperpickaxe(true);
-                    ChatBlock.send(player, "{aqua}Super duper pick axe enabled");
+                    ChatBlock.send(player, "pickaxeEnabled");
                 }
                 plugin.getStorageManager().offerPlayer(player.getName());
                 event.setCancelled(true);

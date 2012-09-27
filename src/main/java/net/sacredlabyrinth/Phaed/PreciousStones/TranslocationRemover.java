@@ -105,12 +105,12 @@ public class TranslocationRemover implements Runnable
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 field.setDisabled(false);
                 field.setTranslocating(false);
-                ChatBlock.send(player, "{aqua}Removal complete");
+                ChatBlock.send(player, "removalComplete");
 
                 if(notRemovedCount > 0)
                 {
-                    ChatBlock.send(player, "{red}{1.count} blocks skipped.", count);
-                    ChatBlock.send(player, "{red}(Their destination locations already had blocks on them)");
+                    ChatBlock.send(player, "blocksSkipped", count);
+                    ChatBlock.send(player, "blocksSkipped2");
                 }
             }
         }
@@ -122,7 +122,7 @@ public class TranslocationRemover implements Runnable
         {
             if (player != null)
             {
-                ChatBlock.send(player, "{aqua}Removed {1.count} blocks", count);
+                ChatBlock.send(player, "removedBlocks", count);
             }
         }
     }

@@ -372,7 +372,7 @@ public final class EntryManager
             {
                 if (plugin.getSettingsManager().isNotifyFlyZones())
                 {
-                    ChatBlock.send(player, "{yellow}Entering no fly zone");
+                    ChatBlock.send(player, "noFlyEnter");
                 }
 
                 player.setAllowFlight(false);
@@ -384,7 +384,7 @@ public final class EntryManager
                 {
                     if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
                     {
-                        plugin.getForceFieldManager().announceAllowedPlayers(field, String.format("{1.player} entry at {2.field} {dark-gray}{3.coords}", player.getName(), field.getName(), field.getCoords()));
+                        plugin.getForceFieldManager().announceAllowedPlayers(field, ChatBlock.format("entryAnnounce", player.getName(), field.getName(), field.getCoords()));
                     }
                 }
             }
@@ -458,7 +458,7 @@ public final class EntryManager
                 {
                     if (plugin.getSettingsManager().isNotifyFlyZones())
                     {
-                        ChatBlock.send(player, "{yellow}Leaving no fly zone");
+                        ChatBlock.send(player, "noFlyLeave");
                     }
 
                     player.setAllowFlight(true);
