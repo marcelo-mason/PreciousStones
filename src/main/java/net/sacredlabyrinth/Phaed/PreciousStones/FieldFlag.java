@@ -93,6 +93,7 @@ public enum FieldFlag
     LEAVING_GAME_MODE,
     NO_ALLOWING
 
+
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
 
