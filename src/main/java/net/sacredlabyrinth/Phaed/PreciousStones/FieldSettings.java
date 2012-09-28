@@ -548,11 +548,11 @@ public class FieldSettings
             }
         }
 
-        if (map.containsKey("protect-npcs") && Helper.isBoolean(map.get("protect-npcs")))
+        if (map.containsKey("protect-villagers") && Helper.isBoolean(map.get("protect-villagers")))
         {
-            if ((Boolean) map.get("protect-npcs"))
+            if ((Boolean) map.get("protect-villagers"))
             {
-                defaultFlags.add(FieldFlag.PROTECT_NPCS);
+                defaultFlags.add(FieldFlag.PROTECT_VILLAGERS);
             }
         }
 

@@ -516,9 +516,10 @@ public class PSEntityListener implements Listener
             }
         }
 
-        if (event.getEntity() instanceof NPC)
+
+        if (event.getEntity() instanceof Villager)
         {
-            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_NPCS);
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_VILLAGERS);
 
             if (field != null)
             {
