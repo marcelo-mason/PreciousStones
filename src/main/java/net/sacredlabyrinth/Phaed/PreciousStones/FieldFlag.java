@@ -45,7 +45,6 @@ public enum FieldFlag
     FAREWELL_MESSAGE,
     SNITCH,
     NO_CONFLICT,
-    NO_ALLOWING,
     LAUNCH,
     CANNON,
     MINE,
@@ -74,7 +73,7 @@ public enum FieldFlag
     PREVENT_USE,
     DYNMAP_AREA,
     DYNMAP_MARKER,
-    DYNMAP_NO_TOGGLE(),
+    DYNMAP_NO_TOGGLE,
     DYNMAP_DISABLED,
     CAN_CHANGE_OWNER,
     PLOT,
@@ -91,8 +90,10 @@ public enum FieldFlag
     WORLDGUARD_REPELLENT,
     GROUP_ON_ENTRY,
     ENTRY_GAME_MODE,
-    LEAVING_GAME_MODE;
+    LEAVING_GAME_MODE,
+    NO_ALLOWING
 
+    ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
 
     private final static String[] unToggable = new String[]{

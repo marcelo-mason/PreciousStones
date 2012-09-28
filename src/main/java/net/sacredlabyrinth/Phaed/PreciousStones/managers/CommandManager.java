@@ -71,12 +71,7 @@ public final class CommandManager implements CommandExecutor
 
                     Block block = hasplayer ? player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ()) : null;
 
-                    if (cmd.equals(ChatBlock.format("commandDraw")))
-                    {
-                        plugin.getForceFieldManager().drawSourceFields();
-                        return true;
-                    }
-                    else if (cmd.equals(ChatBlock.format("commandDebug")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
+                    if (cmd.equals(ChatBlock.format("commandDebug")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
                     {
                         plugin.getSettingsManager().setDebug(!plugin.getSettingsManager().isDebug());
 
@@ -1559,7 +1554,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (field.hasFlag(FieldFlag.CAN_CHANGE_OWNER))
                                         {
-                                            field.setNewOwner(owner);
+                                            plugin.getForceFieldManager().changeOwner(field, owner);
                                             ChatBlock.send(sender, "fieldCanBeTaken", owner);
                                             return true;
                                         }

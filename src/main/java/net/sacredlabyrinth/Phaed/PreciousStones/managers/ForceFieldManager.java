@@ -30,6 +30,7 @@ public final class ForceFieldManager
 {
     private final Map<FieldFlag, List<Field>> fieldsByFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByWorld = Maps.newHashMap();
+    private final Map<String, List<Field>> fieldsByOwner = Maps.newHashMap();
     private final Map<Vec, Field> fieldsByVec = Maps.newHashMap();
 
     private final HashMap<ChunkVec, HashMap<FieldFlag, List<Field>>> sourceFields = new HashMap<ChunkVec, HashMap<FieldFlag, List<Field>>>();
@@ -52,34 +53,10 @@ public final class ForceFieldManager
     {
         fieldsByFlag.clear();
         fieldsByWorld.clear();
+        fieldsByOwner.clear();
         fieldsByVec.clear();
 
         sourceFields.clear();
-    }
-
-    /**
-     * Prints out a tree of all source fields to the log
-     */
-    public void drawSourceFields()
-    {
-        for (ChunkVec cv : sourceFields.keySet())
-        {
-            PreciousStones.getLog().info(cv.toString());
-
-            HashMap<FieldFlag, List<Field>> flagList = sourceFields.get(cv);
-
-            for (FieldFlag flag : flagList.keySet())
-            {
-                PreciousStones.getLog().info("   -" + flag);
-
-                List<Field> fields = flagList.get(flag);
-
-                for (Field field : fields)
-                {
-                    PreciousStones.getLog().info("     -" + Helper.toLocationString(field.getLocation()));
-                }
-            }
-        }
     }
 
     /**
@@ -292,6 +269,19 @@ public final class ForceFieldManager
         fields.add(field);
         fieldsByWorld.put(field.getWorld(), fields);
 
+        // add to owners collection
+
+        fields = fieldsByOwner.get(field.getOwner());
+
+        if (fields == null)
+        {
+            fields = new ArrayList<Field>();
+        }
+
+        fields.add(field);
+        fieldsByOwner.put(field.getOwner(), fields);
+
+
         // add to sources collection
 
         addSourceField(field);
@@ -372,6 +362,10 @@ public final class ForceFieldManager
         // remove from vec collection
 
         fieldsByVec.remove(field.toVec());
+
+        // remove from owners collection
+
+        fieldsByOwner.remove(field.getOwner());
 
         // remove from worlds collection
 
@@ -2231,15 +2225,12 @@ public final class ForceFieldManager
     {
         int deletedFields = 0;
 
-        Collection<Field> fields = fieldsByVec.values();
+        List<Field> fields = fieldsByOwner.get(playerName);
 
         for (Field field : fields)
         {
-            if (field.getOwner().equalsIgnoreCase(playerName))
-            {
-                queueRelease(field);
-                deletedFields++;
-            }
+            queueRelease(field);
+            deletedFields++;
         }
 
         flush();
@@ -2548,4 +2539,18 @@ public final class ForceFieldManager
         return out;
     }
 
+    /**
+     * Change owner of a field
+     *
+     * @param field
+     * @param owner
+     */
+    public void changeOwner(Field field, String owner)
+    {
+        List<Field> fields = fieldsByOwner.get(field.getOwner());
+        fields.remove(field);
+        field.setNewOwner(owner);
+        fields = fieldsByOwner.get(owner);
+        fields.add(field);
+    }
 }
