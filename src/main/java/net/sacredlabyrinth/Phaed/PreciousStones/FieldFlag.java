@@ -109,7 +109,7 @@ public enum FieldFlag
      */
     public boolean isUnToggable()
     {
-        String flagStr = this.getString();
+        String flagStr = this.toString();
 
         for (String flag : unToggable)
         {
@@ -138,16 +138,17 @@ public enum FieldFlag
      *
      * @return
      */
-    public String getString()
+
+    public String toString()
     {
-        return String.valueOf(this).replace('_', '-');
+        return this.name().replace('_', '-');
     }
 
     static
     {
         for (FieldFlag flag : values())
         {
-            flags.put(flag.getString(), flag);
+            flags.put(flag.toString(), flag);
         }
     }
 }

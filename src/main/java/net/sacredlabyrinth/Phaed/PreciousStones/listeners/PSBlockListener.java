@@ -683,11 +683,11 @@ public class PSBlockListener implements Listener
 
         DebugTimer dt = new DebugTimer("onBlockPlace");
 
-        // -------------------------------------------------------------------------------------- placing a block ion top of a field
+        // -------------------------------------------------------------------------------------- placing a block on top of a field
 
         BlockState state = event.getBlockReplacedState();
 
-        Field existingField = plugin.getForceFieldManager().getField(state.getLocation(), state.getTypeId(), state.getRawData());
+        Field existingField = plugin.getForceFieldManager().getField(state.getLocation());
 
         if (existingField != null)
         {

@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.google.common.collect.Maps;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
@@ -27,7 +28,10 @@ import java.util.*;
  */
 public final class ForceFieldManager
 {
-    private final HashMap<FieldFlag, HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>>> fieldLists = new HashMap<FieldFlag, HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>>>();
+    private final Map<FieldFlag, List<Field>> fieldsByFlag = Maps.newHashMap();
+    private final Map<String, List<Field>> fieldsByWorld = Maps.newHashMap();
+    private final Map<Vec, Field> fieldsByVec = Maps.newHashMap();
+
     private final HashMap<ChunkVec, HashMap<FieldFlag, List<Field>>> sourceFields = new HashMap<ChunkVec, HashMap<FieldFlag, List<Field>>>();
 
     private Queue<Field> deletionQueue = new LinkedList<Field>();
@@ -46,7 +50,10 @@ public final class ForceFieldManager
      */
     public void clearChunkLists()
     {
-        fieldLists.clear();
+        fieldsByFlag.clear();
+        fieldsByWorld.clear();
+        fieldsByVec.clear();
+
         sourceFields.clear();
     }
 
@@ -250,44 +257,40 @@ public final class ForceFieldManager
      */
     public void addToCollection(Field field)
     {
-        String world = field.getWorld();
-
-        ChunkVec cv = field.toChunkVec();
-
         List<FieldFlag> flags = new ArrayList<FieldFlag>();
         flags.addAll(field.getSettings().getDefaultFlags());
         flags.addAll(field.getInsertedFlags());
 
+        // add to flags collection
+
         for (FieldFlag flag : flags)
         {
-            // add to fields collection
+            List<Field> fields = fieldsByFlag.get(flag);
 
-            HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
-
-            if (wLists == null)
+            if (fields == null)
             {
-                wLists = new HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>>();
+                fields = new ArrayList<Field>();
             }
 
-            HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(world);
-
-            if (w == null)
-            {
-                w = new HashMap<ChunkVec, HashMap<Vec, Field>>();
-            }
-
-            HashMap<Vec, Field> c = w.get(cv);
-
-            if (c == null)
-            {
-                c = new HashMap<Vec, Field>();
-            }
-
-            c.put(field.toVec(), field);
-            w.put(cv, c);
-            wLists.put(world, w);
-            fieldLists.put(flag, wLists);
+            fields.add(field);
+            fieldsByFlag.put(flag, fields);
         }
+
+        // add to vec collection
+
+        fieldsByVec.put(field.toVec(), field);
+
+        // add to worlds collection
+
+        List<Field> fields = fieldsByWorld.get(field.getWorld());
+
+        if (fields == null)
+        {
+            fields = new ArrayList<Field>();
+        }
+
+        fields.add(field);
+        fieldsByWorld.put(field.getWorld(), fields);
 
         // add to sources collection
 
@@ -349,35 +352,34 @@ public final class ForceFieldManager
             return;
         }
 
-        // remove from fields collection
+        // remove from flags collection
 
         if (field.getSettings() != null)
         {
-            List<FieldFlag> flags = new ArrayList<FieldFlag>();
-            flags.addAll(field.getSettings().getDefaultFlags());
-            flags.addAll(field.getInsertedFlags());
+            Set<FieldFlag> flags = fieldsByFlag.keySet();
 
-            for (FieldFlag flag : flags)
+            if (flags != null)
             {
-                HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
-
-                if (wLists == null)
+                for (FieldFlag flag : flags)
                 {
-                    return;
-                }
+                    List<Field> fields = fieldsByFlag.get(flag);
 
-                HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(field.getWorld());
-
-                if (w != null)
-                {
-                    HashMap<Vec, Field> c = w.get(field.toChunkVec());
-
-                    if (c != null)
-                    {
-                        c.remove(field.toVec());
-                    }
+                    fields.remove(field);
                 }
             }
+        }
+
+        // remove from vec collection
+
+        fieldsByVec.remove(field.toVec());
+
+        // remove from worlds collection
+
+        List<Field> fields = fieldsByWorld.get(field.getWorld());
+
+        if (fields != null)
+        {
+            fields.remove(field);
         }
 
         // remove from sources collection
@@ -515,85 +517,47 @@ public final class ForceFieldManager
     {
         List<Field> out = new ArrayList<Field>();
 
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
+        List<Field> fields = fieldsByWorld.get(world.getName());
 
-        if (wLists != null)
+        if (fields != null)
         {
-            HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(world.getName());
-
-            if (w != null)
+            for (Field field : fields)
             {
-                for (ChunkVec cv : w.keySet())
+                if (target.equals("*"))
                 {
-                    HashMap<Vec, Field> c = w.get(cv);
+                    out.add(field);
+                    continue;
+                }
 
-                    for (Field field : c.values())
+                if (target.contains("g:"))
+                {
+                    String group = target.substring(2);
+
+                    if (plugin.getPermissionsManager().inGroup(field.getOwner(), world, group))
                     {
-                        if (target.equals("*"))
-                        {
-                            out.add(field);
-                            continue;
-                        }
-
-                        if (target.contains("g:"))
-                        {
-                            String group = target.substring(2);
-
-                            if (plugin.getPermissionsManager().inGroup(field.getOwner(), world, group))
-                            {
-                                out.add(field);
-                            }
-                            continue;
-                        }
-
-                        if (target.contains("c:"))
-                        {
-                            String clan = target.substring(2);
-
-                            if (plugin.getSimpleClansManager().isInClan(field.getOwner(), clan))
-                            {
-                                out.add(field);
-                            }
-                            continue;
-                        }
-
-                        if (field.isOwner(target))
-                        {
-                            out.add(field);
-                        }
+                        out.add(field);
                     }
+                    continue;
+                }
+
+                if (target.contains("c:"))
+                {
+                    String clan = target.substring(2);
+
+                    if (plugin.getSimpleClansManager().isInClan(field.getOwner(), clan))
+                    {
+                        out.add(field);
+                    }
+                    continue;
+                }
+
+                if (field.isOwner(target))
+                {
+                    out.add(field);
                 }
             }
         }
 
-        return out;
-    }
-
-    /**
-     * Get all fields on a world, optionally based on field flags
-     *
-     * @param worldName
-     * @return all fields from the database that match the world
-     */
-    public HashMap<ChunkVec, HashMap<Vec, Field>> getFields(String worldName, FieldFlag flag)
-    {
-        HashMap<ChunkVec, HashMap<Vec, Field>> out = new HashMap<ChunkVec, HashMap<Vec, Field>>();
-
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
-
-        if (wLists == null)
-        {
-            return null;
-        }
-
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(worldName);
-
-        if (w == null)
-        {
-            return null;
-        }
-
-        out.putAll(w);
         return out;
     }
 
@@ -605,48 +569,17 @@ public final class ForceFieldManager
      */
     public Field getField(Block block)
     {
-        return getField(block.getLocation(), block.getTypeId(), block.getData());
+        return getField(block.getLocation());
     }
 
     /**
      * Gets the field object from a block, if the block is a field
      *
-     * @param type the block type id
-     * @param data the data value
      * @return the field object from the block
      */
-    public Field getField(Location location, int type, byte data)
+    public Field getField(Location location)
     {
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
-
-        if (wLists == null)
-        {
-            return null;
-        }
-
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = wLists.get(location.getWorld().getName());
-
-        if (w != null)
-        {
-            HashMap<Vec, Field> c = w.get(new ChunkVec(location));
-
-            if (c != null)
-            {
-                Field field = c.get(new Vec(location));
-
-                if (field != null)
-                {
-                    if (!field.getTypeEntry().equals(new BlockTypeEntry(type, data)))
-                    {
-                        deleteField(field);
-                        return null;
-                    }
-                }
-
-                return field;
-            }
-        }
-        return null;
+        return fieldsByVec.get(new Vec(location));
     }
 
     /**
@@ -669,23 +602,17 @@ public final class ForceFieldManager
     {
         int size = 0;
 
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
+        List<World> worlds = plugin.getServer().getWorlds();
 
-        if (wLists == null)
+        if (worlds != null)
         {
-            return 0;
-        }
-
-        for (HashMap<ChunkVec, HashMap<Vec, Field>> w : wLists.values())
-        {
-            if (w != null)
+            for (World world : worlds)
             {
-                for (HashMap<Vec, Field> c : w.values())
-                {
-                    size += c.size();
-                }
+                List<Field> fields = fieldsByWorld.get(world.getName());
+                size += fields.size();
             }
         }
+
         return size;
     }
 
@@ -694,27 +621,13 @@ public final class ForceFieldManager
      */
     public void finalize()
     {
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
+        Collection<Field> fields = fieldsByVec.values();
 
-        if (wLists == null)
+        for (Field field : fields)
         {
-            return;
-        }
-
-        for (HashMap<ChunkVec, HashMap<Vec, Field>> w : wLists.values())
-        {
-            if (w != null)
+            if (field.isDirty())
             {
-                for (HashMap<Vec, Field> c : w.values())
-                {
-                    for (Field f : c.values())
-                    {
-                        if (f.isDirty())
-                        {
-                            plugin.getStorageManager().offerField(f);
-                        }
-                    }
-                }
+                plugin.getStorageManager().offerField(field);
             }
         }
     }
@@ -762,51 +675,43 @@ public final class ForceFieldManager
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = getFields(world.getName(), FieldFlag.ALL);
+        List<Field> fields = fieldsByWorld.get(world.getName());
 
-        if (w != null)
+        for (Field field : fields)
         {
-            for (HashMap<Vec, Field> fields : w.values())
+            // ensure chunk is loaded prior to polling
+
+            ChunkVec cv = field.toChunkVec();
+
+            if (!cv.equals(currentChunk))
             {
-                if (fields != null)
+                if (!currentChunkLoaded)
                 {
-                    for (Field field : fields.values())
+                    if (currentChunk != null)
                     {
-                        // ensure chunk is loaded prior to polling
-
-                        ChunkVec cv = field.toChunkVec();
-
-                        if (!cv.equals(currentChunk))
-                        {
-                            if (!currentChunkLoaded)
-                            {
-                                if (currentChunk != null)
-                                {
-                                    world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
-                                }
-                            }
-
-                            currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
-
-                            if (!currentChunkLoaded)
-                            {
-                                world.loadChunk(cv.getX(), cv.getZ());
-                            }
-
-                            currentChunk = cv;
-                        }
-
-                        int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
-
-                        if (type != field.getTypeId())
-                        {
-                            cleanedCount++;
-                            queueRelease(field);
-                        }
+                        world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
                     }
                 }
+
+                currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                if (!currentChunkLoaded)
+                {
+                    world.loadChunk(cv.getX(), cv.getZ());
+                }
+
+                currentChunk = cv;
+            }
+
+            int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
+
+            if (type != field.getTypeId())
+            {
+                cleanedCount++;
+                queueRelease(field);
             }
         }
+
         flush();
 
         if (cleanedCount != 0)
@@ -828,47 +733,41 @@ public final class ForceFieldManager
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
-        HashMap<ChunkVec, HashMap<Vec, Field>> w = getFields(world.getName(), FieldFlag.ALL);
+        List<Field> fields = fieldsByWorld.get(world.getName());
 
-        if (w != null)
+        for (Field field : fields)
         {
-            for (HashMap<Vec, Field> fields : w.values())
+            // ensure chunk is loaded prior to polling
+
+            ChunkVec cv = field.toChunkVec();
+
+            if (!cv.equals(currentChunk))
             {
-                for (Field field : fields.values())
+                if (!currentChunkLoaded)
                 {
-                    // ensure chunk is loaded prior to polling
-
-                    ChunkVec cv = field.toChunkVec();
-
-                    if (!cv.equals(currentChunk))
+                    if (currentChunk != null)
                     {
-                        if (!currentChunkLoaded)
-                        {
-                            if (currentChunk != null)
-                            {
-                                world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
-                            }
-                        }
-
-                        currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
-
-                        if (!currentChunkLoaded)
-                        {
-                            world.loadChunk(cv.getX(), cv.getZ());
-                        }
-
-                        currentChunk = cv;
-                    }
-
-                    Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
-
-                    if (!plugin.getSettingsManager().isFieldType(block))
-                    {
-                        revertedCount++;
-                        block.setTypeId(field.getTypeId());
-                        block.setData(field.getData());
+                        world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
                     }
                 }
+
+                currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                if (!currentChunkLoaded)
+                {
+                    world.loadChunk(cv.getX(), cv.getZ());
+                }
+
+                currentChunk = cv;
+            }
+
+            Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
+
+            if (!plugin.getSettingsManager().isFieldType(block))
+            {
+                revertedCount++;
+                block.setTypeId(field.getTypeId());
+                block.setData(field.getData());
             }
         }
 
@@ -1481,38 +1380,29 @@ public final class ForceFieldManager
     }
 
     /**
-     * Get all the fields belonging to players, optionally you can pass field flags and it will only retrieve those matching the field flags
+     * Get all the fields belonging to players,  you can pass field flags and it will only retrieve those matching the field flags
      *
      * @param player
      * @return the fields
      */
     public List<Field> getOwnersFields(Player player, FieldFlag flag)
     {
+        List<Field> fields = fieldsByFlag.get(flag);
         List<Field> out = new ArrayList<Field>();
 
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(flag);
-
-        if (wLists == null)
+        if (fields == null)
         {
             return null;
         }
 
-        for (HashMap<ChunkVec, HashMap<Vec, Field>> w : wLists.values())
+        for (Field field : fields)
         {
-            if (w != null)
+            if (field.isOwner(player.getName()))
             {
-                for (HashMap<Vec, Field> fields : w.values())
-                {
-                    for (Field field : fields.values())
-                    {
-                        if (field.isOwner(player.getName()))
-                        {
-                            out.add(field);
-                        }
-                    }
-                }
+                out.add(field);
             }
         }
+
         return out;
     }
 
@@ -2341,28 +2231,14 @@ public final class ForceFieldManager
     {
         int deletedFields = 0;
 
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
+        Collection<Field> fields = fieldsByVec.values();
 
-        if (wLists == null)
+        for (Field field : fields)
         {
-            return 0;
-        }
-
-        for (HashMap<ChunkVec, HashMap<Vec, Field>> w : wLists.values())
-        {
-            if (w != null)
+            if (field.getOwner().equalsIgnoreCase(playerName))
             {
-                for (HashMap<Vec, Field> fields : w.values())
-                {
-                    for (Field field : fields.values())
-                    {
-                        if (field.getOwner().equalsIgnoreCase(playerName))
-                        {
-                            queueRelease(field);
-                            deletedFields++;
-                        }
-                    }
-                }
+                queueRelease(field);
+                deletedFields++;
             }
         }
 
@@ -2552,28 +2428,14 @@ public final class ForceFieldManager
     {
         int deletedCount = 0;
 
-        HashMap<String, HashMap<ChunkVec, HashMap<Vec, Field>>> wLists = fieldLists.get(FieldFlag.ALL);
+        Collection<Field> fields = fieldsByVec.values();
 
-        if (wLists != null)
+        for (Field field : fields)
         {
-            for (HashMap<ChunkVec, HashMap<Vec, Field>> w : wLists.values())
+            if (field.getTypeEntry().equals(type))
             {
-                if (w != null)
-                {
-                    for (ChunkVec cv : w.keySet())
-                    {
-                        HashMap<Vec, Field> c = w.get(cv);
-
-                        for (Field field : c.values())
-                        {
-                            if (field.getTypeEntry().equals(type))
-                            {
-                                queueRelease(field);
-                                deletedCount++;
-                            }
-                        }
-                    }
-                }
+                queueRelease(field);
+                deletedCount++;
             }
         }
 
