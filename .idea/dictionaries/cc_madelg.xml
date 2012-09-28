@@ -3,6 +3,7 @@
     <words>
       <w>blockid</w>
       <w>coords</w>
+      <w>dynmap</w>
       <w>enderman</w>
       <w>griefed</w>
       <w>languageexists</w>
@@ -11,6 +12,7 @@
       <w>pstone</w>
       <w>pstones</w>
       <w>strikethrough</w>
+      <w>tekkit</w>
       <w>translocate</w>
       <w>translocated</w>
       <w>translocations</w>
@@ -18,6 +20,7 @@
       <w>unbreakables</w>
       <w>unprotectable</w>
       <w>unprotectableblock</w>
+      <w>worldguard</w>
     </words>
   </dictionary>
 </component>

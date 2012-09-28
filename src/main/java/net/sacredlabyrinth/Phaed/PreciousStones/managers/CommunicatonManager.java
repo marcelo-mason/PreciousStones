@@ -2582,35 +2582,10 @@ public class CommunicatonManager
 
         List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlags());
         List<FieldFlag> disabledFlags = field.getDisabledFlags();
-        List<FieldFlag> hardCodedFlags = new ArrayList<FieldFlag>();
 
         flags.remove(FieldFlag.ALL);
         flags.remove(FieldFlag.DYNMAP_NO_TOGGLE);
-
         flags.addAll(disabledFlags);
-
-        hardCodedFlags.add(FieldFlag.CUBOID);
-        hardCodedFlags.add(FieldFlag.APPLY_TO_REVERSE);
-        hardCodedFlags.add(FieldFlag.APPLY_TO_ALL);
-        hardCodedFlags.add(FieldFlag.NO_CONFLICT);
-        hardCodedFlags.add(FieldFlag.NO_PLAYER_PLACE);
-        hardCodedFlags.add(FieldFlag.BREAKABLE);
-        hardCodedFlags.add(FieldFlag.TOGGLE_ON_DISABLED);
-        hardCodedFlags.add(FieldFlag.REDEFINE_ON_DISABLED);
-        hardCodedFlags.add(FieldFlag.BREAKABLE_ON_DISABLED);
-        hardCodedFlags.add(FieldFlag.MODIFY_ON_DISABLED);
-        hardCodedFlags.add(FieldFlag.PREVENT_UNPROTECTABLE);
-        hardCodedFlags.add(FieldFlag.PLACE_DISABLED);
-        hardCodedFlags.add(FieldFlag.SNEAKING_BYPASS);
-        hardCodedFlags.add(FieldFlag.SNEAKING_BYPASS);
-
-        if (field.hasFlag(FieldFlag.DYNMAP_NO_TOGGLE))
-        {
-            hardCodedFlags.add(FieldFlag.DYNMAP_AREA);
-            hardCodedFlags.add(FieldFlag.DYNMAP_MARKER);
-        }
-
-        hardCodedFlags.add(FieldFlag.SNEAKING_BYPASS);
 
         int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
 
@@ -2623,7 +2598,7 @@ public class CommunicatonManager
                 title = color + ChatBlock.format("_flags") + ": ";
             }
 
-            cb.addRow("  " + title, getFlag(disabledFlags, hardCodedFlags, flags, i * 2), getFlag(disabledFlags, hardCodedFlags, flags, (i * 2) + 1));
+            cb.addRow("  " + title, getFlag(disabledFlags, flags, i * 2), getFlag(disabledFlags, flags, (i * 2) + 1));
         }
 
         if (field.hasFlag(FieldFlag.POTIONS))
@@ -2681,7 +2656,7 @@ public class CommunicatonManager
         return showMessage;
     }
 
-    private String getFlag(List<FieldFlag> disabledFlags, List<FieldFlag> hardCodedFlags, List<FieldFlag> flags, int index)
+    private String getFlag(List<FieldFlag> disabledFlags, List<FieldFlag> flags, int index)
     {
         if (index < flags.size())
         {
@@ -2694,7 +2669,7 @@ public class CommunicatonManager
                 color = ChatColor.DARK_GRAY;
             }
 
-            if (hardCodedFlags.contains(flag))
+            if (flag.isUnToggable())
             {
                 color = ChatColor.AQUA;
             }

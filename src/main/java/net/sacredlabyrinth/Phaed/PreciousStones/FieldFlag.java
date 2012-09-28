@@ -1,7 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import com.google.common.collect.Maps;
+
+import java.util.Map;
+
 /**
- *
  * @author phaed
  */
 public enum FieldFlag
@@ -71,7 +74,7 @@ public enum FieldFlag
     PREVENT_USE,
     DYNMAP_AREA,
     DYNMAP_MARKER,
-    DYNMAP_NO_TOGGLE,
+    DYNMAP_NO_TOGGLE(),
     DYNMAP_DISABLED,
     CAN_CHANGE_OWNER,
     PLOT,
@@ -88,5 +91,63 @@ public enum FieldFlag
     WORLDGUARD_REPELLENT,
     GROUP_ON_ENTRY,
     ENTRY_GAME_MODE,
-    LEAVING_GAME_MODE
+    LEAVING_GAME_MODE;
+
+    private final static Map<String, FieldFlag> flags = Maps.newHashMap();
+
+    private final static String[] unToggable = new String[]{
+            "worldguard-repellent", "place-disabled", "sneaking-bypass", "breakable-on-disabled",
+            "modify-on-disabled", "redefine-on-disabled", "prevent-unprotectable", "toggle-on-disabled",
+            "no-conflict", "no-player-place", "apply-to-all", "apply-to-reverse", "cuboid", "all",
+            "dynmap-disabled-by-default", "tekkit-block", "dynmap-no-toggle", "no-allowing"
+    };
+
+    /**
+     * Whether this flag is un-toggable
+     *
+     * @return
+     */
+    public boolean isUnToggable()
+    {
+        String flagStr = this.getString();
+
+        for (String flag : unToggable)
+        {
+            if (flag.equalsIgnoreCase(flagStr))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns a FieldFlag based on its flag string
+     *
+     * @param flagStr
+     * @return
+     */
+    public static FieldFlag getByString(String flagStr)
+    {
+        return flags.get(flagStr);
+    }
+
+    /**
+     * Returns the flag string for this flag
+     *
+     * @return
+     */
+    public String getString()
+    {
+        return String.valueOf(this).replace('_', '-');
+    }
+
+    static
+    {
+        for (FieldFlag flag : values())
+        {
+            flags.put(flag.getString(), flag);
+        }
+    }
 }

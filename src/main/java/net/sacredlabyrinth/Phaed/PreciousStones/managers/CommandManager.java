@@ -724,7 +724,7 @@ public final class CommandManager implements CommandExecutor
                                         }
                                     }
 
-                                    if (plugin.getSettingsManager().isUnToggable(flagStr))
+                                    if (FieldFlag.getByString(flagStr).isUnToggable())
                                     {
                                         unToggable = true;
                                     }
