@@ -473,6 +473,7 @@ public final class TranslocationManager
     public void importBlocks(Field field, Player player, List<BlockTypeEntry> entries)
     {
         ProcessResult result = processBlocks(field, player, entries);
+
         Queue<TranslocationBlock> tbs = result.tbs;
         int notImported = result.notImported;
 
@@ -561,9 +562,12 @@ public final class TranslocationManager
 
         Map<Integer, BlockTypeEntry> map = new HashMap<Integer, BlockTypeEntry>();
 
-        for (BlockTypeEntry e : entries)
+        if (entries != null)
         {
-            map.put(e.getTypeId(), e);
+            for (BlockTypeEntry e : entries)
+            {
+                map.put(e.getTypeId(), e);
+            }
         }
 
         for (int x = minx; x <= maxx; x++)
