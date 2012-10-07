@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -157,7 +157,7 @@ public abstract class AbstractVec
      */
     public Location getLocation()
     {
-        return new Location(PreciousStones.getInstance().getServer().getWorld(getWorld()), getX(), getY(), getZ());
+        return new Location(Bukkit.getServer().getWorld(getWorld()), getX(), getY(), getZ());
     }
 
     /**
@@ -165,7 +165,7 @@ public abstract class AbstractVec
      */
     public Block getBlock()
     {
-        World world = PreciousStones.getInstance().getServer().getWorld(getWorld());
+        World world = Bukkit.getServer().getWorld(getWorld());
 
         if (world != null)
         {

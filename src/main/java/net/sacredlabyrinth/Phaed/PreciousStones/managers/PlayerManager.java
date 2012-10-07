@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -159,5 +160,15 @@ public class PlayerManager
         }
 
         return false;
+    }
+
+    public void savePlayerEntries()
+    {
+        Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+
+        for(Player player : onlinePlayers)
+        {
+            plugin.getStorageManager().offerPlayer(player.getName());
+        }
     }
 }

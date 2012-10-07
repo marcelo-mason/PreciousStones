@@ -103,6 +103,35 @@ public class PSEntityListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
+    public void onFoodLevelChange(FoodLevelChangeEvent event)
+    {
+        if (event.getEntity() instanceof Player)
+        {
+            Player player = (Player) event.getEntity();
+
+            if (player.getFoodLevel() < event.getFoodLevel())
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.TELEPORT_ON_FEEDING);
+
+                if (field != null)
+                {
+                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        event.setCancelled(true);
+                        plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceFeeding");
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDamageByBlock(EntityDamageByBlockEvent event)
     {
         Entity entity = event.getEntity();
@@ -490,6 +519,40 @@ public class PSEntityListener implements Listener
 
         DebugTimer dt = new DebugTimer("onEntityDamage");
 
+        if (event.getEntity() instanceof Player)
+        {
+            Player player = (Player) event.getEntity();
+
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.TELEPORT_ON_DAMAGE);
+
+            if (field != null)
+            {
+                boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    event.setCancelled(true);
+                    plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceDamage");
+                }
+            }
+
+            if (player.getHealth() - event.getDamage() < 0)
+            {
+                field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.TELEPORT_BEFORE_DEATH);
+
+                if (field != null)
+                {
+                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        event.setCancelled(true);
+                        plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceDeath");
+                    }
+                }
+            }
+        }
+
         if (event.getEntity() instanceof Ageable)
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_ANIMALS);
@@ -515,7 +578,6 @@ public class PSEntityListener implements Listener
                 }
             }
         }
-
 
         if (event.getEntity() instanceof Villager)
         {
@@ -668,6 +730,21 @@ public class PSEntityListener implements Listener
                                 plugin.getCommunicationManager().warnPvP(attacker, victim, field);
                                 return;
                             }
+                        }
+                    }
+
+                    // -------------------------------------------------------------------------------- pvp inside a teleport field
+
+                    field = plugin.getForceFieldManager().getEnabledSourceField(victim.getLocation(), FieldFlag.TELEPORT_ON_PVP);
+
+                    if (field != null)
+                    {
+                        boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, attacker.getName());
+
+                        if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            sub.setCancelled(true);
+                            plugin.getTeleportationManager().teleport(attacker, field, "teleportAnnouncePvp");
                         }
                     }
                 }

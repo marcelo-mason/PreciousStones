@@ -41,6 +41,7 @@ public class PreciousStones extends JavaPlugin
     private CombatTagManager combatTagManager;
     private ConfiscationManager confiscationManager;
     private TranslocationManager translocationManager;
+    private TeleportationManager teleportationManager;
     private PotionManager potionManager;
     private PSPlayerListener playerListener;
     private PSBlockListener blockListener;
@@ -48,17 +49,6 @@ public class PreciousStones extends JavaPlugin
     private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
     private PSServerListener serverListener;
-
-    //TODO use a better pattern when scanning grief
-
-    /*
-     * Fake main to allow us to run from netbeans
-     */
-    public static void main(String[] args)
-    {
-
-
-    }
 
     /**
      * @return the instance
@@ -79,11 +69,11 @@ public class PreciousStones extends JavaPlugin
     /**
      * @return the logger
      */
-    public static void debug(String msg, Object... arg)
+    public static void debug(Object msg, Object... arg)
     {
         if (getInstance().getSettingsManager().isDebugging())
         {
-            logger.info(String.format(msg, arg));
+            logger.info(String.format(msg.toString(), arg));
         }
     }
 
@@ -94,9 +84,9 @@ public class PreciousStones extends JavaPlugin
      * @param msg   the message
      * @param arg   the arguments
      */
-    public static void log(Level level, String msg, Object... arg)
+    public static void log(Level level, Object msg, Object... arg)
     {
-        logger.log(level, new StringBuilder().append("[PreciousStones] ").append(ChatBlock.format(msg, arg)).toString());
+        logger.log(level, new StringBuilder().append("[PreciousStones] ").append(ChatBlock.format(msg.toString(), arg)).toString());
     }
 
     /**
@@ -105,7 +95,7 @@ public class PreciousStones extends JavaPlugin
      * @param msg
      * @param arg
      */
-    public static void log(String msg, Object... arg)
+    public static void log(Object msg, Object... arg)
     {
         log(Level.INFO, msg, arg);
     }
@@ -145,6 +135,7 @@ public class PreciousStones extends JavaPlugin
         confiscationManager = new ConfiscationManager();
         potionManager = new PotionManager();
         translocationManager = new TranslocationManager();
+        teleportationManager = new TeleportationManager();
 
         playerListener = new PSPlayerListener();
         blockListener = new PSBlockListener();
@@ -185,6 +176,7 @@ public class PreciousStones extends JavaPlugin
     {
         getVisualizationManager().revertAll();
         getForceFieldManager().finalize();
+        getPlayerManager().savePlayerEntries();
         getStorageManager().processQueue();
         getServer().getScheduler().cancelTasks(this);
         getStorageManager().closeConnection();
@@ -405,5 +397,10 @@ public class PreciousStones extends JavaPlugin
     public LanguageManager getLanguageManager()
     {
         return languageManager;
+    }
+
+    public TeleportationManager getTeleportationManager()
+    {
+        return teleportationManager;
     }
 }

@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ItemStackEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,7 +14,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,14 +166,14 @@ public class TranslocationBlock extends AbstractVec
 
     public Location getRelativeLocation()
     {
-        World world = PreciousStones.getInstance().getServer().getWorld(getWorld());
+        World world = Bukkit.getServer().getWorld(getWorld());
         Location location = new Location(world, rx, ry, rz);
         return location;
     }
 
     public Location getRelativeLocation(Field currentField)
     {
-        World world = PreciousStones.getInstance().getServer().getWorld(getWorld());
+        World world = Bukkit.getServer().getWorld(getWorld());
 
         Location location = new Location(world, rx, ry, rz);
         location = location.add(currentField.getLocation());

@@ -379,6 +379,18 @@ public final class PermissionsManager
     }
 
     /**
+     * Charge player money
+     *
+     * @param playerName
+     * @param amount
+     * @return
+     */
+    public boolean playerCharge(String playerName, double amount)
+    {
+        return economy.withdrawPlayer(playerName, amount).transactionSuccess();
+    }
+
+    /**
      * Return money to player
      *
      * @param player
@@ -400,6 +412,18 @@ public final class PermissionsManager
     public static boolean hasMoney(Player player, double amount)
     {
         return economy.has(player.getName(), amount);
+    }
+
+    /**
+     * Check whether player has money
+     *
+     * @param playerName
+     * @param amount
+     * @return
+     */
+    public static boolean hasMoney(String playerName, double amount)
+    {
+        return economy.has(playerName, amount);
     }
 
     public boolean lwcProtected(Player player, Block block)

@@ -1,7 +1,11 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -28,6 +32,11 @@ public class PlayerEntry
     private ItemStackEntry confiscatedChestplate = null;
     private ItemStackEntry confiscatedLeggings = null;
     private ItemStackEntry confiscatedBoots = null;
+    private boolean teleporting = false;
+    private int teleportSecondsRemaining = 0;
+    private Vec teleportVec = null;
+    private boolean teleportPending = false;
+    private int task;
 
     /**
      */
@@ -83,7 +92,7 @@ public class PlayerEntry
     {
         List<ItemStackEntry> out = new ArrayList<ItemStackEntry>();
 
-        for(Object stackEntry : confiscatedInventory)
+        for (Object stackEntry : confiscatedInventory)
         {
             out.add(new ItemStackEntry((JSONObject) stackEntry));
         }
@@ -324,6 +333,21 @@ public class PlayerEntry
             json.put("boots", confiscatedBoots.serialize());
         }
 
+        if (teleportSecondsRemaining > 0)
+        {
+            json.put("teleportSecondsRemaining", teleportSecondsRemaining);
+        }
+
+        if (teleportVec != null)
+        {
+            json.put("teleportVec", teleportVec.serialize());
+        }
+
+        if (teleportPending)
+        {
+            json.put("teleportPending", teleportPending);
+        }
+
         json.put("density", density);
 
         return json.toString();
@@ -371,22 +395,54 @@ public class PlayerEntry
 
                         if (flag.equals("helmet"))
                         {
-                            confiscatedHelmet = new ItemStackEntry((JSONObject)flags.get(flag));
+                            confiscatedHelmet = new ItemStackEntry((JSONObject) flags.get(flag));
                         }
 
                         if (flag.equals("chestplate"))
                         {
-                            confiscatedChestplate = new ItemStackEntry((JSONObject)flags.get(flag));
+                            confiscatedChestplate = new ItemStackEntry((JSONObject) flags.get(flag));
                         }
 
                         if (flag.equals("leggings"))
                         {
-                            confiscatedLeggings = new ItemStackEntry((JSONObject)flags.get(flag));
+                            confiscatedLeggings = new ItemStackEntry((JSONObject) flags.get(flag));
                         }
 
                         if (flag.equals("boots"))
                         {
-                            confiscatedBoots = new ItemStackEntry((JSONObject)flags.get(flag));
+                            confiscatedBoots = new ItemStackEntry((JSONObject) flags.get(flag));
+                        }
+
+                        if (flag.equals("teleportSecondsRemaining"))
+                        {
+                            teleportSecondsRemaining = ((Long) flags.get(flag)).intValue();
+                        }
+
+                        if (flag.equals("teleportVec"))
+                        {
+                            teleportVec = new Vec(flags.get(flag).toString());
+                        }
+
+                        if (flag.equals("teleportPending"))
+                        {
+                            teleportPending = (Boolean) flags.get(flag);
+                        }
+
+                        // player still needs teleport
+
+                        if (teleportSecondsRemaining > 0)
+                        {
+                            if (teleportVec != null)
+                            {
+                                startTeleportCountDown();
+                            }
+                        }
+                        else
+                        {
+                            if (teleportPending)
+                            {
+                                tryTeleport();
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -403,6 +459,43 @@ public class PlayerEntry
                 }
             }
         }
+    }
+
+    public void startTeleportCountDown()
+    {
+        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(PreciousStones.getInstance(), new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                teleportSecondsRemaining -= 1;
+
+                if (teleportSecondsRemaining <= 0)
+                {
+                    tryTeleport();
+
+                    Bukkit.getServer().getScheduler().cancelTask(task);
+                }
+            }
+        }, 20, 20);
+    }
+
+    private void tryTeleport()
+    {
+        Player player = Helper.matchSinglePlayer(name);
+
+        if (player != null)
+        {
+            player.teleport(teleportVec.getLocation());
+            teleportSecondsRemaining = 0;
+            teleportVec = null;
+        }
+        else
+        {
+            teleportPending = true;
+        }
+
+        PreciousStones.getInstance().getStorageManager().offerPlayer(name);
     }
 
     public int getDensity()
@@ -423,5 +516,35 @@ public class PlayerEntry
     public void setSuperduperpickaxe(boolean superduperpickaxe)
     {
         this.superduperpickaxe = superduperpickaxe;
+    }
+
+    public boolean isTeleporting()
+    {
+        return teleporting;
+    }
+
+    public void setTeleporting(boolean teleporting)
+    {
+        this.teleporting = teleporting;
+    }
+
+    public int getTeleportSecondsRemaining()
+    {
+        return teleportSecondsRemaining;
+    }
+
+    public void setTeleportSecondsRemaining(int teleportSecondsRemaining)
+    {
+        this.teleportSecondsRemaining = teleportSecondsRemaining;
+    }
+
+    public Vec getTeleportVec()
+    {
+        return teleportVec;
+    }
+
+    public void setTeleportVec(Vec teleportVec)
+    {
+        this.teleportVec = teleportVec;
     }
 }

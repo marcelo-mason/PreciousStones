@@ -2,10 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeExact;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -272,7 +269,7 @@ public class Helper
      */
     public static Player matchSinglePlayer(String playername)
     {
-        List<Player> players = PreciousStones.getInstance().getServer().matchPlayer(playername);
+        List<Player> players = Bukkit.getServer().matchPlayer(playername);
 
         if (players.size() == 1)
         {
@@ -692,7 +689,7 @@ public class Helper
      * @param rawList
      * @return
      */
-    public static List<BlockTypeEntry> toTypeEntrieBlind(List<Object> rawList)
+    public static List<BlockTypeEntry> toTypeEntriesBlind(List<Object> rawList)
     {
         List<BlockTypeEntry> types = new ArrayList<BlockTypeEntry>();
 
@@ -747,7 +744,7 @@ public class Helper
         int z = Integer.parseInt(unpacked[4]);
         String world = unpacked[5];
 
-        World w = PreciousStones.getInstance().getServer().getWorld(world);
+        World w = Bukkit.getServer().getWorld(world);
 
         return new Location(w, x, y, z);
     }

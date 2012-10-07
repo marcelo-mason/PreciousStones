@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -110,7 +110,7 @@ public class BlockEntry
         int z = Integer.parseInt(unpacked[4]);
         String world = unpacked[5].toString();
 
-        World w = PreciousStones.getInstance().getServer().getWorld(world);
+        World w = Bukkit.getServer().getWorld(world);
 
         this.location = new Location(w, x, y, z);
     }

@@ -19,6 +19,7 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -67,9 +68,30 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerRespawn(final PlayerRespawnEvent event)
+    public void onPlayerRespawn(PlayerRespawnEvent event)
     {
         handlePlayerSpawn(event.getPlayer());
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerSneak(PlayerToggleSneakEvent event)
+    {
+        Player player = event.getPlayer();
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.TELEPORT_ON_SNEAK);
+
+        if (field != null)
+        {
+            boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+            if (allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            {
+                plugin.getTeleportationManager().teleport(player, field);
+            }
+        }
     }
 
     /**
@@ -80,6 +102,554 @@ public class PSPlayerListener implements Listener
     {
         handlePlayerSpawn(event.getPlayer());
     }
+
+    private void handlePlayerSpawn(Player player)
+    {
+        // refund confiscated items if not in confiscation fields
+
+        Field confField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.CONFISCATE_ITEMS);
+
+        if (confField == null)
+        {
+            plugin.getConfiscationManager().returnItems(player);
+        }
+
+        // undo a player's visualization if it exists
+
+        if (plugin.getSettingsManager().isVisualizeEndOnMove())
+        {
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
+            {
+                if (!plugin.getCuboidManager().hasOpenCuboid(player))
+                {
+                    plugin.getVisualizationManager().revertVisualization(player);
+                }
+            }
+        }
+
+        // remove player from any entry field he is not currently in
+
+        List<Field> entryFields = plugin.getEntryManager().getPlayerEntryFields(player);
+
+        if (entryFields != null)
+        {
+            for (Field entryField : entryFields)
+            {
+                if (!entryField.envelops(player.getLocation()))
+                {
+                    plugin.getEntryManager().leaveField(player, entryField);
+
+                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryField))
+                    {
+                        plugin.getEntryManager().leaveOverlappedArea(player, entryField);
+                    }
+                }
+            }
+        }
+
+        // get all the fields the player is currently standing in
+
+        List<Field> currentFields = plugin.getForceFieldManager().getEnabledSourceFields(player.getLocation(), FieldFlag.ALL);
+
+        // check for prevent-entry fields and teleport him away if hes not allowed in it
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entry"))
+        {
+            for (Field field : currentFields)
+            {
+                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
+                {
+                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
+
+                        if (outside != null)
+                        {
+                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
+
+                            if (f != null)
+                            {
+                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                {
+                                    loc = outside;
+                                }
+                            }
+                        }
+
+                        player.teleport(loc);
+                        plugin.getCommunicationManager().warnEntry(player, field);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // did not get teleported out so now we update his last known outside location
+
+        plugin.getPlayerManager().updateOutsideLocation(player);
+
+        // enter all fields hes is not currently entered into yet
+
+        for (Field currentField : currentFields)
+        {
+            if (!plugin.getEntryManager().enteredField(player, currentField))
+            {
+                if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentField))
+                {
+                    plugin.getEntryManager().enterOverlappedArea(player, currentField);
+                }
+                plugin.getEntryManager().enterField(player, currentField);
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerTeleport(PlayerTeleportEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getTo(), FieldFlag.PREVENT_TELEPORT);
+
+        if (field != null)
+        {
+            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, event.getPlayer().getName());
+
+            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            {
+                if (!plugin.getPermissionsManager().has(event.getPlayer(), "preciousstones.bypass.teleport"))
+                {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+
+        handlePlayerTeleport(event);
+    }
+
+    private void handlePlayerTeleport(PlayerTeleportEvent event)
+    {
+        DebugTimer dt = new DebugTimer("onPlayerTeleport");
+        Player player = event.getPlayer();
+
+        if (event.getFrom() == null || event.getTo() == null)
+        {
+            return;
+        }
+
+        if (Helper.isSameLocation(event.getFrom(), event.getTo()))
+        {
+            return;
+        }
+
+        // undo a player's visualization if it exists
+
+        if (!Helper.isSameBlock(event.getFrom(), event.getTo()))
+        {
+            if (plugin.getSettingsManager().isVisualizeEndOnMove())
+            {
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
+                {
+                    if (!plugin.getCuboidManager().hasOpenCuboid(player))
+                    {
+                        plugin.getVisualizationManager().revertVisualization(player);
+                    }
+                }
+            }
+        }
+
+        // remove player from any entry field he is currently in that he is not going to be standing in
+
+        List<Field> currentFields = plugin.getEntryManager().getPlayerEntryFields(player);
+
+        if (currentFields != null)
+        {
+            for (Field entryField : currentFields)
+            {
+                if (!entryField.envelops(event.getTo()))
+                {
+                    plugin.getEntryManager().leaveField(player, entryField);
+
+                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryField))
+                    {
+                        plugin.getEntryManager().leaveOverlappedArea(player, entryField);
+                    }
+                }
+            }
+        }
+
+        // get all the fields the player is going to be standing in
+
+        List<Field> futureFields = plugin.getForceFieldManager().getEnabledSourceFields(event.getTo(), FieldFlag.ALL);
+
+        // check for prevent-entry fields and teleport him away if hes not allowed in it
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entry"))
+        {
+            for (Field field : futureFields)
+            {
+                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
+                {
+                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
+
+                        if (outside != null)
+                        {
+                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
+
+                            if (f != null)
+                            {
+                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                {
+                                    loc = outside;
+                                }
+                            }
+                        }
+
+                        event.setTo(loc);
+                        plugin.getCommunicationManager().warnEntry(player, field);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // did not get teleported out so now we update his last known outside location
+
+        plugin.getPlayerManager().updateOutsideLocation(player);
+
+        // enter all future fields hes is not currently entered into yet
+
+        for (Field currentField : futureFields)
+        {
+            if (!plugin.getEntryManager().enteredField(player, currentField))
+            {
+                if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentField))
+                {
+                    plugin.getEntryManager().enterOverlappedArea(player, currentField);
+                }
+                plugin.getEntryManager().enterField(player, currentField);
+            }
+        }
+
+        if (plugin.getSettingsManager().isDebug())
+        {
+            dt.logProcessTime();
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerMove(PlayerMoveEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
+        {
+            return;
+        }
+
+        handlePlayerMove(event);
+    }
+
+    private void handlePlayerMove(PlayerMoveEvent event)
+    {
+        DebugTimer dt = new DebugTimer("onPlayerMove");
+        final Player player = event.getPlayer();
+
+        if (event.getFrom() == null || event.getTo() == null)
+        {
+            return;
+        }
+
+        if (Helper.isSameLocation(event.getFrom(), event.getTo()))
+        {
+            return;
+        }
+
+        // undo a player's visualization if it exists
+
+        if (!Helper.isSameBlock(event.getFrom(), event.getTo()))
+        {
+            if (plugin.getSettingsManager().isVisualizeEndOnMove())
+            {
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
+                {
+                    if (!plugin.getCuboidManager().hasOpenCuboid(player))
+                    {
+                        plugin.getVisualizationManager().revertVisualization(player);
+                    }
+                }
+            }
+        }
+
+        // remove player from any entry field he is currently in that he is not going to be standing in
+
+        List<Field> currentFields = plugin.getEntryManager().getPlayerEntryFields(player);
+
+        if (currentFields != null)
+        {
+            for (Field entryField : currentFields)
+            {
+                if (!entryField.envelops(event.getTo()))
+                {
+                    plugin.getEntryManager().leaveField(player, entryField);
+
+                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryField))
+                    {
+                        plugin.getEntryManager().leaveOverlappedArea(player, entryField);
+                    }
+                }
+            }
+        }
+
+        // get all the fields the player is going to be standing in
+
+        List<Field> futureFields = plugin.getForceFieldManager().getEnabledSourceFields(event.getTo(), FieldFlag.ALL);
+
+        // check for prevent-entry fields and teleport him away if hes not allowed in it
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entry"))
+        {
+            for (Field field : futureFields)
+            {
+                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
+                {
+                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
+
+                        if (outside != null)
+                        {
+                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
+
+                            if (f != null)
+                            {
+                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                {
+                                    loc = outside;
+                                }
+                            }
+                        }
+
+                        event.setTo(loc);
+                        plugin.getCommunicationManager().warnEntry(player, field);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // teleport due to walking on blocks
+
+        for (Field field : futureFields)
+        {
+            if (field.hasFlag(FieldFlag.TELEPORT_IF_NOT_WALKING_ON) || field.hasFlag(FieldFlag.TELEPORT_IF_WALKING_ON))
+            {
+                if (field.getSettings().teleportDueToWalking(event.getTo(), field))
+                {
+                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    {
+                        plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceWalking");
+                    }
+                }
+            }
+        }
+
+        // did not get teleported out so now we update his last known outside location
+
+        plugin.getPlayerManager().updateOutsideLocation(player);
+
+        // enter all future fields hes is not currently entered into yet
+
+        for (final Field futureField : futureFields)
+        {
+            if (!plugin.getEntryManager().enteredField(player, futureField))
+            {
+                if (!plugin.getEntryManager().containsSameNameOwnedField(player, futureField))
+                {
+                    plugin.getEntryManager().enterOverlappedArea(player, futureField);
+                }
+                plugin.getEntryManager().enterField(player, futureField);
+            }
+
+            if (futureField.hasFlag(FieldFlag.TELEPORT_IF_HAS_ITEMS) || futureField.hasFlag(FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS))
+            {
+                PlayerInventory inventory = player.getInventory();
+                ItemStack[] contents = inventory.getContents();
+                boolean hasItem = false;
+
+                for (ItemStack stack : contents)
+                {
+                    if (stack == null || stack.getTypeId() == 0)
+                    {
+                        continue;
+                    }
+
+                    if (futureField.hasFlag(FieldFlag.TELEPORT_IF_HAS_ITEMS))
+                    {
+                        if (futureField.getSettings().isTeleportHasItem(stack.getTypeId()))
+                        {
+                            boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(futureField, player.getName());
+
+                            if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                            {
+                                PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+
+                                if (!entry.isTeleporting())
+                                {
+                                    entry.setTeleporting(true);
+                                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                    {
+                                        @Override
+                                        public void run()
+                                        {
+                                            plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHasItems");
+                                        }
+                                    }, 0);
+                                }
+                                return;
+                            }
+                        }
+                    }
+
+                    if (futureField.hasFlag(FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS))
+                    {
+                        if (futureField.getSettings().isTeleportHasNotItem(stack.getTypeId()))
+                        {
+                            hasItem = true;
+                        }
+                    }
+                }
+
+                if (!hasItem)
+                {
+                    if (futureField.hasFlag(FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS))
+                    {
+                        boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(futureField, player.getName());
+
+                        if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+
+                            if (!entry.isTeleporting())
+                            {
+                                entry.setTeleporting(true);
+                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHasItems");
+                                    }
+                                }, 0);
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+
+            if (futureField.hasFlag(FieldFlag.TELEPORT_IF_HOLDING_ITEMS))
+            {
+                ItemStack itemInHand = player.getItemInHand();
+
+                if (itemInHand != null && itemInHand.getTypeId() != 0)
+                {
+                    if (futureField.getSettings().isTeleportHoldingItem(itemInHand.getTypeId()))
+                    {
+                        boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(futureField, player.getName());
+
+                        if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+
+                            if (!entry.isTeleporting())
+                            {
+                                entry.setTeleporting(true);
+                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHoldingItems");
+                                    }
+                                }, 0);
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+
+            if (futureField.hasFlag(FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS))
+            {
+                ItemStack itemInHand = player.getItemInHand();
+
+                if (itemInHand != null && itemInHand.getTypeId() != 0)
+                {
+                    if (!futureField.getSettings().isTeleportNotHoldingItem(itemInHand.getTypeId()))
+                    {
+                        boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(futureField, player.getName());
+
+                        if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        {
+                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+
+                            if (!entry.isTeleporting())
+                            {
+                                entry.setTeleporting(true);
+                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHoldingItems");
+                                    }
+                                }, 0);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (plugin.getSettingsManager().isDebug())
+        {
+            dt.logProcessTime();
+        }
+    }
+
 
     /**
      * @param event
@@ -801,7 +1371,6 @@ public class PSPlayerListener implements Listener
         }
     }
 
-
     private boolean showInfo(Field field, Player player)
     {
         Block block = field.getBlock();
@@ -823,278 +1392,6 @@ public class PSPlayerListener implements Listener
             return false;
         }
     }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerTeleport(PlayerTeleportEvent event)
-    {
-        if (event.isCancelled())
-        {
-            return;
-        }
-
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getTo(), FieldFlag.PREVENT_TELEPORT);
-
-        if (field != null)
-        {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, event.getPlayer().getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-            {
-                if (!plugin.getPermissionsManager().has(event.getPlayer(), "preciousstones.bypass.teleport"))
-                {
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-        }
-
-        handlePlayerMove(event);
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerMove(PlayerMoveEvent event)
-    {
-        if (event.isCancelled())
-        {
-            return;
-        }
-
-        if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
-        {
-            return;
-        }
-
-        handlePlayerMove(event);
-    }
-
-    private void handlePlayerMove(PlayerMoveEvent event)
-    {
-        DebugTimer dt = new DebugTimer("onPlayerMove");
-        Player player = event.getPlayer();
-
-        if (event.getFrom() == null || event.getTo() == null)
-        {
-            return;
-        }
-
-        if (Helper.isSameLocation(event.getFrom(), event.getTo()))
-        {
-            return;
-        }
-
-        // undo a player's visualization if it exists
-
-        if (!Helper.isSameBlock(event.getFrom(), event.getTo()))
-        {
-            if (plugin.getSettingsManager().isVisualizeEndOnMove())
-            {
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
-                {
-                    if (!plugin.getCuboidManager().hasOpenCuboid(player))
-                    {
-                        plugin.getVisualizationManager().revertVisualization(player);
-                    }
-                }
-            }
-        }
-
-        // remove player from any entry field he is not currently in
-
-        List<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
-
-        if (entryfields != null)
-        {
-            for (Field entryfield : entryfields)
-            {
-                if (!entryfield.envelops(player.getLocation()))
-                {
-                    plugin.getEntryManager().leaveField(player, entryfield);
-
-                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryfield))
-                    {
-                        plugin.getEntryManager().leaveOverlappedArea(player, entryfield);
-                    }
-                }
-            }
-        }
-
-        // get all the fields the player is currently standing in
-
-        List<Field> currentfields = plugin.getForceFieldManager().getEnabledSourceFields(player.getLocation(), FieldFlag.ALL);
-
-        // check for prevent-entry fields and teleport him away if hes not allowed in it
-
-        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entry"))
-        {
-            for (Field field : currentfields)
-            {
-                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
-                {
-                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                    {
-                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
-                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
-
-                        if (outside != null)
-                        {
-                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
-
-                            if (f != null)
-                            {
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                {
-                                    loc = outside;
-                                }
-                            }
-                        }
-
-                        event.setTo(loc);
-                        plugin.getCommunicationManager().warnEntry(player, field);
-                        return;
-                    }
-                }
-            }
-        }
-
-        // did not get teleported out so now we update his last known outside location
-
-        plugin.getPlayerManager().updateOutsideLocation(player);
-
-        // enter all fields hes is not currently entered into yet
-
-        for (Field currentfield : currentfields)
-        {
-            if (!plugin.getEntryManager().enteredField(player, currentfield))
-            {
-                if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentfield))
-                {
-                    plugin.getEntryManager().enterOverlappedArea(player, currentfield);
-                }
-                plugin.getEntryManager().enterField(player, currentfield);
-            }
-        }
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
-        }
-    }
-
-    private void handlePlayerSpawn(Player player)
-    {
-        // refund confiscated items if not in confiscation fields
-
-        Field confField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.CONFISCATE_ITEMS);
-
-        if (confField == null)
-        {
-            plugin.getConfiscationManager().returnItems(player);
-        }
-
-        // undo a player's visualization if it exists
-
-        if (plugin.getSettingsManager().isVisualizeEndOnMove())
-        {
-            if (!plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
-            {
-                if (!plugin.getCuboidManager().hasOpenCuboid(player))
-                {
-                    plugin.getVisualizationManager().revertVisualization(player);
-                }
-            }
-        }
-
-        // remove player from any entry field he is not currently in
-
-        List<Field> entryfields = plugin.getEntryManager().getPlayerEntryFields(player);
-
-        if (entryfields != null)
-        {
-            for (Field entryfield : entryfields)
-            {
-                if (!entryfield.envelops(player.getLocation()))
-                {
-                    plugin.getEntryManager().leaveField(player, entryfield);
-
-                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryfield))
-                    {
-                        plugin.getEntryManager().leaveOverlappedArea(player, entryfield);
-                    }
-                }
-            }
-        }
-
-        // get all the fields the player is currently standing in
-
-        List<Field> currentfields = plugin.getForceFieldManager().getEnabledSourceFields(player.getLocation(), FieldFlag.ALL);
-
-        // check for prevent-entry fields and teleport him away if hes not allowed in it
-
-        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entry"))
-        {
-            for (Field field : currentfields)
-            {
-                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
-                {
-                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                    {
-                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
-                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
-
-                        if (outside != null)
-                        {
-                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
-
-                            if (f != null)
-                            {
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                {
-                                    loc = outside;
-                                }
-                            }
-                        }
-
-                        player.teleport(loc);
-                        plugin.getCommunicationManager().warnEntry(player, field);
-                        return;
-                    }
-                }
-            }
-        }
-
-        // did not get teleported out so now we update his last known outside location
-
-        plugin.getPlayerManager().updateOutsideLocation(player);
-
-        // enter all fields hes is not currently entered into yet
-
-        for (Field currentfield : currentfields)
-        {
-            if (!plugin.getEntryManager().enteredField(player, currentfield))
-            {
-                if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentfield))
-                {
-                    plugin.getEntryManager().enterOverlappedArea(player, currentfield);
-                }
-                plugin.getEntryManager().enterField(player, currentfield);
-            }
-        }
-    }
-
 
     /**
      * @param event

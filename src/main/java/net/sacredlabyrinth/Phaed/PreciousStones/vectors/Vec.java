@@ -19,6 +19,24 @@ public class Vec extends AbstractVec
         super(x, y, z, world);
     }
 
+    public Vec(String serialized)
+    {
+        String[] unpacked = serialized.split("[:]");
+
+        this.setX(Integer.parseInt(unpacked[0]));
+        this.setY(Integer.parseInt(unpacked[1]));
+        this.setZ(Integer.parseInt(unpacked[2]));
+        this.setWorld(unpacked[3]);
+    }
+
+    /** /**
+     * @param vec
+     */
+    public Vec(Vec vec)
+    {
+        super(vec.getX(), vec.getY(), vec.getZ(), vec.getWorld());
+    }
+
     /**
      * @param block
      */
@@ -74,13 +92,40 @@ public class Vec extends AbstractVec
         return new Vec(this.getX() - x, this.getY() - y, this.getZ() - z, this.getWorld());
     }
 
-    public Vec(String packed)
+    /**
+     * @param vec
+     * @return
+     */
+    public Vec add(Vec vec)
     {
-        super(Integer.parseInt(packed.split("[|]")[0]), Integer.parseInt(packed.split("[|]")[1]), Integer.parseInt(packed.split("[|]")[2]), packed.split("[|]")[3]);
+        return new Vec(this.getX() + vec.getX(), this.getY() + vec.getY(), this.getZ() + vec.getZ(), this.getWorld());
     }
 
+    /**
+     * @param vec
+     * @return
+     */
+    public Vec subtract(Vec vec)
+    {
+        return new Vec(this.getX() - vec.getX(), this.getY() - vec.getY(), this.getZ() - vec.getZ(), this.getWorld());
+    }
+
+    /**
+     * @param m the int to multiply by
+     * @return
+     */
+    public Vec multiply(int m)
+    {
+        return new Vec(this.getX() * m, this.getY() * m, this.getZ() * m, this.getWorld());
+    }
+
+    /**
+     * Serializes the block into a string
+     *
+     * @return
+     */
     public String serialize()
     {
-        return getX() + "|" + getY() + "|" + getZ() + "|" + getBlock();
+        return this.getX() + ":" + this.getY() + ":" + this.getZ()  + ":" + this.getWorld();
     }
 }

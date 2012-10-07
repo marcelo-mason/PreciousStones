@@ -22,7 +22,7 @@ public class LanguageManager
             "\n# 4. If you change a command, make sure it's corresponding menu item matches",
             "\n# 5. When new text is added on future versions, they will be added automatically to your language.yml file",
             "\n#",
-            "\n# Colors: {black}, {blue}, {white}, {yellow}, {gold}, {gray}, {green}, {red} ",
+            "\n# Colors: {aqua}, {black}, {blue}, {white}, {yellow}, {gold}, {gray}, {green}, {red} ",
             "\n#         {dark-aqua}, {dark-blue}, {dark-gray}, {dark-green}, {dark-purple}, {dark-red}, {light-purple}",
             "\n#         {magic}, {bold}, {italic}, {reset}, {strikethrough}, {underline}\n\n",
     };

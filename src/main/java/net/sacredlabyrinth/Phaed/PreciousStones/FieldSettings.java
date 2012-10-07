@@ -2,7 +2,9 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.potion.PotionEffectType;
@@ -48,6 +50,14 @@ public class FieldSettings
     private String title;
     private int price = 0;
     private int refund = -1;
+    private int teleportCost = 0;
+    private int teleportBackAfterSeconds = 0;
+    private List<Integer> teleportIfHoldingItems = new ArrayList<Integer>();
+    private List<Integer> teleportIfNotHoldingItems = new ArrayList<Integer>();
+    private List<Integer> teleportIfHasItems = new ArrayList<Integer>();
+    private List<Integer> teleportIfNotHasItems = new ArrayList<Integer>();
+    private List<BlockTypeEntry> teleportIfWalkingOn = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> teleportIfNotWalkingOn = new ArrayList<BlockTypeEntry>();
     private List<Integer> treeTypes = new ArrayList<Integer>();
     private List<Integer> shrubTypes = new ArrayList<Integer>();
     private List<String> creatureTypes = new ArrayList<String>();
@@ -285,7 +295,7 @@ public class FieldSettings
 
         if (map.containsKey("confiscate-items") && Helper.isStringList(map.get("confiscate-items")))
         {
-            confiscatedItems = Helper.toTypeEntrieBlind((List<Object>) map.get("confiscate-items"));
+            confiscatedItems = Helper.toTypeEntriesBlind((List<Object>) map.get("confiscate-items"));
 
             if (!confiscatedItems.isEmpty())
             {
@@ -305,7 +315,7 @@ public class FieldSettings
 
         if (map.containsKey("equip-items") && Helper.isStringList(map.get("equip-items")))
         {
-            equipItems = Helper.toTypeEntrieBlind((List<Object>) map.get("equip-items"));
+            equipItems = Helper.toTypeEntriesBlind((List<Object>) map.get("equip-items"));
 
             if (!equipItems.isEmpty())
             {
@@ -365,17 +375,17 @@ public class FieldSettings
 
         if (map.containsKey("translocation-blacklist") && Helper.isStringList(map.get("translocation-blacklists")))
         {
-            translocationBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("translocation-blacklist"));
+            translocationBlacklist = Helper.toTypeEntriesBlind((List<Object>) map.get("translocation-blacklist"));
         }
 
         if (map.containsKey("prevent-place-blacklist") && Helper.isStringList(map.get("prevent-place-blacklists")))
         {
-            preventPlaceBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("prevent-place-blacklist"));
+            preventPlaceBlacklist = Helper.toTypeEntriesBlind((List<Object>) map.get("prevent-place-blacklist"));
         }
 
         if (map.containsKey("prevent-destroy-blacklist") && Helper.isStringList(map.get("prevent-destroy-blacklists")))
         {
-            preventDestroyBlacklist = Helper.toTypeEntrieBlind((List<Object>) map.get("prevent-destroy-blacklist"));
+            preventDestroyBlacklist = Helper.toTypeEntriesBlind((List<Object>) map.get("prevent-destroy-blacklist"));
         }
 
         if (map.containsKey("allowed-only-inside") && Helper.isStringList(map.get("allowed-only-inside")))
@@ -1024,6 +1034,239 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("teleport-if-walking-on") && Helper.isStringList(map.get("teleport-if-walking-on")))
+        {
+            teleportIfWalkingOn = Helper.toTypeEntriesBlind((List<Object>) map.get("teleport-if-walking-on"));
+
+            if (teleportIfWalkingOn != null && teleportIfWalkingOn.size() > 0)
+            {
+                defaultFlags.add(FieldFlag.TELEPORTER);
+                defaultFlags.add(FieldFlag.TELEPORT_IF_WALKING_ON);
+            }
+        }
+
+        if (map.containsKey("teleport-if-not-walking-on") && Helper.isStringList(map.get("teleport-if-not-walking-on")))
+        {
+            teleportIfNotWalkingOn = Helper.toTypeEntriesBlind((List<Object>) map.get("teleport-if-not-walking-on"));
+
+            if (teleportIfNotWalkingOn != null && teleportIfNotWalkingOn.size() > 0)
+            {
+                defaultFlags.add(FieldFlag.TELEPORTER);
+                defaultFlags.add(FieldFlag.TELEPORT_IF_NOT_WALKING_ON);
+            }
+        }
+
+        if (map.containsKey("teleport-if-holding-items") && Helper.isIntList(map.get("teleport-if-holding-items")))
+        {
+            teleportIfHoldingItems = (List<Integer>) map.get("teleport-if-holding-items");
+
+            if (teleportIfHoldingItems != null && teleportIfHoldingItems.size() > 0)
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_IF_HOLDING_ITEMS);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-if-not-holding-items") && Helper.isIntList(map.get("teleport-if-not-holding-items")))
+        {
+            teleportIfNotHoldingItems = (List<Integer>) map.get("teleport-if-not-holding-items");
+
+            if (teleportIfNotHoldingItems != null && teleportIfNotHoldingItems.size() > 0)
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-if-has-items") && Helper.isIntList(map.get("teleport-if-has-items")))
+        {
+            teleportIfHasItems = (List<Integer>) map.get("teleport-if-has-items");
+
+            if (teleportIfHasItems != null && teleportIfHasItems.size() > 0)
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_IF_HAS_ITEMS);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-if-not-has-items") && Helper.isIntList(map.get("teleport-if-not-has-items")))
+        {
+            teleportIfNotHasItems = (List<Integer>) map.get("teleport-if-not-has-items");
+
+            if (teleportIfNotHasItems != null && teleportIfNotHasItems.size() > 0)
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-before-death") && Helper.isBoolean(map.get("teleport-before-death")))
+        {
+            if ((Boolean) map.get("teleport-before-death"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_BEFORE_DEATH);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-damage") && Helper.isBoolean(map.get("teleport-on-damage")))
+        {
+            if ((Boolean) map.get("teleport-on-damage"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_DAMAGE);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-feeding") && Helper.isBoolean(map.get("teleport-on-feeding")))
+        {
+            if ((Boolean) map.get("teleport-on-feeding"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_FEEDING);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-mobs-on-enable") && Helper.isBoolean(map.get("teleport-mobs-on-enable")))
+        {
+            if ((Boolean) map.get("teleport-mobs-on-enable"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_MOBS_ON_ENABLE);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-animals-on-enable") && Helper.isBoolean(map.get("teleport-animals-on-enable")))
+        {
+            if ((Boolean) map.get("teleport-animals-on-enable"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-players-on-enable") && Helper.isBoolean(map.get("teleport-players-on-enable")))
+        {
+            if ((Boolean) map.get("teleport-players-on-enable"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-villagers-on-enable") && Helper.isBoolean(map.get("teleport-villagers-on-enable")))
+        {
+            if ((Boolean) map.get("teleport-villagers-on-enable"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-fire") && Helper.isBoolean(map.get("teleport-on-fire")))
+        {
+            if ((Boolean) map.get("teleport-on-fire"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_FIRE);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-pvp") && Helper.isBoolean(map.get("teleport-on-pvp")))
+        {
+            if ((Boolean) map.get("teleport-on-pvp"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_PVP);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-block-place") && Helper.isBoolean(map.get("teleport-on-block-place")))
+        {
+            if ((Boolean) map.get("teleport-on-block-place"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_BLOCK_PLACE);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-block-break") && Helper.isBoolean(map.get("teleport-on-block-break")))
+        {
+            if ((Boolean) map.get("teleport-on-block-break"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_BLOCK_BREAK);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-sneak") && Helper.isBoolean(map.get("teleport-on-sneak")))
+        {
+            if ((Boolean) map.get("teleport-on-sneak"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_SNEAK);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-entry") && Helper.isBoolean(map.get("teleport-on-entry")))
+        {
+            if ((Boolean) map.get("teleport-on-entry"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_ENTRY);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-on-exit") && Helper.isBoolean(map.get("teleport-on-exit")))
+        {
+            if ((Boolean) map.get("teleport-on-exit"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ON_EXIT);
+                defaultFlags.add(FieldFlag.TELEPORTER);
+            }
+        }
+
+        if (map.containsKey("teleport-cost") && Helper.isInteger(map.get("teleport-cost")))
+        {
+            teleportCost = (Integer) map.get("teleport-cost");
+        }
+
+        if (map.containsKey("teleport-back-after-seconds") && Helper.isInteger(map.get("teleport-back-after-seconds")))
+        {
+            teleportBackAfterSeconds = (Integer) map.get("teleport-back-after-seconds");
+        }
+
+        if (map.containsKey("teleport-explosion-effect") && Helper.isBoolean(map.get("teleport-explosion-effect")))
+        {
+            if ((Boolean) map.get("teleport-explosion-effect"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_EXPLOSION_EFFECT);
+            }
+        }
+
+        if (map.containsKey("teleport-relatively") && Helper.isBoolean(map.get("teleport-relatively")))
+        {
+            if ((Boolean) map.get("teleport-relatively"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_RELATIVELY);
+            }
+        }
+
+        if (map.containsKey("teleport-announce") && Helper.isBoolean(map.get("teleport-announce")))
+        {
+            if ((Boolean) map.get("teleport-announce"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_ANNOUNCE);
+            }
+        }
+
+        if (map.containsKey("teleport-destination") && Helper.isBoolean(map.get("teleport-destination")))
+        {
+            if ((Boolean) map.get("teleport-destination"))
+            {
+                defaultFlags.add(FieldFlag.TELEPORT_DESTINATION);
+            }
+        }
         defaultFlags.add(FieldFlag.ALL);
     }
 
@@ -1061,7 +1304,12 @@ public class FieldSettings
      */
     public boolean hasNameableFlag()
     {
-        return defaultFlags.contains(FieldFlag.WELCOME_MESSAGE) || defaultFlags.contains(FieldFlag.FAREWELL_MESSAGE) || defaultFlags.contains(FieldFlag.ENTRY_ALERT) || defaultFlags.contains(FieldFlag.TRANSLOCATION);
+        return defaultFlags.contains(FieldFlag.WELCOME_MESSAGE) ||
+                defaultFlags.contains(FieldFlag.FAREWELL_MESSAGE) ||
+                defaultFlags.contains(FieldFlag.ENTRY_ALERT) ||
+                defaultFlags.contains(FieldFlag.TRANSLOCATION) ||
+                defaultFlags.contains(FieldFlag.TELEPORTER) ||
+                defaultFlags.contains(FieldFlag.TELEPORT_DESTINATION);
     }
 
     /**
@@ -1128,6 +1376,35 @@ public class FieldSettings
     }
 
     /**
+     * Tells you if the player shoudl be teleported teleport based on the block hes standing on
+     *
+     * @return
+     */
+    public boolean teleportDueToWalking(Location loc, Field field)
+    {
+        Block standingOn = new Vec(loc).subtract(0, 1, 0).getBlock();
+
+        if (standingOn.getTypeId() == 0)
+        {
+            return false;
+        }
+
+        boolean teleport = false;
+
+        if (field.hasFlag(FieldFlag.TELEPORT_IF_WALKING_ON))
+        {
+            teleport = teleportIfWalkingOn.contains(new BlockTypeEntry(standingOn));
+        }
+
+        if (field.hasFlag(FieldFlag.TELEPORT_IF_NOT_WALKING_ON))
+        {
+            teleport = !teleportIfNotWalkingOn.contains(new BlockTypeEntry(standingOn));
+        }
+
+        return teleport;
+    }
+
+    /**
      * Can destroy (not in blacklist)
      *
      * @param block
@@ -1161,6 +1438,50 @@ public class FieldSettings
         BlockTypeEntry type = new BlockTypeEntry(block);
 
         return preventPlaceBlacklist.contains(type);
+    }
+
+    /**
+     * Checks to see if a player should be teleported for holding this item
+     *
+     * @param itemId
+     * @return
+     */
+    public boolean isTeleportHoldingItem(int itemId)
+    {
+        return teleportIfHoldingItems.contains(itemId);
+    }
+
+    /**
+     * Checks to see if a player should be teleported for not holding this item
+     *
+     * @param itemId
+     * @return
+     */
+    public boolean isTeleportNotHoldingItem(int itemId)
+    {
+        return teleportIfNotHoldingItems.contains(itemId);
+    }
+
+    /**
+     * Checks to see if a player should be teleported for having this item
+     *
+     * @param itemId
+     * @return
+     */
+    public boolean isTeleportHasItem(int itemId)
+    {
+        return teleportIfHasItems.contains(itemId);
+    }
+
+    /**
+     * Checks to see if a player should be teleported for not having this item
+     *
+     * @param itemId
+     * @return
+     */
+    public boolean isTeleportHasNotItem(int itemId)
+    {
+        return teleportIfNotHasItems.contains(itemId);
     }
 
     /**
@@ -1644,5 +1965,15 @@ public class FieldSettings
         }
 
         return refunded;
+    }
+
+    public int getTeleportCost()
+    {
+        return teleportCost;
+    }
+
+    public int getTeleportBackAfterSeconds()
+    {
+        return teleportBackAfterSeconds;
     }
 }

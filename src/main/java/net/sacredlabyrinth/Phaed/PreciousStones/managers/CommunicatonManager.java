@@ -7,10 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -2583,9 +2580,12 @@ public class CommunicatonManager
         List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlags());
         List<FieldFlag> disabledFlags = field.getDisabledFlags();
 
-        flags.remove(FieldFlag.ALL);
-        flags.remove(FieldFlag.DYNMAP_NO_TOGGLE);
         flags.addAll(disabledFlags);
+
+        for (FieldFlag hid : FieldFlag.getHidden())
+        {
+            flags.remove(hid);
+        }
 
         int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
 
@@ -2714,7 +2714,7 @@ public class CommunicatonManager
                 continue;
             }
 
-            cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(),Helper.friendlyBlockType(material.toString()), entry.toString(), fs.getRadius()) + customHeight);
+            cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), Helper.friendlyBlockType(material.toString()), entry.toString(), fs.getRadius()) + customHeight);
         }
 
         if (cb.size() > 0)
@@ -2744,8 +2744,8 @@ public class CommunicatonManager
     {
         if (!(sender instanceof Player))
         {
-            //sender = new ColouredConsoleSender((CraftServer)PreciousStones.getInstance().getServer());
-            sender = PreciousStones.getInstance().getServer().getConsoleSender();
+            //sender = new ColouredConsoleSender((CraftServer)Bukkit.getServer());
+            sender = Bukkit.getServer().getConsoleSender();
         }
 
         ChatBlock cb = getNewChatBlock(sender);
@@ -2816,12 +2816,12 @@ public class CommunicatonManager
         }
         else
         {
-            sender = PreciousStones.getInstance().getServer().getConsoleSender();
+            sender = Bukkit.getServer().getConsoleSender();
         }
 
         ChatBlock cb = getNewChatBlock(sender);
 
-        boolean showLimits = player.getName().equalsIgnoreCase(target) && plugin.getSettingsManager().haveLimits();
+        boolean showLimits = player != null && player.getName().equalsIgnoreCase(target) && plugin.getSettingsManager().haveLimits();
 
         if (showLimits)
         {
@@ -2930,7 +2930,7 @@ public class CommunicatonManager
         }
         else
         {
-            sender = PreciousStones.getInstance().getServer().getConsoleSender();
+            sender = Bukkit.getServer().getConsoleSender();
         }
 
         ChatBlock cb = getNewChatBlock(sender);
@@ -3115,7 +3115,7 @@ public class CommunicatonManager
         }
         else
         {
-            sender = PreciousStones.getInstance().getServer().getConsoleSender();
+            sender = Bukkit.getServer().getConsoleSender();
         }
 
         boolean hasPlayer = player != null;

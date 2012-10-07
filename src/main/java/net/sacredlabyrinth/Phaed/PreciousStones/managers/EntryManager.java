@@ -337,6 +337,11 @@ public final class EntryManager
             plugin.getCommunicationManager().showWelcomeMessage(player, field);
         }
 
+        if (field.hasFlag(FieldFlag.TELEPORT_ON_ENTRY))
+        {
+            plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceEnter");
+        }
+
         if (field.hasFlag(FieldFlag.GROUP_ON_ENTRY))
         {
             if (!plugin.getPermissionsManager().inGroup(player.getName(), player.getWorld(), field.getSettings().getGroupOnEntry()))
@@ -404,6 +409,11 @@ public final class EntryManager
         if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE))
         {
             plugin.getCommunicationManager().showFarewellMessage(player, field);
+        }
+
+        if (field.hasFlag(FieldFlag.TELEPORT_ON_EXIT))
+        {
+            plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceExit");
         }
 
         if (field.hasFlag(FieldFlag.GROUP_ON_ENTRY))
@@ -715,11 +725,11 @@ public final class EntryManager
 
             if (ef != null)
             {
-                List<Field> entryfields = ef.getFields();
+                List<Field> entryFields = ef.getFields();
 
-                for (Field entryfield : entryfields)
+                for (Field entryField : entryFields)
                 {
-                    if (entryfield.getOwner().equals(field.getOwner()) && entryfield.getName().equals(field.getName()) && entryfield.getType().equals(field.getType()))
+                    if (entryField.getOwner().equals(field.getOwner()) && entryField.getName().equals(field.getName()) && entryField.getType().equals(field.getType()))
                     {
                         return true;
                     }

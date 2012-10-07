@@ -92,32 +92,75 @@ public enum FieldFlag
     ENTRY_GAME_MODE,
     LEAVING_GAME_MODE,
     NO_ALLOWING,
+    TELEPORTER,
     TELEPORT_ON_ENTRY,
+    TELEPORT_ON_EXIT,
     TELEPORT_ON_SNEAK,
     TELEPORT_ON_BLOCK_BREAK,
     TELEPORT_ON_BLOCK_PLACE,
     TELEPORT_ON_PVP,
     TELEPORT_ON_FIRE,
-    TELEPORT_ON_SRC,
-    TELEPORT_IF_HUNGRY,
-    TELEPORT_IF_HURT,
+    TELEPORT_ON_FEEDING,
+    TELEPORT_ON_DAMAGE,
+    TELEPORT_PLAYERS_ON_ENABLE,
+    TELEPORT_MOBS_ON_ENABLE,
+    TELEPORT_ANIMALS_ON_ENABLE,
+    TELEPORT_VILLAGERS_ON_ENABLE,
     TELEPORT_DESTINATION,
     TELEPORT_BEFORE_DEATH,
-    TELEPORT_EXPLOSION_EFFECT
-    //TELEPORT_COST
-    //TELEPORT_IF_HOLDING_ITEM
-    //TELEPORT_IF_HAS_ITEM
-    //TELEPORT_BACK_AFTER
-    //SNEAKING_BYPASS
+    TELEPORT_EXPLOSION_EFFECT,
+    TELEPORT_ANNOUNCE,
+    TELEPORT_RELATIVELY,
+    TELEPORT_IF_WALKING_ON,
+    TELEPORT_IF_NOT_WALKING_ON,
+    TELEPORT_IF_HOLDING_ITEMS,
+    TELEPORT_IF_NOT_HOLDING_ITEMS,
+    TELEPORT_IF_HAS_ITEMS,
+    TELEPORT_IF_NOT_HAS_ITEMS,
+    TELEPORT_COST
+    //TELEPORT_BACK_AFTER_SECONDS
+    //preciousstones.bypass.teleport
+
+    //disabled
+
+    //command-on-enable
+    //command-on-disable
+    //command-on-enter
+    //command-on-leave
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
 
-    private final static String[] unToggable = new String[]{
-            "worldguard-repellent", "place-disabled", "sneaking-bypass", "breakable-on-disabled",
-            "modify-on-disabled", "redefine-on-disabled", "prevent-unprotectable", "toggle-on-disabled",
-            "no-conflict", "no-player-place", "apply-to-all", "apply-to-reverse", "cuboid", "all",
-            "dynmap-disabled-by-default", "tekkit-block", "dynmap-no-toggle", "no-allowing"
+    /**
+     * These flags will not be able to be toggled
+     */
+    private final static FieldFlag[] unToggable = new FieldFlag[]
+    {
+        FieldFlag.WORLDGUARD_REPELLENT,
+        FieldFlag.PLACE_DISABLED,
+        FieldFlag.SNEAKING_BYPASS,
+        FieldFlag.BREAKABLE_ON_DISABLED,
+        FieldFlag.MODIFY_ON_DISABLED,
+        FieldFlag.REDEFINE_ON_DISABLED,
+        FieldFlag.PREVENT_UNPROTECTABLE,
+        FieldFlag.TOGGLE_ON_DISABLED,
+        FieldFlag.NO_CONFLICT,
+        FieldFlag.NO_PLAYER_PLACE,
+        FieldFlag.APPLY_TO_ALL,
+        FieldFlag.APPLY_TO_REVERSE,
+        FieldFlag.CUBOID,
+        FieldFlag.DYNMAP_DISABLED,
+        FieldFlag.NO_ALLOWING
+    };
+
+    /**
+     * These flags will be hidden completely from the flag lists
+     */
+    private final static FieldFlag[] hidden = new FieldFlag[]
+    {
+        FieldFlag.ALL,
+        FieldFlag.DYNMAP_NO_TOGGLE,
+        FieldFlag.TELEPORTER
     };
 
     /**
@@ -129,15 +172,32 @@ public enum FieldFlag
     {
         String flagStr = this.toString();
 
-        for (String flag : unToggable)
+        for (FieldFlag flag : unToggable)
         {
-            if (flag.equalsIgnoreCase(flagStr))
+            if (flag.toString().equalsIgnoreCase(flagStr))
+            {
+                return true;
+            }
+        }
+        for (FieldFlag flag : hidden)
+        {
+            if (flag.toString().equalsIgnoreCase(flagStr))
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Returns all the flags that should be hidden
+     *
+     * @return
+     */
+    public static FieldFlag[] getHidden()
+    {
+        return hidden;
     }
 
     /**

@@ -2553,4 +2553,38 @@ public final class ForceFieldManager
         fields = fieldsByOwner.get(owner);
         fields.add(field);
     }
+
+    /**
+     * Returns a random field owned by the same player with the same name that has the TELEPORT_DESTINATION flag
+     *
+     * @param owner
+     * @param sourceField
+     * @return
+     */
+    public Field getDestinationField(String owner, Field sourceField)
+    {
+        List<Field> out = new ArrayList<Field>();
+
+        List<Field> fields = fieldsByOwner.get(owner);
+
+        for (Field field : fields)
+        {
+            if (field.equals(sourceField))
+            {
+                continue;
+            }
+
+            if (!field.hasFlag(FieldFlag.TELEPORT_DESTINATION))
+            {
+                continue;
+            }
+
+            if (field.getName().equalsIgnoreCase(sourceField.getName()))
+            {
+                out.add(field);
+            }
+        }
+
+        return out.get(new Random().nextInt(out.size()));
+    }
 }

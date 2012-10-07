@@ -4,12 +4,12 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -1450,6 +1450,8 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setDisabled(boolean disabled)
     {
+        PreciousStones plugin = PreciousStones.getInstance();
+
         if (disabled != this.disabled)
         {
             this.disabled = disabled;
@@ -1477,7 +1479,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                 }
 
-                PreciousStones.getInstance().getEntryManager().removeAllPlayers(this);
+                plugin.getEntryManager().removeAllPlayers(this);
             }
             else
             {
@@ -1503,6 +1505,53 @@ public class Field extends AbstractVec implements Comparable<Field>
                         }
                     }
                 }
+
+                if (hasFlag(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE) ||
+                        hasFlag(FieldFlag.TELEPORT_MOBS_ON_ENABLE) ||
+                        hasFlag(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE) ||
+                        hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE) ||
+                        hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE))
+                {
+                    List<Entity> entities = Bukkit.getServer().getWorld(this.getWorld()).getEntities();
+
+                    for (Entity entity : entities)
+                    {
+                        if (envelops(entity.getLocation()))
+                        {
+                            if (hasFlag(FieldFlag.TELEPORT_MOBS_ON_ENABLE))
+                            {
+                                if (entity instanceof Monster || entity instanceof Golem || entity instanceof WaterMob)
+                                {
+                                    plugin.getTeleportationManager().teleport(entity, this);
+                                }
+                            }
+
+                            if (hasFlag(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE))
+                            {
+                                if (entity instanceof Villager)
+                                {
+                                    plugin.getTeleportationManager().teleport(entity, this);
+                                }
+                            }
+
+                            if (hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE))
+                            {
+                                if (entity instanceof Ageable)
+                                {
+                                    plugin.getTeleportationManager().teleport(entity, this);
+                                }
+                            }
+
+                            if (hasFlag(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE))
+                            {
+                                if (entity instanceof Player)
+                                {
+                                    plugin.getTeleportationManager().teleport(entity, this);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -1522,15 +1571,15 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (player != null)
             {
-                ChatBlock.send(player, "fieldWillDisable" , settings.getTitle(), settings.getAutoDisableSeconds());
+                ChatBlock.send(player, "fieldWillDisable", settings.getTitle(), settings.getAutoDisableSeconds());
             }
 
             if (disablerId > 0)
             {
-                PreciousStones.getInstance().getServer().getScheduler().cancelTask(disablerId);
+                Bukkit.getServer().getScheduler().cancelTask(disablerId);
             }
 
-            disablerId = PreciousStones.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
+            disablerId = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
             {
                 public void run()
                 {
@@ -1561,7 +1610,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         PreciousStones plugin = PreciousStones.getInstance();
 
-        World world = PreciousStones.getInstance().getServer().getWorld(this.getWorld());
+        World world = Bukkit.getServer().getWorld(this.getWorld());
 
         if (world == null)
         {

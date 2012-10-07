@@ -148,6 +148,21 @@ public class PSBlockListener implements Listener
             }
         }
 
+        if (player != null)
+        {
+            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TELEPORT_ON_FIRE);
+
+            if (field != null)
+            {
+                boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+                if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                {
+                    event.setCancelled(true);
+                    plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceFire");
+                }
+            }
+        }
         if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
@@ -497,6 +512,21 @@ public class PSBlockListener implements Listener
             {
                 plugin.getTranslocationManager().removeBlock(field, block);
                 plugin.getTranslocationManager().flashFieldBlock(field, player);
+            }
+        }
+
+        // -------------------------------------------------------------------------------- breaking inside a teleport field
+
+        field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.TELEPORT_ON_BLOCK_BREAK);
+
+        if (field != null)
+        {
+            boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+            if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            {
+                event.setCancelled(true);
+                plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceBreak");
             }
         }
 
@@ -1177,6 +1207,21 @@ public class PSBlockListener implements Listener
                         }
                     }, 10);
                 }
+            }
+        }
+
+        // -------------------------------------------------------------------------------- placing inside a teleport field
+
+        field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.TELEPORT_ON_BLOCK_PLACE);
+
+        if (field != null)
+        {
+            boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+            if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            {
+                event.setCancelled(true);
+                plugin.getTeleportationManager().teleport(player, field, "teleportAnnouncePlace");
             }
         }
 
