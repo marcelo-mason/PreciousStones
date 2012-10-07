@@ -52,6 +52,7 @@ public class FieldSettings
     private int refund = -1;
     private int teleportCost = 0;
     private int teleportBackAfterSeconds = 0;
+    private int teleportMaxDistance = 0;
     private List<Integer> teleportIfHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfNotHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfHasItems = new ArrayList<Integer>();
@@ -1236,6 +1237,11 @@ public class FieldSettings
             teleportBackAfterSeconds = (Integer) map.get("teleport-back-after-seconds");
         }
 
+        if (map.containsKey("teleport-max-distance") && Helper.isInteger(map.get("teleport-max-distance")))
+        {
+            teleportMaxDistance = (Integer) map.get("teleport-max-distance");
+        }
+
         if (map.containsKey("teleport-explosion-effect") && Helper.isBoolean(map.get("teleport-explosion-effect")))
         {
             if ((Boolean) map.get("teleport-explosion-effect"))
@@ -1975,5 +1981,10 @@ public class FieldSettings
     public int getTeleportBackAfterSeconds()
     {
         return teleportBackAfterSeconds;
+    }
+
+    public int getTeleportMaxDistance()
+    {
+        return teleportMaxDistance;
     }
 }

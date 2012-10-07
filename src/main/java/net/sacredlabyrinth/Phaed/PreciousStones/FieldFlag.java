@@ -119,8 +119,7 @@ public enum FieldFlag
     TELEPORT_IF_NOT_HOLDING_ITEMS,
     TELEPORT_IF_HAS_ITEMS,
     TELEPORT_IF_NOT_HAS_ITEMS,
-    TELEPORT_COST
-    //TELEPORT_BACK_AFTER_SECONDS
+    TELEPORT_COST,
     //preciousstones.bypass.teleport
 
     //disabled

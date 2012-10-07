@@ -114,8 +114,6 @@ public class PreciousStones extends JavaPlugin
     public void onEnable()
     {
         instance = this;
-        api = new facade();
-
         settingsManager = new SettingsManager();
         languageManager = new LanguageManager();
 
@@ -153,6 +151,8 @@ public class PreciousStones extends JavaPlugin
         vehicleListener = new PSVehicleListener();
         worldListener = new PSWorldListener();
         serverListener = new PSServerListener();
+
+        api = new facade();
 
         registerEvents();
         registerCommands();

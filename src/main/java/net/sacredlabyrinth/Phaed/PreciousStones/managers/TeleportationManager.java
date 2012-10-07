@@ -35,6 +35,20 @@ public class TeleportationManager
 
         if (destinationField != null)
         {
+            if (sourceField.getSettings().getTeleportMaxDistance() > 0)
+            {
+                if (sourceField.getLocation().distance(destinationField.getLocation()) > sourceField.getSettings().getTeleportMaxDistance())
+                {
+                    Player player = Helper.matchSinglePlayer(sourceField.getOwner());
+
+                    if (player != null)
+                    {
+                        ChatBlock.send(player, "teleportMaxDistance", sourceField.getSettings().getTeleportMaxDistance());
+                    }
+                    return false;
+                }
+            }
+
             if (sourceField.getSettings().getTeleportCost() > 0)
             {
                 if (plugin.getPermissionsManager().hasEconomy())

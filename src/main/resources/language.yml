@@ -454,7 +454,7 @@ teleportAnnounceEnter: "{aqua}*teleported for entering the area*"
 teleportAnnounceDamage: "{aqua}*teleported for getting hurt inside the area*"
 teleportAnnounce: "{aqua}*teleported*"
 teleportAnnounceBack: "{aqua}*You will be teleported back in {1.seconds} seconds*"
-
+teleportMaxDistance: "Your teleport setup exeeds the max distance allowed of {1.distance} blocks, teleport canceled"
 
 
 

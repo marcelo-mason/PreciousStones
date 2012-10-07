@@ -877,7 +877,7 @@ public final class StorageManager
                     }
                     catch (final Exception ex)
                     {
-                        PreciousStones.getLog().info(ex.getMessage());
+                        //PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
