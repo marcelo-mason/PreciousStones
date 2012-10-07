@@ -1561,6 +1561,29 @@ public final class ForceFieldManager
     }
 
     /**
+     * Returns an enabled field that matches the flag and is protecting the location and that applies to the player based on his allowed status and who the field is targeting
+     *
+     * @param player
+     * @param loc
+     * @param flag
+     * @return
+     */
+    public Field getApplyingEnabledSourceField(Player player, Location loc, FieldFlag flag)
+    {
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, flag);
+
+        if (field != null)
+        {
+            if (FieldFlag.applies(player, field, FieldFlag.TELEPORT_ON_FIRE))
+            {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns a field in the location that matches the field flag(s)
      *
      * @param loc
@@ -1649,52 +1672,6 @@ public final class ForceFieldManager
     }
 
     /**
-     * Returns the first field found in the location and that the player is not allowed in, optionally with field flags
-     *
-     * @param loc
-     * @param playerName
-     * @return the fields
-     * @deprecated
-     */
-    public Field getNotAllowedSourceField(final Location loc, final String playerName, final FieldFlag flag)
-    {
-        ResultsFilter envelopsFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return field.envelops(loc);
-            }
-        };
-
-        ResultsFilter notAllowedFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return !isAllowed(field, playerName);
-            }
-        };
-
-        ResultsFilter disabledFlagFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return !field.hasDisabledFlag(flag);
-            }
-        };
-
-        ResultsFilter notDisabledFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return !field.isDisabled();
-            }
-        };
-
-        Field field = getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notAllowedFilter, notDisabledFilter, disabledFlagFilter);
-        return field;
-    }
-
-    /**
      * Returns the first conflict field found in the location and that the player is not allowed in, optionally with field flags
      *
      * @param loc
@@ -1721,99 +1698,6 @@ public final class ForceFieldManager
 
         Field field = getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, noConflictFilter);
         return field;
-    }
-
-    /**
-     * Returns the fields that the location is in and that the player is allowed in, optionally with field flags
-     *
-     * @param loc
-     * @param playerName
-     * @return the fields
-     */
-    @Deprecated
-    public List<Field> getAllowedSourceFields(final Location loc, final String playerName, final FieldFlag flag)
-    {
-        ResultsFilter envelopsFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return field.envelops(loc);
-            }
-        };
-
-        ResultsFilter allowedFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return isAllowed(field, playerName);
-            }
-        };
-
-        ResultsFilter disabledFlagFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return !field.hasDisabledFlag(flag);
-            }
-        };
-
-        ResultsFilter notDisabledFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return !field.isDisabled();
-            }
-        };
-
-        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, allowedFilter, notDisabledFilter, disabledFlagFilter);
-        return sources;
-    }
-
-    /**
-     * Returns the fields that the location is in and that the player is not allowed in, optionally with field flags
-     *
-     * @param loc
-     * @param playerName
-     * @return the fields
-     * @deprecated
-     */
-    @Deprecated
-    public List<Field> getNotAllowedSourceFields(final Location loc, final String playerName, final FieldFlag flag)
-    {
-        ResultsFilter envelopsFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return field.envelops(loc);
-            }
-        };
-
-        ResultsFilter notAllowedFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return !isAllowed(field, playerName);
-            }
-        };
-
-        ResultsFilter disabledFlagFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return !field.hasDisabledFlag(flag);
-            }
-        };
-
-        ResultsFilter notDisabledFilter = new ResultsFilter()
-        {
-            public boolean Filter(Field field)
-            {
-                return !field.isDisabled();
-            }
-        };
-
-        List<Field> sources = getSourceFieldsInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notAllowedFilter, notDisabledFilter);
-        return sources;
     }
 
     /**

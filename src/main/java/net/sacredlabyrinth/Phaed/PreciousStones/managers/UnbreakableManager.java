@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -164,6 +165,28 @@ public final class UnbreakableManager
     public HashMap<ChunkVec, HashMap<Vec, Unbreakable>> retrieveUnbreakables(String world)
     {
         return chunkLists.get(world);
+    }
+
+    /**
+     * Gets the unbreakable from source block
+     *
+     * @param location
+     * @return the unbreakable
+     */
+    public Unbreakable getUnbreakable(Location location)
+    {
+        HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(location.getWorld().getName());
+
+        if (w != null)
+        {
+            HashMap<Vec, Unbreakable> c = w.get(new ChunkVec(location));
+
+            if (c != null)
+            {
+                return c.get(new Vec(location));
+            }
+        }
+        return null;
     }
 
     /**

@@ -1,6 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import com.google.common.collect.Maps;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.entity.Player;
 
 import java.util.Map;
 
@@ -152,6 +154,136 @@ public enum FieldFlag
         FieldFlag.DYNMAP_DISABLED,
         FieldFlag.NO_ALLOWING
     };
+
+    /**
+     * These flags apply to allowed
+     */
+    private final static FieldFlag[] applyToAll = new FieldFlag[]
+    {
+        FieldFlag.BREAKABLE,
+        FieldFlag.PREVENT_EXPLOSIONS,
+        FieldFlag.PREVENT_CREEPER_EXPLOSIONS,
+        FieldFlag.PREVENT_PVP,
+        FieldFlag.PREVENT_TNT_EXPLOSIONS,
+        FieldFlag.PREVENT_UNPROTECTABLE,
+        FieldFlag.FAREWELL_MESSAGE,
+        FieldFlag.WELCOME_MESSAGE,
+        FieldFlag.ROLLBACK_EXPLOSIONS,
+        FieldFlag.WORLDGUARD_REPELLENT,
+        FieldFlag.TELEPORT_PLAYERS_ON_ENABLE,
+        FieldFlag.TELEPORT_MOBS_ON_ENABLE,
+        FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE
+    };
+
+    /**
+     * These flags apply to allowed
+     */
+    private final static FieldFlag[] applyToAllowed = new FieldFlag[]
+    {
+        FieldFlag.ALLOWED_CAN_BREAK,
+        FieldFlag.ALLOW_PLACE,
+        FieldFlag.ALLOW_DESTROY,
+        FieldFlag.REMOVE_MOB,
+        FieldFlag.HEAL,
+        FieldFlag.FEED,
+        FieldFlag.REPAIR,
+        FieldFlag.POTIONS,
+        FieldFlag.NEUTRALIZE_POTIONS,
+        FieldFlag.AIR,
+        FieldFlag.LAUNCH,
+        FieldFlag.CANNON,
+        FieldFlag.VISUALIZE_ON_SRC,
+        FieldFlag.ENABLE_ON_SRC,
+        FieldFlag.GROUP_ON_ENTRY,
+        FieldFlag.NO_FALL_DAMAGE,
+        FieldFlag.TRANSLOCATION,
+        FieldFlag.TELEPORT_ON_SNEAK
+    };
+
+    /**
+     * These flags apply to non-allowed
+     */
+    private final static FieldFlag[] applyToNonAllowed = new FieldFlag[]
+    {
+            FieldFlag.PREVENT_FIRE,
+            FieldFlag.PREVENT_FLOW,
+            FieldFlag.PREVENT_ENTRY,
+            FieldFlag.PREVENT_PLACE,
+            FieldFlag.PREVENT_DESTROY,
+            FieldFlag.PREVENT_VEHICLE_DESTROY,
+            FieldFlag.PREVENT_MOB_DAMAGE,
+            FieldFlag.PREVENT_USE,
+            FieldFlag.PREVENT_TELEPORT,
+            FieldFlag.PREVENT_FLIGHT,
+            FieldFlag.PROTECT_ANIMALS,
+            FieldFlag.PROTECT_CROPS,
+            FieldFlag.PROTECT_MOBS,
+            FieldFlag.PROTECT_VILLAGERS,
+            FieldFlag.DAMAGE,
+            FieldFlag.SNITCH,
+            FieldFlag.MINE,
+            FieldFlag.LIGHTNING,
+            FieldFlag.GRIEF_REVERT,
+            FieldFlag.PLACE_GRIEF,
+            FieldFlag.ENTRY_ALERT,
+            FieldFlag.NO_PLAYER_PLACE,
+            FieldFlag.ENTRY_GAME_MODE,
+            FieldFlag.LEAVING_GAME_MODE,
+            FieldFlag.CONFISCATE_ITEMS,
+            FieldFlag.TELEPORT_ON_ENTRY,
+            FieldFlag.TELEPORT_ON_EXIT,
+            FieldFlag.TELEPORT_ON_DAMAGE,
+            FieldFlag.TELEPORT_ON_FEEDING,
+            FieldFlag.TELEPORT_ON_FIRE,
+            FieldFlag.TELEPORT_ON_PVP,
+            FieldFlag.TELEPORT_IF_WALKING_ON,
+            FieldFlag.TELEPORT_IF_NOT_WALKING_ON,
+            FieldFlag.TELEPORT_IF_HOLDING_ITEMS,
+            FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS,
+            FieldFlag.TELEPORT_IF_HAS_ITEMS,
+            FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS,
+            FieldFlag.TELEPORT_ON_BLOCK_BREAK,
+            FieldFlag.TELEPORT_ON_BLOCK_PLACE,
+            FieldFlag.TELEPORT_BEFORE_DEATH,
+    };
+
+    /**
+     * Whether the flag applies to allowed
+     *
+     * @param flag
+     * @return
+     */
+    public final static boolean applies(Player player, Field field, FieldFlag flag)
+    {
+        boolean allowed = PreciousStones.getInstance().getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+        if (field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        {
+            allowed = true;
+        }
+        else
+        {
+            for (FieldFlag aa : applyToNonAllowed)
+            {
+                if (aa.equals(flag))
+                {
+                    allowed = !allowed;
+                    break;
+                }
+            }
+
+            for (FieldFlag aa : applyToAll)
+            {
+                if (aa.equals(flag))
+                {
+                    allowed = true;
+                    break;
+                }
+            }
+        }
+
+        return allowed;
+    }
 
     /**
      * These flags will be hidden completely from the flag lists
