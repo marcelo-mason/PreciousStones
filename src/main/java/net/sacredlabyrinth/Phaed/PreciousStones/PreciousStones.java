@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.api.IApi;
-import net.sacredlabyrinth.Phaed.PreciousStones.api.api;
+import net.sacredlabyrinth.Phaed.PreciousStones.api.facade;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -114,7 +114,7 @@ public class PreciousStones extends JavaPlugin
     public void onEnable()
     {
         instance = this;
-        api = new api();
+        api = new facade();
 
         settingsManager = new SettingsManager();
         languageManager = new LanguageManager();
@@ -412,10 +412,5 @@ public class PreciousStones extends JavaPlugin
     public TeleportationManager getTeleportationManager()
     {
         return teleportationManager;
-    }
-
-    public IApi getAPI()
-    {
-        return api;
     }
 }
