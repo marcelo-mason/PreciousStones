@@ -122,6 +122,8 @@ permissions:
     description: Bypasses entry alert messages
   preciousstones.bypass.teleport:
     description: Bypasses teleport flags
+  preciousstones.bypass.toggle:
+    description: Can toggle bypass mode
   preciousstones.alert.notify.place:
     description: Gets alert for block placement notifys
   preciousstones.alert.notify.destroy:
@@ -296,6 +298,7 @@ permissions:
     description: Permissions for moderators
     default: op
     children:
+      preciousstones.bypass.toggle: true
       preciousstones.bypass.purchase: true
       preciousstones.bypass.entry: true
       preciousstones.bypass.pvp: true

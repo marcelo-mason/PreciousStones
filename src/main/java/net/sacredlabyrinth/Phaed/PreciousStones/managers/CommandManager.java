@@ -1710,6 +1710,43 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
+                    else if (cmd.equals(ChatBlock.format("commandBypass")) && plugin.getPermissionsManager().has(player, "preciousstones.bypass.toggle"))
+                    {
+                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+
+                        if (args.length == 1)
+                        {
+                            String mode = args[0];
+
+                            if (mode.equals(ChatBlock.format("commandOn")))
+                            {
+                                entry.setBypassDisabled(false);
+                                ChatBlock.send(player, "bypassEnabled");
+                            }
+                            else if (mode.equals(ChatBlock.format("commandOff")))
+                            {
+                                entry.setBypassDisabled(true);
+                                ChatBlock.send(player, "bypassDisabled");
+                            }
+                        }
+                        else
+                        {
+                            if (entry.isBypassDisabled())
+                            {
+                                entry.setBypassDisabled(false);
+                                ChatBlock.send(player, "bypassEnabled");
+                            }
+                            else
+                            {
+                                entry.setBypassDisabled(true);
+                                ChatBlock.send(player, "bypassDisabled");
+                            }
+                        }
+
+                        plugin.getStorageManager().offerPlayer(player.getName());
+                        return true;
+                    }
+
 
                     ChatBlock.send(sender, "notValidCommand");
 

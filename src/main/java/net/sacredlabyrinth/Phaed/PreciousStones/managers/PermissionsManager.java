@@ -10,6 +10,7 @@ import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -155,6 +156,16 @@ public final class PermissionsManager
         if (player == null)
         {
             return true;
+        }
+
+        if (perm.contains("preciousstones.bypass.") && !perm.contains("preciousstones.bypass.toggle"))
+        {
+            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+
+            if (entry.isBypassDisabled())
+            {
+                return false;
+            }
         }
 
         if (permission != null)

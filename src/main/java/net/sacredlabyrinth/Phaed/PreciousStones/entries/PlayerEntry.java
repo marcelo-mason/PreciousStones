@@ -25,6 +25,7 @@ public class PlayerEntry
     private boolean online;
     private int density;
     private boolean superduperpickaxe;
+    private boolean bypassDisabled;
     private Location outsideLocation;
     private Map<BlockTypeEntry, Integer> fieldCount = new HashMap<BlockTypeEntry, Integer>();
     private JSONArray confiscatedInventory = new JSONArray();
@@ -348,6 +349,12 @@ public class PlayerEntry
             json.put("teleportPending", teleportPending);
         }
 
+        if (bypassDisabled)
+        {
+            json.put("bypassDisabled", bypassDisabled);
+        }
+
+        json.put("density", density);
         json.put("density", density);
 
         return json.toString();
@@ -428,6 +435,11 @@ public class PlayerEntry
                             teleportPending = (Boolean) flags.get(flag);
                         }
 
+                        if (flag.equals("bypassDisabled"))
+                        {
+                            bypassDisabled = (Boolean) flags.get(flag);
+                        }
+
                         // player still needs teleport
 
                         if (teleportSecondsRemaining > 0)
@@ -482,6 +494,13 @@ public class PlayerEntry
 
     private void tryTeleport()
     {
+        if (teleportVec == null)
+        {
+            teleportSecondsRemaining = 0;
+            teleportPending = false;
+            return;
+        }
+
         Player player = Helper.matchSinglePlayer(name);
 
         if (player != null)
@@ -489,13 +508,12 @@ public class PlayerEntry
             player.teleport(teleportVec.getLocation());
             teleportSecondsRemaining = 0;
             teleportVec = null;
+            teleportPending = false;
         }
         else
         {
             teleportPending = true;
         }
-
-        PreciousStones.getInstance().getStorageManager().offerPlayer(name);
     }
 
     public int getDensity()
@@ -546,5 +564,15 @@ public class PlayerEntry
     public void setTeleportVec(Vec teleportVec)
     {
         this.teleportVec = teleportVec;
+    }
+
+    public boolean isBypassDisabled()
+    {
+        return bypassDisabled;
+    }
+
+    public void setBypassDisabled(boolean bypassDisabled)
+    {
+        this.bypassDisabled = bypassDisabled;
     }
 }

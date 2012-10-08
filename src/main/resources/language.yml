@@ -320,6 +320,7 @@ menu44: "{dark-red}  /ps disableall [flag] {aqua}- Disabled the flags on all fie
 menu45: "{dark-red}  /ps debug {aqua}- Prints timing info to console"
 menu46: "{dark-red}  /ps debugdb {aqua}- Prints out save process info"
 menu47: "{dark-red}  /ps debugsql {aqua}- Prints sql queries to console"
+menu48: "{dark-red}  /ps bypass <on/off>{aqua}- Toggle bypass mode"
 confiscatedFrom: "Confiscated {1.items} from {2.player} at {3.coords}"
 confiscated: "{aqua}Confiscated: {white}{1.image}"
 returnedTo: "Returned {1.items} to {2.player}"
@@ -436,6 +437,7 @@ commandEnableall: "enableall"
 commandDisableall: "disableall"
 commandClean: "clean"
 commandRevert: "revert"
+commandBypass: "bypass"
 noSharing: "You cannot allow others into this field"
 teleportAnnounceHasItems: "{aqua}*teleported for having forbidden items*"
 teleportAnnounceNotHasItems: "{aqua}*teleported for not having required items*"
@@ -455,8 +457,8 @@ teleportAnnounceDamage: "{aqua}*teleported for getting hurt inside the area*"
 teleportAnnounce: "{aqua}*teleported*"
 teleportAnnounceBack: "{aqua}*You will be teleported back in {1.seconds} seconds*"
 teleportMaxDistance: "Your teleport setup exeeds the max distance allowed of {1.distance} blocks, teleport canceled"
-
-
+bypassEnabled: "{aqua}Bypass mode enabled"
+bypassDisabled: "{aqua}Bypass mode disabled"
 
 
 
