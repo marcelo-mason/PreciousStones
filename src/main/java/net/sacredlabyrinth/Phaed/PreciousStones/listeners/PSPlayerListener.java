@@ -43,6 +43,23 @@ public class PSPlayerListener implements Listener
         plugin = PreciousStones.getInstance();
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onCommand(PlayerCommandPreprocessEvent event)
+    {
+        Player player = event.getPlayer();
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.ALL);
+
+        if (field != null)
+        {
+            if (field.getSettings().isCanceledCommand(event.getMessage()))
+            {
+                ChatBlock.send(player, "commandCanceled");
+                event.setCancelled(true);
+            }
+        }
+    }
+
     /**
      * @param event
      */

@@ -78,6 +78,7 @@ public class FieldSettings
     private List<String> allowedWorlds = new ArrayList<String>();
     private List<String> allowedOnlyInside = new ArrayList<String>();
     private List<String> allowedOnlyOutside = new ArrayList<String>();
+    private List<String> canceledCommands = new ArrayList<String>();
     private List<FieldFlag> defaultFlags = new ArrayList<FieldFlag>();
     private List<Integer> allowGrief = new ArrayList<Integer>();
     private HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
@@ -842,7 +843,7 @@ public class FieldSettings
 
         if (map.containsKey("grief-revert-interval") && Helper.isInteger(map.get("grief-revert-interval")))
         {
-             griefRevertInterval = (Integer) map.get("grief-revert-interval");
+            griefRevertInterval = (Integer) map.get("grief-revert-interval");
         }
 
         if (map.containsKey("grief-revert-drop") && Helper.isBoolean(map.get("grief-revert-drop")))
@@ -1312,6 +1313,11 @@ public class FieldSettings
             playerCommandOnExit = (String) map.get("player-command-on-exit");
         }
 
+        if (map.containsKey("command-blacklist") && Helper.isStringList(map.get("command-blacklist")))
+        {
+            canceledCommands = (List<String>) map.get("command-blacklist");
+        }
+
         defaultFlags.add(FieldFlag.ALL);
     }
 
@@ -1483,6 +1489,31 @@ public class FieldSettings
         BlockTypeEntry type = new BlockTypeEntry(block);
 
         return preventPlaceBlacklist.contains(type);
+    }
+
+    /**
+     * Whether a command is in the canceled list
+     *
+     * @param command
+     * @return
+     */
+    public boolean isCanceledCommand(String command)
+    {
+        if (canceledCommands == null)
+        {
+            return false;
+        }
+
+        command = command.replace("/" , "");
+
+        int i = command.indexOf(' ');
+
+        if (i > -1)
+        {
+            command = command.substring(0, i);
+        }
+
+        return canceledCommands.contains(command);
     }
 
     /**

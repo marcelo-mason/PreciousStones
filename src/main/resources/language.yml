@@ -473,7 +473,7 @@ hideUnhideAll: "{aqua}UnHid {1.count} fields"
 hideHiddenAlready: "{red}The field is already hidden"
 hideUnHiddenAlready: "{red}The field is already visible"
 hideCannot: "{red}This type of field cannot be hidden"
-
+commandCanceled: "{red}You cannot use that command here"
 
 
 
