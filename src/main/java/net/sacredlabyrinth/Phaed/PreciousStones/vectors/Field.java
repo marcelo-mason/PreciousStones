@@ -175,7 +175,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
     }
 
-
     private void calculateDimensions()
     {
         this.minx = getX() - radius;
@@ -193,6 +192,50 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
+     * Returns the maximum volume this field can take up.
+     *
+     * @return
+     */
+    public int getMaxVolume()
+    {
+        if (hasFlag(FieldFlag.CUBOID))
+        {
+            if (settings.getCustomVolume() > 0)
+            {
+                return settings.getCustomVolume();
+            }
+        }
+
+        return getActualVolume();
+    }
+
+    /**
+     * Retuns the acutal volume the filed is currently taking up
+     *
+     * @return
+     */
+    public int getActualVolume()
+    {
+        int widthX = maxx - minx;
+        int widthZ = maxz - minz;
+        int height = maxy - miny;
+        return (height * widthX * widthZ);
+    }
+
+    /**
+     * Returns the volume with a fixed height of 1.
+     * Used for size comparisons where height is irrelevant.
+     *
+     * @return
+     */
+    public int get2DVolume()
+    {
+        int widthX = maxx - minx;
+        int widthZ = maxz - minz;
+        return (widthX * widthZ);
+    }
+
+    /**
      * @param radius
      */
     public void setRadius(int radius)
@@ -206,6 +249,8 @@ public class Field extends AbstractVec implements Comparable<Field>
             this.height = (this.radius * 2) + 1;
             dirty.add(DirtyFieldReason.HEIGHT);
         }
+
+        calculateDimensions();
 
         dirty.add(DirtyFieldReason.RADIUS);
 
@@ -233,7 +278,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.maxy = maxY;
         this.maxz = maxZ;
 
-        this.radius = ((maxx - minx) - 1) / 2;
+        this.radius = (((maxx - minx - 1) + (maxz - minz - 1)) / 2) / 2;
         this.height = maxy - miny;
 
         dirty.add(DirtyFieldReason.DIMENSIONS);
@@ -253,8 +298,6 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setRelativeCuboidDimensions(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
     {
-        PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
-
         World world = getBlock().getWorld();
 
         Location min = new Location(world, minX, minY, minZ);
@@ -263,23 +306,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         Location max = new Location(world, maxX, maxY, maxZ);
         max = max.add(getLocation());
 
-        PreciousStones.debug(min.toVector().toBlockVector().toString());
-        PreciousStones.debug(max.toVector().toBlockVector().toString());
-
-        this.minx = min.getBlockX();
-        this.miny = min.getBlockY();
-        this.minz = min.getBlockZ();
-
-        this.maxx = max.getBlockX();
-        this.maxy = max.getBlockY();
-        this.maxz = max.getBlockZ();
-
-        this.radius = ((maxx - minx) - 1) / 2;
-        this.height = maxy - miny;
-
-        dirty.add(DirtyFieldReason.DIMENSIONS);
-
-        PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
+        setCuboidDimensions(min.getBlockX(), min.getBlockY(), min.getBlockZ(), max.getBlockX(), max.getBlockY(), max.getBlockZ());
     }
 
     public Location getRelativeMin()
@@ -1031,19 +1058,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     public boolean isChild()
     {
         return parent != null;
-    }
-
-    public int getVolume()
-    {
-        if (settings.getCustomVolume() > 0)
-        {
-            return settings.getCustomVolume();
-        }
-
-        int maxWidth = (settings.getRadius() * 2) + 1;
-        int maxHeight = settings.getHeight();
-
-        return (maxHeight * maxWidth * maxWidth);
     }
 
     public boolean isOpen()

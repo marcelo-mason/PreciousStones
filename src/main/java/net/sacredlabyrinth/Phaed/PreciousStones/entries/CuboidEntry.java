@@ -270,11 +270,11 @@ public class CuboidEntry
      */
     public int getMaxVolume()
     {
-        int volume = field.getVolume();
+        int volume = field.getMaxVolume();
 
         for (Field child : field.getChildren())
         {
-            volume += child.getVolume();
+            volume += child.getMaxVolume();
         }
 
         return volume;

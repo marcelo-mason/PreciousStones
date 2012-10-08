@@ -1497,9 +1497,46 @@ public final class ForceFieldManager
 
         List<Field> fields = getSourceFieldsInChunk(cv, flag, filters);
 
-        Field smallest = getSmallestVolumeField(fields);
+        return getSmallestVolumeField(fields);
+    }
 
-        return smallest;
+    /**
+     * Gets the smallest field from a list of fields
+     *
+     * @param fields
+     * @return
+     */
+    public Field getSmallestVolumeField(List<Field> fields)
+    {
+        if (fields == null || fields.isEmpty())
+        {
+            return null;
+        }
+
+        // sort fields by volume
+
+        Collections.sort(fields, new Comparator<Field>()
+        {
+            public int compare(Field f1, Field f2)
+            {
+                Integer o1 = f1.get2DVolume();
+                Integer o2 = f2.get2DVolume();
+
+                return o1.compareTo(o2);
+            }
+        });
+
+        // return smallest fields where a player can fit
+
+        for (Field smallest : fields)
+        {
+            if (smallest.get2DVolume() > 1 && smallest.getComputedHeight() > 1)
+            {
+                return smallest;
+            }
+        }
+
+        return fields.get(0);
     }
 
     /**
@@ -1630,45 +1667,6 @@ public final class ForceFieldManager
     public boolean hasSourceField(Location loc, FieldFlag flag)
     {
         return getEnabledSourceField(loc, flag) != null;
-    }
-
-    /**
-     * Gets the smallest field from a list of fields
-     *
-     * @param fields
-     * @return
-     */
-    public Field getSmallestVolumeField(List<Field> fields)
-    {
-        if (fields == null || fields.isEmpty())
-        {
-            return null;
-        }
-
-        // sort fields by volume
-
-        Collections.sort(fields, new Comparator<Field>()
-        {
-            public int compare(Field f1, Field f2)
-            {
-                Integer o1 = f1.getVolume();
-                Integer o2 = f2.getVolume();
-
-                return o1.compareTo(o2);
-            }
-        });
-
-        // return smallest fields where a player can fit
-
-        for (Field smallest : fields)
-        {
-            if (smallest.getVolume() > 1 && smallest.getComputedHeight() > 1)
-            {
-                return smallest;
-            }
-        }
-
-        return fields.get(0);
     }
 
     /**
