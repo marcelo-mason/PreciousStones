@@ -685,7 +685,7 @@ public class PSBlockListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event)
     {
         final Block block = event.getBlock();
@@ -861,65 +861,7 @@ public class PSBlockListener implements Listener
         {
             if (placingFieldChecks(player, block, event))
             {
-                // *** ADD THE FIELD
-
-                final Field field = plugin.getForceFieldManager().add(block, player, event);
-
-                if (field != null)
-                {
-                    //field.generateFence();
-
-                    // disable flags
-
-                    if (plugin.getSettingsManager().isStartMessagesDisabled())
-                    {
-                        field.disableFlag("welcome-message");
-                        field.disableFlag("farewell-message");
-                    }
-
-                    if (field.hasFlag(FieldFlag.DYNMAP_DISABLED) || plugin.getSettingsManager().isStartDynmapFlagsDisabled())
-                    {
-                        field.disableFlag("dynmap-area");
-                        field.disableFlag("dynmap-marker");
-                    }
-
-                    // places the field in a disabled state
-
-                    if (field.hasFlag(FieldFlag.PLACE_DISABLED))
-                    {
-                        field.setDisabled(true);
-                    }
-
-                    // set the enabled mask
-
-                    /*
-                    if (!field.isDisabled())
-                    {
-                        if (field.hasFlag(FieldFlag.MASK_ON_ENABLED))
-                        {
-                            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                            {
-                                public void run()
-                                {
-                                    player.sendBlockChange(field.getLocation(), field.getSettings().getMaskOnEnabledBlock(), (byte) 0);
-                                }
-                            }, 1);
-                        }
-                    }*/
-
-                    // sets the initial state of redstone enabled fields
-
-                    plugin.getStorageManager().offerField(field);
-
-                    // allow all owners of overlapping fields into the field
-
-                    plugin.getForceFieldManager().addAllowOverlappingOwners(field);
-
-                    // start disabling process for auto-disable fields
-
-                    field.startDisabler();
-                    return;
-                }
+                plugin.getForceFieldManager().add(block, player, event);
             }
         }
 

@@ -67,7 +67,7 @@ public final class ForceFieldManager
      * @param event
      * @return confirmation
      */
-    public Field add(Block fieldBlock, Player player, BlockPlaceEvent event)
+    public void add(Block fieldBlock, Player player, BlockPlaceEvent event)
     {
         boolean notify = true;
 
@@ -75,14 +75,14 @@ public final class ForceFieldManager
 
         if (fs == null)
         {
-            return null;
+            return;
         }
 
         // deny if world is blacklisted
 
         if (plugin.getSettingsManager().isBlacklistedWorld(fieldBlock.getWorld()))
         {
-            return null;
+            return;
         }
 
         // check if in worldguard region
@@ -91,7 +91,7 @@ public final class ForceFieldManager
         {
             ChatBlock.send(player, "The field intersects with a WorldGuard region you are not allowed in.");
             event.setCancelled(true);
-            return null;
+            return;
         }
 
         // check if the pstone limit has been reached by the player
@@ -99,7 +99,7 @@ public final class ForceFieldManager
         if (plugin.getLimitManager().reachedLimit(player, fs))
         {
             event.setCancelled(true);
-            return null;
+            return;
         }
 
         // purchase pstone
@@ -108,7 +108,7 @@ public final class ForceFieldManager
         {
             if (fs.getPrice() > 0 && !purchase(player, fs.getPrice()))
             {
-                return null;
+                return;
             }
         }
 
@@ -128,7 +128,7 @@ public final class ForceFieldManager
                 plugin.getCuboidManager().cancelOpenCuboid(player);
                 ChatBlock.send(player, "Cannot mix fields that are not in the same mixing group.");
                 event.setCancelled(true);
-                return null;
+                return;
             }
 
             if (fs.getPrice() > ce.getField().getSettings().getPrice())
@@ -136,7 +136,7 @@ public final class ForceFieldManager
                 plugin.getCuboidManager().cancelOpenCuboid(player);
                 ChatBlock.send(player, "Cannot add on properties of more valuable fields");
                 event.setCancelled(true);
-                return null;
+                return;
             }
 
             field = new Field(fieldBlock, 0, 0, owner);
@@ -224,7 +224,49 @@ public final class ForceFieldManager
             }
         }
 
-        return field;
+        // disable flags
+
+        if (plugin.getSettingsManager().isStartMessagesDisabled())
+        {
+            field.disableFlag("welcome-message");
+            field.disableFlag("farewell-message");
+        }
+
+        if (field.hasFlag(FieldFlag.DYNMAP_DISABLED) || plugin.getSettingsManager().isStartDynmapFlagsDisabled())
+        {
+            field.disableFlag("dynmap-area");
+            field.disableFlag("dynmap-marker");
+        }
+
+        // places the field in a disabled state
+
+        if (field.hasFlag(FieldFlag.PLACE_DISABLED))
+        {
+            field.setDisabled(true);
+        }
+
+        // sets the initial revert seconds for grief reverts
+
+        if (field.hasFlag(FieldFlag.GRIEF_REVERT))
+        {
+            if (field.getSettings().getGriefRevertInterval() > 0)
+            {
+                field.setRevertSecs(field.getSettings().getGriefRevertInterval());
+                plugin.getGriefUndoManager().register(field);
+            }
+        }
+
+        // allow all owners of overlapping fields into the field
+
+        plugin.getForceFieldManager().addAllowOverlappingOwners(field);
+
+        // start disabling process for auto-disable fields
+
+        field.startDisabler();
+
+        // saves the field on the database
+
+        plugin.getStorageManager().offerField(field);
     }
 
     /**

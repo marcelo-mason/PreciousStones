@@ -53,6 +53,7 @@ public class FieldSettings
     private int teleportCost = 0;
     private int teleportBackAfterSeconds = 0;
     private int teleportMaxDistance = 0;
+    private int griefRevertInterval = 0;
     private List<Integer> teleportIfHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfNotHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfHasItems = new ArrayList<Integer>();
@@ -833,6 +834,11 @@ public class FieldSettings
             {
                 defaultFlags.add(FieldFlag.GRIEF_REVERT);
             }
+        }
+
+        if (map.containsKey("grief-revert-interval") && Helper.isInteger(map.get("grief-revert-interval")))
+        {
+             griefRevertInterval = (Integer) map.get("grief-revert-interval");
         }
 
         if (map.containsKey("grief-revert-drop") && Helper.isBoolean(map.get("grief-revert-drop")))
@@ -1986,5 +1992,10 @@ public class FieldSettings
     public int getTeleportMaxDistance()
     {
         return teleportMaxDistance;
+    }
+
+    public int getGriefRevertInterval()
+    {
+        return griefRevertInterval;
     }
 }
