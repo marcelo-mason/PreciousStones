@@ -21,7 +21,8 @@ public class TranslocationApplier implements Runnable
     private final Field field;
 
     /**
-     * @param griefQueue
+     * @param field
+     * @param translocationQueue
      * @param world
      */
     public TranslocationApplier(Field field, Queue<TranslocationBlock> translocationQueue, World world)
@@ -88,6 +89,7 @@ public class TranslocationApplier implements Runnable
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 field.setDisabled(false);
                 field.setTranslocating(false);
+                field.dirtyFlags();
             }
         }
     }

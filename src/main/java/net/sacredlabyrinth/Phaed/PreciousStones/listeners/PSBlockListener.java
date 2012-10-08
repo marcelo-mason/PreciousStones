@@ -245,12 +245,14 @@ public class PSBlockListener implements Listener
                     {
                         plugin.getTranslocationManager().applyTranslocation(field);
                         field.setDisabled(false);
+                        field.dirtyFlags();
                     }
                 }
                 else
                 {
                     plugin.getTranslocationManager().clearTranslocation(field);
                     field.setDisabled(true);
+                    field.dirtyFlags();
                 }
             }
             return;
@@ -343,7 +345,7 @@ public class PSBlockListener implements Listener
 
         // do not allow break of non-field blocks during cuboid definition
 
-        if (plugin.getCuboidManager().hasOpenCuboid(player) && !plugin.getSettingsManager().isFieldType(block))
+        if (plugin.getCuboidManager().hasOpenCuboid(player) && !plugin.getForceFieldManager().isField(block))
         {
             event.setCancelled(true);
             return;
@@ -540,6 +542,11 @@ public class PSBlockListener implements Listener
 
     private boolean breakingFieldChecks(Player player, Block block, Field field, Cancellable event)
     {
+        if (field.isHidden())
+        {
+            field.unHide();
+        }
+
         // cancel cuboid if still drawing it
 
         if (plugin.getCuboidManager().isOpenCuboidField(player, block))
@@ -548,8 +555,6 @@ public class PSBlockListener implements Listener
             removeAndRefundBlock(player, block, field, event);
             return false;
         }
-
-        boolean isLiquid = block.getTypeId() != field.getTypeId();
 
         boolean release = false;
 
@@ -1398,7 +1403,7 @@ public class PSBlockListener implements Listener
 
         for (Block block : blocks)
         {
-            if (plugin.getSettingsManager().isFieldType(block) && plugin.getForceFieldManager().isField(block))
+            if (plugin.getForceFieldManager().isField(block))
             {
                 event.setCancelled(true);
             }
@@ -1458,7 +1463,7 @@ public class PSBlockListener implements Listener
 
         Block block = piston.getRelative(event.getDirection()).getRelative(event.getDirection());
 
-        if (plugin.getSettingsManager().isFieldType(block) && plugin.getForceFieldManager().isField(block))
+        if (plugin.getForceFieldManager().isField(block))
         {
             event.setCancelled(true);
         }

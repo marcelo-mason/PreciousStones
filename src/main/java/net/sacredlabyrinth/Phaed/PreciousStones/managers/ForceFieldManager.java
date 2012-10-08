@@ -655,7 +655,7 @@ public final class ForceFieldManager
     /**
      * things to do before shutdown
      */
-    public void finalize()
+    public void doFinalize()
     {
         Collection<Field> fields = fieldsByVec.values();
 
@@ -739,12 +739,13 @@ public final class ForceFieldManager
                 currentChunk = cv;
             }
 
-            int type = world.getBlockTypeIdAt(field.getX(), field.getY(), field.getZ());
-
-            if (type != field.getTypeId())
+            if (!field.isHidden())
             {
-                cleanedCount++;
-                queueRelease(field);
+                if (!field.matchesBlockType())
+                {
+                    cleanedCount++;
+                    queueRelease(field);
+                }
             }
         }
 
@@ -797,13 +798,15 @@ public final class ForceFieldManager
                 currentChunk = cv;
             }
 
-            Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
-
-            if (!plugin.getSettingsManager().isFieldType(block))
+            if (!field.isHidden())
             {
-                revertedCount++;
-                block.setTypeId(field.getTypeId());
-                block.setData(field.getData());
+                if (!field.matchesBlockType())
+                {
+                    Block block = field.getBlock();
+                    block.setTypeId(field.getTypeId());
+                    block.setData(field.getData());
+                    revertedCount++;
+                }
             }
         }
 
@@ -1025,14 +1028,11 @@ public final class ForceFieldManager
                         continue;
                     }
 
-                    Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
+                    Block surroundingBlock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.getSettingsManager().isFieldType(surroundingblock))
+                    if (plugin.getForceFieldManager().isField(surroundingBlock))
                     {
-                        if (isField(surroundingblock))
-                        {
-                            return surroundingblock;
-                        }
+                        return surroundingBlock;
                     }
                 }
             }
@@ -1561,8 +1561,8 @@ public final class ForceFieldManager
         {
             public int compare(Field f1, Field f2)
             {
-                Integer o1 = f1.get2DVolume();
-                Integer o2 = f2.get2DVolume();
+                Integer o1 = f1.getFlatVolume();
+                Integer o2 = f2.getFlatVolume();
 
                 return o1.compareTo(o2);
             }
@@ -1572,7 +1572,7 @@ public final class ForceFieldManager
 
         for (Field smallest : fields)
         {
-            if (smallest.get2DVolume() > 1 && smallest.getComputedHeight() > 1)
+            if (smallest.getActualVolume() > 1 && smallest.getComputedHeight() > 1)
             {
                 return smallest;
             }
@@ -2163,6 +2163,60 @@ public final class ForceFieldManager
     }
 
     /**
+     * Hide all fields belonging to a player
+     *
+     * @param playerName the players
+     * @return the count of hidden fields
+     */
+    public int hideBelonging(String playerName)
+    {
+        int hiddenFields = 0;
+
+        List<Field> fields = fieldsByOwner.get(playerName);
+
+        for (Field field : fields)
+        {
+            if (field.hasFlag(FieldFlag.HIDABLE))
+            {
+                if (!field.isHidden())
+                {
+                    field.hide();
+                    hiddenFields++;
+                }
+            }
+        }
+
+        return hiddenFields;
+    }
+
+    /**
+     * Unhides all fields belonging to a player
+     *
+     * @param playerName the players
+     * @return the count of hidden fields
+     */
+    public int unhideBelonging(String playerName)
+    {
+        int unhiddenFields = 0;
+
+        List<Field> fields = fieldsByOwner.get(playerName);
+
+        for (Field field : fields)
+        {
+            if (field.hasFlag(FieldFlag.HIDABLE))
+            {
+                if (field.isHidden())
+                {
+                    field.unHide();
+                    unhiddenFields++;
+                }
+            }
+        }
+
+        return unhiddenFields;
+    }
+
+    /**
      * Deletes a liquid based field from the collection
      *
      * @param field
@@ -2301,6 +2355,17 @@ public final class ForceFieldManager
         {
             World world = block.getWorld();
             ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+
+
+            Field field = plugin.getForceFieldManager().getField(block);
+
+            if (field != null)
+            {
+                if (field.isHidden())
+                {
+                    field.unHide();
+                }
+            }
 
             if (plugin.getSettingsManager().isFieldType(block))
             {

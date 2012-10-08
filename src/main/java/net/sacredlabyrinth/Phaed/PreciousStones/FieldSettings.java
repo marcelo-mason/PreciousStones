@@ -1279,6 +1279,15 @@ public class FieldSettings
                 defaultFlags.add(FieldFlag.TELEPORT_DESTINATION);
             }
         }
+
+        if (map.containsKey("hidable") && Helper.isBoolean(map.get("hidable")))
+        {
+            if ((Boolean) map.get("hidable"))
+            {
+                defaultFlags.add(FieldFlag.HIDABLE);
+            }
+        }
+
         defaultFlags.add(FieldFlag.ALL);
     }
 

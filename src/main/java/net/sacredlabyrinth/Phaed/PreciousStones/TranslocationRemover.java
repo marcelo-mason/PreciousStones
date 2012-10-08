@@ -105,6 +105,7 @@ public class TranslocationRemover implements Runnable
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 field.setDisabled(false);
                 field.setTranslocating(false);
+                field.dirtyFlags();
                 ChatBlock.send(player, "removalComplete");
 
                 if(notRemovedCount > 0)

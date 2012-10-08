@@ -59,6 +59,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int disablerId;
     private boolean translocating;
     private int translocationSize;
+    private boolean hidden;
 
     /**
      * @param x
@@ -228,7 +229,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      *
      * @return
      */
-    public int get2DVolume()
+    public int getFlatVolume()
     {
         int widthX = maxx - minx;
         int widthZ = maxz - minz;
@@ -1134,6 +1135,11 @@ public class Field extends AbstractVec implements Comparable<Field>
             json.put("disabled", disabled);
         }
 
+        if (hidden)
+        {
+            json.put("hidden", hidden);
+        }
+
         return json.toString();
     }
 
@@ -1223,6 +1229,10 @@ public class Field extends AbstractVec implements Comparable<Field>
                         {
                             setDisabled(((Boolean) flags.get(flag)));
                         }
+                        else if (flag.equals("hidden"))
+                        {
+                            hidden = (Boolean) flags.get(flag);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1236,24 +1246,6 @@ public class Field extends AbstractVec implements Comparable<Field>
                 }
             }
         }
-    }
-
-    /**
-     * Force insert a flag if it doesn't exist.
-     * This can suck
-     *
-     * @param flagStr
-     */
-    public boolean insertFlag(String flagStr)
-    {
-        if (!flags.contains(Helper.toFieldFlag(flagStr)))
-        {
-            flags.add(Helper.toFieldFlag(flagStr));
-            dirty.add(DirtyFieldReason.FLAGS);
-            PreciousStones.getInstance().getStorageManager().offerField(this);
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -1405,11 +1397,28 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         if (!insertedFlags.contains(Helper.toFieldFlag(flagStr)))
         {
-            dirty.add(DirtyFieldReason.FLAGS);
             insertedFlags.add(Helper.toFieldFlag(flagStr));
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Force insert a flag if it doesn't exist.
+     * This can suck
+     *
+     * @param flagStr
+     */
+    public boolean insertFlag(String flagStr)
+    {
+        if (!flags.contains(Helper.toFieldFlag(flagStr)))
+        {
+            flags.add(Helper.toFieldFlag(flagStr));
+            dirty.add(DirtyFieldReason.FLAGS);
+            PreciousStones.getInstance().getStorageManager().offerField(this);
+            return true;
+        }
         return false;
     }
 
@@ -1568,8 +1577,6 @@ public class Field extends AbstractVec implements Comparable<Field>
                 }
             }
         }
-
-        dirty.add(DirtyFieldReason.FLAGS);
     }
 
     /**
@@ -1607,6 +1614,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                         }
 
                         thisField.setDisabled(true);
+                        thisField.dirtyFlags();
                     }
                 }
             }, 20L * settings.getAutoDisableSeconds());
@@ -1978,6 +1986,78 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
     }
 
+    /**
+     * If the block matches the field type stored on the db
+     *
+     * @return
+     */
+    public boolean matchesBlockType()
+    {
+        Block block = getBlock();
+        return block.getTypeId() == getTypeId();
+    }
+
+    public void hide()
+    {
+        if (!isHidden())
+        {
+            hidden = true;
+            dirtyFlags();
+
+            BlockTypeEntry maskType = findMaskType();
+            Block block = getBlock();
+            block.setTypeId(maskType.getTypeId());
+            block.setData(maskType.getData());
+        }
+    }
+
+    private BlockTypeEntry findMaskType()
+    {
+        List<Vec> vecs = new ArrayList<Vec>();
+
+        Vec center = new Vec(getBlock());
+        vecs.add(center.add(1, 0, 0));
+        vecs.add(center.add(-1, 0, 0));
+        vecs.add(center.add(0, 0, 1));
+        vecs.add(center.add(0, 0, -1));
+        vecs.add(center.add(-1, -1, 0));
+        vecs.add(center.add(0, -1, 1));
+        vecs.add(center.add(0, 1, 0));
+
+        for (Vec vec : vecs)
+        {
+            Block relative = vec.getBlock();
+
+            if (relative.getTypeId() != 0)
+            {
+                BlockTypeEntry entry = new BlockTypeEntry(relative);
+
+                if (PreciousStones.getInstance().getSettingsManager().isHidingMaskType(entry))
+                {
+                    return entry;
+                }
+            }
+        }
+
+        return PreciousStones.getInstance().getSettingsManager().getFirstHidingMask();
+    }
+
+    /**
+     * Unhides the field block turning it back to its normal block type
+     */
+    public void unHide()
+    {
+        if (isHidden())
+        {
+            hidden = false;
+            dirtyFlags();
+
+            Block block = getBlock();
+            block.setTypeId(getTypeId());
+            block.setData(getData());
+        }
+    }
+
     public boolean isNamed()
     {
         return getName().length() > 0;
@@ -2011,5 +2091,29 @@ public class Field extends AbstractVec implements Comparable<Field>
     public String getDetails()
     {
         return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
+    }
+
+    public boolean isHidden()
+    {
+        // fix any discrepencies
+
+        if (hidden)
+        {
+            if (matchesBlockType())
+            {
+                hidden = false;
+                dirtyFlags();
+            }
+        }
+        else
+        {
+            if (!matchesBlockType())
+            {
+                hidden = true;
+                dirtyFlags();
+            }
+        }
+
+        return hidden;
     }
 }

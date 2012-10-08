@@ -3,9 +3,12 @@
     <words>
       <w>blockid</w>
       <w>coords</w>
+      <w>discrepencies</w>
       <w>dynmap</w>
       <w>enderman</w>
       <w>griefed</w>
+      <w>hidable</w>
+      <w>hideall</w>
       <w>languageexists</w>
       <w>posessive</w>
       <w>preciousstones</w>
@@ -22,6 +25,7 @@
       <w>translocations</w>
       <w>translocator</w>
       <w>unbreakables</w>
+      <w>unhide</w>
       <w>unprotectable</w>
       <w>unprotectableblock</w>
       <w>worldguard</w>

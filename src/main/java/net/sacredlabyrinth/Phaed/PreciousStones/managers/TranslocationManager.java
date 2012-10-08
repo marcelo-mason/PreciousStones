@@ -496,6 +496,7 @@ public final class TranslocationManager
         }
 
         field.setDisabled(true);
+        field.dirtyFlags();
     }
 
     /**
@@ -531,6 +532,7 @@ public final class TranslocationManager
         }
 
         field.setDisabled(true);
+        field.dirtyFlags();
     }
 
     private final class ProcessResult

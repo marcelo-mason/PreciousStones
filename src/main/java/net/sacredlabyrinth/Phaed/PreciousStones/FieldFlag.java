@@ -120,14 +120,9 @@ public enum FieldFlag
     TELEPORT_IF_HAS_ITEMS,
     TELEPORT_IF_NOT_HAS_ITEMS,
     TELEPORT_COST,
-    //preciousstones.bypass.teleport
+    HIDABLE,
 
     //disabled
-
-    //command-on-enable
-    //command-on-disable
-    //command-on-enter
-    //command-on-leave
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
@@ -151,7 +146,8 @@ public enum FieldFlag
         FieldFlag.APPLY_TO_REVERSE,
         FieldFlag.CUBOID,
         FieldFlag.DYNMAP_DISABLED,
-        FieldFlag.NO_ALLOWING
+        FieldFlag.NO_ALLOWING,
+        FieldFlag.HIDABLE
     };
 
     /**

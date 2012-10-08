@@ -3235,6 +3235,18 @@ public class CommunicatonManager
             cb.addRow("menu22");
         }
 
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide"))
+        {
+            cb.addRow("menu49");
+            cb.addRow("menu50");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.hideall"))
+        {
+            cb.addRow("menu51");
+            cb.addRow("menu52");
+        }
+
         if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.import"))
         {
             cb.addRow("menu23");

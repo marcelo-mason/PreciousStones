@@ -108,7 +108,7 @@ public class facade implements IApi
     }
 
     /**
-     * If the flag applies to the player on that specific location.
+     * Whether the flag applies to the player on that specific location.
      * i.e.:
      * if you pass in FieldFlag.PREVENT_ENTRY, it will tell you if the flag prevents the player from entering the field
      * if you pass in FieldFlag.HEAL, it will tell you if the flag heals the player

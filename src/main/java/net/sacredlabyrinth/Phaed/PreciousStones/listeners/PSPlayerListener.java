@@ -68,15 +68,6 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerRespawn(PlayerRespawnEvent event)
-    {
-        handlePlayerSpawn(event.getPlayer());
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerSneak(PlayerToggleSneakEvent event)
     {
         Player player = event.getPlayer();
@@ -92,6 +83,15 @@ public class PSPlayerListener implements Listener
                 plugin.getTeleportationManager().teleport(player, field);
             }
         }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerRespawn(PlayerRespawnEvent event)
+    {
+        handlePlayerSpawn(event.getPlayer());
     }
 
     /**
@@ -219,6 +219,19 @@ public class PSPlayerListener implements Listener
             return;
         }
 
+        if (event.getFrom() == null || event.getTo() == null)
+        {
+            return;
+        }
+
+        if (Helper.isSameLocation(event.getFrom(), event.getTo()))
+        {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        DebugTimer dt = new DebugTimer("onPlayerTeleport");
+
         Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getTo(), FieldFlag.PREVENT_TELEPORT);
 
         if (field != null)
@@ -233,24 +246,6 @@ public class PSPlayerListener implements Listener
                     return;
                 }
             }
-        }
-
-        handlePlayerTeleport(event);
-    }
-
-    private void handlePlayerTeleport(PlayerTeleportEvent event)
-    {
-        DebugTimer dt = new DebugTimer("onPlayerTeleport");
-        Player player = event.getPlayer();
-
-        if (event.getFrom() == null || event.getTo() == null)
-        {
-            return;
-        }
-
-        if (Helper.isSameLocation(event.getFrom(), event.getTo()))
-        {
-            return;
         }
 
         // undo a player's visualization if it exists
@@ -297,13 +292,13 @@ public class PSPlayerListener implements Listener
 
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entry"))
         {
-            for (Field field : futureFields)
+            for (Field futureField : futureFields)
             {
-                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
+                if (futureField.hasFlag(FieldFlag.PREVENT_ENTRY))
                 {
                     boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
                     {
                         Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
                         Location outside = plugin.getPlayerManager().getOutsideLocation(player);
@@ -316,7 +311,7 @@ public class PSPlayerListener implements Listener
                             {
                                 boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
 
-                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                if (!allowed || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
                                 {
                                     loc = outside;
                                 }
@@ -337,15 +332,15 @@ public class PSPlayerListener implements Listener
 
         // enter all future fields hes is not currently entered into yet
 
-        for (Field currentField : futureFields)
+        for (Field futureField : futureFields)
         {
-            if (!plugin.getEntryManager().enteredField(player, currentField))
+            if (!plugin.getEntryManager().enteredField(player, futureField))
             {
-                if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentField))
+                if (!plugin.getEntryManager().containsSameNameOwnedField(player, futureField))
                 {
-                    plugin.getEntryManager().enterOverlappedArea(player, currentField);
+                    plugin.getEntryManager().enterOverlappedArea(player, futureField);
                 }
-                plugin.getEntryManager().enterField(player, currentField);
+                plugin.getEntryManager().enterField(player, futureField);
             }
         }
 
@@ -371,14 +366,6 @@ public class PSPlayerListener implements Listener
             return;
         }
 
-        handlePlayerMove(event);
-    }
-
-    private void handlePlayerMove(PlayerMoveEvent event)
-    {
-        DebugTimer dt = new DebugTimer("onPlayerMove");
-        final Player player = event.getPlayer();
-
         if (event.getFrom() == null || event.getTo() == null)
         {
             return;
@@ -388,6 +375,9 @@ public class PSPlayerListener implements Listener
         {
             return;
         }
+
+        DebugTimer dt = new DebugTimer("onPlayerMove");
+        final Player player = event.getPlayer();
 
         // undo a player's visualization if it exists
 
@@ -1211,13 +1201,14 @@ public class PSPlayerListener implements Listener
                                             {
                                                 ChatBlock.send(player, "fieldTypeEnabled", field.getSettings().getTitle());
                                                 field.setDisabled(false);
+                                                field.dirtyFlags();
                                             }
                                             else
                                             {
                                                 ChatBlock.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
                                                 field.setDisabled(true);
+                                                field.dirtyFlags();
                                             }
-                                            field.dirtyFlags();
                                         }
                                     }
                                 }
@@ -1280,7 +1271,7 @@ public class PSPlayerListener implements Listener
                                                     {
                                                         PreciousStones.debug("disabled");
                                                         field.setDisabled(true);
-                                                        plugin.getStorageManager().offerField(field);
+                                                        field.dirtyFlags();
                                                         return;
                                                     }
                                                 }
@@ -1297,7 +1288,7 @@ public class PSPlayerListener implements Listener
                                                     {
                                                         PreciousStones.debug("recording");
                                                         field.setDisabled(false);
-                                                        plugin.getStorageManager().offerField(field);
+                                                        field.dirtyFlags();
                                                         return;
                                                     }
                                                 }

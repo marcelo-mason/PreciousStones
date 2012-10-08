@@ -354,7 +354,7 @@ public final class StorageManager
             {
                 changed++;
                 field.disableFlag(flagStr);
-                field.dirtyFlags();
+                plugin.getStorageManager().offerField(field);
             }
 
             plugin.getForceFieldManager().addToCollection(field);

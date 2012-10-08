@@ -185,7 +185,7 @@ public class PreciousStones extends JavaPlugin
     public void onDisable()
     {
         getVisualizationManager().revertAll();
-        getForceFieldManager().finalize();
+        getForceFieldManager().doFinalize();
         getPlayerManager().savePlayerEntries();
         getStorageManager().processQueue();
         getServer().getScheduler().cancelTasks(this);

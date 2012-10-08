@@ -60,6 +60,7 @@ public final class SettingsManager
     private List<BlockTypeEntry> unbreakableBlocks = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> bypassBlocks = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> unprotectableBlocks = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> hidingMaskBlocs = new ArrayList<BlockTypeEntry>();
     private List<Integer> toolItems = new ArrayList<Integer>();
     private List<Integer> repairableItems = new ArrayList<Integer>();
     private List<String> allEntryGroups = new ArrayList<String>();
@@ -179,6 +180,7 @@ public final class SettingsManager
         bypassBlocks = Helper.toTypeEntries(config.getStringList("bypass-blocks"));
         unprotectableBlocks = Helper.toTypeEntries(config.getStringList("unprotectable-blocks"));
         unbreakableBlocks = Helper.toTypeEntries(config.getStringList("unbreakable-blocks"));
+        hidingMaskBlocs = Helper.toTypeEntries(config.getStringList("hiding-mask-blocks"));
         toolItems = config.getIntegerList("tool-items");
         repairableItems = config.getIntegerList("repairable-items");
         logTranslocation = config.getBoolean("log.translocation");
@@ -463,6 +465,27 @@ public final class SettingsManager
     public boolean isUnprotectableType(BlockTypeEntry type)
     {
         return getUnprotectableBlocks().contains(type);
+    }
+
+    /**
+     * Check if a type is one of the hiding mask types
+     *
+     * @param type
+     * @return
+     */
+    public boolean isHidingMaskType(BlockTypeEntry type)
+    {
+        return hidingMaskBlocs.contains(type);
+    }
+
+    /**
+     * Returns the first entry in the hiding mask list
+     *
+     * @return
+     */
+    public BlockTypeEntry getFirstHidingMask()
+    {
+        return hidingMaskBlocs.get(0);
     }
 
     /**

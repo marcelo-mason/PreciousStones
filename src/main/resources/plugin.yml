@@ -14,8 +14,6 @@ permissions:
     description: Can create forcefield blocks
   preciousstones.benefit.create.unbreakable:
     description: Can create unbreakable blocks
-  preciousstones.benefit.create.protection:
-    description: Can create protection blocks
   preciousstones.benefit.disable:
     description: Can disable his own fields
   preciousstones.benefit.enable:
@@ -62,6 +60,10 @@ permissions:
     description: Can set the visualization density
   preciousstones.benefit.change-owner:
     description: Can change the owner to their own fields
+  preciousstones.benefit.hide:
+    description: Can hide/unhide his fields
+  preciousstones.benefit.hideall:
+    description: Can hide/unhide all of his fields
   preciousstones.whitelist.allow:
     description: Can use /ps allow
   preciousstones.whitelist.allowed:
@@ -188,8 +190,6 @@ permissions:
     description: User does not show up in logs
   preciousstones.admin.viewconflicting:
     description: Tells you locations of conflicting pstones when placing new field
-  preciousstones.admin.retag:
-    description: Can use /ps retag
   preciousstones.admin.insert:
     description: Can use /ps insert
   preciousstones.admin.reset:
@@ -252,7 +252,6 @@ permissions:
     children:
       preciousstones.benefit.create.forcefield: true
       preciousstones.benefit.create.unbreakable: true
-      preciousstones.benefit.create.protection: true
       preciousstones.benefit.heal: true
       preciousstones.benefit.potions: true
       preciousstones.benefit.giveair: true
@@ -276,6 +275,8 @@ permissions:
       preciousstones.benefit.disable: true
       preciousstones.benefit.enable: true
       preciousstones.benefit.change-owner: true
+      preciousstones.benefit.hide: true
+      preciousstones.benefit.hideall: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: false
@@ -314,6 +315,7 @@ permissions:
       preciousstones.bypass.cuboid: true
       preciousstones.bypass.interval: true
       preciousstones.bypass.teleport: true
+      preciousstones.bypass.limits: true
       preciousstones.bypass.world: true
       preciousstones.bypass.allowed-only-inside: true
       preciousstones.bypass.allowed-only-outside: true
@@ -322,7 +324,7 @@ permissions:
       preciousstones.bypass.damage: true
       preciousstones.bypass.entryalert: true
       preciousstones.bypass.no-allowing: true
-      preciousstones.bypass.teleport: true
+      preciousstones.bypass.hiding: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false
@@ -360,7 +362,6 @@ permissions:
       preciousstones.admin.details: true
       preciousstones.admin.bypass.log: true
       preciousstones.admin.viewconflicting: true
-      preciousstones.admin.retag: true
       preciousstones.admin.isadmin: true
       preciousstones.admin.counts: true
       preciousstones.admin.locations: true

@@ -428,10 +428,12 @@ public final class CommandManager implements CommandExecutor
                                 if (plugin.getStorageManager().existsTranslocationDataWithName(fieldName, field.getOwner()))
                                 {
                                     field.setDisabled(true);
+                                    field.dirtyFlags();
                                 }
                                 else
                                 {
                                     field.setDisabled(false);
+                                    field.dirtyFlags();
                                 }
                             }
 
@@ -612,7 +614,7 @@ public final class CommandManager implements CommandExecutor
                                 }
 
                                 field.setDisabled(true);
-                                plugin.getStorageManager().offerField(field);
+                                field.dirtyFlags();
                                 ChatBlock.send(sender, "fieldDisabled");
                             }
                             else
@@ -646,7 +648,7 @@ public final class CommandManager implements CommandExecutor
                                 }
 
                                 field.setDisabled(false);
-                                plugin.getStorageManager().offerField(field);
+                                field.dirtyFlags();
                                 ChatBlock.send(sender, "fieldEnabled");
                             }
                             else
@@ -741,7 +743,7 @@ public final class CommandManager implements CommandExecutor
                                         ChatBlock.send(sender, "flagDisabled", flagStr);
                                     }
 
-                                    field.dirtyFlags();
+                                    plugin.getStorageManager().offerField(field);
                                 }
                                 else
                                 {
@@ -911,16 +913,18 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (!field.hasFlag(flagStr) && !field.hasDisabledFlag(flagStr))
                                 {
+                                    plugin.getForceFieldManager().removeSourceField(field);
+
                                     if (field.insertFieldFlag(flagStr))
                                     {
-                                        plugin.getForceFieldManager().addSourceField(field);
+                                        field.dirtyFlags();
                                         ChatBlock.send(sender, "flagInserted");
-                                        plugin.getStorageManager().offerField(field);
                                     }
                                     else
                                     {
                                         ChatBlock.send(sender, "flagNotExists");
                                     }
+                                    plugin.getForceFieldManager().addSourceField(field);
                                 }
                                 else
                                 {
@@ -1746,10 +1750,88 @@ public final class CommandManager implements CommandExecutor
                         plugin.getStorageManager().offerPlayer(player.getName());
                         return true;
                     }
+                    else if (cmd.equals(ChatBlock.format("commandHide")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide"))
+                    {
+                        if (args.length == 1)
+                        {
+                            if (args[0].equals(ChatBlock.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hideall"))
+                            {
+                                int count = plugin.getForceFieldManager().hideBelonging(player.getName());
 
+                                if (count > 0)
+                                {
+                                    ChatBlock.send(sender, "hideHideAll", count);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
+
+                            if (field != null)
+                            {
+                                if (field.hasFlag(FieldFlag.HIDABLE))
+                                {
+                                    if (!field.isHidden())
+                                    {
+                                        field.hide();
+                                        ChatBlock.send(sender, "hideHide");
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.send(sender, "hideHiddenAlready");
+                                    }
+                                }
+                                else
+                                {
+                                    ChatBlock.send(sender, "hideCannot");
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                    else if (cmd.equals(ChatBlock.format("commandUnhide")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide"))
+                    {
+                        if (args.length == 1)
+                        {
+                            if (args[0].equals(ChatBlock.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hideall"))
+                            {
+                                int count = plugin.getForceFieldManager().unhideBelonging(player.getName());
+
+                                if (count > 0)
+                                {
+                                    ChatBlock.send(sender, "hideUnhideAll", count);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
+
+                            if (field != null)
+                            {
+                                if (field.hasFlag(FieldFlag.HIDABLE))
+                                {
+                                    if (field.isHidden())
+                                    {
+                                        field.unHide();
+                                        ChatBlock.send(sender, "hideUnhide");
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.send(sender, "hideUnHiddenAlready");
+                                    }
+                                }
+                                else
+                                {
+                                    ChatBlock.send(sender, "hideCannot");
+                                }
+                            }
+                        }
+                        return true;
+                    }
 
                     ChatBlock.send(sender, "notValidCommand");
-
                     return true;
                 }
 

@@ -111,6 +111,7 @@ public class TranslocationUpdater implements Runnable
                     Bukkit.getServer().getScheduler().cancelTask(timerID);
                     field.setDisabled(true);
                     field.setTranslocating(false);
+                    field.dirtyFlags();
                 }
             }
         }
