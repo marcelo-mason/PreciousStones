@@ -561,30 +561,35 @@ public final class EntryManager
             }
         }
 
-        if (!field.getSettings().getCommandOnEnter().isEmpty())
+        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+        if (!allowed && !field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
-            String cmd = field.getSettings().getCommandOnEnter();
-            cmd = cmd.replace("{player}", player.getName());
-            cmd = cmd.replace("{owner}", field.getOwner());
-            cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-            cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-            cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-            cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+            if (!field.getSettings().getCommandOnEnter().isEmpty())
+            {
+                String cmd = field.getSettings().getCommandOnEnter();
+                cmd = cmd.replace("{player}", player.getName());
+                cmd = cmd.replace("{owner}", field.getOwner());
+                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
-        }
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+            }
 
-        if (!field.getSettings().getPlayerCommandOnEnter().isEmpty())
-        {
-            String cmd = field.getSettings().getPlayerCommandOnEnter();
-            cmd = cmd.replace("{player}", player.getName());
-            cmd = cmd.replace("{owner}", field.getOwner());
-            cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-            cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-            cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-            cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+            if (!field.getSettings().getPlayerCommandOnEnter().isEmpty())
+            {
+                String cmd = field.getSettings().getPlayerCommandOnEnter();
+                cmd = cmd.replace("{player}", player.getName());
+                cmd = cmd.replace("{owner}", field.getOwner());
+                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
-            player.performCommand(cmd);
+                player.performCommand(cmd);
+            }
         }
     }
 
@@ -625,30 +630,35 @@ public final class EntryManager
             }
         }
 
-        if (!field.getSettings().getCommandOnExit().isEmpty())
+        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+
+        if (!allowed && !field.hasFlag(FieldFlag.APPLY_TO_ALL))
         {
-            String cmd = field.getSettings().getCommandOnExit();
-            cmd = cmd.replace("{player}", player.getName());
-            cmd = cmd.replace("{owner}", field.getOwner());
-            cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-            cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-            cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-            cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+            if (!field.getSettings().getCommandOnExit().isEmpty())
+            {
+                String cmd = field.getSettings().getCommandOnExit();
+                cmd = cmd.replace("{player}", player.getName());
+                cmd = cmd.replace("{owner}", field.getOwner());
+                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
-        }
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+            }
 
-        if (!field.getSettings().getPlayerCommandOnExit().isEmpty())
-        {
-            String cmd = field.getSettings().getPlayerCommandOnExit();
-            cmd = cmd.replace("{player}", player.getName());
-            cmd = cmd.replace("{owner}", field.getOwner());
-            cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-            cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-            cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-            cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+            if (!field.getSettings().getPlayerCommandOnExit().isEmpty())
+            {
+                String cmd = field.getSettings().getPlayerCommandOnExit();
+                cmd = cmd.replace("{player}", player.getName());
+                cmd = cmd.replace("{owner}", field.getOwner());
+                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
-            player.performCommand(cmd);
+                player.performCommand(cmd);
+            }
         }
     }
 
