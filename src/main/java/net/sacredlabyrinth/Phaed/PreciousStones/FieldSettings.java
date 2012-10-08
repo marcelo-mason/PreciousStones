@@ -54,6 +54,10 @@ public class FieldSettings
     private int teleportBackAfterSeconds = 0;
     private int teleportMaxDistance = 0;
     private int griefRevertInterval = 0;
+    private String commandOnEnter = "";
+    private String commandOnExit = "";
+    private String playerCommandOnEnter = "";
+    private String playerCommandOnExit = "";
     private List<Integer> teleportIfHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfNotHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfHasItems = new ArrayList<Integer>();
@@ -1288,6 +1292,26 @@ public class FieldSettings
             }
         }
 
+        if (map.containsKey("command-on-enter") && Helper.isString(map.get("command-on-enter")))
+        {
+            commandOnEnter = (String) map.get("command-on-enter");
+        }
+
+        if (map.containsKey("command-on-exit") && Helper.isString(map.get("command-on-exit")))
+        {
+            commandOnExit = (String) map.get("command-on-exit");
+        }
+
+        if (map.containsKey("player-command-on-enter") && Helper.isString(map.get("player-command-on-enter")))
+        {
+            playerCommandOnEnter = (String) map.get("player-command-on-enter");
+        }
+
+        if (map.containsKey("player-command-on-exit") && Helper.isString(map.get("player-command-on-exit")))
+        {
+            playerCommandOnExit = (String) map.get("player-command-on-exit");
+        }
+
         defaultFlags.add(FieldFlag.ALL);
     }
 
@@ -2006,5 +2030,25 @@ public class FieldSettings
     public int getGriefRevertInterval()
     {
         return griefRevertInterval;
+    }
+
+    public String getCommandOnEnter()
+    {
+        return commandOnEnter;
+    }
+
+    public String getCommandOnExit()
+    {
+        return commandOnExit;
+    }
+
+    public String getPlayerCommandOnEnter()
+    {
+        return playerCommandOnEnter;
+    }
+
+    public String getPlayerCommandOnExit()
+    {
+        return playerCommandOnExit;
     }
 }
