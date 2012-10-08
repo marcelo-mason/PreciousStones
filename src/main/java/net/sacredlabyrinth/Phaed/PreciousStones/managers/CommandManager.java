@@ -1754,7 +1754,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length == 1)
                         {
-                            if (args[0].equals(ChatBlock.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hideall"))
+                            if (args[0].equals(ChatBlock.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall"))
                             {
                                 int count = plugin.getForceFieldManager().hideBelonging(player.getName());
 
@@ -1794,7 +1794,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length == 1)
                         {
-                            if (args[0].equals(ChatBlock.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hideall"))
+                            if (args[0].equals(ChatBlock.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall"))
                             {
                                 int count = plugin.getForceFieldManager().unhideBelonging(player.getName());
 

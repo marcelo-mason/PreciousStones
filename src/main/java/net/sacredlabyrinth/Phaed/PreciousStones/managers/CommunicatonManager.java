@@ -3241,7 +3241,7 @@ public class CommunicatonManager
             cb.addRow("menu50");
         }
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.hideall"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall"))
         {
             cb.addRow("menu51");
             cb.addRow("menu52");

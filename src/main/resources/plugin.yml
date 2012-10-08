@@ -62,7 +62,7 @@ permissions:
     description: Can change the owner to their own fields
   preciousstones.benefit.hide:
     description: Can hide/unhide his fields
-  preciousstones.benefit.hideall:
+  preciousstones.admin.hideall:
     description: Can hide/unhide all of his fields
   preciousstones.whitelist.allow:
     description: Can use /ps allow
@@ -276,7 +276,6 @@ permissions:
       preciousstones.benefit.enable: true
       preciousstones.benefit.change-owner: true
       preciousstones.benefit.hide: true
-      preciousstones.benefit.hideall: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: false
@@ -369,6 +368,7 @@ permissions:
       preciousstones.admin.superduperpickaxe: true
       preciousstones.admin.enableall: true
       preciousstones.admin.disableall: true
+      preciousstones.admin.hideall: true
   preciousstones.override.*:
     description: These players will receive no warnings or notifications
     default: false
