@@ -2038,6 +2038,60 @@ public class Field extends AbstractVec implements Comparable<Field>
             block.setTypeId(maskType.getTypeId());
             block.setData(maskType.getData());
         }
+
+        if (isParent())
+        {
+            for (Field child : children)
+            {
+                if (!child.isHidden())
+                {
+                    child.hide();
+                }
+            }
+        }
+
+        if (isChild())
+        {
+            if (!getParent().isHidden())
+            {
+                getParent().hide();
+            }
+        }
+    }
+
+    /**
+     * Unhides the field block turning it back to its normal block type
+     */
+    public void unHide()
+    {
+        if (isHidden())
+        {
+            hidden = false;
+            dirtyFlags();
+
+            Block block = getBlock();
+            block.setTypeId(getTypeId());
+            block.setData(getData());
+        }
+
+        if (isParent())
+        {
+            for (Field child : children)
+            {
+                if (child.isHidden())
+                {
+                    child.unHide();
+                }
+            }
+        }
+
+        if (isChild())
+        {
+            if (getParent().isHidden())
+            {
+                getParent().unHide();
+            }
+        }
     }
 
     private BlockTypeEntry findMaskType()
@@ -2069,22 +2123,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
 
         return PreciousStones.getInstance().getSettingsManager().getFirstHidingMask();
-    }
-
-    /**
-     * Unhides the field block turning it back to its normal block type
-     */
-    public void unHide()
-    {
-        if (isHidden())
-        {
-            hidden = false;
-            dirtyFlags();
-
-            Block block = getBlock();
-            block.setTypeId(getTypeId());
-            block.setData(getData());
-        }
     }
 
     public boolean isNamed()
