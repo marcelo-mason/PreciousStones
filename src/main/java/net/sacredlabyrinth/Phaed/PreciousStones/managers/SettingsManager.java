@@ -248,7 +248,7 @@ public final class SettingsManager
         disableSimpleClanHook = loadBoolean("settings.disable-simpleclans-hook");
         maxSizeTranslocation = loadInt("settings.max-size-translocation");
         maxSizeTranslocationForRedstone = loadInt("settings.max-size-translocation-for-redstone");
-        version = config.getDouble("settings.version");
+        version = loadDouble("settings.version");
         preventPlaceEverywhere = loadStringList("settings.prevent-place-everywhere");
         preventDestroyEverywhere = loadStringList("settings.prevent-destroy-everywhere");
         showDefaultWelcomeFarewellMessages = loadBoolean("settings.show-default-welcome-farewell-messages");
@@ -330,6 +330,18 @@ public final class SettingsManager
         if (config.isInt(path))
         {
             int value = config.getInt(path);
+            cleanConfig.set(path, value);
+            return value;
+        }
+
+        return 0;
+    }
+
+    private double loadDouble(String path)
+    {
+        if (config.isDouble(path))
+        {
+            double value = config.getDouble(path);
             cleanConfig.set(path, value);
             return value;
         }

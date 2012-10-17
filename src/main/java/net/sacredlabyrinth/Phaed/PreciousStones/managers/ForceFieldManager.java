@@ -2254,10 +2254,7 @@ public final class ForceFieldManager
             return;
         }
 
-        if (field.isHidden())
-        {
-            field.unHide();
-        }
+        field.unHide();
 
         if (plugin.getSettingsManager().isDropOnDelete())
         {
@@ -2289,10 +2286,7 @@ public final class ForceFieldManager
 
         if (field != null)
         {
-            if (field.isHidden())
-            {
-                field.unHide();
-            }
+            field.unHide();
         }
 
         block.setType(Material.AIR);

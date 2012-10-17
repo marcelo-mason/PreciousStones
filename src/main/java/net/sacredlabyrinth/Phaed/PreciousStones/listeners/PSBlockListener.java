@@ -523,10 +523,7 @@ public class PSBlockListener implements Listener
 
     private boolean breakingFieldChecks(Player player, Block block, Field field, Cancellable event)
     {
-        if (field.isHidden())
-        {
-            field.unHide();
-        }
+        field.unHide();
 
         // cancel cuboid if still drawing it
 
@@ -601,11 +598,6 @@ public class PSBlockListener implements Listener
     private void removeAndRefundBlock(Player player, Block block, Field field, Cancellable event)
     {
         PreciousStones.debug("releasing field");
-
-        if (field.isHidden())
-        {
-            field.unHide();
-        }
 
         if (field.hasFlag(FieldFlag.SINGLE_USE))
         {
