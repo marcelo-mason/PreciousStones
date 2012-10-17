@@ -353,6 +353,38 @@ public final class EntryManager
                 }
             }
         }
+
+        if (FieldFlag.COMMAND_ON_ENTER.applies(field, player))
+        {
+            if (!field.getSettings().getCommandOnEnter().isEmpty())
+            {
+                String cmd = field.getSettings().getCommandOnEnter();
+                cmd = cmd.replace("{player}", player.getName());
+                cmd = cmd.replace("{owner}", field.getOwner());
+                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+            }
+        }
+
+        if (FieldFlag.PLAYER_COMMAND_ON_ENTER.applies(field, player))
+        {
+            if (!field.getSettings().getPlayerCommandOnEnter().isEmpty())
+            {
+                String cmd = field.getSettings().getPlayerCommandOnEnter();
+                cmd = cmd.replace("{player}", player.getName());
+                cmd = cmd.replace("{owner}", field.getOwner());
+                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+
+                player.performCommand(cmd);
+            }
+        }
     }
 
     /**
@@ -413,6 +445,38 @@ public final class EntryManager
                 }
 
                 player.setAllowFlight(true);
+            }
+        }
+
+        if (FieldFlag.COMMAND_ON_EXIT.applies(field, player))
+        {
+            if (!field.getSettings().getCommandOnExit().isEmpty())
+            {
+                String cmd = field.getSettings().getCommandOnExit();
+                cmd = cmd.replace("{player}", player.getName());
+                cmd = cmd.replace("{owner}", field.getOwner());
+                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+            }
+        }
+
+        if (FieldFlag.PLAYER_COMMAND_ON_EXIT.applies(field, player))
+        {
+            if (!field.getSettings().getPlayerCommandOnExit().isEmpty())
+            {
+                String cmd = field.getSettings().getPlayerCommandOnExit();
+                cmd = cmd.replace("{player}", player.getName());
+                cmd = cmd.replace("{owner}", field.getOwner());
+                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+
+                player.performCommand(cmd);
             }
         }
     }
@@ -499,38 +563,6 @@ public final class EntryManager
                 player.sendBlockChange(field.getLocation(), field.getTypeId(), field.getData());
             }
         }
-
-        if (FieldFlag.COMMAND_ON_ENTER.applies(field, player))
-        {
-            if (!field.getSettings().getCommandOnEnter().isEmpty())
-            {
-                String cmd = field.getSettings().getCommandOnEnter();
-                cmd = cmd.replace("{player}", player.getName());
-                cmd = cmd.replace("{owner}", field.getOwner());
-                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
-
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
-            }
-        }
-
-        if (FieldFlag.PLAYER_COMMAND_ON_ENTER.applies(field, player))
-        {
-            if (!field.getSettings().getPlayerCommandOnEnter().isEmpty())
-            {
-                String cmd = field.getSettings().getPlayerCommandOnEnter();
-                cmd = cmd.replace("{player}", player.getName());
-                cmd = cmd.replace("{owner}", field.getOwner());
-                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
-
-                player.performCommand(cmd);
-            }
-        }
     }
 
     /**
@@ -567,38 +599,6 @@ public final class EntryManager
                 {
                     updatableEntries.remove(player.getName());
                 }
-            }
-        }
-
-        if (FieldFlag.COMMAND_ON_EXIT.applies(field, player))
-        {
-            if (!field.getSettings().getCommandOnExit().isEmpty())
-            {
-                String cmd = field.getSettings().getCommandOnExit();
-                cmd = cmd.replace("{player}", player.getName());
-                cmd = cmd.replace("{owner}", field.getOwner());
-                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
-
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
-            }
-        }
-
-        if (FieldFlag.PLAYER_COMMAND_ON_EXIT.applies(field, player))
-        {
-            if (!field.getSettings().getPlayerCommandOnExit().isEmpty())
-            {
-                String cmd = field.getSettings().getPlayerCommandOnExit();
-                cmd = cmd.replace("{player}", player.getName());
-                cmd = cmd.replace("{owner}", field.getOwner());
-                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
-
-                player.performCommand(cmd);
             }
         }
     }
