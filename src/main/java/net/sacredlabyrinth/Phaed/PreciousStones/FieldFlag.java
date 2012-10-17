@@ -123,7 +123,8 @@ public enum FieldFlag
     PLAYER_COMMAND_ON_EXIT,
     DISABLE_WHEN_ONLINE,
     MUST_BE_ABOVE,
-    MUST_BE_BELOW
+    MUST_BE_BELOW,
+    NO_GROWTH,
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();

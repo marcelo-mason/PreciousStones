@@ -1386,7 +1386,25 @@ public class PSBlockListener implements Listener
     /**
      * @param event
      */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockGrow(BlockGrowEvent event)
+    {
+        if (event.getBlock() == null)
+        {
+            return;
+        }
 
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getBlock().getLocation(), FieldFlag.NO_GROWTH);
+
+        if (field != null)
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * @param event
+     */
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPistonExtend(BlockPistonExtendEvent event)
     {
