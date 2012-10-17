@@ -474,8 +474,9 @@ hideHiddenAlready: "{red}The field is already hidden"
 hideUnHiddenAlready: "{red}The field is already visible"
 hideCannot: "{red}This type of field cannot be hidden"
 commandCanceled: "{red}You cannot use that command here"
-
-
+cuboidCannotMix: "Cannot mix fields that are not in the same mixing group."
+cuboidCannotAddProps: "Cannot add on properties of more valuable fields"
+fieldIntersectsWG: "The field intersects with a WorldGuard region you are not allowed in."
 
 
 

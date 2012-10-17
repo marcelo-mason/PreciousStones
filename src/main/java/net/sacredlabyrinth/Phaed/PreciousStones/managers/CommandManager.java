@@ -171,7 +171,7 @@ public final class CommandManager implements CommandExecutor
 
                                     // only those with permission can be allowed
 
-                                    if (field.getSettings().getRequiredPermissionAllow() != null)
+                                    if (!field.getSettings().getRequiredPermissionAllow().isEmpty())
                                     {
                                         if (!plugin.getPermissionsManager().has(allowed, field.getSettings().getRequiredPermissionAllow()))
                                         {

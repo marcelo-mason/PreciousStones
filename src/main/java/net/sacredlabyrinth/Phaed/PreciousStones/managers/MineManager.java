@@ -1,7 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
@@ -33,19 +32,12 @@ public class MineManager
             return;
         }
 
-        FieldSettings fs = field.getSettings();
-
-        if (!field.hasFlag(FieldFlag.MINE))
+        if (FieldFlag.MINE.applies(field, player))
         {
-            return;
-        }
-
-        if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-        {
-            final int delay = fs.getMineDelaySeconds();
+            final int delay = field.getSettings().getMineDelaySeconds();
             final Block block = plugin.getForceFieldManager().getBlock(field);
 
-            if(!plugin.getWorldGuardManager().canBuild(player, block.getLocation()))
+            if (!plugin.getWorldGuardManager().canBuild(player, block.getLocation()))
             {
                 return;
             }
@@ -56,7 +48,7 @@ public class MineManager
             {
                 public void run()
                 {
-                    plugin.getForceFieldManager().silentRelease(field);
+                    plugin.getForceFieldManager().releaseNoDrop(field);
 
                     block.getWorld().createExplosion(block.getLocation(), field.getSettings().getMineStrength(), field.getSettings().isMineHasFire());
                 }

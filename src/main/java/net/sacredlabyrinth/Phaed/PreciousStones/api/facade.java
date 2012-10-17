@@ -3,7 +3,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.api;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -31,9 +30,7 @@ public class facade implements IApi
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.PREVENT_PLACE.applies(field, player))
             {
                 return false;
             }
@@ -51,13 +48,11 @@ public class facade implements IApi
      */
     public boolean canBreak(Player player, Location location)
     {
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(location, FieldFlag.PREVENT_PLACE);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(location, FieldFlag.PREVENT_DESTROY);
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.PREVENT_DESTROY.applies(field, player))
             {
                 return false;
             }
@@ -75,10 +70,7 @@ public class facade implements IApi
      */
     public boolean isPStone(Location location)
     {
-        Field field = plugin.getForceFieldManager().getField(location);
-        Unbreakable ub = plugin.getUnbreakableManager().getUnbreakable(location);
-
-        return field != null || ub != null;
+        return plugin.getForceFieldManager().getField(location) != null || plugin.getUnbreakableManager().getUnbreakable(location) != null;
     }
 
     /**
@@ -91,8 +83,7 @@ public class facade implements IApi
      */
     public boolean isFieldProtectingArea(FieldFlag flag, Location location)
     {
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(location, flag);
-        return field != null;
+        return plugin.getForceFieldManager().getEnabledSourceField(location, flag) != null;
     }
 
     /**
@@ -125,7 +116,6 @@ public class facade implements IApi
      */
     public boolean flagAppliesToPlayer(Player player, FieldFlag flag, Location location)
     {
-        Field field = plugin.getForceFieldManager().getApplyingEnabledSourceField(player, location, flag);
-        return field != null;
+        return plugin.getForceFieldManager().getApplyingEnabledSourceField(player, location, flag) != null;
     }
 }

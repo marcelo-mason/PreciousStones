@@ -24,9 +24,6 @@ public final class ForesterManager
 {
     private PreciousStones plugin;
 
-    /**
-     * @param plugin
-     */
     public ForesterManager()
     {
         plugin = PreciousStones.getInstance();
@@ -106,7 +103,7 @@ public final class ForesterManager
                             Block fertile = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
                             fertile.setTypeId(field.getSettings().getGroundBlock());
 
-                            if (field.getSettings().getShrubTypes() != null)
+                            if (!field.getSettings().getShrubTypes().isEmpty())
                             {
                                 int typeabove = world.getBlockTypeIdAt(vec.getX(), vec.getY() + 1, vec.getZ());
 
@@ -180,17 +177,15 @@ public final class ForesterManager
 
                     // do not place in protected area
 
-                    Field f = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
-
-                    if (f != null)
+                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                     {
-                        if (!field.getSettings().inPlaceBlacklist(block))
-                        {
-                            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                        Field f = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
 
-                            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (f != null)
+                        {
+                            if (!field.getSettings().inPlaceBlacklist(block))
                             {
-                                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                                if (FieldFlag.PREVENT_PLACE.applies(field, player))
                                 {
                                     return;
                                 }

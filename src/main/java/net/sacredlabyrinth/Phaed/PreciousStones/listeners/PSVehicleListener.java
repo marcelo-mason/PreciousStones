@@ -44,9 +44,7 @@ public class PSVehicleListener implements Listener
             {
                 Player player = (Player)event.getAttacker();
 
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.PREVENT_VEHICLE_DESTROY.applies(field, player))
                 {
                     if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                     {

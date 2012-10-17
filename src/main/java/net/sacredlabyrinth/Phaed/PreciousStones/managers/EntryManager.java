@@ -97,18 +97,13 @@ public final class EntryManager
                     continue;
                 }
 
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, playerName);
-
                 // check players inventories for items to confiscate every five seconds
 
                 if (updateCount % 5 == 0)
                 {
-                    if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
+                    if (FieldFlag.CONFISCATE_ITEMS.applies(field, player))
                     {
-                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                        {
-                            plugin.getConfiscationManager().confiscateItems(field, player);
-                        }
+                        plugin.getConfiscationManager().confiscateItems(field, player);
                     }
                 }
 
@@ -117,17 +112,14 @@ public final class EntryManager
                 {
                     if (!hasAir)
                     {
-                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.AIR.applies(field, player))
                         {
-                            if (field.hasFlag(FieldFlag.AIR))
+                            if (player.getRemainingAir() < 300)
                             {
-                                if (player.getRemainingAir() < 300)
-                                {
-                                    player.setRemainingAir(600);
-                                    plugin.getCommunicationManager().showGiveAir(player);
-                                    hasAir = true;
-                                    continue;
-                                }
+                                player.setRemainingAir(600);
+                                plugin.getCommunicationManager().showGiveAir(player);
+                                hasAir = true;
+                                continue;
                             }
                         }
                     }
@@ -137,18 +129,15 @@ public final class EntryManager
                 {
                     if (!hasFeeding)
                     {
-                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.FEED.applies(field, player))
                         {
-                            if (field.hasFlag(FieldFlag.FEED))
+                            int food = player.getFoodLevel();
+                            if (food < 20)
                             {
-                                int food = player.getFoodLevel();
-                                if (food < 20)
-                                {
-                                    player.setFoodLevel(food + field.getSettings().getFeed());
-                                    plugin.getCommunicationManager().showFeeding(player);
-                                    hasFeeding = true;
-                                    continue;
-                                }
+                                player.setFoodLevel(food + field.getSettings().getFeed());
+                                plugin.getCommunicationManager().showFeeding(player);
+                                hasFeeding = true;
+                                continue;
                             }
                         }
                     }
@@ -158,19 +147,16 @@ public final class EntryManager
                 {
                     if (!hasHeal)
                     {
-                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.HEAL.applies(field, player))
                         {
-                            if (field.hasFlag(FieldFlag.HEAL))
+                            if (player.getHealth() < 20 && player.getHealth() > 0)
                             {
-                                if (player.getHealth() < 20 && player.getHealth() > 0)
-                                {
-                                    player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
-                                    plugin.getCommunicationManager().showHeal(player);
-                                    hasHeal = true;
-                                    continue;
-                                }
-
+                                player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
+                                plugin.getCommunicationManager().showHeal(player);
+                                hasHeal = true;
+                                continue;
                             }
+
                         }
                     }
                 }
@@ -179,18 +165,45 @@ public final class EntryManager
                 {
                     if (!hasRepair)
                     {
-                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.REPAIR.applies(field, player))
                         {
-                            if (field.hasFlag(FieldFlag.REPAIR))
-                            {
-                                boolean updated = false;
+                            boolean updated = false;
 
-                                ItemStack[] armors = player.getInventory().getArmorContents();
-                                for (ItemStack armor : armors)
+                            ItemStack[] armors = player.getInventory().getArmorContents();
+                            for (ItemStack armor : armors)
+                            {
+                                if (plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
                                 {
-                                    if (plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
+                                    short dur = armor.getDurability();
+                                    if (dur > 0)
                                     {
-                                        short dur = armor.getDurability();
+                                        dur -= field.getSettings().getRepair();
+                                        if (dur < 0)
+                                        {
+                                            dur = 0;
+                                        }
+                                        armor.setDurability(dur);
+                                        plugin.getCommunicationManager().showRepair(player);
+                                        updated = true;
+                                        hasRepair = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (updated)
+                            {
+                                continue;
+                            }
+
+                            ItemStack[] items = player.getInventory().getContents();
+                            for (ItemStack item : items)
+                            {
+                                if (item != null)
+                                {
+                                    if (plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
+                                    {
+                                        short dur = item.getDurability();
                                         if (dur > 0)
                                         {
                                             dur -= field.getSettings().getRepair();
@@ -198,7 +211,7 @@ public final class EntryManager
                                             {
                                                 dur = 0;
                                             }
-                                            armor.setDurability(dur);
+                                            item.setDurability(dur);
                                             plugin.getCommunicationManager().showRepair(player);
                                             updated = true;
                                             hasRepair = true;
@@ -206,41 +219,11 @@ public final class EntryManager
                                         }
                                     }
                                 }
+                            }
 
-                                if (updated)
-                                {
-                                    continue;
-                                }
-
-                                ItemStack[] items = player.getInventory().getContents();
-                                for (ItemStack item : items)
-                                {
-                                    if (item != null)
-                                    {
-                                        if (plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
-                                        {
-                                            short dur = item.getDurability();
-                                            if (dur > 0)
-                                            {
-                                                dur -= field.getSettings().getRepair();
-                                                if (dur < 0)
-                                                {
-                                                    dur = 0;
-                                                }
-                                                item.setDurability(dur);
-                                                plugin.getCommunicationManager().showRepair(player);
-                                                updated = true;
-                                                hasRepair = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (updated)
-                                {
-                                    continue;
-                                }
+                            if (updated)
+                            {
+                                continue;
                             }
                         }
                     }
@@ -250,25 +233,22 @@ public final class EntryManager
                 {
                     if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
                     {
-                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (!hasDamage)
                         {
-                            if (!hasDamage)
+                            if (FieldFlag.DAMAGE.applies(field, player))
                             {
-                                if (field.hasFlag(FieldFlag.DAMAGE))
+                                if (player.getHealth() > 0)
                                 {
-                                    if (player.getHealth() > 0)
-                                    {
-                                        int health = healthCheck(player.getHealth() - field.getSettings().getDamage());
-                                        player.setHealth(health);
+                                    int health = healthCheck(player.getHealth() - field.getSettings().getDamage());
+                                    player.setHealth(health);
 
-                                        if (health <= 0)
-                                        {
-                                            player.playEffect(EntityEffect.DEATH);
-                                        }
-                                        plugin.getCommunicationManager().showDamage(player);
-                                        hasDamage = true;
-                                        continue;
+                                    if (health <= 0)
+                                    {
+                                        player.playEffect(EntityEffect.DEATH);
                                     }
+                                    plugin.getCommunicationManager().showDamage(player);
+                                    hasDamage = true;
+                                    continue;
                                 }
                             }
                         }
@@ -279,24 +259,18 @@ public final class EntryManager
                 {
                     if (!hasPotion)
                     {
-                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.POTIONS.applies(field, player))
                         {
-                            if (field.hasFlag(FieldFlag.POTIONS))
-                            {
-                                plugin.getPotionManager().applyPotions(player, field);
-                                hasPotion = true;
-                                continue;
-                            }
+                            plugin.getPotionManager().applyPotions(player, field);
+                            hasPotion = true;
+                            continue;
                         }
                     }
                 }
 
-                if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.NEUTRALIZE_POTIONS.applies(field, player))
                 {
-                    if (field.hasFlag(FieldFlag.NEUTRALIZE_POTIONS))
-                    {
-                        plugin.getPotionManager().neutralizePotions(player, field);
-                    }
+                    plugin.getPotionManager().neutralizePotions(player, field);
                 }
             }
         }
@@ -331,67 +305,51 @@ public final class EntryManager
      */
     public void enterOverlappedArea(Player player, Field field)
     {
-        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-        if (field.hasFlag(FieldFlag.WELCOME_MESSAGE))
+        if (FieldFlag.WELCOME_MESSAGE.applies(field, player))
         {
             plugin.getCommunicationManager().showWelcomeMessage(player, field);
         }
 
-        if (field.hasFlag(FieldFlag.TELEPORT_ON_ENTRY))
+        if (FieldFlag.TELEPORT_ON_ENTRY.applies(field, player))
         {
             plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceEnter");
         }
 
-        if (field.hasFlag(FieldFlag.GROUP_ON_ENTRY))
+        if (FieldFlag.GROUP_ON_ENTRY.applies(field, player))
         {
-            if (!plugin.getPermissionsManager().inGroup(player.getName(), player.getWorld(), field.getSettings().getGroupOnEntry()))
+            if (!field.getSettings().getGroupOnEntry().isEmpty())
             {
                 plugin.getPermissionsManager().addGroup(player, field.getSettings().getGroupOnEntry());
             }
         }
 
-        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.CONFISCATE_ITEMS.applies(field, player))
         {
-            if (field.getSettings().getGroupOnEntry() != null)
-            {
-                plugin.getPermissionsManager().addGroup(player, field.getSettings().getGroupOnEntry());
-            }
+            plugin.getConfiscationManager().confiscateItems(field, player);
         }
 
-        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.ENTRY_GAME_MODE.applies(field, player))
         {
-            if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
-            {
-                plugin.getConfiscationManager().confiscateItems(field, player);
-            }
+            player.setGameMode(field.getSettings().getForceEntryGameMode());
         }
 
-        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.PREVENT_FLIGHT.applies(field, player))
         {
-            if (field.hasFlag(FieldFlag.ENTRY_GAME_MODE))
+            if (plugin.getSettingsManager().isNotifyFlyZones())
             {
-                player.setGameMode(field.getSettings().getForceEntryGameMode());
+                ChatBlock.send(player, "noFlyEnter");
             }
 
-            if (field.hasFlag(FieldFlag.PREVENT_FLIGHT))
-            {
-                if (plugin.getSettingsManager().isNotifyFlyZones())
-                {
-                    ChatBlock.send(player, "noFlyEnter");
-                }
+            player.setAllowFlight(false);
+        }
 
-                player.setAllowFlight(false);
-            }
-
-            if (field.hasFlag(FieldFlag.ENTRY_ALERT))
+        if (FieldFlag.ENTRY_ALERT.applies(field, player))
+        {
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entryalert"))
             {
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entryalert"))
+                if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
                 {
-                    if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
-                    {
-                        plugin.getForceFieldManager().announceAllowedPlayers(field, ChatBlock.format("entryAnnounce", player.getName(), field.getName(), field.getCoords()));
-                    }
+                    plugin.getForceFieldManager().announceAllowedPlayers(field, ChatBlock.format("entryAnnounce", player.getName(), field.getName(), field.getCoords()));
                 }
             }
         }
@@ -405,75 +363,56 @@ public final class EntryManager
      */
     public void leaveOverlappedArea(Player player, Field field)
     {
-        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-        if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE))
+        if (FieldFlag.FAREWELL_MESSAGE.applies(field, player))
         {
             plugin.getCommunicationManager().showFarewellMessage(player, field);
         }
 
-        if (field.hasFlag(FieldFlag.TELEPORT_ON_EXIT))
+        if (FieldFlag.TELEPORT_ON_EXIT.applies(field, player))
         {
             plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceExit");
         }
 
-        if (field.hasFlag(FieldFlag.GROUP_ON_ENTRY))
+        if (FieldFlag.GROUP_ON_ENTRY.applies(field, player))
         {
-            if (plugin.getPermissionsManager().inGroup(player.getName(), player.getWorld(), field.getSettings().getGroupOnEntry()))
+            if (!field.getSettings().getGroupOnEntry().isEmpty())
             {
                 plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
             }
         }
 
-        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.CONFISCATE_ITEMS.applies(field, player))
         {
-            if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
+            plugin.getConfiscationManager().returnItems(player);
+        }
+
+        if (FieldFlag.POTIONS.applies(field, player))
+        {
+            HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
+
+            for (PotionEffectType pot : potions.keySet())
             {
-                plugin.getConfiscationManager().returnItems(player);
+                player.removePotionEffect(pot);
             }
         }
 
-        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.LEAVING_GAME_MODE.applies(field, player))
         {
-            if (field.getSettings().getGroupOnEntry() != null)
-            {
-                plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
-            }
+            player.setGameMode(field.getSettings().getForceLeavingGameMode());
         }
 
-        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.PREVENT_FLIGHT.applies(field, player))
         {
-            if (field.hasFlag(FieldFlag.POTIONS))
-            {
-                HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
+            Field sub = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_FLIGHT);
 
-                for (PotionEffectType pot : potions.keySet())
+            if (sub == null)
+            {
+                if (plugin.getSettingsManager().isNotifyFlyZones())
                 {
-                    player.removePotionEffect(pot);
+                    ChatBlock.send(player, "noFlyLeave");
                 }
-            }
-        }
 
-        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-        {
-            if (field.hasFlag(FieldFlag.LEAVING_GAME_MODE))
-            {
-                player.setGameMode(field.getSettings().getForceLeavingGameMode());
-            }
-
-            if (field.hasFlag(FieldFlag.PREVENT_FLIGHT))
-            {
-                Field sub = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_FLIGHT);
-
-                if (sub == null)
-                {
-                    if (plugin.getSettingsManager().isNotifyFlyZones())
-                    {
-                        ChatBlock.send(player, "noFlyLeave");
-                    }
-
-                    player.setAllowFlight(true);
-                }
+                player.setAllowFlight(true);
             }
         }
     }
@@ -561,9 +500,7 @@ public final class EntryManager
             }
         }
 
-        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-        if (!allowed && !field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.COMMAND_ON_ENTER.applies(field, player))
         {
             if (!field.getSettings().getCommandOnEnter().isEmpty())
             {
@@ -577,7 +514,10 @@ public final class EntryManager
 
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
             }
+        }
 
+        if (FieldFlag.PLAYER_COMMAND_ON_ENTER.applies(field, player))
+        {
             if (!field.getSettings().getPlayerCommandOnEnter().isEmpty())
             {
                 String cmd = field.getSettings().getPlayerCommandOnEnter();
@@ -630,9 +570,7 @@ public final class EntryManager
             }
         }
 
-        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-        if (!allowed && !field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.COMMAND_ON_EXIT.applies(field, player))
         {
             if (!field.getSettings().getCommandOnExit().isEmpty())
             {
@@ -646,7 +584,10 @@ public final class EntryManager
 
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
             }
+        }
 
+        if (FieldFlag.PLAYER_COMMAND_ON_EXIT.applies(field, player))
+        {
             if (!field.getSettings().getPlayerCommandOnExit().isEmpty())
             {
                 String cmd = field.getSettings().getPlayerCommandOnExit();

@@ -1,6 +1,9 @@
 <component name="ProjectDictionaryState">
   <dictionary name="cc_madelg">
     <words>
+      <w>allable</w>
+      <w>alled</w>
+      <w>alledflags</w>
       <w>blockid</w>
       <w>coords</w>
       <w>discrepencies</w>
@@ -10,6 +13,7 @@
       <w>hidable</w>
       <w>hideall</w>
       <w>languageexists</w>
+      <w>npts</w>
       <w>posessive</w>
       <w>preciousstones</w>
       <w>pstone</w>
@@ -29,6 +33,7 @@
       <w>unprotectable</w>
       <w>unprotectableblock</w>
       <w>worldguard</w>
+      <w>yaml</w>
     </words>
   </dictionary>
 </component>

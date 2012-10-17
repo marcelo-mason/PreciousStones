@@ -72,9 +72,7 @@ public class PSEntityListener implements Listener
 
                     if (field != null)
                     {
-                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                        if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.REMOVE_MOB.applies(field, player))
                         {
                             Entity mob = event.getEntity();
 
@@ -115,9 +113,7 @@ public class PSEntityListener implements Listener
 
                 if (field != null)
                 {
-                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (FieldFlag.TELEPORT_ON_FEEDING.applies(field, player))
                     {
                         event.setCancelled(true);
                         plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceFeeding");
@@ -153,9 +149,7 @@ public class PSEntityListener implements Listener
 
                 if (field != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (FieldFlag.NO_FALL_DAMAGE.applies(field, player))
                     {
                         plugin.getCommunicationManager().showThump(player);
                         event.setCancelled(true);
@@ -527,9 +521,7 @@ public class PSEntityListener implements Listener
 
             if (field != null)
             {
-                boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.TELEPORT_ON_DAMAGE.applies(field, player))
                 {
                     event.setCancelled(true);
                     plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceDamage");
@@ -542,9 +534,7 @@ public class PSEntityListener implements Listener
 
                 if (field != null)
                 {
-                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (FieldFlag.TELEPORT_BEFORE_DEATH.applies(field, player))
                     {
                         event.setCancelled(true);
                         plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceDeath");
@@ -567,9 +557,7 @@ public class PSEntityListener implements Listener
                     {
                         Player player = (Player) sub.getDamager();
 
-                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.PROTECT_ANIMALS.applies(field, player))
                         {
                             event.setCancelled(true);
                             return;
@@ -593,9 +581,7 @@ public class PSEntityListener implements Listener
                     {
                         Player player = (Player) sub.getDamager();
 
-                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.PROTECT_VILLAGERS.applies(field, player))
                         {
                             event.setCancelled(true);
                             return;
@@ -619,9 +605,7 @@ public class PSEntityListener implements Listener
                     {
                         Player player = (Player) sub.getDamager();
 
-                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.PROTECT_MOBS.applies(field, player))
                         {
                             event.setCancelled(true);
                             return;
@@ -651,9 +635,7 @@ public class PSEntityListener implements Listener
 
                 if (field != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (FieldFlag.NO_FALL_DAMAGE.applies(field, player))
                     {
                         plugin.getCommunicationManager().showThump(player);
                         event.setCancelled(true);
@@ -739,9 +721,7 @@ public class PSEntityListener implements Listener
 
                     if (field != null)
                     {
-                        boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, attacker.getName());
-
-                        if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (FieldFlag.TELEPORT_ON_PVP.applies(field, attacker.getName()))
                         {
                             sub.setCancelled(true);
                             plugin.getTeleportationManager().teleport(attacker, field, "teleportAnnouncePvp");
@@ -838,22 +818,15 @@ public class PSEntityListener implements Listener
             {
                 Player player = (Player) pre.getRemover();
 
-                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
-
-                if (field != null)
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
 
-                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (field != null)
                     {
-                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
-                        {
-                            return;
-                        }
-                        else
+                        if (FieldFlag.PREVENT_DESTROY.applies(field, player))
                         {
                             event.setCancelled(true);
-                            return;
                         }
                     }
                 }
@@ -875,13 +848,12 @@ public class PSEntityListener implements Listener
         {
             return;
         }
+
         Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_PLACE);
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.PREVENT_PLACE.applies(field, player))
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                 {

@@ -93,9 +93,7 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.TELEPORT_ON_SNEAK.applies(field, player))
             {
                 plugin.getTeleportationManager().teleport(player, field);
             }
@@ -174,34 +172,24 @@ public class PSPlayerListener implements Listener
         {
             for (Field field : currentFields)
             {
-                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
+                if (FieldFlag.PREVENT_ENTRY.applies(field, player))
                 {
-                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                    Location outside = plugin.getPlayerManager().getOutsideLocation(player);
 
-                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (outside != null)
                     {
-                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
-                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
+                        Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
 
-                        if (outside != null)
+                        if (f != null)
                         {
-                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
-
-                            if (f != null)
-                            {
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                {
-                                    loc = outside;
-                                }
-                            }
+                            loc = outside;
                         }
-
-                        player.teleport(loc);
-                        plugin.getCommunicationManager().warnEntry(player, field);
-                        return;
                     }
+
+                    player.teleport(loc);
+                    plugin.getCommunicationManager().warnEntry(player, field);
+                    return;
                 }
             }
         }
@@ -253,9 +241,7 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, event.getPlayer().getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.PREVENT_TELEPORT.applies(field, player))
             {
                 if (!plugin.getPermissionsManager().has(event.getPlayer(), "preciousstones.bypass.teleport"))
                 {
@@ -311,34 +297,24 @@ public class PSPlayerListener implements Listener
         {
             for (Field futureField : futureFields)
             {
-                if (futureField.hasFlag(FieldFlag.PREVENT_ENTRY))
+                if (FieldFlag.PREVENT_ENTRY.applies(futureField, player))
                 {
-                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                    Location outside = plugin.getPlayerManager().getOutsideLocation(player);
 
-                    if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (outside != null)
                     {
-                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
-                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
+                        Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
 
-                        if (outside != null)
+                        if (f != null)
                         {
-                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
-
-                            if (f != null)
-                            {
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (!allowed || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                {
-                                    loc = outside;
-                                }
-                            }
+                            loc = outside;
                         }
-
-                        event.setTo(loc);
-                        plugin.getCommunicationManager().warnEntry(player, field);
-                        return;
                     }
+
+                    event.setTo(loc);
+                    plugin.getCommunicationManager().warnEntry(player, field);
+                    return;
                 }
             }
         }
@@ -442,34 +418,24 @@ public class PSPlayerListener implements Listener
         {
             for (Field field : futureFields)
             {
-                if (field.hasFlag(FieldFlag.PREVENT_ENTRY))
+                if (FieldFlag.PREVENT_ENTRY.applies(field, player))
                 {
-                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                    Location outside = plugin.getPlayerManager().getOutsideLocation(player);
 
-                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (outside != null)
                     {
-                        Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
-                        Location outside = plugin.getPlayerManager().getOutsideLocation(player);
+                        Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
 
-                        if (outside != null)
+                        if (f != null)
                         {
-                            Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
-
-                            if (f != null)
-                            {
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                                {
-                                    loc = outside;
-                                }
-                            }
+                            loc = outside;
                         }
-
-                        event.setTo(loc);
-                        plugin.getCommunicationManager().warnEntry(player, field);
-                        return;
                     }
+
+                    event.setTo(loc);
+                    plugin.getCommunicationManager().warnEntry(player, field);
+                    return;
                 }
             }
         }
@@ -480,14 +446,9 @@ public class PSPlayerListener implements Listener
         {
             if (field.hasFlag(FieldFlag.TELEPORT_IF_NOT_WALKING_ON) || field.hasFlag(FieldFlag.TELEPORT_IF_WALKING_ON))
             {
-                if (field.getSettings().teleportDueToWalking(event.getTo(), field))
+                if (field.getSettings().teleportDueToWalking(event.getTo(), field, player))
                 {
-                    boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                    {
-                        plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceWalking");
-                    }
+                    plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceWalking");
                 }
             }
         }
@@ -522,34 +483,29 @@ public class PSPlayerListener implements Listener
                         continue;
                     }
 
-                    if (futureField.hasFlag(FieldFlag.TELEPORT_IF_HAS_ITEMS))
+                    if (futureField.getSettings().isTeleportHasItem(stack.getTypeId()))
                     {
-                        if (futureField.getSettings().isTeleportHasItem(stack.getTypeId()))
+                        if (FieldFlag.TELEPORT_IF_HAS_ITEMS.applies(futureField, player))
                         {
-                            boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(futureField, player.getName());
+                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
-                            if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                            if (!entry.isTeleporting())
                             {
-                                PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
-
-                                if (!entry.isTeleporting())
+                                entry.setTeleporting(true);
+                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                                 {
-                                    entry.setTeleporting(true);
-                                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                    @Override
+                                    public void run()
                                     {
-                                        @Override
-                                        public void run()
-                                        {
-                                            plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHasItems");
-                                        }
-                                    }, 0);
-                                }
-                                return;
+                                        plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHasItems");
+                                    }
+                                }, 0);
                             }
+                            return;
                         }
                     }
 
-                    if (futureField.hasFlag(FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS))
+                    if (FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS.applies(futureField, player))
                     {
                         if (futureField.getSettings().isTeleportHasNotItem(stack.getTypeId()))
                         {
@@ -560,91 +516,76 @@ public class PSPlayerListener implements Listener
 
                 if (!hasItem)
                 {
-                    if (futureField.hasFlag(FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS))
+                    if (FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS.applies(futureField, player))
                     {
-                        boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(futureField, player.getName());
+                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
-                        if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (!entry.isTeleporting())
                         {
-                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
-
-                            if (!entry.isTeleporting())
+                            entry.setTeleporting(true);
+                            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                             {
-                                entry.setTeleporting(true);
-                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                @Override
+                                public void run()
                                 {
-                                    @Override
-                                    public void run()
-                                    {
-                                        plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHasItems");
-                                    }
-                                }, 0);
-                            }
-                            return;
+                                    plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHasItems");
+                                }
+                            }, 0);
                         }
+                        return;
                     }
                 }
             }
 
-            if (futureField.hasFlag(FieldFlag.TELEPORT_IF_HOLDING_ITEMS))
+            ItemStack itemInHand = player.getItemInHand();
+
+            if (itemInHand != null && itemInHand.getTypeId() != 0)
             {
-                ItemStack itemInHand = player.getItemInHand();
-
-                if (itemInHand != null && itemInHand.getTypeId() != 0)
+                if (futureField.getSettings().isTeleportHoldingItem(itemInHand.getTypeId()))
                 {
-                    if (futureField.getSettings().isTeleportHoldingItem(itemInHand.getTypeId()))
+                    if (FieldFlag.TELEPORT_IF_HOLDING_ITEMS.applies(futureField, player))
                     {
-                        boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(futureField, player.getName());
+                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
-                        if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (!entry.isTeleporting())
                         {
-                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
-
-                            if (!entry.isTeleporting())
+                            entry.setTeleporting(true);
+                            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                             {
-                                entry.setTeleporting(true);
-                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                @Override
+                                public void run()
                                 {
-                                    @Override
-                                    public void run()
-                                    {
-                                        plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHoldingItems");
-                                    }
-                                }, 0);
-                            }
-                            return;
+                                    plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHoldingItems");
+                                }
+                            }, 0);
                         }
+                        return;
                     }
                 }
             }
 
-            if (futureField.hasFlag(FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS))
+            itemInHand = player.getItemInHand();
+
+            if (itemInHand != null && itemInHand.getTypeId() != 0)
             {
-                ItemStack itemInHand = player.getItemInHand();
-
-                if (itemInHand != null && itemInHand.getTypeId() != 0)
+                if (!futureField.getSettings().isTeleportNotHoldingItem(itemInHand.getTypeId()))
                 {
-                    if (!futureField.getSettings().isTeleportNotHoldingItem(itemInHand.getTypeId()))
+                    if (FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS.applies(futureField, player))
                     {
-                        boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(futureField, player.getName());
+                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
-                        if (!allowedEntry || futureField.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (!entry.isTeleporting())
                         {
-                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
-
-                            if (!entry.isTeleporting())
+                            entry.setTeleporting(true);
+                            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                             {
-                                entry.setTeleporting(true);
-                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                @Override
+                                public void run()
                                 {
-                                    @Override
-                                    public void run()
-                                    {
-                                        plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHoldingItems");
-                                    }
-                                }, 0);
-                                return;
-                            }
+                                    plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHoldingItems");
+                                }
+                            }, 0);
+                            return;
                         }
                     }
                 }
@@ -683,15 +624,21 @@ public class PSPlayerListener implements Listener
 
         if (block != null)
         {
-            Field useField = plugin.getForceFieldManager().findUseProtected(block.getLocation(), player, block.getTypeId());
-
-            if (useField != null)
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.use"))
             {
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.use"))
+                Field useField = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_USE);
+
+                if (useField != null)
                 {
-                    plugin.getCommunicationManager().warnUse(player, block, useField);
-                    event.setCancelled(true);
-                    return;
+                    if (FieldFlag.PREVENT_USE.applies(useField, player))
+                    {
+                        if (!useField.getSettings().canUse(block.getTypeId()))
+                        {
+                            plugin.getCommunicationManager().warnUse(player, block, useField);
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -706,9 +653,7 @@ public class PSPlayerListener implements Listener
 
                 if (field != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (FieldFlag.PROTECT_CROPS.applies(field, player))
                     {
                         event.setCancelled(true);
                     }
@@ -750,6 +695,11 @@ public class PSPlayerListener implements Listener
                     TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
                     Block target = aiming.getTargetBlock();
 
+                    if (target == null)
+                    {
+                        return;
+                    }
+
                     // close the cuboid if the player shift clicks any block
 
                     if (player.isSneaking())
@@ -784,9 +734,10 @@ public class PSPlayerListener implements Listener
 
                     if (field != null)
                     {
-                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                        boolean applies = FieldFlag.PROTECT_CROPS.applies(field, player);
+                        boolean applies2 = FieldFlag.GRIEF_REVERT.applies(field, player);
 
-                        if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                        if (applies || applies2)
                         {
                             if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                             {
@@ -814,6 +765,11 @@ public class PSPlayerListener implements Listener
                     {
                         TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
                         Block target = aiming.getTargetBlock();
+
+                        if (target == null)
+                        {
+                            return;
+                        }
 
                         if (player.isSneaking())
                         {
@@ -930,9 +886,7 @@ public class PSPlayerListener implements Listener
                             {
                                 if (!field.getSettings().inDestroyBlacklist(block))
                                 {
-                                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                    if (FieldFlag.PREVENT_DESTROY.applies(field, player))
                                     {
                                         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                                         {
@@ -946,9 +900,7 @@ public class PSPlayerListener implements Listener
 
                             if (field != null && !field.getSettings().canGrief(block.getTypeId()))
                             {
-                                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                if (FieldFlag.GRIEF_REVERT.applies(field, player))
                                 {
                                     if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                                     {
@@ -1029,7 +981,7 @@ public class PSPlayerListener implements Listener
 
                                     if (release)
                                     {
-                                        plugin.getForceFieldManager().silentRelease(field);
+                                        plugin.getForceFieldManager().releaseNoDrop(field);
 
                                         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
                                         {
@@ -1138,7 +1090,7 @@ public class PSPlayerListener implements Listener
 
                             // only those with permission can use fields
 
-                            if (field.getSettings().getRequiredPermissionUse() != null)
+                            if (!field.getSettings().getRequiredPermissionUse().isEmpty())
                             {
                                 if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionUse()))
                                 {
@@ -1188,44 +1140,39 @@ public class PSPlayerListener implements Listener
 
                             // -------------------------------------------------------------------------------- visualize/enable on sneaking right click
 
-                            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
                             if (player.isSneaking())
                             {
-                                if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                                if (FieldFlag.VISUALIZE_ON_SRC.applies(field, player))
                                 {
-                                    if (field.hasFlag(FieldFlag.VISUALIZE_ON_SRC))
+                                    if (plugin.getCuboidManager().hasOpenCuboid(player))
                                     {
-                                        if (plugin.getCuboidManager().hasOpenCuboid(player))
+                                        ChatBlock.send(player, "visualizationNotWhileCuboid");
+                                    }
+                                    else
+                                    {
+                                        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
                                         {
-                                            ChatBlock.send(player, "visualizationNotWhileCuboid");
+                                            ChatBlock.send(player, "visualizing");
+                                            plugin.getVisualizationManager().visualizeSingleField(player, field);
+                                        }
+                                    }
+                                }
+
+                                if (!field.hasFlag(FieldFlag.TRANSLOCATION))
+                                {
+                                    if (FieldFlag.ENABLE_ON_SRC.applies(field, player))
+                                    {
+                                        if (field.isDisabled())
+                                        {
+                                            ChatBlock.send(player, "fieldTypeEnabled", field.getSettings().getTitle());
+                                            field.setDisabled(false);
+                                            field.dirtyFlags();
                                         }
                                         else
                                         {
-                                            if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
-                                            {
-                                                ChatBlock.send(player, "visualizing");
-                                                plugin.getVisualizationManager().visualizeSingleField(player, field);
-                                            }
-                                        }
-                                    }
-
-                                    if (!field.hasFlag(FieldFlag.TRANSLOCATION))
-                                    {
-                                        if (field.hasFlag(FieldFlag.ENABLE_ON_SRC))
-                                        {
-                                            if (field.isDisabled())
-                                            {
-                                                ChatBlock.send(player, "fieldTypeEnabled", field.getSettings().getTitle());
-                                                field.setDisabled(false);
-                                                field.dirtyFlags();
-                                            }
-                                            else
-                                            {
-                                                ChatBlock.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
-                                                field.setDisabled(true);
-                                                field.dirtyFlags();
-                                            }
+                                            ChatBlock.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
+                                            field.setDisabled(true);
+                                            field.dirtyFlags();
                                         }
                                     }
                                 }
@@ -1448,9 +1395,7 @@ public class PSPlayerListener implements Listener
         {
             if (!field.getSettings().inDestroyBlacklist(block))
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.PREVENT_DESTROY.applies(field, player))
                 {
                     if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                     {
@@ -1471,9 +1416,7 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.GRIEF_REVERT.applies(field, player))
             {
                 if (field.getSettings().canGrief(block.getTypeId()))
                 {
@@ -1564,9 +1507,7 @@ public class PSPlayerListener implements Listener
         {
             if (!field.getSettings().inPlaceBlacklist(block))
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.PREVENT_PLACE.applies(field, player))
                 {
                     if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                     {
@@ -1587,9 +1528,7 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.GRIEF_REVERT.applies(field, player))
             {
                 if (field.hasFlag(FieldFlag.PLACE_GRIEF))
                 {
@@ -1627,9 +1566,7 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.TRANSLOCATION.applies(field, player))
             {
                 if (field.getSettings().canTranslocate(new BlockTypeEntry(liquid)))
                 {
@@ -1679,9 +1616,9 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (field.getSettings().getForceEntryGameMode() != null)
             {
-                if (field.getSettings().getForceEntryGameMode() != null)
+                if (FieldFlag.ENTRY_GAME_MODE.applies(field, player))
                 {
                     if (!gameMode.equals(field.getSettings().getForceEntryGameMode()))
                     {
@@ -1690,6 +1627,7 @@ public class PSPlayerListener implements Listener
                     }
                 }
             }
+
         }
     }
 

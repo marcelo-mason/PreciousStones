@@ -79,7 +79,7 @@ public class PreciousStones extends JavaPlugin
      */
     public static void debug(Object msg, Object... arg)
     {
-        if (getInstance().getSettingsManager().isDebugging())
+        if (getInstance().getSettingsManager() == null || getInstance().getSettingsManager().isDebugging())
         {
             logger.info(String.format(msg.toString(), arg));
         }

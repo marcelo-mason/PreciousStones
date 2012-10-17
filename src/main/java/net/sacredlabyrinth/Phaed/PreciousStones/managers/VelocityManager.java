@@ -25,7 +25,7 @@ public class VelocityManager
     }
 
     /**
-     * @param entity
+     * @param player
      * @param field
      */
     public void launchPlayer(final Player player, final Field field)
@@ -34,38 +34,35 @@ public class VelocityManager
         {
             if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
             {
-                if (plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.LAUNCH.applies(field, player))
                 {
-                    if (field.hasFlag(FieldFlag.LAUNCH))
+                    final float height = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getLaunchHeight();
+                    double speed = 8;
+
+                    Vector loc = player.getLocation().toVector();
+                    Vector target = new Vector(field.getX(), field.getY(), field.getZ());
+
+                    final Vector velocity = target.clone().subtract(new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                    velocity.multiply(speed / velocity.length());
+                    velocity.setY(height > 0 ? height : (((player.getLocation().getPitch() * -1) + 90) / 35));
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
-                        final float launchheight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getLaunchHeight();
-                        double speed = 8;
-
-                        Vector loc = player.getLocation().toVector();
-                        Vector target = new Vector(field.getX(), field.getY(), field.getZ());
-
-                        final Vector velocity = target.clone().subtract(new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-                        velocity.multiply(speed / velocity.length());
-                        velocity.setY(launchheight > 0 ? launchheight : (((player.getLocation().getPitch() * -1) + 90) / 35));
-                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                        public void run()
                         {
-                            public void run()
-                            {
-                                player.setVelocity(velocity);
+                            player.setVelocity(velocity);
 
-                                plugin.getCommunicationManager().showLaunch(player);
-                                startFallImmunity(player);
-                                player.getWorld().createExplosion(player.getLocation(), -1);
-                            }
-                        }, 0L);
-                    }
+                            plugin.getCommunicationManager().showLaunch(player);
+                            startFallImmunity(player);
+                            player.getWorld().createExplosion(player.getLocation(), -1);
+                        }
+                    }, 0L);
                 }
             }
         }
     }
 
     /**
-     * @param entity
+     * @param player
      * @param field
      */
     public void shootPlayer(final Player player, Field field)
@@ -74,24 +71,21 @@ public class VelocityManager
         {
             if (!(field.hasFlag(FieldFlag.SNEAKING_BYPASS) && player.isSneaking()))
             {
-                if (plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.CANNON.applies(field, player))
                 {
-                    if (field.hasFlag(FieldFlag.CANNON))
+                    final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getCannonHeight();
+                    final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
+                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
-                        final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getCannonHeight();
-                        final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
-                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                        public void run()
                         {
-                            public void run()
-                            {
-                                player.setVelocity(new Vector(0, height, 0));
+                            player.setVelocity(new Vector(0, height, 0));
 
-                                plugin.getCommunicationManager().showCannon(player);
-                                startFallImmunity(player);
-                                player.getWorld().createExplosion(player.getLocation(), -1);
-                            }
-                        }, 0L);
-                    }
+                            plugin.getCommunicationManager().showCannon(player);
+                            startFallImmunity(player);
+                            player.getWorld().createExplosion(player.getLocation(), -1);
+                        }
+                    }, 0L);
                 }
             }
         }

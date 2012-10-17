@@ -7,6 +7,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -26,8 +27,8 @@ public class FieldSettings
     private int radius = 0;
     private int heal = 0;
     private int damage = 0;
-    private int maskOnDisabledBlock = 49;
-    private int maskOnEnabledBlock = 49;
+    private int maskOnDisabled = 49;
+    private int maskOnEnabled = 49;
     private int feed = 0;
     private int repair = 0;
     private int launchHeight = 0;
@@ -40,7 +41,7 @@ public class FieldSettings
     private int mixingGroup = 0;
     private int autoDisableSeconds = 0;
     private boolean mineHasFire = false;
-    private int mineStrength = 6;
+    private int mine = 6;
     private String groupOnEntry = null;
     private String requiredPermissionAllow = null;
     private String requiredPermissionUse = null;
@@ -74,1269 +75,563 @@ public class FieldSettings
     private List<BlockTypeEntry> preventDestroyBlacklist = new ArrayList<BlockTypeEntry>();
     private List<Integer> preventUse = new ArrayList<Integer>();
     private List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> equipItems = new ArrayList<BlockTypeEntry>();
     private List<String> allowedWorlds = new ArrayList<String>();
     private List<String> allowedOnlyInside = new ArrayList<String>();
     private List<String> allowedOnlyOutside = new ArrayList<String>();
-    private List<String> canceledCommands = new ArrayList<String>();
+    private List<String> commandBlackList = new ArrayList<String>();
     private List<FieldFlag> defaultFlags = new ArrayList<FieldFlag>();
+    private List<FieldFlag> reversedFlags = new ArrayList<FieldFlag>();
+    private List<FieldFlag> alledflags = new ArrayList<FieldFlag>();
+    private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
     private List<Integer> allowGrief = new ArrayList<Integer>();
     private HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
     private List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();
     private List<String> allowedPlayers = new ArrayList<String>();
     private List<String> deniedPlayers = new ArrayList<String>();
+    private LinkedHashMap<String, Object> map;
 
     /**
      * @param map
      */
-
     public FieldSettings(LinkedHashMap<String, Object> map)
     {
+        this.map = map;
+
         if (map == null)
         {
             return;
         }
 
-        if (map.containsKey("block"))
-        {
-            Object item = map.get("block");
-            BlockTypeEntry type = null;
+        defaultFlags.add(FieldFlag.ALL);
 
-            if (Helper.isString(item) && Helper.isTypeEntry((String) item) && Helper.hasData((String) item))
+        parseSettings();
+    }
+
+    private void parseSettings()
+    {
+        //************************** required
+
+        PreciousStones.debug("**********************");
+
+        title = loadString("title");
+
+        if (title == null)
+        {
+            validField = false;
+            return;
+        }
+
+        type = loadTypeEntry("block");
+
+        if (type == null)
+        {
+            validField = false;
+            return;
+        }
+
+        //************************** custom height
+
+        customHeight = loadInt("custom-height");
+
+        if (customHeight > 0)
+        {
+            if (customHeight % 2 == 0)
             {
-                type = Helper.toTypeEntry((String) item);
+                customHeight++;
+            }
+        }
+
+        //************************** game modes
+
+        String entryGameMode = loadString("entry-game-mode");
+
+        if (entryGameMode.equalsIgnoreCase("creative"))
+        {
+            forceEntryGameMode = GameMode.CREATIVE;
+        }
+        if (entryGameMode.equalsIgnoreCase("survival"))
+        {
+            forceEntryGameMode = GameMode.SURVIVAL;
+        }
+
+        String leavingGameMode = loadString("leaving-game-mode");
+
+        if (leavingGameMode.equalsIgnoreCase("creative"))
+        {
+            forceEntryGameMode = GameMode.CREATIVE;
+        }
+        if (leavingGameMode.equalsIgnoreCase("survival"))
+        {
+            forceEntryGameMode = GameMode.SURVIVAL;
+        }
+
+        //************************** potions
+
+        List<String> pts = loadStringList("potions");
+        List<Integer> intensities = loadIntList("potion-intensity");
+
+        int pos = 0;
+
+        for (String name : pts)
+        {
+            int i = 1;
+
+            if (intensities != null)
+            {
+                i = intensities.get(pos);
+            }
+
+            if (PotionEffectType.getByName(name) != null)
+            {
+                potions.put(PotionEffectType.getByName(name), i);
+            }
+            pos++;
+        }
+
+        List<String> npts = loadStringList("neutralize-potions");
+
+        for (String name : npts)
+        {
+            if (PotionEffectType.getByName(name) != null)
+            {
+                neutralizePotions.add(PotionEffectType.getByName(name));
+            }
+        }
+
+        //**************************
+
+        loadBoolean("prevent-fire");
+        loadBoolean("enable-with-redstone");
+        loadBoolean("allow-place");
+        loadBoolean("allow-destroy");
+        loadBoolean("prevent-place");
+        loadBoolean("prevent-destroy");
+        loadBoolean("prevent-vehicle-destroy");
+        loadBoolean("prevent-enderman-destroy");
+        loadBoolean("prevent-explosions");
+        loadBoolean("prevent-creeper-explosions");
+        loadBoolean("prevent-tnt-explosions");
+        loadBoolean("rollback-explosions");
+        loadBoolean("prevent-pvp");
+        loadBoolean("prevent-teleport");
+        loadBoolean("prevent-mob-damage");
+        loadBoolean("prevent-mob-spawn");
+        loadBoolean("prevent-animal-spawn");
+        loadBoolean("prevent-entry");
+        loadBoolean("prevent-unprotectable");
+        loadBoolean("protect-animals");
+        loadBoolean("protect-villagers");
+        loadBoolean("protect-crops");
+        loadBoolean("protect-mobs");
+        loadBoolean("remove-mob");
+        loadBoolean("worldguard-repellent");
+        loadBoolean("breakable");
+        loadBoolean("welcome-message");
+        loadBoolean("farewell-message");
+        loadBoolean("air");
+        loadBoolean("snitch");
+        loadBoolean("no-conflict");
+        loadBoolean("no-owner");
+        loadBoolean("launch");
+        loadBoolean("cannon");
+        loadBoolean("grief-revert-drop");
+        loadBoolean("lightning");
+        loadBoolean("no-fall-damage");
+        loadBoolean("sneak-to-place");
+        loadBoolean("plot");
+        loadBoolean("prevent-flow");
+        loadBoolean("forester");
+        loadBoolean("grief-revert");
+        loadBoolean("entry-alert");
+        loadBoolean("cuboid");
+        loadBoolean("visualize-on-src");
+        loadBoolean("visualize-on-place");
+        loadBoolean("keep-chunks-loaded");
+        loadBoolean("place-grief");
+        loadBoolean("toggle-on-disabled");
+        loadBoolean("redefine-on-disabled");
+        loadBoolean("modify-on-disabled");
+        loadBoolean("enable-on-src");
+        loadBoolean("breakable-on-disabled");
+        loadBoolean("no-player-place");
+        loadBoolean("translocation");
+        loadBoolean("prevent-flight");
+        loadBoolean("allowed-can-break");
+        loadBoolean("sneaking-bypass");
+        loadBoolean("dynmap-area");
+        loadBoolean("dynmap-marker");
+        loadBoolean("dynmap-disabled");
+        loadBoolean("dynmap-no-toggle");
+        loadBoolean("can-change-owner");
+        loadBoolean("no-allowing");
+        loadBoolean("hidable");
+        loadBoolean("teleport-before-death");
+        loadBoolean("teleport-on-damage");
+        loadBoolean("teleport-on-feeding");
+        loadBoolean("teleport-mobs-on-enable");
+        loadBoolean("teleport-animals-on-enable");
+        loadBoolean("teleport-players-on-enable");
+        loadBoolean("teleport-villagers-on-enable");
+        loadBoolean("teleport-on-fire");
+        loadBoolean("teleport-on-pvp");
+        loadBoolean("teleport-on-block-place");
+        loadBoolean("teleport-on-block-break");
+        loadBoolean("teleport-on-sneak");
+        loadBoolean("teleport-on-entry");
+        loadBoolean("teleport-on-exit");
+        loadBoolean("teleport-explosion-effect");
+        loadBoolean("teleport-relatively");
+        loadBoolean("teleport-announce");
+        loadBoolean("teleport-destination");
+
+        requiredPermission = loadString("required-permission");
+        requiredPermissionUse = loadString("required-permission-use");
+        requiredPermissionAllow = loadString("required-permission-allow");
+        groupOnEntry = loadString("group-on-entry");
+        autoDisableSeconds = loadInt("auto-disable-seconds");
+        radius = loadInt("radius");
+        mixingGroup = loadInt("mixing-group");
+        customVolume = loadInt("custom-volume");
+        launchHeight = loadInt("launch-velocity");
+        cannonHeight = loadInt("cannon-velocity");
+        mineDelaySeconds = loadInt("mine-delay-seconds");
+        mineHasFire = loadBoolean("mine-has-fire");
+        lightningReplaceBlock = loadInt("lightning-replace-block");
+        lightningDelaySeconds = loadInt("lightning-delay-seconds");
+        treeCount = loadInt("tree-count");
+        growTime = loadInt("grow-time");
+        shrubDensity = loadInt("shrub-density");
+        groundBlock = loadInt("ground-block");
+        preventUse = loadIntList("prevent-use");
+        confiscatedItems = loadTypeEntries("confiscate-items");
+        allowedPlayers = loadStringList("always-allow-players");
+        deniedPlayers = loadStringList("always-deny-players");
+        allowGrief = loadIntList("allow-grief");
+        treeTypes = loadIntList("tree-types");
+        shrubTypes = loadIntList("shrub-types");
+        creatureTypes = loadStringList("creature-types");
+        fertileBlocks = loadIntList("fertile-blocks");
+        allowedWorlds = loadStringList("allowed-worlds");
+        creatureCount = loadInt("creature-count");
+        limits = loadIntList("limits");
+        price = loadInt("price");
+        refund = loadInt("refund");
+        translocationBlacklist = loadTypeEntries("translocation-blacklist");
+        preventPlaceBlacklist = loadTypeEntries("prevent-place-blacklist");
+        preventDestroyBlacklist = loadTypeEntries("prevent-destroy-blacklist");
+        allowedOnlyInside = loadStringList("allowed-only-inside");
+        allowedOnlyOutside = loadStringList("allowed-only-outside");
+        heal = loadInt("heal");
+        feed = loadInt("feed");
+        repair = loadInt("repair");
+        damage = loadInt("damage");
+        maskOnDisabled = loadInt("mask-on-disabled");
+        maskOnEnabled = loadInt("mask-on-enabled");
+        mine = loadInt("mine");
+        heal = loadInt("heal");
+        griefRevertInterval = loadInt("grief-revert-interval");
+        commandOnEnter = loadString("command-on-enter");
+        commandOnExit = loadString("command-on-exit");
+        playerCommandOnEnter = loadString("player-command-on-enter");
+        playerCommandOnExit = loadString("player-command-on-exit");
+        commandBlackList = loadStringList("command-blacklist");
+        teleportCost = loadInt("teleport-cost");
+        teleportBackAfterSeconds = loadInt("teleport-back-after-seconds");
+        teleportMaxDistance = loadInt("teleport-max-distance");
+        teleportIfWalkingOn = loadTypeEntries("teleport-if-walking-on");
+        teleportIfNotWalkingOn = loadTypeEntries("teleport-if-not-walking-on");
+        teleportIfHoldingItems = loadIntList("teleport-if-holding-items");
+        teleportIfNotHoldingItems = loadIntList("teleport-if-not-holding-items");
+        teleportIfHasItems = loadIntList("teleport-if-has-items");
+        teleportIfNotHasItems = loadIntList("teleport-if-not-has-items");
+    }
+
+    private boolean loadBoolean(String flagStr)
+    {
+        if (containsKey(flagStr))
+        {
+            if (Helper.isBoolean(getValue(flagStr)))
+            {
+                boolean value = (Boolean) getValue(flagStr);
+
+                if (value)
+                {
+                    loadFlags(getKey(flagStr));
+                }
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+            PreciousStones.debug("   %s: *bad*", flagStr);
+        }
+        return false;
+    }
+
+    private int loadInt(String flagStr)
+    {
+        if (containsKey(flagStr))
+        {
+            if (Helper.isInteger(getValue(flagStr)))
+            {
+                int value = (Integer) getValue(flagStr);
+                loadFlags(getKey(flagStr));
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+            PreciousStones.debug("   %s: *bad*", flagStr);
+        }
+        return 0;
+    }
+
+    private String loadString(String flagStr)
+    {
+        if (containsKey(flagStr))
+        {
+            if (Helper.isString(getValue(flagStr)))
+            {
+                String value = (String) getValue(flagStr);
+
+                if (!value.isEmpty())
+                {
+                    loadFlags(getKey(flagStr));
+                }
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+            PreciousStones.debug("   %s: *bad*", flagStr);
+        }
+        return "";
+    }
+
+    private BlockTypeEntry loadTypeEntry(String flagStr)
+    {
+        if (containsKey(flagStr))
+        {
+            BlockTypeEntry value = null;
+            Object item = getValue(flagStr);
+
+            if (Helper.isString(item) && Helper.isTypeEntry((String) item) && Helper.hasData(item.toString()))
+            {
+                value = Helper.toTypeEntry(item.toString());
             }
             else
             {
                 if (Helper.isInteger(item))
                 {
-                    type = new BlockTypeEntry((Integer) item, ((byte) 0));
+                    value = new BlockTypeEntry((Integer) item, ((byte) 0));
                 }
-                else if (Helper.isInteger((String) item))
+                else if (Helper.isInteger(item.toString()))
                 {
-                    type = new BlockTypeEntry(Integer.parseInt((String) item), ((byte) 0));
+                    value = new BlockTypeEntry(Integer.parseInt(item.toString()), ((byte) 0));
                 }
             }
 
-            if (type == null)
+            if (value != null)
             {
-                validField = false;
-                return;
+                loadFlags(getKey(flagStr));
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
             }
-
-            this.type = type;
+            PreciousStones.debug("   %s: *bad*", flagStr);
         }
-        else
-        {
-            validField = false;
-            return;
-        }
-
-        if (map.containsKey("title") && Helper.isString(map.get("title")))
-        {
-            title = (String) map.get("title");
-        }
-        else
-        {
-            validField = false;
-            return;
-        }
-
-        if (map.containsKey("required-permission") && Helper.isString(map.get("required-permission")))
-        {
-            requiredPermission = (String) map.get("required-permission");
-        }
-
-        if (map.containsKey("required-permission-use") && Helper.isString(map.get("required-permission-use")))
-        {
-            requiredPermissionUse = (String) map.get("required-permission-use");
-        }
-
-        if (map.containsKey("required-permission-allow") && Helper.isString(map.get("required-permission-allow")))
-        {
-            requiredPermissionAllow = (String) map.get("required-permission-allow");
-        }
-
-        if (map.containsKey("group-on-entry") && Helper.isString(map.get("group-on-entry")))
-        {
-            groupOnEntry = (String) map.get("group-on-entry");
-
-            if (groupOnEntry != null && groupOnEntry.length() > 0)
-            {
-                defaultFlags.add(FieldFlag.GROUP_ON_ENTRY);
-            }
-        }
-
-        if (map.containsKey("entry-game-mode") && Helper.isString(map.get("entry-game-mode")))
-        {
-            String gameMode = (String) map.get("entry-game-mode");
-
-            if (gameMode.equalsIgnoreCase("creative"))
-            {
-                forceEntryGameMode = GameMode.CREATIVE;
-            }
-
-            if (gameMode.equalsIgnoreCase("survival"))
-            {
-                forceEntryGameMode = GameMode.SURVIVAL;
-            }
-
-            if (forceEntryGameMode.equals(GameMode.CREATIVE) || forceEntryGameMode.equals(GameMode.SURVIVAL))
-            {
-                defaultFlags.add(FieldFlag.ENTRY_GAME_MODE);
-            }
-        }
-
-        if (map.containsKey("leaving-game-mode") && Helper.isString(map.get("leaving-game-mode")))
-        {
-            String gameMode = (String) map.get("leaving-game-mode");
-
-            if (gameMode.equalsIgnoreCase("creative"))
-            {
-                forceLeavingGameMode = GameMode.CREATIVE;
-            }
-
-            if (gameMode.equalsIgnoreCase("survival"))
-            {
-                forceLeavingGameMode = GameMode.SURVIVAL;
-            }
-
-            if (forceLeavingGameMode.equals(GameMode.CREATIVE) || forceLeavingGameMode.equals(GameMode.SURVIVAL))
-            {
-                defaultFlags.add(FieldFlag.LEAVING_GAME_MODE);
-            }
-        }
-
-        if (map.containsKey("auto-disable-seconds") && Helper.isInteger(map.get("auto-disable-seconds")))
-        {
-            autoDisableSeconds = (Integer) map.get("auto-disable-seconds");
-        }
-
-        if (map.containsKey("radius") && Helper.isInteger(map.get("radius")))
-        {
-            radius = (Integer) map.get("radius");
-        }
-
-        if (map.containsKey("custom-height"))
-        {
-            if (Helper.isInteger(map.get("custom-height")))
-            {
-                customHeight = (Integer) map.get("custom-height");
-
-                if (customHeight % 2 == 0)
-                {
-                    customHeight++;
-                }
-            }
-        }
-
-        if (map.containsKey("mixing-group") && Helper.isInteger(map.get("mixing-group")))
-        {
-            mixingGroup = (Integer) map.get("mixing-group");
-        }
-
-        if (map.containsKey("custom-volume") && Helper.isInteger(map.get("custom-volume")))
-        {
-            customVolume = (Integer) map.get("custom-volume");
-        }
-
-        if (map.containsKey("launch-velocity") && Helper.isInteger(map.get("launch-velocity")))
-        {
-            launchHeight = (Integer) map.get("launch-velocity");
-        }
-
-        if (map.containsKey("cannon-velocity") && Helper.isInteger(map.get("cannon-velocity")))
-        {
-            cannonHeight = (Integer) map.get("cannon-velocity");
-        }
-
-        if (map.containsKey("mine-delay-seconds") && Helper.isInteger(map.get("mine-delay-seconds")))
-        {
-            mineDelaySeconds = (Integer) map.get("mine-delay-seconds");
-        }
-
-        if (map.containsKey("mine-has-fire") && Helper.isBoolean(map.get("mine-has-fire")))
-        {
-            mineHasFire = (Boolean) map.get("mine-has-fire");
-        }
-
-        if (map.containsKey("lightning-replace-block") && Helper.isInteger(map.get("lightning-replace-block")))
-        {
-            lightningReplaceBlock = (Integer) map.get("lightning-replace-block");
-        }
-
-        if (map.containsKey("lightning-delay-seconds") && Helper.isInteger(map.get("lightning-delay-seconds")))
-        {
-            lightningDelaySeconds = (Integer) map.get("lightning-delay-seconds");
-        }
-
-        if (map.containsKey("tree-count") && Helper.isInteger(map.get("tree-count")))
-        {
-            treeCount = (Integer) map.get("tree-count");
-        }
-
-        if (map.containsKey("grow-time") && Helper.isInteger(map.get("grow-time")))
-        {
-            growTime = (Integer) map.get("grow-time");
-        }
-
-        if (map.containsKey("shrub-density") && Helper.isInteger(map.get("shrub-density")))
-        {
-            shrubDensity = (Integer) map.get("shrub-density");
-        }
-
-        if (map.containsKey("ground-block") && Helper.isInteger(map.get("ground-block")))
-        {
-            groundBlock = (Integer) map.get("ground-block");
-        }
-
-        if (map.containsKey("prevent-use") && Helper.isIntList(map.get("prevent-use")))
-        {
-            preventUse = (List<Integer>) map.get("prevent-use");
-
-            if (!preventUse.isEmpty())
-            {
-                defaultFlags.add(FieldFlag.PREVENT_USE);
-            }
-        }
-
-        if (map.containsKey("confiscate-items") && Helper.isStringList(map.get("confiscate-items")))
-        {
-            confiscatedItems = Helper.toTypeEntriesBlind((List<Object>) map.get("confiscate-items"));
-
-            if (!confiscatedItems.isEmpty())
-            {
-                defaultFlags.add(FieldFlag.CONFISCATE_ITEMS);
-            }
-        }
-
-        if (map.containsKey("always-allow-players") && Helper.isStringList(map.get("always-allow-players")))
-        {
-            allowedPlayers = (List<String>) map.get("always-allow-players");
-        }
-
-        if (map.containsKey("always-deny-players") && Helper.isStringList(map.get("always-deny-players")))
-        {
-            deniedPlayers = (List<String>) map.get("always-deny-players");
-        }
-
-        if (map.containsKey("equip-items") && Helper.isStringList(map.get("equip-items")))
-        {
-            equipItems = Helper.toTypeEntriesBlind((List<Object>) map.get("equip-items"));
-
-            if (!equipItems.isEmpty())
-            {
-                defaultFlags.add(FieldFlag.EQUIP_ITEMS);
-            }
-        }
-
-        if (map.containsKey("allow-grief") && Helper.isIntList(map.get("allow-grief")))
-        {
-            allowGrief = (List<Integer>) map.get("allow-grief");
-        }
-
-        if (map.containsKey("tree-types") && Helper.isIntList(map.get("tree-types")))
-        {
-            treeTypes = (List<Integer>) map.get("tree-types");
-        }
-
-        if (map.containsKey("shrub-types") && Helper.isIntList(map.get("shrub-types")))
-        {
-            shrubTypes = (List<Integer>) map.get("shrub-types");
-        }
-
-        if (map.containsKey("creature-types") && Helper.isStringList(map.get("creature-types")))
-        {
-            creatureTypes = (List<String>) map.get("creature-types");
-        }
-
-        if (map.containsKey("creature-count") && Helper.isInteger(map.get("creature-count")))
-        {
-            creatureCount = (Integer) map.get("creature-count");
-        }
-
-        if (map.containsKey("fertile-blocks") && Helper.isIntList(map.get("fertile-blocks")))
-        {
-            fertileBlocks = (List<Integer>) map.get("fertile-blocks");
-        }
-
-        if (map.containsKey("allowed-worlds") && Helper.isStringList(map.get("allowed-worlds")))
-        {
-            allowedWorlds = (List<String>) map.get("allowed-worlds");
-        }
-
-        if (map.containsKey("price") && Helper.isInteger(map.get("price")))
-        {
-            price = (Integer) map.get("price");
-        }
-
-        if (map.containsKey("refund") && Helper.isInteger(map.get("refund")))
-        {
-            refund = (Integer) map.get("refund");
-        }
-
-        if (map.containsKey("limits") && Helper.isIntList(map.get("limits")))
-        {
-            limits = (List<Integer>) map.get("limits");
-        }
-
-        if (map.containsKey("translocation-blacklist") && Helper.isStringList(map.get("translocation-blacklists")))
-        {
-            translocationBlacklist = Helper.toTypeEntriesBlind((List<Object>) map.get("translocation-blacklist"));
-        }
-
-        if (map.containsKey("prevent-place-blacklist") && Helper.isStringList(map.get("prevent-place-blacklists")))
-        {
-            preventPlaceBlacklist = Helper.toTypeEntriesBlind((List<Object>) map.get("prevent-place-blacklist"));
-        }
-
-        if (map.containsKey("prevent-destroy-blacklist") && Helper.isStringList(map.get("prevent-destroy-blacklists")))
-        {
-            preventDestroyBlacklist = Helper.toTypeEntriesBlind((List<Object>) map.get("prevent-destroy-blacklist"));
-        }
-
-        if (map.containsKey("allowed-only-inside") && Helper.isStringList(map.get("allowed-only-inside")))
-        {
-            allowedOnlyInside = (List<String>) map.get("allowed-only-inside");
-        }
-
-        if (map.containsKey("allowed-only-outside") && Helper.isStringList(map.get("allowed-only-outside")))
-        {
-            allowedOnlyOutside = (List<String>) map.get("allowed-only-outside");
-        }
-
-        if (map.containsKey("prevent-fire") && Helper.isBoolean(map.get("prevent-fire")))
-        {
-            if ((Boolean) map.get("prevent-fire"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_FIRE);
-            }
-        }
-
-        if (map.containsKey("enable-with-redstone") && Helper.isBoolean(map.get("enable-with-redstone")))
-        {
-            if ((Boolean) map.get("enable-with-redstone"))
-            {
-                defaultFlags.add(FieldFlag.ENABLE_WITH_REDSTONE);
-            }
-        }
-
-        if (map.containsKey("allow-place") && Helper.isBoolean(map.get("allow-place")))
-        {
-            if ((Boolean) map.get("allow-place"))
-            {
-                defaultFlags.add(FieldFlag.ALLOW_PLACE);
-            }
-        }
-
-        if (map.containsKey("allow-destroy") && Helper.isBoolean(map.get("allow-destroy")))
-        {
-            if ((Boolean) map.get("allow-destroy"))
-            {
-                defaultFlags.add(FieldFlag.ALLOW_DESTROY);
-            }
-        }
-
-        if (map.containsKey("prevent-place") && Helper.isBoolean(map.get("prevent-place")))
-        {
-            if ((Boolean) map.get("prevent-place"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_PLACE);
-            }
-        }
-
-        if (map.containsKey("prevent-destroy") && Helper.isBoolean(map.get("prevent-destroy")))
-        {
-            if ((Boolean) map.get("prevent-destroy"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_DESTROY);
-            }
-        }
-
-        if (map.containsKey("prevent-vehicle-destroy") && Helper.isBoolean(map.get("prevent-vehicle-destroy")))
-        {
-            if ((Boolean) map.get("prevent-vehicle-destroy"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_VEHICLE_DESTROY);
-            }
-        }
-
-        if (map.containsKey("prevent-enderman-destroy") && Helper.isBoolean(map.get("prevent-enderman-destroy")))
-        {
-            if ((Boolean) map.get("prevent-enderman-destroy"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_ENDERMAN_DESTROY);
-            }
-        }
-
-        if (map.containsKey("prevent-explosions") && Helper.isBoolean(map.get("prevent-explosions")))
-        {
-            if ((Boolean) map.get("prevent-explosions"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_EXPLOSIONS);
-            }
-        }
-
-        if (map.containsKey("prevent-creeper-explosions") && Helper.isBoolean(map.get("prevent-creeper-explosions")))
-        {
-            if ((Boolean) map.get("prevent-creeper-explosions"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_CREEPER_EXPLOSIONS);
-            }
-        }
-
-        if (map.containsKey("prevent-tnt-explosions") && Helper.isBoolean(map.get("prevent-tnt-explosions")))
-        {
-            if ((Boolean) map.get("prevent-tnt-explosions"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_TNT_EXPLOSIONS);
-            }
-        }
-
-        if (map.containsKey("rollback-explosions") && Helper.isBoolean(map.get("rollback-explosions")))
-        {
-            if ((Boolean) map.get("rollback-explosions"))
-            {
-                defaultFlags.add(FieldFlag.ROLLBACK_EXPLOSIONS);
-            }
-        }
-
-        if (map.containsKey("prevent-pvp") && Helper.isBoolean(map.get("prevent-pvp")))
-        {
-            if ((Boolean) map.get("prevent-pvp"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_PVP);
-            }
-        }
-
-        if (map.containsKey("prevent-teleport") && Helper.isBoolean(map.get("prevent-teleport")))
-        {
-            if ((Boolean) map.get("prevent-teleport"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_TELEPORT);
-            }
-        }
-
-        if (map.containsKey("prevent-mob-damage") && Helper.isBoolean(map.get("prevent-mob-damage")))
-        {
-            if ((Boolean) map.get("prevent-mob-damage"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_MOB_DAMAGE);
-            }
-        }
-
-        if (map.containsKey("prevent-mob-spawn") && Helper.isBoolean(map.get("prevent-mob-spawn")))
-        {
-            if ((Boolean) map.get("prevent-mob-spawn"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_MOB_SPAWN);
-            }
-        }
-
-        if (map.containsKey("prevent-animal-spawn") && Helper.isBoolean(map.get("prevent-animal-spawn")))
-        {
-            if ((Boolean) map.get("prevent-animal-spawn"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_ANIMAL_SPAWN);
-            }
-        }
-
-        if (map.containsKey("prevent-entry") && Helper.isBoolean(map.get("prevent-entry")))
-        {
-            if ((Boolean) map.get("prevent-entry"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_ENTRY);
-            }
-        }
-
-        if (map.containsKey("prevent-unprotectable") && Helper.isBoolean(map.get("prevent-unprotectable")))
-        {
-            if ((Boolean) map.get("prevent-unprotectable"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_UNPROTECTABLE);
-            }
-        }
-
-        if (map.containsKey("protect-animals") && Helper.isBoolean(map.get("protect-animals")))
-        {
-            if ((Boolean) map.get("protect-animals"))
-            {
-                defaultFlags.add(FieldFlag.PROTECT_ANIMALS);
-            }
-        }
-
-        if (map.containsKey("protect-villagers") && Helper.isBoolean(map.get("protect-villagers")))
-        {
-            if ((Boolean) map.get("protect-villagers"))
-            {
-                defaultFlags.add(FieldFlag.PROTECT_VILLAGERS);
-            }
-        }
-
-        if (map.containsKey("protect-crops") && Helper.isBoolean(map.get("protect-crops")))
-        {
-            if ((Boolean) map.get("protect-crops"))
-            {
-                defaultFlags.add(FieldFlag.PROTECT_CROPS);
-            }
-        }
-
-        if (map.containsKey("protect-mobs") && Helper.isBoolean(map.get("protect-mobs")))
-        {
-            if ((Boolean) map.get("protect-mobs"))
-            {
-                defaultFlags.add(FieldFlag.PROTECT_MOBS);
-            }
-        }
-
-        if (map.containsKey("remove-mob") && Helper.isBoolean(map.get("remove-mob")))
-        {
-            if ((Boolean) map.get("remove-mob"))
-            {
-                defaultFlags.add(FieldFlag.REMOVE_MOB);
-            }
-        }
-
-        if (map.containsKey("worldguard-repellent") && Helper.isBoolean(map.get("worldguard-repellent")))
-        {
-            if ((Boolean) map.get("worldguard-repellent"))
-            {
-                defaultFlags.add(FieldFlag.WORLDGUARD_REPELLENT);
-            }
-        }
-
-        if (map.containsKey("heal") && Helper.isInteger(map.get("heal")))
-        {
-            if ((Integer) map.get("heal") > 0)
-            {
-                defaultFlags.add(FieldFlag.HEAL);
-                heal = (Integer) map.get("heal");
-            }
-        }
-
-        if (map.containsKey("feed") && Helper.isInteger(map.get("feed")))
-        {
-            if ((Integer) map.get("feed") > 0)
-            {
-                defaultFlags.add(FieldFlag.FEED);
-                feed = (Integer) map.get("feed");
-            }
-        }
-
-        if (map.containsKey("repair") && Helper.isInteger(map.get("repair")))
-        {
-            if ((Integer) map.get("repair") > 0)
-            {
-                defaultFlags.add(FieldFlag.REPAIR);
-                repair = (Integer) map.get("repair");
-            }
-        }
-
-        if (map.containsKey("damage") && Helper.isInteger(map.get("damage")))
-        {
-            if ((Integer) map.get("damage") > 0)
-            {
-                defaultFlags.add(FieldFlag.DAMAGE);
-                damage = (Integer) map.get("damage");
-            }
-        }
-
-        if (map.containsKey("mask-on-disabled") && Helper.isInteger(map.get("mask-on-disabled")))
-        {
-            if ((Integer) map.get("mask-on-disabled") > 0)
-            {
-                defaultFlags.add(FieldFlag.MASK_ON_DISABLED);
-                maskOnDisabledBlock = (Integer) map.get("mask-on-disabled");
-            }
-        }
-
-        if (map.containsKey("mask-on-enabled") && Helper.isInteger(map.get("mask-on-enabled")))
-        {
-            if ((Integer) map.get("mask-on-enabled") > 0)
-            {
-                defaultFlags.add(FieldFlag.MASK_ON_ENABLED);
-                maskOnEnabledBlock = (Integer) map.get("mask-on-enabled");
-            }
-        }
-
-        if (map.containsKey("breakable") && Helper.isBoolean(map.get("breakable")))
-        {
-            if ((Boolean) map.get("breakable"))
-            {
-                defaultFlags.add(FieldFlag.BREAKABLE);
-            }
-        }
-
-        if (map.containsKey("welcome-message") && Helper.isBoolean(map.get("welcome-message")))
-        {
-            if ((Boolean) map.get("welcome-message"))
-            {
-                defaultFlags.add(FieldFlag.WELCOME_MESSAGE);
-            }
-        }
-
-        if (map.containsKey("farewell-message") && Helper.isBoolean(map.get("farewell-message")))
-        {
-            if ((Boolean) map.get("farewell-message"))
-            {
-                defaultFlags.add(FieldFlag.FAREWELL_MESSAGE);
-            }
-        }
-
-        if (map.containsKey("air") && Helper.isBoolean(map.get("air")))
-        {
-            if ((Boolean) map.get("air"))
-            {
-                defaultFlags.add(FieldFlag.AIR);
-            }
-        }
-
-        if (map.containsKey("snitch") && Helper.isBoolean(map.get("snitch")))
-        {
-            if ((Boolean) map.get("snitch"))
-            {
-                defaultFlags.add(FieldFlag.SNITCH);
-            }
-        }
-
-        if (map.containsKey("no-conflict") && Helper.isBoolean(map.get("no-conflict")))
-        {
-            if ((Boolean) map.get("no-conflict"))
-            {
-                defaultFlags.add(FieldFlag.NO_CONFLICT);
-            }
-        }
-
-        if (map.containsKey("no-owner") && Helper.isBoolean(map.get("no-owner")))
-        {
-            if ((Boolean) map.get("no-owner"))
-            {
-                defaultFlags.add(FieldFlag.NO_OWNER);
-            }
-        }
-
-        if (map.containsKey("launch") && Helper.isBoolean(map.get("launch")))
-        {
-            if ((Boolean) map.get("launch"))
-            {
-                defaultFlags.add(FieldFlag.LAUNCH);
-            }
-        }
-
-        if (map.containsKey("cannon") && Helper.isBoolean(map.get("cannon")))
-        {
-            if ((Boolean) map.get("cannon"))
-            {
-                defaultFlags.add(FieldFlag.CANNON);
-            }
-        }
-
-        if (map.containsKey("mine") && Helper.isInteger(map.get("mine")))
-        {
-            if ((Integer) map.get("mine") > 0)
-            {
-                defaultFlags.add(FieldFlag.MINE);
-                mineStrength = (Integer) map.get("mine");
-            }
-        }
-
-        if (map.containsKey("potions") && Helper.isStringList(map.get("potions")))
-        {
-            defaultFlags.add(FieldFlag.POTIONS);
-            List<String> pts = (List<String>) map.get("potions");
-
-            List<Integer> intensities = null;
-
-            if (map.containsKey("potion-intensity") && Helper.isIntList(map.get("potion-intensity")))
-            {
-                intensities = (List<Integer>) map.get("potion-intensity");
-            }
-
-            int pos = 0;
-
-            for (String name : pts)
-            {
-                int i = 1; // default intensity
-
-                if (intensities != null)
-                {
-                    i = intensities.get(pos);
-                }
-
-                if (PotionEffectType.getByName(name) != null)
-                {
-                    potions.put(PotionEffectType.getByName(name), i);
-                }
-                pos++;
-            }
-        }
-
-        if (map.containsKey("neutralize-potions") && Helper.isStringList(map.get("neutralize-potions")))
-        {
-            defaultFlags.add(FieldFlag.NEUTRALIZE_POTIONS);
-            List<String> pts = (List<String>) map.get("neutralize-potions");
-
-            for (String name : pts)
-            {
-                if (PotionEffectType.getByName(name) != null)
-                {
-                    neutralizePotions.add(PotionEffectType.getByName(name));
-                }
-            }
-        }
-
-        if (map.containsKey("lightning") && Helper.isBoolean(map.get("lightning")))
-        {
-            if ((Boolean) map.get("lightning"))
-            {
-                defaultFlags.add(FieldFlag.LIGHTNING);
-            }
-        }
-
-        if (map.containsKey("no-fall-damage") && Helper.isBoolean(map.get("no-fall-damage")))
-        {
-            if ((Boolean) map.get("no-fall-damage"))
-            {
-                defaultFlags.add(FieldFlag.NO_FALL_DAMAGE);
-            }
-        }
-
-        if (map.containsKey("sneak-to-place") && Helper.isBoolean(map.get("sneak-to-place")))
-        {
-            if ((Boolean) map.get("sneak-to-place"))
-            {
-                defaultFlags.add(FieldFlag.SNEAK_TO_PLACE);
-            }
-        }
-
-        if (map.containsKey("plot") && Helper.isBoolean(map.get("plot")))
-        {
-            if ((Boolean) map.get("plot"))
-            {
-                defaultFlags.add(FieldFlag.PLOT);
-            }
-        }
-
-        if (map.containsKey("prevent-flow") && Helper.isBoolean(map.get("prevent-flow")))
-        {
-            if ((Boolean) map.get("prevent-flow"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_FLOW);
-            }
-        }
-
-        if (map.containsKey("forester") && Helper.isBoolean(map.get("forester")))
-        {
-            if ((Boolean) map.get("forester"))
-            {
-                defaultFlags.add(FieldFlag.FORESTER);
-            }
-        }
-
-        if (map.containsKey("grief-revert") && Helper.isBoolean(map.get("grief-revert")))
-        {
-            if ((Boolean) map.get("grief-revert"))
-            {
-                defaultFlags.add(FieldFlag.GRIEF_REVERT);
-            }
-        }
-
-        if (map.containsKey("grief-revert-interval") && Helper.isInteger(map.get("grief-revert-interval")))
-        {
-            griefRevertInterval = (Integer) map.get("grief-revert-interval");
-        }
-
-        if (map.containsKey("grief-revert-drop") && Helper.isBoolean(map.get("grief-revert-drop")))
-        {
-            if ((Boolean) map.get("grief-revert-drop"))
-            {
-                defaultFlags.add(FieldFlag.GRIEF_REVERT_DROP);
-            }
-        }
-
-        if (map.containsKey("entry-alert") && Helper.isBoolean(map.get("entry-alert")))
-        {
-            if ((Boolean) map.get("entry-alert"))
-            {
-                defaultFlags.add(FieldFlag.ENTRY_ALERT);
-            }
-        }
-
-        if (map.containsKey("cuboid") && Helper.isBoolean(map.get("cuboid")))
-        {
-            if ((Boolean) map.get("cuboid"))
-            {
-                defaultFlags.add(FieldFlag.CUBOID);
-            }
-        }
-
-        if (map.containsKey("visualize-on-src") && Helper.isBoolean(map.get("visualize-on-src")))
-        {
-            if ((Boolean) map.get("visualize-on-src"))
-            {
-                defaultFlags.add(FieldFlag.VISUALIZE_ON_SRC);
-            }
-        }
-
-        if (map.containsKey("visualize-on-place") && Helper.isBoolean(map.get("visualize-on-place")))
-        {
-            if ((Boolean) map.get("visualize-on-place"))
-            {
-                defaultFlags.add(FieldFlag.VISUALIZE_ON_PLACE);
-            }
-        }
-
-        if (map.containsKey("keep-chunks-loaded") && Helper.isBoolean(map.get("keep-chunks-loaded")))
-        {
-            if ((Boolean) map.get("keep-chunks-loaded"))
-            {
-                defaultFlags.add(FieldFlag.KEEP_CHUNKS_LOADED);
-            }
-        }
-
-        if (map.containsKey("place-grief") && Helper.isBoolean(map.get("place-grief")))
-        {
-            if ((Boolean) map.get("place-grief"))
-            {
-                defaultFlags.add(FieldFlag.PLACE_GRIEF);
-            }
-        }
-
-        if (map.containsKey("toggle-on-disabled") && Helper.isBoolean(map.get("toggle-on-disabled")))
-        {
-            if ((Boolean) map.get("toggle-on-disabled"))
-            {
-                defaultFlags.add(FieldFlag.TOGGLE_ON_DISABLED);
-            }
-        }
-
-        if (map.containsKey("redefine-on-disabled") && Helper.isBoolean(map.get("redefine-on-disabled")))
-        {
-            if ((Boolean) map.get("redefine-on-disabled"))
-            {
-                defaultFlags.add(FieldFlag.REDEFINE_ON_DISABLED);
-            }
-        }
-
-        if (map.containsKey("modify-on-disabled") && Helper.isBoolean(map.get("modify-on-disabled")))
-        {
-            if ((Boolean) map.get("modify-on-disabled"))
-            {
-                defaultFlags.add(FieldFlag.MODIFY_ON_DISABLED);
-            }
-        }
-
-        if (map.containsKey("enable-on-src") && Helper.isBoolean(map.get("enable-on-src")))
-        {
-            if ((Boolean) map.get("enable-on-src"))
-            {
-                defaultFlags.add(FieldFlag.ENABLE_ON_SRC);
-            }
-        }
-
-        if (map.containsKey("breakable-on-disabled") && Helper.isBoolean(map.get("breakable-on-disabled")))
-        {
-            if ((Boolean) map.get("breakable-on-disabled"))
-            {
-                defaultFlags.add(FieldFlag.BREAKABLE_ON_DISABLED);
-            }
-        }
-
-        if (map.containsKey("no-player-place") && Helper.isBoolean(map.get("no-player-place")))
-        {
-            if ((Boolean) map.get("no-player-place"))
-            {
-                defaultFlags.add(FieldFlag.NO_PLAYER_PLACE);
-            }
-        }
-
-        if (map.containsKey("translocation") && Helper.isBoolean(map.get("translocation")))
-        {
-            if ((Boolean) map.get("translocation"))
-            {
-                defaultFlags.add(FieldFlag.TRANSLOCATION);
-            }
-        }
-
-        if (map.containsKey("apply-to-reverse") && Helper.isBoolean(map.get("apply-to-reverse")))
-        {
-            if ((Boolean) map.get("apply-to-reverse"))
-            {
-                defaultFlags.add(FieldFlag.APPLY_TO_REVERSE);
-            }
-        }
-
-        if (map.containsKey("apply-to-all") && Helper.isBoolean(map.get("apply-to-all")))
-        {
-            if ((Boolean) map.get("apply-to-all"))
-            {
-                defaultFlags.add(FieldFlag.APPLY_TO_ALL);
-            }
-        }
-
-        if (map.containsKey("prevent-flight") && Helper.isBoolean(map.get("prevent-flight")))
-        {
-            if ((Boolean) map.get("prevent-flight"))
-            {
-                defaultFlags.add(FieldFlag.PREVENT_FLIGHT);
-            }
-        }
-
-        if (map.containsKey("allowed-can-break") && Helper.isBoolean(map.get("allowed-can-break")))
-        {
-            if ((Boolean) map.get("allowed-can-break"))
-            {
-                defaultFlags.add(FieldFlag.ALLOWED_CAN_BREAK);
-            }
-        }
-
-        if (map.containsKey("sneaking-bypass") && Helper.isBoolean(map.get("sneaking-bypass")))
-        {
-            if ((Boolean) map.get("sneaking-bypass"))
-            {
-                defaultFlags.add(FieldFlag.SNEAKING_BYPASS);
-            }
-        }
-
-        if (map.containsKey("dynmap-area") && Helper.isBoolean(map.get("dynmap-area")))
-        {
-            if ((Boolean) map.get("dynmap-area"))
-            {
-                defaultFlags.add(FieldFlag.DYNMAP_AREA);
-            }
-        }
-
-        if (map.containsKey("dynmap-marker") && Helper.isBoolean(map.get("dynmap-marker")))
-        {
-            if ((Boolean) map.get("dynmap-marker"))
-            {
-                defaultFlags.add(FieldFlag.DYNMAP_MARKER);
-            }
-        }
-
-        if (map.containsKey("dynmap-disabled") && Helper.isBoolean(map.get("dynmap-disabled")))
-        {
-            if ((Boolean) map.get("dynmap-disabled"))
-            {
-                defaultFlags.add(FieldFlag.DYNMAP_DISABLED);
-            }
-        }
-
-        if (map.containsKey("dynmap-no-toggle") && Helper.isBoolean(map.get("dynmap-no-toggle")))
-        {
-            if ((Boolean) map.get("dynmap-no-toggle"))
-            {
-                defaultFlags.add(FieldFlag.DYNMAP_NO_TOGGLE);
-            }
-        }
-
-        if (map.containsKey("can-change-owner") && Helper.isBoolean(map.get("can-change-owner")))
-        {
-            if ((Boolean) map.get("can-change-owner"))
-            {
-                defaultFlags.add(FieldFlag.CAN_CHANGE_OWNER);
-            }
-        }
-
-        if (map.containsKey("no-allowing") && Helper.isBoolean(map.get("no-allowing")))
-        {
-            if ((Boolean) map.get("no-allowing"))
-            {
-                defaultFlags.add(FieldFlag.NO_ALLOWING);
-            }
-        }
-
-        if (map.containsKey("teleport-if-walking-on") && Helper.isStringList(map.get("teleport-if-walking-on")))
-        {
-            teleportIfWalkingOn = Helper.toTypeEntriesBlind((List<Object>) map.get("teleport-if-walking-on"));
-
-            if (teleportIfWalkingOn != null && teleportIfWalkingOn.size() > 0)
-            {
-                defaultFlags.add(FieldFlag.TELEPORTER);
-                defaultFlags.add(FieldFlag.TELEPORT_IF_WALKING_ON);
-            }
-        }
-
-        if (map.containsKey("teleport-if-not-walking-on") && Helper.isStringList(map.get("teleport-if-not-walking-on")))
-        {
-            teleportIfNotWalkingOn = Helper.toTypeEntriesBlind((List<Object>) map.get("teleport-if-not-walking-on"));
-
-            if (teleportIfNotWalkingOn != null && teleportIfNotWalkingOn.size() > 0)
-            {
-                defaultFlags.add(FieldFlag.TELEPORTER);
-                defaultFlags.add(FieldFlag.TELEPORT_IF_NOT_WALKING_ON);
-            }
-        }
-
-        if (map.containsKey("teleport-if-holding-items") && Helper.isIntList(map.get("teleport-if-holding-items")))
-        {
-            teleportIfHoldingItems = (List<Integer>) map.get("teleport-if-holding-items");
-
-            if (teleportIfHoldingItems != null && teleportIfHoldingItems.size() > 0)
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_IF_HOLDING_ITEMS);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-if-not-holding-items") && Helper.isIntList(map.get("teleport-if-not-holding-items")))
-        {
-            teleportIfNotHoldingItems = (List<Integer>) map.get("teleport-if-not-holding-items");
-
-            if (teleportIfNotHoldingItems != null && teleportIfNotHoldingItems.size() > 0)
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-if-has-items") && Helper.isIntList(map.get("teleport-if-has-items")))
-        {
-            teleportIfHasItems = (List<Integer>) map.get("teleport-if-has-items");
-
-            if (teleportIfHasItems != null && teleportIfHasItems.size() > 0)
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_IF_HAS_ITEMS);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-if-not-has-items") && Helper.isIntList(map.get("teleport-if-not-has-items")))
-        {
-            teleportIfNotHasItems = (List<Integer>) map.get("teleport-if-not-has-items");
-
-            if (teleportIfNotHasItems != null && teleportIfNotHasItems.size() > 0)
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-before-death") && Helper.isBoolean(map.get("teleport-before-death")))
-        {
-            if ((Boolean) map.get("teleport-before-death"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_BEFORE_DEATH);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-damage") && Helper.isBoolean(map.get("teleport-on-damage")))
-        {
-            if ((Boolean) map.get("teleport-on-damage"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_DAMAGE);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-feeding") && Helper.isBoolean(map.get("teleport-on-feeding")))
-        {
-            if ((Boolean) map.get("teleport-on-feeding"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_FEEDING);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-mobs-on-enable") && Helper.isBoolean(map.get("teleport-mobs-on-enable")))
-        {
-            if ((Boolean) map.get("teleport-mobs-on-enable"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_MOBS_ON_ENABLE);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-animals-on-enable") && Helper.isBoolean(map.get("teleport-animals-on-enable")))
-        {
-            if ((Boolean) map.get("teleport-animals-on-enable"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-players-on-enable") && Helper.isBoolean(map.get("teleport-players-on-enable")))
-        {
-            if ((Boolean) map.get("teleport-players-on-enable"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-villagers-on-enable") && Helper.isBoolean(map.get("teleport-villagers-on-enable")))
-        {
-            if ((Boolean) map.get("teleport-villagers-on-enable"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-fire") && Helper.isBoolean(map.get("teleport-on-fire")))
-        {
-            if ((Boolean) map.get("teleport-on-fire"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_FIRE);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-pvp") && Helper.isBoolean(map.get("teleport-on-pvp")))
-        {
-            if ((Boolean) map.get("teleport-on-pvp"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_PVP);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-block-place") && Helper.isBoolean(map.get("teleport-on-block-place")))
-        {
-            if ((Boolean) map.get("teleport-on-block-place"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_BLOCK_PLACE);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-block-break") && Helper.isBoolean(map.get("teleport-on-block-break")))
-        {
-            if ((Boolean) map.get("teleport-on-block-break"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_BLOCK_BREAK);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-sneak") && Helper.isBoolean(map.get("teleport-on-sneak")))
-        {
-            if ((Boolean) map.get("teleport-on-sneak"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_SNEAK);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-entry") && Helper.isBoolean(map.get("teleport-on-entry")))
-        {
-            if ((Boolean) map.get("teleport-on-entry"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_ENTRY);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-on-exit") && Helper.isBoolean(map.get("teleport-on-exit")))
-        {
-            if ((Boolean) map.get("teleport-on-exit"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ON_EXIT);
-                defaultFlags.add(FieldFlag.TELEPORTER);
-            }
-        }
-
-        if (map.containsKey("teleport-cost") && Helper.isInteger(map.get("teleport-cost")))
-        {
-            teleportCost = (Integer) map.get("teleport-cost");
-        }
-
-        if (map.containsKey("teleport-back-after-seconds") && Helper.isInteger(map.get("teleport-back-after-seconds")))
-        {
-            teleportBackAfterSeconds = (Integer) map.get("teleport-back-after-seconds");
-        }
-
-        if (map.containsKey("teleport-max-distance") && Helper.isInteger(map.get("teleport-max-distance")))
-        {
-            teleportMaxDistance = (Integer) map.get("teleport-max-distance");
-        }
-
-        if (map.containsKey("teleport-explosion-effect") && Helper.isBoolean(map.get("teleport-explosion-effect")))
-        {
-            if ((Boolean) map.get("teleport-explosion-effect"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_EXPLOSION_EFFECT);
-            }
-        }
-
-        if (map.containsKey("teleport-relatively") && Helper.isBoolean(map.get("teleport-relatively")))
-        {
-            if ((Boolean) map.get("teleport-relatively"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_RELATIVELY);
-            }
-        }
-
-        if (map.containsKey("teleport-announce") && Helper.isBoolean(map.get("teleport-announce")))
-        {
-            if ((Boolean) map.get("teleport-announce"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_ANNOUNCE);
-            }
-        }
-
-        if (map.containsKey("teleport-destination") && Helper.isBoolean(map.get("teleport-destination")))
-        {
-            if ((Boolean) map.get("teleport-destination"))
-            {
-                defaultFlags.add(FieldFlag.TELEPORT_DESTINATION);
-            }
-        }
-
-        if (map.containsKey("hidable") && Helper.isBoolean(map.get("hidable")))
-        {
-            if ((Boolean) map.get("hidable"))
-            {
-                defaultFlags.add(FieldFlag.HIDABLE);
-            }
-        }
-
-        if (map.containsKey("command-on-enter") && Helper.isString(map.get("command-on-enter")))
-        {
-            commandOnEnter = (String) map.get("command-on-enter");
-        }
-
-        if (map.containsKey("command-on-exit") && Helper.isString(map.get("command-on-exit")))
-        {
-            commandOnExit = (String) map.get("command-on-exit");
-        }
-
-        if (map.containsKey("player-command-on-enter") && Helper.isString(map.get("player-command-on-enter")))
-        {
-            playerCommandOnEnter = (String) map.get("player-command-on-enter");
-        }
-
-        if (map.containsKey("player-command-on-exit") && Helper.isString(map.get("player-command-on-exit")))
-        {
-            playerCommandOnExit = (String) map.get("player-command-on-exit");
-        }
-
-        if (map.containsKey("command-blacklist") && Helper.isStringList(map.get("command-blacklist")))
-        {
-            canceledCommands = (List<String>) map.get("command-blacklist");
-        }
-
-        defaultFlags.add(FieldFlag.ALL);
+        return null;
     }
 
-    /**
-     * Check if the setting has a flag
-     *
-     * @param flagStr
-     * @return
-     */
-    public boolean hasDefaultFlag(String flagStr)
+    private List<String> loadStringList(String flagStr)
     {
-        for (FieldFlag flag : defaultFlags)
+        if (containsKey(flagStr))
         {
-            if (Helper.toFlagStr(flag).equals(flagStr))
+            if (Helper.isStringList(getValue(flagStr)))
             {
-                return true;
+                List<String> value = (List<String>) getValue(flagStr);
+
+                if (!value.isEmpty())
+                {
+                    loadFlags(getKey(flagStr));
+                }
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
             }
+            PreciousStones.debug("   %s: *bad*", flagStr);
         }
+        return new ArrayList<String>();
+    }
+
+    private List<BlockTypeEntry> loadTypeEntries(String flagStr)
+    {
+        if (containsKey(flagStr))
+        {
+            if (Helper.isStringList(getValue(flagStr)))
+            {
+                List<BlockTypeEntry> value = Helper.toTypeEntriesBlind((List<Object>) getValue(flagStr));
+
+                if (!value.isEmpty())
+                {
+                    loadFlags(getKey(flagStr));
+                }
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+            PreciousStones.debug("   %s: *bad*", flagStr);
+        }
+        return new ArrayList<BlockTypeEntry>();
+    }
+
+    private List<Integer> loadIntList(String flagStr)
+    {
+        if (containsKey(flagStr))
+        {
+            if (Helper.isIntList(getValue(flagStr)))
+            {
+                List<Integer> value = (List<Integer>) getValue(flagStr);
+
+                if (!value.isEmpty())
+                {
+                    loadFlags(getKey(flagStr));
+                }
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+            PreciousStones.debug("   %s: *bad*", flagStr);
+        }
+        return new ArrayList<Integer>();
+    }
+
+    private boolean containsKey(String flagStr)
+    {
+        if (map.containsKey(flagStr))
+        {
+            return true;
+        }
+
+        if (map.containsKey("~" + flagStr))
+        {
+            return true;
+        }
+
+        if (map.containsKey("^" + flagStr))
+        {
+            return true;
+        }
+
+        if (map.containsKey("?" + flagStr))
+        {
+            return true;
+        }
+
         return false;
+    }
+
+    private String getKey(String flagStr)
+    {
+        if (map.containsKey(flagStr))
+        {
+            return flagStr;
+        }
+
+        if (map.containsKey("~" + flagStr))
+        {
+            return "~" + flagStr;
+        }
+
+        if (map.containsKey("^" + flagStr))
+        {
+            return "^" + flagStr;
+        }
+
+        if (map.containsKey("?" + flagStr))
+        {
+            return "?" + flagStr;
+        }
+
+        return null;
+    }
+
+    private Object getValue(String flagStr)
+    {
+        if (map.get(flagStr) != null)
+        {
+            return map.get(flagStr);
+        }
+
+        if (map.get("~" + flagStr) != null)
+        {
+            return map.get("~" + flagStr);
+        }
+
+        if (map.get("^" + flagStr) != null)
+        {
+            return map.get("^" + flagStr);
+        }
+
+        if (map.get("?" + flagStr) != null)
+        {
+            return map.get("?" + flagStr);
+        }
+
+        return null;
+    }
+
+    private void loadFlags(String flagStr)
+    {
+        if (flagStr == null || flagStr.isEmpty())
+        {
+            return;
+        }
+
+        if (flagStr.startsWith("^"))
+        {
+            FieldFlag flag = FieldFlag.getByString(flagStr);
+
+            if (flag != null)
+            {
+                if (!reversedFlags.contains(flag))
+                {
+                    alledflags.add(flag);
+                }
+                loadFlags(flagStr.substring(1));
+            }
+            return;
+        }
+
+        if (flagStr.startsWith("~"))
+        {
+            FieldFlag flag = FieldFlag.getByString(flagStr);
+
+            if (flag != null)
+            {
+                if (!alledflags.contains(flag))
+                {
+                    reversedFlags.add(flag);
+                }
+                loadFlags(flagStr.substring(1));
+            }
+            return;
+        }
+
+        if (flagStr.startsWith("?"))
+        {
+            FieldFlag flag = FieldFlag.getByString(flagStr);
+
+            if (flag != null)
+            {
+                disabledFlags.add(flag);
+                loadFlags(flagStr.substring(1));
+            }
+            return;
+        }
+
+        FieldFlag flag = FieldFlag.getByString(flagStr);
+
+        if (flag != null)
+        {
+            defaultFlags.add(flag);
+        }
     }
 
     /**
@@ -1355,12 +650,15 @@ public class FieldSettings
      */
     public boolean hasNameableFlag()
     {
-        return defaultFlags.contains(FieldFlag.WELCOME_MESSAGE) ||
-                defaultFlags.contains(FieldFlag.FAREWELL_MESSAGE) ||
-                defaultFlags.contains(FieldFlag.ENTRY_ALERT) ||
-                defaultFlags.contains(FieldFlag.TRANSLOCATION) ||
-                defaultFlags.contains(FieldFlag.TELEPORTER) ||
-                defaultFlags.contains(FieldFlag.TELEPORT_DESTINATION);
+        for (FieldFlag flag : defaultFlags)
+        {
+            if (flag.isNameable())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1376,11 +674,6 @@ public class FieldSettings
      */
     public boolean hasLimit()
     {
-        if (limits == null)
-        {
-            return false;
-        }
-
         return !limits.isEmpty();
     }
 
@@ -1389,11 +682,6 @@ public class FieldSettings
      */
     public String getTitle()
     {
-        if (title == null)
-        {
-            return "";
-        }
-
         return title;
     }
 
@@ -1418,20 +706,15 @@ public class FieldSettings
      */
     public boolean canTranslocate(BlockTypeEntry type)
     {
-        if (translocationBlacklist == null)
-        {
-            return true;
-        }
-
         return !translocationBlacklist.contains(type);
     }
 
     /**
-     * Tells you if the player shoudl be teleported teleport based on the block hes standing on
+     * Tells you if the player should be teleported teleport based on the block hes standing on
      *
      * @return
      */
-    public boolean teleportDueToWalking(Location loc, Field field)
+    public boolean teleportDueToWalking(Location loc, Field field, Player player)
     {
         Block standingOn = new Vec(loc).subtract(0, 1, 0).getBlock();
 
@@ -1442,12 +725,12 @@ public class FieldSettings
 
         boolean teleport = false;
 
-        if (field.hasFlag(FieldFlag.TELEPORT_IF_WALKING_ON))
+        if (FieldFlag.TELEPORT_IF_WALKING_ON.applies(field, player))
         {
             teleport = teleportIfWalkingOn.contains(new BlockTypeEntry(standingOn));
         }
 
-        if (field.hasFlag(FieldFlag.TELEPORT_IF_NOT_WALKING_ON))
+        if (FieldFlag.TELEPORT_IF_NOT_WALKING_ON.applies(field, player))
         {
             teleport = !teleportIfNotWalkingOn.contains(new BlockTypeEntry(standingOn));
         }
@@ -1463,11 +746,6 @@ public class FieldSettings
      */
     public boolean inDestroyBlacklist(Block block)
     {
-        if (preventDestroyBlacklist == null)
-        {
-            return false;
-        }
-
         BlockTypeEntry type = new BlockTypeEntry(block);
 
         return preventDestroyBlacklist.contains(type);
@@ -1481,11 +759,6 @@ public class FieldSettings
      */
     public boolean inPlaceBlacklist(Block block)
     {
-        if (preventPlaceBlacklist == null)
-        {
-            return false;
-        }
-
         BlockTypeEntry type = new BlockTypeEntry(block);
 
         return preventPlaceBlacklist.contains(type);
@@ -1499,12 +772,7 @@ public class FieldSettings
      */
     public boolean isCanceledCommand(String command)
     {
-        if (canceledCommands == null)
-        {
-            return false;
-        }
-
-        command = command.replace("/" , "");
+        command = command.replace("/", "");
 
         int i = command.indexOf(' ');
 
@@ -1513,7 +781,7 @@ public class FieldSettings
             command = command.substring(0, i);
         }
 
-        return canceledCommands.contains(command);
+        return commandBlackList.contains(command);
     }
 
     /**
@@ -1561,6 +829,28 @@ public class FieldSettings
     }
 
     /**
+     * Whether the flag has been reversed
+     *
+     * @param flag
+     * @return
+     */
+    public boolean isReversedFlag(FieldFlag flag)
+    {
+        return reversedFlags.contains(flag);
+    }
+
+    /**
+     * Whether the flag has been set to all
+     *
+     * @param flag
+     * @return
+     */
+    public boolean isAlledFlag(FieldFlag flag)
+    {
+        return alledflags.contains(flag);
+    }
+
+    /**
      * Whether a block type can be used in this field
      *
      * @param type
@@ -1568,7 +858,7 @@ public class FieldSettings
      */
     public boolean canUse(int type)
     {
-        return preventUse == null || !preventUse.contains(type);
+        return !preventUse.contains(type);
 
     }
 
@@ -1653,11 +943,6 @@ public class FieldSettings
      */
     public boolean inAllowedList(String playerName)
     {
-        if (allowedPlayers == null)
-        {
-            return false;
-        }
-
         return allowedPlayers.contains(playerName);
     }
 
@@ -1669,11 +954,6 @@ public class FieldSettings
      */
     public boolean inDeniedList(String playerName)
     {
-        if (deniedPlayers == null)
-        {
-            return false;
-        }
-
         return deniedPlayers.contains(playerName);
     }
 
@@ -1685,11 +965,6 @@ public class FieldSettings
      */
     public boolean canGrief(int type)
     {
-        if (allowGrief == null || allowGrief.isEmpty())
-        {
-            return false;
-        }
-
         return allowGrief.contains(type);
     }
 
@@ -1701,7 +976,7 @@ public class FieldSettings
      */
     public boolean allowedWorld(World world)
     {
-        return allowedWorlds == null || allowedWorlds.isEmpty() || allowedWorlds.contains(world.getName());
+        return allowedWorlds.isEmpty() || allowedWorlds.contains(world.getName());
     }
 
     /**
@@ -1711,7 +986,7 @@ public class FieldSettings
      */
     public boolean hasAllowedOnlyInside()
     {
-        return allowedOnlyInside != null && !allowedOnlyInside.isEmpty();
+        return !allowedOnlyInside.isEmpty();
     }
 
     /**
@@ -1741,7 +1016,7 @@ public class FieldSettings
      */
     public boolean hasAllowedOnlyOutside()
     {
-        return allowedOnlyOutside != null && !allowedOnlyOutside.isEmpty();
+        return !allowedOnlyOutside.isEmpty();
     }
 
     /**
@@ -1857,10 +1132,6 @@ public class FieldSettings
      */
     public List<Integer> getLimits()
     {
-        if (limits == null)
-        {
-            return new ArrayList<Integer>();
-        }
         return Collections.unmodifiableList(limits);
     }
 
@@ -1926,21 +1197,11 @@ public class FieldSettings
 
     public List<Integer> getTreeTypes()
     {
-        if (treeTypes == null)
-        {
-            return null;
-        }
-
         return new ArrayList<Integer>(treeTypes);
     }
 
     public List<Integer> getShrubTypes()
     {
-        if (shrubTypes == null)
-        {
-            return null;
-        }
-
         return new ArrayList<Integer>(shrubTypes);
     }
 
@@ -1986,7 +1247,7 @@ public class FieldSettings
 
     public int getMineStrength()
     {
-        return mineStrength;
+        return mine;
     }
 
     public HashMap<PotionEffectType, Integer> getPotions()
@@ -1999,19 +1260,14 @@ public class FieldSettings
         return neutralizePotions;
     }
 
-    public List<BlockTypeEntry> getEquipItems()
-    {
-        return equipItems;
-    }
-
     public int getMaskOnDisabledBlock()
     {
-        return maskOnDisabledBlock;
+        return maskOnDisabled;
     }
 
     public int getMaskOnEnabledBlock()
     {
-        return maskOnEnabledBlock;
+        return maskOnEnabled;
     }
 
     public String getRequiredPermissionAllow()
@@ -2081,5 +1337,10 @@ public class FieldSettings
     public String getPlayerCommandOnExit()
     {
         return playerCommandOnExit;
+    }
+
+    public List<FieldFlag> getDisabledFlags()
+    {
+        return disabledFlags;
     }
 }

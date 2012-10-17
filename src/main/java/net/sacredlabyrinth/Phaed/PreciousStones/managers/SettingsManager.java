@@ -9,6 +9,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
@@ -25,11 +26,9 @@ public final class SettingsManager
     private int maxSizeTranslocationForRedstone;
     private List<String> preventDestroyEverywhere;
     private List<String> preventPlaceEverywhere;
-    private boolean startDynmapFlagsDisabled;
     private boolean sneakPlaceFields;
     private boolean showDefaultWelcomeFarewellMessages;
     private boolean sneakNormalBlock;
-    private boolean startMessagesDisabled;
     private boolean disableGroundInfo;
     private int globalFieldLimit;
     private boolean noRefunds;
@@ -113,7 +112,6 @@ public final class SettingsManager
     private boolean disableBypassAlertsForAdmins;
     private boolean disableSimpleClanHook;
     private boolean offByDefault;
-
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
     private int[] fragileBlocks = new int[]{7, 8, 9, 10, 11, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 97, 100, 123, 124, 129};
     private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
@@ -129,6 +127,7 @@ public final class SettingsManager
     private PreciousStones plugin;
     private File main;
     private FileConfiguration config;
+    private FileConfiguration cleanConfig;
 
     /**
      *
@@ -137,6 +136,7 @@ public final class SettingsManager
     {
         plugin = PreciousStones.getInstance();
         config = plugin.getConfig();
+        cleanConfig = new YamlConfiguration();
         main = new File(plugin.getDataFolder() + File.separator + "config.yml");
         load();
     }
@@ -176,106 +176,193 @@ public final class SettingsManager
             config.options().copyDefaults(true);
         }
 
-        forceFieldBlocks = (ArrayList) config.get("force-field-blocks");
-        bypassBlocks = Helper.toTypeEntries(config.getStringList("bypass-blocks"));
-        unprotectableBlocks = Helper.toTypeEntries(config.getStringList("unprotectable-blocks"));
-        unbreakableBlocks = Helper.toTypeEntries(config.getStringList("unbreakable-blocks"));
-        hidingMaskBlocs = Helper.toTypeEntries(config.getStringList("hiding-mask-blocks"));
-        toolItems = config.getIntegerList("tool-items");
-        repairableItems = config.getIntegerList("repairable-items");
-        logTranslocation = config.getBoolean("log.translocation");
-        logRollback = config.getBoolean("log.rollback");
-        logFire = config.getBoolean("log.fire");
-        logEntry = config.getBoolean("log.entry");
-        logPlace = config.getBoolean("log.place");
-        logUse = config.getBoolean("log.use");
-        logPvp = config.getBoolean("log.pvp");
-        logDestroy = config.getBoolean("log.destroy");
-        logDestroyArea = config.getBoolean("log.destroy-area");
-        logPlaceArea = config.getBoolean("log.place-area");
-        logUnprotectable = config.getBoolean("log.unprotectable");
-        logBypassPvp = config.getBoolean("log.bypass-pvp");
-        logBypassDelete = config.getBoolean("log.bypass-delete");
-        logBypassPlace = config.getBoolean("log.bypass-place");
-        logBypassDestroy = config.getBoolean("log.bypass-destroy");
-        logConflictPlace = config.getBoolean("log.conflict-place");
-        notifyTranslocation = config.getBoolean("notify.translocation");
-        notifyRollback = config.getBoolean("notify.rollback");
-        notifyPlace = config.getBoolean("notify.place");
-        notifyDestroy = config.getBoolean("notify.destroy");
-        notifyBypassUnprotectable = config.getBoolean("notify.bypass-unprotectable");
-        notifyBypassPvp = config.getBoolean("notify.bypass-pvp");
-        notifyBypassPlace = config.getBoolean("notify.bypass-place");
-        notifyBypassDestroy = config.getBoolean("notify.bypass-destroy");
-        notifyFlyZones = config.getBoolean("notify.fly-zones");
-        warnInstantHeal = config.getBoolean("warn.instant-heal");
-        warnSlowHeal = config.getBoolean("warn.slow-heal");
-        warnSlowDamage = config.getBoolean("warn.slow-damage");
-        warnSlowFeeding = config.getBoolean("warn.slow-feeding");
-        warnSlowRepair = config.getBoolean("warn.slow-repair");
-        warnFastDamage = config.getBoolean("warn.fast-damage");
-        warnGiveAir = config.getBoolean("warn.air");
-        warnFire = config.getBoolean("warn.fire");
-        warnEntry = config.getBoolean("warn.entry");
-        warnPlace = config.getBoolean("warn.place");
-        warnUse = config.getBoolean("warn.use");
-        warnPvp = config.getBoolean("warn.pvp");
-        warnDestroy = config.getBoolean("warn.destroy");
-        warnDestroyArea = config.getBoolean("warn.destroy-area");
-        warnUnprotectable = config.getBoolean("warn.unprotectable");
-        warnLaunch = config.getBoolean("warn.launch");
-        warnCannon = config.getBoolean("warn.cannon");
-        warnMine = config.getBoolean("warn.mine");
-        disableSimpleClanHook = config.getBoolean("settings.disable-simpleclans-hook");
-        maxSizeTranslocation = config.getInt("settings.max-size-translocation");
-        maxSizeTranslocationForRedstone = config.getInt("settings.max-size-translocation-for-redstone");
+
+        // ********************************** Lists
+
+        bypassBlocks = Helper.toTypeEntries(loadStringList("bypass-blocks"));
+        unprotectableBlocks = Helper.toTypeEntries(loadStringList("unprotectable-blocks"));
+        unbreakableBlocks = Helper.toTypeEntries(loadStringList("unbreakable-blocks"));
+        hidingMaskBlocs = Helper.toTypeEntries(loadStringList("hiding-mask-blocks"));
+        toolItems = loadIntList("tool-items");
+        repairableItems = loadIntList("repairable-items");
+
+        // ********************************** Field configs
+
+        forceFieldBlocks = (ArrayList) loadObject("force-field-blocks");
+
+        // ********************************** Log
+
+        logTranslocation = loadBoolean("log.translocation");
+        logRollback = loadBoolean("log.rollback");
+        logFire = loadBoolean("log.fire");
+        logEntry = loadBoolean("log.entry");
+        logPlace = loadBoolean("log.place");
+        logUse = loadBoolean("log.use");
+        logPvp = loadBoolean("log.pvp");
+        logDestroy = loadBoolean("log.destroy");
+        logDestroyArea = loadBoolean("log.destroy-area");
+        logPlaceArea = loadBoolean("log.place-area");
+        logUnprotectable = loadBoolean("log.unprotectable");
+        logBypassPvp = loadBoolean("log.bypass-pvp");
+        logBypassDelete = loadBoolean("log.bypass-delete");
+        logBypassPlace = loadBoolean("log.bypass-place");
+        logBypassDestroy = loadBoolean("log.bypass-destroy");
+        logConflictPlace = loadBoolean("log.conflict-place");
+
+        // ********************************** Notify
+
+        notifyTranslocation = loadBoolean("notify.translocation");
+        notifyRollback = loadBoolean("notify.rollback");
+        notifyPlace = loadBoolean("notify.place");
+        notifyDestroy = loadBoolean("notify.destroy");
+        notifyBypassUnprotectable = loadBoolean("notify.bypass-unprotectable");
+        notifyBypassPvp = loadBoolean("notify.bypass-pvp");
+        notifyBypassPlace = loadBoolean("notify.bypass-place");
+        notifyBypassDestroy = loadBoolean("notify.bypass-destroy");
+        notifyFlyZones = loadBoolean("notify.fly-zones");
+
+        // ********************************** Warn
+
+        warnInstantHeal = loadBoolean("warn.instant-heal");
+        warnSlowHeal = loadBoolean("warn.slow-heal");
+        warnSlowDamage = loadBoolean("warn.slow-damage");
+        warnSlowFeeding = loadBoolean("warn.slow-feeding");
+        warnSlowRepair = loadBoolean("warn.slow-repair");
+        warnFastDamage = loadBoolean("warn.fast-damage");
+        warnGiveAir = loadBoolean("warn.air");
+        warnFire = loadBoolean("warn.fire");
+        warnEntry = loadBoolean("warn.entry");
+        warnPlace = loadBoolean("warn.place");
+        warnUse = loadBoolean("warn.use");
+        warnPvp = loadBoolean("warn.pvp");
+        warnDestroy = loadBoolean("warn.destroy");
+        warnDestroyArea = loadBoolean("warn.destroy-area");
+        warnUnprotectable = loadBoolean("warn.unprotectable");
+        warnLaunch = loadBoolean("warn.launch");
+        warnCannon = loadBoolean("warn.cannon");
+        warnMine = loadBoolean("warn.mine");
+
+        // ********************************** Settings
+
+        disableSimpleClanHook = loadBoolean("settings.disable-simpleclans-hook");
+        maxSizeTranslocation = loadInt("settings.max-size-translocation");
+        maxSizeTranslocationForRedstone = loadInt("settings.max-size-translocation-for-redstone");
         version = config.getDouble("settings.version");
-        preventPlaceEverywhere = config.getStringList("settings.prevent-place-everywhere");
-        preventDestroyEverywhere = config.getStringList("settings.prevent-destroy-everywhere");
-        showDefaultWelcomeFarewellMessages = config.getBoolean("settings.show-default-welcome-farewell-messages");
-        sneakPlaceFields = config.getBoolean("settings.sneak-to-place-field");
-        sneakNormalBlock = config.getBoolean("settings.sneak-to-place-normal-block");
-        startMessagesDisabled = config.getBoolean("settings.welcome-farewell-disabled-by-default");
-        startDynmapFlagsDisabled = config.getBoolean("settings.dynmap-flags-disabled-by-default");
-        disableGroundInfo = config.getBoolean("settings.disable-ground-info");
-        globalFieldLimit = config.getInt("settings.global-field-limit");
-        noRefunds = config.getBoolean("settings.no-refund-for-fields");
-        publicBlockDetails = config.getBoolean("settings.public-block-details");
-        dropOnDelete = config.getBoolean("settings.drop-on-delete");
-        disableAlertsForAdmins = config.getBoolean("settings.disable-alerts-for-admins");
-        disableBypassAlertsForAdmins = config.getBoolean("settings.disable-bypass-alerts-for-admins");
-        offByDefault = config.getBoolean("settings.off-by-default");
-        linesPerPage = config.getInt("settings.lines-per-page");
-        logToHawkEye = config.getBoolean("settings.log-to-hawkeye");
-        debugging = config.getBoolean("settings.show-debug-info");
-        blacklistedWorlds = config.getStringList("settings.blacklisted-worlds");
-        cuboidDefiningType = config.getInt("cuboid.defining-blocktype");
-        cuboidVisualizationType = config.getInt("cuboid.visualization-blocktype");
-        purgeAfterDays = config.getInt("cleanup.player-inactivity-purge-days");
-        purgeSnitchAfterDays = config.getInt("cleanup.snitch-unused-purge-days");
-        saveFrequency = config.getInt("saving.frequency-seconds");
-        maxSnitchRecords = config.getInt("saving.max-records-per-snitch");
-        visualizeFrameBlock = config.getInt("visualization.frame-block-type");
-        visualizeBlock = config.getInt("visualization.block-type");
-        visualizeSeconds = config.getInt("visualization.seconds");
-        visualizeEndOnMove = config.getBoolean("visualization.end-on-player-move");
-        visualizeMarkBlock = config.getInt("visualization.mark-block-type");
-        visualizeDensity = config.getInt("visualization.default-density");
-        visualizeSendSize = config.getInt("visualization.blocks-to-send");
-        visualizeMaxFields = config.getInt("visualization.max-fields-to-visualize-at-once");
-        visualizeTicksBetweenSends = config.getInt("visualization.ticks-between-sends");
-        griefRevertMinInterval = config.getInt("grief-undo.min-interval-secs");
-        griefUndoBlackList = config.getStringList("grief-undo.black-list");
-        useMysql = config.getBoolean("mysql.enable");
-        host = config.getString("mysql.host");
-        port = config.getInt("mysql.port");
-        database = config.getString("mysql.database");
-        username = config.getString("mysql.username");
-        password = config.getString("mysql.password");
+        preventPlaceEverywhere = loadStringList("settings.prevent-place-everywhere");
+        preventDestroyEverywhere = loadStringList("settings.prevent-destroy-everywhere");
+        showDefaultWelcomeFarewellMessages = loadBoolean("settings.show-default-welcome-farewell-messages");
+        sneakPlaceFields = loadBoolean("settings.sneak-to-place-field");
+        sneakNormalBlock = loadBoolean("settings.sneak-to-place-normal-block");
+        disableGroundInfo = loadBoolean("settings.disable-ground-info");
+        globalFieldLimit = loadInt("settings.global-field-limit");
+        noRefunds = loadBoolean("settings.no-refund-for-fields");
+        publicBlockDetails = loadBoolean("settings.public-block-details");
+        dropOnDelete = loadBoolean("settings.drop-on-delete");
+        disableAlertsForAdmins = loadBoolean("settings.disable-alerts-for-admins");
+        disableBypassAlertsForAdmins = loadBoolean("settings.disable-bypass-alerts-for-admins");
+        offByDefault = loadBoolean("settings.off-by-default");
+        linesPerPage = loadInt("settings.lines-per-page");
+        logToHawkEye = loadBoolean("settings.log-to-hawkeye");
+        debugging = loadBoolean("settings.show-debug-info");
+        blacklistedWorlds = loadStringList("settings.blacklisted-worlds");
+
+        cuboidDefiningType = loadInt("cuboid.defining-blocktype");
+        cuboidVisualizationType = loadInt("cuboid.visualization-blocktype");
+        purgeAfterDays = loadInt("cleanup.player-inactivity-purge-days");
+        purgeSnitchAfterDays = loadInt("cleanup.snitch-unused-purge-days");
+
+        saveFrequency = loadInt("saving.frequency-seconds");
+        maxSnitchRecords = loadInt("saving.max-records-per-snitch");
+
+        visualizeFrameBlock = loadInt("visualization.frame-block-type");
+        visualizeBlock = loadInt("visualization.block-type");
+        visualizeSeconds = loadInt("visualization.seconds");
+        visualizeEndOnMove = loadBoolean("visualization.end-on-player-move");
+        visualizeMarkBlock = loadInt("visualization.mark-block-type");
+        visualizeDensity = loadInt("visualization.default-density");
+        visualizeSendSize = loadInt("visualization.blocks-to-send");
+        visualizeMaxFields = loadInt("visualization.max-fields-to-visualize-at-once");
+        visualizeTicksBetweenSends = loadInt("visualization.ticks-between-sends");
+
+        griefRevertMinInterval = loadInt("grief-revert.min-interval-secs");
+        griefUndoBlackList = loadStringList("grief-revert.black-list");
+
+        useMysql = loadBoolean("mysql.enable");
+        host = loadString("mysql.host");
+        port = loadInt("mysql.port");
+        database = loadString("mysql.database");
+        username = loadString("mysql.username");
+        password = loadString("mysql.password");
 
         addForceFieldStones(forceFieldBlocks);
 
         save();
+    }
+
+    private Boolean loadBoolean(String path)
+    {
+        if (config.isBoolean(path))
+        {
+            boolean value = config.getBoolean(path);
+            cleanConfig.set(path, value);
+            return value;
+        }
+        return false;
+    }
+
+    private String loadString(String path)
+    {
+        if (config.isString(path))
+        {
+            String value = config.getString(path);
+            cleanConfig.set(path, value);
+            return value;
+        }
+
+        return "";
+    }
+
+    private int loadInt(String path)
+    {
+        if (config.isInt(path))
+        {
+            int value = config.getInt(path);
+            cleanConfig.set(path, value);
+            return value;
+        }
+
+        return 0;
+    }
+
+    private List<Integer> loadIntList(String path)
+    {
+        if (config.isList(path))
+        {
+            List<Integer> value = config.getIntegerList(path);
+            cleanConfig.set(path, value);
+            return value;
+        }
+
+        return new ArrayList<Integer>();
+    }
+
+    private List<String> loadStringList(String path)
+    {
+        if (config.isList(path))
+        {
+            List<String> value = config.getStringList(path);
+            cleanConfig.set(path, value);
+            return value;
+        }
+
+        return new ArrayList<String>();
+    }
+
+    private Object loadObject(String path)
+    {
+        Object value = config.get(path);
+        cleanConfig.set(path, value);
+        return value;
     }
 
     /**
@@ -285,7 +372,7 @@ public final class SettingsManager
     {
         try
         {
-            config.save(main);
+            cleanConfig.save(main);
         }
         catch (IOException e)
         {
@@ -314,7 +401,7 @@ public final class SettingsManager
 
                 fieldDefinitions.put(fs.getTypeEntry(), fs);
 
-                if (fs.getGroupOnEntry() != null)
+                if (!fs.getGroupOnEntry().isEmpty())
                 {
                     allEntryGroups.add(fs.getGroupOnEntry());
                 }
@@ -414,14 +501,14 @@ public final class SettingsManager
 
     public boolean isHarmfulPotion(PotionEffectType pot)
     {
-        if(pot.equals(PotionEffectType.SLOW)||
-                pot.equals(PotionEffectType.SLOW_DIGGING)||
-                pot.equals(PotionEffectType.WEAKNESS)||
-                pot.equals(PotionEffectType.BLINDNESS)||
-                pot.equals(PotionEffectType.CONFUSION)||
-                pot.equals(PotionEffectType.HARM)||
-                pot.equals(PotionEffectType.POISON)||
-                pot.equals(PotionEffectType.HUNGER)||
+        if (pot.equals(PotionEffectType.SLOW) ||
+                pot.equals(PotionEffectType.SLOW_DIGGING) ||
+                pot.equals(PotionEffectType.WEAKNESS) ||
+                pot.equals(PotionEffectType.BLINDNESS) ||
+                pot.equals(PotionEffectType.CONFUSION) ||
+                pot.equals(PotionEffectType.HARM) ||
+                pot.equals(PotionEffectType.POISON) ||
+                pot.equals(PotionEffectType.HUNGER) ||
                 pot.equals(PotionEffectType.INCREASE_DAMAGE))
         {
             return true;
@@ -438,7 +525,8 @@ public final class SettingsManager
      */
     public boolean isDependentBlock(int type)
     {
-        if (type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119 || type == 127 || type == 131 || type == 132)        {
+        if (type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119 || type == 127 || type == 131 || type == 132)
+        {
             return true;
         }
 
@@ -1346,11 +1434,6 @@ public final class SettingsManager
         return disableGroundInfo;
     }
 
-    public boolean isStartMessagesDisabled()
-    {
-        return startMessagesDisabled;
-    }
-
     public boolean isDebugging()
     {
         return debugging;
@@ -1371,11 +1454,6 @@ public final class SettingsManager
         return sneakPlaceFields;
     }
 
-    public boolean isStartDynmapFlagsDisabled()
-    {
-        return startDynmapFlagsDisabled;
-    }
-
     public boolean isPreventDestroyEverywhere(String world)
     {
         return preventDestroyEverywhere.contains(world);
@@ -1394,6 +1472,7 @@ public final class SettingsManager
     public void setVersion(double version)
     {
         config.set("settings.version", version);
+        cleanConfig.set("settings.version", version);
         save();
         this.version = version;
     }

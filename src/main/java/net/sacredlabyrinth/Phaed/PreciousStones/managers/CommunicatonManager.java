@@ -2516,25 +2516,6 @@ public class CommunicatonManager
             }
         }
 
-        List<String> applies = new ArrayList<String>();
-
-        if (field.hasFlag(FieldFlag.APPLY_TO_REVERSE))
-        {
-            applies.add("reverse");
-        }
-
-        if (field.hasFlag(FieldFlag.APPLY_TO_ALL))
-        {
-            applies.add("all");
-        }
-
-        if (applies.isEmpty())
-        {
-            applies.add("default");
-        }
-
-        cb.addRow("  " + color + ChatBlock.format("_appliesTo") + ": ", ChatColor.WHITE + Helper.toMessage(applies, ","), "");
-
         cb.addRow("  " + color + ChatBlock.format("_owner") + ": ", ChatColor.AQUA + field.getOwner(), "");
 
         if (field.getAllowed().size() > 0)
@@ -2598,7 +2579,7 @@ public class CommunicatonManager
                 title = color + ChatBlock.format("_flags") + ": ";
             }
 
-            cb.addRow("  " + title, getFlag(disabledFlags, flags, i * 2), getFlag(disabledFlags, flags, (i * 2) + 1));
+            cb.addRow("  " + title, getFlag(disabledFlags, field.getSettings(), flags, i * 2), getFlag(disabledFlags, field.getSettings(), flags, (i * 2) + 1));
         }
 
         if (field.hasFlag(FieldFlag.POTIONS))
@@ -2656,7 +2637,7 @@ public class CommunicatonManager
         return showMessage;
     }
 
-    private String getFlag(List<FieldFlag> disabledFlags, List<FieldFlag> flags, int index)
+    private String getFlag(List<FieldFlag> disabledFlags, FieldSettings settings, List<FieldFlag> flags, int index)
     {
         if (index < flags.size())
         {
@@ -2674,7 +2655,19 @@ public class CommunicatonManager
                 color = ChatColor.AQUA;
             }
 
-            return color + Helper.toFlagStr(flag);
+            String flagStr = Helper.toFlagStr(flag);
+
+            if (settings.isReversedFlag(flag))
+            {
+                flagStr = "~" + flagStr;
+            }
+
+            if (settings.isAlledFlag(flag))
+            {
+                flagStr = "^" + flagStr;
+            }
+
+            return color + flagStr;
         }
 
         return "";

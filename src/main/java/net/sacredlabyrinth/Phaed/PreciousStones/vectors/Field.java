@@ -199,15 +199,13 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public int getMaxVolume()
     {
-        if (hasFlag(FieldFlag.CUBOID))
+        if (settings.getCustomVolume() > 0)
         {
-            if (settings.getCustomVolume() > 0)
-            {
-                return settings.getCustomVolume();
-            }
+            return settings.getCustomVolume();
         }
 
-        return getActualVolume();
+        int side = ((settings.getRadius() * 2) + 1);
+        return side * side * side;
     }
 
     /**
@@ -993,6 +991,11 @@ public class Field extends AbstractVec implements Comparable<Field>
         return minz;
     }
 
+    public String getDimensionString()
+    {
+        return String.format("minx: %s maxx: %s miny: %s maxy: %s minz: %s maxz: %s", minx, maxx, miny, maxy, minz, maxz);
+    }
+
     public boolean isProgress()
     {
         return progress;
@@ -1093,9 +1096,35 @@ public class Field extends AbstractVec implements Comparable<Field>
         return ret;
     }
 
+    /**
+     * Check if the field has certain certain properties
+     *
+     * @param flagStr
+     * @return
+     */
     public boolean hasFlag(String flagStr)
     {
         return hasFlag(Helper.toFieldFlag(flagStr));
+    }
+
+    /**
+     * If the field has a flag that applies to the player
+     *
+     * @param flag
+     * @param playerName
+     * @return
+     */
+    public boolean hasApplyingFlag(FieldFlag flag, String playerName)
+    {
+        if (hasFlag(flag))
+        {
+            if (flag.applies(this, playerName))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

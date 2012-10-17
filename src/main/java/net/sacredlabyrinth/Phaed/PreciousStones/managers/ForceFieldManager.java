@@ -89,7 +89,7 @@ public final class ForceFieldManager
 
         if (!plugin.getWorldGuardManager().canBuildField(player, fieldBlock, fs))
         {
-            ChatBlock.send(player, "The field intersects with a WorldGuard region you are not allowed in.");
+            ChatBlock.send(player, "fieldIntersectsWG");
             event.setCancelled(true);
             return;
         }
@@ -126,7 +126,7 @@ public final class ForceFieldManager
             if ((ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup() || fs.getMixingGroup() == 0) && !ce.getField().getSettings().getTypeEntry().equals(fs.getTypeEntry()))
             {
                 plugin.getCuboidManager().cancelOpenCuboid(player);
-                ChatBlock.send(player, "Cannot mix fields that are not in the same mixing group.");
+                ChatBlock.send(player, "cuboidCannotMix");
                 event.setCancelled(true);
                 return;
             }
@@ -134,7 +134,7 @@ public final class ForceFieldManager
             if (fs.getPrice() > ce.getField().getSettings().getPrice())
             {
                 plugin.getCuboidManager().cancelOpenCuboid(player);
-                ChatBlock.send(player, "Cannot add on properties of more valuable fields");
+                ChatBlock.send(player, "cuboidCannotAddProps");
                 event.setCancelled(true);
                 return;
             }
@@ -165,13 +165,6 @@ public final class ForceFieldManager
 
         field.setSettings(fs);
 
-        String clan = plugin.getSimpleClansManager().getClan(player.getName());
-
-        if (clan != null)
-        {
-            field.addAllowed("c:" + clan);
-        }
-
         // add to database (skip foresters and activate them)
 
         if (fs.hasDefaultFlag(FieldFlag.FORESTER))
@@ -182,9 +175,12 @@ public final class ForceFieldManager
         {
             // add count to player data
 
-            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
-            data.incrementFieldCount(field.getSettings().getTypeEntry());
-            plugin.getStorageManager().offerPlayer(player.getName());
+            if (!isChild)
+            {
+                PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                data.incrementFieldCount(field.getSettings().getTypeEntry());
+                plugin.getStorageManager().offerPlayer(player.getName());
+            }
 
             // open cuboid definition
 
@@ -226,16 +222,9 @@ public final class ForceFieldManager
 
         // disable flags
 
-        if (plugin.getSettingsManager().isStartMessagesDisabled())
+        for (FieldFlag flag : field.getSettings().getDisabledFlags())
         {
-            field.disableFlag("welcome-message");
-            field.disableFlag("farewell-message");
-        }
-
-        if (field.hasFlag(FieldFlag.DYNMAP_DISABLED) || plugin.getSettingsManager().isStartDynmapFlagsDisabled())
-        {
-            field.disableFlag("dynmap-area");
-            field.disableFlag("dynmap-marker");
+            field.disableFlag(flag.toString());
         }
 
         // places the field in a disabled state
@@ -254,6 +243,15 @@ public final class ForceFieldManager
                 field.setRevertSecs(field.getSettings().getGriefRevertInterval());
                 plugin.getGriefUndoManager().register(field);
             }
+        }
+
+        // add allowed clan
+
+        String clan = plugin.getSimpleClansManager().getClan(player.getName());
+
+        if (clan != null)
+        {
+            field.addAllowed("c:" + clan);
         }
 
         // allow all owners of overlapping fields into the field
@@ -465,34 +463,17 @@ public final class ForceFieldManager
                 c.clearParent();
                 queueRelease(c);
             }
-
             field.clearChildren();
+            flush();
         }
 
         // if the child's parent is not open, then remove the whole family
 
         if (field.isChild())
         {
-            if (!field.getParent().isOpen())
-            {
-                queueRelease(field.getParent());
-            }
-            else
-            {
-                Field parent = field.getParent();
-
-                for (Field s : parent.getChildren())
-                {
-                    s.clearParent();
-                    queueRelease(s);
-                }
-
-                parent.clearChildren();
-                queueRelease(parent);
-            }
+            release(field.getParent());
+            return;
         }
-
-        dropBlock(field);
 
         // delete from database
 
@@ -1094,52 +1075,6 @@ public final class ForceFieldManager
     }
 
     /**
-     * Whether the player is allowed in the field
-     *
-     * @param field
-     * @param playerName
-     * @return
-     */
-    public boolean isApplyToAllowed(Field field, String playerName)
-    {
-        Player player = Helper.matchSinglePlayer(playerName);
-
-        if (player != null)
-        {
-            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
-            {
-                return true;
-            }
-        }
-
-        // always allow if in war
-
-        if (plugin.getSimpleClansManager().inWar(field, playerName))
-        {
-            return true;
-        }
-
-        // ensure allow of only those with the required permission, fail silently otherwise
-
-        if (field.getSettings().getRequiredPermissionAllow() != null)
-        {
-            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionAllow()))
-            {
-                return false;
-            }
-        }
-
-        boolean allowed = isAllowed(field, playerName);
-
-        if (field.hasFlag(FieldFlag.APPLY_TO_REVERSE))
-        {
-            return !allowed;
-        }
-
-        return allowed;
-    }
-
-    /**
      * Determine whether a player is allowed on a field
      *
      * @param fieldBlock
@@ -1149,9 +1084,7 @@ public final class ForceFieldManager
     public boolean isAllowed(Block fieldBlock, String playerName)
     {
         Field field = getField(fieldBlock);
-
         return field != null && isAllowed(field, playerName);
-
     }
 
     /**
@@ -1170,6 +1103,8 @@ public final class ForceFieldManager
 
         Player player = Helper.matchSinglePlayer(playerName);
 
+        // allow if admin
+
         if (player != null)
         {
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
@@ -1178,12 +1113,24 @@ public final class ForceFieldManager
             }
         }
 
-        // handle sllowed/denied lists flags
+        // deny if doesn't have the required perms
+
+        if (!field.getSettings().getRequiredPermissionAllow().isEmpty())
+        {
+            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionAllow()))
+            {
+                return false;
+            }
+        }
+
+        // allow if in global allowed list
 
         if (field.getSettings().inAllowedList(playerName))
         {
             return true;
         }
+
+        // allow if in global deny list
 
         if (field.getSettings().inDeniedList(playerName))
         {
@@ -1598,8 +1545,7 @@ public final class ForceFieldManager
             }
         };
 
-        List<Field> sources = getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter);
-        return sources;
+        return getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter);
     }
 
     /**
@@ -1635,8 +1581,7 @@ public final class ForceFieldManager
             }
         };
 
-        List<Field> sources = getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter);
-        return sources;
+        return getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter);
     }
 
     /**
@@ -1653,7 +1598,7 @@ public final class ForceFieldManager
 
         if (field != null)
         {
-            if (FieldFlag.applies(player, field, FieldFlag.TELEPORT_ON_FIRE))
+            if (flag.applies(field, player.getName()))
             {
                 return field;
             }
@@ -1695,8 +1640,7 @@ public final class ForceFieldManager
             }
         };
 
-        Field field = getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notDisabledFilter, disabledFlagFilter);
-        return field;
+        return getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notDisabledFilter, disabledFlagFilter);
     }
 
     /**
@@ -1736,8 +1680,7 @@ public final class ForceFieldManager
             }
         };
 
-        Field field = getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, noConflictFilter);
-        return field;
+        return getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, noConflictFilter);
     }
 
     /**
@@ -1890,8 +1833,7 @@ public final class ForceFieldManager
             }
         };
 
-        Field field = getSmallestSourceFieldInChunk(blockInArea.getLocation().getBlock().getChunk(), flag, envelopsFilter, allowedFilter);
-        return field;
+        return getSmallestSourceFieldInChunk(blockInArea.getLocation().getChunk(), flag, envelopsFilter, allowedFilter);
     }
 
 
@@ -1927,55 +1869,8 @@ public final class ForceFieldManager
             }
         };
 
-        Field field = getSmallestSourceFieldInChunk(blockInArea.getLocation().getBlock().getChunk(), flag, envelopsFilter, allowedFilter);
-        return field;
+        return getSmallestSourceFieldInChunk(blockInArea.getLocation().getChunk(), flag, envelopsFilter, allowedFilter);
     }
-
-    /**
-     * Whether the location is in a use protected area that the player is not allowed in
-     *
-     * @param loc
-     * @param player
-     * @param type_id
-     * @return the field, null if its not
-     */
-    public boolean isUseProtected(Location loc, Player player, int type_id)
-    {
-        return findUseProtected(loc, player, type_id) != null;
-    }
-
-    /**
-     * Find a use protected area in the location that the player is not allowed in
-     *
-     * @param loc
-     * @param player
-     * @param type_id
-     * @return the field, null if its not
-     */
-    public Field findUseProtected(Location loc, Player player, int type_id)
-    {
-        List<Field> sources = getEnabledSourceFields(loc, FieldFlag.ALL);
-
-        ArrayList<Field> out = new ArrayList<Field>();
-
-        for (Field field : sources)
-        {
-            boolean allowed = isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-            {
-                FieldSettings fs = field.getSettings();
-
-                if (!fs.canUse(type_id) && field.hasFlag(FieldFlag.PREVENT_USE))
-                {
-                    out.add(field);
-                }
-            }
-        }
-
-        return getSmallestVolumeField(out);
-    }
-
 
     /**
      * Return the first field that conflicts with the unbreakable
@@ -2221,10 +2116,21 @@ public final class ForceFieldManager
      *
      * @param field
      */
-    public void releaseLiquid(Field field)
+    public void releaseNoClean(Field field)
     {
         deleteField(field);
-        dropBlockSilent(field);
+        dropBlockNoClean(field);
+    }
+
+    /**
+     * Deletes a field from the collection
+     *
+     * @param field
+     */
+    public void release(Field field)
+    {
+        deleteField(field);
+        dropBlock(field.getBlock());
     }
 
     /**
@@ -2245,7 +2151,7 @@ public final class ForceFieldManager
      *
      * @param block
      */
-    public void silentRelease(Block block)
+    public void releaseNoDrop(Block block)
     {
         deleteField(getField(block));
     }
@@ -2255,7 +2161,7 @@ public final class ForceFieldManager
      *
      * @param field
      */
-    public void silentRelease(Field field)
+    public void releaseNoDrop(Field field)
     {
         deleteField(field);
     }
@@ -2288,30 +2194,13 @@ public final class ForceFieldManager
     }
 
     /**
-     * Delete fields in deletion queue, force a drop
-     */
-    public void flushDrop()
-    {
-        while (deletionQueue.size() > 0)
-        {
-            Field pending = deletionQueue.poll();
-
-            deleteField(pending);
-            dropBlock(pending);
-        }
-    }
-
-    /**
      * Drops a block
      *
      * @param field
      */
     public void dropBlock(Field field)
     {
-        if (!plugin.getSettingsManager().isDropOnDelete())
-        {
-            dropBlock(field.getBlock());
-        }
+        dropBlock(field.getBlock());
     }
 
     /**
@@ -2319,7 +2208,7 @@ public final class ForceFieldManager
      *
      * @param field
      */
-    public void dropBlockSilent(Field field)
+    public void dropBlockNoClean(Field field)
     {
         // prevent tekkit blocks from dropping and crashing client
 
@@ -2328,7 +2217,12 @@ public final class ForceFieldManager
             return;
         }
 
-        if (!plugin.getSettingsManager().isDropOnDelete())
+        if (field.isHidden())
+        {
+            field.unHide();
+        }
+
+        if (plugin.getSettingsManager().isDropOnDelete())
         {
             World world = field.getLocation().getWorld();
             ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, field.getData());
@@ -2351,27 +2245,24 @@ public final class ForceFieldManager
             return;
         }
 
-        if (!plugin.getSettingsManager().isDropOnDelete())
+        World world = block.getWorld();
+        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+
+        Field field = plugin.getForceFieldManager().getField(block);
+
+        if (field != null)
         {
-            World world = block.getWorld();
-            ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
-
-
-            Field field = plugin.getForceFieldManager().getField(block);
-
-            if (field != null)
+            if (field.isHidden())
             {
-                if (field.isHidden())
-                {
-                    field.unHide();
-                }
+                field.unHide();
             }
+        }
 
-            if (plugin.getSettingsManager().isFieldType(block))
-            {
-                block.setType(Material.AIR);
-                world.dropItemNaturally(block.getLocation(), is);
-            }
+        block.setType(Material.AIR);
+
+        if (plugin.getSettingsManager().isDropOnDelete())
+        {
+            world.dropItemNaturally(block.getLocation(), is);
         }
     }
 
@@ -2572,6 +2463,16 @@ public final class ForceFieldManager
             {
                 out.add(field);
             }
+        }
+
+        if (out.isEmpty())
+        {
+            return null;
+        }
+
+        if (out.size() == 1)
+        {
+            return out.get(0);
         }
 
         return out.get(new Random().nextInt(out.size()));

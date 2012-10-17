@@ -96,7 +96,7 @@ public class ForesterEntry
             landPrepared = true;
         }
 
-        if (field.getSettings().getTreeTypes() != null)
+        if (!field.getSettings().getTreeTypes().isEmpty())
         {
             PreciousStones.debug("generate tree");
             plugin.getForesterManager().generateTree(field, player, world);
@@ -111,7 +111,7 @@ public class ForesterEntry
             world.generateTree(block.getLocation(), plugin.getForesterManager().getTree(field.getSettings()));
 
             plugin.getForesterManager().doCreatureSpawns(field);
-            plugin.getForceFieldManager().silentRelease(field);
+            plugin.getForceFieldManager().releaseNoDrop(field);
             return false;
         }
 

@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author phaed
  */
 public class SnitchManager
@@ -32,7 +31,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param entity
      */
@@ -44,9 +42,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Kill", entity.getType().getName(), 1));
                 }
@@ -55,7 +51,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param victim
      */
@@ -67,9 +62,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Kill", victim.getName(), 1));
                 }
@@ -78,7 +71,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param field
      */
@@ -86,22 +78,16 @@ public class SnitchManager
     {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
-            if (field.hasFlag(FieldFlag.SNITCH))
+            if (FieldFlag.SNITCH.applies(field, player))
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
-                {
-                    DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Entry", dateFormat.format(new Date()), 1));
-                }
+                DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
+                plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Entry", dateFormat.format(new Date()), 1));
             }
         }
 
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -113,9 +99,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Break", toBlockDetails(block), 1));
                 }
@@ -124,7 +108,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -136,9 +119,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     String details = Helper.friendlyBlockType(type) + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
 
@@ -149,7 +130,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -161,9 +141,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Bucket Filled", toBlockDetails(block), 1));
                 }
@@ -172,7 +150,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -184,9 +161,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Block Place", toBlockDetails(block), 1));
                 }
@@ -195,7 +170,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -207,9 +181,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Used", toBlockDetails(block), 1));
                 }
@@ -218,7 +190,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -237,9 +208,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Shopped", toBlockDetails(block), 1));
                 }
@@ -248,7 +217,6 @@ public class SnitchManager
     }
 
     /**
-     *
      * @param player
      * @param block
      */
@@ -260,9 +228,7 @@ public class SnitchManager
 
             for (Field field : snitchFields)
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.SNITCH.applies(field, player))
                 {
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Ignite", toBlockDetails(block), 1));
                 }
@@ -272,6 +238,7 @@ public class SnitchManager
 
     /**
      * Returns formatted coordinates
+     *
      * @param block
      * @return
      */

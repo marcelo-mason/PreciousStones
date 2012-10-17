@@ -1,7 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Material;
@@ -34,34 +33,30 @@ public class LightningManager
             return;
         }
 
-        if (!plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+        if (FieldFlag.LIGHTNING.applies(field, player))
         {
-            FieldSettings fs = field.getSettings();
+            final int delay = field.getSettings().getLightningDelaySeconds();
+            final int leftBehind = field.getSettings().getLightningReplaceBlock();
 
-            final int delay = fs.getLightningDelaySeconds();
-            final int leftbehind = fs.getLightningReplaceBlock();
+            plugin.getCommunicationManager().showLightning(player);
 
-            if (field.hasFlag(FieldFlag.LIGHTNING))
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
-                plugin.getCommunicationManager().showLightning(player);
-
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                public void run()
                 {
-                    public void run()
+                    Block block = plugin.getForceFieldManager().getBlock(field);
+
+                    player.getWorld().strikeLightning(player.getLocation());
+
+                    if (leftBehind >= 0)
                     {
-                        Block block = plugin.getForceFieldManager().getBlock(field);
-
-                        player.getWorld().strikeLightning(player.getLocation());
-
-                        if (leftbehind >= 0)
-                        {
-                            plugin.getForceFieldManager().silentRelease(field);
-                            block.setType(Material.getMaterial(leftbehind));
-                        }
-
+                        plugin.getForceFieldManager().releaseNoDrop(field);
+                        block.setType(Material.getMaterial(leftBehind));
                     }
-                }, delay * 20L);
-            }
+
+                }
+            }, delay * 20L);
         }
+
     }
 }

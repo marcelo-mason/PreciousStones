@@ -137,12 +137,15 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            if (player == null || !plugin.getForceFieldManager().isApplyToAllowed(field, player.getName()) || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (player == null)
             {
                 event.setCancelled(true);
-
-                if (player != null)
+            }
+            else
+            {
+                if (FieldFlag.PREVENT_FIRE.applies(field, player))
                 {
+                    event.setCancelled(true);
                     plugin.getCommunicationManager().warnFire(player, block, field);
                 }
             }
@@ -154,9 +157,7 @@ public class PSBlockListener implements Listener
 
             if (field != null)
             {
-                boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.TELEPORT_ON_FIRE.applies(field, player))
                 {
                     event.setCancelled(true);
                     plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceFire");
@@ -270,52 +271,38 @@ public class PSBlockListener implements Listener
                 {
                     public void run()
                     {
-                        boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
                         if (field.isDisabled())
                         {
-                            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                            if (field.hasApplyingFlag(FieldFlag.POTIONS, player.getName()))
                             {
-                                if (field.hasFlag(FieldFlag.POTIONS))
-                                {
-                                    plugin.getPotionManager().removePotions(player, field);
-                                }
+                                plugin.getPotionManager().removePotions(player, field);
                             }
 
-                            if (!allowed)
+                            if (field.hasApplyingFlag(FieldFlag.CONFISCATE_ITEMS, player.getName()))
                             {
-                                if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
-                                {
-                                    plugin.getConfiscationManager().returnItems(player);
-                                }
+                                plugin.getConfiscationManager().returnItems(player);
                             }
                         }
                         else
                         {
-                            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                            if (field.hasApplyingFlag(FieldFlag.LAUNCH, player.getName()))
                             {
-                                if (field.hasFlag(FieldFlag.LAUNCH))
-                                {
-                                    plugin.getVelocityManager().launchPlayer(player, field);
-                                }
-
-                                if (field.hasFlag(FieldFlag.CANNON))
-                                {
-                                    plugin.getVelocityManager().shootPlayer(player, field);
-                                }
-
-                                if (field.hasFlag(FieldFlag.POTIONS))
-                                {
-                                    plugin.getPotionManager().applyPotions(player, field);
-                                }
+                                plugin.getVelocityManager().launchPlayer(player, field);
                             }
 
-                            if (!allowed)
+                            if (field.hasApplyingFlag(FieldFlag.CANNON, player.getName()))
                             {
-                                if (field.hasFlag(FieldFlag.CONFISCATE_ITEMS))
-                                {
-                                    plugin.getConfiscationManager().confiscateItems(field, player);
-                                }
+                                plugin.getVelocityManager().shootPlayer(player, field);
+                            }
+
+                            if (field.hasApplyingFlag(FieldFlag.POTIONS, player.getName()))
+                            {
+                                plugin.getPotionManager().applyPotions(player, field);
+                            }
+
+                            if (field.hasApplyingFlag(FieldFlag.CONFISCATE_ITEMS, player.getName()))
+                            {
+                                plugin.getConfiscationManager().confiscateItems(field, player);
                             }
                         }
                     }
@@ -387,9 +374,9 @@ public class PSBlockListener implements Listener
 
                 if (field != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    boolean applies = FieldFlag.ALLOW_DESTROY.applies(field, player);
 
-                    if (!allowed && !field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (!applies)
                     {
                         event.setCancelled(true);
                         return;
@@ -442,9 +429,7 @@ public class PSBlockListener implements Listener
         {
             if (!field.getSettings().inDestroyBlacklist(block))
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.PREVENT_DESTROY.applies(field, player))
                 {
                     if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                     {
@@ -470,9 +455,7 @@ public class PSBlockListener implements Listener
             {
                 if (!plugin.getPermissionsManager().locketteProtected(player, block))
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                    if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (FieldFlag.GRIEF_REVERT.applies(field, player))
                     {
                         if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy") || field.getSettings().canGrief(block.getTypeId()))
                         {
@@ -523,9 +506,7 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.TELEPORT_ON_BLOCK_BREAK.applies(field, player))
             {
                 event.setCancelled(true);
                 plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceBreak");
@@ -621,18 +602,23 @@ public class PSBlockListener implements Listener
     {
         PreciousStones.debug("releasing field");
 
+        if (field.isHidden())
+        {
+            field.unHide();
+        }
+
         if (block.getTypeId() == field.getTypeId())
         {
             if (plugin.getSettingsManager().isFragileBlock(block))
             {
                 PreciousStones.debug("fragile block broken");
-                event.setCancelled(true);
                 plugin.getForceFieldManager().release(block);
+                event.setCancelled(true);
             }
             else
             {
                 PreciousStones.debug("silent break");
-                plugin.getForceFieldManager().silentRelease(block);
+                plugin.getForceFieldManager().releaseNoDrop(block);
                 event.setCancelled(false);
             }
         }
@@ -641,12 +627,12 @@ public class PSBlockListener implements Listener
             if (plugin.getSettingsManager().isFragileBlock(new BlockTypeEntry(field.getTypeId(), field.getData())))
             {
                 PreciousStones.debug("fragile block broken");
-                plugin.getForceFieldManager().releaseLiquid(field);
+                plugin.getForceFieldManager().releaseNoClean(field);
             }
             else
             {
                 PreciousStones.debug("silent break");
-                plugin.getForceFieldManager().silentRelease(block);
+                plugin.getForceFieldManager().releaseNoDrop(block);
             }
         }
 
@@ -747,7 +733,7 @@ public class PSBlockListener implements Listener
 
             if (field.hasFlag(FieldFlag.ENABLE_WITH_REDSTONE))
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                boolean allowed = plugin.getForceFieldManager().isAllowed(field, player.getName());
 
                 if (!allowed)
                 {
@@ -805,9 +791,9 @@ public class PSBlockListener implements Listener
 
                 if (field != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
+                    boolean applies = FieldFlag.ALLOW_PLACE.applies(field, player);
 
-                    if (!allowed && !field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (!applies)
                     {
                         event.setCancelled(true);
                         return;
@@ -991,9 +977,9 @@ public class PSBlockListener implements Listener
 
                 if (field1 != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field1, player.getName());
+                    boolean allowed = plugin.getForceFieldManager().isAllowed(field1, player.getName());
 
-                    if (!allowed || field1.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (!allowed)
                     {
                         conflicted = true;
                     }
@@ -1006,9 +992,9 @@ public class PSBlockListener implements Listener
 
                 if (field2 != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field2, player.getName());
+                    boolean allowed = plugin.getForceFieldManager().isAllowed(field2, player.getName());
 
-                    if (!allowed || field2.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (!allowed)
                     {
                         conflicted = true;
                     }
@@ -1021,9 +1007,9 @@ public class PSBlockListener implements Listener
 
                 if (field3 != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field3, player.getName());
+                    boolean allowed = plugin.getForceFieldManager().isAllowed(field3, player.getName());
 
-                    if (!allowed || field3.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (!allowed)
                     {
                         conflicted = true;
                     }
@@ -1036,9 +1022,9 @@ public class PSBlockListener implements Listener
 
                 if (field4 != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field4, player.getName());
+                    boolean allowed = plugin.getForceFieldManager().isAllowed(field4, player.getName());
 
-                    if (!allowed || field4.hasFlag(FieldFlag.APPLY_TO_ALL))
+                    if (!allowed)
                     {
                         conflicted = true;
                     }
@@ -1061,9 +1047,7 @@ public class PSBlockListener implements Listener
         {
             if (!field.getSettings().inPlaceBlacklist(block))
             {
-                boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-                if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+                if (FieldFlag.PREVENT_PLACE.applies(field, player))
                 {
                     if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                     {
@@ -1084,9 +1068,7 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.GRIEF_REVERT.applies(field, player))
             {
                 if (field.hasFlag(FieldFlag.PLACE_GRIEF))
                 {
@@ -1124,9 +1106,7 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            boolean allowed = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (allowed || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.TRANSLOCATION.applies(field, player))
             {
                 if (field.getSettings().canTranslocate(new BlockTypeEntry(block)))
                 {
@@ -1163,9 +1143,7 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            boolean allowedEntry = plugin.getForceFieldManager().isApplyToAllowed(field, player.getName());
-
-            if (!allowedEntry || field.hasFlag(FieldFlag.APPLY_TO_ALL))
+            if (FieldFlag.TELEPORT_ON_BLOCK_PLACE.applies(field, player))
             {
                 event.setCancelled(true);
                 plugin.getTeleportationManager().teleport(player, field, "teleportAnnouncePlace");
@@ -1214,7 +1192,7 @@ public class PSBlockListener implements Listener
 
         // ensure placement of only those with the required permission, fail silently otherwise
 
-        if (fs.getRequiredPermission() != null)
+        if (!fs.getRequiredPermission().isEmpty())
         {
             if (!plugin.getPermissionsManager().has(player, fs.getRequiredPermission()))
             {
@@ -1236,7 +1214,7 @@ public class PSBlockListener implements Listener
             plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
         }
 
-        // cannot place a coniscate field below a field or unbreakable
+        // cannot place a confiscate field below a field or unbreakable
 
         if (fs.hasDefaultFlag(FieldFlag.CONFISCATE_ITEMS))
         {
@@ -1257,7 +1235,7 @@ public class PSBlockListener implements Listener
             }
         }
 
-        // cannot place a field that contains players inside of it if no-player-lpace flag exists
+        // cannot place a field that contains players inside of it if no-player-place flag exists
 
         if (fs.hasDefaultFlag(FieldFlag.NO_PLAYER_PLACE))
         {
