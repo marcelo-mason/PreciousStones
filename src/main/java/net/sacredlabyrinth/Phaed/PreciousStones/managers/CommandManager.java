@@ -1671,18 +1671,18 @@ public final class CommandManager implements CommandExecutor
 
                             if (world != null)
                             {
-                                int cleandFF = plugin.getForceFieldManager().cleanOrphans(world);
-                                int cleandU = plugin.getUnbreakableManager().cleanOrphans(world);
+                                int cleanedFF = plugin.getForceFieldManager().cleanOrphans(world);
+                                int cleanedU = plugin.getUnbreakableManager().cleanOrphans(world);
 
-                                if (cleandFF > 0)
+                                if (cleanedFF > 0)
                                 {
-                                    ChatBlock.send(sender, "cleanedOrphanedFields", cleandFF);
+                                    ChatBlock.send(sender, "cleanedOrphanedFields", cleanedFF);
                                 }
-                                if (cleandU > 0)
+                                if (cleanedU > 0)
                                 {
-                                    ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleandU);
+                                    ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleanedU);
                                 }
-                                if (cleandFF == 0 && cleandU == 0)
+                                if (cleanedFF == 0 && cleanedU == 0)
                                 {
                                     ChatBlock.send(sender, "noOrphansFound");
                                 }
@@ -1696,23 +1696,23 @@ public final class CommandManager implements CommandExecutor
                         {
                             List<World> worlds = plugin.getServer().getWorlds();
 
-                            int cleandFF = 0;
-                            int cleandU = 0;
+                            int cleanedFF = 0;
+                            int cleanedU = 0;
 
                             for (World world : worlds)
                             {
-                                cleandFF += plugin.getForceFieldManager().cleanOrphans(world);
-                                cleandU += plugin.getUnbreakableManager().cleanOrphans(world);
+                                cleanedFF += plugin.getForceFieldManager().cleanOrphans(world);
+                                cleanedU += plugin.getUnbreakableManager().cleanOrphans(world);
                             }
-                            if (cleandFF > 0)
+                            if (cleanedFF > 0)
                             {
-                                ChatBlock.send(sender, "cleanedOrphanedFields", cleandFF);
+                                ChatBlock.send(sender, "cleanedOrphanedFields", cleanedFF);
                             }
-                            if (cleandU > 0)
+                            if (cleanedU > 0)
                             {
-                                ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleandU);
+                                ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleanedU);
                             }
-                            if (cleandFF == 0 && cleandU == 0)
+                            if (cleanedFF == 0 && cleanedU == 0)
                             {
                                 ChatBlock.send(sender, "noOrphansFound");
                             }
@@ -1721,29 +1721,62 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals(ChatBlock.format("commandRevert")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.revert"))
                     {
-                        List<World> worlds = plugin.getServer().getWorlds();
-
-                        int cleandFF = 0;
-                        int cleandU = 0;
-
-                        for (World world : worlds)
+                        if (args.length == 1)
                         {
-                            cleandFF += plugin.getForceFieldManager().revertOrphans(world);
-                            cleandU += plugin.getUnbreakableManager().revertOrphans(world);
+                            String worldName = args[0];
+
+                            World world = Bukkit.getServer().getWorld(worldName);
+
+                            if (world != null)
+                            {
+                                int cleanedFF = plugin.getForceFieldManager().revertOrphans(world);
+                                int cleanedU = plugin.getUnbreakableManager().revertOrphans(world);
+
+                                if (cleanedFF > 0)
+                                {
+                                    ChatBlock.send(sender, "revertedOrphanFields", cleanedFF);
+                                }
+                                if (cleanedU > 0)
+                                {
+                                    ChatBlock.send(sender, "revertedOrphanUnbreakables", cleanedU);
+                                }
+
+                                if (cleanedFF == 0 && cleanedU == 0)
+                                {
+                                    ChatBlock.send(sender, "noOrphansFound");
+                                }
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "worldNotFound");
+                            }
                         }
+                        else
+                        {
+                            List<World> worlds = plugin.getServer().getWorlds();
 
-                        if (cleandFF > 0)
-                        {
-                            ChatBlock.send(sender, "revertedOrphanFields", cleandFF);
-                        }
-                        if (cleandU > 0)
-                        {
-                            ChatBlock.send(sender, "revertedOrphanUnbreakables", cleandU);
-                        }
+                            int cleanedFF = 0;
+                            int cleanedU = 0;
 
-                        if (cleandFF == 0 && cleandU == 0)
-                        {
-                            ChatBlock.send(sender, "noOrphansFound");
+                            for (World world : worlds)
+                            {
+                                cleanedFF += plugin.getForceFieldManager().revertOrphans(world);
+                                cleanedU += plugin.getUnbreakableManager().revertOrphans(world);
+                            }
+
+                            if (cleanedFF > 0)
+                            {
+                                ChatBlock.send(sender, "revertedOrphanFields", cleanedFF);
+                            }
+                            if (cleanedU > 0)
+                            {
+                                ChatBlock.send(sender, "revertedOrphanUnbreakables", cleanedU);
+                            }
+
+                            if (cleanedFF == 0 && cleanedU == 0)
+                            {
+                                ChatBlock.send(sender, "noOrphansFound");
+                            }
                         }
                         return true;
                     }

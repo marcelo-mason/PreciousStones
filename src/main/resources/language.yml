@@ -314,7 +314,7 @@ menu38: "{dark-red}  /ps setowner [player] {aqua}- Of the block you're pointing 
 menu39: "{dark-red}  /ps reload {aqua}- Reloads configuraton file"
 menu40: "{dark-red}  /ps fields {aqua}- List the configured field types"
 menu41: "{dark-red}  /ps clean <world>{aqua}- Cleans up all orphan fields in the world"
-menu42: "{dark-red}  /ps revert {aqua}- Reverts all orphan fields in the world"
+menu42: "{dark-red}  /ps revert <world>{aqua}- Reverts all orphan fields in the world"
 menu43: "{dark-red}  /ps enableall [flag] {aqua}- Enables the flag on all fields"
 menu44: "{dark-red}  /ps disableall [flag] {aqua}- Disables the flag on all fields"
 menu45: "{dark-red}  /ps debug {aqua}- Prints timing info to console"
