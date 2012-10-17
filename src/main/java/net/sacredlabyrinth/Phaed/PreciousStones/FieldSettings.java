@@ -40,6 +40,8 @@ public class FieldSettings
     private int lightningReplaceBlock = 0;
     private int mixingGroup = 0;
     private int autoDisableSeconds = 0;
+    private int mustBeAbove = 0;
+    private int mustBeBelow = 0;
     private boolean mineHasFire = false;
     private int mine = 6;
     private String groupOnEntry = null;
@@ -345,6 +347,8 @@ public class FieldSettings
         teleportIfNotHoldingItems = loadIntList("teleport-if-not-holding-items");
         teleportIfHasItems = loadIntList("teleport-if-has-items");
         teleportIfNotHasItems = loadIntList("teleport-if-not-has-items");
+        mustBeAbove = loadInt("must-be-above");
+        mustBeBelow = loadInt("must-be-below");
     }
 
     private boolean loadBoolean(String flagStr)
@@ -1343,5 +1347,15 @@ public class FieldSettings
     public List<FieldFlag> getDisabledFlags()
     {
         return disabledFlags;
+    }
+
+    public int getMustBeAbove()
+    {
+        return mustBeAbove;
+    }
+
+    public int getMustBeBelow()
+    {
+        return mustBeBelow;
     }
 }

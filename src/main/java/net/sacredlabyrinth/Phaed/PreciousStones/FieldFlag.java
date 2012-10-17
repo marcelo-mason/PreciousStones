@@ -121,10 +121,22 @@ public enum FieldFlag
     COMMAND_ON_EXIT,
     PLAYER_COMMAND_ON_ENTER,
     PLAYER_COMMAND_ON_EXIT,
-    DISABLE_WHEN_ONLINE
+    DISABLE_WHEN_ONLINE,
+    MUST_BE_ABOVE,
+    MUST_BE_BELOW
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
+
+
+    /**
+     * These flags will be hidden completely from the flag lists
+     */
+    private final static FieldFlag[] hidden = new FieldFlag[]
+    {
+        FieldFlag.ALL,
+        FieldFlag.DYNMAP_NO_TOGGLE
+    };
 
     /**
      * These flags are nameable
@@ -183,7 +195,9 @@ public enum FieldFlag
         FieldFlag.COMMAND_ON_EXIT,
         FieldFlag.PLAYER_COMMAND_ON_ENTER,
         FieldFlag.PLAYER_COMMAND_ON_EXIT,
-        FieldFlag.DISABLE_WHEN_ONLINE
+        FieldFlag.DISABLE_WHEN_ONLINE,
+        FieldFlag.MUST_BE_ABOVE,
+        FieldFlag.MUST_BE_BELOW,
     };
 
     /**
@@ -335,15 +349,6 @@ public enum FieldFlag
 
         return false;
     }
-
-    /**
-     * These flags will be hidden completely from the flag lists
-     */
-    private final static FieldFlag[] hidden = new FieldFlag[]
-    {
-        FieldFlag.ALL,
-        FieldFlag.DYNMAP_NO_TOGGLE
-    };
 
     /**
      * Whether this flag is nameable

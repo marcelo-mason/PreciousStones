@@ -478,7 +478,8 @@ cuboidCannotMix: "Cannot mix fields that are not in the same mixing group."
 cuboidCannotAddProps: "Cannot add on properties of more valuable fields"
 fieldIntersectsWG: "The field intersects with a WorldGuard region you are not allowed in."
 worldNotFound: "World not found"
-
+mustBeAbove: "This field can only be placed above y={1.level}"
+mustBeBelow: "This field can only be placed below y={1.level}"
 
 
 

@@ -1214,6 +1214,28 @@ public class PSBlockListener implements Listener
             plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
         }
 
+        // must obey y coord
+
+        if (fs.hasDefaultFlag(FieldFlag.MUST_BE_ABOVE))
+        {
+            if (block.getLocation().getBlockY() <= fs.getMustBeAbove())
+            {
+                ChatBlock.send(player, "mustBeAbove", fs.getMustBeAbove());
+                event.setCancelled(true);
+                return false;
+            }
+        }
+
+        if (fs.hasDefaultFlag(FieldFlag.MUST_BE_BELOW))
+        {
+            if (block.getLocation().getBlockY() >= fs.getMustBeBelow())
+            {
+                ChatBlock.send(player, "mustBeBelow", fs.getMustBeBelow());
+                event.setCancelled(true);
+                return false;
+            }
+        }
+
         // cannot place a confiscate field below a field or unbreakable
 
         if (fs.hasDefaultFlag(FieldFlag.CONFISCATE_ITEMS))
