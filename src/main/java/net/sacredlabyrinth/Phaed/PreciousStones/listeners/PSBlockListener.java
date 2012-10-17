@@ -607,35 +607,42 @@ public class PSBlockListener implements Listener
             field.unHide();
         }
 
-        if (block.getTypeId() == field.getTypeId())
+        if (field.hasFlag(FieldFlag.SINGLE_USE))
         {
-            if (plugin.getSettingsManager().isFragileBlock(block))
-            {
-                PreciousStones.debug("fragile block broken");
-                plugin.getForceFieldManager().release(block);
-                event.setCancelled(true);
-            }
-            else
-            {
-                PreciousStones.debug("silent break");
-                plugin.getForceFieldManager().releaseNoDrop(block);
-                event.setCancelled(false);
-            }
+            event.setCancelled(true);
+            plugin.getForceFieldManager().releaseWipe(block);
         }
         else
         {
-            if (plugin.getSettingsManager().isFragileBlock(new BlockTypeEntry(field.getTypeId(), field.getData())))
+            if (block.getTypeId() == field.getTypeId())
             {
-                PreciousStones.debug("fragile block broken");
-                plugin.getForceFieldManager().releaseNoClean(field);
+                if (plugin.getSettingsManager().isFragileBlock(block))
+                {
+                    PreciousStones.debug("fragile block broken");
+                    event.setCancelled(true);
+                    plugin.getForceFieldManager().release(block);
+                }
+                else
+                {
+                    PreciousStones.debug("silent break");
+                    event.setCancelled(false);
+                    plugin.getForceFieldManager().releaseNoDrop(block);
+                }
             }
             else
             {
-                PreciousStones.debug("silent break");
-                plugin.getForceFieldManager().releaseNoDrop(block);
+                if (plugin.getSettingsManager().isFragileBlock(new BlockTypeEntry(field.getTypeId(), field.getData())))
+                {
+                    PreciousStones.debug("fragile block broken");
+                    plugin.getForceFieldManager().releaseNoClean(field);
+                }
+                else
+                {
+                    PreciousStones.debug("silent break");
+                    plugin.getForceFieldManager().releaseNoDrop(block);
+                }
             }
         }
-
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
         {
             if (!plugin.getSettingsManager().isNoRefunds())

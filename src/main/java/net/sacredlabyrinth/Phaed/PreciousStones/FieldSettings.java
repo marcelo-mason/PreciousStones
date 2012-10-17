@@ -287,6 +287,7 @@ public class FieldSettings
         loadBoolean("teleport-destination");
         loadBoolean("disable-when-online");
         loadBoolean("no-growth");
+        loadBoolean("single-use");
 
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");

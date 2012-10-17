@@ -125,6 +125,7 @@ public enum FieldFlag
     MUST_BE_ABOVE,
     MUST_BE_BELOW,
     NO_GROWTH,
+    SINGLE_USE,
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
@@ -169,6 +170,7 @@ public enum FieldFlag
         FieldFlag.TELEPORT_ON_ENTRY,
         FieldFlag.TELEPORT_ON_EXIT,
         FieldFlag.TELEPORT_DESTINATION,
+        FieldFlag.SINGLE_USE
     };
 
     /**
