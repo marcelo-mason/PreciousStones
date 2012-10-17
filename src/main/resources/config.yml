@@ -352,6 +352,7 @@ warn:
 cleanup:
     player-inactivity-purge-days: 45
     snitch-unused-purge-days: 30
+    purge-banned-players: true
 settings:
     max-size-translocation: 100000
     max-size-translocation-for-redstone: 1000

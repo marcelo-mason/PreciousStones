@@ -112,6 +112,7 @@ public final class SettingsManager
     private boolean disableBypassAlertsForAdmins;
     private boolean disableSimpleClanHook;
     private boolean offByDefault;
+    private boolean purgeBannedPlayers;
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
     private int[] fragileBlocks = new int[]{7, 8, 9, 10, 11, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 97, 100, 123, 124, 129};
     private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
@@ -268,8 +269,10 @@ public final class SettingsManager
 
         cuboidDefiningType = loadInt("cuboid.defining-blocktype");
         cuboidVisualizationType = loadInt("cuboid.visualization-blocktype");
+
         purgeAfterDays = loadInt("cleanup.player-inactivity-purge-days");
         purgeSnitchAfterDays = loadInt("cleanup.snitch-unused-purge-days");
+        purgeBannedPlayers =  loadBoolean("cleanup.purge-banned-players");
 
         saveFrequency = loadInt("saving.frequency-seconds");
         maxSnitchRecords = loadInt("saving.max-records-per-snitch");
@@ -1510,5 +1513,10 @@ public final class SettingsManager
     public boolean isDisableSimpleClanHook()
     {
         return disableSimpleClanHook;
+    }
+
+    public boolean isPurgeBannedPlayers()
+    {
+        return purgeBannedPlayers;
     }
 }

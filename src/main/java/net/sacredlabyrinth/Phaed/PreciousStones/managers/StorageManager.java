@@ -8,7 +8,9 @@ import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -835,6 +837,17 @@ public final class StorageManager
         final String query = "SELECT * FROM pstone_players;";
         final ResultSet res = core.select(query);
 
+        Set<OfflinePlayer> bannedPlayers = Bukkit.getBannedPlayers();
+        List<String> banned = new ArrayList<String>();
+
+        if (plugin.getSettingsManager().isPurgeBannedPlayers())
+        {
+            for (OfflinePlayer player : bannedPlayers)
+            {
+                banned.add(player.getName());
+            }
+        }
+
         if (res != null)
         {
             try
@@ -851,7 +864,7 @@ public final class StorageManager
                         {
                             final int lastSeenDays = (int) Dates.differenceInDays(new Date(), new Date(last_seen));
 
-                            if (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays() && lastSeenDays < plugin.getSettingsManager().getPurgeAfterDays() * 2)
+                            if (banned.contains(name) || (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays() && lastSeenDays < plugin.getSettingsManager().getPurgeAfterDays() * 2))
                             {
                                 int purged = plugin.getForceFieldManager().deleteBelonging(name);
 
