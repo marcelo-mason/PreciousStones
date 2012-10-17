@@ -976,12 +976,7 @@ public class PSBlockListener implements Listener
 
                 if (field1 != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isAllowed(field1, player.getName());
-
-                    if (!allowed)
-                    {
-                        conflicted = true;
-                    }
+                    conflicted = true;
                 }
             }
 
@@ -991,12 +986,7 @@ public class PSBlockListener implements Listener
 
                 if (field2 != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isAllowed(field2, player.getName());
-
-                    if (!allowed)
-                    {
-                        conflicted = true;
-                    }
+                    conflicted = true;
                 }
             }
 
@@ -1006,12 +996,7 @@ public class PSBlockListener implements Listener
 
                 if (field3 != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isAllowed(field3, player.getName());
-
-                    if (!allowed)
-                    {
-                        conflicted = true;
-                    }
+                    conflicted = true;
                 }
             }
 
@@ -1021,12 +1006,7 @@ public class PSBlockListener implements Listener
 
                 if (field4 != null)
                 {
-                    boolean allowed = plugin.getForceFieldManager().isAllowed(field4, player.getName());
-
-                    if (!allowed)
-                    {
-                        conflicted = true;
-                    }
+                    conflicted = true;
                 }
             }
 

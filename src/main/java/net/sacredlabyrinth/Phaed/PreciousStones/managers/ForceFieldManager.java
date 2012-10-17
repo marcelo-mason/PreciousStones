@@ -1545,7 +1545,7 @@ public final class ForceFieldManager
             }
         };
 
-        return getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter);
+        return getSourceFieldsInChunk(new ChunkVec(loc.getChunk()), flag, envelopsFilter);
     }
 
     /**
@@ -1594,7 +1594,7 @@ public final class ForceFieldManager
             }
         };
 
-        return getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter, disableIfOnlineFilter);
+        return getSourceFieldsInChunk(new ChunkVec(loc.getChunk()), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter, disableIfOnlineFilter);
     }
 
     /**
@@ -1643,42 +1643,7 @@ public final class ForceFieldManager
             }
         };
 
-        return getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notDisabledFilter, disabledFlagFilter, disableIfOnlineFilter);
-    }
-
-    /**
-     * Returns an enabled field that matches the flag and is protecting the location and that applies to the player based on his allowed status and who the field is targeting
-     *
-     * @param player
-     * @param loc
-     * @param flag
-     * @return
-     */
-    public Field getApplyingEnabledSourceField(Player player, Location loc, FieldFlag flag)
-    {
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, flag);
-
-        if (field != null)
-        {
-            if (flag.applies(field, player.getName()))
-            {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * If a field in the location that matches the field flag(s)
-     *
-     * @param loc
-     * @param flag
-     * @return result
-     */
-    public boolean hasSourceField(Location loc, FieldFlag flag)
-    {
-        return getEnabledSourceField(loc, flag) != null;
+        return getSmallestSourceFieldInChunk(loc.getChunk(), flag, envelopsFilter, notDisabledFilter, disabledFlagFilter, disableIfOnlineFilter);
     }
 
     /**
@@ -1706,24 +1671,44 @@ public final class ForceFieldManager
             }
         };
 
-        return getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, noConflictFilter);
+        ResultsFilter allowedFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return !isAllowed(field, playerName);
+            }
+        };
+
+        return getSmallestSourceFieldInChunk(loc.getChunk(), flag, allowedFilter, envelopsFilter, noConflictFilter);
+    }
+
+    /**
+     * If a field in the location that matches the field flag(s)
+     *
+     * @param loc
+     * @param flag
+     * @return result
+     */
+    public boolean hasSourceField(Location loc, FieldFlag flag)
+    {
+        return getEnabledSourceField(loc, flag) != null;
     }
 
     /**
      * Returns the fields in the chunk and adjacent chunks
      *
      * @param loc
-     * @param chunkradius
+     * @param chunkRadius
      * @return the fields
      */
-    public Set<Field> getFieldsInCustomArea(final Location loc, int chunkradius, FieldFlag flag)
+    public Set<Field> getFieldsInCustomArea(final Location loc, int chunkRadius, FieldFlag flag)
     {
         Set<Field> out = new HashSet<Field>();
 
-        int xlow = (loc.getBlockX() >> 4) - chunkradius;
-        int xhigh = (loc.getBlockX() >> 4) + chunkradius;
-        int zlow = (loc.getBlockZ() >> 4) - chunkradius;
-        int zhigh = (loc.getBlockZ() >> 4) + chunkradius;
+        int xlow = (loc.getBlockX() >> 4) - chunkRadius;
+        int xhigh = (loc.getBlockX() >> 4) + chunkRadius;
+        int zlow = (loc.getBlockZ() >> 4) - chunkRadius;
+        int zhigh = (loc.getBlockZ() >> 4) + chunkRadius;
 
         for (int x = xlow; x <= xhigh; x++)
         {

@@ -116,6 +116,16 @@ public class facade implements IApi
      */
     public boolean flagAppliesToPlayer(Player player, FieldFlag flag, Location location)
     {
-        return plugin.getForceFieldManager().getApplyingEnabledSourceField(player, location, flag) != null;
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(location, flag);
+
+        if (field != null)
+        {
+            if (flag.applies(field, player))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
