@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -1662,27 +1663,59 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals(ChatBlock.format("commandClean")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.clean"))
                     {
-                        List<World> worlds = plugin.getServer().getWorlds();
+                        if (args.length == 1)
+                        {
+                            String worldName = args[0];
 
-                        int cleandFF = 0;
-                        int cleandU = 0;
+                            World world = Bukkit.getServer().getWorld(worldName);
 
-                        for (World world : worlds)
-                        {
-                            cleandFF += plugin.getForceFieldManager().cleanOrphans(world);
-                            cleandU += plugin.getUnbreakableManager().cleanOrphans(world);
+                            if (world != null)
+                            {
+                                int cleandFF = plugin.getForceFieldManager().cleanOrphans(world);
+                                int cleandU = plugin.getUnbreakableManager().cleanOrphans(world);
+
+                                if (cleandFF > 0)
+                                {
+                                    ChatBlock.send(sender, "cleanedOrphanedFields", cleandFF);
+                                }
+                                if (cleandU > 0)
+                                {
+                                    ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleandU);
+                                }
+                                if (cleandFF == 0 && cleandU == 0)
+                                {
+                                    ChatBlock.send(sender, "noOrphansFound");
+                                }
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "worldNotFound");
+                            }
                         }
-                        if (cleandFF > 0)
+                        else
                         {
-                            ChatBlock.send(sender, "cleanedOrphanedFields", cleandFF);
-                        }
-                        if (cleandU > 0)
-                        {
-                            ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleandU);
-                        }
-                        if (cleandFF == 0 && cleandU == 0)
-                        {
-                            ChatBlock.send(sender, "noOrphansFound");
+                            List<World> worlds = plugin.getServer().getWorlds();
+
+                            int cleandFF = 0;
+                            int cleandU = 0;
+
+                            for (World world : worlds)
+                            {
+                                cleandFF += plugin.getForceFieldManager().cleanOrphans(world);
+                                cleandU += plugin.getUnbreakableManager().cleanOrphans(world);
+                            }
+                            if (cleandFF > 0)
+                            {
+                                ChatBlock.send(sender, "cleanedOrphanedFields", cleandFF);
+                            }
+                            if (cleandU > 0)
+                            {
+                                ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleandU);
+                            }
+                            if (cleandFF == 0 && cleandU == 0)
+                            {
+                                ChatBlock.send(sender, "noOrphansFound");
+                            }
                         }
                         return true;
                     }

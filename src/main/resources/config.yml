@@ -19,7 +19,7 @@ force-field-blocks:
     prevent-flow: true
     ?prevent-teleport: true
     protect-crops: true
-    prevent-use: [54, 61, 62]
+    prevent-use: [23, 54, 61, 62]
     ?welcome-message: true
     ?farewell-message: true
     can-change-owner: true
