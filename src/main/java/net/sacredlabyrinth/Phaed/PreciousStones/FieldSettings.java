@@ -283,6 +283,7 @@ public class FieldSettings
         loadBoolean("teleport-relatively");
         loadBoolean("teleport-announce");
         loadBoolean("teleport-destination");
+        loadBoolean("disable-when-online");
 
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");

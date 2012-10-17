@@ -1108,26 +1108,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * If the field has a flag that applies to the player
-     *
-     * @param flag
-     * @param playerName
-     * @return
-     */
-    public boolean hasApplyingFlag(FieldFlag flag, String playerName)
-    {
-        if (hasFlag(flag))
-        {
-            if (flag.applies(this, playerName))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Return the list of flags and their data as a json string
      *
      * @return the flags
@@ -2094,6 +2074,30 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
     }
 
+    public boolean isHidden()
+    {
+        // fix any discrepencies
+
+        if (hidden)
+        {
+            if (matchesBlockType())
+            {
+                hidden = false;
+                dirtyFlags();
+            }
+        }
+        else
+        {
+            if (!matchesBlockType())
+            {
+                hidden = true;
+                dirtyFlags();
+            }
+        }
+
+        return hidden;
+    }
+
     private BlockTypeEntry findMaskType()
     {
         List<Vec> vecs = new ArrayList<Vec>();
@@ -2123,6 +2127,32 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
 
         return PreciousStones.getInstance().getSettingsManager().getFirstHidingMask();
+    }
+
+    /**
+     * Whether any of the allowed players are online and in the world
+     *
+     * @return
+     */
+    public boolean hasOnlineAllowed()
+    {
+        World world = Bukkit.getWorld(getWorld());
+
+        if (world != null)
+        {
+            List<String> allAllowed = getAllAllowed();
+
+            for (String allowed : allAllowed)
+            {
+                Player player = Helper.matchSinglePlayer(allowed);
+
+                if (player != null)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isNamed()
@@ -2158,29 +2188,5 @@ public class Field extends AbstractVec implements Comparable<Field>
     public String getDetails()
     {
         return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
-    }
-
-    public boolean isHidden()
-    {
-        // fix any discrepencies
-
-        if (hidden)
-        {
-            if (matchesBlockType())
-            {
-                hidden = false;
-                dirtyFlags();
-            }
-        }
-        else
-        {
-            if (!matchesBlockType())
-            {
-                hidden = true;
-                dirtyFlags();
-            }
-        }
-
-        return hidden;
     }
 }

@@ -121,6 +121,7 @@ public enum FieldFlag
     COMMAND_ON_EXIT,
     PLAYER_COMMAND_ON_ENTER,
     PLAYER_COMMAND_ON_EXIT,
+    DISABLE_WHEN_ONLINE
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
@@ -182,6 +183,7 @@ public enum FieldFlag
         FieldFlag.COMMAND_ON_EXIT,
         FieldFlag.PLAYER_COMMAND_ON_ENTER,
         FieldFlag.PLAYER_COMMAND_ON_EXIT,
+        FieldFlag.DISABLE_WHEN_ONLINE
     };
 
     /**

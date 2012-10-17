@@ -273,34 +273,34 @@ public class PSBlockListener implements Listener
                     {
                         if (field.isDisabled())
                         {
-                            if (field.hasApplyingFlag(FieldFlag.POTIONS, player.getName()))
+                            if (FieldFlag.POTIONS.applies(field, player))
                             {
                                 plugin.getPotionManager().removePotions(player, field);
                             }
 
-                            if (field.hasApplyingFlag(FieldFlag.CONFISCATE_ITEMS, player.getName()))
+                            if (FieldFlag.CONFISCATE_ITEMS.applies(field, player))
                             {
                                 plugin.getConfiscationManager().returnItems(player);
                             }
                         }
                         else
                         {
-                            if (field.hasApplyingFlag(FieldFlag.LAUNCH, player.getName()))
+                            if (FieldFlag.LAUNCH.applies(field, player))
                             {
                                 plugin.getVelocityManager().launchPlayer(player, field);
                             }
 
-                            if (field.hasApplyingFlag(FieldFlag.CANNON, player.getName()))
+                            if (FieldFlag.CANNON.applies(field, player))
                             {
                                 plugin.getVelocityManager().shootPlayer(player, field);
                             }
 
-                            if (field.hasApplyingFlag(FieldFlag.POTIONS, player.getName()))
+                            if (FieldFlag.POTIONS.applies(field, player))
                             {
                                 plugin.getPotionManager().applyPotions(player, field);
                             }
 
-                            if (field.hasApplyingFlag(FieldFlag.CONFISCATE_ITEMS, player.getName()))
+                            if (FieldFlag.CONFISCATE_ITEMS.applies(field, player))
                             {
                                 plugin.getConfiscationManager().confiscateItems(field, player);
                             }

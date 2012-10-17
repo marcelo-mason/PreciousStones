@@ -9,7 +9,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.*;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -1578,30 +1581,20 @@ public final class ForceFieldManager
             }
         };
 
-        return getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter);
-    }
-
-    /**
-     * Returns an enabled field that matches the flag and is protecting the location and that applies to the player based on his allowed status and who the field is targeting
-     *
-     * @param player
-     * @param loc
-     * @param flag
-     * @return
-     */
-    public Field getApplyingEnabledSourceField(Player player, Location loc, FieldFlag flag)
-    {
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, flag);
-
-        if (field != null)
+        ResultsFilter disableIfOnlineFilter = new ResultsFilter()
         {
-            if (flag.applies(field, player.getName()))
+            public boolean Filter(Field field)
             {
-                return field;
-            }
-        }
+                if (field.hasFlag(FieldFlag.DISABLE_WHEN_ONLINE))
+                {
+                    return !field.hasOnlineAllowed();
+                }
 
-        return null;
+                return true;
+            }
+        };
+
+        return getSourceFieldsInChunk(new ChunkVec(loc.getBlock().getChunk()), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter, disableIfOnlineFilter);
     }
 
     /**
@@ -1637,7 +1630,43 @@ public final class ForceFieldManager
             }
         };
 
-        return getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notDisabledFilter, disabledFlagFilter);
+        ResultsFilter disableIfOnlineFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                if (field.hasFlag(FieldFlag.DISABLE_WHEN_ONLINE))
+                {
+                    return !field.hasOnlineAllowed();
+                }
+
+                return true;
+            }
+        };
+
+        return getSmallestSourceFieldInChunk(loc.getBlock().getChunk(), flag, envelopsFilter, notDisabledFilter, disabledFlagFilter, disableIfOnlineFilter);
+    }
+
+    /**
+     * Returns an enabled field that matches the flag and is protecting the location and that applies to the player based on his allowed status and who the field is targeting
+     *
+     * @param player
+     * @param loc
+     * @param flag
+     * @return
+     */
+    public Field getApplyingEnabledSourceField(Player player, Location loc, FieldFlag flag)
+    {
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, flag);
+
+        if (field != null)
+        {
+            if (flag.applies(field, player.getName()))
+            {
+                return field;
+            }
+        }
+
+        return null;
     }
 
     /**
