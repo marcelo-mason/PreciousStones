@@ -59,6 +59,37 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.3.2</version>
             </plugin>
+
+            <!-- Shade plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>org.mcstats:metrics</artifact>
+                                    <includes>
+                                        <include>org/mcstats/**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.mcstats</pattern>
+                                    <shadedPattern>ps.org.mcstats</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -132,7 +163,12 @@
             <version>1.5</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.mcstats</groupId>
+            <artifactId>metrics</artifactId>
+            <version>1.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <!-- Repository -->
@@ -141,6 +177,10 @@
         <repository>
             <id>remote-repos</id>
             <url>http://repo.sacredlabyrinth.net:8081/artifactory/remote-repos</url>
+        </repository>
+        <repository>
+            <id>Plugin Metrics</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
         </repository>
     </repositories>
 

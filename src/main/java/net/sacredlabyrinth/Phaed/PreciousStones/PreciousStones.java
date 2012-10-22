@@ -5,7 +5,9 @@ import net.sacredlabyrinth.Phaed.PreciousStones.api.facade;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -118,6 +120,7 @@ public class PreciousStones extends JavaPlugin
         languageManager = new LanguageManager();
 
         displayStatusInfo();
+        metrics();
 
         simpleClansManager = new SimpleClansManager();
         commandManager = new CommandManager();
@@ -161,6 +164,15 @@ public class PreciousStones extends JavaPlugin
     private void displayStatusInfo()
     {
         log("psLoaded", getDescription().getVersion());
+    }
+
+    private void metrics()
+    {
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+        }
     }
 
     private void registerEvents()

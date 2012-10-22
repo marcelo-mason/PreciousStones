@@ -24,7 +24,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldguard:5.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:4.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:dummypermscompat:1.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.0.0-R1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.0.0-R1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />
@@ -40,6 +40,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sacredlabyrinth.phaed:simpleclans:2.3.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: uk.co.oliwali:HawkEye:1.0.7b" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.platymuus:bukkit-permissions:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.mcstats:metrics:1.1" level="project" />
   </component>
 </module>
 
