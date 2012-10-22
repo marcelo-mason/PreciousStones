@@ -172,6 +172,7 @@ public class PreciousStones extends JavaPlugin
             Metrics metrics = new Metrics(this);
             metrics.start();
         } catch (IOException e) {
+            log("Metrics did not load");
         }
     }
 
