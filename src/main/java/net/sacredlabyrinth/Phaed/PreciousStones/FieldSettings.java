@@ -295,7 +295,13 @@ public class FieldSettings
         requiredPermissionAllow = loadString("required-permission-allow");
         groupOnEntry = loadString("group-on-entry");
         autoDisableSeconds = loadInt("auto-disable");
-        //autoDisableSeconds = loadInt("auto-disable-seconds");
+
+        // TODO: remove
+        if (autoDisableSeconds == 0)
+        {
+            autoDisableSeconds = loadInt("auto-disable-seconds");
+        }
+
         radius = loadInt("radius");
         mixingGroup = loadInt("mixing-group");
         customVolume = loadInt("custom-volume");
