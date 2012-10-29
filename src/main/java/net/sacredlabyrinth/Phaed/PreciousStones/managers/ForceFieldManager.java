@@ -9,10 +9,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -2495,5 +2492,75 @@ public final class ForceFieldManager
         }
 
         return out.get(new Random().nextInt(out.size()));
+    }
+
+    /**
+     * Disables all fields belonging to a player that have the DISABLE_ON_LOGOFF flag if he is the last allowed player online
+     *
+     * @param player
+     */
+    public void disableFieldsOnLogoff(Player player)
+    {
+        List<Field> fields = fieldsByOwner.get(player.getName());
+
+        for (Field field : fields)
+        {
+            if (field.hasFlag(FieldFlag.DISABLE_ON_LOGOFF))
+            {
+                List<String> allAllowed = field.getAllAllowed();
+
+                boolean someoneOnline = false;
+
+                for (String playerName : allAllowed)
+                {
+                    Player allowed = Bukkit.getServer().getPlayerExact(playerName);
+
+                    if (allowed != null)
+                    {
+                        someoneOnline = true;
+                    }
+                }
+
+                if (!someoneOnline)
+                {
+                    field.setDisabled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * Enables all fields belonging to a player that have the ENABLE_ON_LOGON flag if he is the last allowed player online
+     *
+     * @param player
+     */
+    public void enableFieldsOnLogon(Player player)
+    {
+        List<Field> fields = fieldsByOwner.get(player.getName());
+
+        for (Field field : fields)
+        {
+            if (field.hasFlag(FieldFlag.ENABLE_ON_LOGON))
+            {
+                List<String> allAllowed = field.getAllAllowed();
+
+                boolean someoneOnline = false;
+
+                for (String playerName : allAllowed)
+                {
+                    Player allowed = Bukkit.getServer().getPlayerExact(playerName);
+
+                    if (allowed != null)
+                    {
+                        someoneOnline = true;
+                    }
+                }
+
+                if (!someoneOnline)
+                {
+                    field.setDisabled(false);
+                }
+            }
+        }
     }
 }

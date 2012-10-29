@@ -121,11 +121,13 @@ public enum FieldFlag
     COMMAND_ON_EXIT,
     PLAYER_COMMAND_ON_ENTER,
     PLAYER_COMMAND_ON_EXIT,
-    DISABLE_WHEN_ONLINE,
     MUST_BE_ABOVE,
     MUST_BE_BELOW,
     NO_GROWTH,
     SINGLE_USE,
+    DISABLE_WHEN_ONLINE,
+    DISABLE_ON_LOGOFF,
+    ENABLE_ON_LOGON
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
@@ -201,6 +203,8 @@ public enum FieldFlag
         FieldFlag.DISABLE_WHEN_ONLINE,
         FieldFlag.MUST_BE_ABOVE,
         FieldFlag.MUST_BE_BELOW,
+        FieldFlag.DISABLE_ON_LOGOFF,
+        FieldFlag.ENABLE_ON_LOGON
     };
 
     /**

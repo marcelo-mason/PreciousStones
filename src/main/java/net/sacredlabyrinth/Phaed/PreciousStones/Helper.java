@@ -758,4 +758,9 @@ public class Helper
     {
         return "[" + block.getType() + "|" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
     }
+
+    public static boolean isOnline(String playerName)
+    {
+        return Bukkit.getServer().getPlayer(playerName) != null;
+    }
 }
