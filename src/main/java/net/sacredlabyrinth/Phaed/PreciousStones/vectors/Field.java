@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,7 +17,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A field object
@@ -34,9 +34,8 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int maxz;
     private int minx;
     private int miny;
-    private int minz;
     private float velocity;
-    private TimeUnit timeUnit;
+    private int minz;
     private BlockTypeEntry type;
     private String owner;
     private String newOwner;
@@ -60,6 +59,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private boolean translocating;
     private int translocationSize;
     private boolean hidden;
+    private boolean forested;
 
     /**
      * @param x
@@ -1482,6 +1482,16 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setDisabled(boolean disabled)
     {
+        setDisabled(disabled, null);
+    }
+
+    /**
+     * Disables the field
+     *
+     * @param disabled
+     */
+    public boolean setDisabled(boolean disabled, Player player)
+    {
         PreciousStones plugin = PreciousStones.getInstance();
 
         if (disabled != this.disabled)
@@ -1515,6 +1525,21 @@ public class Field extends AbstractVec implements Comparable<Field>
             }
             else
             {
+                if (settings.getPayToEnable() > 0)
+                {
+                    if (player == null)
+                    {
+                        this.disabled = true;
+                        return false;
+                    }
+
+                    if (!plugin.getForceFieldManager().purchase(player, settings.getPayToEnable()))
+                    {
+                        this.disabled = true;
+                        return false;
+                    }
+                }
+
                 if (hasFlag(FieldFlag.MASK_ON_DISABLED))
                 {
                     unmask();
@@ -1535,6 +1560,14 @@ public class Field extends AbstractVec implements Comparable<Field>
                         {
                             insertedFlags.remove(FieldFlag.BREAKABLE);
                         }
+                    }
+                }
+
+                if (hasFlag(FieldFlag.FORESTER) && !forested)
+                {
+                    if (player != null)
+                    {
+                        ForesterEntry fe = new ForesterEntry(this, player.getName());
                     }
                 }
 
@@ -1586,6 +1619,8 @@ public class Field extends AbstractVec implements Comparable<Field>
                 }
             }
         }
+
+        return true;
     }
 
     /**
@@ -2188,5 +2223,15 @@ public class Field extends AbstractVec implements Comparable<Field>
     public String getDetails()
     {
         return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
+    }
+
+    public boolean isForested()
+    {
+        return forested;
+    }
+
+    public void setForested(boolean forested)
+    {
+        this.forested = forested;
     }
 }

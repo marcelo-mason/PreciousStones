@@ -57,6 +57,7 @@ public class FieldSettings
     private int teleportBackAfterSeconds = 0;
     private int teleportMaxDistance = 0;
     private int griefRevertInterval = 0;
+    private int payToEnable = 0;
     private String commandOnEnter = "";
     private String commandOnExit = "";
     private String playerCommandOnEnter = "";
@@ -351,6 +352,7 @@ public class FieldSettings
         teleportIfNotHasItems = loadIntList("teleport-if-not-has-items");
         mustBeAbove = loadInt("must-be-above");
         mustBeBelow = loadInt("must-be-below");
+        payToEnable = loadInt("pay-to-enable");
     }
 
     private boolean loadBoolean(String flagStr)
@@ -1359,5 +1361,10 @@ public class FieldSettings
     public int getMustBeBelow()
     {
         return mustBeBelow;
+    }
+
+    public int getPayToEnable()
+    {
+        return payToEnable;
     }
 }

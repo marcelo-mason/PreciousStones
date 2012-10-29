@@ -1165,13 +1165,19 @@ public class PSPlayerListener implements Listener
                                         if (field.isDisabled())
                                         {
                                             ChatBlock.send(player, "fieldTypeEnabled", field.getSettings().getTitle());
-                                            field.setDisabled(false);
+                                            boolean disabled = field.setDisabled(false, player);
+
+                                            if (!disabled)
+                                            {
+                                                ChatBlock.send(player, "cannotEnable");
+                                                return;
+                                            }
                                             field.dirtyFlags();
                                         }
                                         else
                                         {
                                             ChatBlock.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
-                                            field.setDisabled(true);
+                                            field.setDisabled(true, player);
                                             field.dirtyFlags();
                                         }
                                     }
@@ -1234,7 +1240,7 @@ public class PSPlayerListener implements Listener
                                                     else
                                                     {
                                                         PreciousStones.debug("disabled");
-                                                        field.setDisabled(true);
+                                                        field.setDisabled(true, player);
                                                         field.dirtyFlags();
                                                         return;
                                                     }
@@ -1251,7 +1257,13 @@ public class PSPlayerListener implements Listener
                                                     else
                                                     {
                                                         PreciousStones.debug("recording");
-                                                        field.setDisabled(false);
+                                                        boolean disabled = field.setDisabled(false, player);
+
+                                                        if (!disabled)
+                                                        {
+                                                            ChatBlock.send(player, "cannotEnable");
+                                                            return;
+                                                        }
                                                         field.dirtyFlags();
                                                         return;
                                                     }

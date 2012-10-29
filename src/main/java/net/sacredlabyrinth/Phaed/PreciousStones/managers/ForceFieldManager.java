@@ -167,9 +167,12 @@ public final class ForceFieldManager
 
         // add to database (skip foresters and activate them)
 
-        if (fs.hasDefaultFlag(FieldFlag.FORESTER))
+        if (field.hasFlag(FieldFlag.FORESTER))
         {
-            ForesterEntry fe = new ForesterEntry(field, player.getName());
+            if (!field.hasFlag(FieldFlag.PLACE_DISABLED))
+            {
+                ForesterEntry fe = new ForesterEntry(field, player.getName());
+            }
         }
         else
         {

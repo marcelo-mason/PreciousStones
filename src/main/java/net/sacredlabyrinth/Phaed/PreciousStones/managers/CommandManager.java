@@ -428,12 +428,18 @@ public final class CommandManager implements CommandExecutor
 
                                 if (plugin.getStorageManager().existsTranslocationDataWithName(fieldName, field.getOwner()))
                                 {
-                                    field.setDisabled(true);
+                                    field.setDisabled(true, player);
                                     field.dirtyFlags();
                                 }
                                 else
                                 {
-                                    field.setDisabled(false);
+                                    boolean disabled = field.setDisabled(false, player);
+
+                                    if (!disabled)
+                                    {
+                                        ChatBlock.send(player, "cannotEnable");
+                                        return true;
+                                    }
                                     field.dirtyFlags();
                                 }
                             }
@@ -614,7 +620,7 @@ public final class CommandManager implements CommandExecutor
                                     }
                                 }
 
-                                field.setDisabled(true);
+                                field.setDisabled(true, player);
                                 field.dirtyFlags();
                                 ChatBlock.send(sender, "fieldDisabled");
                             }
@@ -648,7 +654,14 @@ public final class CommandManager implements CommandExecutor
                                     }
                                 }
 
-                                field.setDisabled(false);
+                                boolean disabled = field.setDisabled(false, player);
+
+                                if (!disabled)
+                                {
+                                    ChatBlock.send(sender, "cannotEnable");
+                                    return true;
+                                }
+
                                 field.dirtyFlags();
                                 ChatBlock.send(sender, "fieldEnabled");
                             }

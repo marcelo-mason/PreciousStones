@@ -31,6 +31,7 @@ public class ForesterEntry
         plugin = PreciousStones.getInstance();
 
         scheduleNextUpdate();
+        field.setForested(true);
     }
 
     /**

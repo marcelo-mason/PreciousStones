@@ -480,6 +480,7 @@ fieldIntersectsWG: "The field intersects with a WorldGuard region you are not al
 worldNotFound: "World not found"
 mustBeAbove: "This field can only be placed above y={1.level}"
 mustBeBelow: "This field can only be placed below y={1.level}"
+cannotEnable: "You do not have enough currency to enable this field"
 
 
 
