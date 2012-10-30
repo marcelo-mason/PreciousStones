@@ -78,6 +78,7 @@ public class LanguageManager
     {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setWidth(99999999);
         options.setAllowUnicode(true);
 
         try
