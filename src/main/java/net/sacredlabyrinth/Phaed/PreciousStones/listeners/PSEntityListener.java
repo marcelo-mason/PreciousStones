@@ -577,6 +577,14 @@ public class PSEntityListener implements Listener
                             return;
                         }
                     }
+                    else
+                    {
+                        if (field.hasFlag(FieldFlag.PROTECT_ANIMALS))
+                        {
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -615,6 +623,14 @@ public class PSEntityListener implements Listener
                             return;
                         }
                     }
+                    else
+                    {
+                        if (field.hasFlag(FieldFlag.PROTECT_VILLAGERS))
+                        {
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -648,6 +664,14 @@ public class PSEntityListener implements Listener
                     if (player != null)
                     {
                         if (FieldFlag.PROTECT_MOBS.applies(field, player))
+                        {
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        if (field.hasFlag(FieldFlag.PROTECT_MOBS))
                         {
                             event.setCancelled(true);
                             return;

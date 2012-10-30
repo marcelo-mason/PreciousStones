@@ -170,6 +170,27 @@ public class PreciousStones extends JavaPlugin
     {
         try {
             Metrics metrics = new Metrics(this);
+
+            Metrics.Graph protections = metrics.createGraph("Protections in Place");
+
+            protections.addPlotter(new Metrics.Plotter("Total Fields") {
+
+                @Override
+                public int getValue() {
+                    return getForceFieldManager().getCount();
+                }
+
+            });
+
+            protections.addPlotter(new Metrics.Plotter("Total Unbreakables") {
+
+                @Override
+                public int getValue() {
+                    return getUnbreakableManager().getCount();
+                }
+
+            });
+
             metrics.start();
         } catch (IOException e) {
             log("Metrics did not load");
