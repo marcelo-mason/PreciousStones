@@ -2497,33 +2497,36 @@ public final class ForceFieldManager
     /**
      * Disables all fields belonging to a player that have the DISABLE_ON_LOGOFF flag if he is the last allowed player online
      *
-     * @param player
+     * @param name
      */
-    public void disableFieldsOnLogoff(Player player)
+    public void disableFieldsOnLogoff(String name)
     {
-        List<Field> fields = fieldsByOwner.get(player.getName());
+        List<Field> fields = fieldsByOwner.get(name);
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            if (field.hasFlag(FieldFlag.DISABLE_ON_LOGOFF))
+            for (Field field : fields)
             {
-                List<String> allAllowed = field.getAllAllowed();
-
-                boolean someoneOnline = false;
-
-                for (String playerName : allAllowed)
+                if (field.hasFlag(FieldFlag.DISABLE_ON_LOGOFF))
                 {
-                    Player allowed = Bukkit.getServer().getPlayerExact(playerName);
+                    List<String> allAllowed = field.getAllAllowed();
 
-                    if (allowed != null)
+                    boolean someoneOnline = false;
+
+                    for (String playerName : allAllowed)
                     {
-                        someoneOnline = true;
-                    }
-                }
+                        Player allowed = Bukkit.getServer().getPlayerExact(playerName);
 
-                if (!someoneOnline)
-                {
-                    field.setDisabled(true);
+                        if (allowed != null)
+                        {
+                            someoneOnline = true;
+                        }
+                    }
+
+                    if (!someoneOnline)
+                    {
+                        field.setDisabled(true);
+                    }
                 }
             }
         }
@@ -2532,33 +2535,36 @@ public final class ForceFieldManager
     /**
      * Enables all fields belonging to a player that have the ENABLE_ON_LOGON flag if he is the last allowed player online
      *
-     * @param player
+     * @param name
      */
-    public void enableFieldsOnLogon(Player player)
+    public void enableFieldsOnLogon(String name)
     {
-        List<Field> fields = fieldsByOwner.get(player.getName());
+        List<Field> fields = fieldsByOwner.get(name);
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            if (field.hasFlag(FieldFlag.ENABLE_ON_LOGON))
+            for (Field field : fields)
             {
-                List<String> allAllowed = field.getAllAllowed();
-
-                boolean someoneOnline = false;
-
-                for (String playerName : allAllowed)
+                if (field.hasFlag(FieldFlag.ENABLE_ON_LOGON))
                 {
-                    Player allowed = Bukkit.getServer().getPlayerExact(playerName);
+                    List<String> allAllowed = field.getAllAllowed();
 
-                    if (allowed != null)
+                    boolean someoneOnline = false;
+
+                    for (String playerName : allAllowed)
                     {
-                        someoneOnline = true;
-                    }
-                }
+                        Player allowed = Bukkit.getServer().getPlayerExact(playerName);
 
-                if (!someoneOnline)
-                {
-                    field.setDisabled(false);
+                        if (allowed != null)
+                        {
+                            someoneOnline = true;
+                        }
+                    }
+
+                    if (!someoneOnline)
+                    {
+                        field.setDisabled(false);
+                    }
                 }
             }
         }

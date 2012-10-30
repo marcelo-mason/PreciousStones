@@ -68,7 +68,7 @@ public class PSPlayerListener implements Listener
     {
         plugin.getPlayerManager().playerLogin(event.getPlayer());
         plugin.getStorageManager().offerPlayer(event.getPlayer().getName());
-        plugin.getForceFieldManager().enableFieldsOnLogon(event.getPlayer());
+        plugin.getForceFieldManager().enableFieldsOnLogon(event.getPlayer().getName());
     }
 
 
@@ -81,7 +81,7 @@ public class PSPlayerListener implements Listener
         plugin.getPlayerManager().playerLogoff(event.getPlayer());
         plugin.getStorageManager().offerPlayer(event.getPlayer().getName());
         plugin.getEntryManager().leaveAllFields(event.getPlayer());
-        plugin.getForceFieldManager().disableFieldsOnLogoff(event.getPlayer());
+        plugin.getForceFieldManager().disableFieldsOnLogoff(event.getPlayer().getName());
 
     }
 
