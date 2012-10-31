@@ -222,6 +222,7 @@ public class FieldSettings
         loadBoolean("prevent-animal-spawn");
         loadBoolean("prevent-entry");
         loadBoolean("prevent-unprotectable");
+        loadBoolean("prevent-potion-splash");
         loadBoolean("protect-animals");
         loadBoolean("protect-villagers");
         loadBoolean("protect-crops");

@@ -875,18 +875,14 @@ public class PSEntityListener implements Listener
             return;
         }
 
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_VEHICLE_DESTROY);
-
-        if (field != null)
+        if (entity instanceof Enderman)
         {
-            event.setCancelled(true);
-        }
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_ENDERMAN_DESTROY);
 
-        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
-
-        if (field != null)
-        {
-            event.setCancelled(true);
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -928,7 +924,6 @@ public class PSEntityListener implements Listener
         }
     }
 
-
     /**
      * @param event
      */
@@ -956,6 +951,35 @@ public class PSEntityListener implements Listener
                 else
                 {
                     event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPotionSplash(PotionSplashEvent event)
+    {
+        ThrownPotion potion = event.getPotion();
+
+        LivingEntity shooter = potion.getShooter();
+
+        if (shooter != null)
+        {
+            if (shooter instanceof Player)
+            {
+                Player player = (Player) shooter;
+
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_POTION_SPLASH);
+
+                if (field != null)
+                {
+                    if (FieldFlag.PREVENT_POTION_SPLASH.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
