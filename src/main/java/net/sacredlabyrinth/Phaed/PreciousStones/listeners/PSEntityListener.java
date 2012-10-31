@@ -1022,4 +1022,18 @@ public class PSEntityListener implements Listener
             }
         }
     }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onCreeperPower(CreeperPowerEvent event)
+    {
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_CREEPER_EXPLOSIONS);
+
+        if (field != null)
+        {
+            event.setCancelled(true);
+        }
+    }
 }
