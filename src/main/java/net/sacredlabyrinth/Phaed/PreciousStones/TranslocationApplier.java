@@ -2,8 +2,10 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.TranslocationBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -52,6 +54,11 @@ public class TranslocationApplier implements Runnable
                     continue;
                 }
 
+                if (field.hasFlag(FieldFlag.TRANSLOCATION_SAFETY))
+                {
+                    movePlayers(tb);
+                }
+
                 boolean applied = PreciousStones.getInstance().getTranslocationManager().applyTranslocationBlock(tb, world);
 
                 // if the block could not be applied, due to another block being in the way
@@ -70,6 +77,11 @@ public class TranslocationApplier implements Runnable
             while (i < 200 && !dependentQueue.isEmpty())
             {
                 TranslocationBlock tb = dependentQueue.poll();
+
+                if (field.hasFlag(FieldFlag.TRANSLOCATION_SAFETY))
+                {
+                    movePlayers(tb);
+                }
 
                 boolean applied = PreciousStones.getInstance().getTranslocationManager().applyTranslocationBlock(tb, world);
 
@@ -90,6 +102,21 @@ public class TranslocationApplier implements Runnable
                 field.setDisabled(false);
                 field.setTranslocating(false);
                 field.dirtyFlags();
+            }
+        }
+    }
+
+
+    private void movePlayers(TranslocationBlock tb)
+    {
+        for (Player player : world.getPlayers())
+        {
+            Vec blockLocation = tb.toVec();
+            Vec location = new Vec(player.getLocation());
+
+            if (blockLocation.equals(location) || blockLocation.equals(location.add(0, 1, 0)))
+            {
+                plugin.getTeleportationManager().teleportAway(player);
             }
         }
     }

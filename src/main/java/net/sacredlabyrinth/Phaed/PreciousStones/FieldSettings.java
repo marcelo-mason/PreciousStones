@@ -259,6 +259,7 @@ public class FieldSettings
         loadBoolean("breakable-on-disabled");
         loadBoolean("no-player-place");
         loadBoolean("translocation");
+        loadBoolean("translocation-safety");
         loadBoolean("prevent-flight");
         loadBoolean("allowed-can-break");
         loadBoolean("sneaking-bypass");
