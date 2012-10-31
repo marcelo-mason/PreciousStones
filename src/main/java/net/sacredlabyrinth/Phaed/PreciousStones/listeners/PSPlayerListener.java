@@ -1752,4 +1752,26 @@ public class PSPlayerListener implements Listener
             }
         }
     }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerSprint(PlayerToggleSprintEvent event)
+    {
+        if (event.isSprinting())
+        {
+            return;
+        }
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.NO_PLAYER_SPRINT);
+
+        if (field != null)
+        {
+            if (FieldFlag.NO_PLAYER_SPRINT.applies(field, event.getPlayer()))
+            {
+                event.setCancelled(true);
+            }
+        }
+    }
 }

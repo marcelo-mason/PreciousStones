@@ -135,9 +135,61 @@ public enum FieldFlag
     ENABLE_ON_LOGON,
     NO_PROJECTILE_THROW,
     NO_PLAYER_PLACE,
-    NO_DROPPING_ITEMS
+    NO_DROPPING_ITEMS,
+    NO_PLAYER_SPRINT
 
     ;
+
+    /**
+     * These flags apply to non-allowed
+     */
+    private final static FieldFlag[] applyToNonAllowed = new FieldFlag[]
+    {
+        FieldFlag.PREVENT_FIRE,
+        FieldFlag.PREVENT_FLOW,
+        FieldFlag.PREVENT_ENTRY,
+        FieldFlag.PREVENT_PLACE,
+        FieldFlag.PREVENT_DESTROY,
+        FieldFlag.PREVENT_VEHICLE_DESTROY,
+        FieldFlag.PREVENT_MOB_DAMAGE,
+        FieldFlag.PREVENT_USE,
+        FieldFlag.PREVENT_TELEPORT,
+        FieldFlag.PREVENT_FLIGHT,
+        FieldFlag.PROTECT_ANIMALS,
+        FieldFlag.PROTECT_CROPS,
+        FieldFlag.PROTECT_MOBS,
+        FieldFlag.PROTECT_VILLAGERS,
+        FieldFlag.DAMAGE,
+        FieldFlag.SNITCH,
+        FieldFlag.MINE,
+        FieldFlag.LIGHTNING,
+        FieldFlag.GRIEF_REVERT,
+        FieldFlag.PLACE_GRIEF,
+        FieldFlag.ENTRY_ALERT,
+        FieldFlag.ENTRY_GAME_MODE,
+        FieldFlag.LEAVING_GAME_MODE,
+        FieldFlag.CONFISCATE_ITEMS,
+        FieldFlag.TELEPORT_ON_ENTRY,
+        FieldFlag.TELEPORT_ON_EXIT,
+        FieldFlag.TELEPORT_ON_DAMAGE,
+        FieldFlag.TELEPORT_ON_FEEDING,
+        FieldFlag.TELEPORT_ON_FIRE,
+        FieldFlag.TELEPORT_ON_PVP,
+        FieldFlag.TELEPORT_IF_WALKING_ON,
+        FieldFlag.TELEPORT_IF_NOT_WALKING_ON,
+        FieldFlag.TELEPORT_IF_HOLDING_ITEMS,
+        FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS,
+        FieldFlag.TELEPORT_IF_HAS_ITEMS,
+        FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS,
+        FieldFlag.TELEPORT_ON_BLOCK_BREAK,
+        FieldFlag.TELEPORT_ON_BLOCK_PLACE,
+        FieldFlag.TELEPORT_BEFORE_DEATH,
+        FieldFlag.PREVENT_POTION_SPLASH,
+        FieldFlag.NO_PROJECTILE_THROW,
+        FieldFlag.NO_DROPPING_ITEMS,
+        FieldFlag.NO_PLAYER_SPRINT
+    };
+
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
 
 
@@ -213,55 +265,6 @@ public enum FieldFlag
         FieldFlag.MUST_BE_BELOW,
         FieldFlag.DISABLE_ON_LOGOFF,
         FieldFlag.ENABLE_ON_LOGON
-    };
-
-    /**
-     * These flags apply to non-allowed
-     */
-    private final static FieldFlag[] applyToNonAllowed = new FieldFlag[]
-    {
-        FieldFlag.PREVENT_FIRE,
-        FieldFlag.PREVENT_FLOW,
-        FieldFlag.PREVENT_ENTRY,
-        FieldFlag.PREVENT_PLACE,
-        FieldFlag.PREVENT_DESTROY,
-        FieldFlag.PREVENT_VEHICLE_DESTROY,
-        FieldFlag.PREVENT_MOB_DAMAGE,
-        FieldFlag.PREVENT_USE,
-        FieldFlag.PREVENT_TELEPORT,
-        FieldFlag.PREVENT_FLIGHT,
-        FieldFlag.PROTECT_ANIMALS,
-        FieldFlag.PROTECT_CROPS,
-        FieldFlag.PROTECT_MOBS,
-        FieldFlag.PROTECT_VILLAGERS,
-        FieldFlag.DAMAGE,
-        FieldFlag.SNITCH,
-        FieldFlag.MINE,
-        FieldFlag.LIGHTNING,
-        FieldFlag.GRIEF_REVERT,
-        FieldFlag.PLACE_GRIEF,
-        FieldFlag.ENTRY_ALERT,
-        FieldFlag.ENTRY_GAME_MODE,
-        FieldFlag.LEAVING_GAME_MODE,
-        FieldFlag.CONFISCATE_ITEMS,
-        FieldFlag.TELEPORT_ON_ENTRY,
-        FieldFlag.TELEPORT_ON_EXIT,
-        FieldFlag.TELEPORT_ON_DAMAGE,
-        FieldFlag.TELEPORT_ON_FEEDING,
-        FieldFlag.TELEPORT_ON_FIRE,
-        FieldFlag.TELEPORT_ON_PVP,
-        FieldFlag.TELEPORT_IF_WALKING_ON,
-        FieldFlag.TELEPORT_IF_NOT_WALKING_ON,
-        FieldFlag.TELEPORT_IF_HOLDING_ITEMS,
-        FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS,
-        FieldFlag.TELEPORT_IF_HAS_ITEMS,
-        FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS,
-        FieldFlag.TELEPORT_ON_BLOCK_BREAK,
-        FieldFlag.TELEPORT_ON_BLOCK_PLACE,
-        FieldFlag.TELEPORT_BEFORE_DEATH,
-        FieldFlag.PREVENT_POTION_SPLASH,
-        FieldFlag.NO_PROJECTILE_THROW,
-        FieldFlag.NO_DROPPING_ITEMS
     };
 
     /**

@@ -265,6 +265,7 @@ public class FieldSettings
         loadBoolean("no-player-place");
         loadBoolean("no-projectile-throw");
         loadBoolean("no-dropping-items");
+        loadBoolean("no-player-sprint");
         loadBoolean("translocation");
         loadBoolean("translocation-safety");
         loadBoolean("prevent-flight");
