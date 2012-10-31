@@ -228,6 +228,10 @@ public class TeleportationManager
     {
         Vec d = new Vec(dest);
 
+        if (blockIsSafe(d))
+        {
+            return d;
+        }
         if (blockIsSafe(d.add(1, 0, 0)))
         {
             return d.add(1, 0, 0);
