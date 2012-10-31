@@ -814,6 +814,11 @@ public class PSEntityListener implements Listener
             return;
         }
 
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getBlock().getLocation().getWorld()))
+        {
+            return;
+        }
+
         Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getBlock().getLocation(), FieldFlag.PREVENT_DESTROY);
 
         if (field != null)
@@ -870,14 +875,18 @@ public class PSEntityListener implements Listener
             return;
         }
 
-        if (entity instanceof Enderman)
-        {
-            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_VEHICLE_DESTROY);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_VEHICLE_DESTROY);
 
-            if (field != null)
-            {
-                event.setCancelled(true);
-            }
+        if (field != null)
+        {
+            event.setCancelled(true);
+        }
+
+        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+        if (field != null)
+        {
+            event.setCancelled(true);
         }
     }
 
