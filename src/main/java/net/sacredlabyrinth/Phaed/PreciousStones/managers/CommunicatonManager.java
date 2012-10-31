@@ -3223,41 +3223,41 @@ public class CommunicatonManager
             cb.addRow("menu21");
         }
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.use"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.use") && hasPlayer)
         {
             cb.addRow("menu22");
         }
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide") && hasPlayer)
         {
             cb.addRow("menu49");
             cb.addRow("menu50");
         }
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall") && hasPlayer)
         {
             cb.addRow("menu51");
             cb.addRow("menu52");
         }
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.import"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.import") && hasPlayer)
         {
             cb.addRow("menu23");
             cb.addRow("menu24");
         }
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.delete"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.delete") && hasPlayer)
         {
             cb.addRow("menu25");
             cb.addRow("menu26");
         }
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.remove"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.remove") && hasPlayer)
         {
             cb.addRow("menu27");
         }
 
-        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.unlink"))
+        if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.unlink") && hasPlayer)
         {
             cb.addRow("menu28");
         }
