@@ -1,6 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 /**
@@ -127,5 +129,15 @@ public class Vec extends AbstractVec
     public String serialize()
     {
         return this.getX() + ":" + this.getY() + ":" + this.getZ()  + ":" + this.getWorld();
+    }
+
+    /**
+     * Returns a bukkit world
+     *
+     * @return
+     */
+    public World toWorld()
+    {
+        return Bukkit.getWorld(this.getWorld());
     }
 }

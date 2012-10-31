@@ -129,10 +129,11 @@ public class TeleportationManager
             // prepare teleport destination
 
             World world = destination.getWorld();
-            double x = destination.getBlockX() + .5D;
-            double y = findSafeHeight(destination);
-            double z = destination.getBlockZ() + .5D;
 
+            Vec safe = findSafeLocation(destination);
+            double x = safe.getX() + .5D;
+            double y = safe.getY();
+            double z = safe.getZ() + .5D;
 
             if (y == -1)
             {
@@ -222,6 +223,46 @@ public class TeleportationManager
         return;
     }
 
+    private Vec findSafeLocation(Location dest)
+    {
+        Vec d = new Vec(dest);
+
+        if (blockIsSafe(d.add(1, 0, 0)))
+        {
+            return d.add(1, 0, 0);
+        }
+        if (blockIsSafe(d.add(-1, 0, 0)))
+        {
+            return d.add(-1, 0, 0);
+        }
+        if (blockIsSafe(d.add(0, 0, 1)))
+        {
+            return d.add(0, 0, 1);
+        }
+        if (blockIsSafe(d.add(0, 0, -1)))
+        {
+            return d.add(0, 0, -1);
+        }
+        if (blockIsSafe(d.add(1, 0, 1)))
+        {
+            return d.add(1, 0, 1);
+        }
+        if (blockIsSafe(d.add(-1, 0, 1)))
+        {
+            return d.add(-1, 0, 1);
+        }
+        if (blockIsSafe(d.add(1, 0, -1)))
+        {
+            return d.add(1, 0, -1);
+        }
+        if (blockIsSafe(d.add(-1, 0, -1)))
+        {
+            return d.add(-1, 0, -1);
+        }
+
+        return new Vec(d.getX(), findSafeHeight(dest), d.getZ(), d.getWorld());
+    }
+
     private int findSafeHeight(Location dest)
     {
         int y = dest.getBlockY();
@@ -237,6 +278,11 @@ public class TeleportationManager
         }
 
         return y;
+    }
+
+    private boolean blockIsSafe(Vec vec)
+    {
+        return blockIsSafe(vec.toWorld(), vec.getX(), vec.getY(), vec.getZ());
     }
 
     private boolean blockIsSafe(World world, int x, int y, int z)

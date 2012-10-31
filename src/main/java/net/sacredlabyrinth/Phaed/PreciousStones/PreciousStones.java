@@ -120,7 +120,6 @@ public class PreciousStones extends JavaPlugin
         languageManager = new LanguageManager();
 
         displayStatusInfo();
-        metrics();
 
         simpleClansManager = new SimpleClansManager();
         commandManager = new CommandManager();
@@ -159,6 +158,7 @@ public class PreciousStones extends JavaPlugin
 
         registerEvents();
         registerCommands();
+        metrics();
     }
 
     private void displayStatusInfo()
