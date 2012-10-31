@@ -130,7 +130,8 @@ public enum FieldFlag
     SINGLE_USE,
     DISABLE_WHEN_ONLINE,
     DISABLE_ON_LOGOFF,
-    ENABLE_ON_LOGON
+    ENABLE_ON_LOGON,
+    NO_PROJECTILE_THROW
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
@@ -211,35 +212,6 @@ public enum FieldFlag
     };
 
     /**
-     * These flags apply to allowed
-     */
-    private final static FieldFlag[] applyToAllowed = new FieldFlag[]
-    {
-        FieldFlag.ALLOWED_CAN_BREAK,
-        FieldFlag.ALLOW_PLACE,
-        FieldFlag.ALLOW_DESTROY,
-        FieldFlag.REMOVE_MOB,
-        FieldFlag.HEAL,
-        FieldFlag.FEED,
-        FieldFlag.REPAIR,
-        FieldFlag.POTIONS,
-        FieldFlag.NEUTRALIZE_POTIONS,
-        FieldFlag.AIR,
-        FieldFlag.LAUNCH,
-        FieldFlag.CANNON,
-        FieldFlag.VISUALIZE_ON_SRC,
-        FieldFlag.ENABLE_ON_SRC,
-        FieldFlag.GROUP_ON_ENTRY,
-        FieldFlag.NO_FALL_DAMAGE,
-        FieldFlag.TRANSLOCATION,
-        FieldFlag.TELEPORT_ON_SNEAK,
-        FieldFlag.COMMAND_ON_ENTER,
-        FieldFlag.COMMAND_ON_EXIT,
-        FieldFlag.PLAYER_COMMAND_ON_ENTER,
-        FieldFlag.PLAYER_COMMAND_ON_EXIT,
-    };
-
-    /**
      * These flags apply to non-allowed
      */
     private final static FieldFlag[] applyToNonAllowed = new FieldFlag[]
@@ -283,6 +255,8 @@ public enum FieldFlag
         FieldFlag.TELEPORT_ON_BLOCK_BREAK,
         FieldFlag.TELEPORT_ON_BLOCK_PLACE,
         FieldFlag.TELEPORT_BEFORE_DEATH,
+        FieldFlag.PREVENT_POTION_SPLASH,
+        FieldFlag.NO_PROJECTILE_THROW
     };
 
     /**

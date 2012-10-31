@@ -993,4 +993,33 @@ public class PSEntityListener implements Listener
             }
         }
     }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onProjectileThrow(ProjectileLaunchEvent event)
+    {
+        Projectile projectile = event.getEntity();
+
+        LivingEntity shooter = projectile.getShooter();
+
+        if (shooter != null)
+        {
+            if (shooter instanceof Player)
+            {
+                Player player = (Player) shooter;
+
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.NO_PROJECTILE_THROW);
+
+                if (field != null)
+                {
+                    if (FieldFlag.NO_PROJECTILE_THROW.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+    }
 }
