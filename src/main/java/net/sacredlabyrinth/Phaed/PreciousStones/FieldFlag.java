@@ -136,8 +136,9 @@ public enum FieldFlag
     NO_PROJECTILE_THROW,
     NO_PLAYER_PLACE,
     NO_DROPPING_ITEMS,
-    NO_PLAYER_SPRINT
-
+    NO_PLAYER_SPRINT,
+    PREVENT_VEHICLE_ENTER,
+    PREVENT_VEHICLE_EXIT
     ;
 
     /**
@@ -187,7 +188,9 @@ public enum FieldFlag
         FieldFlag.PREVENT_POTION_SPLASH,
         FieldFlag.NO_PROJECTILE_THROW,
         FieldFlag.NO_DROPPING_ITEMS,
-        FieldFlag.NO_PLAYER_SPRINT
+        FieldFlag.NO_PLAYER_SPRINT,
+        FieldFlag.PREVENT_VEHICLE_ENTER,
+        FieldFlag.PREVENT_VEHICLE_EXIT
     };
 
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();

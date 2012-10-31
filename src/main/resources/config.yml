@@ -16,13 +16,17 @@ force-field-blocks:
     prevent-enderman-destroy: true
     prevent-explosions: true
     prevent-unprotectable: true
-    ?prevent-portal-enter: true
     prevent-flow: true
-    ?prevent-teleport: true
     protect-crops: true
     prevent-use: [23, 54, 61, 62]
     ?welcome-message: true
     ?farewell-message: true
+    ?prevent-portal-enter: true
+    ?prevent-portal-destination: true
+    ?prevent-portal-create: true
+    ?prevent-vehicle-enter: true
+    ?prevent-vehicle-exit: true
+    ?prevent-teleport: true
     can-change-owner: true
     enable-on-src: true
     mixing-group: 1

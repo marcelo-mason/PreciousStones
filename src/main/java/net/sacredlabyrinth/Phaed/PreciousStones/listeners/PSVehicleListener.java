@@ -11,6 +11,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 /**
@@ -42,7 +44,7 @@ public class PSVehicleListener implements Listener
         {
             if (event.getAttacker() instanceof Player)
             {
-                Player player = (Player)event.getAttacker();
+                Player player = (Player) event.getAttacker();
 
                 if (FieldFlag.PREVENT_VEHICLE_DESTROY.applies(field, player))
                 {
@@ -81,5 +83,57 @@ public class PSVehicleListener implements Listener
         }
 
         plugin.getPlayerListener().onPlayerMove(new PlayerMoveEvent((Player) entity, event.getFrom(), event.getTo()));
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onVehicleEnter(VehicleEnterEvent event)
+    {
+        Vehicle vehicle = event.getVehicle();
+
+        Entity passenger = vehicle.getPassenger();
+
+        if (passenger instanceof Player)
+        {
+            Player player = (Player) passenger;
+
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_VEHICLE_ENTER);
+
+            if (field != null)
+            {
+                if (FieldFlag.PREVENT_VEHICLE_ENTER.applies(field, player))
+                {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onVehicleExit(VehicleExitEvent event)
+    {
+        Vehicle vehicle = event.getVehicle();
+
+        Entity passenger = vehicle.getPassenger();
+
+        if (passenger instanceof Player)
+        {
+            Player player = (Player) passenger;
+
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_VEHICLE_EXIT);
+
+            if (field != null)
+            {
+                if (FieldFlag.PREVENT_VEHICLE_EXIT.applies(field, player))
+                {
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 }

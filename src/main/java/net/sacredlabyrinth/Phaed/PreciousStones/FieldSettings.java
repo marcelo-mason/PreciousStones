@@ -227,6 +227,8 @@ public class FieldSettings
         loadBoolean("prevent-portal-creation");
         loadBoolean("prevent-portal-destination");
         loadBoolean("prevent-potion-splash");
+        loadBoolean("prevent-vehicle-enter");
+        loadBoolean("prevent-vehicle-exit");
         loadBoolean("protect-animals");
         loadBoolean("protect-villagers");
         loadBoolean("protect-crops");
