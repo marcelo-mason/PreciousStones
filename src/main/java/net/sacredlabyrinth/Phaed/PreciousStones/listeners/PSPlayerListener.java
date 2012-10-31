@@ -1735,4 +1735,21 @@ public class PSPlayerListener implements Listener
             }
         }
     }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPortalEnter(PlayerPortalEvent event)
+    {
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.PREVENT_PORTAL_ENTER);
+
+        if (field != null)
+        {
+            if (FieldFlag.PREVENT_PORTAL_ENTER.applies(field, event.getPlayer()))
+            {
+                event.setCancelled(true);
+            }
+        }
+    }
 }

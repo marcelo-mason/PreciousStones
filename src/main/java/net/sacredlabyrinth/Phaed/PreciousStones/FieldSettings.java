@@ -223,6 +223,10 @@ public class FieldSettings
         loadBoolean("prevent-entry");
         loadBoolean("prevent-unprotectable");
         loadBoolean("prevent-potion-splash");
+        loadBoolean("prevent-portal-enter");
+        loadBoolean("prevent-portal-creation");
+        loadBoolean("prevent-portal-destination");
+        loadBoolean("prevent-potion-splash");
         loadBoolean("protect-animals");
         loadBoolean("protect-villagers");
         loadBoolean("protect-crops");

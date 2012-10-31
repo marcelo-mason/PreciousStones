@@ -6,12 +6,15 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +37,7 @@ public class PSWorldListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority= EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onChunkUnload(ChunkUnloadEvent event)
     {
         World world = event.getWorld();
@@ -55,7 +58,7 @@ public class PSWorldListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority=EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onWorldLoad(WorldLoadEvent event)
     {
         DebugTimer dt = new DebugTimer("onWorldLoad");
@@ -73,6 +76,36 @@ public class PSWorldListener implements Listener
         if (plugin.getSettingsManager().isDebug())
         {
             dt.logProcessTime();
+        }
+    }
+
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPortalCreate(PortalCreateEvent event)
+    {
+        ArrayList<Block> blocks = event.getBlocks();
+
+        if (event.getReason().equals(PortalCreateEvent.CreateReason.FIRE))
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(blocks.get(0).getLocation(), FieldFlag.PREVENT_PORTAL_CREATION);
+
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
+        }
+
+        if (event.getReason().equals(PortalCreateEvent.CreateReason.OBC_DESTINATION))
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(blocks.get(0).getLocation(), FieldFlag.PREVENT_PORTAL_DESTINATION);
+
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
         }
     }
 }
