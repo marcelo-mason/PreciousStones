@@ -884,6 +884,15 @@ public class PSEntityListener implements Listener
                 event.setCancelled(true);
             }
         }
+        else
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
+        }
     }
 
     /**
