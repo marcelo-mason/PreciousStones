@@ -68,7 +68,6 @@ public enum FieldFlag
     REDEFINE_ON_DISABLED,
     MODIFY_ON_DISABLED,
     BREAKABLE_ON_DISABLED,
-    NO_PLAYER_PLACE,
     ALLOWED_CAN_BREAK,
     SNEAKING_BYPASS,
     PLACE_DISABLED,
@@ -131,7 +130,9 @@ public enum FieldFlag
     DISABLE_WHEN_ONLINE,
     DISABLE_ON_LOGOFF,
     ENABLE_ON_LOGON,
-    NO_PROJECTILE_THROW
+    NO_PROJECTILE_THROW,
+    NO_PLAYER_PLACE,
+    NO_DROPPING_ITEMS
 
     ;
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
@@ -256,7 +257,8 @@ public enum FieldFlag
         FieldFlag.TELEPORT_ON_BLOCK_PLACE,
         FieldFlag.TELEPORT_BEFORE_DEATH,
         FieldFlag.PREVENT_POTION_SPLASH,
-        FieldFlag.NO_PROJECTILE_THROW
+        FieldFlag.NO_PROJECTILE_THROW,
+        FieldFlag.NO_DROPPING_ITEMS
     };
 
     /**

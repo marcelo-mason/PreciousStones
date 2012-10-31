@@ -19,6 +19,7 @@ import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1019,6 +1020,23 @@ public class PSEntityListener implements Listener
                         event.setCancelled(true);
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onItemDrop(PlayerDropItemEvent event)
+    {
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.NO_DROPPING_ITEMS);
+
+        if (field != null)
+        {
+            if (FieldFlag.NO_DROPPING_ITEMS.applies(field, event.getPlayer()))
+            {
+                event.setCancelled(true);
             }
         }
     }

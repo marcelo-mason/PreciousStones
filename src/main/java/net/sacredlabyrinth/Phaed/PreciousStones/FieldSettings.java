@@ -260,6 +260,7 @@ public class FieldSettings
         loadBoolean("breakable-on-disabled");
         loadBoolean("no-player-place");
         loadBoolean("no-projectile-throw");
+        loadBoolean("no-dropping-items");
         loadBoolean("translocation");
         loadBoolean("translocation-safety");
         loadBoolean("prevent-flight");
