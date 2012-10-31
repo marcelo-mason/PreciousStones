@@ -1080,7 +1080,10 @@ public final class StorageManager
             query = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
         }
 
-        core.delete(query);
+        synchronized (this)
+        {
+            core.delete(query);
+        }
     }
 
     /**
@@ -1093,8 +1096,12 @@ public final class StorageManager
         String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
         String query2 = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
-        core.delete(query);
-        core.delete(query2);
+
+        synchronized (this)
+        {
+            core.delete(query);
+            core.delete(query2);
+        }
     }
 
 
@@ -1106,7 +1113,11 @@ public final class StorageManager
     public void deleteFields(final String playerName)
     {
         final String query = "DELETE FROM `pstone_fields` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
-        core.delete(query);
+
+        synchronized (this)
+        {
+            core.delete(query);
+        }
     }
 
     /**
@@ -1117,7 +1128,11 @@ public final class StorageManager
     public void deleteUnbreakables(final String playerName)
     {
         final String query = "DELETE FROM `pstone_unbreakables` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
-        core.delete(query);
+
+        synchronized (this)
+        {
+            core.delete(query);
+        }
     }
 
     /**
@@ -1164,14 +1179,22 @@ public final class StorageManager
             final String query = "INSERT INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
             final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + new Date().getTime() + "') ";
             final String update = "ON DUPLICATE KEY UPDATE count = count+1;";
-            core.insert(query + values + update);
+
+            synchronized (this)
+            {
+                core.insert(query + values + update);
+            }
         }
         else
         {
             final String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
             final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + new Date().getTime() + "');";
             final String update = "UPDATE `pstone_snitches` SET count = count+1;";
-            core.insert(query + values + update);
+
+            synchronized (this)
+            {
+                core.insert(query + values + update);
+            }
         }
     }
 
@@ -1206,10 +1229,7 @@ public final class StorageManager
             pendingSnitchEntries.clear();
         }
 
-        synchronized (this)
-        {
-            processSnitches(workingSnitchEntries);
-        }
+        processSnitches(workingSnitchEntries);
 
         final List<SnitchEntry> out = new ArrayList<SnitchEntry>();
 
@@ -1263,7 +1283,10 @@ public final class StorageManager
     {
         final String query = "DELETE FROM `pstone_players` WHERE player_name = '" + playerName + "';";
 
-        core.delete(query);
+        synchronized (this)
+        {
+            core.delete(query);
+        }
     }
 
     /**
@@ -1282,14 +1305,22 @@ public final class StorageManager
             final String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             final String values = "VALUES ( '" + playerName + "', " + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "') ";
             final String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "'";
-            core.insert(query + values + update);
+
+            synchronized (this)
+            {
+                core.insert(query + values + update);
+            }
         }
         else
         {
             final String query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             final String values = "VALUES ( '" + playerName + "'," + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "');";
             final String update = "UPDATE `pstone_players` SET last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "' WHERE player_name = '" + playerName + "';";
-            core.insert(query + values + update);
+
+            synchronized (this)
+            {
+                core.insert(query + values + update);
+            }
         }
     }
 
@@ -1301,21 +1332,37 @@ public final class StorageManager
         {
             String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             String values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_fields ";
-            core.insert(query + values);
+
+            synchronized (this)
+            {
+                core.insert(query + values);
+            }
 
             query = "INSERT IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_unbreakables ";
-            core.insert(query + values);
+
+            synchronized (this)
+            {
+                core.insert(query + values);
+            }
         }
         else
         {
             String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             String values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_fields ";
-            core.insert(query + values);
+
+            synchronized (this)
+            {
+                core.insert(query + values);
+            }
 
             query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
             values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_unbreakables ";
-            core.insert(query + values);
+
+            synchronized (this)
+            {
+                core.insert(query + values);
+            }
         }
     }
 
@@ -1329,7 +1376,11 @@ public final class StorageManager
     {
         final String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
         final String values = "VALUES ( '" + new Timestamp((new Date()).getTime()) + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
-        core.insert(query + values);
+
+        synchronized (this)
+        {
+            core.insert(query + values);
+        }
     }
 
     /**
@@ -1348,10 +1399,7 @@ public final class StorageManager
             pendingGrief.clear();
         }
 
-        synchronized (this)
-        {
-            processGrief(workingGrief);
-        }
+        processGrief(workingGrief);
 
         final Queue<GriefBlock> out = new LinkedList<GriefBlock>();
 
@@ -1414,7 +1462,10 @@ public final class StorageManager
      */
     public void deleteBlockGrief(final Field field)
     {
-        pendingGrief.remove(field);
+        synchronized (this)
+        {
+            pendingGrief.remove(field);
+        }
 
         final String query = "DELETE FROM `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
@@ -1536,7 +1587,10 @@ public final class StorageManager
         final String query = "INSERT INTO `pstone_translocations` ( `name`, `player_name`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`) ";
         final String values = "VALUES ( '" + Helper.escapeQuotes(name) + "','" + Helper.escapeQuotes(field.getOwner()) + "'," + field.getRelativeMin().getBlockX() + "," + field.getRelativeMin().getBlockY() + "," + field.getRelativeMin().getBlockZ() + "," + field.getRelativeMax().getBlockX() + "," + field.getRelativeMax().getBlockY() + "," + field.getRelativeMax().getBlockZ() + ");";
 
-        core.insert(query + values);
+        synchronized (this)
+        {
+            core.insert(query + values);
+        }
     }
 
     /**
@@ -1561,7 +1615,11 @@ public final class StorageManager
     {
         final String query = "INSERT INTO `pstone_storedblocks` ( `name`, `player_name`, `world`, `x` , `y`, `z`, `type_id`, `data`, `contents`, `sign_text`, `applied`) ";
         final String values = "VALUES ( '" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getOwner()) + "','" + Helper.escapeQuotes(field.getWorld()) + "'," + tb.getRx() + "," + tb.getRy() + "," + tb.getRz() + "," + tb.getTypeId() + "," + tb.getData() + ",'" + tb.getContents() + "','" + Helper.escapeQuotes(tb.getSignText()) + "', " + (applied ? 1 : 0) + ");";
-        core.insert(query + values);
+
+        synchronized (this)
+        {
+            core.insert(query + values);
+        }
     }
 
     /**
@@ -2294,32 +2352,29 @@ public final class StorageManager
             pendingSnitchEntries.clear();
         }
 
-        synchronized (this)
+        if (!working.isEmpty())
         {
-            if (!working.isEmpty())
-            {
-                processFields(working);
-            }
+            processFields(working);
+        }
 
-            if (!workingUb.isEmpty())
-            {
-                processUnbreakable(workingUb);
-            }
+        if (!workingUb.isEmpty())
+        {
+            processUnbreakable(workingUb);
+        }
 
-            if (!workingGrief.isEmpty())
-            {
-                processGrief(workingGrief);
-            }
+        if (!workingGrief.isEmpty())
+        {
+            processGrief(workingGrief);
+        }
 
-            if (!workingPlayers.isEmpty())
-            {
-                processPlayers(workingPlayers);
-            }
+        if (!workingPlayers.isEmpty())
+        {
+            processPlayers(workingPlayers);
+        }
 
-            if (!workingSnitchEntries.isEmpty())
-            {
-                processSnitches(workingSnitchEntries);
-            }
+        if (!workingSnitchEntries.isEmpty())
+        {
+            processSnitches(workingSnitchEntries);
         }
     }
 
@@ -2344,7 +2399,10 @@ public final class StorageManager
             updateField(field);
         }
 
-        pending.remove(field.toVec());
+        synchronized (this)
+        {
+            pending.remove(field.toVec());
+        }
     }
 
     /**

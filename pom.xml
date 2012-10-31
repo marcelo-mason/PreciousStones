@@ -190,7 +190,7 @@
         <connection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</connection>
         <developerConnection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</developerConnection>
         <url>http://github.com/SacredCoding/PreciousStones.git/tree/master/</url>
-      <tag>PreciousStones-9.4.0</tag>
+      <tag>PreciousStones</tag>
   </scm>
 
     <properties>
