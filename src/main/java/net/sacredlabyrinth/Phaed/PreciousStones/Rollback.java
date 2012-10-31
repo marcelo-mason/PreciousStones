@@ -76,9 +76,10 @@ public class Rollback implements Runnable
     {
         for (Player player : world.getPlayers())
         {
+            Vec blockLocation = gb.toVec();
             Vec location = new Vec(player.getLocation());
 
-            if (location.equals(gb.toVec()))
+            if (blockLocation.equals(location) || blockLocation.equals(location.add(0, 1, 0)))
             {
                 plugin.getTeleportationManager().teleport(player, location.add(0, 1, 0).getLocation());
             }
