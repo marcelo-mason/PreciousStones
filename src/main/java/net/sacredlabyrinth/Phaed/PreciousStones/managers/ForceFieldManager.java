@@ -626,7 +626,11 @@ public final class ForceFieldManager
             for (World world : worlds)
             {
                 List<Field> fields = fieldsByWorld.get(world.getName());
-                size += fields.size();
+
+                if (fields != null)
+                {
+                    size += fields.size();
+                }
             }
         }
 
@@ -640,11 +644,14 @@ public final class ForceFieldManager
     {
         Collection<Field> fields = fieldsByVec.values();
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            if (field.isDirty())
+            for (Field field : fields)
             {
-                plugin.getStorageManager().offerField(field);
+                if (field.isDirty())
+                {
+                    plugin.getStorageManager().offerField(field);
+                }
             }
         }
     }

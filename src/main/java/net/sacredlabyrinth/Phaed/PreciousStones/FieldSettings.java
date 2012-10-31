@@ -237,7 +237,6 @@ public class FieldSettings
         loadBoolean("no-owner");
         loadBoolean("launch");
         loadBoolean("cannon");
-        loadBoolean("grief-revert-drop");
         loadBoolean("lightning");
         loadBoolean("no-fall-damage");
         loadBoolean("sneak-to-place");
@@ -245,6 +244,8 @@ public class FieldSettings
         loadBoolean("prevent-flow");
         loadBoolean("forester");
         loadBoolean("grief-revert");
+        loadBoolean("grief-revert-drop");
+        loadBoolean("grief-revert-safety");
         loadBoolean("entry-alert");
         loadBoolean("cuboid");
         loadBoolean("visualize-on-src");

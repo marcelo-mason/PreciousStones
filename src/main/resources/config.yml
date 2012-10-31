@@ -69,6 +69,7 @@ force-field-blocks:
     custom-height: 15
     allow-grief: [37, 38, 39, 40]
     grief-revert: true
+    grief-revert-safety: true
     ?welcome-message: true
     ?farewell-message: true
     enable-on-src: true

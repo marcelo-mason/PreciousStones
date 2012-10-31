@@ -185,7 +185,7 @@ public final class GriefUndoManager
             if (!gbs.isEmpty())
             {
                 plugin.getCommunicationManager().notifyRollBack(field, gbs.size());
-                Rollback rollback = new Rollback(gbs, world);
+                Rollback rollback = new Rollback(gbs, world, field);
             }
             return gbs.size();
         }
@@ -210,7 +210,7 @@ public final class GriefUndoManager
             if (!gbs.isEmpty())
             {
                 plugin.getCommunicationManager().notifyRollBack(field, gbs.size());
-                Rollback rollback = new Rollback(gbs, world);
+                Rollback rollback = new Rollback(gbs, world, field);
             }
             return gbs.size();
         }

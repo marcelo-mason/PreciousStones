@@ -55,6 +55,7 @@ public enum FieldFlag
     FORESTER,
     GRIEF_REVERT,
     GRIEF_REVERT_DROP,
+    GRIEF_REVERT_SAFETY,
     ENTRY_ALERT,
     CUBOID,
     ENABLE_ON_SRC,

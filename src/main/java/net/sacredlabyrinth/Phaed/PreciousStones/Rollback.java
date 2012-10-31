@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;
@@ -19,13 +20,15 @@ public class Rollback implements Runnable
     private Queue<GriefBlock> dependentQueue = new LinkedList<GriefBlock>();
     private final int timerID;
     private final World world;
+    private final Field field;
 
     /**
      * @param griefQueue
      * @param world
      */
-    public Rollback(Queue<GriefBlock> griefQueue, World world)
+    public Rollback(Queue<GriefBlock> griefQueue, World world, Field field)
     {
+        this.field = field;
         this.griefQueue = griefQueue;
         this.world = world;
         this.plugin = PreciousStones.getInstance();
@@ -47,7 +50,10 @@ public class Rollback implements Runnable
                 continue;
             }
 
-            movePlayers(gb);
+            if (field.hasFlag(FieldFlag.GRIEF_REVERT_SAFETY))
+            {
+                movePlayers(gb);
+            }
 
             PreciousStones.getInstance().getGriefUndoManager().undoGriefBlock(gb, world);
             i++;
@@ -59,7 +65,10 @@ public class Rollback implements Runnable
             {
                 GriefBlock gb = dependentQueue.poll();
 
-                movePlayers(gb);
+                if (field.hasFlag(FieldFlag.GRIEF_REVERT_SAFETY))
+                {
+                    movePlayers(gb);
+                }
 
                 PreciousStones.getInstance().getGriefUndoManager().undoGriefBlock(gb, world);
                 i++;
