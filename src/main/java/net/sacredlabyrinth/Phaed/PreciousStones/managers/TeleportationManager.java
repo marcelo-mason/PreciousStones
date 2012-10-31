@@ -194,6 +194,34 @@ public class TeleportationManager
         return true;
     }
 
+    public void teleport(Player player, Location destination)
+    {
+        // prepare teleport destination
+
+        World world = destination.getWorld();
+        double x = destination.getBlockX() + .5D;
+        double y = findSafeHeight(destination);
+        double z = destination.getBlockZ() + .5D;
+
+        if (y == -1)
+        {
+            return;
+        }
+
+        if (!world.isChunkLoaded(destination.getBlockX() >> 4, destination.getBlockZ() >> 4))
+        {
+            world.loadChunk(destination.getBlockX() >> 4, destination.getBlockZ() >> 4);
+        }
+
+        Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
+
+        // teleport the player
+
+        player.teleport(loc);
+
+        return;
+    }
+
     private int findSafeHeight(Location dest)
     {
         int y = dest.getBlockY();

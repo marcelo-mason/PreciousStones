@@ -1,8 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -45,6 +47,8 @@ public class Rollback implements Runnable
                 continue;
             }
 
+            movePlayers(gb);
+
             PreciousStones.getInstance().getGriefUndoManager().undoGriefBlock(gb, world);
             i++;
         }
@@ -55,6 +59,8 @@ public class Rollback implements Runnable
             {
                 GriefBlock gb = dependentQueue.poll();
 
+                movePlayers(gb);
+
                 PreciousStones.getInstance().getGriefUndoManager().undoGriefBlock(gb, world);
                 i++;
             }
@@ -62,6 +68,19 @@ public class Rollback implements Runnable
             if (!dependentQueue.iterator().hasNext())
             {
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
+            }
+        }
+    }
+
+    private void movePlayers(GriefBlock gb)
+    {
+        for (Player player : world.getPlayers())
+        {
+            Vec location = new Vec(player.getLocation());
+
+            if (location.equals(gb.toVec()))
+            {
+                plugin.getTeleportationManager().teleport(player, location.add(0, 1, 0).getLocation());
             }
         }
     }
