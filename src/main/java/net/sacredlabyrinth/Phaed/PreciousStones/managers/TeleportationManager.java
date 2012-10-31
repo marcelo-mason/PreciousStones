@@ -195,14 +195,17 @@ public class TeleportationManager
         return true;
     }
 
-    public void teleport(Player player, Location destination)
+    public void teleportAway(Player player)
     {
         // prepare teleport destination
 
+        Location destination = player.getLocation();
         World world = destination.getWorld();
-        double x = destination.getBlockX() + .5D;
-        double y = findSafeHeight(destination);
-        double z = destination.getBlockZ() + .5D;
+
+        Vec safe = findSafeLocation(destination);
+        double x = safe.getX() + .5D;
+        double y = safe.getY();
+        double z = safe.getZ() + .5D;
 
         if (y == -1)
         {
@@ -214,13 +217,11 @@ public class TeleportationManager
             world.loadChunk(destination.getBlockX() >> 4, destination.getBlockZ() >> 4);
         }
 
-        Location loc = new Location(world, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
+        Location loc = new Location(world, x, y, z, destination.getYaw(), destination.getPitch());
 
         // teleport the player
 
         player.teleport(loc);
-
-        return;
     }
 
     private Vec findSafeLocation(Location dest)

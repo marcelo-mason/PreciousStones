@@ -81,7 +81,7 @@ public class Rollback implements Runnable
 
             if (blockLocation.equals(location) || blockLocation.equals(location.add(0, 1, 0)))
             {
-                plugin.getTeleportationManager().teleport(player, location.add(0, 1, 0).getLocation());
+                plugin.getTeleportationManager().teleportAway(player);
             }
         }
     }
