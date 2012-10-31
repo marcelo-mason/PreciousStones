@@ -87,6 +87,12 @@
                                     <shadedPattern>ps.org.mcstats</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.bukkit:bukkit</exclude>
+                                    <exclude>org.yaml:snakeyaml</exclude>
+                                </excludes>
+                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
@@ -97,7 +103,6 @@
     <!-- Dependencies -->
 
     <dependencies>
-
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>

@@ -807,6 +807,25 @@ public class PSEntityListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityDoorBreak(EntityBreakDoorEvent event)
+    {
+        if (event.getBlock() == null)
+        {
+            return;
+        }
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getBlock().getLocation(), FieldFlag.PREVENT_DESTROY);
+
+        if (field != null)
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDeath(EntityDeathEvent event)
     {
         if (event.getEntity() instanceof Player)

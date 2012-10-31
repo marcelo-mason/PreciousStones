@@ -97,7 +97,6 @@ public class TeleportationManager
             Entity entity = entry.getEntity();
             Location destination = entry.getDestination();
             Field sourceField = entry.getSourceField();
-            FieldSettings fs = sourceField.getSettings();
             Vec currentPosition = null;
 
             if (entity instanceof Player)

@@ -8,6 +8,8 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/bukkit/craftbukkit/1.4.2-R0.1-SNAPSHOT/craftbukkit-1.4.2-R0.1-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/bukkit/craftbukkit/1.4.2-R0.1-SNAPSHOT/craftbukkit-1.4.2-R0.1-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/bukkit/craftbukkit/1.4.2-R0.1-SNAPSHOT/craftbukkit-1.4.2-R0.1-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
