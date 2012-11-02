@@ -231,6 +231,14 @@ public class TeleportationManager
         {
             return d;
         }
+        if (blockIsSafe(d.add(0, 1, 0)))
+        {
+            return d.add(0, 1, 0);
+        }
+        if (blockIsSafe(d.add(0, 2, 0)))
+        {
+            return d.add(0, 2, 0);
+        }
         if (blockIsSafe(d.add(1, 0, 0)))
         {
             return d.add(1, 0, 0);
