@@ -239,7 +239,6 @@ public class PSPlayerListener implements Listener
         }
 
         Player player = event.getPlayer();
-        DebugTimer dt = new DebugTimer("onPlayerTeleport");
 
         Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getTo(), FieldFlag.PREVENT_TELEPORT);
 
@@ -340,11 +339,6 @@ public class PSPlayerListener implements Listener
                 plugin.getEntryManager().enterField(player, futureField);
             }
         }
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
-        }
     }
 
     /**
@@ -373,7 +367,6 @@ public class PSPlayerListener implements Listener
             return;
         }
 
-        DebugTimer dt = new DebugTimer("onPlayerMove");
         final Player player = event.getPlayer();
 
         // undo a player's visualization if it exists
@@ -595,11 +588,6 @@ public class PSPlayerListener implements Listener
                 }
             }
         }
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
-        }
     }
 
 
@@ -615,7 +603,6 @@ public class PSPlayerListener implements Listener
         }
 
         final Player player = event.getPlayer();
-        DebugTimer dt = new DebugTimer("onPlayerInteract");
         Block block = event.getClickedBlock();
         ItemStack is = player.getItemInHand();
 
@@ -1335,11 +1322,6 @@ public class PSPlayerListener implements Listener
                 }
             }
         }
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
-        }
     }
 
     private boolean showInfo(Field field, Player player)
@@ -1388,8 +1370,6 @@ public class PSPlayerListener implements Listener
         {
             return;
         }
-
-        DebugTimer dt = new DebugTimer("onPlayerBucketFill");
 
         // snitch
 
@@ -1466,11 +1446,6 @@ public class PSPlayerListener implements Listener
                     plugin.getTranslocationManager().flashFieldBlock(field, player);
                 }
             }
-
-            if (plugin.getSettingsManager().isDebug())
-            {
-                dt.logProcessTime();
-            }
         }
     }
 
@@ -1515,7 +1490,6 @@ public class PSPlayerListener implements Listener
 
         // -------------------------------------------------------------------------------------- placing in a prevent-place area
 
-        DebugTimer dt = new DebugTimer("onPlayerBucketEmpty");
 
         Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
 
@@ -1610,12 +1584,6 @@ public class PSPlayerListener implements Listener
                     }, 5);
                 }
             }
-        }
-
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
         }
     }
 

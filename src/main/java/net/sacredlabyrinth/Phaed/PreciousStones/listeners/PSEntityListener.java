@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
@@ -57,8 +56,6 @@ public class PSEntityListener implements Listener
             return;
         }
 
-        DebugTimer dt = new DebugTimer("onEntityTarget");
-
         Entity target = event.getTarget();
 
         if (target instanceof Player)
@@ -90,11 +87,6 @@ public class PSEntityListener implements Listener
                     }
                 }
             }
-        }
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
         }
     }
 
@@ -241,8 +233,6 @@ public class PSEntityListener implements Listener
         {
             return;
         }
-
-        DebugTimer dt = new DebugTimer("onEntityExplode");
 
         final List<BlockEntry> saved = new ArrayList<BlockEntry>();
         final List<BlockEntry> unprotected = new ArrayList<BlockEntry>();
@@ -465,11 +455,6 @@ public class PSEntityListener implements Listener
                 }
             }, 1);
         }
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
-        }
     }
 
     /**
@@ -511,8 +496,6 @@ public class PSEntityListener implements Listener
         {
             return;
         }
-
-        DebugTimer dt = new DebugTimer("onEntityDamage");
 
         if (event.getEntity() instanceof Player)
         {
@@ -796,11 +779,6 @@ public class PSEntityListener implements Listener
                     }
                 }
             }
-        }
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
         }
     }
 

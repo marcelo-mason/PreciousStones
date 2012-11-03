@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.DebugTimer;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
@@ -61,8 +60,6 @@ public class PSWorldListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onWorldLoad(WorldLoadEvent event)
     {
-        DebugTimer dt = new DebugTimer("onWorldLoad");
-
         World world = event.getWorld();
 
         if (plugin.getSettingsManager().isBlacklistedWorld(world))
@@ -72,13 +69,7 @@ public class PSWorldListener implements Listener
 
         plugin.getStorageManager().loadWorldFields(world.getName());
         plugin.getStorageManager().loadWorldUnbreakables(world.getName());
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
-        }
     }
-
 
     /**
      * @param event

@@ -158,7 +158,7 @@ public final class PermissionsManager
             return true;
         }
 
-        if (perm.contains("preciousstones.bypass.") && perm.contains("preciousstones.bypass.toggle"))
+        if (perm.contains("preciousstones.bypass.") && !perm.contains("preciousstones.bypass.toggle"))
         {
             PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
@@ -170,7 +170,7 @@ public final class PermissionsManager
 
         if (permission != null)
         {
-            if (permission.has(player, "preciousstones.blacklist") && !permission.has(player, "preciousstones.admintest"))
+            if (permission.has(player, "preciousstones.blacklist") && !permission.has(player, "preciousstones.admin.isadmin"))
             {
                 return false;
             }
@@ -179,7 +179,7 @@ public final class PermissionsManager
         }
         else if (handler != null)
         {
-            if (handler.has(player, "preciousstones.blacklist") && !handler.has(player, "preciousstones.admintest"))
+            if (handler.has(player, "preciousstones.blacklist") && !handler.has(player, "preciousstones.admin.isadmin"))
             {
                 return false;
             }

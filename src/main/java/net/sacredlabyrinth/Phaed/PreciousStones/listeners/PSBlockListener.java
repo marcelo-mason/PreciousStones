@@ -57,8 +57,6 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockFromTo(BlockFromToEvent event)
     {
-        DebugTimer dt = new DebugTimer("onBlockFromTo");
-
         Block source = event.getBlock();
         Block destination = event.getToBlock();
 
@@ -99,11 +97,6 @@ public class PSBlockListener implements Listener
         {
             event.setCancelled(true);
         }
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
-        }
     }
 
     /**
@@ -125,8 +118,6 @@ public class PSBlockListener implements Listener
         {
             return;
         }
-
-        DebugTimer dt = new DebugTimer("onBlockIgnite");
 
         if (player != null)
         {
@@ -163,10 +154,6 @@ public class PSBlockListener implements Listener
                     plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceFire");
                 }
             }
-        }
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
         }
     }
 
@@ -348,8 +335,6 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        DebugTimer dt = new DebugTimer("onBlockBreak");
-
         plugin.getSnitchManager().recordSnitchBlockBreak(player, block);
 
         // -------------------------------------------------------------------------------- prevent destroy everywhere
@@ -511,13 +496,6 @@ public class PSBlockListener implements Listener
                 event.setCancelled(true);
                 plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceBreak");
             }
-        }
-
-        // --------------------------------------------------------------------------------
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
         }
     }
 
@@ -700,8 +678,6 @@ public class PSBlockListener implements Listener
         {
             return;
         }
-
-        DebugTimer dt = new DebugTimer("onBlockPlace");
 
         // -------------------------------------------------------------------------------------- placing a block on top of a field
 
@@ -1132,11 +1108,6 @@ public class PSBlockListener implements Listener
         // --------------------------------------------------------------------------------------
 
         plugin.getSnitchManager().recordSnitchBlockPlace(player, block);
-
-        if (plugin.getSettingsManager().isDebug())
-        {
-            dt.logProcessTime();
-        }
     }
 
     private boolean placingFieldChecks(Player player, Block block, Cancellable event)
