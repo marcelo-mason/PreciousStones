@@ -158,13 +158,16 @@ public final class PermissionsManager
             return true;
         }
 
-        if (perm.contains("preciousstones.bypass.") && !perm.contains("preciousstones.bypass.toggle"))
+        if (!perm.contains("preciousstones.bypass.toggle"))
         {
-            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
-
-            if (entry.isBypassDisabled())
+            if (perm.contains("preciousstones.bypass.") || perm.contains("preciousstones.admin.allowed"))
             {
-                return false;
+                PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+
+                if (entry.isBypassDisabled())
+                {
+                    return false;
+                }
             }
         }
 
