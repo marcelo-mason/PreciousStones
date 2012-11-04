@@ -7,6 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -226,7 +227,7 @@ public class CuboidManager
         field.setOpen(true);
         plugin.getVisualizationManager().revertVisualization(player);
 
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
             public void run()
             {
@@ -258,7 +259,7 @@ public class CuboidManager
 
         if (ce != null)
         {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
                 {

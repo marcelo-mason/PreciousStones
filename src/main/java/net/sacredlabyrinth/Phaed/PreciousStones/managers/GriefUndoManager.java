@@ -46,7 +46,7 @@ public final class GriefUndoManager
         if (intervalFields.containsKey(field))
         {
             int taskId = intervalFields.get(field);
-            plugin.getServer().getScheduler().cancelTask(taskId);
+            Bukkit.getScheduler().cancelTask(taskId);
         }
 
         int taskId = startInterval(field);
@@ -294,7 +294,7 @@ public final class GriefUndoManager
 
     private int startInterval(final Field field)
     {
-        return plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable()
         {
             public void run()
             {

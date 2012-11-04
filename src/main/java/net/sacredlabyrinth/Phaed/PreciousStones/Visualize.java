@@ -64,7 +64,7 @@ public class Visualize implements Runnable
             {
                 if (!skipRevert)
                 {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
                         public void run()
                         {

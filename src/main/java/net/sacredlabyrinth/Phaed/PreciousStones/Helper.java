@@ -264,22 +264,6 @@ public class Helper
     }
 
     /**
-     * @param playername
-     * @return
-     */
-    public static Player matchSinglePlayer(String playername)
-    {
-        List<Player> players = Bukkit.getServer().matchPlayer(playername);
-
-        if (players.size() == 1)
-        {
-            return players.get(0);
-        }
-
-        return null;
-    }
-
-    /**
      * Convert block type names to friendly format
      *
      * @param type
@@ -762,5 +746,117 @@ public class Helper
     public static boolean isOnline(String playerName)
     {
         return Bukkit.getServer().getPlayer(playerName) != null;
+    }
+
+    /**
+     * Parse a period string to seconds
+     *
+     * @param period
+     * @return
+     */
+    public static int periodToSeconds(String period)
+    {
+        if (period.contains("s"))
+        {
+            period = period.replace("s", "");
+
+            if (Helper.isInteger(period))
+            {
+                return Integer.parseInt(period);
+            }
+        }
+
+        if (period.contains("m"))
+        {
+            period = period.replace("m", "");
+
+            if (Helper.isInteger(period))
+            {
+                return Integer.parseInt(period) * 60;
+            }
+        }
+
+        if (period.contains("h"))
+        {
+            period = period.replace("h", "");
+
+            if (Helper.isInteger(period))
+            {
+                return Integer.parseInt(period) * 60 * 60;
+            }
+        }
+
+        if (period.contains("d"))
+        {
+            period = period.replace("d", "");
+
+            if (Helper.isInteger(period))
+            {
+                return Integer.parseInt(period) * 60 * 60 * 24;
+            }
+        }
+
+        if (period.contains("w"))
+        {
+            period = period.replace("w", "");
+
+            if (Helper.isInteger(period))
+            {
+                return Integer.parseInt(period) * 60 * 60 * 24 * 7;
+            }
+        }
+
+        return 0;
+    }
+
+    public static String secondsToPeriods(int seconds)
+    {
+        String out = "";
+
+        int w = (60 * 60 * 24 * 7);
+        int d = (60 * 60 * 24);
+        int h = (60 * 60);
+        int m = (60);
+
+        int wd = seconds / w;
+
+        if (wd > 0)
+        {
+            out += wd + "w ";
+            seconds = seconds % w;
+        }
+
+        int dd = seconds / d;
+
+        if (dd > 0)
+        {
+            out += dd + "d ";
+            seconds = seconds % d;
+        }
+
+        int hd = seconds / h;
+
+        if (hd > 0)
+        {
+            out += hd + "h ";
+            seconds = seconds % h;
+        }
+
+        int md = seconds / m;
+
+        if (md > 0)
+        {
+            out += md + "m ";
+            seconds = seconds % m;
+        }
+
+        int sd = seconds;
+
+        if (sd > 0)
+        {
+            out += sd + "s";
+        }
+
+        return Helper.stripTrailing(out, " ");
     }
 }

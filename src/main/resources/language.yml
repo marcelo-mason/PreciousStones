@@ -482,7 +482,10 @@ mustBeAbove: "This field can only be placed above y={1.level}"
 mustBeBelow: "This field can only be placed below y={1.level}"
 cannotEnable: "Could not enable the field"
 cuboidSelectionConflicts: "{red}Cannot extend inside other player's fields"
-
+rentExpired: "Your rent has expired"
+rentAdded: "{aqua}You have rented a total of {1.period}"
+rentRented: "{aqua}You have rented {1.period} of time on this field"
+rentError: "{red}Badly formatted time period, ask owner to fix"
 
 
 

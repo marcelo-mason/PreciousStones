@@ -2306,7 +2306,7 @@ public final class StorageManager
      */
     public int saverScheduler()
     {
-        return plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
+        return Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
         {
             public void run()
             {

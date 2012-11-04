@@ -44,7 +44,7 @@ public class MineManager
 
             plugin.getCommunicationManager().showMine(player);
 
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
                 {

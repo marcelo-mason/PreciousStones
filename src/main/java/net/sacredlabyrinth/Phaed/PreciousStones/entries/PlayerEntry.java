@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;
@@ -501,7 +500,7 @@ public class PlayerEntry
             return;
         }
 
-        Player player = Helper.matchSinglePlayer(name);
+        Player player = Bukkit.getServer().getPlayerExact(name);
 
         if (player != null)
         {

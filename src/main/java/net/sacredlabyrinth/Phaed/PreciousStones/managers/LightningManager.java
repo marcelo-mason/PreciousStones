@@ -40,7 +40,7 @@ public class LightningManager
 
             plugin.getCommunicationManager().showLightning(player);
 
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
                 {

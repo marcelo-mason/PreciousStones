@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -83,7 +84,7 @@ public class ChatBlock
     {
         List<String> out = new ArrayList<String>();
 
-        for(String content : contents)
+        for (String content : contents)
         {
             out.add(format(content));
         }
@@ -725,6 +726,29 @@ public class ChatBlock
 
         output[1] = str.substring(x);
         return output;
+    }
+
+    /**
+     * Outputs a message to a user (if online)
+     *
+     * @param playerName
+     * @param msg
+     */
+    public static void send(String playerName, String msg, Object... args)
+    {
+        Player player = Bukkit.getPlayerExact(playerName);
+
+        if (player != null)
+        {
+            msg = format(msg, args);
+
+            String[] message = colorize(wordWrap(msg, 0));
+
+            for (String out : message)
+            {
+                player.sendMessage(out);
+            }
+        }
     }
 
     /**

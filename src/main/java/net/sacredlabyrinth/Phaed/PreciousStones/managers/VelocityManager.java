@@ -45,7 +45,7 @@ public class VelocityManager
                     final Vector velocity = target.clone().subtract(new Vector(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
                     velocity.multiply(speed / velocity.length());
                     velocity.setY(height > 0 ? height : (((player.getLocation().getPitch() * -1) + 90) / 35));
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
                         public void run()
                         {
@@ -75,7 +75,7 @@ public class VelocityManager
                 {
                     final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getCannonHeight();
                     final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
                         public void run()
                         {
@@ -100,7 +100,7 @@ public class VelocityManager
         {
             int current = fallDamageImmune.get(player.getName());
 
-            plugin.getServer().getScheduler().cancelTask(current);
+            Bukkit.getScheduler().cancelTask(current);
         }
 
         fallDamageImmune.put(player.getName(), startImmuneRemovalDelay(player));
@@ -123,7 +123,7 @@ public class VelocityManager
     {
         final String name = player.getName();
 
-        return plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        return Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
             public void run()
             {

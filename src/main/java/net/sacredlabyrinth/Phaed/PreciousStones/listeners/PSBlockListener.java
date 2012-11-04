@@ -257,7 +257,7 @@ public class PSBlockListener implements Listener
         {
             if (player != null)
             {
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                 {
                     public void run()
                     {
@@ -1104,7 +1104,7 @@ public class PSBlockListener implements Listener
                     }
 
                     final Field finalField = field;
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
                         public void run()
                         {

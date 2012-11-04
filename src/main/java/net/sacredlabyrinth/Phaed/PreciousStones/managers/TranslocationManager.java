@@ -68,7 +68,7 @@ public final class TranslocationManager
 
         // record wood doors in correct order
 
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
             public void run()
             {
@@ -450,7 +450,7 @@ public final class TranslocationManager
             p.sendBlockChange(field.getLocation(), Material.GLASS, (byte) 0);
         }
 
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
             public void run()
             {

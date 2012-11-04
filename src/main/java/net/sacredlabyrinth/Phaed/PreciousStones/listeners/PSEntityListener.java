@@ -374,7 +374,7 @@ public class PSEntityListener implements Listener
 
         if (!tnts.isEmpty())
         {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
                 {
@@ -401,7 +401,7 @@ public class PSEntityListener implements Listener
             final Field field = rollbackField;
             field.setProgress(true);
 
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
                 {
@@ -415,7 +415,7 @@ public class PSEntityListener implements Listener
 
         if (!revert.isEmpty())
         {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
                 {
@@ -435,7 +435,7 @@ public class PSEntityListener implements Listener
         {
             event.setCancelled(true);
 
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 public void run()
                 {

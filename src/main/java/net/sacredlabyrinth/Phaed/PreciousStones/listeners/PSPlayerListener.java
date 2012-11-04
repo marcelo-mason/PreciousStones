@@ -489,7 +489,7 @@ public class PSPlayerListener implements Listener
                             if (!entry.isTeleporting())
                             {
                                 entry.setTeleporting(true);
-                                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                                 {
                                     @Override
                                     public void run()
@@ -520,7 +520,7 @@ public class PSPlayerListener implements Listener
                         if (!entry.isTeleporting())
                         {
                             entry.setTeleporting(true);
-                            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                             {
                                 @Override
                                 public void run()
@@ -547,7 +547,7 @@ public class PSPlayerListener implements Listener
                         if (!entry.isTeleporting())
                         {
                             entry.setTeleporting(true);
-                            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                             {
                                 @Override
                                 public void run()
@@ -574,7 +574,7 @@ public class PSPlayerListener implements Listener
                         if (!entry.isTeleporting())
                         {
                             entry.setTeleporting(true);
-                            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                             {
                                 @Override
                                 public void run()
@@ -1115,7 +1115,7 @@ public class PSPlayerListener implements Listener
 
                                     ChatBlock.send(player, "takenFieldOwnership", oldOwnerName);
 
-                                    Player oldOwner = Helper.matchSinglePlayer(oldOwnerName);
+                                    Player oldOwner = Bukkit.getServer().getPlayerExact(oldOwnerName);
 
                                     if (oldOwner != null)
                                     {
@@ -1574,7 +1574,7 @@ public class PSPlayerListener implements Listener
                     }
 
                     final Field finalField = field;
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
                     {
                         public void run()
                         {

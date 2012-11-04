@@ -245,6 +245,13 @@ public final class ForceFieldManager
             }
         }
 
+        // start renter scheduler
+
+        if (field.hasFlag(FieldFlag.RENTABLE))
+        {
+            field.scheduleNextRentUpdate();
+        }
+
         // add allowed clan
 
         String clan = plugin.getSimpleClansManager().getClan(player.getName());
@@ -983,7 +990,7 @@ public final class ForceFieldManager
 
         for (String playerName : allowed)
         {
-            Player pl = Helper.matchSinglePlayer(playerName);
+            Player pl = Bukkit.getServer().getPlayerExact(playerName);
 
             if (pl != null)
             {
@@ -1103,21 +1110,23 @@ public final class ForceFieldManager
      */
     public boolean isAllowed(Field field, String playerName)
     {
-        if (field == null)
+        if (field == null || playerName == null)
         {
             return false;
         }
 
-        Player player = Helper.matchSinglePlayer(playerName);
+        Player player = Bukkit.getServer().getPlayerExact(playerName);
+
+        if (player == null)
+        {
+            return false;
+        }
 
         // allow if admin
 
-        if (player != null)
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
         {
-            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
-            {
-                return true;
-            }
+            return true;
         }
 
         // deny if doesn't have the required perms

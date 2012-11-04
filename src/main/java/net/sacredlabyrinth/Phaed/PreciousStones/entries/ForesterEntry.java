@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -64,7 +65,7 @@ public class ForesterEntry
 
     private void scheduleNextUpdate()
     {
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), growTime);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Update(), growTime);
     }
 
     private class Update implements Runnable

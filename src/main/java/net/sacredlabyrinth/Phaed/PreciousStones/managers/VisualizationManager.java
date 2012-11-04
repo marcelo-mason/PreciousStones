@@ -76,7 +76,7 @@ public class VisualizationManager
         for (String playerName : visualizations.keySet())
         {
             Visualization vis = visualizations.get(playerName);
-            Player player = Helper.matchSinglePlayer(playerName);
+            Player player = Bukkit.getServer().getPlayerExact(playerName);
 
             if (player != null)
             {

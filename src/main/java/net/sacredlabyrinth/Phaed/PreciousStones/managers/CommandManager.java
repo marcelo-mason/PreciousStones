@@ -168,7 +168,7 @@ public final class CommandManager implements CommandExecutor
 
                                 for (String playerName : args)
                                 {
-                                    Player allowed = Helper.matchSinglePlayer(playerName);
+                                    Player allowed = Bukkit.getServer().getPlayerExact(playerName);
 
                                     // only those with permission can be allowed
 

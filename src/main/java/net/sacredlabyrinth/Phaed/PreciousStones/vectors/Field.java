@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.RentEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,6 +44,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private Field parent;
     private List<Field> children = new ArrayList<Field>();
     private List<String> allowed = new ArrayList<String>();
+    private List<String> renters = new ArrayList<String>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
     private List<GriefBlock> grief = new ArrayList<GriefBlock>();
     private List<SnitchEntry> snitches = new ArrayList<SnitchEntry>();
@@ -50,6 +52,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
     private List<FieldFlag> insertedFlags = new ArrayList<FieldFlag>();
     private List<BlockEntry> fenceBlocks = new ArrayList<BlockEntry>();
+    private List<RentEntry> renterEntries = new ArrayList<RentEntry>();
     private long lastUsed;
     private boolean progress;
     private boolean open;
@@ -454,6 +457,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         List<String> all = new ArrayList<String>();
         all.add(owner.toLowerCase());
         all.addAll(allowed);
+        all.addAll(renters);
         return all;
     }
 
@@ -491,6 +495,10 @@ public class Field extends AbstractVec implements Comparable<Field>
             return true;
         }
 
+        if (renters.contains(target.toLowerCase()))
+        {
+            return true;
+        }
 
         List<String> groups = PreciousStones.getInstance().getPermissionsManager().getGroups(getWorld(), target);
 
@@ -511,15 +519,6 @@ public class Field extends AbstractVec implements Comparable<Field>
                 return true;
             }
         }
-
-        // allows all allies into each others fields
-
-        /*
-        if (PreciousStones.getInstance().getSimpleClansManager().isAllyOwner(owner, target))
-        {
-            return true;
-        }
-        */
 
         return false;
     }
@@ -793,6 +792,14 @@ public class Field extends AbstractVec implements Comparable<Field>
     public List<String> getAllowed()
     {
         return Collections.unmodifiableList(allowed);
+    }
+
+    /**
+     * @return the allowed
+     */
+    public List<String> getRenters()
+    {
+        return Collections.unmodifiableList(renters);
     }
 
     /**
@@ -1124,6 +1131,9 @@ public class Field extends AbstractVec implements Comparable<Field>
         JSONArray insertedFlags = new JSONArray();
         insertedFlags.addAll(getInsertedFlagsStringList());
 
+        JSONArray renterList = new JSONArray();
+        renterList.addAll(getRentersString());
+
         if (!disabledFlags.isEmpty())
         {
             json.put("disabledFlags", disabledFlags);
@@ -1132,6 +1142,11 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (!insertedFlags.isEmpty())
         {
             json.put("insertedFlags", insertedFlags);
+        }
+
+        if (!renterList.isEmpty())
+        {
+            json.put("renterList", renterList);
         }
 
         if (revertSecs > 0)
@@ -1171,6 +1186,18 @@ public class Field extends AbstractVec implements Comparable<Field>
             FieldFlag flag = (FieldFlag) iter.next();
             ll.add(Helper.toFlagStr(flag));
         }
+        return ll;
+    }
+
+    public ArrayList<String> getRentersString()
+    {
+        ArrayList<String> ll = new ArrayList();
+
+        for (RentEntry entry : renterEntries)
+        {
+            ll.add(entry.serialize());
+        }
+
         return ll;
     }
 
@@ -1228,6 +1255,17 @@ public class Field extends AbstractVec implements Comparable<Field>
                             for (Object flagStr : localFlags)
                             {
                                 insertFieldFlag(flagStr.toString());
+                            }
+                        }
+                        else if (flag.equals("renterList"))
+                        {
+                            JSONArray renterList = (JSONArray) flags.get(flag);
+
+                            for (Object flagStr : renterList)
+                            {
+                                RentEntry entry = new RentEntry(flagStr.toString());
+                                renters.add(entry.getPlayerName());
+                                renterEntries.add(entry);
                             }
                         }
                         else if (flag.equals("revertSecs"))
@@ -1630,7 +1668,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         if (settings != null && settings.getAutoDisableSeconds() > 0)
         {
-            Player player = Helper.matchSinglePlayer(owner);
+            Player player = Bukkit.getServer().getPlayerExact(owner);
             final String theOwner = owner;
             final Field thisField = this;
 
@@ -1650,7 +1688,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 {
                     if (!thisField.isDisabled())
                     {
-                        Player player = Helper.matchSinglePlayer(theOwner);
+                        Player player = Bukkit.getServer().getPlayerExact(theOwner);
 
                         if (player != null)
                         {
@@ -1932,7 +1970,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean containsPlayer(String playerName)
     {
-        Player player = Helper.matchSinglePlayer(playerName);
+        Player player = Bukkit.getServer().getPlayerExact(playerName);
 
         if (player != null)
         {
@@ -2179,7 +2217,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             for (String allowed : allAllowed)
             {
-                Player player = Helper.matchSinglePlayer(allowed);
+                Player player = Bukkit.getServer().getPlayerExact(allowed);
 
                 if (player != null)
                 {
@@ -2233,5 +2271,91 @@ public class Field extends AbstractVec implements Comparable<Field>
     public void setForested(boolean forested)
     {
         this.forested = forested;
+    }
+
+    public RentEntry getRenter(Player player)
+    {
+        for (RentEntry entry : renterEntries)
+        {
+            if (entry.getPlayerName().equals(player.getName()))
+            {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
+    public void addRent(Player player, String period)
+    {
+        int seconds = Helper.periodToSeconds(period);
+
+        if (seconds == 0)
+        {
+            ChatBlock.send(player, "rentError");
+            return;
+        }
+
+        RentEntry renter = getRenter(player);
+
+        if (renter != null)
+        {
+            renter.addSeconds(seconds);
+            ChatBlock.send(player, "rentAdded", Helper.secondsToPeriods(renter.getPeriodSeconds()));
+        }
+        else
+        {
+            renterEntries.add(new RentEntry(player.getName(), seconds));
+            renters.add(player.getName());
+
+            if (renterEntries.size() == 1)
+            {
+                scheduleNextRentUpdate();
+            }
+            ChatBlock.send(player, "rentRented", period);
+        }
+
+        dirty.add(DirtyFieldReason.FLAGS);
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void removeRenter(RentEntry entry)
+    {
+        renterEntries.remove(entry);
+        renters.remove(entry.getPlayerName());
+
+        dirty.add(DirtyFieldReason.FLAGS);
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void scheduleNextRentUpdate()
+    {
+        if (!renterEntries.isEmpty())
+        {
+            Bukkit.getScheduler().scheduleAsyncDelayedTask(PreciousStones.getInstance(), new Update(), 20);
+        }
+    }
+
+    private class Update implements Runnable
+    {
+        public void run()
+        {
+            for (final RentEntry entry : renterEntries)
+            {
+                if (entry.isDone())
+                {
+                    Bukkit.getScheduler().scheduleAsyncDelayedTask(PreciousStones.getInstance(), new Runnable()
+                    {
+                        public void run()
+                        {
+                            removeRenter(entry);
+                            ChatBlock.send(entry.getPlayerName(), "rentExpired");
+                        }
+                    }, 0);
+                }
+            }
+
+            scheduleNextRentUpdate();
+        }
     }
 }

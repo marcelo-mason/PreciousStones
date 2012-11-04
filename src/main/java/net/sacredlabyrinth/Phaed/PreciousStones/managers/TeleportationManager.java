@@ -39,7 +39,7 @@ public class TeleportationManager
             {
                 if (sourceField.getLocation().distance(destinationField.getLocation()) > sourceField.getSettings().getTeleportMaxDistance())
                 {
-                    Player player = Helper.matchSinglePlayer(sourceField.getOwner());
+                    Player player = Bukkit.getServer().getPlayerExact(sourceField.getOwner());
 
                     if (player != null)
                     {
@@ -59,7 +59,7 @@ public class TeleportationManager
                     }
                     else
                     {
-                        Player player = Helper.matchSinglePlayer(sourceField.getOwner());
+                        Player player = Bukkit.getServer().getPlayerExact(sourceField.getOwner());
 
                         if (player != null)
                         {

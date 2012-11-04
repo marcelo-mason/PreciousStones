@@ -45,7 +45,7 @@ public final class EntryManager
 
     private void scheduleNextUpdate()
     {
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Update(), 20L);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Update(), 20L);
     }
 
     private class Update implements Runnable
@@ -71,7 +71,7 @@ public final class EntryManager
     {
         for (String playerName : updatableEntries.keySet())
         {
-            Player player = Helper.matchSinglePlayer(playerName);
+            Player player = Bukkit.getServer().getPlayerExact(playerName);
 
             if (player == null)
             {
@@ -615,7 +615,7 @@ public final class EntryManager
         {
             for (String playerName : entries.keySet())
             {
-                Player player = Helper.matchSinglePlayer(playerName);
+                Player player = Bukkit.getServer().getPlayerExact(playerName);
 
                 if (player == null)
                 {
@@ -639,7 +639,7 @@ public final class EntryManager
 
             for (String playerName : updatableEntries.keySet())
             {
-                Player player = Helper.matchSinglePlayer(playerName);
+                Player player = Bukkit.getServer().getPlayerExact(playerName);
 
                 if (player == null)
                 {
