@@ -481,7 +481,7 @@ worldNotFound: "World not found"
 mustBeAbove: "This field can only be placed above y={1.level}"
 mustBeBelow: "This field can only be placed below y={1.level}"
 cannotEnable: "Could not enable the field"
-
+cuboidSelectionConflicts: "{red}Cannot extend inside other player's fields"
 
 
 
