@@ -139,7 +139,9 @@ public enum FieldFlag
     NO_DROPPING_ITEMS,
     NO_PLAYER_SPRINT,
     PREVENT_VEHICLE_ENTER,
-    PREVENT_VEHICLE_EXIT
+    PREVENT_VEHICLE_EXIT,
+    RENTABLE,
+    SELLABLE
     ;
 
     /**
@@ -268,7 +270,9 @@ public enum FieldFlag
         FieldFlag.MUST_BE_ABOVE,
         FieldFlag.MUST_BE_BELOW,
         FieldFlag.DISABLE_ON_LOGOFF,
-        FieldFlag.ENABLE_ON_LOGON
+        FieldFlag.ENABLE_ON_LOGON,
+        FieldFlag.RENTABLE,
+        FieldFlag.SELLABLE
     };
 
     /**

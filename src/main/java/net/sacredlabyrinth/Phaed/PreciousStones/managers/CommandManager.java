@@ -279,7 +279,6 @@ public final class CommandManager implements CommandExecutor
                         {
                             for (String playerName : args)
                             {
-
                                 int count = plugin.getForceFieldManager().removeAll(player, playerName);
 
                                 if (count > 0)
@@ -297,7 +296,7 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals(ChatBlock.format("commandAllowed")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowed") && hasplayer)
                     {
-                        Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                        Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                         if (field != null)
                         {
@@ -377,7 +376,7 @@ public final class CommandManager implements CommandExecutor
                             fieldName = Helper.toMessage(args);
                         }
 
-                        Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                        Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                         if (field != null)
                         {
@@ -509,7 +508,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             int radius = Integer.parseInt(args[0]);
 
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                             if (field != null)
                             {
@@ -564,7 +563,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             float velocity = Float.parseFloat(args[0]);
 
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                             if (field != null)
                             {
@@ -702,7 +701,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             String flagStr = args[0];
 
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                             if (field != null)
                             {
@@ -921,7 +920,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             String flagStr = args[0];
 
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                             if (field != null)
                             {
@@ -974,7 +973,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             int interval = Integer.parseInt(args[0]);
 
-                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.GRIEF_REVERT);
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.GRIEF_REVERT);
 
                             if (field != null)
                             {
