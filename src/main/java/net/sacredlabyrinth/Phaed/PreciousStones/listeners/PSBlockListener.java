@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -14,6 +15,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
+import org.bukkit.event.painting.PaintingBreakByEntityEvent;
+import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import java.util.List;
 import java.util.Set;
@@ -317,6 +320,11 @@ public class PSBlockListener implements Listener
             return;
         }
 
+        handleBreak(player, block, event);
+    }
+
+    private void handleBreak(Player player, Block block, Cancellable event)
+    {
         // do not allow break of non-field blocks during cuboid definition
 
         if (plugin.getCuboidManager().hasOpenCuboid(player) && !plugin.getForceFieldManager().isField(block))
@@ -656,6 +664,11 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         final Block block = event.getBlock();
         final Player player = event.getPlayer();
 
@@ -664,11 +677,11 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        if (event.isCancelled())
-        {
-            return;
-        }
+        handlePlace(player, block, event);
+    }
 
+    private void handlePlace(final Player player, final Block block, Cancellable event)
+    {
         if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld()))
         {
             return;
@@ -681,24 +694,28 @@ public class PSBlockListener implements Listener
 
         // -------------------------------------------------------------------------------------- placing a block on top of a field
 
-        BlockState state = event.getBlockReplacedState();
-
-        Field existingField = plugin.getForceFieldManager().getField(state.getLocation());
-
-        if (existingField != null)
+        if (event instanceof BlockPlaceEvent)
         {
-            if (state.getTypeId() > 0)
+            BlockPlaceEvent e = (BlockPlaceEvent) event;
+
+            BlockState state = e.getBlockReplacedState();
+
+            Field existingField = plugin.getForceFieldManager().getField(state.getLocation());
+
+            if (existingField != null)
             {
-                if (!breakingFieldChecks(player, block, existingField, event))
+                if (state.getTypeId() > 0)
                 {
-                    event.setCancelled(true);
+                    if (!breakingFieldChecks(player, block, existingField, event))
+                    {
+                        event.setCancelled(true);
+                    }
+                    return;
                 }
-                return;
             }
         }
 
         // -------------------------------------------------------------------------------------- placing blocks touching a field block that you don't own
-
 
         Block fieldBlock = plugin.getForceFieldManager().touchingFieldBlock(block);
 
@@ -823,11 +840,13 @@ public class PSBlockListener implements Listener
             }
         }
 
+        // -------------------------------------------------------------------------------------- placing a field
+
         if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
         {
             if (placingFieldChecks(player, block, event))
             {
-                plugin.getForceFieldManager().add(block, player, event);
+                plugin.getForceFieldManager().add(block, player, (BlockPlaceEvent) event);
             }
         }
 
@@ -1029,9 +1048,14 @@ public class PSBlockListener implements Listener
                 {
                     if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                     {
-                        BlockState blockState = event.getBlockReplacedState();
+                        if (event instanceof BlockPlaceEvent)
+                        {
+                            BlockPlaceEvent e = (BlockPlaceEvent) event;
+                            BlockState blockState = e.getBlockReplacedState();
 
-                        plugin.getGriefUndoManager().addBlock(field, blockState);
+                            plugin.getGriefUndoManager().addBlock(field, blockState);
+                        }
+
                         plugin.getStorageManager().offerGrief(field);
                     }
                 }
@@ -1331,6 +1355,81 @@ public class PSBlockListener implements Listener
         }
 
         return true;
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPaintingBreak(PaintingBreakByEntityEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        if(!(event.getRemover() instanceof Player))
+        {
+            return;
+        }
+
+        Location loc = event.getPainting().getLocation();
+        Player player = (Player)event.getRemover();
+
+        if (loc == null || player == null)
+        {
+            return;
+        }
+
+        // -------------------------------------------------------------------------------- breaking a prevent destroy area
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_DESTROY);
+
+        if (field != null)
+        {
+            if (FieldFlag.PREVENT_DESTROY.applies(field, player))
+            {
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPaintingPlace(PaintingPlaceEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        Location loc = event.getPainting().getLocation();
+        Player player = event.getPlayer();
+
+        if (loc == null || player == null)
+        {
+            return;
+        }
+
+        // -------------------------------------------------------------------------------------- placing in a prevent place area
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_PLACE);
+
+        if (field != null)
+        {
+            if (FieldFlag.PREVENT_PLACE.applies(field, player))
+            {
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                {
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 
     /**
