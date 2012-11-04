@@ -175,12 +175,20 @@
 
     <repositories>
         <repository>
-            <id>remote-repos</id>
-            <url>http://repo.sacredlabyrinth.net:8081/artifactory/remote-repos</url>
-        </repository>
-        <repository>
             <id>Plugin Metrics</id>
             <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
+        <repository>
+            <id>bukkit-repo</id>
+            <url>http://repo.bukkit.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+        <repository>
+            <id>ext-release-local</id>
+            <url>http://repo.sacredlabyrinth.net:8081/artifactory/ext-release-local</url>
         </repository>
     </repositories>
 
