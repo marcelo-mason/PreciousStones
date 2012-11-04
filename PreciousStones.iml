@@ -16,20 +16,20 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:craftbukkit:1.4.2-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:Vault:1.2.16" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldguard:5.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:4.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:dummypermscompat:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.0.0-R1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:Vault:1.2.19" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldguard:5.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:5.4.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:jchronic:0.2.4a" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: junit:junit:4.8.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun:iconomy:5.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.khelekore:prtree:1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.4.2-R0.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:commandbook:2.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.opencsv:opencsv:2.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun:iconomy:5.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.khelekore:prtree:1.5.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: ru.tehkode:PermissionsEx:1.19.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.trc202:CombatTag:3.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.griefcraft:LWC:4.0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yi.acru.bukkit:Lockette:1.7.4" level="project" />
