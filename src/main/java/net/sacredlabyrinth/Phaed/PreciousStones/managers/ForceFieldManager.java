@@ -1988,8 +1988,6 @@ public final class ForceFieldManager
             return null;
         }
 
-        // create throwaway field to test intersection
-
         Set<Field> overlapping = ce.getField().getOverlappingFields();
 
         ArrayList<Field> out = new ArrayList<Field>();

@@ -313,12 +313,14 @@ public class CuboidManager
 
             plugin.getVisualizationManager().revertVisualization(player);
             plugin.getVisualizationManager().revertOutline(player);
+            plugin.getForceFieldManager().removeSourceField(field);
 
             ce.finalizeField();
             field.setOpen(false);
 
             openCuboids.remove(player.getName());
 
+            plugin.getForceFieldManager().addSourceField(field);
             plugin.getVisualizationManager().visualizeSingleFieldFast(player, field);
             plugin.getStorageManager().offerField(field);
             plugin.getCommunicationManager().notifyPlaceCuboid(player, field);
