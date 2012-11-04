@@ -301,6 +301,7 @@ public class FieldSettings
         loadBoolean("disable-when-online");
         loadBoolean("no-growth");
         loadBoolean("single-use");
+        loadBoolean("commands-on-overlap");
 
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");
