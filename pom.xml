@@ -107,61 +107,56 @@
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <version>1.4.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
             <version>1.2.19</version>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nijikokun.bukkit</groupId>
+            <artifactId>Permissions</artifactId>
+            <version>2.7.4</version>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>
             <version>5.6</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
             <version>1.19.3</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.trc202</groupId>
             <artifactId>CombatTag</artifactId>
             <version>3.3</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.griefcraft</groupId>
             <artifactId>LWC</artifactId>
             <version>4.0.2</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.yi.acru.bukkit</groupId>
             <artifactId>Lockette</artifactId>
             <version>1.7.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.sacredlabyrinth.phaed</groupId>
             <artifactId>simpleclans</artifactId>
             <version>2.3.3</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>uk.co.oliwali</groupId>
             <artifactId>HawkEye</artifactId>
             <version>1.0.7b</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.platymuus</groupId>
             <artifactId>bukkit-permissions</artifactId>
             <version>1.5</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mcstats</groupId>
