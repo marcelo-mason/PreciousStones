@@ -225,7 +225,7 @@ public class CuboidManager
         openCuboids.put(player.getName(), ce);
 
         field.setOpen(true);
-        plugin.getVisualizationManager().revertVisualization(player);
+        plugin.getVisualizationManager().revert(player);
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
@@ -332,7 +332,7 @@ public class CuboidManager
                 }
             }
 
-            plugin.getVisualizationManager().revertVisualization(player);
+            plugin.getVisualizationManager().revert(player);
             plugin.getVisualizationManager().revertOutline(player);
             plugin.getForceFieldManager().removeSourceField(field);
 
@@ -404,7 +404,7 @@ public class CuboidManager
      */
     public void cancelOpenCuboid(Player player)
     {
-        plugin.getVisualizationManager().revertVisualization(player);
+        plugin.getVisualizationManager().revert(player);
         plugin.getVisualizationManager().revertOutline(player);
         openCuboids.remove(player.getName());
         ChatBlock.send(player, "cuboidCancelled");

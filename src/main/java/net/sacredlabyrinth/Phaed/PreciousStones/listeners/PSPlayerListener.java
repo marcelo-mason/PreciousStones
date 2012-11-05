@@ -142,7 +142,7 @@ public class PSPlayerListener implements Listener
             {
                 if (!plugin.getCuboidManager().hasOpenCuboid(player))
                 {
-                    plugin.getVisualizationManager().revertVisualization(player);
+                    plugin.getVisualizationManager().revert(player);
                 }
             }
         }
@@ -265,7 +265,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (!plugin.getCuboidManager().hasOpenCuboid(player))
                     {
-                        plugin.getVisualizationManager().revertVisualization(player);
+                        plugin.getVisualizationManager().revert(player);
                     }
                 }
             }
@@ -380,7 +380,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (!plugin.getCuboidManager().hasOpenCuboid(player))
                     {
-                        plugin.getVisualizationManager().revertVisualization(player);
+                        plugin.getVisualizationManager().revert(player);
                     }
                 }
             }

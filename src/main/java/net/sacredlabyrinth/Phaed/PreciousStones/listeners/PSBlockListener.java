@@ -654,6 +654,8 @@ public class PSBlockListener implements Listener
                 }
             }
         }
+
+        plugin.getVisualizationManager().revert(player);
     }
 
     /**

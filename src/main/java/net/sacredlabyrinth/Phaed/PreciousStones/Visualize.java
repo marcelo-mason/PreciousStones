@@ -68,7 +68,7 @@ public class Visualize implements Runnable
                     {
                         public void run()
                         {
-                            plugin.getVisualizationManager().revertVisualization(player);
+                            plugin.getVisualizationManager().revert(player);
                         }
                     }, 20L * seconds);
                 }

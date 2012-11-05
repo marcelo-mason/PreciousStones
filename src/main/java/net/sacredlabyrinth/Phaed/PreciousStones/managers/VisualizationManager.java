@@ -659,7 +659,7 @@ public class VisualizationManager
      *
      * @param player
      */
-    public void revertVisualization(Player player)
+    public void revert(Player player)
     {
         Visualization vis = visualizations.get(player.getName());
 
