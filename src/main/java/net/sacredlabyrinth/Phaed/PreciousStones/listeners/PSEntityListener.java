@@ -879,8 +879,6 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onPaintingBreak(PaintingBreakByEntityEvent event)
     {
-        PreciousStones.debug(1);
-
         Painting painting = event.getPainting();
 
         if (plugin.getSettingsManager().isBlacklistedWorld(painting.getLocation().getWorld()))
@@ -896,20 +894,16 @@ public class PSEntityListener implements Listener
         Player player = (Player) event.getRemover();
         Location loc = event.getPainting().getLocation();
 
-        PreciousStones.debug(2);
-
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_DESTROY);
-
-            PreciousStones.debug(3);
 
             if (field != null)
             {
                 if (FieldFlag.PREVENT_DESTROY.applies(field, player))
                 {
-                    PreciousStones.debug(4);
                     event.setCancelled(true);
+                    plugin.getCommunicationManager().warnDestroyPainting(player, painting, field);
                 }
             }
         }
@@ -942,6 +936,7 @@ public class PSEntityListener implements Listener
                 else
                 {
                     event.setCancelled(true);
+                    plugin.getCommunicationManager().warnPlacePainting(player, painting, field);
                 }
             }
         }

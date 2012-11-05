@@ -1417,10 +1417,7 @@ public class PSBlockListener implements Listener
             {
                 if (!blockField.getSettings().inDestroyBlacklist(block))
                 {
-                    if (blockField != null)
-                    {
-                        event.setCancelled(true);
-                    }
+                    event.setCancelled(true);
                 }
             }
         }
