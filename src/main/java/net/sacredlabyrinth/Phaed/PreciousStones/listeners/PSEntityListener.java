@@ -864,7 +864,7 @@ public class PSEntityListener implements Listener
                 event.setCancelled(true);
             }
         }
-        else
+        else if (entity instanceof EnderDragon || entity instanceof Monster || entity instanceof Monster || entity instanceof Ghast)
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
 
