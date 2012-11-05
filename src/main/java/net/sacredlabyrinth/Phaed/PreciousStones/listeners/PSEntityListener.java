@@ -16,8 +16,6 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
-import org.bukkit.event.painting.PaintingBreakEvent;
-import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingPlaceEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
@@ -864,7 +862,7 @@ public class PSEntityListener implements Listener
                 event.setCancelled(true);
             }
         }
-        else if (entity instanceof EnderDragon || entity instanceof Monster || entity instanceof Monster || entity instanceof Ghast)
+        else if (entity instanceof EnderDragon || entity instanceof Monster || entity instanceof Ghast)
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
 
@@ -879,35 +877,39 @@ public class PSEntityListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPaintingBreak(PaintingBreakEvent event)
+    public void onPaintingBreak(PaintingBreakByEntityEvent event)
     {
+        PreciousStones.debug(1);
+
         Painting painting = event.getPainting();
-        RemoveCause cause = event.getCause();
 
         if (plugin.getSettingsManager().isBlacklistedWorld(painting.getLocation().getWorld()))
         {
             return;
         }
 
-        if (cause.equals(RemoveCause.ENTITY))
+        if (!(event.getRemover() instanceof Player))
         {
-            PaintingBreakByEntityEvent pre = (PaintingBreakByEntityEvent) event;
+            return;
+        }
 
-            if (pre.getRemover() instanceof Player)
+        Player player = (Player) event.getRemover();
+        Location loc = event.getPainting().getLocation();
+
+        PreciousStones.debug(2);
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_DESTROY);
+
+            PreciousStones.debug(3);
+
+            if (field != null)
             {
-                Player player = (Player) pre.getRemover();
-
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+                if (FieldFlag.PREVENT_DESTROY.applies(field, player))
                 {
-                    Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_DESTROY);
-
-                    if (field != null)
-                    {
-                        if (FieldFlag.PREVENT_DESTROY.applies(field, player))
-                        {
-                            event.setCancelled(true);
-                        }
-                    }
+                    PreciousStones.debug(4);
+                    event.setCancelled(true);
                 }
             }
         }

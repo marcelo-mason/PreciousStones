@@ -5,7 +5,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,8 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.painting.PaintingBreakByEntityEvent;
-import org.bukkit.event.painting.PaintingPlaceEvent;
 
 import java.util.List;
 import java.util.Set;
@@ -1356,81 +1353,6 @@ public class PSBlockListener implements Listener
         }
 
         return true;
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPaintingBreak(PaintingBreakByEntityEvent event)
-    {
-        if (event.isCancelled())
-        {
-            return;
-        }
-
-        if(!(event.getRemover() instanceof Player))
-        {
-            return;
-        }
-
-        Location loc = event.getPainting().getLocation();
-        Player player = (Player)event.getRemover();
-
-        if (loc == null || player == null)
-        {
-            return;
-        }
-
-        // -------------------------------------------------------------------------------- breaking a prevent destroy area
-
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_DESTROY);
-
-        if (field != null)
-        {
-            if (FieldFlag.PREVENT_DESTROY.applies(field, player))
-            {
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
-                {
-                    event.setCancelled(true);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPaintingPlace(PaintingPlaceEvent event)
-    {
-        if (event.isCancelled())
-        {
-            return;
-        }
-
-        Location loc = event.getPainting().getLocation();
-        Player player = event.getPlayer();
-
-        if (loc == null || player == null)
-        {
-            return;
-        }
-
-        // -------------------------------------------------------------------------------------- placing in a prevent place area
-
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_PLACE);
-
-        if (field != null)
-        {
-            if (FieldFlag.PREVENT_PLACE.applies(field, player))
-            {
-                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
-                {
-                    event.setCancelled(true);
-                }
-            }
-        }
     }
 
     /**
