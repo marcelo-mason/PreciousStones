@@ -619,7 +619,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      *
      * @return
      */
-    public Set<Field> getOverlappingFields()
+    public Set<Field> getIntersectingFields()
     {
         Set<ChunkVec> envelopingChunks = getEnvelopingChunks();
 
@@ -636,26 +636,9 @@ public class Field extends AbstractVec implements Comparable<Field>
                     continue;
                 }
 
-                World world = field.getBlock().getWorld();
-
-                List<Vector> corners = field.getCorners();
-
-                for (Vector corner : corners)
+                if (field.intersects(this))
                 {
-                    if (this.envelops(corner.toLocation(world)))
-                    {
-                        sources.add(field);
-                    }
-                }
-
-                corners = this.getCorners();
-
-                for (Vector corner : corners)
-                {
-                    if (field.envelops(corner.toLocation(world)))
-                    {
-                        sources.add(field);
-                    }
+                    sources.add(field);
                 }
             }
         }

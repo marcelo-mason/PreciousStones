@@ -261,7 +261,7 @@ public final class ForceFieldManager
             field.addAllowed("c:" + clan);
         }
 
-        // allow all owners of overlapping fields into the field
+        // allow all owners of intersecting fields into the field
 
         plugin.getForceFieldManager().addAllowOverlappingOwners(field);
 
@@ -1254,7 +1254,7 @@ public final class ForceFieldManager
     }
 
     /**
-     * Whether another field that is overlapping the field is owned by the allowedName
+     * Whether another field that is intersecting the field is owned by the allowedName
      *
      * @param field
      * @param allowedName
@@ -1262,7 +1262,7 @@ public final class ForceFieldManager
      */
     public boolean conflictOfInterestExists(Field field, String allowedName)
     {
-        Set<Field> sources = field.getOverlappingFields();
+        Set<Field> sources = field.getIntersectingFields();
 
         for (Field source : sources)
         {
@@ -1292,7 +1292,7 @@ public final class ForceFieldManager
      */
     public boolean hasSubFields(Field field)
     {
-        Set<Field> sources = field.getOverlappingFields();
+        Set<Field> sources = field.getIntersectingFields();
 
         for (Field source : sources)
         {
@@ -1958,11 +1958,11 @@ public final class ForceFieldManager
 
         Field placedField = new Field(placedBlock, fs.getRadius(), fs.getHeight());
 
-        Set<Field> overlapping = placedField.getOverlappingFields();
+        Set<Field> intersecting = placedField.getIntersectingFields();
 
         ArrayList<Field> out = new ArrayList<Field>();
 
-        for (Field field : overlapping)
+        for (Field field : intersecting)
         {
             if (field.hasFlag(FieldFlag.NO_CONFLICT))
             {
@@ -1974,13 +1974,44 @@ public final class ForceFieldManager
                 continue;
             }
 
-            if (field.intersects(placedField))
-            {
-                out.add(field);
-            }
+            out.add(field);
         }
 
         return getSmallestVolumeField(out);
+    }
+
+    /**
+     * Whether the provided field would conflict with existing fields in the area
+     *
+     * @param mockField
+     * @param placer
+     * @return
+     */
+    public boolean existsConflict(Field mockField, Player placer)
+    {
+        if (mockField.hasFlag(FieldFlag.NO_CONFLICT))
+        {
+            return false;
+        }
+
+        Set<Field> intersecting = mockField.getIntersectingFields();
+
+        for (Field field : intersecting)
+        {
+            if (field.hasFlag(FieldFlag.NO_CONFLICT))
+            {
+                continue;
+            }
+
+            if (isAllowed(field, placer.getName()))
+            {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1997,11 +2028,11 @@ public final class ForceFieldManager
             return null;
         }
 
-        Set<Field> overlapping = ce.getField().getOverlappingFields();
+        Set<Field> intersecting = ce.getField().getIntersectingFields();
 
         ArrayList<Field> out = new ArrayList<Field>();
 
-        for (Field field : overlapping)
+        for (Field field : intersecting)
         {
             if (field.hasFlag(FieldFlag.NO_CONFLICT))
             {
@@ -2013,17 +2044,14 @@ public final class ForceFieldManager
                 continue;
             }
 
-            if (field.intersects(ce.getField()))
-            {
-                out.add(field);
-            }
+            out.add(field);
         }
 
         return getSmallestVolumeField(out);
     }
 
     /**
-     * Allows all owners of fields that are overlapping
+     * Allows all owners of fields that are intersecting
      *
      * @param field
      */
@@ -2043,9 +2071,9 @@ public final class ForceFieldManager
 
         // create throwaway field to test intersection
 
-        Set<Field> overlapping = field.getOverlappingFields();
+        Set<Field> intersecting = field.getIntersectingFields();
 
-        for (Field overlap : overlapping)
+        for (Field overlap : intersecting)
         {
             if (overlap.hasFlag(FieldFlag.NO_CONFLICT))
             {

@@ -131,26 +131,6 @@ public class CuboidManager
      */
     public boolean processSelectedBlock(Player player, Block block)
     {
-        // find conflicts
-
-        List<Field> sourceFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
-
-        for (Field field : sourceFields)
-        {
-            if (field.hasFlag(FieldFlag.NO_CONFLICT))
-            {
-                continue;
-            }
-
-            if (plugin.getForceFieldManager().isAllowed(field, player.getName()))
-            {
-                continue;
-            }
-
-            ChatBlock.send(player, "cuboidSelectionConflicts");
-            return false;
-        }
-
         CuboidEntry openCuboid = getOpenCuboid(player);
 
         if (!plugin.getVisualizationManager().isOutlineBlock(player, block))
@@ -172,6 +152,19 @@ public class CuboidManager
                         }
                         else
                         {
+                            // find conflicts
+
+                            CuboidEntry clone = ce.Clone();
+                            clone.addSelected(block);
+
+                            if (plugin.getForceFieldManager().existsConflict(clone.getMockField(), player))
+                            {
+                                ChatBlock.send(player, "cuboidSelectionConflicts");
+                                return false;
+                            }
+
+                            // add block
+
                             ce.addSelected(block);
                             plugin.getVisualizationManager().displaySingle(player, Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType()), block);
                         }

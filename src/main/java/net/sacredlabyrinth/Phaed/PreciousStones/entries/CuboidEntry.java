@@ -32,6 +32,18 @@ public class CuboidEntry
         maxz = field.getZ();
     }
 
+    public CuboidEntry(Field field, int minx, int maxx, int miny, int maxy, int minz, int maxz, List<BlockEntry> selected, Location expanded)
+    {
+        this.field = field;
+        this.maxx = maxx;
+        this.minx = minx;
+        this.maxy = maxy;
+        this.miny = miny;
+        this.maxz = maxz;
+        this.minz = minz;
+        this.selected = new ArrayList<BlockEntry>(selected);
+        this.expanded = expanded;
+    }
     /**
      * Add a single selected block
      *
@@ -368,5 +380,15 @@ public class CuboidEntry
         }
 
         return maxz;
+    }
+
+    public Field getMockField()
+    {
+        return new Field(field.getX(), field.getY(), field.getZ(),minx,  miny,  minz,  maxx,  maxy,  maxz, 0, field.getWorld(), field.getTypeEntry(), field.getOwner(), field.getName(), 0);
+    }
+
+    public CuboidEntry Clone()
+    {
+        return new CuboidEntry(field, minx, maxx, miny, maxy, minz, maxz, selected, expanded);
     }
 }
