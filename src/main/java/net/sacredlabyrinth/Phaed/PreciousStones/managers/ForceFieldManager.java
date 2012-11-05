@@ -1129,6 +1129,13 @@ public final class ForceFieldManager
             return true;
         }
 
+        // false if settings missing
+
+        if (field.getSettings() == null)
+        {
+            return false;
+        }
+
         // deny if doesn't have the required perms
 
         if (!field.getSettings().getRequiredPermissionAllow().isEmpty())

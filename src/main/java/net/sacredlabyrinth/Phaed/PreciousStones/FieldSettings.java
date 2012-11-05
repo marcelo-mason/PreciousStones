@@ -45,9 +45,9 @@ public class FieldSettings
     private boolean mineHasFire = false;
     private int mine = 6;
     private String groupOnEntry = null;
-    private String requiredPermissionAllow = null;
-    private String requiredPermissionUse = null;
-    private String requiredPermission = null;
+    private String requiredPermissionAllow = "";
+    private String requiredPermissionUse = "";
+    private String requiredPermission = "";
     private GameMode forceEntryGameMode = null;
     private GameMode forceLeavingGameMode = null;
     private String title;
