@@ -44,7 +44,7 @@ public class FieldSettings
     private int mustBeBelow = 0;
     private boolean mineHasFire = false;
     private int mine = 6;
-    private String groupOnEntry = null;
+    private String groupOnEntry = "";
     private String requiredPermissionAllow = "";
     private String requiredPermissionUse = "";
     private String requiredPermission = "";
@@ -308,13 +308,6 @@ public class FieldSettings
         requiredPermissionAllow = loadString("required-permission-allow");
         groupOnEntry = loadString("group-on-entry");
         autoDisableSeconds = loadInt("auto-disable");
-
-        // TODO: remove
-        if (autoDisableSeconds == 0)
-        {
-            autoDisableSeconds = loadInt("auto-disable-seconds");
-        }
-
         radius = loadInt("radius");
         mixingGroup = loadInt("mixing-group");
         customVolume = loadInt("custom-volume");
