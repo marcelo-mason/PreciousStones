@@ -1179,6 +1179,30 @@ public final class ForceFieldManager
     }
 
     /**
+     * Whether the field is owned by the player
+     *
+     * @param field
+     * @param player
+     * @return
+     */
+    public boolean isOwned(Field field, Player player)
+    {
+        if (field == null || player == null)
+        {
+            return false;
+        }
+
+        // allow if admin
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
+        {
+            return true;
+        }
+
+        return field.isOwner(player.getName());
+    }
+
+    /**
      * Allow a target (name, g:group, c:clan) into a field
      *
      * @param field
@@ -1905,7 +1929,7 @@ public final class ForceFieldManager
         {
             public boolean Filter(Field field)
             {
-                return field.isOwner(player.getName());
+                return isOwned(field, player);
             }
         };
 
