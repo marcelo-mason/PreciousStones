@@ -1654,6 +1654,8 @@ public final class CommandManager implements CommandExecutor
                     else if (cmd.equals(ChatBlock.format("commandReload")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.reload"))
                     {
                         plugin.getSettingsManager().load();
+                        plugin.getLanguageManager().load();
+
                         ChatBlock.send(sender, "configReloaded");
                         return true;
                     }

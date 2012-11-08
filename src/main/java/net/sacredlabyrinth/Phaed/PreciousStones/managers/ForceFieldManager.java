@@ -401,7 +401,10 @@ public final class ForceFieldManager
                 {
                     List<Field> fields = fieldsByFlag.get(flag);
 
-                    fields.remove(field);
+                    if (fields != null)
+                    {
+                        fields.remove(field);
+                    }
                 }
             }
         }
@@ -1401,16 +1404,14 @@ public final class ForceFieldManager
         List<Field> fields = fieldsByFlag.get(flag);
         List<Field> out = new ArrayList<Field>();
 
-        if (fields == null)
+        if (fields != null)
         {
-            return null;
-        }
-
-        for (Field field : fields)
-        {
-            if (field.isOwner(player.getName()))
+            for (Field field : fields)
             {
-                out.add(field);
+                if (field.isOwner(player.getName()))
+                {
+                    out.add(field);
+                }
             }
         }
 

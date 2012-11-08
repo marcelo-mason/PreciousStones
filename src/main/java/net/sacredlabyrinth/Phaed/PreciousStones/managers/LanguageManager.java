@@ -29,6 +29,11 @@ public class LanguageManager
 
     public LanguageManager()
     {
+        load();
+    }
+
+    public void load()
+    {
         file = new File(PreciousStones.getInstance().getDataFolder() + File.separator + "language.yml");
         check();
     }
