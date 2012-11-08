@@ -11,6 +11,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -1159,6 +1160,58 @@ public class CommunicationManager
         }
     }
 
+
+    /**
+     * @param player
+     * @param hanging
+     * @param field
+     */
+    public void warnPlaceHanging(Player player, Hanging hanging, Field field)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isWarnPlace() && canWarn(player))
+        {
+            ChatBlock.send(player, "warnPlace");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogPlaceArea())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Block Place Attempt", player, hanging.getLocation(), hanging.toString() + " (field: " + field.getOwner() + " " + fs.getTitle() + ")");
+            }
+            else
+            {
+                PreciousStones.log("logFire", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+            }
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.place") && canAlert(pl))
+            {
+                ChatBlock.sendPs(pl, "logFire", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+            }
+        }
+    }
+
+
     /**
      * @param player
      * @param painting
@@ -1448,6 +1501,56 @@ public class CommunicationManager
             if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.destroyarea") && canAlert(pl))
             {
                 ChatBlock.sendPs(pl, "logDestroyInField", player.getName(), (new Vec(damagedblock)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+            }
+        }
+    }
+
+    /**
+     * @param player
+     * @param hanging
+     * @param field
+     */
+    public void warnDestroyHanging(Player player, Hanging hanging, Field field)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isWarnDestroyArea() && canWarn(player))
+        {
+            ChatBlock.send(player, "warnDestroy");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogDestroyArea())
+        {
+            if (useHawkEye)
+            {
+                HawkEyeAPI.addCustomEntry(plugin, "Destroy Attempt", player, hanging.getLocation(), hanging.toString() + " (field: " + field.getOwner() + " " + fs.getTitle() + ")");
+            }
+            else
+            {
+                PreciousStones.log("logDestroyInField", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+            }
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.destroyarea") && canAlert(pl))
+            {
+                ChatBlock.sendPs(pl, "logDestroyInField", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
     }

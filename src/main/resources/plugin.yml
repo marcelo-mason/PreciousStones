@@ -126,6 +126,8 @@ permissions:
     description: Bypasses teleport flags
   preciousstones.bypass.toggle:
     description: Can toggle bypass mode
+  preciousstones.bypass.item-frame-take:
+    description: Can take other ppls items
   preciousstones.alert.notify.place:
     description: Gets alert for block placement notifys
   preciousstones.alert.notify.destroy:
@@ -324,6 +326,7 @@ permissions:
       preciousstones.bypass.entryalert: true
       preciousstones.bypass.no-allowing: true
       preciousstones.bypass.hiding: true
+      preciousstones.bypass.item-frame-take: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false

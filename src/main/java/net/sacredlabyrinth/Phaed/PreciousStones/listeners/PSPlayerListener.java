@@ -11,9 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -601,6 +599,37 @@ public class PSPlayerListener implements Listener
         }
     }
 
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event)
+    {
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
+        {
+            return;
+        }
+
+        final Player player = event.getPlayer();
+        Entity entity = event.getRightClicked();
+
+        if (entity.equals(EntityType.ITEM_FRAME))
+        {
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.item-frame-take"))
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ITEM_FRAME_TAKE);
+
+                if (field != null)
+                {
+                    if (FieldFlag.PREVENT_ITEM_FRAME_TAKE.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * @param event

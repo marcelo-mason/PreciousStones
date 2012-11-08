@@ -16,6 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingPlaceEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -947,6 +950,93 @@ public class PSEntityListener implements Listener
                     event.setCancelled(true);
                     plugin.getCommunicationManager().warnPlacePainting(player, painting, field);
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onHangingBreakByEntityEvent(HangingBreakByEntityEvent event)
+    {
+        Hanging entity = event.getEntity();
+        Entity remover = event.getRemover();
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(entity.getLocation().getWorld()))
+        {
+            return;
+        }
+
+        if (remover instanceof Player)
+        {
+            Player player = (Player) event.getRemover();
+
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+                if (field != null)
+                {
+                    if (FieldFlag.PREVENT_DESTROY.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                        plugin.getCommunicationManager().warnDestroyHanging(player, entity, field);
+                    }
+                }
+            }
+        }
+        else
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+            if (field != null)
+            {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onHangingPlaceEvent(HangingPlaceEvent event)
+    {
+        Hanging entity = event.getEntity();
+        Player player = event.getPlayer();
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(entity.getLocation().getWorld()))
+        {
+            return;
+        }
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_PLACE);
+
+            if (field != null)
+            {
+                if (FieldFlag.PREVENT_PLACE.applies(field, player))
+                {
+                    event.setCancelled(true);
+                    plugin.getCommunicationManager().warnPlaceHanging(player, entity, field);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onHangingBreakEvent(HangingBreakEvent event)
+    {
+        Hanging entity = event.getEntity();
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(entity.getLocation().getWorld()))
+        {
+            return;
+        }
+
+        if (!event.getCause().equals(HangingBreakEvent.RemoveCause.ENTITY))
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+            if (field != null)
+            {
+                event.setCancelled(true);
             }
         }
     }
