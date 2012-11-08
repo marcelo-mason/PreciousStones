@@ -302,6 +302,9 @@ public class FieldSettings
         loadBoolean("no-growth");
         loadBoolean("single-use");
         loadBoolean("commands-on-overlap");
+        loadBoolean("shareable");
+        loadBoolean("buyable");
+        loadBoolean("rentable");
 
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");

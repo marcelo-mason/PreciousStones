@@ -1,20 +1,21 @@
-package net.sacredlabyrinth.Phaed.PreciousStones.managers;
+package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
-
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 
 public class RentEntry
 {
     private String playerName;
-    private Date startDate;
+    private DateTime endDate;
     private int periodSeconds;
+    private int rentMultiple;
 
     public RentEntry(String playerName, int periodSeconds)
     {
         this.playerName = playerName;
-        this.startDate = new Date();
         this.periodSeconds = periodSeconds;
+        this.rentMultiple = 1;
+        this.endDate = (new DateTime()).plusSeconds(periodSeconds);
     }
 
     public RentEntry(String packed)
@@ -23,12 +24,16 @@ public class RentEntry
 
         this.playerName = unpacked[0];
         this.periodSeconds = Integer.parseInt(unpacked[1]);
-        this.startDate = new Date(Long.parseLong(unpacked[1]));
+        this.endDate = new DateTime(Long.parseLong(unpacked[2]));
+        this.rentMultiple = Integer.parseInt(unpacked[3]);
     }
 
     public void addSeconds(int seconds)
     {
         this.periodSeconds += seconds;
+        this.endDate = endDate.plusSeconds(seconds);
+
+        this.rentMultiple += 1;
     }
 
     public int getPeriodSeconds()
@@ -43,7 +48,12 @@ public class RentEntry
 
     public boolean isDone()
     {
-        return Dates.differenceInSeconds(new Date(), startDate) >= periodSeconds;
+        return Seconds.secondsBetween(new DateTime(), endDate).getSeconds() <= 0;
+    }
+
+    public int remainingRent()
+    {
+        return Seconds.secondsBetween(new DateTime(), endDate).getSeconds();
     }
 
     @Override
@@ -66,6 +76,11 @@ public class RentEntry
 
     public String serialize()
     {
-        return playerName + "|" + periodSeconds + "|" + startDate.getTime();
+        return playerName + "|" + periodSeconds + "|" + endDate.getMillis() + "|" + rentMultiple;
+    }
+
+    public int getRentMultiple()
+    {
+        return rentMultiple;
     }
 }

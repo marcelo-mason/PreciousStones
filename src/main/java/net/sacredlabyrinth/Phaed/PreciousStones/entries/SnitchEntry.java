@@ -1,11 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
-import net.sacredlabyrinth.Phaed.PreciousStones.Dates;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 
 /**
  *
@@ -18,7 +16,7 @@ public class SnitchEntry
     private String details;
     private int eventCount;
     private Field field;
-    private Timestamp age;
+    private DateTime age;
 
     /**
      *
@@ -39,7 +37,7 @@ public class SnitchEntry
         this.reason = reason;
         this.details = details;
         this.eventCount = 1;
-        this.age = (new Timestamp((new Date()).getTime()));
+        this.age = (new DateTime());
     }
 
     /**
@@ -57,7 +55,7 @@ public class SnitchEntry
         this.reason = reason;
         this.details = details;
         this.eventCount = eventCount;
-        this.age = (new Timestamp((new Date()).getTime()));
+        this.age = (new DateTime());
     }
 
     /**
@@ -198,6 +196,6 @@ public class SnitchEntry
      */
     public int getAgeInSeconds()
     {
-        return (int) Dates.differenceInSeconds((new Timestamp((new Date()).getTime())), age);
+        return Seconds.secondsBetween(new DateTime(), new DateTime(age)).getSeconds();
     }
 }

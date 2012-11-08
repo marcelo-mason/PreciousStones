@@ -80,11 +80,21 @@
                                         <include>org/mcstats/**</include>
                                     </includes>
                                 </filter>
+                                <filter>
+                                    <artifact>org.joda.time:joda-time</artifact>
+                                    <includes>
+                                        <include>org/joda/time/**</include>
+                                    </includes>
+                                </filter>
                             </filters>
                             <relocations>
                                 <relocation>
                                     <pattern>org.mcstats</pattern>
                                     <shadedPattern>ps.org.mcstats</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>joda-time</pattern>
+                                    <shadedPattern>ps.joda-time</shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>
@@ -105,7 +115,7 @@
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
+            <artifactId>bukkit</artifactId>
             <version>1.4.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
@@ -173,6 +183,12 @@
             <groupId>org.mcstats</groupId>
             <artifactId>metrics</artifactId>
             <version>1.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -13,10 +13,11 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -215,6 +216,20 @@ public final class StorageManager
             addSnitchDate();
             plugin.getSettingsManager().setVersion(10);
         }
+
+        if (plugin.getSettingsManager().getVersion() < 11)
+        {
+            resetLastSeem();
+            plugin.getSettingsManager().setVersion(11);
+        }
+    }
+
+    private void resetLastSeem()
+    {
+        PreciousStones.log("Updating last seen dates to new time format");
+        core.execute("update pstone_fields last_used = " + (new DateTime()).getMillis());
+        core.execute("update pstone_cuboids last_used = " + (new DateTime()).getMillis());
+        core.execute("update pstone_players last_seen = " + (new DateTime()).getMillis());
     }
 
     private void addData()
@@ -318,6 +333,13 @@ public final class StorageManager
                     int count = totalTranslocationCount(field.getName(), field.getOwner());
                     field.setTranslocationSize(count);
                 }
+            }
+
+            // start renter scheduler
+
+            if (field.hasFlag(FieldFlag.RENTABLE) || field.hasFlag(FieldFlag.SHAREABLE))
+            {
+                field.scheduleNextRentUpdate();
             }
         }
 
@@ -856,13 +878,13 @@ public final class StorageManager
                 {
                     try
                     {
-                        final String name = res.getString("player_name");
-                        final long last_seen = res.getLong("last_seen");
-                        final String flags = res.getString("flags");
+                        String name = res.getString("player_name");
+                        long last_seen = res.getLong("last_seen");
+                        String flags = res.getString("flags");
 
                         if (last_seen > 0)
                         {
-                            final int lastSeenDays = (int) Dates.differenceInDays(new Date(), new Date(last_seen));
+                            final int lastSeenDays = Days.daysBetween(new DateTime(), new DateTime(last_seen)).getDays();
 
                             if (banned.contains(name) || (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays() && lastSeenDays < plugin.getSettingsManager().getPurgeAfterDays() * 2))
                             {
@@ -1008,7 +1030,7 @@ public final class StorageManager
 
         if (field.isDirty(DirtyFieldReason.LASTUSED))
         {
-            subQuery += "last_used = " + (new Date()).getTime() + ", ";
+            subQuery += "last_used = " + (new DateTime()).getMillis() + ", ";
         }
 
         if (field.isDirty(DirtyFieldReason.FLAGS))
@@ -1052,12 +1074,12 @@ public final class StorageManager
         }
 
         String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new DateTime()).getMillis() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
             query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new Date()).getTime() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new DateTime()).getMillis() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
         }
 
         synchronized (this)
@@ -1177,7 +1199,7 @@ public final class StorageManager
         if (plugin.getSettingsManager().isUseMysql())
         {
             final String query = "INSERT INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
-            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + new Date().getTime() + "') ";
+            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + (new DateTime()).getMillis() + "') ";
             final String update = "ON DUPLICATE KEY UPDATE count = count+1;";
 
             synchronized (this)
@@ -1188,7 +1210,7 @@ public final class StorageManager
         else
         {
             final String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
-            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + new Date().getTime() + "');";
+            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + (new DateTime()).getMillis() + "');";
             final String update = "UPDATE `pstone_snitches` SET count = count+1;";
 
             synchronized (this)
@@ -1296,7 +1318,7 @@ public final class StorageManager
      */
     public void updatePlayer(final String playerName)
     {
-        final long time = (new Date()).getTime();
+        final long time = (new DateTime()).getMillis();
 
         final PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(playerName);
 
@@ -1326,7 +1348,7 @@ public final class StorageManager
 
     private void touchAllPlayers()
     {
-        final long time = (new Date()).getTime();
+        final long time = (new DateTime()).getMillis();
 
         if (plugin.getSettingsManager().isUseMysql())
         {
@@ -1375,7 +1397,7 @@ public final class StorageManager
     public void insertBlockGrief(final Field field, final GriefBlock gb)
     {
         final String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
-        final String values = "VALUES ( '" + new Timestamp((new Date()).getTime()) + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
+        final String values = "VALUES ( '" + (new DateTime()).getMillis() + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
 
         synchronized (this)
         {

@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -11,6 +12,7 @@ public class BlockTypeEntry
 {
     private final int typeId;
     private byte data;
+
     /**
      * @param block
      */
@@ -18,6 +20,21 @@ public class BlockTypeEntry
     {
         this.typeId = block.getTypeId();
         this.data = block.getData();
+    }
+
+    public BlockTypeEntry(String packed)
+    {
+        String[] unpacked = packed.split("[:]");
+        this.typeId = Integer.parseInt(unpacked[0]);
+
+        if (unpacked.length > 1)
+        {
+            this.data = Byte.parseByte(unpacked[1]);
+        }
+        else
+        {
+            this.data = 0;
+        }
     }
 
     /**
@@ -124,13 +141,6 @@ public class BlockTypeEntry
         return getTypeId() + ":" + getData();
     }
 
-    public BlockTypeEntry(String packed)
-    {
-        String[] unpacked = packed.split("[:]");
-        this.typeId = Integer.parseInt(unpacked[0]);
-        this.data = Byte.parseByte(unpacked[1]);
-    }
-
     public String serialize()
     {
         return getTypeId() + ":" + getData();
@@ -145,6 +155,11 @@ public class BlockTypeEntry
     {
         Material material = Material.getMaterial(getTypeId());
         return material != null;
+    }
+
+    public String getFriendly()
+    {
+        return Helper.friendlyBlockType(Material.getMaterial(getTypeId()).toString());
     }
 }
 

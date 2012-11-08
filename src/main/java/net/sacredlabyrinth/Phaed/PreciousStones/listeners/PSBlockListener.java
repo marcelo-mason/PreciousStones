@@ -3,8 +3,10 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -203,7 +205,10 @@ public class PSBlockListener implements Listener
         {
             if (!field.isDisabled())
             {
-                field.setDisabled(true);
+                if (!field.isRented())
+                {
+                    field.setDisabled(true);
+                }
             }
 
             PreciousStones.debug("redstone disabled");
@@ -381,6 +386,14 @@ public class PSBlockListener implements Listener
             }
         }
 
+        // -------------------------------------------------------------------------------- breaking a field sign
+
+        if (SignHelper.cannotBreakFieldSign(block, player))
+        {
+            event.setCancelled(true);
+            return;
+        }
+
         // -------------------------------------------------------------------------------- breaking a field
 
         if (plugin.getForceFieldManager().isField(block))
@@ -507,6 +520,13 @@ public class PSBlockListener implements Listener
 
     private boolean breakingFieldChecks(Player player, Block block, Field field, Cancellable event)
     {
+        if (field.isRented())
+        {
+            ChatBlock.send(player, "fieldSignCannotDestroy");
+            event.setCancelled(true);
+            return false;
+        }
+
         field.unHide();
 
         // cancel cuboid if still drawing it
@@ -1395,14 +1415,22 @@ public class PSBlockListener implements Listener
 
         for (Block block : blocks)
         {
+            if (SignHelper.cannotBreakFieldSign(block, null))
+            {
+                event.setCancelled(true);
+                return;
+            }
+
             if (plugin.getForceFieldManager().isField(block))
             {
                 event.setCancelled(true);
+                return;
             }
 
             if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
             {
                 event.setCancelled(true);
+                return;
             }
 
             Field blockField = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
@@ -1420,6 +1448,7 @@ public class PSBlockListener implements Listener
                 if (!blockField.getSettings().inDestroyBlacklist(block))
                 {
                     event.setCancelled(true);
+                    return;
                 }
             }
         }
@@ -1452,13 +1481,21 @@ public class PSBlockListener implements Listener
 
         Block block = piston.getRelative(event.getDirection()).getRelative(event.getDirection());
 
+        if (SignHelper.cannotBreakFieldSign(block, null))
+        {
+            event.setCancelled(true);
+            return;
+        }
+
         if (plugin.getForceFieldManager().isField(block))
         {
             event.setCancelled(true);
+            return;
         }
         if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
         {
             event.setCancelled(true);
+            return;
         }
 
         if (unprotected)
@@ -1474,4 +1511,66 @@ public class PSBlockListener implements Listener
             }
         }
     }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onSignChange(SignChangeEvent event)
+    {
+        final Player player = event.getPlayer();
+        final Block block = event.getBlock();
+        String[] lines = event.getLines();
+
+        final FieldSign s = new FieldSign(block, lines, player);
+
+        if (s.isValid())
+        {
+            Block fieldBlock = SignHelper.getAttachedBlock(block);
+            FieldSign attachedFieldSign = SignHelper.getAttachedFieldSign(fieldBlock);
+
+            if (attachedFieldSign != null)
+            {
+                ChatBlock.send(player, "fieldSignOnlyOne");
+                event.setCancelled(true);
+                return;
+            }
+
+            event.setLine(0, ChatColor.BLACK + "" + ChatColor.BOLD + ChatColor.stripColor(lines[0]));
+
+            if (s.isRentable())
+            {
+                ChatBlock.send(player, "fieldSignRentCreated");
+            }
+
+            if (s.isBuyable())
+            {
+                ChatBlock.send(player, "fieldSignBuyCreated");
+            }
+        }
+        else
+        {
+            if (s.isFieldSign())
+            {
+                if (s.getField() == null)
+                {
+                    ChatBlock.send(player, "fieldSignMustBeOnField");
+                }
+                else
+                {
+                    ChatBlock.send(player, "fieldSignBadFormat");
+                }
+                event.setCancelled(true);
+                return;
+            }
+
+            if(s.isNoEconomy())
+            {
+                ChatBlock.send(player, "fieldSignNoEco");
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
 }
+

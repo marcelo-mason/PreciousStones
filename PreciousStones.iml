@@ -14,10 +14,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:craftbukkit:1.4.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.4.2-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:Vault:1.2.19" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun.bukkit:Permissions:2.7.4" level="project" />
-    <orderEntry type="library" name="Maven: org.bukkit:bukkit:0.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldguard:5.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:5.4.4" level="project" />
@@ -37,6 +36,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: uk.co.oliwali:HawkEye:1.0.7b" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.platymuus:bukkit-permissions:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.mcstats:metrics:1.1" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.1" level="project" />
   </component>
 </module>
 

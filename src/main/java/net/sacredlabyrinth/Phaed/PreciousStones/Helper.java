@@ -506,6 +506,11 @@ public class Helper
             return true;
         }
 
+        if (loc == null || loc2 == null)
+        {
+            return false;
+        }
+
         if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ())
         {
             return true;
@@ -525,6 +530,11 @@ public class Helper
         if (loc == null && loc2 == null)
         {
             return true;
+        }
+
+        if (loc == null || loc2 == null)
+        {
+            return false;
         }
 
         if (loc.getX() == loc2.getX() && loc.getY() == loc2.getY() && loc.getZ() == loc2.getZ())
@@ -565,30 +575,6 @@ public class Helper
         catch (Exception ex)
         {
             return null;
-        }
-    }
-
-    /**
-     * Drop block to ground
-     *
-     * @param block
-     */
-    public static void dropBlock(Block block)
-    {
-        if (block.getTypeId() == 0)
-        {
-            return;
-        }
-
-        try
-        {
-            World world = block.getWorld();
-            ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
-            world.dropItemNaturally(block.getLocation(), is);
-        }
-        catch (Exception ex)
-        {
-
         }
     }
 
@@ -749,114 +735,57 @@ public class Helper
     }
 
     /**
-     * Parse a period string to seconds
+     * Drop block to ground
      *
-     * @param period
-     * @return
+     * @param block
      */
-    public static int periodToSeconds(String period)
+    public static boolean dropBlock(Block block)
     {
-        if (period.contains("s"))
+        if (block.getTypeId() != 0)
         {
-            period = period.replace("s", "");
-
-            if (Helper.isInteger(period))
+            try
             {
-                return Integer.parseInt(period);
+                World world = block.getWorld();
+                ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+                world.dropItemNaturally(block.getLocation(), is);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // fail silently
             }
         }
-
-        if (period.contains("m"))
-        {
-            period = period.replace("m", "");
-
-            if (Helper.isInteger(period))
-            {
-                return Integer.parseInt(period) * 60;
-            }
-        }
-
-        if (period.contains("h"))
-        {
-            period = period.replace("h", "");
-
-            if (Helper.isInteger(period))
-            {
-                return Integer.parseInt(period) * 60 * 60;
-            }
-        }
-
-        if (period.contains("d"))
-        {
-            period = period.replace("d", "");
-
-            if (Helper.isInteger(period))
-            {
-                return Integer.parseInt(period) * 60 * 60 * 24;
-            }
-        }
-
-        if (period.contains("w"))
-        {
-            period = period.replace("w", "");
-
-            if (Helper.isInteger(period))
-            {
-                return Integer.parseInt(period) * 60 * 60 * 24 * 7;
-            }
-        }
-
-        return 0;
+        return false;
     }
 
-    public static String secondsToPeriods(int seconds)
+    /**
+     * Drop block to ground and wipe out existing
+     *
+     * @param block
+     */
+    public static void dropBlockWipe(Block block)
     {
-        String out = "";
-
-        int w = (60 * 60 * 24 * 7);
-        int d = (60 * 60 * 24);
-        int h = (60 * 60);
-        int m = (60);
-
-        int wd = seconds / w;
-
-        if (wd > 0)
+        if (dropBlock(block))
         {
-            out += wd + "w ";
-            seconds = seconds % w;
+            block.setTypeId(0);
+        }
+    }
+
+    /**
+     * Removes any non-integers and then parses it
+     *
+     * @param intString
+     * @return
+     */
+    public static int forceParseInteger(String intString)
+    {
+        intString = intString.replaceAll("[^0-9]", "");
+
+        if (!Helper.isInteger(intString))
+        {
+            return 0;
         }
 
-        int dd = seconds / d;
-
-        if (dd > 0)
-        {
-            out += dd + "d ";
-            seconds = seconds % d;
-        }
-
-        int hd = seconds / h;
-
-        if (hd > 0)
-        {
-            out += hd + "h ";
-            seconds = seconds % h;
-        }
-
-        int md = seconds / m;
-
-        if (md > 0)
-        {
-            out += md + "m ";
-            seconds = seconds % m;
-        }
-
-        int sd = seconds;
-
-        if (sd > 0)
-        {
-            out += sd + "s";
-        }
-
-        return Helper.stripTrailing(out, " ");
+        return Integer.parseInt(intString);
     }
 }

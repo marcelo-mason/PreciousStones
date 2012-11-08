@@ -2,7 +2,9 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.RentEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -67,9 +69,17 @@ public class PSPlayerListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLogin(PlayerLoginEvent event)
     {
-        plugin.getPlayerManager().playerLogin(event.getPlayer());
-        plugin.getStorageManager().offerPlayer(event.getPlayer().getName());
-        plugin.getForceFieldManager().enableFieldsOnLogon(event.getPlayer().getName());
+        final String playerName = event.getPlayer().getName();
+
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            public void run()
+            {
+                plugin.getPlayerManager().playerLogin(playerName);
+                plugin.getStorageManager().offerPlayer(playerName);
+                plugin.getForceFieldManager().enableFieldsOnLogon(playerName);
+            }
+        }, 10);
     }
 
 
@@ -635,6 +645,145 @@ public class PSPlayerListener implements Listener
             }
         }
 
+        // -------------------------------------------------------------------------------- renting time
+
+        if (block != null)
+        {
+            if (SignHelper.isSign(block))
+            {
+                FieldSign s = new FieldSign(block);
+
+                if (s.isValid())
+                {
+                    Field field = s.getField();
+
+                    if (!field.isOwner(player.getName()))
+                    {
+                        if (field.isDisabled())
+                        {
+                            ChatBlock.send(player, "fieldSignCannotRentDisabled");
+                            event.setCancelled(true);
+                            return;
+                        }
+
+                        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+                        {
+                            if (s.isRentable())
+                            {
+                                if (field.isRented())
+                                {
+                                    if (!field.isRenter(player.getName()))
+                                    {
+                                        ChatBlock.send(player, "fieldSignAlreadyRented");
+                                        plugin.getCommunicationManager().showRenterInfo(player, field);
+                                        event.setCancelled(true);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        if (player.isSneaking())
+                                        {
+                                            field.abandonRent(player);
+                                            ChatBlock.send(player, "rentAbandoned");
+                                            event.setCancelled(true);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (s.isRentable() || s.isShareable())
+                            {
+                                if (s.getMultiple() > 0)
+                                {
+                                    RentEntry renter = field.getRenter(player);
+
+                                    if (renter != null)
+                                    {
+                                        if (renter.getRentMultiple() >= s.getMultiple())
+                                        {
+                                            ChatBlock.send(player, "fieldSignMultipleExceeded");
+                                            event.setCancelled(true);
+                                            return;
+                                        }
+                                    }
+                                }
+
+                                if (SignHelper.pay(player, s))
+                                {
+                                    field.addRent(player, s);
+                                    event.setCancelled(true);
+
+                                    if (s.isRentable())
+                                    {
+                                        s.setRentedColor();
+                                    }
+                                    else if (s.isShareable())
+                                    {
+                                        s.setSharedColor();
+                                    }
+
+                                    return;
+                                }
+                                return;
+                            }
+
+                            if (s.isBuyable())
+                            {
+                                if (SignHelper.pay(player, s))
+                                {
+                                    s.strip();
+                                    field.setOwner(player.getName());
+                                    plugin.getStorageManager().offerField(field);
+
+                                    ChatBlock.send(player, "fieldSignBought");
+                                    event.setCancelled(true);
+                                    return;
+                                }
+                                return;
+                            }
+                        }
+                        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK))
+                        {
+                            if (s.isRentable())
+                            {
+                                if (field.isRented() && !field.isRenter(player.getName()))
+                                {
+                                    ChatBlock.send(player, "fieldSignAlreadyRented");
+                                    plugin.getCommunicationManager().showRenterInfo(player, field);
+                                    event.setCancelled(true);
+                                    return;
+                                }
+                            }
+
+                            plugin.getVisualizationManager().visualizeSingleOutline(player, field);
+                            plugin.getCommunicationManager().showFieldDetails(player, field);
+                            plugin.getCommunicationManager().showRenterInfo(player, field);
+                        }
+
+                        event.setCancelled(true);
+                        return;
+                    }
+                    else
+                    {
+                        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+                        {
+                            if (field.isRented())
+                            {
+                                plugin.getCommunicationManager().showRenterInfo(player, field);
+                            }
+                            else
+                            {
+                                ChatBlock.send(player, "fieldSignNoTennant");
+                            }
+                            event.setCancelled(true);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         // -------------------------------------------------------------------------------- soil interaction
 
         if (block != null)
@@ -814,6 +963,12 @@ public class PSPlayerListener implements Listener
                                                     return;
                                                 }
                                             }
+                                        }
+
+                                        if (field.isRented())
+                                        {
+                                            ChatBlock.send(player, "fieldSignCannotChange");
+                                            return;
                                         }
 
                                         plugin.getCuboidManager().openCuboid(player, field);

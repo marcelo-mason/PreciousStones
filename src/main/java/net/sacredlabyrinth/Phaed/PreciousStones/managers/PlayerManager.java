@@ -59,12 +59,17 @@ public class PlayerManager
     /**
      * Set player as online
      *
-     * @param player
+     * @param playerName
      */
-    public void playerLogin(Player player)
+    public void playerLogin(String playerName)
     {
-        PlayerEntry data = getPlayerEntry(player.getName());
+        PlayerEntry data = getPlayerEntry(playerName);
         data.setOnline(true);
+
+        if (data.hasPendingPayments())
+        {
+            data.retrievePayment(playerName);
+        }
     }
 
     /**
@@ -166,7 +171,7 @@ public class PlayerManager
     {
         Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
 
-        for(Player player : onlinePlayers)
+        for (Player player : onlinePlayers)
         {
             plugin.getStorageManager().offerPlayer(player.getName());
         }

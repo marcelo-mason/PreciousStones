@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
@@ -281,6 +282,14 @@ public class PSEntityListener implements Listener
                 saved.add(new BlockEntry(block));
                 event.setCancelled(true);
                 continue;
+            }
+
+            // prevent explosion if field sign
+
+            if (SignHelper.cannotBreakFieldSign(block, null))
+            {
+                event.setCancelled(true);
+                return;
             }
 
             if (event.getEntity() instanceof Creeper)

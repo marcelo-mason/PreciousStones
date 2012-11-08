@@ -328,6 +328,12 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
+                                    if (field.isRented())
+                                    {
+                                        ChatBlock.send(player, "fieldSignCannotChange");
+                                        return true;
+                                    }
+
                                     plugin.getCuboidManager().openCuboid(player, field);
                                 }
                                 else
@@ -380,6 +386,12 @@ public final class CommandManager implements CommandExecutor
 
                         if (field != null)
                         {
+                            if (field.isRented())
+                            {
+                                ChatBlock.send(player, "fieldSignCannotChange");
+                                return true;
+                            }
+
                             if (field.hasFlag(FieldFlag.TRANSLOCATION))
                             {
                                 // if switching from an existing translocation
@@ -410,6 +422,7 @@ public final class CommandManager implements CommandExecutor
                                     ChatBlock.send(sender, "translocationExists");
                                     return true;
                                 }
+
 
                                 // if this is a new translocation name, create its head record
                                 // this will cement the size of the cuboid
@@ -526,6 +539,12 @@ public final class CommandManager implements CommandExecutor
                                     }
                                 }
 
+                                if (field.isRented())
+                                {
+                                    ChatBlock.send(player, "fieldSignCannotChange");
+                                    return true;
+                                }
+
                                 if (!field.hasFlag(FieldFlag.CUBOID))
                                 {
                                     if (radius >= 0 && (radius <= fs.getRadius() || plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius")))
@@ -617,6 +636,12 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         plugin.getTranslocationManager().clearTranslocation(field);
                                     }
+                                }
+
+                                if (field.isRented())
+                                {
+                                    ChatBlock.send(player, "fieldSignCannotDisable");
+                                    return true;
                                 }
 
                                 field.setDisabled(true, player);
@@ -715,6 +740,12 @@ public final class CommandManager implements CommandExecutor
                                             return true;
                                         }
                                     }
+                                }
+
+                                if (field.isRented())
+                                {
+                                    ChatBlock.send(player, "fieldSignCannotChange");
+                                    return true;
                                 }
 
                                 if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))

@@ -141,7 +141,8 @@ public enum FieldFlag
     PREVENT_VEHICLE_ENTER,
     PREVENT_VEHICLE_EXIT,
     RENTABLE,
-    SELLABLE
+    SHAREABLE,
+    BUYABLE
     ;
 
     /**
@@ -272,7 +273,7 @@ public enum FieldFlag
         FieldFlag.DISABLE_ON_LOGOFF,
         FieldFlag.ENABLE_ON_LOGON,
         FieldFlag.RENTABLE,
-        FieldFlag.SELLABLE
+        FieldFlag.BUYABLE
     };
 
     /**

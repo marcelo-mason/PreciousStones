@@ -1,11 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.RentEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +9,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -26,6 +24,7 @@ import java.util.*;
  */
 public class Field extends AbstractVec implements Comparable<Field>
 {
+    final private Field self;
     private FieldSettings settings;
     private long id = 0;
     private int radius;
@@ -63,6 +62,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int translocationSize;
     private boolean hidden;
     private boolean forested;
+    private boolean rentPeriodReverted;
 
     /**
      * @param x
@@ -99,6 +99,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = name;
         this.type = type;
         this.lastUsed = lastUsed;
+        this.self = this;
     }
 
     /**
@@ -126,6 +127,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = name;
         this.type = type;
         this.lastUsed = lastUsed;
+        this.self = this;
 
         calculateDimensions();
     }
@@ -145,6 +147,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.owner = owner;
         this.name = "";
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.self = this;
 
         calculateDimensions();
     }
@@ -163,6 +166,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = "";
         this.owner = "";
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.self = this;
 
         calculateDimensions();
     }
@@ -173,10 +177,12 @@ public class Field extends AbstractVec implements Comparable<Field>
     public Field(Block block)
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
+        this.self = this;
     }
 
     public Field()
     {
+        this.self = this;
     }
 
     private void calculateDimensions()
@@ -786,6 +792,22 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
+     * @return the allowed
+     */
+    public boolean isRented()
+    {
+        return !renters.isEmpty();
+    }
+
+    /**
+     * @return the allowed
+     */
+    public boolean isRenter(String playerName)
+    {
+        return renters.contains(playerName.toLowerCase());
+    }
+
+    /**
      * @return the packedAllowed
      */
     public String getPackedAllowed()
@@ -848,7 +870,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void updateLastUsed()
     {
-        lastUsed = (new Date()).getTime();
+        lastUsed = (new DateTime()).getMillis();
         dirty.add(DirtyFieldReason.LASTUSED);
     }
 
@@ -864,7 +886,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             return 0;
         }
 
-        return (int) Dates.differenceInDays(new Date(), new Date(lastUsed));
+        return Days.daysBetween(new DateTime(), new DateTime(lastUsed)).getDays();
     }
 
     /**
@@ -1129,7 +1151,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         if (!renterList.isEmpty())
         {
-            json.put("renterList", renterList);
+            json.put("renters", renterList);
         }
 
         if (revertSecs > 0)
@@ -1240,14 +1262,16 @@ public class Field extends AbstractVec implements Comparable<Field>
                                 insertFieldFlag(flagStr.toString());
                             }
                         }
-                        else if (flag.equals("renterList"))
+                        else if (flag.equals("renters"))
                         {
                             JSONArray renterList = (JSONArray) flags.get(flag);
 
+                            renterEntries.clear();
+                            renters.clear();
                             for (Object flagStr : renterList)
                             {
                                 RentEntry entry = new RentEntry(flagStr.toString());
-                                renters.add(entry.getPlayerName());
+                                renters.add(entry.getPlayerName().toLowerCase());
                                 renterEntries.add(entry);
                             }
                         }
@@ -2269,14 +2293,15 @@ public class Field extends AbstractVec implements Comparable<Field>
         return null;
     }
 
-    public void addRent(Player player, String period)
+    public int addRent(Player player, FieldSign s)
     {
-        int seconds = Helper.periodToSeconds(period);
+        int seconds = SignHelper.periodToSeconds(s.getPeriod());
+        int multiple;
 
         if (seconds == 0)
         {
             ChatBlock.send(player, "rentError");
-            return;
+            return 0;
         }
 
         RentEntry renter = getRenter(player);
@@ -2284,28 +2309,32 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (renter != null)
         {
             renter.addSeconds(seconds);
-            ChatBlock.send(player, "rentAdded", Helper.secondsToPeriods(renter.getPeriodSeconds()));
+            multiple = renter.getRentMultiple();
+
+            ChatBlock.send(player, "rentAdded", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
         }
         else
         {
             renterEntries.add(new RentEntry(player.getName(), seconds));
-            renters.add(player.getName());
+            renters.add(player.getName().toLowerCase());
+            multiple = 1;
 
             if (renterEntries.size() == 1)
             {
                 scheduleNextRentUpdate();
             }
-            ChatBlock.send(player, "rentRented", period);
+            ChatBlock.send(player, "rentRented", s.getPeriod());
         }
 
         dirty.add(DirtyFieldReason.FLAGS);
         PreciousStones.getInstance().getStorageManager().offerField(this);
+        return multiple;
     }
 
     public void removeRenter(RentEntry entry)
     {
         renterEntries.remove(entry);
-        renters.remove(entry.getPlayerName());
+        renters.remove(entry.getPlayerName().toLowerCase());
 
         dirty.add(DirtyFieldReason.FLAGS);
         PreciousStones.getInstance().getStorageManager().offerField(this);
@@ -2316,6 +2345,42 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (!renterEntries.isEmpty())
         {
             Bukkit.getScheduler().scheduleAsyncDelayedTask(PreciousStones.getInstance(), new Update(), 20);
+        }
+    }
+
+    public List<RentEntry> getRenterEntries()
+    {
+        return Collections.unmodifiableList(renterEntries);
+    }
+
+    public void abandonRent(Player player)
+    {
+        for (RentEntry entry : renterEntries)
+        {
+            if (entry.getPlayerName().equals(player.getName()))
+            {
+                removeRenter(entry);
+                cleanFieldSign();
+                return;
+            }
+        }
+    }
+
+    public FieldSign getAttachedFieldSign()
+    {
+        return SignHelper.getAttachedFieldSign(getBlock());
+    }
+
+    public void cleanFieldSign()
+    {
+        if (!isRented())
+        {
+            FieldSign s = getAttachedFieldSign();
+
+            if (s != null)
+            {
+                s.setNotRentedColor();
+            }
         }
     }
 
@@ -2331,8 +2396,19 @@ public class Field extends AbstractVec implements Comparable<Field>
                     {
                         public void run()
                         {
+                            // clean up expired
+
                             removeRenter(entry);
-                            ChatBlock.send(entry.getPlayerName(), "rentExpired");
+                            cleanFieldSign();
+
+                            if (getName().isEmpty())
+                            {
+                                ChatBlock.send(entry.getPlayerName(), "rentExpiredNoName");
+                            }
+                            else
+                            {
+                                ChatBlock.send(entry.getPlayerName(), "rentExpired", getName());
+                            }
                         }
                     }, 0);
                 }

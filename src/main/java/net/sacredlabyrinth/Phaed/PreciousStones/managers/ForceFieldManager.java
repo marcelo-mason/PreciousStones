@@ -247,7 +247,7 @@ public final class ForceFieldManager
 
         // start renter scheduler
 
-        if (field.hasFlag(FieldFlag.RENTABLE))
+        if (field.hasFlag(FieldFlag.RENTABLE) || field.hasFlag(FieldFlag.SHAREABLE))
         {
             field.scheduleNextRentUpdate();
         }
@@ -2402,6 +2402,10 @@ public final class ForceFieldManager
                 ChatBlock.send(player, "economyNotEnoughMoney");
                 return false;
             }
+        }
+        else
+        {
+            return false;
         }
 
         return true;

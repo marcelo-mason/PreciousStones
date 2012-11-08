@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.RentEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
@@ -21,7 +22,7 @@ import java.util.*;
 /**
  * @author phaed
  */
-public class CommunicatonManager
+public class CommunicationManager
 {
     private PreciousStones plugin;
     private boolean useHawkEye;
@@ -30,7 +31,7 @@ public class CommunicatonManager
     /**
      *
      */
-    public CommunicatonManager()
+    public CommunicationManager()
     {
         plugin = PreciousStones.getInstance();
         useHawkEye = useHawkEye();
@@ -2581,7 +2582,6 @@ public class CommunicatonManager
         }
     }
 
-
     /**
      * @param player
      * @param field
@@ -2695,8 +2695,7 @@ public class CommunicatonManager
 
         if (cb.size() > 0)
         {
-            cb.addRow("", "", "", "");
-
+            cb.addRow("", "", "");
             ChatBlock.sendBlank(player);
 
             if (field.isDisabled())
@@ -2708,34 +2707,60 @@ public class CommunicatonManager
                 ChatBlock.saySingle(player, "sepFieldInfo");
             }
 
+            cb.sendBlock(player);
+
             if (field.isDisabled())
             {
                 ChatBlock.sendBlank(player);
 
-                List<String> cond = new ArrayList<String>();
-
-                if (field.hasFlag(FieldFlag.MODIFY_ON_DISABLED))
-                {
-                    cond.add("settings");
-                }
-
-                if (field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
-                {
-                    cond.add("flags");
-                }
-
-                if (field.hasFlag(FieldFlag.REDEFINE_ON_DISABLED))
-                {
-                    cond.add("cuboid");
-                }
-
                 showMessage = false;
             }
-
-            cb.sendBlock(player);
         }
 
         return showMessage;
+    }
+
+    public void showRenterInfo(Player player, Field field)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        ChatBlock cb = getNewChatBlock(player);
+
+
+        if (field.getRenters().size() > 0)
+        {
+            List<String> renters = field.getRenters();
+
+            int rows = (int) Math.max(Math.ceil(renters.size() / 2), 1);
+
+            for (int i = 0; i < rows; i++)
+            {
+                String title = "";
+
+                if (i == 0)
+                {
+                    if (renters.size() == 1)
+                    {
+                        title = ChatColor.YELLOW + ChatBlock.format("_tenant") + ": ";
+                    }
+                    else
+                    {
+                        title = ChatColor.YELLOW + ChatBlock.format("_tenants") + ": ";
+                    }
+                }
+
+                cb.addRow("  " + title, ChatColor.WHITE + getRenters(field, i * 2), getRenters(field, (i * 2) + 1));
+            }
+        }
+
+        if (cb.size() > 0)
+        {
+            cb.sendBlock(player);
+            ChatBlock.sendBlank(player);
+        }
     }
 
     private String getFlag(List<FieldFlag> disabledFlags, FieldSettings settings, List<FieldFlag> flags, int index)
@@ -2779,6 +2804,20 @@ public class CommunicatonManager
         if (index < allowed.size())
         {
             return allowed.get(index);
+        }
+
+        return "";
+    }
+
+    private String getRenters(Field field, int index)
+    {
+        List<RentEntry> entries = field.getRenterEntries();
+
+        if (index < entries.size())
+        {
+            RentEntry entry = entries.get(index);
+
+            return ChatColor.WHITE + entry.getPlayerName() + ChatColor.DARK_AQUA + " (" + SignHelper.secondsToPeriods(entry.remainingRent()) + ")";
         }
 
         return "";

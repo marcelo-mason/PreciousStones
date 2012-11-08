@@ -31,7 +31,7 @@ public class PreciousStones extends JavaPlugin
     private UnprotectableManager unprotectableManager;
     private GriefUndoManager griefUndoManager;
     private StorageManager storageManager;
-    private CommunicatonManager communicationManager;
+    private CommunicationManager communicationManager;
     private EntryManager entryManager;
     private PlayerManager playerManager;
     private SnitchManager snitchManager;
@@ -128,7 +128,7 @@ public class PreciousStones extends JavaPlugin
         cuboidManager = new CuboidManager();
         unbreakableManager = new UnbreakableManager();
         unprotectableManager = new UnprotectableManager();
-        communicationManager = new CommunicatonManager();
+        communicationManager = new CommunicationManager();
         entryManager = new EntryManager();
         playerManager = new PlayerManager();
         snitchManager = new SnitchManager();
@@ -168,31 +168,38 @@ public class PreciousStones extends JavaPlugin
 
     private void metrics()
     {
-        try {
+        try
+        {
             Metrics metrics = new Metrics(this);
 
             Metrics.Graph protections = metrics.createGraph("Protections in Place");
 
-            protections.addPlotter(new Metrics.Plotter("Total Fields") {
+            protections.addPlotter(new Metrics.Plotter("Total Fields")
+            {
 
                 @Override
-                public int getValue() {
+                public int getValue()
+                {
                     return getForceFieldManager().getCount();
                 }
 
             });
 
-            protections.addPlotter(new Metrics.Plotter("Total Unbreakables") {
+            protections.addPlotter(new Metrics.Plotter("Total Unbreakables")
+            {
 
                 @Override
-                public int getValue() {
+                public int getValue()
+                {
                     return getUnbreakableManager().getCount();
                 }
 
             });
 
             metrics.start();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             log("Metrics did not load");
         }
     }
@@ -285,7 +292,7 @@ public class PreciousStones extends JavaPlugin
     /**
      * @return the communicationManager
      */
-    public CommunicatonManager getCommunicationManager()
+    public CommunicationManager getCommunicationManager()
     {
         return communicationManager;
     }
