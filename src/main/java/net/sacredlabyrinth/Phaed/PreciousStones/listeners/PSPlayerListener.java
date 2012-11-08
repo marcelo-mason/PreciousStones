@@ -613,7 +613,7 @@ public class PSPlayerListener implements Listener
         final Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
 
-        if (entity.equals(EntityType.ITEM_FRAME))
+        if (entity.getType().equals(EntityType.ITEM_FRAME))
         {
             if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.item-frame-take"))
             {
