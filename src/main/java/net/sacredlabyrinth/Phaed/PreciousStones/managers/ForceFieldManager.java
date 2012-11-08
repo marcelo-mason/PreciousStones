@@ -708,38 +708,41 @@ public final class ForceFieldManager
 
         List<Field> fields = fieldsByWorld.get(world.getName());
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            // ensure chunk is loaded prior to polling
-
-            ChunkVec cv = field.toChunkVec();
-
-            if (!cv.equals(currentChunk))
+            for (Field field : fields)
             {
-                if (!currentChunkLoaded)
+                // ensure chunk is loaded prior to polling
+
+                ChunkVec cv = field.toChunkVec();
+
+                if (!cv.equals(currentChunk))
                 {
-                    if (currentChunk != null)
+                    if (!currentChunkLoaded)
                     {
-                        world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                        if (currentChunk != null)
+                        {
+                            world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                        }
                     }
+
+                    currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                    if (!currentChunkLoaded)
+                    {
+                        world.loadChunk(cv.getX(), cv.getZ());
+                    }
+
+                    currentChunk = cv;
                 }
 
-                currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
-
-                if (!currentChunkLoaded)
+                if (!field.isHidden())
                 {
-                    world.loadChunk(cv.getX(), cv.getZ());
-                }
-
-                currentChunk = cv;
-            }
-
-            if (!field.isHidden())
-            {
-                if (!field.matchesBlockType())
-                {
-                    cleanedCount++;
-                    queueRelease(field);
+                    if (!field.matchesBlockType())
+                    {
+                        cleanedCount++;
+                        queueRelease(field);
+                    }
                 }
             }
         }
@@ -767,44 +770,46 @@ public final class ForceFieldManager
 
         List<Field> fields = fieldsByWorld.get(world.getName());
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            // ensure chunk is loaded prior to polling
-
-            ChunkVec cv = field.toChunkVec();
-
-            if (!cv.equals(currentChunk))
+            for (Field field : fields)
             {
-                if (!currentChunkLoaded)
+                // ensure chunk is loaded prior to polling
+
+                ChunkVec cv = field.toChunkVec();
+
+                if (!cv.equals(currentChunk))
                 {
-                    if (currentChunk != null)
+                    if (!currentChunkLoaded)
                     {
-                        world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                        if (currentChunk != null)
+                        {
+                            world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
+                        }
                     }
+
+                    currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
+
+                    if (!currentChunkLoaded)
+                    {
+                        world.loadChunk(cv.getX(), cv.getZ());
+                    }
+
+                    currentChunk = cv;
                 }
 
-                currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
-
-                if (!currentChunkLoaded)
+                if (!field.isHidden())
                 {
-                    world.loadChunk(cv.getX(), cv.getZ());
-                }
-
-                currentChunk = cv;
-            }
-
-            if (!field.isHidden())
-            {
-                if (!field.matchesBlockType())
-                {
-                    Block block = field.getBlock();
-                    block.setTypeId(field.getTypeId());
-                    block.setData(field.getData());
-                    revertedCount++;
+                    if (!field.matchesBlockType())
+                    {
+                        Block block = field.getBlock();
+                        block.setTypeId(field.getTypeId());
+                        block.setData(field.getData());
+                        revertedCount++;
+                    }
                 }
             }
         }
-
         return revertedCount;
     }
 
