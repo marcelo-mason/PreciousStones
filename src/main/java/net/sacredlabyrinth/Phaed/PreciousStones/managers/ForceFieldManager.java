@@ -2111,12 +2111,14 @@ public final class ForceFieldManager
 
         List<Field> fields = fieldsByOwner.get(playerName);
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            queueRelease(field);
-            deletedFields++;
+            for (Field field : fields)
+            {
+                queueRelease(field);
+                deletedFields++;
+            }
         }
-
         flush();
 
         return deletedFields;
@@ -2134,14 +2136,17 @@ public final class ForceFieldManager
 
         List<Field> fields = fieldsByOwner.get(playerName);
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            if (field.hasFlag(FieldFlag.HIDABLE))
+            for (Field field : fields)
             {
-                if (!field.isHidden())
+                if (field.hasFlag(FieldFlag.HIDABLE))
                 {
-                    field.hide();
-                    hiddenFields++;
+                    if (!field.isHidden())
+                    {
+                        field.hide();
+                        hiddenFields++;
+                    }
                 }
             }
         }
@@ -2161,14 +2166,17 @@ public final class ForceFieldManager
 
         List<Field> fields = fieldsByOwner.get(playerName);
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            if (field.hasFlag(FieldFlag.HIDABLE))
+            for (Field field : fields)
             {
-                if (field.isHidden())
+                if (field.hasFlag(FieldFlag.HIDABLE))
                 {
-                    field.unHide();
-                    unhiddenFields++;
+                    if (field.isHidden())
+                    {
+                        field.unHide();
+                        unhiddenFields++;
+                    }
                 }
             }
         }
@@ -2502,10 +2510,14 @@ public final class ForceFieldManager
     public void changeOwner(Field field, String owner)
     {
         List<Field> fields = fieldsByOwner.get(field.getOwner());
-        fields.remove(field);
-        field.setNewOwner(owner);
-        fields = fieldsByOwner.get(owner);
-        fields.add(field);
+
+        if (fields != null)
+        {
+            fields.remove(field);
+            field.setNewOwner(owner);
+            fields = fieldsByOwner.get(owner);
+            fields.add(field);
+        }
     }
 
     /**
@@ -2521,21 +2533,24 @@ public final class ForceFieldManager
 
         List<Field> fields = fieldsByOwner.get(owner);
 
-        for (Field field : fields)
+        if (fields != null)
         {
-            if (field.equals(sourceField))
+            for (Field field : fields)
             {
-                continue;
-            }
+                if (field.equals(sourceField))
+                {
+                    continue;
+                }
 
-            if (!field.hasFlag(FieldFlag.TELEPORT_DESTINATION))
-            {
-                continue;
-            }
+                if (!field.hasFlag(FieldFlag.TELEPORT_DESTINATION))
+                {
+                    continue;
+                }
 
-            if (field.getName().equalsIgnoreCase(sourceField.getName()))
-            {
-                out.add(field);
+                if (field.getName().equalsIgnoreCase(sourceField.getName()))
+                {
+                    out.add(field);
+                }
             }
         }
 
