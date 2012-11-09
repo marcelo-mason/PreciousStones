@@ -2466,6 +2466,96 @@ public class Field extends AbstractVec implements Comparable<Field>
         PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 
+    public boolean rent(Player player, FieldSign s)
+    {
+        if (s.getItem() == null)
+        {
+            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
+            {
+                if (PermissionsManager.hasMoney(player, s.getPrice()))
+                {
+                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
+
+                    addPayment(player.getName(), s.getField().getName(), null, s.getPrice());
+                    addRent(player);
+
+                    PreciousStones.getInstance().getCommunicationManager().logPayment(getOwner(), player.getName(), s);
+                    return true;
+                }
+
+                ChatBlock.send(player, "economyNotEnoughMoney");
+            }
+        }
+        else
+        {
+            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
+            {
+                StackHelper.remove(player, s.getItem(), s.getPrice());
+
+                addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
+                addRent(player);
+
+                PreciousStones.getInstance().getCommunicationManager().logPayment(getOwner(), player.getName(), s);
+                return true;
+            }
+
+            ChatBlock.send(player, "economyNotEnoughItems");
+        }
+        return false;
+    }
+
+    public boolean hasPendingPayments()
+    {
+        return !payment.isEmpty();
+    }
+
+
+    public boolean buy(Player player, FieldSign s)
+    {
+        if (s.getItem() == null)
+        {
+            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
+            {
+                if (PermissionsManager.hasMoney(player, s.getPrice()))
+                {
+                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
+
+                    addPurchase(player.getName(), s.getField().getName(), null, s.getPrice());
+
+                    PreciousStones.getInstance().getCommunicationManager().logPurchase(getOwner(), player.getName(), s);
+                    return true;
+                }
+
+                ChatBlock.send(player, "economyNotEnoughMoney");
+            }
+        }
+        else
+        {
+            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
+            {
+                StackHelper.remove(player, s.getItem(), s.getPrice());
+
+                addPurchase(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
+
+                PreciousStones.getInstance().getCommunicationManager().logPurchase(getOwner(), player.getName(), s);
+                return true;
+            }
+
+            ChatBlock.send(player, "economyNotEnoughItems");
+        }
+        return false;
+    }
+
+    public boolean hasPendingPurchase()
+    {
+        return purchase != null;
+    }
+
+    public boolean isBuyer(Player player)
+    {
+        return purchase != null && purchase.getPlayer().equals(player.getName());
+    }
+
     public void retrievePayment(Player player)
     {
         for (PaymentEntry entry : payment)
@@ -2498,6 +2588,8 @@ public class Field extends AbstractVec implements Comparable<Field>
             }
         }
 
+        PreciousStones.getInstance().getCommunicationManager().logPaymentCollect(getOwner(), player.getName(), getAttachedFieldSign());
+
         payment.clear();
         dirtyFlags();
         PreciousStones.getInstance().getStorageManager().offerField(this);
@@ -2505,112 +2597,13 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     public void retrievePurchase(Player player)
     {
-        if (purchase != null)
-        {
-            if (purchase.isItemPayment())
-            {
-                StackHelper.give(player, purchase.getItem(), purchase.getAmount());
-            }
-            else
-            {
-                PreciousStones.getInstance().getPermissionsManager().playerCredit(player, purchase.getAmount());
-            }
-
-            purchase = null;
-            dirtyFlags();
-            PreciousStones.getInstance().getStorageManager().offerField(this);
-        }
-    }
-
-    public boolean rent(Player player, FieldSign s)
-    {
-        if (s.getItem() == null)
-        {
-            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
-            {
-                if (PermissionsManager.hasMoney(player, s.getPrice()))
-                {
-                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
-
-                    addPayment(player.getName(), s.getField().getName(), null, s.getPrice());
-                    addRent(player);
-                    return true;
-                }
-
-                ChatBlock.send(player, "economyNotEnoughMoney");
-            }
-        }
-        else
-        {
-            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
-            {
-                StackHelper.remove(player, s.getItem(), s.getPrice());
-
-                addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
-                addRent(player);
-                return true;
-            }
-
-            ChatBlock.send(player, "economyNotEnoughItems");
-        }
-        return false;
-    }
-
-    public boolean hasPendingPayments()
-    {
-        return !payment.isEmpty();
-    }
-
-
-    public boolean buy(Player player, FieldSign s)
-    {
-        if (s.getItem() == null)
-        {
-            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
-            {
-                if (PermissionsManager.hasMoney(player, s.getPrice()))
-                {
-                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
-
-                    addPurchase(player.getName(), s.getField().getName(), null, s.getPrice());
-                    return true;
-                }
-
-                ChatBlock.send(player, "economyNotEnoughMoney");
-            }
-        }
-        else
-        {
-            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
-            {
-                StackHelper.remove(player, s.getItem(), s.getPrice());
-
-                addPurchase(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
-                return true;
-            }
-
-            ChatBlock.send(player, "economyNotEnoughItems");
-        }
-        return false;
-    }
-
-    public boolean hasPendingPurchase()
-    {
-        return purchase != null;
-    }
-
-    public boolean isBuyer(Player player)
-    {
-        return purchase != null && purchase.getPlayer().equals(player.getName());
-    }
-
-    public void swapOwnership(Player player)
-    {
         setOwner(purchase.getPlayer());
         PreciousStones.getInstance().getStorageManager().offerField(this);
 
         if (purchase.isItemPayment())
         {
+            StackHelper.give(player, purchase.getItem(), purchase.getAmount());
+
             if (purchase.getFieldName().isEmpty())
             {
                 ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", purchase.getAmount(), purchase.getItem().getFriendly(), purchase.getPlayer());
@@ -2622,6 +2615,8 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
         else
         {
+            PreciousStones.getInstance().getPermissionsManager().playerCredit(player, purchase.getAmount());
+
             if (purchase.getFieldName().isEmpty())
             {
                 ChatBlock.send(player, "fieldSignPaymentReceivedNoName", purchase.getAmount(), purchase.getPlayer());
@@ -2632,7 +2627,11 @@ public class Field extends AbstractVec implements Comparable<Field>
             }
         }
 
-        retrievePurchase(player);
+        PreciousStones.getInstance().getCommunicationManager().logPurchaseCollect(getOwner(), player.getName(), getAttachedFieldSign());
+
+        purchase = null;
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 
     private class Update implements Runnable

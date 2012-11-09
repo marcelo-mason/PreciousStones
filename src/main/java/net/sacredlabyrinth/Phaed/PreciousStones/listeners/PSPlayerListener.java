@@ -783,7 +783,7 @@ public class PSPlayerListener implements Listener
                         {
                             if (field.hasPendingPurchase())
                             {
-                                field.swapOwnership(player);
+                                field.retrievePurchase(player);
                                 s.eject();
 
                                 event.setCancelled(true);

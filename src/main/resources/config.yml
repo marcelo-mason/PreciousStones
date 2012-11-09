@@ -399,6 +399,7 @@ log:
     rollback: true
     bypass-delete: true
     conflict-place: true
+    rents-and-purchases: true
 cuboid:
     visualization-blocktype: 20
     defining-blocktype: 49

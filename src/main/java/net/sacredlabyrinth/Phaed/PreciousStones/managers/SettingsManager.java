@@ -79,6 +79,7 @@ public final class SettingsManager
     private boolean logBypassPlace;
     private boolean logBypassDestroy;
     private boolean logConflictPlace;
+    private boolean logRentsAndPurchases;
     private boolean notifyTranslocation;
     private boolean notifyRollback;
     private boolean notifyFlyZones;
@@ -209,6 +210,7 @@ public final class SettingsManager
         logBypassPlace = loadBoolean("log.bypass-place");
         logBypassDestroy = loadBoolean("log.bypass-destroy");
         logConflictPlace = loadBoolean("log.conflict-place");
+        logRentsAndPurchases = loadBoolean("log.rents-and-purchases");
 
         // ********************************** Notify
 
@@ -1530,5 +1532,10 @@ public final class SettingsManager
     public boolean isPurgeBannedPlayers()
     {
         return purgeBannedPlayers;
+    }
+
+    public boolean isLogRentsAndPurchases()
+    {
+        return logRentsAndPurchases;
     }
 }

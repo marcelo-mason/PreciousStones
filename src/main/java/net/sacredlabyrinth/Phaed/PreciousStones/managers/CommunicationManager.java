@@ -1,10 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.RentEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -119,6 +116,38 @@ public class CommunicationManager
     private boolean canBypassAlert(Player player)
     {
         return !(plugin.getSettingsManager().isDisableBypassAlertsForAdmins() && plugin.getPermissionsManager().has(player, "preciousstones.admin.isadmin"));
+    }
+
+    public void logPayment(String owner, String renter, FieldSign s)
+    {
+        if (plugin.getSettingsManager().isLogRentsAndPurchases())
+        {
+            PreciousStones.log("logPayment", renter, s.getPeriod(), owner, s.getField().getType(), s.getPrice(), (s.getItem() != null) ? s.getItem().getFriendly() : "", s.getField().getCoords());
+        }
+    }
+
+    public void logPaymentCollect(String owner, String renter, FieldSign s)
+    {
+        if (plugin.getSettingsManager().isLogRentsAndPurchases())
+        {
+            PreciousStones.log("logPaymentCollect", owner, s.getPrice(), (s.getItem() != null) ? s.getItem().getFriendly() : "", renter, s.getField().getCoords());
+        }
+    }
+
+    public void logPurchase(String owner, String renter, FieldSign s)
+    {
+        if (plugin.getSettingsManager().isLogRentsAndPurchases())
+        {
+            PreciousStones.log("logPurchase", renter, owner, s.getField().getType(), s.getPrice(), (s.getItem() != null) ? s.getItem().getFriendly() : "", s.getField().getCoords());
+        }
+    }
+
+    public void logPurchaseCollect(String owner, String renter, FieldSign s)
+    {
+        if (plugin.getSettingsManager().isLogRentsAndPurchases())
+        {
+            PreciousStones.log("logPurchaseCollect", owner, s.getPrice(), (s.getItem() != null) ? s.getItem().getFriendly() : "", renter, s.getField().getCoords());
+        }
     }
 
     /**
