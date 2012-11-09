@@ -755,6 +755,7 @@ public class PSPlayerListener implements Listener
                                 return;
                             }
                         }
+
                         if (event.getAction().equals(Action.LEFT_CLICK_BLOCK))
                         {
                             if (s.isRentable())
@@ -995,7 +996,7 @@ public class PSPlayerListener implements Listener
 
                                         if (field.isRented())
                                         {
-                                            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroyd"))
+                                            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                                             {
                                                 ChatBlock.send(player, "fieldSignCannotChange");
                                                 return;

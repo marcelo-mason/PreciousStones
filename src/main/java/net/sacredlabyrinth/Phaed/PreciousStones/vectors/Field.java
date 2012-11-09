@@ -795,11 +795,19 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * @return the allowed
+     * @return the if its rented
      */
     public boolean isRented()
     {
         return !renters.isEmpty();
+    }
+
+    /**
+     * @return if it has been bought
+     */
+    public boolean isBought()
+    {
+        return purchase != null;
     }
 
     /**
@@ -2552,6 +2560,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         return !payment.isEmpty();
     }
+
 
     public boolean buy(Player player, FieldSign s)
     {

@@ -1602,6 +1602,12 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (field.hasFlag(FieldFlag.CAN_CHANGE_OWNER))
                                         {
+                                            if (field.isBought())
+                                            {
+                                                ChatBlock.send(player, "fieldSignCannotChange");
+                                                return true;
+                                            }
+
                                             plugin.getForceFieldManager().changeOwner(field, owner);
                                             ChatBlock.send(sender, "fieldCanBeTaken", owner);
                                             return true;

@@ -520,7 +520,7 @@ public class PSBlockListener implements Listener
 
     private boolean breakingFieldChecks(Player player, Block block, Field field, Cancellable event)
     {
-        if (field.isRented())
+        if (field.isRented() || field.isBought())
         {
             ChatBlock.send(player, "fieldSignCannotDestroy");
             event.setCancelled(true);
