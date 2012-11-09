@@ -2,8 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -285,40 +283,6 @@ public class SignHelper
         return true;
     }
 
-    public static boolean isValidMultiple(String multiple)
-    {
-        if (multiple == null || multiple.isEmpty())
-        {
-            return true;
-        }
-
-        if (!multiple.contains("x"))
-        {
-            return false;
-        }
-
-        multiple = multiple.replace("x", "");
-
-        if (!Helper.isInteger(multiple))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    public static int multipleToInteger(String multiple)
-    {
-        if (multiple == null || multiple.isEmpty())
-        {
-            return 0;
-        }
-
-        multiple = multiple.replace("x", "");
-
-        return Integer.parseInt(multiple);
-    }
-
     public static BlockTypeEntry extractItemFromParenthesis(String line)
     {
         Pattern p = Pattern.compile("\\((.*?)\\)", Pattern.DOTALL);
@@ -337,40 +301,5 @@ public class SignHelper
     {
         line = line.replaceAll("\\((.*?)\\)", "");
         return Helper.forceParseInteger(line);
-    }
-
-    public static boolean pay(Player player, FieldSign s)
-    {
-        if (s.getItem() == null)
-        {
-            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
-            {
-                if (PermissionsManager.hasMoney(player, s.getPrice()))
-                {
-                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
-
-                    PlayerEntry entry = PreciousStones.getInstance().getPlayerManager().getPlayerEntry(s.getField().getOwner());
-                    entry.addPayment(player.getName(), s.getField().getName(), null, s.getPrice());
-                    return true;
-                }
-
-                ChatBlock.send(player, "economyNotEnoughMoney");
-            }
-        }
-        else
-        {
-            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
-            {
-                StackHelper.remove(player, s.getItem(), s.getPrice());
-
-                PlayerEntry entry = PreciousStones.getInstance().getPlayerManager().getPlayerEntry(s.getField().getOwner());
-                entry.addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
-                return true;
-            }
-
-            ChatBlock.send(player, "economyNotEnoughItems");
-        }
-
-        return false;
     }
 }

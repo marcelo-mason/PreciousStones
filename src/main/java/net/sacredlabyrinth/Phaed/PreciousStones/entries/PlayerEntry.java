@@ -1,8 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.StackHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,7 +37,6 @@ public class PlayerEntry
     private Vec teleportVec = null;
     private boolean teleportPending = false;
     private int task;
-    private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
 
     /**
      */
@@ -301,14 +298,6 @@ public class PlayerEntry
 
         // writing the list of flags to json
 
-        JSONArray paymentList = new JSONArray();
-        paymentList.addAll(getPaymentString());
-
-        if (!paymentList.isEmpty())
-        {
-            json.put("payments", paymentList);
-        }
-
         if (superduperpickaxe)
         {
             json.put("superduperpickaxe", superduperpickaxe);
@@ -370,18 +359,6 @@ public class PlayerEntry
         return json.toString();
     }
 
-    public ArrayList<String> getPaymentString()
-    {
-        ArrayList<String> ll = new ArrayList();
-
-        for (PaymentEntry entry : payment)
-        {
-            ll.add(entry.toString());
-        }
-
-        return ll;
-    }
-
     /**
      * Read the list of flags in from a json string
      *
@@ -401,17 +378,6 @@ public class PlayerEntry
                     try
                     {
                         // reading the list of flags from json
-
-                        if (flag.equals("payments"))
-                        {
-                            JSONArray paymentList = (JSONArray) flags.get(flag);
-
-                            paymentList.clear();
-                            for (Object flagStr : paymentList)
-                            {
-                                payment.add(new PaymentEntry(flagStr.toString()));
-                            }
-                        }
 
                         if (flag.equals("disabled"))
                         {
@@ -547,76 +513,6 @@ public class PlayerEntry
         {
             teleportPending = true;
         }
-    }
-
-    public void addPayment(String playerName, String fieldName, BlockTypeEntry item, int amount)
-    {
-        payment.add(new PaymentEntry(playerName, fieldName, item, amount));
-
-        Player player = Bukkit.getServer().getPlayerExact(getName());
-
-        if (player != null)
-        {
-            retrievePayment(player.getName());
-        }
-        else
-        {
-            PreciousStones.getInstance().getStorageManager().offerPlayer(getName());
-        }
-    }
-
-    public void retrievePayment(String playerName)
-    {
-        Player player = Bukkit.getServer().getPlayer(playerName);
-
-        if (player != null)
-        {
-            for (PaymentEntry entry : payment)
-            {
-                if (entry.isItemPayment())
-                {
-                    PaymentEntry remainder = StackHelper.give(player, entry.getItem(), entry.getAmount());
-
-                    if (entry.getFieldName().isEmpty())
-                    {
-                        ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", entry.getAmount(), entry.getItem().getFriendly(), entry.getPlayer());
-                    }
-                    else
-                    {
-                        ChatBlock.send(player, "fieldSignItemPaymentReceived", entry.getAmount(), entry.getItem().getFriendly(), entry.getPlayer(), entry.getFieldName());
-                    }
-
-                    if (remainder != null)
-                    {
-                        remainder.setPlayer(entry.getPlayer());
-                        remainder.setFieldName(entry.getFieldName());
-                        payment.add(remainder);
-
-                        ChatBlock.send(player, "fieldSignItemPaymentRemainder", entry.getAmount(), entry.getItem().getFriendly(), entry.getPlayer(), entry.getFieldName());
-                    }
-                }
-                else
-                {
-                    PreciousStones.getInstance().getPermissionsManager().playerCredit(player, entry.getAmount());
-
-                    if (entry.getFieldName().isEmpty())
-                    {
-                        ChatBlock.send(player, "fieldSignPaymentReceivedNoName", entry.getAmount(), entry.getPlayer());
-                    }
-                    else
-                    {
-                        ChatBlock.send(player, "fieldSignPaymentReceived", entry.getAmount(), entry.getPlayer(), entry.getFieldName());
-                    }
-                }
-            }
-            payment.clear();
-            PreciousStones.getInstance().getStorageManager().offerPlayer(getName());
-        }
-    }
-
-    public boolean hasPendingPayments()
-    {
-        return !payment.isEmpty();
     }
 
     public int getDensity()

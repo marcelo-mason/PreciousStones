@@ -15,7 +15,6 @@ public class FieldSign
     private String tag;
     private Field field;
     private boolean fieldSign;
-    private int multiple;
     private String period;
     private int price;
     private boolean noEconomy;
@@ -79,13 +78,6 @@ public class FieldSign
             {
                 return false;
             }
-
-            if (!SignHelper.isValidMultiple(ChatColor.stripColor(lines[3])))
-            {
-                return false;
-            }
-
-            multiple = SignHelper.multipleToInteger(ChatColor.stripColor(lines[3]));
 
             fieldSign = tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
 
@@ -163,37 +155,44 @@ public class FieldSign
         sign.update();
     }
 
+    public void setBoughtColor(Player player)
+    {
+        sign.setLine(0, ChatColor.RED + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) + ChatColor.RED + "" + ChatColor.BOLD);
+        sign.setLine(3, ChatColor.BOLD + player.getName() + ChatColor.BOLD);
+        sign.update();
+    }
+
     public void setSharedColor()
     {
         sign.setLine(0, ChatColor.GOLD + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) + ChatColor.RED + "" + ChatColor.BOLD);
         sign.update();
     }
 
-    public void setNotRentedColor()
+    public void setAvailableColor()
     {
-        sign.setLine(0, ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) + ChatColor.RED + "" + ChatColor.BOLD);
+        sign.setLine(0, ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) +  ChatColor.BOLD);
+        sign.setLine(3, "");
+        sign.update();
+    }
+
+    public void updateRemainingTime(int seconds)
+    {
+        sign.setLine(3, ChatColor.BOLD + SignHelper.secondsToPeriods(seconds) +  ChatColor.BOLD);
+        sign.update();
+    }
+
+    public void cleanRemainingTime()
+    {
+        sign.setLine(3, "");
         sign.update();
     }
 
     /**
      * Throws the fieldSign back at the player
      */
-    public void reject()
+    public void eject()
     {
         Helper.dropBlockWipe(sign.getBlock());
-    }
-
-    /**
-     * Strips the block of its sign
-     */
-    public void strip()
-    {
-        FieldSign s = SignHelper.getAttachedFieldSign(field.getBlock());
-
-        if (s != null)
-        {
-            Helper.dropBlockWipe(s.getSign().getBlock());
-        }
     }
 
     /**
@@ -224,11 +223,6 @@ public class FieldSign
     public int getPrice()
     {
         return price;
-    }
-
-    public int getMultiple()
-    {
-        return multiple;
     }
 
     public BlockTypeEntry getItem()

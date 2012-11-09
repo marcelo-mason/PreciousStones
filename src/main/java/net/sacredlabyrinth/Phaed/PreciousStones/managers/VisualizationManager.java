@@ -324,12 +324,23 @@ public class VisualizationManager
     }
 
     /**
-     * Visualizes a single field's outline nad reverts
+     * Visualizes a single field's outline
      *
      * @param player
      * @param field
      */
     public void visualizeSingleOutline(Player player, Field field)
+    {
+        visualizeSingleOutline(player, field);
+    }
+
+    /**
+     * Visualizes a single field's outline
+     *
+     * @param player
+     * @param field
+     */
+    public void visualizeSingleOutline(Player player, Field field, boolean revert)
     {
         Visualization vis = visualizations.get(player.getName());
 
@@ -410,7 +421,7 @@ public class VisualizationManager
 
         // visualize all the new blocks that are left to visualize
 
-        Visualize visualize = new Visualize(newBlocks, player, false, false, plugin.getSettingsManager().getVisualizeSeconds());
+        Visualize visualize = new Visualize(newBlocks, player, false, !revert, plugin.getSettingsManager().getVisualizeSeconds());
         visualizations.put(player.getName(), vis);
     }
 
@@ -671,7 +682,7 @@ public class VisualizationManager
     }
 
     /**
-     * Reverts any player's entire visualization buffer
+     * Reverts the player's outline blocks
      *
      * @param player
      */

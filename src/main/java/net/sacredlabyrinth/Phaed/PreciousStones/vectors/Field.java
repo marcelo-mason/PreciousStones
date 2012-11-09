@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,7 +63,9 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int translocationSize;
     private boolean hidden;
     private boolean forested;
-    private boolean rentPeriodReverted;
+    private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
+    private PaymentEntry purchase;
+    private boolean singIsClean;
 
     /**
      * @param x
@@ -1139,6 +1142,14 @@ public class Field extends AbstractVec implements Comparable<Field>
         JSONArray renterList = new JSONArray();
         renterList.addAll(getRentersString());
 
+        JSONArray paymentList = new JSONArray();
+        paymentList.addAll(getPaymentString());
+
+        if (!paymentList.isEmpty())
+        {
+            json.put("payments", paymentList);
+        }
+
         if (!disabledFlags.isEmpty())
         {
             json.put("disabledFlags", disabledFlags);
@@ -1169,7 +1180,24 @@ public class Field extends AbstractVec implements Comparable<Field>
             json.put("hidden", hidden);
         }
 
+        if (purchase != null)
+        {
+            json.put("purchase", purchase);
+        }
+
         return json.toString();
+    }
+
+    public ArrayList<String> getPaymentString()
+    {
+        ArrayList<String> ll = new ArrayList();
+
+        for (PaymentEntry entry : payment)
+        {
+            ll.add(entry.toString());
+        }
+
+        return ll;
     }
 
     public ArrayList<String> getDisabledFlagsStringList()
@@ -1286,6 +1314,20 @@ public class Field extends AbstractVec implements Comparable<Field>
                         else if (flag.equals("hidden"))
                         {
                             hidden = (Boolean) flags.get(flag);
+                        }
+                        else if (flag.equals("purchase"))
+                        {
+                            purchase = new PaymentEntry(flags.get(flag).toString());
+                        }
+                        else if (flag.equals("payments"))
+                        {
+                            JSONArray paymentList = (JSONArray) flags.get(flag);
+
+                            paymentList.clear();
+                            for (Object flagStr : paymentList)
+                            {
+                                payment.add(new PaymentEntry(flagStr.toString()));
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -2293,42 +2335,43 @@ public class Field extends AbstractVec implements Comparable<Field>
         return null;
     }
 
-    public int addRent(Player player, FieldSign s)
+    public void addRent(Player player)
     {
-        int seconds = SignHelper.periodToSeconds(s.getPeriod());
-        int multiple;
+        FieldSign s = getAttachedFieldSign();
 
-        if (seconds == 0)
+        if (s != null)
         {
-            ChatBlock.send(player, "rentError");
-            return 0;
-        }
+            int seconds = SignHelper.periodToSeconds(s.getPeriod());
 
-        RentEntry renter = getRenter(player);
-
-        if (renter != null)
-        {
-            renter.addSeconds(seconds);
-            multiple = renter.getRentMultiple();
-
-            ChatBlock.send(player, "rentAdded", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
-        }
-        else
-        {
-            renterEntries.add(new RentEntry(player.getName(), seconds));
-            renters.add(player.getName().toLowerCase());
-            multiple = 1;
-
-            if (renterEntries.size() == 1)
+            if (seconds == 0)
             {
-                scheduleNextRentUpdate();
+                ChatBlock.send(player, "fieldSignRentError");
+                return;
             }
-            ChatBlock.send(player, "rentRented", s.getPeriod());
-        }
 
-        dirty.add(DirtyFieldReason.FLAGS);
-        PreciousStones.getInstance().getStorageManager().offerField(this);
-        return multiple;
+            RentEntry renter = getRenter(player);
+
+            if (renter != null)
+            {
+                renter.addSeconds(seconds);
+
+                ChatBlock.send(player, "fieldSignRentRented", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
+            }
+            else
+            {
+                renterEntries.add(new RentEntry(player.getName(), seconds));
+                renters.add(player.getName().toLowerCase());
+
+                if (renterEntries.size() == 1)
+                {
+                    scheduleNextRentUpdate();
+                }
+                ChatBlock.send(player, "fieldSignRentRented", s.getPeriod());
+            }
+
+            dirtyFlags();
+            PreciousStones.getInstance().getStorageManager().offerField(this);
+        }
     }
 
     public void removeRenter(RentEntry entry)
@@ -2336,7 +2379,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         renterEntries.remove(entry);
         renters.remove(entry.getPlayerName().toLowerCase());
 
-        dirty.add(DirtyFieldReason.FLAGS);
+        dirtyFlags();
         PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 
@@ -2379,15 +2422,242 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (s != null)
             {
-                s.setNotRentedColor();
+                s.setAvailableColor();
+                s.cleanRemainingTime();
             }
         }
+    }
+
+    public void addPurchase(String playerName, String fieldName, BlockTypeEntry item, int amount)
+    {
+        purchase = new PaymentEntry(playerName, fieldName, item, amount);
+
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void addPayment(String playerName, String fieldName, BlockTypeEntry item, int amount)
+    {
+        boolean added = false;
+
+        for (PaymentEntry entry : payment)
+        {
+            if (entry.getPlayer().equals(playerName) && entry.getItem().equals(item))
+            {
+                entry.setAmount(entry.getAmount() + amount);
+                added = true;
+            }
+        }
+
+        if (!added)
+        {
+            payment.add(new PaymentEntry(playerName, fieldName, item, amount));
+        }
+
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void retrievePayment(Player player)
+    {
+        for (PaymentEntry entry : payment)
+        {
+            if (entry.isItemPayment())
+            {
+                StackHelper.give(player, entry.getItem(), entry.getAmount());
+
+                if (entry.getFieldName().isEmpty())
+                {
+                    ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", entry.getAmount(), entry.getItem().getFriendly(), entry.getPlayer());
+                }
+                else
+                {
+                    ChatBlock.send(player, "fieldSignItemPaymentReceived", entry.getAmount(), entry.getItem().getFriendly(), entry.getPlayer(), entry.getFieldName());
+                }
+            }
+            else
+            {
+                PreciousStones.getInstance().getPermissionsManager().playerCredit(player, entry.getAmount());
+
+                if (entry.getFieldName().isEmpty())
+                {
+                    ChatBlock.send(player, "fieldSignPaymentReceivedNoName", entry.getAmount(), entry.getPlayer());
+                }
+                else
+                {
+                    ChatBlock.send(player, "fieldSignPaymentReceived", entry.getAmount(), entry.getPlayer(), entry.getFieldName());
+                }
+            }
+        }
+
+        payment.clear();
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void retrievePurchase(Player player)
+    {
+        if (purchase != null)
+        {
+            if (purchase.isItemPayment())
+            {
+                StackHelper.give(player, purchase.getItem(), purchase.getAmount());
+            }
+            else
+            {
+                PreciousStones.getInstance().getPermissionsManager().playerCredit(player, purchase.getAmount());
+            }
+
+            purchase = null;
+            dirtyFlags();
+            PreciousStones.getInstance().getStorageManager().offerField(this);
+        }
+    }
+
+    public boolean rent(Player player, FieldSign s)
+    {
+        if (s.getItem() == null)
+        {
+            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
+            {
+                if (PermissionsManager.hasMoney(player, s.getPrice()))
+                {
+                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
+
+                    addPayment(player.getName(), s.getField().getName(), null, s.getPrice());
+                    addRent(player);
+                    return true;
+                }
+
+                ChatBlock.send(player, "economyNotEnoughMoney");
+            }
+        }
+        else
+        {
+            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
+            {
+                StackHelper.remove(player, s.getItem(), s.getPrice());
+
+                addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
+                addRent(player);
+                return true;
+            }
+
+            ChatBlock.send(player, "economyNotEnoughItems");
+        }
+        return false;
+    }
+
+    public boolean hasPendingPayments()
+    {
+        return !payment.isEmpty();
+    }
+
+    public boolean buy(Player player, FieldSign s)
+    {
+        if (s.getItem() == null)
+        {
+            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
+            {
+                if (PermissionsManager.hasMoney(player, s.getPrice()))
+                {
+                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
+
+                    addPurchase(player.getName(), s.getField().getName(), null, s.getPrice());
+                    return true;
+                }
+
+                ChatBlock.send(player, "economyNotEnoughMoney");
+            }
+        }
+        else
+        {
+            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
+            {
+                StackHelper.remove(player, s.getItem(), s.getPrice());
+
+                addPurchase(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
+                return true;
+            }
+
+            ChatBlock.send(player, "economyNotEnoughItems");
+        }
+        return false;
+    }
+
+    public boolean hasPendingPurchase()
+    {
+        return purchase != null;
+    }
+
+    public boolean isBuyer(Player player)
+    {
+        return purchase != null && purchase.getPlayer().equals(player.getName());
+    }
+
+    public void swapOwnership(Player player)
+    {
+        setOwner(purchase.getPlayer());
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+
+        if (purchase.isItemPayment())
+        {
+            if (purchase.getFieldName().isEmpty())
+            {
+                ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", purchase.getAmount(), purchase.getItem().getFriendly(), purchase.getPlayer());
+            }
+            else
+            {
+                ChatBlock.send(player, "fieldSignItemPaymentReceived", purchase.getAmount(), purchase.getItem().getFriendly(), purchase.getPlayer(), purchase.getFieldName());
+            }
+        }
+        else
+        {
+            if (purchase.getFieldName().isEmpty())
+            {
+                ChatBlock.send(player, "fieldSignPaymentReceivedNoName", purchase.getAmount(), purchase.getPlayer());
+            }
+            else
+            {
+                ChatBlock.send(player, "fieldSignPaymentReceived", purchase.getAmount(), purchase.getPlayer(), purchase.getFieldName());
+            }
+        }
+
+        retrievePurchase(player);
     }
 
     private class Update implements Runnable
     {
         public void run()
         {
+            if (isRented())
+            {
+                FieldSign s = getAttachedFieldSign();
+
+                if (s != null)
+                {
+                    if (s.isRentable() && s.isValid())
+                    {
+                        boolean foundSomeone = false;
+
+                        for (RentEntry entry : renterEntries)
+                        {
+                            if (PreciousStones.getInstance().getEntryManager().hasInhabitants(self))
+                            {
+                                s.updateRemainingTime(entry.remainingRent());
+                                foundSomeone = true;
+                            }
+                        }
+
+                        if (!foundSomeone && !singIsClean)
+                        {
+                            s.cleanRemainingTime();
+                            singIsClean = true;
+                        }
+                    }
+                }
+            }
+
             for (final RentEntry entry : renterEntries)
             {
                 if (entry.isDone())
@@ -2403,11 +2673,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                             if (getName().isEmpty())
                             {
-                                ChatBlock.send(entry.getPlayerName(), "rentExpiredNoName");
+                                ChatBlock.send(entry.getPlayerName(), "fieldSignRentExpiredNoName");
                             }
                             else
                             {
-                                ChatBlock.send(entry.getPlayerName(), "rentExpired", getName());
+                                ChatBlock.send(entry.getPlayerName(), "fieldSignRentExpired", getName());
                             }
                         }
                     }, 0);

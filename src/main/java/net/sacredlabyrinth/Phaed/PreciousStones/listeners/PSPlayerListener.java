@@ -4,7 +4,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.RentEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -624,7 +623,6 @@ public class PSPlayerListener implements Listener
                     if (FieldFlag.PREVENT_ITEM_FRAME_TAKE.applies(field, player))
                     {
                         event.setCancelled(true);
-                        return;
                     }
                 }
             }
@@ -697,52 +695,34 @@ public class PSPlayerListener implements Listener
 
                         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
                         {
-                            if (s.isRentable())
-                            {
-                                if (field.isRented())
-                                {
-                                    if (!field.isRenter(player.getName()))
-                                    {
-                                        ChatBlock.send(player, "fieldSignAlreadyRented");
-                                        plugin.getCommunicationManager().showRenterInfo(player, field);
-                                        event.setCancelled(true);
-                                        return;
-                                    }
-                                    else
-                                    {
-                                        if (player.isSneaking())
-                                        {
-                                            field.abandonRent(player);
-                                            ChatBlock.send(player, "rentAbandoned");
-                                            event.setCancelled(true);
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-
                             if (s.isRentable() || s.isShareable())
                             {
-                                if (s.getMultiple() > 0)
+                                if (s.isRentable())
                                 {
-                                    RentEntry renter = field.getRenter(player);
-
-                                    if (renter != null)
+                                    if (field.isRented())
                                     {
-                                        if (renter.getRentMultiple() >= s.getMultiple())
+                                        if (!field.isRenter(player.getName()))
                                         {
-                                            ChatBlock.send(player, "fieldSignMultipleExceeded");
+                                            ChatBlock.send(player, "fieldSignAlreadyRented");
+                                            plugin.getCommunicationManager().showRenterInfo(player, field);
                                             event.setCancelled(true);
                                             return;
+                                        }
+                                        else
+                                        {
+                                            if (player.isSneaking())
+                                            {
+                                                field.abandonRent(player);
+                                                ChatBlock.send(player, "fieldSignRentAbandoned");
+                                                event.setCancelled(true);
+                                                return;
+                                            }
                                         }
                                     }
                                 }
 
-                                if (SignHelper.pay(player, s))
+                                if (field.rent(player, s))
                                 {
-                                    field.addRent(player, s);
-                                    event.setCancelled(true);
-
                                     if (s.isRentable())
                                     {
                                         s.setRentedColor();
@@ -752,6 +732,7 @@ public class PSPlayerListener implements Listener
                                         s.setSharedColor();
                                     }
 
+                                    event.setCancelled(true);
                                     return;
                                 }
                                 return;
@@ -759,16 +740,18 @@ public class PSPlayerListener implements Listener
 
                             if (s.isBuyable())
                             {
-                                if (SignHelper.pay(player, s))
+                                if (field.hasPendingPurchase())
                                 {
-                                    s.strip();
-                                    field.setOwner(player.getName());
-                                    plugin.getStorageManager().offerField(field);
+                                    ChatBlock.send(player, "fieldSignAlreadyBought");
+                                }
+                                else if (field.buy(player, s))
+                                {
+                                    s.setBoughtColor(player);
 
                                     ChatBlock.send(player, "fieldSignBought");
-                                    event.setCancelled(true);
-                                    return;
                                 }
+
+                                event.setCancelled(true);
                                 return;
                             }
                         }
@@ -785,7 +768,7 @@ public class PSPlayerListener implements Listener
                                 }
                             }
 
-                            plugin.getVisualizationManager().visualizeSingleOutline(player, field);
+                            plugin.getVisualizationManager().visualizeSingleOutline(player, field, true);
                             plugin.getCommunicationManager().showFieldDetails(player, field);
                             plugin.getCommunicationManager().showRenterInfo(player, field);
                         }
@@ -797,9 +780,25 @@ public class PSPlayerListener implements Listener
                     {
                         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
                         {
+                            if (field.hasPendingPurchase())
+                            {
+                                field.swapOwnership(player);
+                                s.eject();
+
+                                event.setCancelled(true);
+                                return;
+                            }
+
                             if (field.isRented())
                             {
-                                plugin.getCommunicationManager().showRenterInfo(player, field);
+                                if (field.hasPendingPayments())
+                                {
+                                    field.retrievePayment(player);
+                                }
+                                else
+                                {
+                                    plugin.getCommunicationManager().showRenterInfo(player, field);
+                                }
                             }
                             else
                             {
@@ -996,8 +995,11 @@ public class PSPlayerListener implements Listener
 
                                         if (field.isRented())
                                         {
-                                            ChatBlock.send(player, "fieldSignCannotChange");
-                                            return;
+                                            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroyd"))
+                                            {
+                                                ChatBlock.send(player, "fieldSignCannotChange");
+                                                return;
+                                            }
                                         }
 
                                         plugin.getCuboidManager().openCuboid(player, field);

@@ -1898,6 +1898,10 @@ public final class CommandManager implements CommandExecutor
                                     ChatBlock.send(sender, "hideCannot");
                                 }
                             }
+                            else
+                            {
+                                plugin.getCommunicationManager().showNotFound(player);
+                            }
                         }
                         return true;
                     }
@@ -1937,6 +1941,10 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     ChatBlock.send(sender, "hideCannot");
                                 }
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "hideNoneFound");
                             }
                         }
                         return true;

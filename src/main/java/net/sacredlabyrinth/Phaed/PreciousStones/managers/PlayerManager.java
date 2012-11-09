@@ -65,11 +65,6 @@ public class PlayerManager
     {
         PlayerEntry data = getPlayerEntry(playerName);
         data.setOnline(true);
-
-        if (data.hasPendingPayments())
-        {
-            data.retrievePayment(playerName);
-        }
     }
 
     /**

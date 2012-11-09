@@ -8,13 +8,11 @@ public class RentEntry
     private String playerName;
     private DateTime endDate;
     private int periodSeconds;
-    private int rentMultiple;
 
     public RentEntry(String playerName, int periodSeconds)
     {
         this.playerName = playerName;
         this.periodSeconds = periodSeconds;
-        this.rentMultiple = 1;
         this.endDate = (new DateTime()).plusSeconds(periodSeconds);
     }
 
@@ -25,15 +23,12 @@ public class RentEntry
         this.playerName = unpacked[0];
         this.periodSeconds = Integer.parseInt(unpacked[1]);
         this.endDate = new DateTime(Long.parseLong(unpacked[2]));
-        this.rentMultiple = Integer.parseInt(unpacked[3]);
     }
 
     public void addSeconds(int seconds)
     {
         this.periodSeconds += seconds;
         this.endDate = endDate.plusSeconds(seconds);
-
-        this.rentMultiple += 1;
     }
 
     public int getPeriodSeconds()
@@ -76,11 +71,6 @@ public class RentEntry
 
     public String serialize()
     {
-        return playerName + "|" + periodSeconds + "|" + endDate.getMillis() + "|" + rentMultiple;
-    }
-
-    public int getRentMultiple()
-    {
-        return rentMultiple;
+        return playerName + "|" + periodSeconds + "|" + endDate.getMillis();
     }
 }

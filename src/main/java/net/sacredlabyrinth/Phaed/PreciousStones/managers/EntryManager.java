@@ -1,6 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.EntryFields;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
@@ -18,8 +21,9 @@ import java.util.*;
 public final class EntryManager
 {
     private PreciousStones plugin;
-    private final HashMap<String, EntryFields> entries = new HashMap<String, EntryFields>();
-    private final HashMap<String, EntryFields> updatableEntries = new HashMap<String, EntryFields>();
+    private final HashMap<String, EntryFields> entriesByPlayer = new HashMap<String, EntryFields>();
+    private final List<Field> enteredFields = new ArrayList<Field>();
+    private final HashMap<String, EntryFields> dynamicEntries = new HashMap<String, EntryFields>();
     private int updateCount = 0;
 
     /**
@@ -31,7 +35,7 @@ public final class EntryManager
         scheduleNextUpdate();
     }
 
-    private boolean isUpdatable(Field field)
+    private boolean isDynamic(Field field)
     {
         return field.hasFlag(FieldFlag.DAMAGE) ||
                 field.hasFlag(FieldFlag.REPAIR) ||
@@ -52,7 +56,7 @@ public final class EntryManager
     {
         public void run()
         {
-            synchronized (entries)
+            synchronized (dynamicEntries)
             {
                 doEffects();
             }
@@ -69,7 +73,7 @@ public final class EntryManager
 
     private void doEffects()
     {
-        for (String playerName : updatableEntries.keySet())
+        for (String playerName : dynamicEntries.keySet())
         {
             Player player = Bukkit.getServer().getPlayerExact(playerName);
 
@@ -78,7 +82,7 @@ public final class EntryManager
                 continue;
             }
 
-            EntryFields ef = updatableEntries.get(playerName);
+            EntryFields ef = dynamicEntries.get(playerName);
             List<Field> fields = ef.getFields();
 
             boolean hasDamage = false;
@@ -282,9 +286,9 @@ public final class EntryManager
      */
     public List<Field> getPlayerEntryFields(Player player)
     {
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            EntryFields ef = entries.get(player.getName());
+            EntryFields ef = entriesByPlayer.get(player.getName());
 
             if (ef != null)
             {
@@ -438,9 +442,9 @@ public final class EntryManager
 
         EntryFields newEntryField = new EntryFields(field);
 
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            EntryFields ef = entries.get(player.getName());
+            EntryFields ef = entriesByPlayer.get(player.getName());
 
             if (ef != null)
             {
@@ -448,15 +452,15 @@ public final class EntryManager
             }
             else
             {
-                entries.put(player.getName(), newEntryField);
+                entriesByPlayer.put(player.getName(), newEntryField);
             }
         }
 
-        if (isUpdatable(field))
+        if (isDynamic(field))
         {
-            synchronized (entries)
+            synchronized (dynamicEntries)
             {
-                EntryFields ef = updatableEntries.get(player.getName());
+                EntryFields ef = dynamicEntries.get(player.getName());
 
                 if (ef != null)
                 {
@@ -464,9 +468,14 @@ public final class EntryManager
                 }
                 else
                 {
-                    updatableEntries.put(player.getName(), newEntryField);
+                    dynamicEntries.put(player.getName(), newEntryField);
                 }
             }
+        }
+
+        if (!enteredFields.contains(field))
+        {
+            enteredFields.add(field);
         }
 
         /********************************************************************************/
@@ -530,29 +539,31 @@ public final class EntryManager
 
         PreciousStones.debug(player.getName() + " left a " + field.getSettings().getTitle() + " field");
 
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            EntryFields ef = entries.get(player.getName());
+            EntryFields ef = entriesByPlayer.get(player.getName());
             ef.removeField(field);
 
             if (ef.size() == 0)
             {
-                entries.remove(player.getName());
+                entriesByPlayer.remove(player.getName());
             }
         }
 
-        synchronized (entries)
+        synchronized (dynamicEntries)
         {
-            EntryFields ef = updatableEntries.get(player.getName());
+            EntryFields ef = dynamicEntries.get(player.getName());
             if (ef != null)
             {
                 ef.removeField(field);
                 if (ef.size() == 0)
                 {
-                    updatableEntries.remove(player.getName());
+                    dynamicEntries.remove(player.getName());
                 }
             }
         }
+
+        enteredFields.remove(field);
 
         /********************************************************************************/
 
@@ -571,26 +582,26 @@ public final class EntryManager
     {
         // remove player from all entered fields
 
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            if (entries.containsKey(player.getName()))
+            if (entriesByPlayer.containsKey(player.getName()))
             {
-                EntryFields entryFields = entries.get(player.getName());
+                EntryFields entryFields = entriesByPlayer.get(player.getName());
 
                 for (Field field : entryFields.getFields())
                 {
                     leaveOverlappedArea(player, field);
                 }
 
-                entries.remove(player.getName());
+                entriesByPlayer.remove(player.getName());
             }
         }
 
-        synchronized (entries)
+        synchronized (dynamicEntries)
         {
-            if (updatableEntries.containsKey(player.getName()))
+            if (dynamicEntries.containsKey(player.getName()))
             {
-                updatableEntries.remove(player.getName());
+                dynamicEntries.remove(player.getName());
             }
         }
 
@@ -611,9 +622,9 @@ public final class EntryManager
      */
     public void removeAllPlayers(Field field)
     {
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            for (String playerName : entries.keySet())
+            for (String playerName : entriesByPlayer.keySet())
             {
                 Player player = Bukkit.getServer().getPlayerExact(playerName);
 
@@ -622,7 +633,7 @@ public final class EntryManager
                     continue;
                 }
 
-                EntryFields ef = entries.get(playerName);
+                EntryFields ef = entriesByPlayer.get(playerName);
                 List<Field> fields = ef.getFields();
 
                 for (Iterator iter = fields.iterator(); iter.hasNext(); )
@@ -636,8 +647,10 @@ public final class EntryManager
                     }
                 }
             }
-
-            for (String playerName : updatableEntries.keySet())
+        }
+        synchronized (dynamicEntries)
+        {
+            for (String playerName : dynamicEntries.keySet())
             {
                 Player player = Bukkit.getServer().getPlayerExact(playerName);
 
@@ -646,7 +659,7 @@ public final class EntryManager
                     continue;
                 }
 
-                EntryFields ef = updatableEntries.get(playerName);
+                EntryFields ef = dynamicEntries.get(playerName);
                 List<Field> fields = ef.getFields();
 
                 for (Iterator iter = fields.iterator(); iter.hasNext(); )
@@ -670,9 +683,9 @@ public final class EntryManager
      */
     public boolean enteredField(Player player, Field field)
     {
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            EntryFields ef = entries.get(player.getName());
+            EntryFields ef = entriesByPlayer.get(player.getName());
 
             if (ef == null)
             {
@@ -690,9 +703,9 @@ public final class EntryManager
      */
     public boolean containsSameNameOwnedField(Player player, Field field)
     {
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            EntryFields ef = entries.get(player.getName());
+            EntryFields ef = entriesByPlayer.get(player.getName());
 
             if (ef != null)
             {
@@ -732,22 +745,19 @@ public final class EntryManager
      */
     public boolean isInhabitant(Field field, String playerName)
     {
-        HashSet<String> inhabitants = new HashSet<String>();
-
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            for (String entrantName : entries.keySet())
-            {
-                EntryFields ef = entries.get(entrantName);
-                List<Field> fields = ef.getFields();
+            EntryFields ef = entriesByPlayer.get(playerName);
+            List<Field> fields = ef.getFields();
 
-                return fields.contains(field);
-            }
+            return fields.contains(field);
         }
-
-        return false;
     }
 
+    public boolean hasInhabitants(Field field)
+    {
+        return enteredFields.contains(field);
+    }
 
     /**
      * @param field
@@ -757,11 +767,11 @@ public final class EntryManager
     {
         HashSet<String> inhabitants = new HashSet<String>();
 
-        synchronized (entries)
+        synchronized (entriesByPlayer)
         {
-            for (String playerName : entries.keySet())
+            for (String playerName : entriesByPlayer.keySet())
             {
-                EntryFields ef = entries.get(playerName);
+                EntryFields ef = entriesByPlayer.get(playerName);
                 List<Field> fields = ef.getFields();
 
                 for (Field testfield : fields)
@@ -775,17 +785,6 @@ public final class EntryManager
         }
 
         return inhabitants;
-    }
-
-    /**
-     * @return the entries
-     */
-    public HashMap<String, EntryFields> getEntries()
-    {
-        synchronized (entries)
-        {
-            return entries;
-        }
     }
 
     private void fireEnterCommands(Field field, Player player)

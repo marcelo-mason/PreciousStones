@@ -1,7 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.PaymentEntry;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,46 +20,24 @@ public class StackHelper
         player.updateInventory();
     }
 
-    public static PaymentEntry give(Player player, BlockTypeEntry item, int amount)
+    public static void give(Player player, BlockTypeEntry item, int amount)
     {
-        List<ItemStack> remainder = new ArrayList<ItemStack>();
-
         for (ItemStack stack : makeStacks(item, amount))
         {
             HashMap<Integer, ItemStack> rem = player.getInventory().addItem(stack);
 
             if (rem != null && !rem.isEmpty())
             {
-                remainder.addAll(rem.values());
+                player.getWorld().dropItemNaturally(player.getLocation(), new ItemStack(Material.CHEST));
+
+                for (ItemStack is : rem.values())
+                {
+                    player.getWorld().dropItemNaturally(player.getLocation(), is);
+                }
             }
         }
 
         player.updateInventory();
-
-        if (remainder.isEmpty())
-        {
-            return null;
-        }
-
-        return packRemainder(remainder);
-    }
-
-    private static PaymentEntry packRemainder(List<ItemStack> stacks)
-    {
-        PaymentEntry entry = new PaymentEntry();
-
-        entry.setItem(new BlockTypeEntry(stacks.get(0).getTypeId(), stacks.get(0).getData().getData()));
-
-        int amount = 0;
-
-        for (ItemStack stack : stacks)
-        {
-            amount += stack.getAmount();
-        }
-
-        entry.setAmount(amount);
-
-        return entry;
     }
 
     public static List<ItemStack> makeStacks(BlockTypeEntry item, int amount)
