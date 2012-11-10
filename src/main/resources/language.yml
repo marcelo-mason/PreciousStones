@@ -512,7 +512,7 @@ fieldSignPaymentReceived: "{yellow}* {aqua}Received {yellow}{1.amount} {aqua}pay
 fieldSignItemPaymentReceived: "{yellow}* {aqua}Received {yellow}{1.amount} {2.item} {aqua}payment from {3.player} ({4.field})"
 fieldSignNoTennant: "{red}The field has no tennant"
 fieldSignOnlyOne: "{red}You can only have one field-sign per field"
-fieldSignNoEco: "{red}You must specify an item id in parenthesis, no economy detected"
+fieldSignNoEco: "{red}You must specify an item id in parenthesis"
 fieldSignAlreadyBought: "{red}Sorry, this place has already been sold"
 _tenant: "Tenant"
 _tenants: "Tenants"

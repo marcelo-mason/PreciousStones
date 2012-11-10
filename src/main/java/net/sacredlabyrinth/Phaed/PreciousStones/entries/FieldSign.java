@@ -61,15 +61,6 @@ public class FieldSign
 
         item = SignHelper.extractItemFromParenthesis(ChatColor.stripColor(lines[1]));
 
-        if (item == null)
-        {
-            if (!PreciousStones.getInstance().getPermissionsManager().hasEconomy())
-            {
-                noEconomy = true;
-                return false;
-            }
-        }
-
         if (!isBuyable())
         {
             period = ChatColor.stripColor(lines[2]);
@@ -83,6 +74,15 @@ public class FieldSign
 
             if (!fieldSign)
             {
+                return false;
+            }
+        }
+
+        if (item == null)
+        {
+            if (!PreciousStones.getInstance().getPermissionsManager().hasEconomy())
+            {
+                noEconomy = true;
                 return false;
             }
         }
@@ -208,6 +208,11 @@ public class FieldSign
     public Field getField()
     {
         return field;
+    }
+
+    public boolean foundField()
+    {
+        return field != null;
     }
 
     public boolean isFieldSign()

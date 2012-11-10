@@ -1552,7 +1552,7 @@ public class PSBlockListener implements Listener
         {
             if (s.isFieldSign())
             {
-                if (s.getField() == null)
+                if (s.foundField())
                 {
                     ChatBlock.send(player, "fieldSignMustBeOnField");
                 }
@@ -1560,17 +1560,17 @@ public class PSBlockListener implements Listener
                 {
                     ChatBlock.send(player, "fieldSignBadFormat");
                 }
-                event.setCancelled(true);
-                return;
-            }
 
-            if(s.isNoEconomy())
-            {
-                ChatBlock.send(player, "fieldSignNoEco");
+                if (s.isNoEconomy())
+                {
+                    ChatBlock.send(player, "fieldSignNoEco");
+                }
+
                 event.setCancelled(true);
                 return;
             }
         }
     }
 }
+
 
