@@ -275,7 +275,8 @@ public enum FieldFlag
         FieldFlag.DISABLE_ON_LOGOFF,
         FieldFlag.ENABLE_ON_LOGON,
         FieldFlag.RENTABLE,
-        FieldFlag.BUYABLE
+        FieldFlag.BUYABLE,
+        FieldFlag.SHAREABLE
     };
 
     /**
