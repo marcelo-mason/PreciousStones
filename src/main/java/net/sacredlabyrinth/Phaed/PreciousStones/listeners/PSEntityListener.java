@@ -883,6 +883,36 @@ public class PSEntityListener implements Listener
                 event.setCancelled(true);
             }
         }
+
+        if (entity instanceof Player)
+        {
+            Player player = (Player) entity;
+
+            if (plugin.getSettingsManager().isCrop(block))
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PROTECT_CROPS);
+
+                if (field != null)
+                {
+                    if (FieldFlag.PROTECT_CROPS.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (plugin.getSettingsManager().isCrop(block))
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PROTECT_CROPS);
+
+                if (field != null)
+                {
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 
     /**

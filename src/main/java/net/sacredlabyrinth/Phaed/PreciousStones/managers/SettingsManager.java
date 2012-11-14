@@ -6,6 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -532,6 +533,18 @@ public final class SettingsManager
         }
 
         return false;
+    }
+
+    public boolean isCrop(Block block)
+    {
+        return block.getType().equals(Material.SOIL) ||
+                block.getType().equals(Material.WHEAT) ||
+                block.getType().equals(Material.SUGAR_CANE) ||
+                block.getType().equals(Material.CARROT) ||
+                block.getType().equals(Material.POTATO) ||
+                block.getType().equals(Material.PUMPKIN_STEM) ||
+                block.getType().equals(Material.MELON_STEM);
+
     }
 
     /**

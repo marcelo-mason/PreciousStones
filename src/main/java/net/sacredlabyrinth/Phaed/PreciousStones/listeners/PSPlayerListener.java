@@ -817,7 +817,7 @@ public class PSPlayerListener implements Listener
 
         if (block != null)
         {
-            if (block.getType().equals(Material.SOIL))
+            if (plugin.getSettingsManager().isCrop(block))
             {
                 Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PROTECT_CROPS);
 
