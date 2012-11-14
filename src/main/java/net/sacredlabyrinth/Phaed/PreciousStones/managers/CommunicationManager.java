@@ -3495,6 +3495,11 @@ public class CommunicationManager
             cb.addRow("menu21");
         }
 
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield") && hasPlayer)
+        {
+            cb.addRow("menu53");
+        }
+
         if (plugin.getPermissionsManager().has(player, "preciousstones.translocation.use") && hasPlayer)
         {
             cb.addRow("menu22");
