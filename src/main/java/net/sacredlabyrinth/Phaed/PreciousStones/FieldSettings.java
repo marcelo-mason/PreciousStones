@@ -161,11 +161,11 @@ public class FieldSettings
 
         if (leavingGameMode.equalsIgnoreCase("creative"))
         {
-            forceEntryGameMode = GameMode.CREATIVE;
+            forceLeavingGameMode = GameMode.CREATIVE;
         }
         if (leavingGameMode.equalsIgnoreCase("survival"))
         {
-            forceEntryGameMode = GameMode.SURVIVAL;
+            forceLeavingGameMode = GameMode.SURVIVAL;
         }
 
         //************************** potions
