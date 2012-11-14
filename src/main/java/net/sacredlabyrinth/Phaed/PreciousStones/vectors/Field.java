@@ -2375,6 +2375,9 @@ public class Field extends AbstractVec implements Comparable<Field>
                     scheduleNextRentUpdate();
                 }
                 ChatBlock.send(player, "fieldSignRentRented", s.getPeriod());
+
+                PreciousStones.getInstance().getEntryManager().leaveField(player, this);
+                PreciousStones.getInstance().getEntryManager().enterField(player, this);
             }
 
             dirtyFlags();
