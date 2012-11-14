@@ -2450,7 +2450,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         for (PaymentEntry entry : payment)
         {
-            if (entry.getPlayer().equals(playerName) && entry.getItem().equals(item))
+            if (entry.getPlayer().equals(playerName) && (item == null || entry.getItem().equals(item)))
             {
                 entry.setAmount(entry.getAmount() + amount);
                 added = true;
