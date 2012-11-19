@@ -25,18 +25,18 @@ import java.util.logging.Logger;
 /**
  * @author phaed
  */
-public final class StorageManager
+public class StorageManager
 {
     /**
      *
      */
     private DBCore core;
-    private final PreciousStones plugin;
-    private final Map<Vec, Field> pending = new HashMap<Vec, Field>();
-    private final Set<Field> pendingGrief = new HashSet<Field>();
-    private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
-    private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
-    private final List<SnitchEntry> pendingSnitchEntries = new ArrayList<SnitchEntry>();
+    private PreciousStones plugin;
+    private Map<Vec, Field> pending = new HashMap<Vec, Field>();
+    private Set<Field> pendingGrief = new HashSet<Field>();
+    private Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
+    private Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
+    private List<SnitchEntry> pendingSnitchEntries = new ArrayList<SnitchEntry>();
 
     /**
      *
@@ -268,15 +268,15 @@ public final class StorageManager
 
         extractPlayers();
 
-        final List<World> worlds = plugin.getServer().getWorlds();
+        List<World> worlds = plugin.getServer().getWorlds();
         Map<String, World> filtered = new HashMap<String, World>();
 
-        for (final World world : worlds)
+        for (World world : worlds)
         {
             filtered.put(world.getName(), world);
         }
 
-        for (final World world : filtered.values())
+        for (World world : filtered.values())
         {
             loadWorldFields(world.getName());
             loadWorldUnbreakables(world.getName());
@@ -288,7 +288,7 @@ public final class StorageManager
      *
      * @param world the world to load
      */
-    public void loadWorldFields(final String world)
+    public void loadWorldFields(String world)
     {
         int fieldCount;
         int cuboidCount;
@@ -308,7 +308,7 @@ public final class StorageManager
             fields.addAll(cuboids);
         }
 
-        for (final Field field : fields)
+        for (Field field : fields)
         {
             // add to collection
 
@@ -372,7 +372,7 @@ public final class StorageManager
 
         plugin.getForceFieldManager().clearChunkLists();
 
-        for (final Field field : fields)
+        for (Field field : fields)
         {
             if (field.hasFlag(flagStr))
             {
@@ -405,7 +405,7 @@ public final class StorageManager
 
         plugin.getForceFieldManager().clearChunkLists();
 
-        for (final Field field : fields)
+        for (Field field : fields)
         {
             if (field.hasDisabledFlag(flagStr))
             {
@@ -425,7 +425,7 @@ public final class StorageManager
      *
      * @param world
      */
-    public void loadWorldUnbreakables(final String world)
+    public void loadWorldUnbreakables(String world)
     {
         List<Unbreakable> unbreakables;
 
@@ -436,7 +436,7 @@ public final class StorageManager
 
         if (unbreakables != null)
         {
-            for (final Unbreakable ub : unbreakables)
+            for (Unbreakable ub : unbreakables)
             {
                 plugin.getUnbreakableManager().addToCollection(ub);
             }
@@ -453,7 +453,7 @@ public final class StorageManager
      *
      * @param field
      */
-    public void offerField(final Field field)
+    public void offerField(Field field)
     {
         synchronized (pending)
         {
@@ -466,7 +466,7 @@ public final class StorageManager
      *
      * @param field
      */
-    public void offerGrief(final Field field)
+    public void offerGrief(Field field)
     {
         synchronized (pendingGrief)
         {
@@ -481,7 +481,7 @@ public final class StorageManager
      * @param ub
      * @param insert
      */
-    public void offerUnbreakable(final Unbreakable ub, final boolean insert)
+    public void offerUnbreakable(Unbreakable ub, boolean insert)
     {
         synchronized (pendingUb)
         {
@@ -494,7 +494,7 @@ public final class StorageManager
      *
      * @param playerName
      */
-    public void offerPlayer(final String playerName)
+    public void offerPlayer(String playerName)
     {
         synchronized (pendingPlayers)
         {
@@ -507,7 +507,7 @@ public final class StorageManager
      *
      * @param playerName
      */
-    public void offerDeletePlayer(final String playerName)
+    public void offerDeletePlayer(String playerName)
     {
         synchronized (pendingPlayers)
         {
@@ -521,7 +521,7 @@ public final class StorageManager
      *
      * @param se
      */
-    public void offerSnitchEntry(final SnitchEntry se)
+    public void offerSnitchEntry(SnitchEntry se)
     {
         synchronized (pendingSnitchEntries)
         {
@@ -535,15 +535,15 @@ public final class StorageManager
      * @param worldName
      * @return
      */
-    public List<Field> getFields(final String worldName)
+    public List<Field> getFields(String worldName)
     {
-        final List<Field> out = new ArrayList<Field>();
+        List<Field> out = new ArrayList<Field>();
         boolean foundInWrongTable = false;
         int purged = 0;
 
-        final String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM pstone_fields WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
+        String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM pstone_fields WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
-        final ResultSet res = core.select(query);
+        ResultSet res = core.select(query);
 
         if (res != null)
         {
@@ -553,29 +553,29 @@ public final class StorageManager
                 {
                     try
                     {
-                        final long id = res.getLong("id");
-                        final int x = res.getInt("x");
-                        final int y = res.getInt("y");
-                        final int z = res.getInt("z");
-                        final int radius = res.getInt("radius");
-                        final int height = res.getInt("height");
+                        long id = res.getLong("id");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
+                        int radius = res.getInt("radius");
+                        int height = res.getInt("height");
                         int type_id = res.getInt("type_id");
                         byte data = res.getByte("data");
-                        final float velocity = res.getFloat("velocity");
-                        final String world = res.getString("world");
-                        final String owner = res.getString("owner");
-                        final String name = res.getString("name");
-                        final String flags = res.getString("flags");
-                        final String packed_allowed = res.getString("packed_allowed");
-                        final long last_used = res.getLong("last_used");
+                        float velocity = res.getFloat("velocity");
+                        String world = res.getString("world");
+                        String owner = res.getString("owner");
+                        String name = res.getString("name");
+                        String flags = res.getString("flags");
+                        String packed_allowed = res.getString("packed_allowed");
+                        long last_used = res.getLong("last_used");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        final Field field = new Field(x, y, z, radius, height, velocity, world, type, owner, name, last_used);
+                        Field field = new Field(x, y, z, radius, height, velocity, world, type, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
                         field.setId(id);
 
-                        final FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+                        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
                         // check for snitch fields to purge
 
@@ -603,7 +603,7 @@ public final class StorageManager
 
                             out.add(field);
 
-                            final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
+                            PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
                             playerdata.incrementFieldCount(type);
 
                             // check for fields in the wrong table
@@ -616,14 +616,14 @@ public final class StorageManager
                             }
                         }
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         System.out.print(ex.getMessage());
                         ex.printStackTrace();
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
@@ -648,9 +648,9 @@ public final class StorageManager
      * @param worldName
      * @return
      */
-    public Collection<Field> getCuboidFields(final String worldName)
+    public Collection<Field> getCuboidFields(String worldName)
     {
-        final HashMap<Long, Field> out = new HashMap<Long, Field>();
+        HashMap<Long, Field> out = new HashMap<Long, Field>();
         int purged = 0;
         boolean foundInWrongTable = false;
 
@@ -666,33 +666,33 @@ public final class StorageManager
                 {
                     try
                     {
-                        final long id = res.getLong("id");
-                        final int x = res.getInt("x");
-                        final int y = res.getInt("y");
-                        final int z = res.getInt("z");
-                        final int minx = res.getInt("minx");
-                        final int miny = res.getInt("miny");
-                        final int minz = res.getInt("minz");
-                        final int maxx = res.getInt("maxx");
-                        final int maxy = res.getInt("maxy");
-                        final int maxz = res.getInt("maxz");
+                        long id = res.getLong("id");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
+                        int minx = res.getInt("minx");
+                        int miny = res.getInt("miny");
+                        int minz = res.getInt("minz");
+                        int maxx = res.getInt("maxx");
+                        int maxy = res.getInt("maxy");
+                        int maxz = res.getInt("maxz");
                         int type_id = res.getInt("type_id");
                         byte data = res.getByte("data");
-                        final float velocity = res.getFloat("velocity");
-                        final String world = res.getString("world");
-                        final String owner = res.getString("owner");
-                        final String name = res.getString("name");
-                        final String flags = res.getString("flags");
-                        final String packed_allowed = res.getString("packed_allowed");
-                        final long last_used = res.getLong("last_used");
+                        float velocity = res.getFloat("velocity");
+                        String world = res.getString("world");
+                        String owner = res.getString("owner");
+                        String name = res.getString("name");
+                        String flags = res.getString("flags");
+                        String packed_allowed = res.getString("packed_allowed");
+                        long last_used = res.getLong("last_used");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
+                        Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
                         field.setId(id);
 
-                        final FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+                        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
                         // check for fields to purge
 
@@ -720,7 +720,7 @@ public final class StorageManager
 
                             out.put(id, field);
 
-                            final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
+                            PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
                             playerdata.incrementFieldCount(type);
 
                             // check for fields in the wrong table
@@ -733,14 +733,14 @@ public final class StorageManager
                             }
                         }
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         System.out.print(ex.getMessage());
                         ex.printStackTrace();
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
@@ -759,33 +759,33 @@ public final class StorageManager
                 {
                     try
                     {
-                        final long id = res.getLong("id");
-                        final long parent = res.getLong("parent");
-                        final int x = res.getInt("x");
-                        final int y = res.getInt("y");
-                        final int z = res.getInt("z");
-                        final int minx = res.getInt("minx");
-                        final int miny = res.getInt("miny");
-                        final int minz = res.getInt("minz");
-                        final int maxx = res.getInt("maxx");
-                        final int maxy = res.getInt("maxy");
-                        final int maxz = res.getInt("maxz");
+                        long id = res.getLong("id");
+                        long parent = res.getLong("parent");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
+                        int minx = res.getInt("minx");
+                        int miny = res.getInt("miny");
+                        int minz = res.getInt("minz");
+                        int maxx = res.getInt("maxx");
+                        int maxy = res.getInt("maxy");
+                        int maxz = res.getInt("maxz");
                         int type_id = res.getInt("type_id");
                         byte data = res.getByte("data");
-                        final float velocity = res.getFloat("velocity");
-                        final String world = res.getString("world");
-                        final String owner = res.getString("owner");
-                        final String name = res.getString("name");
-                        final String flags = res.getString("flags");
-                        final String packed_allowed = res.getString("packed_allowed");
-                        final long last_used = res.getLong("last_used");
+                        float velocity = res.getFloat("velocity");
+                        String world = res.getString("world");
+                        String owner = res.getString("owner");
+                        String name = res.getString("name");
+                        String flags = res.getString("flags");
+                        String packed_allowed = res.getString("packed_allowed");
+                        long last_used = res.getLong("last_used");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        final Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
+                        Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
                         field.setPackedAllowed(packed_allowed);
 
-                        final Field parentField = out.get(parent);
+                        Field parentField = out.get(parent);
 
                         if (parentField != null)
                         {
@@ -800,7 +800,7 @@ public final class StorageManager
 
                         field.setId(id);
 
-                        final FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+                        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
                         if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                         {
@@ -820,18 +820,18 @@ public final class StorageManager
                             field.setFlags(flags);
                             out.put(id, field);
 
-                            final PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
+                            PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
                             playerdata.incrementFieldCount(type);
                         }
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         System.out.print(ex.getMessage());
                         ex.printStackTrace();
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
@@ -856,8 +856,8 @@ public final class StorageManager
      */
     public void extractPlayers()
     {
-        final String query = "SELECT * FROM pstone_players;";
-        final ResultSet res = core.select(query);
+        String query = "SELECT * FROM pstone_players;";
+        ResultSet res = core.select(query);
 
         Set<OfflinePlayer> bannedPlayers = Bukkit.getBannedPlayers();
         List<String> banned = new ArrayList<String>();
@@ -884,7 +884,7 @@ public final class StorageManager
 
                         if (last_seen > 0)
                         {
-                            final int lastSeenDays = Days.daysBetween(new DateTime(), new DateTime(last_seen)).getDays();
+                            int lastSeenDays = Days.daysBetween(new DateTime(), new DateTime(last_seen)).getDays();
 
                             if (banned.contains(name) || (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays() && lastSeenDays < plugin.getSettingsManager().getPurgeAfterDays() * 2))
                             {
@@ -907,16 +907,16 @@ public final class StorageManager
                             }
                         }
 
-                        final PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(name);
+                        PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(name);
                         data.setFlags(flags);
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         //PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
@@ -930,14 +930,14 @@ public final class StorageManager
      * @param worldName
      * @return
      */
-    public List<Unbreakable> getUnbreakables(final String worldName)
+    public List<Unbreakable> getUnbreakables(String worldName)
     {
-        final List<Unbreakable> out = new ArrayList<Unbreakable>();
+        List<Unbreakable> out = new ArrayList<Unbreakable>();
         int purged = 0;
 
-        final String query = "SELECT * FROM  `pstone_unbreakables` WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
+        String query = "SELECT * FROM  `pstone_unbreakables` WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
-        final ResultSet res = core.select(query);
+        ResultSet res = core.select(query);
 
         if (res != null)
         {
@@ -947,27 +947,27 @@ public final class StorageManager
                 {
                     try
                     {
-                        final int x = res.getInt("x");
-                        final int y = res.getInt("y");
-                        final int z = res.getInt("z");
-                        final int type_id = res.getInt("type_id");
-                        final byte data = res.getByte("data");
-                        final String world = res.getString("world");
-                        final String owner = res.getString("owner");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
+                        int type_id = res.getInt("type_id");
+                        byte data = res.getByte("data");
+                        String world = res.getString("world");
+                        String owner = res.getString("owner");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        final Unbreakable ub = new Unbreakable(x, y, z, world, type, owner);
+                        Unbreakable ub = new Unbreakable(x, y, z, world, type, owner);
 
                         out.add(ub);
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
@@ -982,20 +982,20 @@ public final class StorageManager
         return out;
     }
 
-    private void updateGrief(final Field field)
+    private void updateGrief(Field field)
     {
         if (field.isDirty(DirtyFieldReason.GRIEF_BLOCKS))
         {
-            final Queue<GriefBlock> grief = field.getGrief();
+            Queue<GriefBlock> grief = field.getGrief();
 
-            for (final GriefBlock gb : grief)
+            for (GriefBlock gb : grief)
             {
                 insertBlockGrief(field, gb);
             }
         }
     }
 
-    public void updateField(final Field field)
+    public void updateField(Field field)
     {
         String subQuery = "";
 
@@ -1064,7 +1064,7 @@ public final class StorageManager
      *
      * @param field
      */
-    public void insertField(final Field field)
+    public void insertField(Field field)
     {
         Vec vec = field.toVec();
 
@@ -1093,7 +1093,7 @@ public final class StorageManager
      *
      * @param field
      */
-    public void deleteField(final Field field)
+    public void deleteField(Field field)
     {
         String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
@@ -1113,7 +1113,7 @@ public final class StorageManager
      *
      * @param field
      */
-    public void deleteFieldFromBothTables(final Field field)
+    public void deleteFieldFromBothTables(Field field)
     {
         String query = "DELETE FROM `pstone_fields` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
         String query2 = "DELETE FROM `pstone_cuboids` WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
@@ -1132,9 +1132,9 @@ public final class StorageManager
      *
      * @param playerName
      */
-    public void deleteFields(final String playerName)
+    public void deleteFields(String playerName)
     {
-        final String query = "DELETE FROM `pstone_fields` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
+        String query = "DELETE FROM `pstone_fields` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
 
         synchronized (this)
         {
@@ -1147,9 +1147,9 @@ public final class StorageManager
      *
      * @param playerName
      */
-    public void deleteUnbreakables(final String playerName)
+    public void deleteUnbreakables(String playerName)
     {
-        final String query = "DELETE FROM `pstone_unbreakables` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
+        String query = "DELETE FROM `pstone_unbreakables` WHERE owner = '" + Helper.escapeQuotes(playerName) + "';";
 
         synchronized (this)
         {
@@ -1162,10 +1162,10 @@ public final class StorageManager
      *
      * @param ub
      */
-    public void insertUnbreakable(final Unbreakable ub)
+    public void insertUnbreakable(Unbreakable ub)
     {
-        final String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`, `data`) ";
-        final String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + Helper.escapeQuotes(ub.getWorld()) + "','" + ub.getOwner() + "'," + ub.getTypeId() + "," + ub.getData() + ");";
+        String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`, `data`) ";
+        String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + Helper.escapeQuotes(ub.getWorld()) + "','" + ub.getOwner() + "'," + ub.getTypeId() + "," + ub.getData() + ");";
 
         synchronized (this)
         {
@@ -1178,9 +1178,9 @@ public final class StorageManager
      *
      * @param ub
      */
-    public void deleteUnbreakable(final Unbreakable ub)
+    public void deleteUnbreakable(Unbreakable ub)
     {
-        final String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + Helper.escapeQuotes(ub.getWorld()) + "';";
+        String query = "DELETE FROM `pstone_unbreakables` WHERE x = " + ub.getX() + " AND y = " + ub.getY() + " AND z = " + ub.getZ() + " AND world = '" + Helper.escapeQuotes(ub.getWorld()) + "';";
 
         synchronized (this)
         {
@@ -1194,13 +1194,13 @@ public final class StorageManager
      * @param snitch
      * @param se
      */
-    public void insertSnitchEntry(final Field snitch, final SnitchEntry se)
+    public void insertSnitchEntry(Field snitch, SnitchEntry se)
     {
         if (plugin.getSettingsManager().isUseMysql())
         {
-            final String query = "INSERT INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
-            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + (new DateTime()).getMillis() + "') ";
-            final String update = "ON DUPLICATE KEY UPDATE count = count+1;";
+            String query = "INSERT INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
+            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + (new DateTime()).getMillis() + "') ";
+            String update = "ON DUPLICATE KEY UPDATE count = count+1;";
 
             synchronized (this)
             {
@@ -1209,9 +1209,9 @@ public final class StorageManager
         }
         else
         {
-            final String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
-            final String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + (new DateTime()).getMillis() + "');";
-            final String update = "UPDATE `pstone_snitches` SET count = count+1;";
+            String query = "INSERT OR IGNORE INTO `pstone_snitches` (`x`, `y`, `z`, `world`, `name`, `reason`, `details`, `count`, `date`) ";
+            String values = "VALUES ( " + snitch.getX() + "," + snitch.getY() + "," + snitch.getZ() + ",'" + Helper.escapeQuotes(snitch.getWorld()) + "','" + Helper.escapeQuotes(se.getName()) + "','" + Helper.escapeQuotes(se.getReason()) + "','" + Helper.escapeQuotes(se.getDetails()) + "',1, '" + (new DateTime()).getMillis() + "');";
+            String update = "UPDATE `pstone_snitches` SET count = count+1;";
 
             synchronized (this)
             {
@@ -1225,9 +1225,9 @@ public final class StorageManager
      *
      * @param snitch
      */
-    public void deleteSnitchEntries(final Field snitch)
+    public void deleteSnitchEntries(Field snitch)
     {
-        final String query = "DELETE FROM `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "';";
+        String query = "DELETE FROM `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "';";
 
         synchronized (this)
         {
@@ -1241,9 +1241,9 @@ public final class StorageManager
      * @param snitch
      * @return
      */
-    public List<SnitchEntry> getSnitchEntries(final Field snitch)
+    public List<SnitchEntry> getSnitchEntries(Field snitch)
     {
-        final List<SnitchEntry> workingSnitchEntries = new ArrayList<SnitchEntry>();
+        List<SnitchEntry> workingSnitchEntries = new ArrayList<SnitchEntry>();
 
         synchronized (pendingSnitchEntries)
         {
@@ -1253,9 +1253,9 @@ public final class StorageManager
 
         processSnitches(workingSnitchEntries);
 
-        final List<SnitchEntry> out = new ArrayList<SnitchEntry>();
+        List<SnitchEntry> out = new ArrayList<SnitchEntry>();
 
-        final String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "' ORDER BY `date` DESC;";
+        String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "' ORDER BY `date` DESC;";
 
         ResultSet res;
 
@@ -1272,22 +1272,22 @@ public final class StorageManager
                 {
                     try
                     {
-                        final String name = res.getString("name");
-                        final String reason = res.getString("reason");
-                        final String details = res.getString("details");
-                        final int count = res.getInt("count");
+                        String name = res.getString("name");
+                        String reason = res.getString("reason");
+                        String details = res.getString("details");
+                        int count = res.getInt("count");
 
-                        final SnitchEntry ub = new SnitchEntry(null, name, reason, details, count);
+                        SnitchEntry ub = new SnitchEntry(null, name, reason, details, count);
 
                         out.add(ub);
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1301,9 +1301,9 @@ public final class StorageManager
      *
      * @param playerName
      */
-    public void deletePlayer(final String playerName)
+    public void deletePlayer(String playerName)
     {
-        final String query = "DELETE FROM `pstone_players` WHERE player_name = '" + playerName + "';";
+        String query = "DELETE FROM `pstone_players` WHERE player_name = '" + playerName + "';";
 
         synchronized (this)
         {
@@ -1316,17 +1316,17 @@ public final class StorageManager
      *
      * @param playerName
      */
-    public void updatePlayer(final String playerName)
+    public void updatePlayer(String playerName)
     {
-        final long time = (new DateTime()).getMillis();
+        long time = (new DateTime()).getMillis();
 
-        final PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(playerName);
+        PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(playerName);
 
         if (plugin.getSettingsManager().isUseMysql())
         {
-            final String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
-            final String values = "VALUES ( '" + playerName + "', " + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "') ";
-            final String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "'";
+            String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
+            String values = "VALUES ( '" + playerName + "', " + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "') ";
+            String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "'";
 
             synchronized (this)
             {
@@ -1335,9 +1335,9 @@ public final class StorageManager
         }
         else
         {
-            final String query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
-            final String values = "VALUES ( '" + playerName + "'," + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "');";
-            final String update = "UPDATE `pstone_players` SET last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "' WHERE player_name = '" + playerName + "';";
+            String query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
+            String values = "VALUES ( '" + playerName + "'," + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "');";
+            String update = "UPDATE `pstone_players` SET last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "' WHERE player_name = '" + playerName + "';";
 
             synchronized (this)
             {
@@ -1348,7 +1348,7 @@ public final class StorageManager
 
     private void touchAllPlayers()
     {
-        final long time = (new DateTime()).getMillis();
+        long time = (new DateTime()).getMillis();
 
         if (plugin.getSettingsManager().isUseMysql())
         {
@@ -1394,10 +1394,10 @@ public final class StorageManager
      * @param field
      * @param gb
      */
-    public void insertBlockGrief(final Field field, final GriefBlock gb)
+    public void insertBlockGrief(Field field, GriefBlock gb)
     {
-        final String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
-        final String values = "VALUES ( '" + (new DateTime()).getMillis() + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
+        String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
+        String values = "VALUES ( '" + (new DateTime()).getMillis() + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
 
         synchronized (this)
         {
@@ -1411,9 +1411,9 @@ public final class StorageManager
      * @param field
      * @return
      */
-    public Queue<GriefBlock> retrieveBlockGrief(final Field field)
+    public Queue<GriefBlock> retrieveBlockGrief(Field field)
     {
-        final Set<Field> workingGrief = new HashSet<Field>();
+        Set<Field> workingGrief = new HashSet<Field>();
 
         synchronized (pendingGrief)
         {
@@ -1423,9 +1423,9 @@ public final class StorageManager
 
         processGrief(workingGrief);
 
-        final Queue<GriefBlock> out = new LinkedList<GriefBlock>();
+        Queue<GriefBlock> out = new LinkedList<GriefBlock>();
 
-        final String query = "SELECT * FROM  `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "' ORDER BY y ASC;";
+        String query = "SELECT * FROM  `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "' ORDER BY y ASC;";
 
         ResultSet res;
 
@@ -1442,16 +1442,16 @@ public final class StorageManager
                 {
                     try
                     {
-                        final int x = res.getInt("x");
-                        final int y = res.getInt("y");
-                        final int z = res.getInt("z");
-                        final int type_id = res.getInt("type_id");
-                        final byte data = res.getByte("data");
-                        final String signText = res.getString("sign_text");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
+                        int type_id = res.getInt("type_id");
+                        byte data = res.getByte("data");
+                        String signText = res.getString("sign_text");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        final GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type);
+                        GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type);
 
                         if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11)
                         {
@@ -1461,13 +1461,13 @@ public final class StorageManager
                         gb.setSignText(signText);
                         out.add(gb);
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1482,14 +1482,14 @@ public final class StorageManager
      *
      * @param field
      */
-    public void deleteBlockGrief(final Field field)
+    public void deleteBlockGrief(Field field)
     {
         synchronized (this)
         {
             pendingGrief.remove(field);
         }
 
-        final String query = "DELETE FROM `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
+        String query = "DELETE FROM `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
         synchronized (this)
         {
@@ -1502,9 +1502,9 @@ public final class StorageManager
      *
      * @param block
      */
-    public void deleteBlockGrief(final Block block)
+    public void deleteBlockGrief(Block block)
     {
-        final String query = "DELETE FROM `pstone_grief_undo` WHERE x = " + block.getX() + " AND y = " + block.getY() + " AND z = " + block.getZ() + " AND world = '" + block.getWorld().getName() + "';";
+        String query = "DELETE FROM `pstone_grief_undo` WHERE x = " + block.getX() + " AND y = " + block.getY() + " AND z = " + block.getZ() + " AND world = '" + block.getWorld().getName() + "';";
 
         synchronized (this)
         {
@@ -1521,7 +1521,7 @@ public final class StorageManager
      */
     public boolean existsTranslocatior(String name, String playerName)
     {
-        final String query = "SELECT COUNT(*) FROM `pstone_translocations` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "'";
+        String query = "SELECT COUNT(*) FROM `pstone_translocations` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "'";
         ResultSet res;
         boolean exists = false;
 
@@ -1539,7 +1539,7 @@ public final class StorageManager
                     exists = res.getInt(1) > 0;
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1555,9 +1555,9 @@ public final class StorageManager
      * @param fieldName
      * @return
      */
-    public boolean changeSizeTranslocatiorField(final Field field, String fieldName)
+    public boolean changeSizeTranslocatiorField(Field field, String fieldName)
     {
-        final String query = "SELECT * FROM `pstone_translocations` WHERE `name` ='" + Helper.escapeQuotes(fieldName) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' LIMIT 1";
+        String query = "SELECT * FROM `pstone_translocations` WHERE `name` ='" + Helper.escapeQuotes(fieldName) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' LIMIT 1";
         ResultSet res;
         boolean exists = false;
 
@@ -1576,13 +1576,13 @@ public final class StorageManager
                     {
                         field.setRelativeCuboidDimensions(res.getInt("minx"), res.getInt("miny"), res.getInt("minz"), res.getInt("maxx"), res.getInt("maxy"), res.getInt("maxz"));
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1597,7 +1597,7 @@ public final class StorageManager
      * @param field
      * @param name
      */
-    public void insertTranslocationHead(final Field field, String name)
+    public void insertTranslocationHead(Field field, String name)
     {
         boolean exists = existsTranslocatior(name, field.getOwner());
 
@@ -1606,8 +1606,8 @@ public final class StorageManager
             return;
         }
 
-        final String query = "INSERT INTO `pstone_translocations` ( `name`, `player_name`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`) ";
-        final String values = "VALUES ( '" + Helper.escapeQuotes(name) + "','" + Helper.escapeQuotes(field.getOwner()) + "'," + field.getRelativeMin().getBlockX() + "," + field.getRelativeMin().getBlockY() + "," + field.getRelativeMin().getBlockZ() + "," + field.getRelativeMax().getBlockX() + "," + field.getRelativeMax().getBlockY() + "," + field.getRelativeMax().getBlockZ() + ");";
+        String query = "INSERT INTO `pstone_translocations` ( `name`, `player_name`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`) ";
+        String values = "VALUES ( '" + Helper.escapeQuotes(name) + "','" + Helper.escapeQuotes(field.getOwner()) + "'," + field.getRelativeMin().getBlockX() + "," + field.getRelativeMin().getBlockY() + "," + field.getRelativeMin().getBlockZ() + "," + field.getRelativeMax().getBlockX() + "," + field.getRelativeMax().getBlockY() + "," + field.getRelativeMax().getBlockZ() + ");";
 
         synchronized (this)
         {
@@ -1621,7 +1621,7 @@ public final class StorageManager
      * @param field
      * @param tb
      */
-    public void insertTranslocationBlock(final Field field, final TranslocationBlock tb)
+    public void insertTranslocationBlock(Field field, TranslocationBlock tb)
     {
         insertTranslocationBlock(field, tb, true);
     }
@@ -1633,10 +1633,10 @@ public final class StorageManager
      * @param tb
      * @param applied
      */
-    public void insertTranslocationBlock(final Field field, final TranslocationBlock tb, boolean applied)
+    public void insertTranslocationBlock(Field field, TranslocationBlock tb, boolean applied)
     {
-        final String query = "INSERT INTO `pstone_storedblocks` ( `name`, `player_name`, `world`, `x` , `y`, `z`, `type_id`, `data`, `contents`, `sign_text`, `applied`) ";
-        final String values = "VALUES ( '" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getOwner()) + "','" + Helper.escapeQuotes(field.getWorld()) + "'," + tb.getRx() + "," + tb.getRy() + "," + tb.getRz() + "," + tb.getTypeId() + "," + tb.getData() + ",'" + tb.getContents() + "','" + Helper.escapeQuotes(tb.getSignText()) + "', " + (applied ? 1 : 0) + ");";
+        String query = "INSERT INTO `pstone_storedblocks` ( `name`, `player_name`, `world`, `x` , `y`, `z`, `type_id`, `data`, `contents`, `sign_text`, `applied`) ";
+        String values = "VALUES ( '" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getOwner()) + "','" + Helper.escapeQuotes(field.getWorld()) + "'," + tb.getRx() + "," + tb.getRy() + "," + tb.getRz() + "," + tb.getTypeId() + "," + tb.getData() + ",'" + tb.getContents() + "','" + Helper.escapeQuotes(tb.getSignText()) + "', " + (applied ? 1 : 0) + ");";
 
         synchronized (this)
         {
@@ -1664,7 +1664,7 @@ public final class StorageManager
      */
     public int appliedTranslocationCount(String name, String playerName)
     {
-        final String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `applied` = 1";
+        String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `applied` = 1";
         ResultSet res;
         int count = 0;
 
@@ -1682,7 +1682,7 @@ public final class StorageManager
                     count = res.getInt(1);
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1700,7 +1700,7 @@ public final class StorageManager
      */
     public int totalTranslocationCount(String name, String playerName)
     {
-        final String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "'";
+        String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "'";
         ResultSet res;
         int count = 0;
 
@@ -1718,7 +1718,7 @@ public final class StorageManager
                     count = res.getInt(1);
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1733,7 +1733,7 @@ public final class StorageManager
      * @param field
      * @return
      */
-    public int unappliedTranslocationCount(final Field field)
+    public int unappliedTranslocationCount(Field field)
     {
         return unappliedTranslocationCount(field.getName(), field.getOwner());
     }
@@ -1747,7 +1747,7 @@ public final class StorageManager
      */
     public int unappliedTranslocationCount(String name, String playerName)
     {
-        final String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `applied` = 0";
+        String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `applied` = 0";
         ResultSet res;
         int count = 0;
 
@@ -1765,7 +1765,7 @@ public final class StorageManager
                     count = res.getInt(1);
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1780,11 +1780,11 @@ public final class StorageManager
      * @param field
      * @return
      */
-    public Queue<TranslocationBlock> retrieveClearTranslocation(final Field field)
+    public Queue<TranslocationBlock> retrieveClearTranslocation(Field field)
     {
-        final Queue<TranslocationBlock> out = new LinkedList<TranslocationBlock>();
+        Queue<TranslocationBlock> out = new LinkedList<TranslocationBlock>();
 
-        final String query = "SELECT * FROM  `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1 ORDER BY y ASC;";
+        String query = "SELECT * FROM  `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1 ORDER BY y ASC;";
 
         ResultSet res;
 
@@ -1801,23 +1801,23 @@ public final class StorageManager
                 {
                     try
                     {
-                        final int x = res.getInt("x");
-                        final int y = res.getInt("y");
-                        final int z = res.getInt("z");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
 
                         World world = plugin.getServer().getWorld(field.getWorld());
 
                         Location location = new Location(world, x, y, z);
                         location = location.add(field.getLocation());
 
-                        final int type_id = res.getInt("type_id");
-                        final byte data = res.getByte("data");
-                        final String signText = res.getString("sign_text");
-                        final String contents = res.getString("contents");
+                        int type_id = res.getInt("type_id");
+                        byte data = res.getByte("data");
+                        String signText = res.getString("sign_text");
+                        String contents = res.getString("contents");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        final TranslocationBlock tb = new TranslocationBlock(location, type);
+                        TranslocationBlock tb = new TranslocationBlock(location, type);
 
                         if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11)
                         {
@@ -1829,13 +1829,13 @@ public final class StorageManager
                         tb.setSignText(signText);
                         out.add(tb);
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1851,11 +1851,11 @@ public final class StorageManager
      * @param field
      * @return
      */
-    public Queue<TranslocationBlock> retrieveTranslocation(final Field field)
+    public Queue<TranslocationBlock> retrieveTranslocation(Field field)
     {
-        final Queue<TranslocationBlock> out = new LinkedList<TranslocationBlock>();
+        Queue<TranslocationBlock> out = new LinkedList<TranslocationBlock>();
 
-        final String query = "SELECT * FROM  `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 0 ORDER BY y ASC;";
+        String query = "SELECT * FROM  `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 0 ORDER BY y ASC;";
 
         ResultSet res;
 
@@ -1872,23 +1872,23 @@ public final class StorageManager
                 {
                     try
                     {
-                        final int x = res.getInt("x");
-                        final int y = res.getInt("y");
-                        final int z = res.getInt("z");
+                        int x = res.getInt("x");
+                        int y = res.getInt("y");
+                        int z = res.getInt("z");
 
                         World world = plugin.getServer().getWorld(field.getWorld());
 
                         Location location = new Location(world, x, y, z);
                         location = location.add(field.getLocation());
 
-                        final int type_id = res.getInt("type_id");
-                        final byte data = res.getByte("data");
-                        final String signText = res.getString("sign_text");
-                        final String contents = res.getString("contents");
+                        int type_id = res.getInt("type_id");
+                        byte data = res.getByte("data");
+                        String signText = res.getString("sign_text");
+                        String contents = res.getString("contents");
 
                         BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        final TranslocationBlock tb = new TranslocationBlock(location, type);
+                        TranslocationBlock tb = new TranslocationBlock(location, type);
 
                         if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11)
                         {
@@ -1900,13 +1900,13 @@ public final class StorageManager
                         tb.setSignText(signText);
                         out.add(tb);
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1924,9 +1924,9 @@ public final class StorageManager
      */
     public Map<String, Integer> getTranslocationDetails(String playerName)
     {
-        final Map<String, Integer> out = new HashMap<String, Integer>();
+        Map<String, Integer> out = new HashMap<String, Integer>();
 
-        final String query = "SELECT name, COUNT(name) FROM  `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' GROUP BY `name`;";
+        String query = "SELECT name, COUNT(name) FROM  `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' GROUP BY `name`;";
 
         ResultSet res;
 
@@ -1943,18 +1943,18 @@ public final class StorageManager
                 {
                     try
                     {
-                        final String name = res.getString(1);
-                        final int count = res.getInt(2);
+                        String name = res.getString(1);
+                        int count = res.getInt(2);
 
                         out.put(name, count);
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1989,16 +1989,16 @@ public final class StorageManager
                 {
                     try
                     {
-                        final int count = res.getInt(1);
+                        int count = res.getInt(1);
                         exists = count > 0;
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2019,16 +2019,16 @@ public final class StorageManager
                 {
                     try
                     {
-                        final int count = res.getInt(1);
+                        int count = res.getInt(1);
                         exists = exists || count > 0;
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2063,16 +2063,16 @@ public final class StorageManager
                 {
                     try
                     {
-                        final int count = res.getInt(1);
+                        int count = res.getInt(1);
                         exists = count > 0;
                     }
-                    catch (final Exception ex)
+                    catch (Exception ex)
                     {
                         PreciousStones.getLog().info(ex.getMessage());
                     }
                 }
             }
-            catch (final SQLException ex)
+            catch (SQLException ex)
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2086,9 +2086,9 @@ public final class StorageManager
      *
      * @param field
      */
-    public void applyTranslocation(final Field field)
+    public void applyTranslocation(Field field)
     {
-        final String query = "UPDATE `pstone_storedblocks` SET `applied` = 1 WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 0;";
+        String query = "UPDATE `pstone_storedblocks` SET `applied` = 1 WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 0;";
 
         synchronized (this)
         {
@@ -2101,9 +2101,9 @@ public final class StorageManager
      *
      * @param field
      */
-    public void clearTranslocation(final Field field)
+    public void clearTranslocation(Field field)
     {
-        final String query = "UPDATE `pstone_storedblocks` SET `applied` = 0 WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1;";
+        String query = "UPDATE `pstone_storedblocks` SET `applied` = 0 WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1;";
 
         synchronized (this)
         {
@@ -2116,9 +2116,9 @@ public final class StorageManager
      *
      * @param field
      */
-    public void deleteAppliedTranslocation(final Field field)
+    public void deleteAppliedTranslocation(Field field)
     {
-        final String query = "DELETE FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1;";
+        String query = "DELETE FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1;";
 
         synchronized (this)
         {
@@ -2132,11 +2132,11 @@ public final class StorageManager
      * @param field
      * @param tb
      */
-    public void deleteTranslocation(final Field field, final TranslocationBlock tb)
+    public void deleteTranslocation(Field field, TranslocationBlock tb)
     {
         Location location = tb.getRelativeLocation();
 
-        final String query = "DELETE FROM `pstone_storedblocks` WHERE x = " + location.getBlockX() + " AND y = " + location.getBlockY() + " AND z = " + location.getBlockZ() + " AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `name` = '" + Helper.escapeQuotes(field.getName()) + "';";
+        String query = "DELETE FROM `pstone_storedblocks` WHERE x = " + location.getBlockX() + " AND y = " + location.getBlockY() + " AND z = " + location.getBlockZ() + " AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `name` = '" + Helper.escapeQuotes(field.getName()) + "';";
 
         synchronized (this)
         {
@@ -2149,9 +2149,9 @@ public final class StorageManager
      *
      * @param playerName
      */
-    public void deleteTranslocation(final String playerName)
+    public void deleteTranslocation(String playerName)
     {
-        final String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "';";
+        String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "';";
 
         synchronized (this)
         {
@@ -2165,9 +2165,9 @@ public final class StorageManager
      * @param name
      * @param playerName
      */
-    public void deleteTranslocation(String name, final String playerName)
+    public void deleteTranslocation(String name, String playerName)
     {
-        final String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "';";
+        String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "';";
 
         synchronized (this)
         {
@@ -2181,9 +2181,9 @@ public final class StorageManager
      * @param name
      * @param playerName
      */
-    public void deleteTranslocationHead(String name, final String playerName)
+    public void deleteTranslocationHead(String name, String playerName)
     {
-        final String query = "DELETE FROM `pstone_translocations` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "';";
+        String query = "DELETE FROM `pstone_translocations` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "';";
 
         synchronized (this)
         {
@@ -2199,7 +2199,7 @@ public final class StorageManager
      * @param block
      * @return
      */
-    public int deleteBlockTypeFromTranslocation(String name, final String playerName, BlockTypeEntry block)
+    public int deleteBlockTypeFromTranslocation(String name, String playerName, BlockTypeEntry block)
     {
         int beforeCount = totalTranslocationCount(name, playerName);
 
@@ -2228,7 +2228,7 @@ public final class StorageManager
      */
     public void changeTranslocationOwner(Field field, String newOwner)
     {
-        final String query = "UPDATE `pstone_storedblocks` SET `player_name` = '" + Helper.escapeQuotes(newOwner) + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "';";
+        String query = "UPDATE `pstone_storedblocks` SET `player_name` = '" + Helper.escapeQuotes(newOwner) + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "';";
 
         synchronized (this)
         {
@@ -2247,7 +2247,7 @@ public final class StorageManager
     {
         Location location = tb.getRelativeLocation();
 
-        final String query = "UPDATE `pstone_storedblocks` SET `applied` = " + (applied ? 1 : 0) + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
+        String query = "UPDATE `pstone_storedblocks` SET `applied` = " + (applied ? 1 : 0) + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
         synchronized (this)
         {
@@ -2277,7 +2277,7 @@ public final class StorageManager
     {
         Location location = tb.getRelativeLocation();
 
-        final String query = "UPDATE `pstone_storedblocks` SET `data` = " + tb.getData() + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
+        String query = "UPDATE `pstone_storedblocks` SET `data` = " + tb.getData() + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
         synchronized (this)
         {
@@ -2295,7 +2295,7 @@ public final class StorageManager
     {
         Location location = tb.getRelativeLocation();
 
-        final String query = "UPDATE `pstone_storedblocks` SET `contents` = '" + tb.getContents() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
+        String query = "UPDATE `pstone_storedblocks` SET `contents` = '" + tb.getContents() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
         synchronized (this)
         {
@@ -2313,7 +2313,7 @@ public final class StorageManager
     {
         Location location = tb.getRelativeLocation();
 
-        final String query = "UPDATE `pstone_storedblocks` SET `sign_text` = '" + tb.getSignText() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
+        String query = "UPDATE `pstone_storedblocks` SET `sign_text` = '" + tb.getSignText() + "' WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
 
         synchronized (this)
         {
@@ -2342,11 +2342,11 @@ public final class StorageManager
      */
     public void processQueue()
     {
-        final Map<Vec, Field> working = new HashMap<Vec, Field>();
-        final Map<Unbreakable, Boolean> workingUb = new HashMap<Unbreakable, Boolean>();
-        final Map<String, Boolean> workingPlayers = new HashMap<String, Boolean>();
-        final Set<Field> workingGrief = new HashSet<Field>();
-        final List<SnitchEntry> workingSnitchEntries = new ArrayList<SnitchEntry>();
+        Map<Vec, Field> working = new HashMap<Vec, Field>();
+        Map<Unbreakable, Boolean> workingUb = new HashMap<Unbreakable, Boolean>();
+        Map<String, Boolean> workingPlayers = new HashMap<String, Boolean>();
+        Set<Field> workingGrief = new HashSet<Field>();
+        List<SnitchEntry> workingSnitchEntries = new ArrayList<SnitchEntry>();
 
         synchronized (pending)
         {
@@ -2405,7 +2405,7 @@ public final class StorageManager
      *
      * @param field
      */
-    public void processSingleField(final Field field)
+    public void processSingleField(Field field)
     {
         if (plugin.getSettingsManager().isDebugdb())
         {
@@ -2432,14 +2432,14 @@ public final class StorageManager
      *
      * @param working
      */
-    public void processFields(final Map<Vec, Field> working)
+    public void processFields(Map<Vec, Field> working)
     {
         if (plugin.getSettingsManager().isDebugdb() && !working.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] processing " + working.size() + " pstone queries...");
         }
 
-        for (final Field field : working.values())
+        for (Field field : working.values())
         {
             if (field.isDirty(DirtyFieldReason.DELETE))
             {
@@ -2457,14 +2457,14 @@ public final class StorageManager
      *
      * @param workingUb
      */
-    public void processUnbreakable(final Map<Unbreakable, Boolean> workingUb)
+    public void processUnbreakable(Map<Unbreakable, Boolean> workingUb)
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingUb.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] processing " + workingUb.size() + " unbreakable queries...");
         }
 
-        for (final Unbreakable ub : workingUb.keySet())
+        for (Unbreakable ub : workingUb.keySet())
         {
             if (workingUb.get(ub))
             {
@@ -2482,14 +2482,14 @@ public final class StorageManager
      *
      * @param workingPlayers
      */
-    public void processPlayers(final Map<String, Boolean> workingPlayers)
+    public void processPlayers(Map<String, Boolean> workingPlayers)
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingPlayers.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] processing " + workingPlayers.size() + " player queries...");
         }
 
-        for (final String playerName : workingPlayers.keySet())
+        for (String playerName : workingPlayers.keySet())
         {
             if (workingPlayers.get(playerName))
             {
@@ -2510,14 +2510,14 @@ public final class StorageManager
      *
      * @param workingSnitchEntries
      */
-    public void processSnitches(final List<SnitchEntry> workingSnitchEntries)
+    public void processSnitches(List<SnitchEntry> workingSnitchEntries)
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingSnitchEntries.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] sending " + workingSnitchEntries.size() + " snitch queries...");
         }
 
-        for (final SnitchEntry se : workingSnitchEntries)
+        for (SnitchEntry se : workingSnitchEntries)
         {
             insertSnitchEntry(se.getField(), se);
         }
@@ -2528,14 +2528,14 @@ public final class StorageManager
      *
      * @param workingGrief
      */
-    public void processGrief(final Set<Field> workingGrief)
+    public void processGrief(Set<Field> workingGrief)
     {
         if (plugin.getSettingsManager().isDebugdb() && !workingGrief.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] processing " + workingGrief.size() + " grief queries...");
         }
 
-        for (final Field field : workingGrief)
+        for (Field field : workingGrief)
         {
             updateGrief(field);
         }
