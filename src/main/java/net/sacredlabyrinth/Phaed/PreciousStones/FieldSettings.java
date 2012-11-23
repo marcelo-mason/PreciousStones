@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author phaed
@@ -399,6 +400,7 @@ public class FieldSettings
             if (Helper.isInteger(getValue(flagStr)))
             {
                 int value = (Integer) getValue(flagStr);
+
                 loadFlags(getKey(flagStr));
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
@@ -417,9 +419,16 @@ public class FieldSettings
             {
                 String value = (String) getValue(flagStr);
 
-                if (!value.isEmpty())
+                if (value != null)
                 {
-                    loadFlags(getKey(flagStr));
+                    if (!value.isEmpty())
+                    {
+                        loadFlags(getKey(flagStr));
+                    }
+                }
+                else
+                {
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
@@ -451,6 +460,10 @@ public class FieldSettings
                 {
                     value = new BlockTypeEntry(Integer.parseInt(item.toString()), ((byte) 0));
                 }
+                else
+                {
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
+                }
             }
 
             if (value != null)
@@ -479,6 +492,10 @@ public class FieldSettings
                         loadFlags(getKey(flagStr));
                     }
                 }
+                else
+                {
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
+                }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
                 return value;
@@ -503,6 +520,10 @@ public class FieldSettings
                         loadFlags(getKey(flagStr));
                     }
                 }
+                else
+                {
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
+                }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
                 return value;
@@ -526,6 +547,10 @@ public class FieldSettings
                     {
                         loadFlags(getKey(flagStr));
                     }
+                }
+                else
+                {
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
