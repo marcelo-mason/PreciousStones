@@ -472,9 +472,12 @@ public class FieldSettings
             {
                 List<String> value = (List<String>) getValue(flagStr);
 
-                if (!value.isEmpty())
+                if (value != null)
                 {
-                    loadFlags(getKey(flagStr));
+                    if (!value.isEmpty())
+                    {
+                        loadFlags(getKey(flagStr));
+                    }
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
@@ -493,9 +496,12 @@ public class FieldSettings
             {
                 List<BlockTypeEntry> value = Helper.toTypeEntriesBlind((List<Object>) getValue(flagStr));
 
-                if (!value.isEmpty())
+                if (value != null)
                 {
-                    loadFlags(getKey(flagStr));
+                    if (!value.isEmpty())
+                    {
+                        loadFlags(getKey(flagStr));
+                    }
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
@@ -514,9 +520,12 @@ public class FieldSettings
             {
                 List<Integer> value = (List<Integer>) getValue(flagStr);
 
-                if (!value.isEmpty())
+                if (value != null)
                 {
-                    loadFlags(getKey(flagStr));
+                    if (!value.isEmpty())
+                    {
+                        loadFlags(getKey(flagStr));
+                    }
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
