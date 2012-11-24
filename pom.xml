@@ -73,28 +73,14 @@
                         </goals>
                         <configuration>
                             <minimizeJar>true</minimizeJar>
-                            <filters>
-                                <filter>
-                                    <artifact>org.mcstats:metrics</artifact>
-                                    <includes>
-                                        <include>org/mcstats/**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.joda.time:joda-time</artifact>
-                                    <includes>
-                                        <include>org/joda/time/**</include>
-                                    </includes>
-                                </filter>
-                            </filters>
                             <relocations>
                                 <relocation>
                                     <pattern>org.mcstats</pattern>
                                     <shadedPattern>ps.org.mcstats</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>joda-time</pattern>
-                                    <shadedPattern>ps.joda-time</shadedPattern>
+                                    <pattern>org.joda.time</pattern>
+                                    <shadedPattern>ps.org.joda.time</shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>
