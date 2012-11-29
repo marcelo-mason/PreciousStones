@@ -263,24 +263,31 @@ public class StorageManager
      */
     public void loadWorldData()
     {
-        plugin.getForceFieldManager().clearChunkLists();
-        plugin.getUnbreakableManager().clearChunkLists();
-
-        extractPlayers();
-
-        List<World> worlds = plugin.getServer().getWorlds();
-        Map<String, World> filtered = new HashMap<String, World>();
-
-        for (World world : worlds)
+        plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable()
         {
-            filtered.put(world.getName(), world);
-        }
+            @Override
+            public void run()
+            {
+                plugin.getForceFieldManager().clearChunkLists();
+                plugin.getUnbreakableManager().clearChunkLists();
 
-        for (World world : filtered.values())
-        {
-            loadWorldFields(world.getName());
-            loadWorldUnbreakables(world.getName());
-        }
+                extractPlayers();
+
+                List<World> worlds = plugin.getServer().getWorlds();
+                Map<String, World> filtered = new HashMap<String, World>();
+
+                for (World world : worlds)
+                {
+                    filtered.put(world.getName(), world);
+                }
+
+                for (World world : filtered.values())
+                {
+                    loadWorldFields(world.getName());
+                    loadWorldUnbreakables(world.getName());
+                }
+            }
+        }, 0);
     }
 
     /**
