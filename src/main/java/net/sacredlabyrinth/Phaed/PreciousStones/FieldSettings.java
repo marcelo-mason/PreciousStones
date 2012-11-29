@@ -25,6 +25,7 @@ public class FieldSettings
     private int shrubDensity = 64;
     private boolean validField = true;
     private BlockTypeEntry type;
+    private boolean spoutBlock;
     private int radius = 0;
     private int heal = 0;
     private int damage = 0;
@@ -125,7 +126,23 @@ public class FieldSettings
             return;
         }
 
-        type = loadTypeEntry("block");
+        spoutBlock = loadBoolean("spout");
+
+        if (spoutBlock)
+        {
+            if (PreciousStones.hasSpout())
+            {
+                type = loadSpoutTypeEntry("block");
+            }
+            else
+            {
+                PreciousStones.log(Level.WARNING, "** Spout not loaded, spout field skipped: %s", title);
+            }
+        }
+        else
+        {
+            type = loadTypeEntry("block");
+        }
 
         if (type == null)
         {
@@ -428,7 +445,7 @@ public class FieldSettings
                 }
                 else
                 {
-                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
@@ -444,25 +461,63 @@ public class FieldSettings
         if (containsKey(flagStr))
         {
             BlockTypeEntry value = null;
-            Object item = getValue(flagStr);
+            Object typeStr = getValue(flagStr);
 
-            if (Helper.isString(item) && Helper.isTypeEntry((String) item) && Helper.hasData(item.toString()))
+            if (Helper.isString(typeStr) && Helper.isTypeEntry((String) typeStr) && Helper.hasData(typeStr.toString()))
             {
-                value = Helper.toTypeEntry(item.toString());
+                value = Helper.toTypeEntry(typeStr.toString());
             }
             else
             {
-                if (Helper.isInteger(item))
+                if (Helper.isInteger(typeStr))
                 {
-                    value = new BlockTypeEntry((Integer) item, ((byte) 0));
+                    value = new BlockTypeEntry((Integer) typeStr, ((byte) 0));
                 }
-                else if (Helper.isInteger(item.toString()))
+                else if (Helper.isInteger(typeStr.toString()))
                 {
-                    value = new BlockTypeEntry(Integer.parseInt(item.toString()), ((byte) 0));
+                    value = new BlockTypeEntry(Integer.parseInt(typeStr.toString()), ((byte) 0));
                 }
                 else
                 {
-                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
+                }
+            }
+
+            if (value != null)
+            {
+                loadFlags(getKey(flagStr));
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+            PreciousStones.debug("   %s: *bad*", flagStr);
+        }
+        return null;
+    }
+
+    private BlockTypeEntry loadSpoutTypeEntry(String flagStr)
+    {
+        if (containsKey(flagStr))
+        {
+            BlockTypeEntry value = null;
+            Object typeStr = getValue(flagStr);
+
+            if (Helper.isString(typeStr) && Helper.isTypeEntry((String) typeStr) && Helper.hasData(typeStr.toString()))
+            {
+                value = Helper.toSpoutTypeEntry(typeStr.toString());
+            }
+            else
+            {
+                if (Helper.isInteger(typeStr))
+                {
+                    value = new BlockTypeEntry((Integer) typeStr, ((byte) 0), true);
+                }
+                else if (Helper.isInteger(typeStr.toString()))
+                {
+                    value = new BlockTypeEntry(Integer.parseInt(typeStr.toString()), ((byte) 0), true);
+                }
+                else
+                {
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
             }
 
@@ -494,7 +549,7 @@ public class FieldSettings
                 }
                 else
                 {
-                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
@@ -522,7 +577,7 @@ public class FieldSettings
                 }
                 else
                 {
-                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
@@ -550,7 +605,7 @@ public class FieldSettings
                 }
                 else
                 {
-                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr, value);
+                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
 
                 PreciousStones.debug("   %s: %s", flagStr, value);
@@ -1416,5 +1471,10 @@ public class FieldSettings
     public int getPayToEnable()
     {
         return payToEnable;
+    }
+
+    public boolean isSpoutBlock()
+    {
+        return spoutBlock;
     }
 }

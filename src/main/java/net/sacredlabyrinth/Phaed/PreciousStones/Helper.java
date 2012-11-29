@@ -1,7 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeExact;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -640,16 +639,21 @@ public class Helper
      * @param rawItem
      * @return
      */
-    public static BlockTypeExact toTypeEntryExact(String rawItem)
+    public static BlockTypeEntry toSpoutTypeEntry(String rawItem)
     {
         if (hasData(rawItem))
         {
             String[] split = rawItem.split("[:]");
-            return new BlockTypeExact(Integer.parseInt(split[0]), Byte.parseByte(split[1]));
+            return new BlockTypeEntry(Integer.parseInt(split[0]), Byte.parseByte(split[1]), true);
         }
         else
         {
-            return new BlockTypeExact(Integer.parseInt(rawItem), (byte) 0);
+            if (!isInteger(rawItem))
+            {
+                return null;
+            }
+
+            return new BlockTypeEntry(Integer.parseInt(rawItem), (byte) 0, true);
         }
     }
 

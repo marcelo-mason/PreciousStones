@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.getspout:spoutplugin:1.3.2-R1.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/1.3.2-R1.0/spoutplugin-1.3.2-R1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/1.3.2-R1.0/spoutplugin-1.3.2-R1.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/1.3.2-R1.0/spoutplugin-1.3.2-R1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

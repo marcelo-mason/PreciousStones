@@ -535,6 +535,7 @@ public final class SettingsManager
         return false;
     }
 
+    //TODO: Spout
     public boolean isCrop(Block block)
     {
         return block.getType().equals(Material.SOIL) ||
@@ -658,7 +659,7 @@ public final class SettingsManager
      */
     public boolean isRepairableItemType(int typeId)
     {
-        return getRepairableItems().contains(typeId);
+        return repairableItems.contains(typeId);
     }
 
     /**

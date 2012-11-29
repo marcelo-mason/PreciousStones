@@ -454,4 +454,9 @@ public class PreciousStones extends JavaPlugin
     {
         return teleportationManager;
     }
+
+    public static boolean hasSpout()
+    {
+        return PreciousStones.getInstance().getPermissionsManager().hasSpout();
+    }
 }

@@ -16,6 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.getspout.spout.Spout;
 import org.yi.acru.bukkit.Lockette.Lockette;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -33,6 +34,7 @@ public final class PermissionsManager
     private PermissionHandler handler = null;
     private PermissionsPlugin pbukkit = null;
     private PermissionsEx pex = null;
+    private Spout spout = null;
     private LWC lwc = null;
     private Lockette lockette = null;
     private PreciousStones plugin;
@@ -48,6 +50,7 @@ public final class PermissionsManager
         detectPermissions();
         detectLWC();
         detectLockette();
+        detectSpout();
 
         try
         {
@@ -60,6 +63,16 @@ public final class PermissionsManager
         {
             //SimpleClans.log("[PreciousStones] Vault.jar not found. No economy support.");
             //no need to spam everyone who doesnt use vault
+        }
+    }
+
+    private void detectSpout()
+    {
+        Plugin plug = plugin.getServer().getPluginManager().getPlugin("Spout");
+
+        if (plug != null)
+        {
+            spout = ((Spout) plug);
         }
     }
 
@@ -471,5 +484,10 @@ public final class PermissionsManager
         }
 
         return false;
+    }
+
+    public boolean hasSpout()
+    {
+        return spout != null;
     }
 }
