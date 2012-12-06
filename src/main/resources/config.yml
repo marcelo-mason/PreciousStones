@@ -423,7 +423,7 @@ notify:
     rollback: true
     translocation: true
     fly-zones: true
-grief-undo:
+grief-revert:
     min-interval-secs: 30
     black-list:
     - 92
