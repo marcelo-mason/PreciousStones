@@ -643,6 +643,7 @@ public final class EntryManager
                     if (field.equals(testfield))
                     {
                         iter.remove();
+                        leaveField(player, field);
                         leaveOverlappedArea(player, field);
                     }
                 }
@@ -669,6 +670,7 @@ public final class EntryManager
                     if (field.equals(testfield))
                     {
                         iter.remove();
+                        leaveField(player, field);
                         leaveOverlappedArea(player, field);
                     }
                 }
