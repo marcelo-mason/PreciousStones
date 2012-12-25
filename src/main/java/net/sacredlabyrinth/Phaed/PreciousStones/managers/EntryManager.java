@@ -21,8 +21,8 @@ import java.util.*;
 public final class EntryManager
 {
     private PreciousStones plugin;
-    private final HashMap<String, EntryFields> entriesByPlayer = new HashMap<String, EntryFields>();
     private final List<Field> enteredFields = new ArrayList<Field>();
+    private final HashMap<String, EntryFields> entriesByPlayer = new HashMap<String, EntryFields>();
     private final HashMap<String, EntryFields> dynamicEntries = new HashMap<String, EntryFields>();
     private int updateCount = 0;
 
@@ -478,8 +478,11 @@ public final class EntryManager
             enteredFields.add(field);
         }
 
-        /********************************************************************************/
+        enteredSingleField(player, field);
+    }
 
+    public void enteredSingleField(Player player, Field field)
+    {
         if (!field.isDisabled())
         {
             plugin.getSnitchManager().recordSnitchEntry(player, field);
@@ -542,20 +545,26 @@ public final class EntryManager
         synchronized (entriesByPlayer)
         {
             EntryFields ef = entriesByPlayer.get(player.getName());
-            ef.removeField(field);
 
-            if (ef.size() == 0)
+            if (ef != null)
             {
-                entriesByPlayer.remove(player.getName());
+                ef.removeField(field);
+
+                if (ef.size() == 0)
+                {
+                    entriesByPlayer.remove(player.getName());
+                }
             }
         }
 
         synchronized (dynamicEntries)
         {
             EntryFields ef = dynamicEntries.get(player.getName());
+
             if (ef != null)
             {
                 ef.removeField(field);
+
                 if (ef.size() == 0)
                 {
                     dynamicEntries.remove(player.getName());
@@ -565,8 +574,11 @@ public final class EntryManager
 
         enteredFields.remove(field);
 
-        /********************************************************************************/
+        leftSingleField(player, field);
+    }
 
+    public void leftSingleField(Player player, Field field)
+    {
         if (!field.hasFlag(FieldFlag.COMMANDS_ON_OVERLAP))
         {
             fireExitCommands(field, player);
@@ -590,6 +602,7 @@ public final class EntryManager
 
                 for (Field field : entryFields.getFields())
                 {
+                    leftSingleField(player, field);
                     leaveOverlappedArea(player, field);
                 }
 
@@ -643,12 +656,13 @@ public final class EntryManager
                     if (field.equals(testfield))
                     {
                         iter.remove();
-                        leaveField(player, field);
+                        leftSingleField(player, field);
                         leaveOverlappedArea(player, field);
                     }
                 }
             }
         }
+
         synchronized (dynamicEntries)
         {
             for (String playerName : dynamicEntries.keySet())
@@ -670,7 +684,7 @@ public final class EntryManager
                     if (field.equals(testfield))
                     {
                         iter.remove();
-                        leaveField(player, field);
+                        leftSingleField(player, field);
                         leaveOverlappedArea(player, field);
                     }
                 }
