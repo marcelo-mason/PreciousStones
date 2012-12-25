@@ -26,12 +26,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.hanging.HangingBreakEvent;
-import org.bukkit.event.hanging.HangingPlaceEvent;
-*/
-
 /**
  * PreciousStones entity listener
  *

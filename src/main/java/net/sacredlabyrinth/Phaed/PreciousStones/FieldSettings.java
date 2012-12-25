@@ -295,6 +295,8 @@ public class FieldSettings
         loadBoolean("dynmap-marker");
         loadBoolean("dynmap-disabled");
         loadBoolean("dynmap-no-toggle");
+        loadBoolean("dynmap-hide-players");
+        loadBoolean("dynmap-show-players");
         loadBoolean("can-change-owner");
         loadBoolean("no-allowing");
         loadBoolean("hidable");
