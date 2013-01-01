@@ -310,7 +310,7 @@ public class PSPlayerListener implements Listener
             {
                 if (FieldFlag.PREVENT_ENTRY.applies(futureField, player))
                 {
-                    Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
+                    Location loc = plugin.getPlayerManager().getOutsideFieldLocation(futureField, player);
                     Location outside = plugin.getPlayerManager().getOutsideLocation(player);
 
                     if (outside != null)
