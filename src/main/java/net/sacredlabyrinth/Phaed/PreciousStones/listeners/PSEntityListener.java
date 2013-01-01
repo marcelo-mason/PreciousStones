@@ -6,6 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -305,6 +306,16 @@ public class PSEntityListener implements Listener
                 }
             }
 
+            if (event.getEntity() instanceof Wither || event.getEntity() instanceof WitherSkull)
+            {
+                if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_WITHER_EXPLOSIONS))
+                {
+                    saved.add(new BlockEntry(block));
+                    event.setCancelled(true);
+                    continue;
+                }
+            }
+
             if (event.getEntity() instanceof TNTPrimed)
             {
                 if (plugin.getForceFieldManager().hasSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_TNT_EXPLOSIONS))
@@ -379,6 +390,14 @@ public class PSEntityListener implements Listener
                     plugin.getTranslocationManager().removeBlock(field, block);
                 }
             }
+        }
+
+        // show explosion effect
+
+        if (event.isCancelled())
+        {
+            event.getLocation().getWorld().createExplosion(event.getLocation(), 0.0F, false);
+            event.getLocation().getWorld().playEffect(event.getLocation(), Effect.SMOKE, 1);
         }
 
         // trigger any tnts in the field

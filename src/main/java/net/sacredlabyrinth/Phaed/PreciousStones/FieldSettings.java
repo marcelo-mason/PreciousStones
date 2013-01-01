@@ -231,6 +231,7 @@ public class FieldSettings
         loadBoolean("prevent-enderman-destroy");
         loadBoolean("prevent-explosions");
         loadBoolean("prevent-creeper-explosions");
+        loadBoolean("prevent-wither-explosions");
         loadBoolean("prevent-tnt-explosions");
         loadBoolean("rollback-explosions");
         loadBoolean("prevent-pvp");
