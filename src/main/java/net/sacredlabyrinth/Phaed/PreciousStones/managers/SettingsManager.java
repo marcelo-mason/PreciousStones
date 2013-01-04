@@ -31,6 +31,7 @@ public final class SettingsManager
     private boolean showDefaultWelcomeFarewellMessages;
     private boolean sneakNormalBlock;
     private boolean disableGroundInfo;
+    private boolean autoAddClan;
     private int globalFieldLimit;
     private boolean noRefunds;
     private int cuboidDefiningType;
@@ -269,6 +270,7 @@ public final class SettingsManager
         logToHawkEye = loadBoolean("settings.log-to-hawkeye");
         debugging = loadBoolean("settings.show-debug-info");
         blacklistedWorlds = loadStringList("settings.blacklisted-worlds");
+        autoAddClan = loadBoolean("settings.auto-allow-clan-on-fields");
 
         cuboidDefiningType = loadInt("cuboid.defining-blocktype");
         cuboidVisualizationType = loadInt("cuboid.visualization-blocktype");
@@ -1551,5 +1553,9 @@ public final class SettingsManager
     public boolean isLogRentsAndPurchases()
     {
         return logRentsAndPurchases;
+    }
+
+    public boolean isAutoAddClan() {
+        return autoAddClan;
     }
 }

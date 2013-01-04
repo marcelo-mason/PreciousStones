@@ -381,6 +381,7 @@ settings:
     public-block-details: false
     blacklisted-worlds: [creative_world]
     drop-on-delete: true
+    auto-allow-clan-on-fields: true
     version: 10
 log:
     bypass-pvp: true

@@ -254,11 +254,14 @@ public final class ForceFieldManager
 
         // add allowed clan
 
-        String clan = plugin.getSimpleClansManager().getClan(player.getName());
-
-        if (clan != null)
+        if (plugin.getSettingsManager().isAutoAddClan())
         {
-            field.addAllowed("c:" + clan);
+            String clan = plugin.getSimpleClansManager().getClan(player.getName());
+
+            if (clan != null)
+            {
+                field.addAllowed("c:" + clan);
+            }
         }
 
         // allow all owners of intersecting fields into the field
