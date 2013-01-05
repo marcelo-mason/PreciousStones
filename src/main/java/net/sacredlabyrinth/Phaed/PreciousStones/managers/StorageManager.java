@@ -32,11 +32,11 @@ public class StorageManager
      */
     private DBCore core;
     private PreciousStones plugin;
-    private Map<Vec, Field> pending = new HashMap<Vec, Field>();
-    private Set<Field> pendingGrief = new HashSet<Field>();
-    private Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
-    private Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
-    private List<SnitchEntry> pendingSnitchEntries = new ArrayList<SnitchEntry>();
+    private final Map<Vec, Field> pending = new HashMap<Vec, Field>();
+    private final Set<Field> pendingGrief = new HashSet<Field>();
+    private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
+    private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
+    private final List<SnitchEntry> pendingSnitchEntries = new ArrayList<SnitchEntry>();
 
     /**
      *
@@ -1491,7 +1491,7 @@ public class StorageManager
      */
     public void deleteBlockGrief(Field field)
     {
-        synchronized (this)
+        synchronized (pendingGrief)
         {
             pendingGrief.remove(field);
         }
