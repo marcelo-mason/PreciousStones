@@ -10,9 +10,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author phaed
@@ -26,7 +24,6 @@ public class PlayerEntry
     private boolean superduperpickaxe;
     private boolean bypassDisabled;
     private Location outsideLocation;
-    private Map<BlockTypeEntry, Integer> fieldCount = new HashMap<BlockTypeEntry, Integer>();
     private JSONArray confiscatedInventory = new JSONArray();
     private ItemStackEntry confiscatedHelmet = null;
     private ItemStackEntry confiscatedChestplate = null;
@@ -147,80 +144,6 @@ public class PlayerEntry
         ItemStackEntry out = confiscatedBoots;
         confiscatedBoots = null;
         return out;
-    }
-
-    /**
-     * Increment the field count of a specific field
-     *
-     * @param type
-     */
-    public void incrementFieldCount(BlockTypeEntry type)
-    {
-        if (fieldCount.containsKey(type))
-        {
-            fieldCount.put(type, fieldCount.get(type) + 1);
-        }
-        else
-        {
-            fieldCount.put(type, 1);
-        }
-    }
-
-    /**
-     * Decrement the field count of a specific field
-     *
-     * @param type
-     */
-    public void decrementFieldCount(BlockTypeEntry type)
-    {
-        if (fieldCount.containsKey(type))
-        {
-            fieldCount.put(type, Math.max(fieldCount.get(type) - 1, 0));
-        }
-    }
-
-    /**
-     * @return the fieldCount
-     */
-    public HashMap<BlockTypeEntry, Integer> getFieldCount()
-    {
-        HashMap<BlockTypeEntry, Integer> counts = new HashMap<BlockTypeEntry, Integer>();
-        counts.putAll(fieldCount);
-
-        return counts;
-    }
-
-    /**
-     * Get the number of fields the player has placed
-     *
-     * @param type
-     * @return
-     */
-    public int getFieldCount(BlockTypeEntry type)
-    {
-        if (fieldCount.containsKey(type))
-        {
-            return fieldCount.get(type);
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get the total number of fields the player has placed
-     *
-     * @return
-     */
-    public int getTotalFieldCount()
-    {
-        int total = 0;
-
-        for (int count : fieldCount.values())
-        {
-            total += count;
-        }
-
-        return total;
     }
 
     /**

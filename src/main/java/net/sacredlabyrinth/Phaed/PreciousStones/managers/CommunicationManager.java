@@ -3035,13 +3035,11 @@ public class CommunicationManager
 
         for (String playerName : players.keySet())
         {
-            PlayerEntry data = players.get(playerName);
-
-            int count = data.getFieldCount(type);
+            int count = plugin.getForceFieldManager().getFieldCount(playerName, type);
 
             if (count > 0)
             {
-                cb.addRow("  " + ChatColor.AQUA + data.getName(), ChatColor.WHITE + " " + count);
+                cb.addRow("  " + ChatColor.AQUA + playerName, ChatColor.WHITE + " " + count);
             }
         }
 
@@ -3106,15 +3104,7 @@ public class CommunicationManager
 
         HashMap<BlockTypeEntry, Integer> fieldCounts;
 
-        if (target.contains(":"))
-        {
-            fieldCounts = plugin.getForceFieldManager().getFieldCounts(target);
-        }
-        else
-        {
-            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(target);
-            fieldCounts = data.getFieldCount();
-        }
+        fieldCounts = plugin.getForceFieldManager().getFieldCounts(target);
 
         for (BlockTypeEntry type : fieldCounts.keySet())
         {

@@ -5,7 +5,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -27,6 +26,7 @@ public final class ForceFieldManager
 {
     private final Map<FieldFlag, List<Field>> fieldsByFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByWorld = Maps.newHashMap();
+    private final Map<String, Map<BlockTypeEntry, List<Field>>> fieldsByOwnerAndType = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByOwner = Maps.newHashMap();
     private final Map<Vec, Field> fieldsByVec = Maps.newHashMap();
 
@@ -51,6 +51,7 @@ public final class ForceFieldManager
         fieldsByFlag.clear();
         fieldsByWorld.clear();
         fieldsByOwner.clear();
+        fieldsByOwnerAndType.clear();
         fieldsByVec.clear();
 
         sourceFields.clear();
@@ -173,15 +174,6 @@ public final class ForceFieldManager
         }
         else
         {
-            // add count to player data
-
-            if (!isChild)
-            {
-                PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
-                data.incrementFieldCount(field.getSettings().getTypeEntry());
-                plugin.getStorageManager().offerPlayer(player.getName());
-            }
-
             // open cuboid definition
 
             if (field.hasFlag(FieldFlag.CUBOID) && !isImport)
@@ -331,6 +323,25 @@ public final class ForceFieldManager
         fields.add(field);
         fieldsByOwner.put(field.getOwner().toLowerCase(), fields);
 
+        // add to owner and type collection
+
+        Map<BlockTypeEntry, List<Field>> types = fieldsByOwnerAndType.get(field.getOwner().toLowerCase());
+
+        if (types == null)
+        {
+            types = Maps.newHashMap();
+        }
+
+        fields = types.get(field.getTypeEntry());
+
+        if (fields == null)
+        {
+            fields = new ArrayList<Field>();
+        }
+
+        fields.add(field);
+        types.put(field.getTypeEntry(), fields);
+        fieldsByOwnerAndType.put(field.getOwner().toLowerCase(), types);
 
         // add to sources collection
 
@@ -434,6 +445,20 @@ public final class ForceFieldManager
             fields.remove(field);
         }
 
+        // remove from owner and types collection
+
+        Map<BlockTypeEntry, List<Field>> types = fieldsByOwnerAndType.get(field.getOwner().toLowerCase());
+
+        if (types != null)
+        {
+            fields = types.get(field.getTypeEntry());
+
+            if (fields != null)
+            {
+                fields.remove(field);
+            }
+        }
+
         // remove from sources collection
 
         removeSourceField(field);
@@ -465,12 +490,6 @@ public final class ForceFieldManager
         // remove all people as having entered the field
 
         plugin.getEntryManager().removeAllPlayers(field);
-
-        // remove the count from the owner
-
-        PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
-        data.decrementFieldCount(field.getSettings().getTypeEntry());
-        plugin.getStorageManager().offerPlayer(field.getOwner());
 
         // delete siblings and parent if exists
 
@@ -2692,5 +2711,34 @@ public final class ForceFieldManager
                 }
             }
         }
+    }
+
+    public int getFieldCount(String playerName, BlockTypeEntry type)
+    {
+        Map<BlockTypeEntry, List<Field>> types = fieldsByOwnerAndType.get(playerName.toLowerCase());
+
+        if (types != null)
+        {
+            List<Field> fields = types.get(type);
+
+            if (fields != null)
+            {
+                return fields.size();
+            }
+        }
+
+        return 0;
+    }
+
+    public int getTotalFieldCount(String playerName)
+    {
+        List<Field> fields = fieldsByOwner.get(playerName.toLowerCase());
+
+        if (fields != null)
+        {
+            return fields.size();
+        }
+
+        return 0;
     }
 }

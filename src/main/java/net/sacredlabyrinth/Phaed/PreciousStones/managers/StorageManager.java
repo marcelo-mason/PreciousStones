@@ -610,9 +610,6 @@ public class StorageManager
 
                             out.add(field);
 
-                            PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
-                            playerdata.incrementFieldCount(type);
-
                             // check for fields in the wrong table
 
                             if (fs.hasDefaultFlag(FieldFlag.CUBOID))
@@ -727,9 +724,6 @@ public class StorageManager
 
                             out.put(id, field);
 
-                            PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
-                            playerdata.incrementFieldCount(type);
-
                             // check for fields in the wrong table
 
                             if (!fs.hasDefaultFlag(FieldFlag.CUBOID))
@@ -826,9 +820,6 @@ public class StorageManager
                             field.setSettings(fs);
                             field.setFlags(flags);
                             out.put(id, field);
-
-                            PlayerEntry playerdata = plugin.getPlayerManager().getPlayerEntry(owner);
-                            playerdata.incrementFieldCount(type);
                         }
                     }
                     catch (Exception ex)

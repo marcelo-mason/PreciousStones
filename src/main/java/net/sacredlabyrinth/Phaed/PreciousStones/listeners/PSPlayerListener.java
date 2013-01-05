@@ -1285,12 +1285,6 @@ public class PSPlayerListener implements Listener
                                 {
                                     PreciousStones plugin = PreciousStones.getInstance();
 
-                                    PlayerEntry oldData = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
-                                    oldData.decrementFieldCount(field.getSettings().getTypeEntry());
-
-                                    PlayerEntry newData = plugin.getPlayerManager().getPlayerEntry(field.getNewOwner());
-                                    newData.incrementFieldCount(field.getSettings().getTypeEntry());
-
                                     PreciousStones.getInstance().getStorageManager().changeTranslocationOwner(field, field.getNewOwner());
 
                                     String oldOwnerName = field.getOwner();

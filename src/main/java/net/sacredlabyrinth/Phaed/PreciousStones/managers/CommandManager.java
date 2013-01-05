@@ -1589,12 +1589,6 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     // transfer the count over to the new owner
 
-                                    PlayerEntry oldData = plugin.getPlayerManager().getPlayerEntry(field.getOwner());
-                                    oldData.decrementFieldCount(field.getSettings().getTypeEntry());
-
-                                    PlayerEntry newData = plugin.getPlayerManager().getPlayerEntry(owner);
-                                    newData.incrementFieldCount(field.getSettings().getTypeEntry());
-
                                     plugin.getStorageManager().changeTranslocationOwner(field, owner);
                                     plugin.getStorageManager().offerPlayer(field.getOwner());
                                     plugin.getStorageManager().offerPlayer(owner);
