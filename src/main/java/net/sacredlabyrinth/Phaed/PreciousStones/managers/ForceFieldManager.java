@@ -2359,15 +2359,15 @@ public final class ForceFieldManager
             return;
         }
 
-        World world = block.getWorld();
-        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
-
         Field field = plugin.getForceFieldManager().getField(block);
 
         if (field != null)
         {
             field.unHide();
         }
+
+        World world = block.getWorld();
+        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
 
         block.setType(Material.AIR);
 
