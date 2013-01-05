@@ -278,7 +278,7 @@ public final class UnbreakableManager
                     for (Unbreakable unbreakable : ubs.values())
                     {
                         // ensure chunk is loaded prior to polling
-
+/*
                         ChunkVec cv = unbreakable.toChunkVec();
 
                         if (!cv.equals(currentChunk))
@@ -299,7 +299,7 @@ public final class UnbreakableManager
 
                             currentChunk = cv;
                         }
-
+*/
                         int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 
                         if (type != unbreakable.getTypeId())
