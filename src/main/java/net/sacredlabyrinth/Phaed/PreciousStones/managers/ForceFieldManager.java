@@ -2363,6 +2363,7 @@ public final class ForceFieldManager
         if (plugin.getSettingsManager().isDropOnDelete())
         {
             World world = field.getLocation().getWorld();
+
             ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, field.getData());
 
             world.dropItemNaturally(field.getLocation(), is);
