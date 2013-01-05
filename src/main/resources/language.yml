@@ -330,6 +330,7 @@ menu50: "{yellow}  /ps unhide {aqua}- Unhides field"
 menu51: "{yellow}  /ps hide <all>{aqua}- Hides field(s)"
 menu52: "{yellow}  /ps unhide <all>{aqua}- Unhides field(s)"
 menu53: "{yellow}  /ps cuboid [open/close] {aqua}- Open close cuboid mode"
+menu54: "{yellow}  /ps setlimit [time] {aqua}- Set renting limit on a field"
 confiscatedFrom: "Confiscated {1.items} from {2.player} at {3.coords}"
 confiscated: "{aqua}Confiscated: {white}{1.image}"
 returnedTo: "Returned {1.items} to {2.player}"
@@ -517,9 +518,14 @@ fieldSignNoEco: "{red}You must specify an item id in parenthesis"
 fieldSignAlreadyBought: "{red}Sorry, this place has already been sold"
 _tenant: "Tenant"
 _tenants: "Tenants"
-
-
-
+commandSetLimit: "setlimit"
+limitReached: "{red} The renting limit for this field has been reached"
+limitMalformed: "{red} Renting limit in the wrong format"
+limitMalformed2: "{red} Format: w = week, d = day, h = hour, m = minute"
+limitMalformed3: "{red} i.e.: /ps setlimit 3d12h"
+limitSet: "{aqua} Limit has been set"
+_rentingLimit: "Renting Limit"
+limitBadField: "{red} Cannot set renting limit on a field that is not rentable or shareable"
 
 
 

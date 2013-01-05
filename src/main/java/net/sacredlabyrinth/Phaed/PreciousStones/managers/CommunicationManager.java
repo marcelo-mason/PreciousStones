@@ -2861,7 +2861,6 @@ public class CommunicationManager
 
         ChatBlock cb = getNewChatBlock(player);
 
-
         if (field.getRenters().size() > 0)
         {
             List<String> renters = field.getRenters();
@@ -2886,6 +2885,12 @@ public class CommunicationManager
 
                 cb.addRow("  " + title, ChatColor.WHITE + getRenters(field, i * 2), getRenters(field, (i * 2) + 1));
             }
+        }
+
+        if (field.getLimitSeconds() > 0)
+        {
+            cb.addRow("", "", "");
+            cb.addRow("  " + ChatColor.YELLOW + ChatBlock.format("_rentingLimit") + ": ", SignHelper.secondsToPeriods(field.getLimitSeconds()));
         }
 
         if (cb.size() > 0)
@@ -3468,6 +3473,11 @@ public class CommunicationManager
         if (plugin.getSettingsManager().haveGriefRevert() && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setinterval") && hasPlayer)
         {
             cb.addRow("menu16");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.setlimit") && hasPlayer)
+        {
+            cb.addRow("menu54");
         }
 
         if (plugin.getSettingsManager().haveSnitch() && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasPlayer)

@@ -1531,6 +1531,41 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
+                    else if (cmd.equals(ChatBlock.format("commandSetLimit")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setlimit") && hasplayer)
+                    {
+                        if (args.length == 1)
+                        {
+                            Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
+
+                            if (field != null)
+                            {
+                                String period = args[0];
+
+                                if (!SignHelper.isValidPeriod(period))
+                                {
+                                    ChatBlock.send(sender, "limitMalformed");
+                                    ChatBlock.send(sender, "limitMalformed2");
+                                    ChatBlock.send(sender, "limitMalformed3");
+                                    return true;
+                                }
+
+                                if (!field.hasFlag(FieldFlag.RENTABLE) && !field.hasFlag(FieldFlag.SHAREABLE))
+                                {
+                                    ChatBlock.send(sender, "limitBadField");
+                                    return true;
+                                }
+
+                                field.setLimitSeconds(SignHelper.periodToSeconds(period));
+                                ChatBlock.send(sender, "limitSet");
+                            }
+                            else
+                            {
+                                plugin.getCommunicationManager().showNotFound(player);
+                            }
+
+                            return true;
+                        }
+                    }
                     else if (cmd.equals(ChatBlock.format("commandSetowner")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.setowner") && hasplayer)
                     {
                         if (args.length == 1)

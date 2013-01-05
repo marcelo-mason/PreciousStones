@@ -62,6 +62,8 @@ permissions:
     description: Can change the owner to their own fields
   preciousstones.benefit.hide:
     description: Can hide/unhide his fields
+  preciousstones.benefit.setlimit:
+    description: Can set renting limits
   preciousstones.admin.hideall:
     description: Can hide/unhide all of his fields
   preciousstones.whitelist.allow:

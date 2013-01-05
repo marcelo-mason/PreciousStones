@@ -66,6 +66,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
     private PaymentEntry purchase;
     private boolean singIsClean;
+    private int limitSeconds;
 
     /**
      * @param x
@@ -1178,6 +1179,11 @@ public class Field extends AbstractVec implements Comparable<Field>
             json.put("revertSecs", revertSecs);
         }
 
+        if (limitSeconds > 0)
+        {
+            json.put("limitSeconds", limitSeconds);
+        }
+
         if (disabled)
         {
             json.put("disabled", disabled);
@@ -1314,6 +1320,10 @@ public class Field extends AbstractVec implements Comparable<Field>
                         else if (flag.equals("revertSecs"))
                         {
                             revertSecs = ((Long) flags.get(flag)).intValue();
+                        }
+                        else if (flag.equals("limitSeconds"))
+                        {
+                            limitSeconds = ((Long) flags.get(flag)).intValue();
                         }
                         else if (flag.equals("disabled"))
                         {
@@ -2482,6 +2492,24 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     public boolean rent(Player player, FieldSign s)
     {
+        Field field = s.getField();
+
+        if (field.getLimitSeconds() > 0)
+        {
+            RentEntry renter = getRenter(player);
+
+            if (renter != null)
+            {
+                int seconds = SignHelper.periodToSeconds(s.getPeriod());
+
+                if (renter.getPeriodSeconds() + seconds > field.getLimitSeconds())
+                {
+                    ChatBlock.send(player, "limitReached");
+                    return false;
+                }
+            }
+        }
+
         if (s.getItem() == null)
         {
             if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
@@ -2522,7 +2550,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         return !payment.isEmpty();
     }
-
 
     public boolean buy(Player player, FieldSign s)
     {
@@ -2644,6 +2671,19 @@ public class Field extends AbstractVec implements Comparable<Field>
         PreciousStones.getInstance().getCommunicationManager().logPurchaseCollect(getOwner(), player.getName(), getAttachedFieldSign());
 
         purchase = null;
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public int getLimitSeconds()
+    {
+        return limitSeconds;
+    }
+
+    public void setLimitSeconds(int limitSeconds)
+    {
+        this.limitSeconds = limitSeconds;
+
         dirtyFlags();
         PreciousStones.getInstance().getStorageManager().offerField(this);
     }
