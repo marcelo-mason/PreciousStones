@@ -1552,7 +1552,7 @@ public class PSBlockListener implements Listener
         {
             if (s.isFieldSign())
             {
-                if (s.foundField())
+                if (!s.foundField())
                 {
                     ChatBlock.send(player, "fieldSignMustBeOnField");
                 }
