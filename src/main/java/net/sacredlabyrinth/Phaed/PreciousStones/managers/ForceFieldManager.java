@@ -2544,7 +2544,15 @@ public final class ForceFieldManager
             fields.remove(field);
             field.setNewOwner(owner);
             fields = fieldsByOwner.get(owner.toLowerCase());
+
+            if (fields == null)
+            {
+                fields = new ArrayList<Field>();
+            }
+
             fields.add(field);
+
+            fieldsByOwner.put(owner.toLowerCase(), fields);
         }
     }
 
