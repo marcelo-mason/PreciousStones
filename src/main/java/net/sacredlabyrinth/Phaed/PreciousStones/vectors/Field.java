@@ -2136,6 +2136,17 @@ public class Field extends AbstractVec implements Comparable<Field>
         return block.getTypeId() == getTypeId();
     }
 
+    /**
+     * If the block is missing
+     *
+     * @return
+     */
+    public boolean missingBlock()
+    {
+        Block block = getBlock();
+        return block.getTypeId() == 0;
+    }
+
     public void hide()
     {
         if (!isHidden())

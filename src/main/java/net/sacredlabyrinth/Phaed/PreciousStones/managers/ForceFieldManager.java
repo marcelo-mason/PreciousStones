@@ -742,7 +742,7 @@ public final class ForceFieldManager
                     currentChunk = cv;
                 }
 */
-                if (!field.isHidden())
+                if (!field.isHidden() || field.missingBlock())
                 {
                     if (!field.matchesBlockType())
                     {
