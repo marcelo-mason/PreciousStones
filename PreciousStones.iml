@@ -37,11 +37,8 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.platymuus:bukkit-permissions:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.mcstats:metrics:1.1" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.getspout:spoutplugin:1.3.2-R1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-io:commons-io:2.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.trove4j:trove4j:3.0.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.gmail.nossr50.mcMMO:mcMMO:1.3.11" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.getspout:spoutpluginapi:dev-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.getspout:spoutplugin:1.4.5-R0.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.gmail.nossr50.mcMMO:mcMMO:1.3.13-dev" level="project" />
   </component>
 </module>
 
