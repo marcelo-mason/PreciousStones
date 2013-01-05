@@ -825,9 +825,9 @@ public class PSBlockListener implements Listener
 
         if (plugin.getSettingsManager().isSneakPlaceFields())
         {
-            if (player.isSneaking())
+            if (!player.isSneaking())
             {
-                isDisabled = false;
+                isDisabled = true;
             }
         }
 
