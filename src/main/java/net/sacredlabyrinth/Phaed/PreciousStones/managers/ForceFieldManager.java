@@ -719,7 +719,7 @@ public final class ForceFieldManager
             for (Field field : fields)
             {
                 // ensure chunk is loaded prior to polling
-
+/*
                 ChunkVec cv = field.toChunkVec();
 
                 if (!cv.equals(currentChunk))
@@ -741,7 +741,7 @@ public final class ForceFieldManager
 
                     currentChunk = cv;
                 }
-
+*/
                 if (!field.isHidden())
                 {
                     if (!field.matchesBlockType())
