@@ -781,8 +781,6 @@ public class PSBlockListener implements Listener
 
         // -------------------------------------------------------------------------------------- prevent place everywhere
 
-        boolean isDisabled = plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
-
         if (plugin.getSettingsManager().isPreventPlaceEverywhere(block.getWorld().getName()) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
         {
             boolean isAllowBlock = false;
@@ -821,6 +819,8 @@ public class PSBlockListener implements Listener
 
         // -------------------------------------------------------------------------------------- placing a field
 
+        boolean isDisabled = false;
+
         // allow place field if sneaking
 
         if (plugin.getSettingsManager().isSneakPlaceFields())
@@ -858,6 +858,13 @@ public class PSBlockListener implements Listener
                     isDisabled = true;
                 }
             }
+        }
+
+        // if the user has it manually off then disable placing
+
+        if (plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled())
+        {
+            isDisabled = true;
         }
 
         // -------------------------------------------------------------------------------------- placing a field

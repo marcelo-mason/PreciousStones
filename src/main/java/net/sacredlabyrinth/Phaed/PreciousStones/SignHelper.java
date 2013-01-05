@@ -253,7 +253,6 @@ public class SignHelper
             if (sd > 0)
             {
                 out += sd + "s";
-                counter++;
             }
         }
         return Helper.stripTrailing(out, " ");
