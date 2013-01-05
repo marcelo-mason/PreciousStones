@@ -2336,6 +2336,11 @@ public final class ForceFieldManager
 
         field.unHide();
 
+        if (field.getBlock().getTypeId() == 0)
+        {
+            return;
+        }
+
         if (plugin.getSettingsManager().isDropOnDelete())
         {
             World world = field.getLocation().getWorld();
@@ -2364,6 +2369,11 @@ public final class ForceFieldManager
         if (field != null)
         {
             field.unHide();
+        }
+
+        if (block.getTypeId() == 0)
+        {
+            return;
         }
 
         World world = block.getWorld();
