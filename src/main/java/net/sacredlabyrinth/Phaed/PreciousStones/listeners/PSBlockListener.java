@@ -1552,13 +1552,13 @@ public class PSBlockListener implements Listener
         {
             if (s.isFieldSign())
             {
-                if (!s.foundField())
+                if (s.foundField())
                 {
-                    ChatBlock.send(player, "fieldSignMustBeOnField");
+                    ChatBlock.send(player, "fieldSignBadFormat");
                 }
                 else
                 {
-                    ChatBlock.send(player, "fieldSignBadFormat");
+                    ChatBlock.send(player, "fieldSignMustBeOnField");
                 }
 
                 if (s.isNoEconomy())
