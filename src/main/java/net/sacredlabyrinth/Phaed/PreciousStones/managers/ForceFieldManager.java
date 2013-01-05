@@ -418,7 +418,12 @@ public final class ForceFieldManager
 
         // remove from owners collection
 
-        fieldsByOwner.remove(field.getOwner().toLowerCase());
+        List<Field> owned = fieldsByOwner.get(field.getOwner().toLowerCase());
+
+        if (owned != null)
+        {
+            owned.remove(field);
+        }
 
         // remove from worlds collection
 
