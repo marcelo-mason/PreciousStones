@@ -4,7 +4,7 @@ main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
 version: ${project.version}
 dev-url: http://dev.bukkit.org/server-mods/preciousstones/
 load: 'postworld'
-softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC, Lockette, Spout]
+softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC, Lockette, Spout, mcMMO]
 commands:
   ps:
     description: All of the PreciousStones commands
@@ -280,6 +280,7 @@ permissions:
       preciousstones.benefit.enable: true
       preciousstones.benefit.change-owner: true
       preciousstones.benefit.hide: true
+      preciousstones.benefit.setlimit: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: false

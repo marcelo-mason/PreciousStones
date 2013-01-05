@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
@@ -1570,21 +1569,6 @@ public class PSBlockListener implements Listener
                 event.setCancelled(true);
                 return;
             }
-        }
-    }
-
-    /**
-     * Cancels McMMO block breaking on fields
-     *
-     * @param event
-     */
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onMcMMBlockBreak(FakeBlockBreakEvent event)
-    {
-        if (plugin.getForceFieldManager().isField(event.getBlock()))
-        {
-            event.setCancelled(true);
         }
     }
 }

@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.gmail.nossr50.mcMMO;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
@@ -38,6 +39,7 @@ public final class PermissionsManager
     private LWC lwc = null;
     private Lockette lockette = null;
     private PreciousStones plugin;
+    private mcMMO mcmmo = null;
 
     /**
      *
@@ -51,6 +53,7 @@ public final class PermissionsManager
         detectLWC();
         detectLockette();
         detectSpout();
+        detectMcMMO();
 
         try
         {
@@ -63,6 +66,16 @@ public final class PermissionsManager
         {
             //SimpleClans.log("[PreciousStones] Vault.jar not found. No economy support.");
             //no need to spam everyone who doesnt use vault
+        }
+    }
+
+    private void detectMcMMO()
+    {
+        Plugin plug = plugin.getServer().getPluginManager().getPlugin("mcMMO");
+
+        if (plug != null)
+        {
+            mcmmo = ((mcMMO) plug);
         }
     }
 
@@ -489,5 +502,10 @@ public final class PermissionsManager
     public boolean hasSpout()
     {
         return spout != null;
+    }
+
+    public boolean hasMcMMO()
+    {
+        return mcmmo != null;
     }
 }
