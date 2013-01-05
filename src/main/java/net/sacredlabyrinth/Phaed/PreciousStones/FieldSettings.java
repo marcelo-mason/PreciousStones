@@ -358,7 +358,7 @@ public class FieldSettings
         creatureCount = loadInt("creature-count");
         limits = loadIntList("limits");
         price = loadInt("price");
-        refund = loadInt("refund");
+        refund = loadInt("refund", -1);
         translocationBlacklist = loadTypeEntries("translocation-blacklist");
         preventPlaceBlacklist = loadTypeEntries("prevent-place-blacklist");
         preventDestroyBlacklist = loadTypeEntries("prevent-destroy-blacklist");
@@ -411,6 +411,11 @@ public class FieldSettings
 
     private int loadInt(String flagStr)
     {
+        return loadInt(flagStr, 0);
+    }
+
+    private int loadInt(String flagStr, int defaultValue)
+    {
         if (containsKey(flagStr))
         {
             if (Helper.isInteger(getValue(flagStr)))
@@ -424,7 +429,7 @@ public class FieldSettings
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
-        return 0;
+        return defaultValue;
     }
 
     private String loadString(String flagStr)
