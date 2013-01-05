@@ -396,19 +396,15 @@ public class FieldSettings
     {
         if (containsKey(flagStr))
         {
-            if (Helper.isBoolean(getValue(flagStr)))
+            boolean value = Boolean.parseBoolean(getValue(flagStr).toString());
+
+            if (value)
             {
-                boolean value = (Boolean) getValue(flagStr);
-
-                if (value)
-                {
-                    loadFlags(getKey(flagStr));
-                }
-
-                PreciousStones.debug("   %s: %s", flagStr, value);
-                return value;
+                loadFlags(getKey(flagStr));
             }
-            PreciousStones.debug("   %s: *bad*", flagStr);
+
+            PreciousStones.debug("   %s: %s", flagStr, value);
+            return value;
         }
         return false;
     }
