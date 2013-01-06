@@ -146,7 +146,8 @@ public enum FieldFlag
     PREVENT_VEHICLE_EXIT,
     RENTABLE,
     SHAREABLE,
-    BUYABLE
+    BUYABLE,
+    DELETE_IF_NO_PERMISSION
     ;
 
     /**
@@ -211,7 +212,8 @@ public enum FieldFlag
     private final static FieldFlag[] hidden = new FieldFlag[]
     {
         FieldFlag.ALL,
-        FieldFlag.DYNMAP_NO_TOGGLE
+        FieldFlag.DYNMAP_NO_TOGGLE,
+        FieldFlag.DELETE_IF_NO_PERMISSION,
     };
 
     /**

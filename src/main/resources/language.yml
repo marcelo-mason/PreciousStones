@@ -222,6 +222,7 @@ logPayment: "{1.renter} rented {2.period} time in {3.owner}'s {4.field} field fo
 logPaymentCollect: "{1.owner} collected {2.amount} {3.item} rent from {4.renter} {5.coords}"
 logPurchase: "{1.buyer} purchased {2.owner}'s {3.field} field for {4.amount} {6.item} {7.coords}"
 logPurchaseCollect: "{1.owner} collected {2.amount} {3.item} purchase from {4.buyer} {5.coords}"
+logDeletedNoPermission: "Deleted {1.count} fields belonging to {2.player} for lack of permissions"
 enteringField: "{aqua}Entering {1.owner}'s {2.field-type} field"
 enteringNamedField: "{aqua}Entering {1.field}"
 leavingField: "{aqua}Leaving {1.owner}'s {2.field-type} field"

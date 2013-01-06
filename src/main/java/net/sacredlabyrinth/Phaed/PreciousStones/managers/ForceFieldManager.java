@@ -27,6 +27,7 @@ public final class ForceFieldManager
     private final Map<FieldFlag, List<Field>> fieldsByFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByWorld = Maps.newHashMap();
     private final Map<String, Map<BlockTypeEntry, List<Field>>> fieldsByOwnerAndType = Maps.newHashMap();
+    private final Map<String, Map<FieldFlag, List<Field>>> fieldsByOwnerAndFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByOwner = Maps.newHashMap();
     private final Map<Vec, Field> fieldsByVec = Maps.newHashMap();
 
@@ -52,6 +53,7 @@ public final class ForceFieldManager
         fieldsByWorld.clear();
         fieldsByOwner.clear();
         fieldsByOwnerAndType.clear();
+        fieldsByOwnerAndFlag.clear();
         fieldsByVec.clear();
 
         sourceFields.clear();
@@ -343,6 +345,30 @@ public final class ForceFieldManager
         types.put(field.getTypeEntry(), fields);
         fieldsByOwnerAndType.put(field.getOwner().toLowerCase(), types);
 
+        // add to owner and flag collection
+
+        Map<FieldFlag, List<Field>> allFlags = fieldsByOwnerAndFlag.get(field.getOwner().toLowerCase());
+
+        if (allFlags == null)
+        {
+            allFlags = Maps.newHashMap();
+        }
+
+        for (FieldFlag flag : field.getFlags())
+        {
+            fields = allFlags.get(flag);
+
+            if (fields == null)
+            {
+                fields = new ArrayList<Field>();
+            }
+
+            fields.add(field);
+            allFlags.put(flag, fields);
+        }
+
+        fieldsByOwnerAndFlag.put(field.getOwner().toLowerCase(), allFlags);
+
         // add to sources collection
 
         addSourceField(field);
@@ -456,6 +482,23 @@ public final class ForceFieldManager
             if (fields != null)
             {
                 fields.remove(field);
+            }
+        }
+
+        // remove from owner and flags collection
+
+        Map<FieldFlag, List<Field>> allFlags = fieldsByOwnerAndFlag.get(field.getOwner().toLowerCase());
+
+        if (allFlags != null)
+        {
+            for (FieldFlag flag : field.getFlags())
+            {
+                fields = allFlags.get(flag);
+
+                if (fields != null)
+                {
+                    fields.remove(field);
+                }
             }
         }
 
@@ -2741,5 +2784,52 @@ public final class ForceFieldManager
         }
 
         return 0;
+    }
+
+    public List<Field> getFieldsOwnedBy(String playerName, FieldFlag flag)
+    {
+        Map<FieldFlag, List<Field>> flags = fieldsByOwnerAndFlag.get(playerName);
+
+        if (flags != null)
+        {
+            return flags.get(flag);
+        }
+
+        return null;
+    }
+
+    public void removeFieldsIfNoPermission(String playerName)
+    {
+        Player player = Bukkit.getServer().getPlayer(playerName);
+
+        if (player != null)
+        {
+            List<Field> fields = getFieldsOwnedBy(playerName, FieldFlag.DELETE_IF_NO_PERMISSION);
+
+            if (fields != null)
+            {
+                int deletedCount = 0;
+
+                for (Field field : fields)
+                {
+                    String permission = field.getSettings().getDeleteIfNoPermission();
+
+                    if (!permission.isEmpty())
+                    {
+                        if (!plugin.getPermissionsManager().has(player, permission))
+                        {
+                            queueRelease(field);
+                        }
+                    }
+                }
+
+                if (deletedCount > 0)
+                {
+                    flush();
+                }
+
+                PreciousStones.log("logDeletedNoPermission", deletedCount, playerName);
+            }
+        }
     }
 }

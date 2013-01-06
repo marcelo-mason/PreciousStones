@@ -50,6 +50,7 @@ public class FieldSettings
     private String requiredPermissionAllow = "";
     private String requiredPermissionUse = "";
     private String requiredPermission = "";
+    private String deleteIfNoPermission = "";
     private GameMode forceEntryGameMode = null;
     private GameMode forceLeavingGameMode = null;
     private String title;
@@ -330,6 +331,7 @@ public class FieldSettings
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");
         requiredPermissionAllow = loadString("required-permission-allow");
+        deleteIfNoPermission = loadString("delete-if-no-permission");
         groupOnEntry = loadString("group-on-entry");
         autoDisableSeconds = loadInt("auto-disable");
         radius = loadInt("radius");
@@ -1480,5 +1482,10 @@ public class FieldSettings
     public boolean isSpoutBlock()
     {
         return spoutBlock;
+    }
+
+    public String getDeleteIfNoPermission()
+    {
+        return deleteIfNoPermission;
     }
 }

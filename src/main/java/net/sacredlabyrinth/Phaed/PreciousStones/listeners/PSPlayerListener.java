@@ -75,6 +75,7 @@ public class PSPlayerListener implements Listener
                 plugin.getPlayerManager().playerLogin(playerName);
                 plugin.getStorageManager().offerPlayer(playerName);
                 plugin.getForceFieldManager().enableFieldsOnLogon(playerName);
+                plugin.getForceFieldManager().removeFieldsIfNoPermission(playerName);
             }
         }, 10);
     }
