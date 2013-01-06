@@ -2826,9 +2826,8 @@ public final class ForceFieldManager
                 if (deletedCount > 0)
                 {
                     flush();
+                    PreciousStones.log("logDeletedNoPermission", deletedCount, playerName);
                 }
-
-                PreciousStones.log("logDeletedNoPermission", deletedCount, playerName);
             }
         }
     }
