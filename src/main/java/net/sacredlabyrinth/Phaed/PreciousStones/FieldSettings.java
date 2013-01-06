@@ -27,6 +27,8 @@ public class FieldSettings
     private BlockTypeEntry type;
     private boolean spoutBlock;
     private int radius = 0;
+    private int fenceItem = 0;
+    private int fenceItemPrice = 0;
     private int heal = 0;
     private int damage = 0;
     private int maskOnDisabled = 49;
@@ -392,6 +394,8 @@ public class FieldSettings
         mustBeAbove = loadInt("must-be-above");
         mustBeBelow = loadInt("must-be-below");
         payToEnable = loadInt("pay-to-enable");
+        fenceItem = loadInt("fence-on-place");
+        fenceItemPrice = loadInt("price-per-fence");
     }
 
     private boolean loadBoolean(String flagStr)
@@ -1487,5 +1491,15 @@ public class FieldSettings
     public String getDeleteIfNoPermission()
     {
         return deleteIfNoPermission;
+    }
+
+    public int getFenceItem()
+    {
+        return fenceItem;
+    }
+
+    public int getFenceItemPrice()
+    {
+        return fenceItemPrice;
     }
 }

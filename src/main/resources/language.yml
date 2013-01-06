@@ -527,7 +527,7 @@ limitMalformed3: "{red} i.e.: /ps setlimit 3d12h"
 limitSet: "{aqua} Limit has been set"
 _rentingLimit: "Renting Limit"
 limitBadField: "{red} Cannot set renting limit on a field that is not rentable or shareable"
-
+fenceGenerated: "{aqua} The fence has been created"
 
 
 

@@ -258,6 +258,17 @@ public final class ForceFieldManager
             }
         }
 
+        // generate fence
+
+        if (field.getSettings().getFenceItem() > 0)
+        {
+            if (field.getFencePrice() == 0  || purchase(player, field.getFencePrice()))
+            {
+                field.generateFence(field.getSettings().getFenceItem());
+                ChatBlock.send(player, "fenceGenerated");
+            }
+        }
+
         // allow all owners of intersecting fields into the field
 
         plugin.getForceFieldManager().addAllowOverlappingOwners(field);
