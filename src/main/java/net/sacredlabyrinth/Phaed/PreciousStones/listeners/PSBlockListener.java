@@ -990,6 +990,8 @@ public class PSBlockListener implements Listener
 
         if (block.getType().equals(Material.CHEST))
         {
+            Field field = plugin.getForceFieldManager().getConflictSourceField(block.getLocation(), player.getName(), FieldFlag.ALL);
+
             boolean conflicted = false;
 
             if (block.getRelative(BlockFace.EAST).getType().equals(Material.CHEST))
@@ -998,7 +1000,10 @@ public class PSBlockListener implements Listener
 
                 if (field1 != null)
                 {
-                    conflicted = true;
+                    if (field == null || field != field1)
+                    {
+                        conflicted = true;
+                    }
                 }
             }
 
@@ -1008,7 +1013,10 @@ public class PSBlockListener implements Listener
 
                 if (field2 != null)
                 {
-                    conflicted = true;
+                    if (field == null || field != field2)
+                    {
+                        conflicted = true;
+                    }
                 }
             }
 
@@ -1018,7 +1026,10 @@ public class PSBlockListener implements Listener
 
                 if (field3 != null)
                 {
-                    conflicted = true;
+                    if (field == null || field != field3)
+                    {
+                        conflicted = true;
+                    }
                 }
             }
 
@@ -1028,7 +1039,10 @@ public class PSBlockListener implements Listener
 
                 if (field4 != null)
                 {
-                    conflicted = true;
+                    if (field == null || field != field4)
+                    {
+                        conflicted = true;
+                    }
                 }
             }
 
