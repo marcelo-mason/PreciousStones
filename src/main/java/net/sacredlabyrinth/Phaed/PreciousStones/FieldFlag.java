@@ -213,7 +213,7 @@ public enum FieldFlag
     {
         FieldFlag.ALL,
         FieldFlag.DYNMAP_NO_TOGGLE,
-        FieldFlag.DELETE_IF_NO_PERMISSION,
+        FieldFlag.DYNMAP_NO_TOGGLE,
     };
 
     /**
@@ -312,14 +312,14 @@ public enum FieldFlag
 
         boolean allowed = PreciousStones.getInstance().getForceFieldManager().isAllowed(field, playerName);
 
-        // reverse the flag if its in the allow-to-reverse list
+        // reverse the flag if its in the reversible list
 
         if (field.getSettings().isReversedFlag(this))
         {
             allowed = !allowed;
         }
 
-        // allow the if flag is in the allow-to-all list
+        // allow the if flag is in the allable list
 
         if (field.getSettings().isAlledFlag(this))
         {

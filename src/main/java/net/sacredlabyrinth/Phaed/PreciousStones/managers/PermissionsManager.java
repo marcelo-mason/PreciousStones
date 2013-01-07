@@ -15,6 +15,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.getspout.spout.Spout;
@@ -507,5 +508,20 @@ public final class PermissionsManager
     public boolean hasMcMMO()
     {
         return mcmmo != null;
+    }
+
+    public boolean isVanished(Player player)
+    {
+        List<MetadataValue> values = player.getMetadata("vanished");
+
+        for (MetadataValue value : values)
+        {
+            if(value.asBoolean())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -14,6 +14,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.*;
 
@@ -262,12 +263,16 @@ public final class ForceFieldManager
 
         if (field.getSettings().getFenceItem() > 0)
         {
-            if (field.getFencePrice() == 0  || purchase(player, field.getFencePrice()))
+            if (field.getFencePrice() == 0 || purchase(player, field.getFencePrice()))
             {
                 field.generateFence(field.getSettings().getFenceItem());
                 ChatBlock.send(player, "fenceGenerated");
             }
         }
+
+        // add metadata
+
+        field.getBlock().setMetadata("Pstone", new FixedMetadataValue(plugin, true));
 
         // allow all owners of intersecting fields into the field
 
@@ -1174,7 +1179,24 @@ public final class ForceFieldManager
      */
     public HashSet<String> getWho(Field field)
     {
-        return plugin.getEntryManager().getInhabitants(field);
+        HashSet<String> playerNames = plugin.getEntryManager().getInhabitants(field);
+
+        for (Iterator iter = playerNames.iterator(); iter.hasNext(); )
+        {
+            String playerName = (String) iter.next();
+
+            Player player = Bukkit.getServer().getPlayer(playerName);
+
+            if (player != null)
+            {
+                if (plugin.getPermissionsManager().isVanished(player))
+                {
+                    iter.remove();
+                }
+            }
+        }
+
+        return playerNames;
     }
 
     /**

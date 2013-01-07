@@ -36,6 +36,11 @@ public class SnitchManager
      */
     public void recordSnitchEntityKill(Player player, Entity entity)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(entity.getLocation(), FieldFlag.SNITCH);
@@ -56,6 +61,11 @@ public class SnitchManager
      */
     public void recordSnitchPlayerKill(Player player, Player victim)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(victim.getLocation(), FieldFlag.SNITCH);
@@ -76,6 +86,11 @@ public class SnitchManager
      */
     public void recordSnitchEntry(Player player, Field field)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             if (FieldFlag.SNITCH.applies(field, player))
@@ -84,7 +99,6 @@ public class SnitchManager
                 plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), "Entry", dateFormat.format(new Date()), 1));
             }
         }
-
     }
 
     /**
@@ -93,6 +107,11 @@ public class SnitchManager
      */
     public void recordSnitchBlockBreak(Player player, Block block)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
@@ -113,6 +132,11 @@ public class SnitchManager
      */
     public void recordSnitchBucketEmpty(Player player, Block block, String type)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
@@ -135,6 +159,11 @@ public class SnitchManager
      */
     public void recordSnitchBucketFill(Player player, Block block)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
@@ -155,6 +184,11 @@ public class SnitchManager
      */
     public void recordSnitchBlockPlace(Player player, Block block)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
@@ -175,6 +209,11 @@ public class SnitchManager
      */
     public void recordSnitchUsed(Player player, Block block)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
@@ -195,6 +234,11 @@ public class SnitchManager
      */
     public void recordSnitchShop(Player player, Block block)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         Sign sign = (Sign) block.getState();
 
         if (sign.getLines().length == 0)
@@ -222,6 +266,11 @@ public class SnitchManager
      */
     public void recordSnitchIgnite(Player player, Block block)
     {
+        if (plugin.getPermissionsManager().isVanished(player))
+        {
+            return;
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.snitch"))
         {
             List<Field> snitchFields = plugin.getForceFieldManager().getEnabledSourceFields(block.getLocation(), FieldFlag.SNITCH);
