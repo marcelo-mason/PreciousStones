@@ -181,10 +181,13 @@ public final class GriefUndoManager
 
         if (world != null)
         {
+            PreciousStones.debug("Retrieving block grief");
+
             Queue<GriefBlock> gbs = plugin.getStorageManager().retrieveBlockGrief(field);
 
             if (!gbs.isEmpty())
             {
+                PreciousStones.debug("Rolling back %s griefed blocks", gbs.size());
                 plugin.getCommunicationManager().notifyRollBack(field, gbs.size());
                 Rollback rollback = new Rollback(gbs, world, field);
             }

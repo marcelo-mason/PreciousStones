@@ -1469,9 +1469,16 @@ public class StorageManager
             {
                 Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+            PreciousStones.debug("Extracted %s griefed blocks from the db", out.size());
+
+            if (!out.isEmpty())
+            {
+                PreciousStones.debug("Deleting grief from the db");
+                deleteBlockGrief(field);
+            }
         }
 
-        deleteBlockGrief(field);
         return out;
     }
 
