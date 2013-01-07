@@ -1177,7 +1177,7 @@ public final class ForceFieldManager
      * @param field
      * @return list of player names
      */
-    public HashSet<String> getWho(Field field)
+    public HashSet<String> getWho(Player owner, Field field)
     {
         HashSet<String> playerNames = plugin.getEntryManager().getInhabitants(field);
 
@@ -1190,6 +1190,11 @@ public final class ForceFieldManager
             if (player != null)
             {
                 if (plugin.getPermissionsManager().isVanished(player))
+                {
+                    iter.remove();
+                }
+
+                if (!owner.canSee(player))
                 {
                     iter.remove();
                 }

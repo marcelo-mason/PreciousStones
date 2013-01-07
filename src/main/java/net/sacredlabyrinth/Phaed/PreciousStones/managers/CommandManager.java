@@ -355,7 +355,7 @@ public final class CommandManager implements CommandExecutor
 
                         if (field != null)
                         {
-                            HashSet<String> inhabitants = plugin.getForceFieldManager().getWho(field);
+                            HashSet<String> inhabitants = plugin.getForceFieldManager().getWho(player, field);
 
                             if (inhabitants.size() > 0)
                             {
