@@ -1193,8 +1193,7 @@ public final class ForceFieldManager
                 {
                     iter.remove();
                 }
-
-                if (!owner.canSee(player))
+                else if (!owner.canSee(player))
                 {
                     iter.remove();
                 }
