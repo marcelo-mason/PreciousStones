@@ -1530,6 +1530,34 @@ public final class CommandManager implements CommandExecutor
                             }
                             return true;
                         }
+                        else if (args.length == 2)
+                        {
+                            if (Helper.isTypeEntry(args[1]))
+                            {
+                                String name = args[0];
+                                BlockTypeEntry type = Helper.toTypeEntry(args[1]);
+
+                                if (type != null)
+                                {
+                                    int fields = plugin.getForceFieldManager().deletePlayerFieldsOfType(name, type);
+
+                                    if (fields > 0)
+                                    {
+                                        ChatBlock.send(sender, "deletedFields", fields, Material.getMaterial(type.getTypeId()));
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.send(sender, "noPstonesFound");
+                                    }
+                                }
+                                else
+                                {
+                                    plugin.getCommunicationManager().showNotFound(sender);
+                                }
+                            }
+
+                            return true;
+                        }
                     }
                     else if (cmd.equals(ChatBlock.format("commandSetLimit")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setlimit") && hasplayer)
                     {

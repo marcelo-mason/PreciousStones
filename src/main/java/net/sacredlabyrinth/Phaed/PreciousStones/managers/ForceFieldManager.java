@@ -2539,6 +2539,40 @@ public final class ForceFieldManager
     }
 
     /**
+     * Delete fields of a certain type from a player
+     *
+     * @param type
+     * @return count of fields deleted
+     */
+    public int deletePlayerFieldsOfType(String playerName, BlockTypeEntry type)
+    {
+        int deletedCount = 0;
+
+        Map<BlockTypeEntry, List<Field>> types = fieldsByOwnerAndType.get(playerName.toLowerCase());
+
+        if (types != null)
+        {
+            List<Field> fields = types.get(type);
+
+            if (fields != null)
+            {
+                for (Field field : fields)
+                {
+                    queueRelease(field);
+                    deletedCount++;
+                }
+
+            }
+        }
+
+        if (deletedCount > 0)
+        {
+            flush();
+        }
+        return deletedCount;
+    }
+
+    /**
      * Removes money from player's account
      *
      * @param player

@@ -3566,6 +3566,8 @@ public class CommunicationManager
                 cb.addRow("menu32");
             }
             cb.addRow("menu33");
+            cb.addRow("menu55");
+            cb.addRow("menu56");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.info") && hasPlayer)
