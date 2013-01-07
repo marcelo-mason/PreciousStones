@@ -319,19 +319,19 @@ public enum FieldFlag
             allowed = !allowed;
         }
 
-        // allow the if flag is in the allable list
-
-        if (field.getSettings().isAlledFlag(this))
-        {
-            allowed = true;
-        }
-
         // if its a flag that applies to non-allowed players,
         // then return true when the player is not allowed
 
         if (appliesToNonAllowed(this))
         {
             allowed = !allowed;
+        }
+
+        // allow the if flag is in the allable list
+
+        if (field.getSettings().isAlledFlag(this))
+        {
+            allowed = true;
         }
 
         // return whether the player is allowed or not
