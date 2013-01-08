@@ -53,7 +53,6 @@ public final class SettingsManager
     private int visualizeSendSize;
     private int visualizeMaxFields;
     private boolean visualizeEndOnMove;
-    private boolean debugging;
     private boolean debug;
     private boolean debugdb;
     private boolean debugsql;
@@ -268,7 +267,7 @@ public final class SettingsManager
         offByDefault = loadBoolean("settings.off-by-default");
         linesPerPage = loadInt("settings.lines-per-page");
         logToHawkEye = loadBoolean("settings.log-to-hawkeye");
-        debugging = loadBoolean("settings.show-debug-info");
+        debug = loadBoolean("settings.show-debug-info");
         blacklistedWorlds = loadStringList("settings.blacklisted-worlds");
         autoAddClan = loadBoolean("settings.auto-allow-clan-on-fields");
 
@@ -1465,11 +1464,6 @@ public final class SettingsManager
     public boolean isDisableGroundInfo()
     {
         return disableGroundInfo;
-    }
-
-    public boolean isDebugging()
-    {
-        return debugging;
     }
 
     public boolean isSneakNormalBlock()
