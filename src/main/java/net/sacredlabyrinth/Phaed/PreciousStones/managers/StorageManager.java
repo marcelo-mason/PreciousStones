@@ -271,8 +271,6 @@ public class StorageManager
                 plugin.getForceFieldManager().clearChunkLists();
                 plugin.getUnbreakableManager().clearChunkLists();
 
-                extractPlayers();
-
                 List<World> worlds = plugin.getServer().getWorlds();
                 Map<String, World> filtered = new HashMap<String, World>();
 
@@ -286,6 +284,8 @@ public class StorageManager
                     loadWorldFields(world.getName());
                     loadWorldUnbreakables(world.getName());
                 }
+
+                extractPlayers();
             }
         }, 0);
     }
@@ -884,7 +884,7 @@ public class StorageManager
                         {
                             int lastSeenDays = Days.daysBetween(new DateTime(), new DateTime(last_seen)).getDays();
 
-                            if (banned.contains(name) || (lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays() && lastSeenDays < plugin.getSettingsManager().getPurgeAfterDays() * 2))
+                            if (banned.contains(name) || lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
                             {
                                 int purged = plugin.getForceFieldManager().deleteBelonging(name);
 
