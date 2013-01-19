@@ -361,17 +361,25 @@ public class PSPlayerListener implements Listener
             return;
         }
 
-        if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
-        {
-            return;
-        }
-
         if (event.getFrom() == null || event.getTo() == null)
         {
             return;
         }
 
         if (Helper.isSameLocation(event.getFrom(), event.getTo()))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isOncePerBlockOnMove())
+        {
+            if (Helper.isSameBlock(event.getFrom(), event.getTo()))
+            {
+                return;
+            }
+        }
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
         {
             return;
         }
