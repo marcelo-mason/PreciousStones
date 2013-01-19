@@ -1107,6 +1107,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     public boolean hasFlag(FieldFlag flag)
     {
         boolean ret = flags.contains(flag);
+
         if (!ret)
         {
             ret = insertedFlags.contains(flag);

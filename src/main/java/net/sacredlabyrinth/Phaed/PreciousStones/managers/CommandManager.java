@@ -765,9 +765,17 @@ public final class CommandManager implements CommandExecutor
                                         }
                                     }
 
-                                    if (FieldFlag.getByString(flagStr).isUnToggable())
+                                    try
                                     {
-                                        unToggable = true;
+                                        if (FieldFlag.getByString(flagStr).isUnToggable())
+                                        {
+                                            unToggable = true;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        ChatBlock.send(sender, "flagNotFound");
+                                        return true;
                                     }
 
                                     if (unToggable)
