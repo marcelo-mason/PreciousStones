@@ -284,10 +284,17 @@ public class StorageManager
                     loadWorldFields(world.getName());
                     loadWorldUnbreakables(world.getName());
                 }
-
-                extractPlayers();
             }
         }, 0);
+
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                extractPlayers();
+            }
+        }, 20);
     }
 
     /**
