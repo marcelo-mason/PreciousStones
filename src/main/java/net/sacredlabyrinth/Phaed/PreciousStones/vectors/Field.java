@@ -2410,7 +2410,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         if (!renterEntries.isEmpty())
         {
-            Bukkit.getScheduler().scheduleAsyncDelayedTask(PreciousStones.getInstance(), new Update(), 20);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Update(), 20);
         }
     }
 
@@ -2715,7 +2715,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             {
                 if (entry.isDone())
                 {
-                    Bukkit.getScheduler().scheduleAsyncDelayedTask(PreciousStones.getInstance(), new Runnable()
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
                     {
                         public void run()
                         {

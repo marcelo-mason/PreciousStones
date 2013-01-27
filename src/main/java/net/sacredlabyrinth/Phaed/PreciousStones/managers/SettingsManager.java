@@ -273,15 +273,23 @@ public final class SettingsManager
         autoAddClan = loadBoolean("settings.auto-allow-clan-on-fields");
         oncePerBlockOnMove = loadBoolean("settings.check-once-per-block-on-move");
 
+        // ********************************** Cuboid
+
         cuboidDefiningType = loadInt("cuboid.defining-blocktype");
         cuboidVisualizationType = loadInt("cuboid.visualization-blocktype");
+
+        // ********************************** Cleanup
 
         purgeAfterDays = loadInt("cleanup.player-inactivity-purge-days");
         purgeSnitchAfterDays = loadInt("cleanup.snitch-unused-purge-days");
         purgeBannedPlayers = loadBoolean("cleanup.purge-banned-players");
 
+        // ********************************** Saving
+
         saveFrequency = loadInt("saving.frequency-seconds");
         maxSnitchRecords = loadInt("saving.max-records-per-snitch");
+
+        // ********************************** Visualization
 
         visualizeFrameBlock = loadInt("visualization.frame-block-type");
         visualizeBlock = loadInt("visualization.block-type");
@@ -293,8 +301,12 @@ public final class SettingsManager
         visualizeMaxFields = loadInt("visualization.max-fields-to-visualize-at-once");
         visualizeTicksBetweenSends = loadInt("visualization.ticks-between-sends");
 
+        // ********************************** Grief Revert
+
         griefRevertMinInterval = loadInt("grief-revert.min-interval-secs");
         griefUndoBlackList = loadStringList("grief-revert.black-list");
+
+        // ********************************** DB Settings
 
         useMysql = loadBoolean("mysql.enable");
         host = loadString("mysql.host");
