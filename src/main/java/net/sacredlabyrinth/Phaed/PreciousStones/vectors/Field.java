@@ -2693,9 +2693,9 @@ public class Field extends AbstractVec implements Comparable<Field>
                     {
                         boolean foundSomeone = false;
 
-                        for (RentEntry entry : renterEntries)
+                        if (PreciousStones.getInstance().getEntryManager().hasInhabitants(self))
                         {
-                            if (PreciousStones.getInstance().getEntryManager().hasInhabitants(self))
+                            for (RentEntry entry : renterEntries)
                             {
                                 s.updateRemainingTime(entry.remainingRent());
                                 foundSomeone = true;
