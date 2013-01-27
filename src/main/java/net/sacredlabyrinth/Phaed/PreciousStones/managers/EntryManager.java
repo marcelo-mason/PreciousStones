@@ -7,7 +7,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -445,31 +444,23 @@ public final class EntryManager
 
         if (FieldFlag.LEAVING_GAME_MODE.applies(field, player))
         {
-            final GameMode mode = field.getSettings().getForceLeavingGameMode();
-
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            {
+                @Override
+                public void run()
                 {
-                    @Override
-                    public void run()
+                    List<Field> fields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ENTRY_GAME_MODE);
+
+                    if (fields != null)
                     {
-                        List<Field> fields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ENTRY_GAME_MODE);
-                        boolean skip = false;
-
-                        for (Field sourceField : fields)
-                        {
-                            if (sourceField.getSettings().getForceLeavingGameMode().equals(mode))
-                            {
-                                skip = true;
-                            }
-                        }
-
-                        if (!skip)
-                        {
-                            player.setGameMode(field.getSettings().getForceLeavingGameMode());
-                        }
+                        player.setGameMode(fields.get(0).getSettings().getForceEntryGameMode());
                     }
-                }, 1);
-
+                    else
+                    {
+                        player.setGameMode(field.getSettings().getForceLeavingGameMode());
+                    }
+                }
+            }, 1);
         }
 
         if (FieldFlag.PREVENT_FLIGHT.applies(field, player))
