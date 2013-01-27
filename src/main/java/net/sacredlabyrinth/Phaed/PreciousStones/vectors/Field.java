@@ -898,7 +898,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             return 0;
         }
 
-        return Days.daysBetween(new DateTime(), new DateTime(lastUsed)).getDays();
+        return Days.daysBetween(new DateTime(lastUsed), new DateTime()).getDays();
     }
 
     /**
@@ -2695,8 +2695,8 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                         if (PreciousStones.getInstance().getEntryManager().hasInhabitants(self))
                         {
-                            for (RentEntry entry : renterEntries)
-                            {
+                        for (RentEntry entry : renterEntries)
+                        {
                                 s.updateRemainingTime(entry.remainingRent());
                                 foundSomeone = true;
                             }

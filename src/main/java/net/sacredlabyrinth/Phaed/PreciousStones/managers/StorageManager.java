@@ -209,18 +209,21 @@ public class StorageManager
             }
 
             plugin.getSettingsManager().setVersion(9);
+            plugin.getSettingsManager().save();
         }
 
         if (plugin.getSettingsManager().getVersion() < 10)
         {
             addSnitchDate();
             plugin.getSettingsManager().setVersion(10);
+            plugin.getSettingsManager().save();
         }
 
         if (plugin.getSettingsManager().getVersion() < 11)
         {
             resetLastSeem();
             plugin.getSettingsManager().setVersion(11);
+            plugin.getSettingsManager().save();
         }
     }
 
@@ -593,10 +596,14 @@ public class StorageManager
 
                         // check for snitch fields to purge
 
-                        if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
+                        if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
                         {
-                            if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
+                            PreciousStones.debug("Snitch age: %s", field.getAgeInDays());
+
+                            if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                             {
+                                PreciousStones.debug("PURGED %s", field.toString());
+
                                 deleteSnitchEntries(field);
                                 field.markForDeletion();
                                 offerField(field);
@@ -707,10 +714,14 @@ public class StorageManager
 
                         // check for fields to purge
 
-                        if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
+                        if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
                         {
-                            if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
+                            PreciousStones.debug("Snitch age: %s", field.getAgeInDays());
+
+                            if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
                             {
+                                PreciousStones.debug("PURGED %s", field.toString());
+
                                 deleteSnitchEntries(field);
                                 field.markForDeletion();
                                 offerField(field);
@@ -889,10 +900,14 @@ public class StorageManager
 
                         if (last_seen > 0)
                         {
-                            int lastSeenDays = Days.daysBetween(new DateTime(), new DateTime(last_seen)).getDays();
+                            int lastSeenDays = Days.daysBetween(new DateTime(last_seen), new DateTime()).getDays();
+
+                            PreciousStones.debug("Player last seen: %s [%s]", lastSeenDays, name);
 
                             if (banned.contains(name) || lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
                             {
+                                PreciousStones.debug("PURGED %s", name);
+
                                 int purged = plugin.getForceFieldManager().deleteBelonging(name);
 
                                 if (purged > 0)
