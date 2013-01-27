@@ -43,16 +43,18 @@ public class Visualize implements Runnable
             BlockEntry bd = visualizationQueue.poll();
             Location loc = bd.getLocation();
 
-            if (!revert)
+            if (!loc.equals(player.getLocation()) && !loc.equals(player.getLocation().add(0, 1, 0)))
             {
-                player.sendBlockChange(loc, bd.getTypeId(), bd.getData());
+                if (!revert)
+                {
+                    player.sendBlockChange(loc, bd.getTypeId(), bd.getData());
+                }
+                else
+                {
+                    Block block = bd.getBlock();
+                    player.sendBlockChange(loc, block.getType(), block.getData());
+                }
             }
-            else
-            {
-                Block block = bd.getBlock();
-                player.sendBlockChange(loc, block.getType(), block.getData());
-            }
-
             i++;
         }
 
