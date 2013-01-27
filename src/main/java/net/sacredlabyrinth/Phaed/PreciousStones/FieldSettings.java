@@ -255,6 +255,7 @@ public class FieldSettings
         loadBoolean("protect-villagers");
         loadBoolean("protect-crops");
         loadBoolean("protect-mobs");
+        loadBoolean("protect-lwc");
         loadBoolean("remove-mob");
         loadBoolean("worldguard-repellent");
         loadBoolean("breakable");

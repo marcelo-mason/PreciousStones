@@ -510,6 +510,11 @@ public final class PermissionsManager
         return mcmmo != null;
     }
 
+    public boolean hasLWC()
+    {
+        return lwc != null;
+    }
+
     public boolean isVanished(Player player)
     {
         List<MetadataValue> values = player.getMetadata("vanished");
