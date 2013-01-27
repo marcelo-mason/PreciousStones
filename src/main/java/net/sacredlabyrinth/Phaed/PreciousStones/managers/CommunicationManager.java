@@ -3334,7 +3334,7 @@ public class CommunicationManager
                 ChatBlock.saySingle(player, ChatColor.WHITE + title + ChatColor.DARK_GRAY + " ----------------------------------------------------------------------------------------");
                 ChatBlock.sendBlank(player);
 
-                cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_owner"), ChatBlock.format("_reason"), ChatBlock.format("_details"));
+                cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_name"), ChatBlock.format("_reason"), ChatBlock.format("_details"));
 
                 for (SnitchEntry se : snitches)
                 {
