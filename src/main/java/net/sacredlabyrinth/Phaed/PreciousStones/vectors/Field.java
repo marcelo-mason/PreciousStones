@@ -69,6 +69,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private PaymentEntry purchase;
     private boolean singIsClean;
     private int limitSeconds;
+    private FieldSign attachedSign;
 
     /**
      * @param x
@@ -2442,7 +2443,16 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     public FieldSign getAttachedFieldSign()
     {
-        return SignHelper.getAttachedFieldSign(getBlock());
+        if (attachedSign == null)
+        {
+            attachedSign = SignHelper.getAttachedFieldSign(getBlock());
+        }
+        return attachedSign;
+    }
+
+    public void resetAttachedSign()
+    {
+        attachedSign = null;
     }
 
     public void cleanFieldSign()

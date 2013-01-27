@@ -95,6 +95,8 @@ public class FieldSign
             return false;
         }
 
+        field.resetAttachedSign();
+
         if (playerName != null)
         {
             if (!field.isOwner(playerName))
