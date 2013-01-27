@@ -383,6 +383,7 @@ settings:
     drop-on-delete: true
     auto-allow-clan-on-fields: true
     check-once-per-block-on-move: false
+    use-blockids-in-snitches: false
     version: 11
 log:
     bypass-pvp: true
