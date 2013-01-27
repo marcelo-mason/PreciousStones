@@ -407,10 +407,10 @@ public final class EntryManager
                     @Override
                     public void run()
                     {
-                        List<Field> fields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.GROUP_ON_ENTRY);
+                        Field sourceField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.GROUP_ON_ENTRY);
                         boolean skip = false;
 
-                        for (Field sourceField : fields)
+                        if (sourceField != null)
                         {
                             if (sourceField.getSettings().getGroupOnEntry().equals(group))
                             {
@@ -449,11 +449,11 @@ public final class EntryManager
                 @Override
                 public void run()
                 {
-                    List<Field> fields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ENTRY_GAME_MODE);
+                    Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.ENTRY_GAME_MODE);
 
-                    if (fields != null)
+                    if (field != null)
                     {
-                        player.setGameMode(fields.get(0).getSettings().getForceEntryGameMode());
+                        player.setGameMode(field.getSettings().getForceEntryGameMode());
                     }
                     else
                     {
