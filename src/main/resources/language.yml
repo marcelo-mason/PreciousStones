@@ -539,7 +539,7 @@ noBlacklistingFieldFound: "{red} Not standing on or pointing at a field that has
 commandBlacklistUsage: "{red} Usage: /ps blacklistcommand who"
 commandBlacklistCleared: "{aqua} Blacklisted commands cleared"
 commandBlacklistAdded: "{aqua} The command has been blacklisted"
-
+cannotTeleportInsideField: "{red} Cannot teleport inside a field with the prevent-teleport flag"
 
 
 

@@ -261,6 +261,7 @@ public class PSPlayerListener implements Listener
                 if (!plugin.getPermissionsManager().has(event.getPlayer(), "preciousstones.bypass.teleport"))
                 {
                     event.setCancelled(true);
+                    ChatBlock.send(player, "cannotTeleportInsideField");
                     return;
                 }
             }

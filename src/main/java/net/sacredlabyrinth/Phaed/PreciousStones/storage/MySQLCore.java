@@ -292,11 +292,6 @@ public class MySQLCore implements DBCore
             {
                 statement.close();
 
-                if (result == null)
-                {
-                    return false;
-                }
-
                 return result != null;
             }
         }
