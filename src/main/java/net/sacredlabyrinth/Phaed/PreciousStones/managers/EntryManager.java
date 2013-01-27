@@ -7,6 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -384,7 +385,7 @@ public final class EntryManager
      * @param player
      * @param field
      */
-    public void leaveOverlappedArea(Player player, Field field)
+    public void leaveOverlappedArea(final Player player, final Field field)
     {
         if (FieldFlag.FAREWELL_MESSAGE.applies(field, player))
         {
@@ -398,9 +399,32 @@ public final class EntryManager
 
         if (FieldFlag.GROUP_ON_ENTRY.applies(field, player))
         {
+            final String group = field.getSettings().getGroupOnEntry();
+
             if (!field.getSettings().getGroupOnEntry().isEmpty())
             {
-                plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        List<Field> fields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.GROUP_ON_ENTRY);
+                        boolean skip = false;
+
+                        for (Field sourceField : fields)
+                        {
+                            if (sourceField.getSettings().getGroupOnEntry().equals(group))
+                            {
+                                skip = true;
+                            }
+                        }
+
+                        if (!skip)
+                        {
+                            plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
+                        }
+                    }
+                }, 1);
             }
         }
 
@@ -421,7 +445,31 @@ public final class EntryManager
 
         if (FieldFlag.LEAVING_GAME_MODE.applies(field, player))
         {
-            player.setGameMode(field.getSettings().getForceLeavingGameMode());
+            final GameMode mode = field.getSettings().getForceLeavingGameMode();
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        List<Field> fields = plugin.getForceFieldManager().getSourceFields(player.getLocation(), FieldFlag.ENTRY_GAME_MODE);
+                        boolean skip = false;
+
+                        for (Field sourceField : fields)
+                        {
+                            if (sourceField.getSettings().getForceLeavingGameMode().equals(mode))
+                            {
+                                skip = true;
+                            }
+                        }
+
+                        if (!skip)
+                        {
+                            player.setGameMode(field.getSettings().getForceLeavingGameMode());
+                        }
+                    }
+                }, 1);
+
         }
 
         if (FieldFlag.PREVENT_FLIGHT.applies(field, player))
@@ -695,9 +743,9 @@ public final class EntryManager
 
                 for (Iterator iter = fields.iterator(); iter.hasNext(); )
                 {
-                    Field testfield = (Field) iter.next();
+                    Field testField = (Field) iter.next();
 
-                    if (field.equals(testfield))
+                    if (field.equals(testField))
                     {
                         iter.remove();
                         leftSingleField(player, field);
