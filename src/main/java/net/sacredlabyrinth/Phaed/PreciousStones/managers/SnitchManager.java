@@ -252,7 +252,7 @@ public class SnitchManager
                 {
                     for (String action : actions)
                     {
-                        plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_LWCAction"), action, 1));
+                        plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_LWC") + " " + action, Helper.toLocationString(block.getLocation()), 1));
                     }
                 }
             }

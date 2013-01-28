@@ -126,7 +126,7 @@ public class MySQLCore implements DBCore
      */
     public long insert(String query)
     {
-        if (PreciousStones.getInstance().getSettingsManager().isDebugsql())
+        if (PreciousStones.getInstance().getSettingsManager().isDebug())
         {
             PreciousStones.getLog().info(query);
         }
@@ -147,7 +147,9 @@ public class MySQLCore implements DBCore
                 {
                     if (keys.next())
                     {
-                        return keys.getLong(1);
+                        long key = keys.getLong(1);
+                        statement.close();
+                        return key;
                     }
                 }
                 statement.close();
@@ -173,7 +175,7 @@ public class MySQLCore implements DBCore
      */
     public void update(String query)
     {
-        if (PreciousStones.getInstance().getSettingsManager().isDebugsql())
+        if (PreciousStones.getInstance().getSettingsManager().isDebug())
         {
             PreciousStones.getLog().info(query);
         }
@@ -208,7 +210,7 @@ public class MySQLCore implements DBCore
      */
     public void delete(String query)
     {
-        if (PreciousStones.getInstance().getSettingsManager().isDebugsql())
+        if (PreciousStones.getInstance().getSettingsManager().isDebug())
         {
             PreciousStones.getLog().info(query);
         }
@@ -244,7 +246,7 @@ public class MySQLCore implements DBCore
      */
     public Boolean execute(String query)
     {
-        if (PreciousStones.getInstance().getSettingsManager().isDebugsql())
+        if (PreciousStones.getInstance().getSettingsManager().isDebug())
         {
             PreciousStones.getLog().info(query);
         }

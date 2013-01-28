@@ -86,32 +86,6 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandDebugdb")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
-                    {
-                        plugin.getSettingsManager().setDebugdb(!plugin.getSettingsManager().isDebugdb());
-                        if (plugin.getSettingsManager().isDebugdb())
-                        {
-                            ChatBlock.send(sender, "debugDbEnabled");
-                        }
-                        else
-                        {
-                            ChatBlock.send(sender, "debugDbDisabled");
-                        }
-                        return true;
-                    }
-                    else if (cmd.equals(ChatBlock.format("commandDebugsql")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
-                    {
-                        plugin.getSettingsManager().setDebugsql(!plugin.getSettingsManager().isDebugsql());
-                        if (plugin.getSettingsManager().isDebugsql())
-                        {
-                            ChatBlock.send(sender, "debugSqlEnabled");
-                        }
-                        else
-                        {
-                            ChatBlock.send(sender, "debugSqlDisabled");
-                        }
-                        return true;
-                    }
                     else if (cmd.equals(ChatBlock.format("commandOn")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
                         boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();

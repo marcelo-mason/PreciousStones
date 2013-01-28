@@ -2434,7 +2434,7 @@ public class StorageManager
      */
     public void processSingleField(Field field)
     {
-        if (plugin.getSettingsManager().isDebugdb())
+        if (plugin.getSettingsManager().isDebug())
         {
             PreciousStones.getLog().info("[Queue] processing single query");
         }
@@ -2461,7 +2461,7 @@ public class StorageManager
      */
     public void processFields(Map<Vec, Field> working)
     {
-        if (plugin.getSettingsManager().isDebugdb() && !working.isEmpty())
+        if (plugin.getSettingsManager().isDebug() && !working.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] processing " + working.size() + " pstone queries...");
         }
@@ -2486,7 +2486,7 @@ public class StorageManager
      */
     public void processUnbreakable(Map<Unbreakable, Boolean> workingUb)
     {
-        if (plugin.getSettingsManager().isDebugdb() && !workingUb.isEmpty())
+        if (plugin.getSettingsManager().isDebug() && !workingUb.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] processing " + workingUb.size() + " unbreakable queries...");
         }
@@ -2511,7 +2511,7 @@ public class StorageManager
      */
     public void processPlayers(Map<String, Boolean> workingPlayers)
     {
-        if (plugin.getSettingsManager().isDebugdb() && !workingPlayers.isEmpty())
+        if (plugin.getSettingsManager().isDebug() && !workingPlayers.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] processing " + workingPlayers.size() + " player queries...");
         }
@@ -2539,7 +2539,7 @@ public class StorageManager
      */
     public void processSnitches(List<SnitchEntry> workingSnitchEntries)
     {
-        if (plugin.getSettingsManager().isDebugdb() && !workingSnitchEntries.isEmpty())
+        if (plugin.getSettingsManager().isDebug() && !workingSnitchEntries.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] sending " + workingSnitchEntries.size() + " snitch queries...");
         }
@@ -2557,7 +2557,7 @@ public class StorageManager
      */
     public void processGrief(Set<Field> workingGrief)
     {
-        if (plugin.getSettingsManager().isDebugdb() && !workingGrief.isEmpty())
+        if (plugin.getSettingsManager().isDebug() && !workingGrief.isEmpty())
         {
             PreciousStones.getLog().info("[Queue] processing " + workingGrief.size() + " grief queries...");
         }

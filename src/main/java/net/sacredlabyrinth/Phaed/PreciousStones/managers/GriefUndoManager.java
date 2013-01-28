@@ -88,6 +88,8 @@ public final class GriefUndoManager
 
         if (!plugin.getSettingsManager().isDependentBlock(block.getTypeId()))
         {
+            PreciousStones.debug("not depenedent");
+
             BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
 
             for (BlockFace face : faces)
@@ -97,6 +99,7 @@ public final class GriefUndoManager
                 if (plugin.getSettingsManager().isDependentBlock(rel.getTypeId()))
                 {
                     addBlock(field, rel, clear);
+                    PreciousStones.debug("+found dependent");
                 }
             }
         }
@@ -141,6 +144,7 @@ public final class GriefUndoManager
         }
         else
         {
+            PreciousStones.debug("added grief to field");
             field.addGriefBlock(new GriefBlock(block));
         }
         if (clear)

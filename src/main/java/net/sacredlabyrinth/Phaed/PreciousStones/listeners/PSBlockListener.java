@@ -465,14 +465,25 @@ public class PSBlockListener implements Listener
                     {
                         if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy") || field.getSettings().canGrief(block.getTypeId()))
                         {
+                            PreciousStones.debug("bypassed");
+
+                            if(field.getSettings().canGrief(block.getTypeId()))
+                            {
+                                PreciousStones.debug("can-grief");
+                            }
+
                             plugin.getCommunicationManager().notifyBypassDestroy(player, block, field);
                             plugin.getStorageManager().deleteBlockGrief(block);
                             return;
                         }
                         else
                         {
+                            PreciousStones.debug("is grief");
+
                             if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                             {
+                                PreciousStones.debug("adding block");
+
                                 boolean clear = !field.hasFlag(FieldFlag.GRIEF_REVERT_DROP);
 
                                 plugin.getGriefUndoManager().addBlock(field, block, clear);
@@ -480,6 +491,7 @@ public class PSBlockListener implements Listener
 
                                 if (clear)
                                 {
+                                    PreciousStones.debug("cleared");
                                     event.setCancelled(true);
                                 }
                             }

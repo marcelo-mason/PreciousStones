@@ -55,8 +55,6 @@ public final class SettingsManager
     private int visualizeMaxFields;
     private boolean visualizeEndOnMove;
     private boolean debug;
-    private boolean debugdb;
-    private boolean debugsql;
     private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
     private List<BlockTypeEntry> unbreakableBlocks = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> bypassBlocks = new ArrayList<BlockTypeEntry>();
@@ -917,22 +915,6 @@ public final class SettingsManager
     }
 
     /**
-     * @return the debugdb
-     */
-    public boolean isDebugdb()
-    {
-        return debugdb;
-    }
-
-    /**
-     * @return the debugsql
-     */
-    public boolean isDebugsql()
-    {
-        return debugsql;
-    }
-
-    /**
      * @return the forceFieldBlocks
      */
     public List<LinkedHashMap<String, Object>> getForceFieldBlocks()
@@ -1371,22 +1353,6 @@ public final class SettingsManager
     public void setDebug(boolean debug)
     {
         this.debug = debug;
-    }
-
-    /**
-     * @param debugdb the debugdb to set
-     */
-    public void setDebugdb(boolean debugdb)
-    {
-        this.debugdb = debugdb;
-    }
-
-    /**
-     * @param debugsql the debugsql to set
-     */
-    public void setDebugsql(boolean debugsql)
-    {
-        this.debugsql = debugsql;
     }
 
     /**
