@@ -90,7 +90,7 @@ public class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_grief_undo");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_grief_undo` (  `id` bigint(20) NOT NULL auto_increment,  `date_griefed` datetime NOT NULL, `field_x` int(11) default NULL,  `field_y` int(11) default NULL, `field_z` int(11) default NULL, `world` varchar(25) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL, PRIMARY KEY  (`id`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_grief_undo` (  `id` bigint(20) NOT NULL auto_increment,  `date_griefed` bigint(20), `field_x` int(11) default NULL,  `field_y` int(11) default NULL, `field_z` int(11) default NULL, `world` varchar(25) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL, PRIMARY KEY  (`id`));");
                 }
 
                 if (!core.existsTable("pstone_translocations"))
@@ -163,7 +163,7 @@ public class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_grief_undo");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_grief_undo` (  `id` INTEGER PRIMARY KEY,  `date_griefed` datetime NOT NULL, `field_x` int(11) default NULL,  `field_y` int(11) default NULL, `field_z` int(11) default NULL, `world` varchar(25) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL, `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL);");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_grief_undo` (  `id` INTEGER PRIMARY KEY,  `date_griefed` bigint(20), `field_x` int(11) default NULL,  `field_y` int(11) default NULL, `field_z` int(11) default NULL, `world` varchar(25) NOT NULL, `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL, `type_id` int(11) NOT NULL,  `data` TINYINT NOT NULL,  `sign_text` varchar(75) NOT NULL);");
                 }
 
                 if (!core.existsTable("pstone_translocations"))
@@ -219,20 +219,44 @@ public class StorageManager
             plugin.getSettingsManager().save();
         }
 
-        if (plugin.getSettingsManager().getVersion() < 11)
+        if (plugin.getSettingsManager().getVersion() < 12)
         {
             resetLastSeem();
-            plugin.getSettingsManager().setVersion(11);
+            plugin.getSettingsManager().setVersion(12);
             plugin.getSettingsManager().save();
         }
     }
 
     private void resetLastSeem()
     {
-        PreciousStones.log("Updating last seen dates to new time format");
-        core.execute("update pstone_fields last_used = " + (new DateTime()).getMillis());
-        core.execute("update pstone_cuboids last_used = " + (new DateTime()).getMillis());
-        core.execute("update pstone_players last_seen = " + (new DateTime()).getMillis());
+        if (plugin.getSettingsManager().isUseMysql())
+        {
+            PreciousStones.log("Updating last seen dates to new time format");
+
+            if (!core.getDataType("pstone_grief_undo", "date_griefed").equals("bigint"))
+            {
+                core.execute("alter table pstone_grief_undo change date_griefed date_griefed bigint(20)");
+                core.execute("update pstone_grief_undo date_griefed = " + (new DateTime()).getMillis());
+            }
+
+            if (!core.getDataType("pstone_fields", "last_used").equals("bigint"))
+            {
+                core.execute("alter table pstone_fields change last_used last_used bigint(20)");
+                core.execute("update pstone_fields last_used = " + (new DateTime()).getMillis());
+            }
+
+            if (!core.getDataType("pstone_cuboids", "last_used").equals("bigint"))
+            {
+                core.execute("alter table pstone_cuboids change last_used last_used bigint(20)");
+                core.execute("update pstone_cuboids last_used = " + (new DateTime()).getMillis());
+            }
+
+            if (!core.getDataType("pstone_players", "last_seen").equals("bigint"))
+            {
+                core.execute("alter table pstone_players change last_seen last_seen bigint(20)");
+                core.execute("update pstone_players last_seen = " + (new DateTime()).getMillis());
+            }
+        }
     }
 
     private void addData()

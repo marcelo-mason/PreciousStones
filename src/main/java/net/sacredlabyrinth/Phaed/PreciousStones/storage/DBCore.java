@@ -70,4 +70,12 @@ public interface DBCore
      * @return
      */
     public Boolean existsColumn(String table, String column);
+
+    /**
+     * CGEt the datatype of a column
+     * @param table
+     * @param column
+     * @return
+     */
+    public String getDataType(String table, String column);
 }
