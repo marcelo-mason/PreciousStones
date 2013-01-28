@@ -451,16 +451,13 @@ public final class ForceFieldManager
         {
             Set<FieldFlag> flags = fieldsByFlag.keySet();
 
-            if (flags != null)
+            for (FieldFlag flag : flags)
             {
-                for (FieldFlag flag : flags)
-                {
-                    List<Field> fields = fieldsByFlag.get(flag);
+                List<Field> fields = fieldsByFlag.get(flag);
 
-                    if (fields != null)
-                    {
-                        fields.remove(field);
-                    }
+                if (fields != null)
+                {
+                    fields.remove(field);
                 }
             }
         }

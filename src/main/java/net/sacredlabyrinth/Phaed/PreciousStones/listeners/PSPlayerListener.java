@@ -757,7 +757,9 @@ public class PSPlayerListener implements Listener
                                 {
                                     s.setBoughtColor(player);
 
-                                    ChatBlock.send(player, "fieldSignBought");
+                                    PreciousStones.getInstance().getForceFieldManager().addAllowed(field, player.getName());
+
+                                    ChatBlock.send(player, "fieldSignBoughtAndAllowed");
                                 }
 
                                 event.setCancelled(true);

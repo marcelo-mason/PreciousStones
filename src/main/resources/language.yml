@@ -511,7 +511,7 @@ fieldSignCannotDestroy: "{red}Cannot destroy the field while its under rent or p
 fieldSignCannotDisable: "{red}Cannot disable the field while its under rent"
 fieldSignCannotRentDisabled: "{red}Field has been disabled by owner, come back later"
 fieldSignAlreadyRented: "{red}This field is already rented, come back later"
-fieldSignBought: "{aqua}You have bought this field, you will receive ownership when the payment is collected by the other party"
+fieldSignBoughtAndAllowed: "{aqua}You have bought this field, you will receive ownership when the payment is collected by the other party.  You have been allowed on the field for the time being."
 fieldSignPaymentReceivedNoName: "{yellow}* {aqua}Received {yellow}{1.amount} {aqua}payment from {2.player}"
 fieldSignItemPaymentReceivedNoName: "{yellow}* {aqua}Received {yellow}{1.amount} {2.item} {aqua}payment from {3.player}"
 fieldSignPaymentReceived: "{yellow}* {aqua}Received {yellow}{1.amount} {aqua}payment from {2.player} ({3.field})"

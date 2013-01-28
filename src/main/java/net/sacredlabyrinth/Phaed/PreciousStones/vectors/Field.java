@@ -2635,7 +2635,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     public void retrievePurchase(Player player)
     {
         setOwner(purchase.getPlayer());
-        PreciousStones.getInstance().getStorageManager().offerField(this);
+        allowed.clear();
 
         if (purchase.isItemPayment())
         {
