@@ -33,8 +33,8 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.platymuus:bukkit-permissions:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.mcstats:metrics:1.1" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.getspout:spoutplugin:1.4.7-R0.2-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.gmail.nossr50.mcMMO:mcMMO:1.3.13-dev" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.getspout:spoutplugin:1.4.7-R0.2-SNAPSHOT" level="project" />
   </component>
 </module>
 
