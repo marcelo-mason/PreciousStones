@@ -2276,6 +2276,11 @@ public final class ForceFieldManager
                 {
                     if (!field.isHidden())
                     {
+                        if (!field.matchesBlockType())
+                        {
+                            continue;
+                        }
+
                         field.hide();
                         hiddenFields++;
                     }

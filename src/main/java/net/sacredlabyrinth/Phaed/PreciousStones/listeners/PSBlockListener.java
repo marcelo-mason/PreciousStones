@@ -400,8 +400,10 @@ public class PSBlockListener implements Listener
         {
             Field field = plugin.getForceFieldManager().getField(block);
 
-            breakingFieldChecks(player, block, field, event);
-            return;
+            if (breakingFieldChecks(player, block, field, event))
+            {
+                return;
+            }
         }
         else if (plugin.getUnbreakableManager().isUnbreakable(block))
         {
@@ -524,10 +526,17 @@ public class PSBlockListener implements Listener
         {
             ChatBlock.send(player, "fieldSignCannotDestroy");
             event.setCancelled(true);
-            return false;
+            return true;
         }
 
         field.unHide();
+
+        // now that it's unhidden it should pass this check, if not then no block for you
+
+        if (!plugin.getSettingsManager().isFieldType(block))
+        {
+            return false;
+        }
 
         // cancel cuboid if still drawing it
 
@@ -535,45 +544,45 @@ public class PSBlockListener implements Listener
         {
             plugin.getCuboidManager().cancelOpenCuboid(player, block);
             removeAndRefundBlock(player, block, field, event);
-            return false;
+            return true;
         }
-
-        boolean release = false;
 
         if (field.isOwner(player.getName()))
         {
             plugin.getCommunicationManager().notifyDestroyFF(player, block);
-            release = true;
         }
         else if (field.hasFlag(FieldFlag.BREAKABLE))
         {
             plugin.getCommunicationManager().notifyDestroyBreakableFF(player, block);
-            release = true;
         }
         else if (field.hasFlag(FieldFlag.ALLOWED_CAN_BREAK))
         {
             if (plugin.getForceFieldManager().isAllowed(block, player.getName()))
             {
                 plugin.getCommunicationManager().notifyDestroyOthersFF(player, block);
-                release = true;
+            }
+            else
+            {
+                event.setCancelled(true);
+                return true;
             }
         }
         else if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.forcefield"))
         {
             plugin.getCommunicationManager().notifyBypassDestroyFF(player, block);
-            release = true;
         }
         else
         {
             plugin.getCommunicationManager().warnDestroyFF(player, block);
             event.setCancelled(true);
+            return true;
         }
 
         if (plugin.getForceFieldManager().hasSubFields(field))
         {
             ChatBlock.send(player, "cannotRemoveWithSubplots");
             event.setCancelled(true);
-            return false;
+            return true;
         }
 
         // -------------------------------------------------------------------------------- breaking a transloctor block
@@ -591,12 +600,8 @@ public class PSBlockListener implements Listener
             }
         }
 
-        if (release)
-        {
-            removeAndRefundBlock(player, block, field, event);
-        }
-
-        return release;
+        removeAndRefundBlock(player, block, field, event);
+        return true;
     }
 
     private void removeAndRefundBlock(Player player, Block block, Field field, Cancellable event)
@@ -849,14 +854,7 @@ public class PSBlockListener implements Listener
         {
             if (settings.hasDefaultFlag(FieldFlag.SNEAK_TO_PLACE))
             {
-                if (player.isSneaking())
-                {
-                    isDisabled = false;
-                }
-                else
-                {
-                    isDisabled = true;
-                }
+                isDisabled = !player.isSneaking();
             }
         }
 
@@ -1434,16 +1432,18 @@ public class PSBlockListener implements Listener
 
         List<Block> blocks = event.getBlocks();
 
-        for (Block block : blocks)
+        for(Block block : blocks)
         {
             if (SignHelper.cannotBreakFieldSign(block, null))
             {
                 event.setCancelled(true);
+                PreciousStones.debug("Cancelling field sign move");
                 return;
             }
 
             if (plugin.getForceFieldManager().isField(block))
             {
+                PreciousStones.debug("Cancelling field move");
                 event.setCancelled(true);
                 return;
             }
@@ -1451,6 +1451,7 @@ public class PSBlockListener implements Listener
             if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
             {
                 event.setCancelled(true);
+                PreciousStones.debug("Cancelling unbreakable move");
                 return;
             }
 
@@ -1460,7 +1461,7 @@ public class PSBlockListener implements Listener
             {
                 if (blockField.isAllowed(pistonField.getOwner()))
                 {
-                    return;
+                    continue;
                 }
             }
 
@@ -1469,6 +1470,7 @@ public class PSBlockListener implements Listener
                 if (!blockField.getSettings().inDestroyBlacklist(block))
                 {
                     event.setCancelled(true);
+                    PreciousStones.debug("Cancelling field conflict move");
                     return;
                 }
             }
@@ -1588,7 +1590,6 @@ public class PSBlockListener implements Listener
                 }
 
                 event.setCancelled(true);
-                return;
             }
         }
     }

@@ -1956,6 +1956,12 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isHidden())
                                     {
+                                        if (!field.matchesBlockType())
+                                        {
+                                            ChatBlock.send(sender, "cannotHideOrphan");
+                                            return true;
+                                        }
+
                                         field.hide();
                                         ChatBlock.send(sender, "hideHide");
                                     }

@@ -2159,6 +2159,8 @@ public class Field extends AbstractVec implements Comparable<Field>
             Block block = getBlock();
             block.setTypeId(maskType.getTypeId());
             block.setData(maskType.getData());
+
+            PreciousStones.getInstance().getStorageManager().offerField(this);
         }
 
         if (isParent())
@@ -2194,6 +2196,8 @@ public class Field extends AbstractVec implements Comparable<Field>
             Block block = getBlock();
             block.setTypeId(getTypeId());
             block.setData(getData());
+
+            PreciousStones.getInstance().getStorageManager().offerField(this);
         }
 
         if (isParent())
@@ -2218,6 +2222,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     public boolean isHidden()
     {
+        /*
         // fix any discrepencies
 
         if (hidden)
@@ -2235,7 +2240,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 hidden = true;
                 dirtyFlags();
             }
-        }
+        }*/
 
         return hidden;
     }

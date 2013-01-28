@@ -530,9 +530,12 @@ public final class EntryManager
 
         if (field.hasFlag(FieldFlag.HIDABLE))
         {
-            if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.hiding"))
+            if (field.isHidden())
             {
-                player.sendBlockChange(field.getLocation(), field.getTypeId(), field.getData());
+                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.hiding"))
+                {
+                    player.sendBlockChange(field.getLocation(), field.getTypeId(), field.getData());
+                }
             }
         }
 
