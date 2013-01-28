@@ -28,6 +28,7 @@ force-field-blocks:
     ?prevent-vehicle-enter: true
     ?prevent-vehicle-exit: true
     ?prevent-teleport: true
+    command-blacklisting: true
     can-change-owner: true
     enable-on-src: true
     mixing-group: 1
@@ -384,6 +385,7 @@ settings:
     auto-allow-clan-on-fields: true
     check-once-per-block-on-move: false
     use-blockids-in-snitches: false
+    fence-max-depth: 50
     version: 11
 log:
     bypass-pvp: true

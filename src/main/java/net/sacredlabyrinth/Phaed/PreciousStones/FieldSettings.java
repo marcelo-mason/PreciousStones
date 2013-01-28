@@ -329,6 +329,7 @@ public class FieldSettings
         loadBoolean("shareable");
         loadBoolean("buyable");
         loadBoolean("rentable");
+        loadBoolean("command-blacklisting");
 
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");

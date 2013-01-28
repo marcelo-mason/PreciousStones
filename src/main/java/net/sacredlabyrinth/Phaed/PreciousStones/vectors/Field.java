@@ -45,6 +45,8 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<Field> children = new ArrayList<Field>();
     private List<String> allowed = new ArrayList<String>();
     private List<String> renters = new ArrayList<String>();
+    private List<String> blacklistedCommands = new ArrayList<String>();
+    private List<BlockTypeEntry> whitelistedBlocks = new ArrayList<BlockTypeEntry>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
     private List<GriefBlock> grief = new ArrayList<GriefBlock>();
     private List<SnitchEntry> snitches = new ArrayList<SnitchEntry>();
@@ -1155,6 +1157,12 @@ public class Field extends AbstractVec implements Comparable<Field>
         JSONArray paymentList = new JSONArray();
         paymentList.addAll(getPaymentString());
 
+        JSONArray blacklistedCommandsList = new JSONArray();
+        blacklistedCommandsList.addAll(blacklistedCommands);
+
+        JSONArray whitelistedBlocksList = new JSONArray();
+        whitelistedBlocksList.addAll(whitelistedBlocks);
+
         if (!paymentList.isEmpty())
         {
             json.put("payments", paymentList);
@@ -1168,6 +1176,11 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (!insertedFlags.isEmpty())
         {
             json.put("insertedFlags", insertedFlags);
+        }
+
+        if (!blacklistedCommandsList.isEmpty())
+        {
+            json.put("blacklistedCommands", blacklistedCommandsList);
         }
 
         if (!renterList.isEmpty())
@@ -1205,22 +1218,19 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     public ArrayList<String> getPaymentString()
     {
-        ArrayList<String> ll = new ArrayList();
-
+        ArrayList<String> ll = new ArrayList<String>();
         for (PaymentEntry entry : payment)
         {
             ll.add(entry.toString());
         }
-
         return ll;
     }
 
     public ArrayList<String> getDisabledFlagsStringList()
     {
-        ArrayList<String> ll = new ArrayList();
-        for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
+        ArrayList<String> ll = new ArrayList<String>();
+        for (FieldFlag flag : disabledFlags)
         {
-            FieldFlag flag = (FieldFlag) iter.next();
             ll.add(Helper.toFlagStr(flag));
         }
         return ll;
@@ -1228,10 +1238,9 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     public ArrayList<String> getInsertedFlagsStringList()
     {
-        ArrayList<String> ll = new ArrayList();
-        for (Iterator iter = insertedFlags.iterator(); iter.hasNext(); )
+        ArrayList<String> ll = new ArrayList<String>();
+        for (FieldFlag flag : insertedFlags)
         {
-            FieldFlag flag = (FieldFlag) iter.next();
             ll.add(Helper.toFlagStr(flag));
         }
         return ll;
@@ -1239,13 +1248,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     public ArrayList<String> getRentersString()
     {
-        ArrayList<String> ll = new ArrayList();
-
+        ArrayList<String> ll = new ArrayList<String>();
         for (RentEntry entry : renterEntries)
         {
             ll.add(entry.serialize());
         }
-
         return ll;
     }
 
@@ -1316,6 +1323,24 @@ public class Field extends AbstractVec implements Comparable<Field>
                                 RentEntry entry = new RentEntry(flagStr.toString());
                                 renters.add(entry.getPlayerName().toLowerCase());
                                 renterEntries.add(entry);
+                            }
+                        }
+                        else if (flag.equals("blacklistedCommands"))
+                        {
+                            JSONArray blacklistedCommandsList = (JSONArray) flags.get(flag);
+
+                            for (Object flagStr : blacklistedCommandsList)
+                            {
+                                blacklistedCommands.add(flagStr.toString());
+                            }
+                        }
+                        else if (flag.equals("whitelistedBlocks"))
+                        {
+                            JSONArray whitelistedBlocksList = (JSONArray) flags.get(flag);
+
+                            for (Object flagStr : whitelistedBlocksList)
+                            {
+                                whitelistedBlocks.add(new BlockTypeEntry(flagStr.toString()));
                             }
                         }
                         else if (flag.equals("revertSecs"))
@@ -1808,92 +1833,82 @@ public class Field extends AbstractVec implements Comparable<Field>
             maxy = getMaxy() + 1;
         }
 
+        int limity = Math.min(plugin.getSettingsManager().getFenceMaxDepth(), miny);
+
         // traveling the z length
 
         for (int z = minz; z <= maxz; z++)
         {
             int sideOneMidId = world.getBlockTypeIdAt(minx, mid, z);
 
-            if (plugin.getSettingsManager().isThroughType(sideOneMidId))
+            if (plugin.getSettingsManager().isNaturalThroughType(sideOneMidId))
             {
                 // if the midId is through type then travel downwards
 
-                for (int y = mid; y >= miny; y--)
+                boolean hasFloor = false;
+
+                for (int y = mid; y >= limity; y--)
                 {
                     int sideOne = world.getBlockTypeIdAt(minx, y, z);
 
-                    if (!plugin.getSettingsManager().isThroughType(sideOne))
+                    if (!plugin.getSettingsManager().isNaturalThroughType(sideOne))
                     {
-                        if (plugin.getSettingsManager().isNaturalFloorType(sideOne))
-                        {
-                            Block block = world.getBlockAt(minx, y + 1, z);
-                            fenceBlocks.add(new BlockEntry(block));
-                            block.setTypeId(item);
-                        }
+                        hasFloor = true;
                         break;
                     }
                 }
-            }
-            else
-            {
-                // if the midId is solid then travel upwards
 
-                for (int y = mid; y >= maxy; y++)
+                if (hasFloor)
                 {
-                    int sideOne = world.getBlockTypeIdAt(minx, y, z);
-
-                    if (plugin.getSettingsManager().isThroughType(sideOne))
+                    for (int y = mid; y >= limity; y--)
                     {
-                        if (plugin.getSettingsManager().isNaturalFloorType(sideOne))
+                        int sideOne = world.getBlockTypeIdAt(minx, y, z);
+
+                        if (!plugin.getSettingsManager().isNaturalThroughType(sideOne))
                         {
-                            Block block = world.getBlockAt(minx, y, z);
-                            fenceBlocks.add(new BlockEntry(block));
-                            block.setTypeId(item);
+                            continue;
                         }
-                        break;
+
+                        Block block = world.getBlockAt(minx, y, z);
+                        fenceBlocks.add(new BlockEntry(block));
+                        block.setTypeId(item);
                     }
                 }
             }
 
             int sideTwoMidId = world.getBlockTypeIdAt(maxx, mid, z);
 
-            if (plugin.getSettingsManager().isThroughType(sideTwoMidId))
+            if (plugin.getSettingsManager().isNaturalThroughType(sideTwoMidId))
             {
                 // if the midId is through type then travel downwards
 
-                for (int y = mid; y >= miny; y--)
+                boolean hasFloor = false;
+
+                for (int y = mid; y >= limity; y--)
                 {
                     int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
 
-                    if (!plugin.getSettingsManager().isThroughType(sideTwo))
+                    if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo))
                     {
-                        if (plugin.getSettingsManager().isNaturalFloorType(sideTwo))
-                        {
-                            Block block = world.getBlockAt(maxx, y + 1, z);
-                            fenceBlocks.add(new BlockEntry(block));
-                            block.setTypeId(item);
-                        }
+                        hasFloor = true;
                         break;
                     }
                 }
-            }
-            else
-            {
-                // if the midId is solid then travel upwards
 
-                for (int y = mid; y >= maxy; y++)
+                if (hasFloor)
                 {
-                    int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
-
-                    if (plugin.getSettingsManager().isThroughType(sideTwo))
+                    for (int y = mid; y >= limity; y--)
                     {
-                        if (plugin.getSettingsManager().isNaturalFloorType(sideTwo))
+                        int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
+
+                        if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo))
                         {
-                            Block block = world.getBlockAt(maxx, y, z);
-                            fenceBlocks.add(new BlockEntry(block));
-                            block.setTypeId(item);
+                            continue;
                         }
-                        break;
+
+                        Block block = world.getBlockAt(maxx, y, z);
+                        fenceBlocks.add(new BlockEntry(block));
+                        block.setTypeId(item);
                     }
                 }
             }
@@ -1901,90 +1916,78 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         // traveling the x length
 
-        for (int x = minz; x <= maxz; x++)
+        for (int x = minx; x <= maxx; x++)
         {
             int sideOneMidId = world.getBlockTypeIdAt(x, mid, minz);
 
-            if (plugin.getSettingsManager().isThroughType(sideOneMidId))
+            if (plugin.getSettingsManager().isNaturalThroughType(sideOneMidId))
             {
                 // if the midId is through type then travel downwards
 
-                for (int y = mid; y >= miny; y--)
+                boolean hasFloor = false;
+
+                for (int y = mid; y >= limity; y--)
                 {
                     int sideOne = world.getBlockTypeIdAt(x, y, minz);
 
-                    if (!plugin.getSettingsManager().isThroughType(sideOne))
+                    if (!plugin.getSettingsManager().isNaturalThroughType(sideOne))
                     {
-                        if (plugin.getSettingsManager().isNaturalFloorType(sideOne))
-                        {
-                            Block block = world.getBlockAt(x, y + 1, minz);
-                            fenceBlocks.add(new BlockEntry(block));
-                            block.setTypeId(item);
-                        }
+                        hasFloor = true;
                         break;
                     }
                 }
-            }
-            else
-            {
-                // if the midId is solid then travel upwards
 
-                for (int y = mid; y >= maxy; y++)
+                if (hasFloor)
                 {
-                    int sideOne = world.getBlockTypeIdAt(x, y, minz);
-
-                    if (plugin.getSettingsManager().isThroughType(sideOne))
+                    for (int y = mid; y >= limity; y--)
                     {
-                        if (plugin.getSettingsManager().isNaturalFloorType(sideOne))
+                        int sideOne = world.getBlockTypeIdAt(x, y, minz);
+
+                        if (!plugin.getSettingsManager().isNaturalThroughType(sideOne))
                         {
-                            Block block = world.getBlockAt(x, y, minz);
-                            fenceBlocks.add(new BlockEntry(block));
-                            block.setTypeId(item);
+                            continue;
                         }
-                        break;
+
+                        Block block = world.getBlockAt(x, y, minz);
+                        fenceBlocks.add(new BlockEntry(block));
+                        block.setTypeId(item);
                     }
                 }
             }
 
             int sideTwoMidId = world.getBlockTypeIdAt(x, mid, maxz);
 
-            if (plugin.getSettingsManager().isThroughType(sideTwoMidId))
+            if (plugin.getSettingsManager().isNaturalThroughType(sideTwoMidId))
             {
                 // if the midId is through type then travel downwards
 
-                for (int y = mid; y >= miny; y--)
+                boolean hasFloor = false;
+
+                for (int y = mid; y >= limity; y--)
                 {
                     int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
 
-                    if (!plugin.getSettingsManager().isThroughType(sideTwo))
+                    if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo))
                     {
-                        if (plugin.getSettingsManager().isNaturalFloorType(sideTwo))
-                        {
-                            Block block = world.getBlockAt(x, y + 1, maxz);
-                            fenceBlocks.add(new BlockEntry(block));
-                            block.setTypeId(item);
-                        }
+                        hasFloor = true;
                         break;
                     }
                 }
-            }
-            else
-            {
-                // if the midId is solid then travel upwards
 
-                for (int y = mid; y >= maxy; y++)
+                if (hasFloor)
                 {
-                    int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
-
-                    if (plugin.getSettingsManager().isThroughType(sideTwo))
+                    for (int y = mid; y >= limity; y--)
                     {
-                        if (plugin.getSettingsManager().isNaturalFloorType(sideTwo))
+                        int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
+
+                        if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo))
                         {
-                            Block block = world.getBlockAt(x, y, maxz);
-                            fenceBlocks.add(new BlockEntry(block));
-                            block.setTypeId(item);
+                            continue;
                         }
-                        break;
+
+                        Block block = world.getBlockAt(x, y, maxz);
+                        fenceBlocks.add(new BlockEntry(block));
+                        block.setTypeId(item);
                     }
                 }
             }
@@ -2700,8 +2703,8 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                         if (PreciousStones.getInstance().getEntryManager().hasInhabitants(self))
                         {
-                        for (RentEntry entry : renterEntries)
-                        {
+                            for (RentEntry entry : renterEntries)
+                            {
                                 s.updateRemainingTime(entry.remainingRent());
                                 foundSomeone = true;
                             }
@@ -2749,5 +2752,76 @@ public class Field extends AbstractVec implements Comparable<Field>
     public int getFencePrice()
     {
         return fenceBlocks.size() * settings.getFenceItemPrice();
+    }
+
+    public void addBlacklistedCommand(String command)
+    {
+        if (!blacklistedCommands.contains(command))
+        {
+            blacklistedCommands.add(command);
+        }
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void clearBlacklistedCommands()
+    {
+        blacklistedCommands.clear();
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public boolean isBlacklistedCommand(String command)
+    {
+        if (hasFlag(FieldFlag.COMMAND_BLACKLISTING))
+        {
+            command = command.replace("/", "");
+
+            int i = command.indexOf(' ');
+
+            if (i > -1)
+            {
+                command = command.substring(0, i);
+            }
+
+            PreciousStones.debug(command);
+
+            return blacklistedCommands.contains(command);
+        }
+        return false;
+    }
+
+    public boolean hasBlacklistedComands()
+    {
+        return blacklistedCommands.size() > 0;
+    }
+
+    public String getBlacklistedCommandsList()
+    {
+        String out = "";
+
+        for (String cmd : blacklistedCommands)
+        {
+            out += cmd + ", ";
+        }
+
+        return Helper.stripTrailing(out, ", ");
+    }
+
+    public void addWhitelistedBlock(BlockTypeEntry type)
+    {
+        if (!whitelistedBlocks.contains(type))
+        {
+            whitelistedBlocks.add(type);
+        }
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void deleteWhitelistedBlock(BlockTypeEntry type)
+    {
+        whitelistedBlocks.remove(type);
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 }

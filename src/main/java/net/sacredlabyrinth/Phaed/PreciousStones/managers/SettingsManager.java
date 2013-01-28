@@ -117,9 +117,12 @@ public final class SettingsManager
     private boolean offByDefault;
     private boolean purgeBannedPlayers;
     private boolean useIdInSnitches;
-    private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
+    private int fenceMaxDepth;
+    private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 78, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
+    private int[] naturalThroughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 51, 59, 78, 83, 104, 105, 106, 141, 142};
     private int[] fragileBlocks = new int[]{7, 8, 9, 10, 11, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 97, 100, 123, 124, 129};
     private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
+    private HashSet<Integer> naturalThroughFieldSet = new HashSet<Integer>();
     private HashSet<Integer> fragileBlockSet = new HashSet<Integer>();
     private int linesPerPage;
     private boolean useMysql;
@@ -155,6 +158,11 @@ public final class SettingsManager
         for (int item : throughFields)
         {
             throughFieldsSet.add(item);
+        }
+
+        for (int item : naturalThroughFields)
+        {
+            naturalThroughFieldSet.add(item);
         }
 
         for (int item : fragileBlocks)
@@ -274,6 +282,7 @@ public final class SettingsManager
         autoAddClan = loadBoolean("settings.auto-allow-clan-on-fields");
         oncePerBlockOnMove = loadBoolean("settings.check-once-per-block-on-move");
         useIdInSnitches = loadBoolean("settings.use-blockids-in-snitches");
+        fenceMaxDepth = loadInt("settings.fence-max-depth");
 
         // ********************************** Cuboid
 
@@ -655,6 +664,17 @@ public final class SettingsManager
     public boolean isThroughType(int type)
     {
         return throughFieldsSet.contains(type);
+    }
+
+    /**
+     * Check if a type is a natural see through block
+     *
+     * @param type
+     * @return
+     */
+    public boolean isNaturalThroughType(int type)
+    {
+        return naturalThroughFieldSet.contains(type);
     }
 
     /**
@@ -1583,5 +1603,10 @@ public final class SettingsManager
     public boolean isUseIdInSnitches()
     {
         return useIdInSnitches;
+    }
+
+    public int getFenceMaxDepth()
+    {
+        return fenceMaxDepth;
     }
 }

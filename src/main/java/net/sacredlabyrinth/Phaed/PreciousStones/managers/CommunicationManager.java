@@ -2789,7 +2789,13 @@ public class CommunicationManager
             cb.addRow("  " + color + ChatBlock.format("_interval") + ": ", ChatColor.AQUA + "" + field.getRevertSecs(), "");
         }
 
+        if (field.hasBlacklistedComands())
+        {
+            cb.addRow("  " + color + ChatBlock.format("_blacklistedCommands") + ": ", ChatColor.AQUA + "" + field.getBlacklistedCommandsList(), "");
+        }
+
         cb.addRow("  " + color + ChatBlock.format("_location") + ": ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
+
 
         List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlags());
         List<FieldFlag> disabledFlags = field.getDisabledFlags();
@@ -3194,7 +3200,7 @@ public class CommunicationManager
         }
 
         ChatBlock cb = getNewChatBlock(sender);
-        boolean admin = player == null ? true : !player.getName().equalsIgnoreCase(target);
+        boolean admin = player == null || !player.getName().equalsIgnoreCase(target);
         Location center = player == null ? new Location(plugin.getServer().getWorlds().get(0), 0, 0, 0) : player.getLocation();
 
         if (admin)
@@ -3224,15 +3230,17 @@ public class CommunicationManager
 
         sortByDistance(fields, center);
 
-        for (Field field : fields)
-        {
-            // if type id supplied, then only show fields of that typeid
+        // if type id supplied, then only show fields of that typeid
 
-            if (typeid != -1)
+        if (typeid != -1)
+        {
+            for (Iterator iter = fields.iterator(); iter.hasNext(); )
             {
-                if (typeid != field.getTypeId())
+                Field testfield = (Field) iter.next();
+
+                if (typeid != testfield.getTypeId())
                 {
-                    continue;
+                    iter.remove();
                 }
             }
         }
@@ -3266,7 +3274,16 @@ public class CommunicationManager
         if (cb.size() > 1)
         {
             ChatBlock.sendBlank(sender);
-            ChatBlock.saySingle(sender, "sepFieldLocations", targetName, player.getWorld().getName());
+
+            if (player != null)
+            {
+                ChatBlock.saySingle(sender, "sepFieldLocations", targetName, player.getWorld().getName());
+            }
+            else
+            {
+                ChatBlock.saySingle(sender, "sepFieldLocations", targetName, "");
+            }
+
             ChatBlock.sendBlank(sender);
 
             boolean more = cb.sendBlock(sender, plugin.getSettingsManager().getLinesPerPage());
@@ -3292,14 +3309,15 @@ public class CommunicationManager
      * @param playerLocation
      * @return
      */
+
     public void sortByDistance(List<Field> fields, final Location playerLocation)
     {
         Collections.sort(fields, new Comparator<Field>()
         {
             public int compare(Field f1, Field f2)
             {
-                Float o1 = Float.valueOf((float) f1.distance(playerLocation));
-                Float o2 = Float.valueOf((float) f2.distance(playerLocation));
+                Float o1 = (float) f1.distance(playerLocation);
+                Float o2 = (float) f2.distance(playerLocation);
 
                 return o1.compareTo(o2);
             }
@@ -3468,6 +3486,12 @@ public class CommunicationManager
         if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.setlimit") && hasPlayer)
         {
             cb.addRow("menu54");
+        }
+
+        if (hasPlayer)
+        {
+            cb.addRow("menu57");
+            cb.addRow("menu58");
         }
 
         if (plugin.getSettingsManager().haveSnitch() && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasPlayer)

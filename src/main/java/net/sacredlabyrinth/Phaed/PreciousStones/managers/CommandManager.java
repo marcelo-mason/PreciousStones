@@ -1563,9 +1563,51 @@ public final class CommandManager implements CommandExecutor
                                     plugin.getCommunicationManager().showNotFound(sender);
                                 }
                             }
+                            else
+                            {
+                                ChatBlock.send(sender, "notValidBlockId", args[1]);
+                            }
+                        }
+                        return true;
+                    }
+                    else if (cmd.equals(ChatBlock.format("commandBlacklisting")) && hasplayer)
+                    {
+                        Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
+                        if (args.length == 0 || args.length > 1 || args[0].contains("/"))
+                        {
+                            ChatBlock.send(sender, "commandBlacklistUsage");
                             return true;
                         }
+
+                        String blacklistedCommand = args[0];
+
+                        if (field != null)
+                        {
+                            if (field.hasFlag(FieldFlag.COMMAND_BLACKLISTING))
+                            {
+                                if (blacklistedCommand.equalsIgnoreCase("clear"))
+                                {
+                                    field.clearBlacklistedCommands();
+                                    ChatBlock.send(sender, "commandBlacklistCleared");
+                                }
+                                else
+                                {
+                                    field.addBlacklistedCommand(blacklistedCommand);
+                                    ChatBlock.send(sender, "commandBlacklistAdded");
+                                }
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "noBlacklistingFieldFound");
+                            }
+                        }
+                        else
+                        {
+                            plugin.getCommunicationManager().showNotFound(player);
+                        }
+
+                        return true;
                     }
                     else if (cmd.equals(ChatBlock.format("commandSetLimit")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setlimit") && hasplayer)
                     {

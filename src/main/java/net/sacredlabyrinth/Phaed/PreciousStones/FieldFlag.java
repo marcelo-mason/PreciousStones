@@ -147,7 +147,8 @@ public enum FieldFlag
     RENTABLE,
     SHAREABLE,
     BUYABLE,
-    DELETE_IF_NO_PERMISSION
+    DELETE_IF_NO_PERMISSION,
+    COMMAND_BLACKLISTING
     ;
 
     /**
