@@ -219,43 +219,43 @@ public class StorageManager
             plugin.getSettingsManager().save();
         }
 
-        if (plugin.getSettingsManager().getVersion() < 12)
+        if (plugin.getSettingsManager().isUseMysql())
         {
-            resetLastSeem();
-            plugin.getSettingsManager().setVersion(12);
-            plugin.getSettingsManager().save();
+            if (plugin.getSettingsManager().getVersion() < 12)
+            {
+                resetLastSeem();
+                plugin.getSettingsManager().setVersion(12);
+                plugin.getSettingsManager().save();
+            }
         }
     }
 
     private void resetLastSeem()
     {
-        if (plugin.getSettingsManager().isUseMysql())
+        PreciousStones.log("Updating last seen dates to new time format");
+
+        if (!core.getDataType("pstone_grief_undo", "date_griefed").equals("bigint"))
         {
-            PreciousStones.log("Updating last seen dates to new time format");
+            core.execute("alter table pstone_grief_undo change date_griefed date_griefed bigint(20)");
+            core.execute("update pstone_grief_undo date_griefed = " + (new DateTime()).getMillis());
+        }
 
-            if (!core.getDataType("pstone_grief_undo", "date_griefed").equals("bigint"))
-            {
-                core.execute("alter table pstone_grief_undo change date_griefed date_griefed bigint(20)");
-                core.execute("update pstone_grief_undo date_griefed = " + (new DateTime()).getMillis());
-            }
+        if (!core.getDataType("pstone_fields", "last_used").equals("bigint"))
+        {
+            core.execute("alter table pstone_fields change last_used last_used bigint(20)");
+            core.execute("update pstone_fields last_used = " + (new DateTime()).getMillis());
+        }
 
-            if (!core.getDataType("pstone_fields", "last_used").equals("bigint"))
-            {
-                core.execute("alter table pstone_fields change last_used last_used bigint(20)");
-                core.execute("update pstone_fields last_used = " + (new DateTime()).getMillis());
-            }
+        if (!core.getDataType("pstone_cuboids", "last_used").equals("bigint"))
+        {
+            core.execute("alter table pstone_cuboids change last_used last_used bigint(20)");
+            core.execute("update pstone_cuboids last_used = " + (new DateTime()).getMillis());
+        }
 
-            if (!core.getDataType("pstone_cuboids", "last_used").equals("bigint"))
-            {
-                core.execute("alter table pstone_cuboids change last_used last_used bigint(20)");
-                core.execute("update pstone_cuboids last_used = " + (new DateTime()).getMillis());
-            }
-
-            if (!core.getDataType("pstone_players", "last_seen").equals("bigint"))
-            {
-                core.execute("alter table pstone_players change last_seen last_seen bigint(20)");
-                core.execute("update pstone_players last_seen = " + (new DateTime()).getMillis());
-            }
+        if (!core.getDataType("pstone_players", "last_seen").equals("bigint"))
+        {
+            core.execute("alter table pstone_players change last_seen last_seen bigint(20)");
+            core.execute("update pstone_players last_seen = " + (new DateTime()).getMillis());
         }
     }
 
