@@ -600,7 +600,7 @@ public class StorageManager
                         {
                             PreciousStones.debug("Snitch age: %s", field.getAgeInDays());
 
-                            if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
+                            if (field.getAgeInDays() >= plugin.getSettingsManager().getPurgeSnitchAfterDays())
                             {
                                 PreciousStones.debug("PURGED %s", field.toString());
 
@@ -718,7 +718,7 @@ public class StorageManager
                         {
                             PreciousStones.debug("Snitch age: %s", field.getAgeInDays());
 
-                            if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
+                            if (field.getAgeInDays() >= plugin.getSettingsManager().getPurgeSnitchAfterDays())
                             {
                                 PreciousStones.debug("PURGED %s", field.toString());
 
@@ -904,7 +904,7 @@ public class StorageManager
 
                             PreciousStones.debug("Player last seen: %s [%s]", lastSeenDays, name);
 
-                            if (banned.contains(name) || lastSeenDays > plugin.getSettingsManager().getPurgeAfterDays())
+                            if (banned.contains(name) || lastSeenDays >= plugin.getSettingsManager().getPurgeAfterDays())
                             {
                                 PreciousStones.debug("PURGED %s", name);
 
