@@ -350,11 +350,6 @@ public class MySQLCore implements DBCore
     {
         String query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table + "' AND COLUMN_NAME = '" + column + "';";
 
-        if (PreciousStones.getInstance().getSettingsManager().isDebug())
-        {
-            PreciousStones.getLog().info(query);
-        }
-
         String dataType = "";
         try
         {
@@ -375,6 +370,8 @@ public class MySQLCore implements DBCore
             log.severe("Error at SQL Query: " + ex.getMessage());
             log.severe("Query: " + query);
         }
+
+        PreciousStones.debug("Column %s in table %s has datatype: %s", column, table, dataType);
 
         return dataType;
     }

@@ -22,7 +22,7 @@ import java.util.*;
  */
 public final class SettingsManager
 {
-    private double version;
+    private int version;
     private boolean oncePerBlockOnMove;
     private int maxSizeTranslocation;
     private int maxSizeTranslocationForRedstone;
@@ -259,7 +259,7 @@ public final class SettingsManager
         disableSimpleClanHook = loadBoolean("settings.disable-simpleclans-hook");
         maxSizeTranslocation = loadInt("settings.max-size-translocation");
         maxSizeTranslocationForRedstone = loadInt("settings.max-size-translocation-for-redstone");
-        version = loadDouble("settings.version");
+        version = loadInt("settings.version");
         preventPlaceEverywhere = loadStringList("settings.prevent-place-everywhere");
         preventDestroyEverywhere = loadStringList("settings.prevent-destroy-everywhere");
         showDefaultWelcomeFarewellMessages = loadBoolean("settings.show-default-welcome-farewell-messages");
@@ -1498,7 +1498,7 @@ public final class SettingsManager
         return version;
     }
 
-    public void setVersion(double version)
+    public void setVersion(int version)
     {
         config.set("settings.version", version);
         cleanConfig.set("settings.version", version);
