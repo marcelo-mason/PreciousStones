@@ -141,6 +141,13 @@ public class MySQLCore implements DBCore
                 statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
                 keys = statement.getGeneratedKeys();
             }
+            catch (SQLException ex)
+            {
+                if (!ex.toString().contains("not return ResultSet"))
+                {
+                    log.severe("Error at SQL INSERT Query: " + ex);
+                }
+            }
             finally
             {
                 if (keys != null)
@@ -161,7 +168,6 @@ public class MySQLCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL INSERT Query: " + ex);
-                log.severe("Query: " + query);
             }
         }
 
@@ -198,7 +204,6 @@ public class MySQLCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL UPDATE Query: " + ex);
-                log.severe("Query: " + query);
             }
         }
     }
@@ -233,7 +238,6 @@ public class MySQLCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL DELETE Query: " + ex);
-                log.severe("Query: " + query);
             }
         }
     }
@@ -268,7 +272,6 @@ public class MySQLCore implements DBCore
         catch (SQLException ex)
         {
             log.severe(ex.getMessage());
-            log.severe("Query: " + query);
             return false;
         }
     }
@@ -334,5 +337,45 @@ public class MySQLCore implements DBCore
         {
             return false;
         }
+    }
+
+    /**
+     * Check whether a column exists
+     *
+     * @param table
+     * @param column
+     * @return
+     */
+    public String getDataType(String table, String column)
+    {
+        String query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table + "' AND COLUMN_NAME = '" + column + "';";
+
+        if (PreciousStones.getInstance().getSettingsManager().isDebug())
+        {
+            PreciousStones.getLog().info(query);
+        }
+
+        String dataType = "";
+        try
+        {
+            Statement statement = getConnection().createStatement();
+
+            ResultSet res = statement.executeQuery(query);
+
+            if (res != null)
+            {
+                while (res.next())
+                {
+                    dataType = res.getString("DATA_TYPE");
+                }
+            }
+        }
+        catch (SQLException ex)
+        {
+            log.severe("Error at SQL Query: " + ex.getMessage());
+            log.severe("Query: " + query);
+        }
+
+        return dataType;
     }
 }

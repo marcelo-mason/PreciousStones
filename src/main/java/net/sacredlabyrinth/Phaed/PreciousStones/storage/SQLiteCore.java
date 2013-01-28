@@ -152,6 +152,13 @@ public class SQLiteCore implements DBCore
                 statement.executeUpdate(query);
                 keys = statement.executeQuery("SELECT last_insert_rowid()");
             }
+            catch (SQLException ex)
+            {
+                if (!ex.toString().contains("not return ResultSet"))
+                {
+                    log.severe("Error at SQL INSERT Query: " + ex);
+                }
+            }
             finally
             {
                 if (keys != null)
@@ -172,7 +179,6 @@ public class SQLiteCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL INSERT Query: " + ex);
-                log.severe("Query: " + query);
             }
         }
 
@@ -209,7 +215,6 @@ public class SQLiteCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL UPDATE Query: " + ex);
-                log.severe("Query: " + query);
             }
         }
     }
@@ -244,7 +249,6 @@ public class SQLiteCore implements DBCore
             if (!ex.toString().contains("not return ResultSet"))
             {
                 log.severe("Error at SQL DELETE Query: " + ex);
-                log.severe("Query: " + query);
             }
         }
     }
@@ -279,7 +283,6 @@ public class SQLiteCore implements DBCore
         catch (SQLException ex)
         {
             log.severe(ex.getMessage());
-            log.severe("Query: " + query);
             return false;
         }
     }
@@ -331,5 +334,17 @@ public class SQLiteCore implements DBCore
         {
             return false;
         }
+    }
+
+    /**
+     * CGEt the datatype of a column
+     * @param table
+     * @param column
+     * @return
+     */
+    public String getDataType(String table, String column)
+    {
+        // not supported
+        return null;
     }
 }
