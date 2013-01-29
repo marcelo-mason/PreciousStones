@@ -231,7 +231,6 @@ public class CuboidManager
                     ce.addSelected(child.getBlock());
                 }
 
-                PreciousStones.getInstance().getForceFieldManager().removeSourceField(field);
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
 
                 ChatBlock.send(player, "cuboidDrawingMode");

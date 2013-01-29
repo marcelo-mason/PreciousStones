@@ -789,8 +789,6 @@ public final class ForceFieldManager
     public int cleanOrphans(World world)
     {
         int cleanedCount = 0;
-        boolean currentChunkLoaded = false;
-        ChunkVec currentChunk = null;
 
         List<Field> fields = fieldsByWorld.get(world.getName());
 
@@ -798,30 +796,6 @@ public final class ForceFieldManager
         {
             for (Field field : fields)
             {
-                // ensure chunk is loaded prior to polling
-/*
-                ChunkVec cv = field.toChunkVec();
-
-                if (!cv.equals(currentChunk))
-                {
-                    if (!currentChunkLoaded)
-                    {
-                        if (currentChunk != null)
-                        {
-                            world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
-                        }
-                    }
-
-                    currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
-
-                    if (!currentChunkLoaded)
-                    {
-                        world.loadChunk(cv.getX(), cv.getZ());
-                    }
-
-                    currentChunk = cv;
-                }
-*/
                 if (!field.isHidden() || field.missingBlock())
                 {
                     if (!field.matchesBlockType())
