@@ -206,6 +206,8 @@ public class Field extends AbstractVec implements Comparable<Field>
             this.miny = getY() - ((height - 1) / 2);
             this.maxy = getY() + ((height - 1) / 2);
         }
+
+        dirty.add(DirtyFieldReason.DIMENSIONS);
     }
 
     /**
@@ -255,8 +257,6 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setRadius(int radius)
     {
-        PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
-
         this.radius = radius;
 
         if (height == 0)
@@ -265,11 +265,9 @@ public class Field extends AbstractVec implements Comparable<Field>
             dirty.add(DirtyFieldReason.HEIGHT);
         }
 
-        calculateDimensions();
-
         dirty.add(DirtyFieldReason.RADIUS);
 
-        PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
+        calculateDimensions();
     }
 
     /**
@@ -284,8 +282,6 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setCuboidDimensions(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
     {
-        PreciousStones.getInstance().getForceFieldManager().removeSourceField(this);
-
         this.minx = minX;
         this.miny = minY;
         this.minz = minZ;
@@ -297,8 +293,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.height = maxy - miny;
 
         dirty.add(DirtyFieldReason.DIMENSIONS);
-
-        PreciousStones.getInstance().getForceFieldManager().addSourceField(this);
     }
 
     /**
