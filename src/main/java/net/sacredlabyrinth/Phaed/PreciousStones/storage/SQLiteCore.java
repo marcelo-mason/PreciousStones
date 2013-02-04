@@ -345,6 +345,6 @@ public class SQLiteCore implements DBCore
     public String getDataType(String table, String column)
     {
         // not supported
-        return null;
+        return "";
     }
 }

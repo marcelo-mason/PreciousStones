@@ -65,7 +65,10 @@ public class MySQLCore implements DBCore
         }
         catch (SQLException e)
         {
-            initialize();
+            if (connection == null)
+            {
+                initialize();
+            }
         }
 
         return connection;
@@ -365,10 +368,10 @@ public class MySQLCore implements DBCore
                 }
             }
         }
-        catch (SQLException ex)
+        catch (Exception ex)
         {
-            log.severe("Error at SQL Query: " + ex.getMessage());
-            log.severe("Query: " + query);
+            //log.severe("Error at SQL Query: " + ex.getMessage());
+            //log.severe("Query: " + query);
         }
 
         PreciousStones.debug("Column %s in table %s has datatype: %s", column, table, dataType);
