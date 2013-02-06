@@ -358,7 +358,7 @@ warn:
     slow-repair: true
     place: true
 cleanup:
-    player-inactivity-purge-days: 45
+    player-inactivity-purge-days: 180
     snitch-unused-purge-days: 30
     purge-banned-players: true
 settings:
