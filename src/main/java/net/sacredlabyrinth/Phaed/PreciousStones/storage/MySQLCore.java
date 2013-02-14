@@ -376,6 +376,11 @@ public class MySQLCore implements DBCore
 
         PreciousStones.debug("Column %s in table %s has datatype: %s", column, table, dataType);
 
+        if (dataType == null)
+        {
+            return "";
+        }
+
         return dataType;
     }
 }
