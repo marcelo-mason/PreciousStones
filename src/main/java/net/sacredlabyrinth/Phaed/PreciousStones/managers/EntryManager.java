@@ -1,9 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.EntryFields;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
@@ -444,6 +441,8 @@ public final class EntryManager
 
         if (FieldFlag.LEAVING_GAME_MODE.applies(field, player))
         {
+            final FieldSettings settings  = field.getSettings();
+
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
                 @Override
@@ -453,11 +452,11 @@ public final class EntryManager
 
                     if (field != null)
                     {
-                        player.setGameMode(field.getSettings().getForceEntryGameMode());
+                        player.setGameMode(settings.getForceEntryGameMode());
                     }
                     else
                     {
-                        player.setGameMode(field.getSettings().getForceLeavingGameMode());
+                        player.setGameMode(settings.getForceLeavingGameMode());
                     }
                 }
             }, 1);
