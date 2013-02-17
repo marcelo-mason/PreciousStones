@@ -2677,7 +2677,7 @@ public final class ForceFieldManager
      */
     public void changeOwner(Field field, String owner)
     {
-        List<Field> fields = fieldsByOwner.get(field.getOwner());
+        List<Field> fields = fieldsByOwner.get(field.getOwner().toLowerCase());
 
         if (fields != null)
         {
