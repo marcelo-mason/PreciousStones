@@ -120,14 +120,16 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerRespawn(final PlayerRespawnEvent event)
+    public void onPlayerRespawn(PlayerRespawnEvent event)
     {
+        final Player player = event.getPlayer();
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
             @Override
             public void run()
             {
-                handlePlayerSpawn(event.getPlayer());
+                handlePlayerSpawn(player);
             }
         }, 5);
     }
@@ -138,12 +140,14 @@ public class PSPlayerListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(final PlayerJoinEvent event)
     {
+        final Player player = event.getPlayer();
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
             @Override
             public void run()
             {
-                handlePlayerSpawn(event.getPlayer());
+                handlePlayerSpawn(player);
             }
         }, 5);
     }
