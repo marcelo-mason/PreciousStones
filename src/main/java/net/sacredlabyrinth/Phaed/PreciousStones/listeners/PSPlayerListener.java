@@ -119,7 +119,7 @@ public class PSPlayerListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event)
     {
         final Player player = event.getPlayer();
@@ -137,7 +137,7 @@ public class PSPlayerListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         final Player player = event.getPlayer();
