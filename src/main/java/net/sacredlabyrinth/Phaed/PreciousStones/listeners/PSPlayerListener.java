@@ -1307,7 +1307,7 @@ public class PSPlayerListener implements Listener
                                     field.changeOwner();
 
                                     plugin.getStorageManager().offerPlayer(field.getOwner());
-                                    plugin.getStorageManager().offerPlayer(field.getNewOwner());
+                                    plugin.getStorageManager().offerPlayer(oldOwnerName);
                                     PreciousStones.getInstance().getStorageManager().offerField(field);
 
                                     ChatBlock.send(player, "takenFieldOwnership", oldOwnerName);
