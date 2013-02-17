@@ -138,7 +138,7 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerJoin(final PlayerJoinEvent event)
+    public void onPlayerJoin(PlayerJoinEvent event)
     {
         final Player player = event.getPlayer();
 
