@@ -137,10 +137,7 @@ public class SQLiteCore implements DBCore
      */
     public long insert(String query)
     {
-        if (PreciousStones.getInstance().getSettingsManager().isDebug())
-        {
-            PreciousStones.getLog().info(query);
-        }
+        PreciousStones.debug(query);
 
         try
         {
@@ -192,10 +189,7 @@ public class SQLiteCore implements DBCore
      */
     public void update(String query)
     {
-        if (PreciousStones.getInstance().getSettingsManager().isDebug())
-        {
-            PreciousStones.getLog().info(query);
-        }
+        PreciousStones.debug(query);
 
         try
         {
@@ -226,10 +220,7 @@ public class SQLiteCore implements DBCore
      */
     public void delete(String query)
     {
-        if (PreciousStones.getInstance().getSettingsManager().isDebug())
-        {
-            PreciousStones.getLog().info(query);
-        }
+        PreciousStones.debug(query);
 
         try
         {
@@ -261,10 +252,7 @@ public class SQLiteCore implements DBCore
      */
     public Boolean execute(String query)
     {
-        if (PreciousStones.getInstance().getSettingsManager().isDebug())
-        {
-            PreciousStones.getLog().info(query);
-        }
+        PreciousStones.debug(query);
 
         try
         {
