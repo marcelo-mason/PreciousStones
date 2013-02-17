@@ -2218,6 +2218,11 @@ public final class ForceFieldManager
         {
             for (Field field : fields)
             {
+                if (field.hasFlag(FieldFlag.NO_OWNER))
+                {
+                    continue;
+                }
+
                 queueRelease(field);
                 deletedFields++;
             }
@@ -2247,6 +2252,11 @@ public final class ForceFieldManager
                 {
                     if (!field.isHidden())
                     {
+                        if (field.hasFlag(FieldFlag.NO_OWNER))
+                        {
+                            continue;
+                        }
+
                         if (!field.matchesBlockType())
                         {
                             continue;
@@ -2282,6 +2292,11 @@ public final class ForceFieldManager
                 {
                     if (field.isHidden())
                     {
+                        if (field.hasFlag(FieldFlag.NO_OWNER))
+                        {
+                            continue;
+                        }
+
                         field.unHide();
                         unhiddenFields++;
                     }
