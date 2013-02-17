@@ -120,14 +120,16 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerRespawn(PlayerRespawnEvent event)
+    public void onPlayerRespawn(final PlayerRespawnEvent event)
     {
-        if (plugin.getSettingsManager().isBlacklistedWorld(event.getRespawnLocation().getWorld()))
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
         {
-            return;
-        }
-
-        handlePlayerSpawn(event.getPlayer());
+            @Override
+            public void run()
+            {
+                handlePlayerSpawn(event.getPlayer());
+            }
+        }, 5);
     }
 
     /**
@@ -136,11 +138,23 @@ public class PSPlayerListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(final PlayerJoinEvent event)
     {
-        handlePlayerSpawn(event.getPlayer());
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                handlePlayerSpawn(event.getPlayer());
+            }
+        }, 5);
     }
 
     private void handlePlayerSpawn(Player player)
     {
+        if (plugin.getSettingsManager().isBlacklistedWorld(player.getWorld()))
+        {
+            return;
+        }
+
         // refund confiscated items if not in confiscation fields
 
         Field confField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.CONFISCATE_ITEMS);
