@@ -122,6 +122,11 @@ public class PSPlayerListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerRespawn(PlayerRespawnEvent event)
     {
+        if (plugin.getSettingsManager().isBlacklistedWorld(event.getRespawnLocation().getWorld()))
+        {
+            return;
+        }
+
         handlePlayerSpawn(event.getPlayer());
     }
 
