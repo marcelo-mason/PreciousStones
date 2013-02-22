@@ -63,10 +63,10 @@ public class FieldSettings
     private int teleportMaxDistance = 0;
     private int griefRevertInterval = 0;
     private int payToEnable = 0;
-    private String commandOnEnter = "";
-    private String commandOnExit = "";
-    private String playerCommandOnEnter = "";
-    private String playerCommandOnExit = "";
+    private List<String> commandOnEnter = new ArrayList<String>();
+    private List<String> commandOnExit = new ArrayList<String>();
+    private List<String> playerCommandOnEnter = new ArrayList<String>();
+    private List<String> playerCommandOnExit = new ArrayList<String>();
     private List<Integer> teleportIfHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfNotHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfHasItems = new ArrayList<Integer>();
@@ -379,10 +379,10 @@ public class FieldSettings
         mine = loadInt("mine");
         heal = loadInt("heal");
         griefRevertInterval = loadInt("grief-revert-interval");
-        commandOnEnter = loadString("command-on-enter");
-        commandOnExit = loadString("command-on-exit");
-        playerCommandOnEnter = loadString("player-command-on-enter");
-        playerCommandOnExit = loadString("player-command-on-exit");
+        commandOnEnter = loadStringList("command-on-enter");
+        commandOnExit = loadStringList("command-on-exit");
+        playerCommandOnEnter = loadStringList("player-command-on-enter");
+        playerCommandOnExit = loadStringList("player-command-on-exit");
         commandBlackList = loadStringList("command-blacklist");
         teleportCost = loadInt("teleport-cost");
         teleportBackAfterSeconds = loadInt("teleport-back-after-seconds");
@@ -1455,22 +1455,22 @@ public class FieldSettings
         return griefRevertInterval;
     }
 
-    public String getCommandOnEnter()
+    public List<String> getCommandsOnEnter()
     {
         return commandOnEnter;
     }
 
-    public String getCommandOnExit()
+    public List<String> getCommandsOnExit()
     {
         return commandOnExit;
     }
 
-    public String getPlayerCommandOnEnter()
+    public List<String> getPlayerCommandsOnEnter()
     {
         return playerCommandOnEnter;
     }
 
-    public String getPlayerCommandOnExit()
+    public List<String> getPlayerCommandsOnExit()
     {
         return playerCommandOnExit;
     }

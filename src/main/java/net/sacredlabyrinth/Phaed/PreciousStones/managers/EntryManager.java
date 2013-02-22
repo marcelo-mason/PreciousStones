@@ -441,7 +441,7 @@ public final class EntryManager
 
         if (FieldFlag.LEAVING_GAME_MODE.applies(field, player))
         {
-            final FieldSettings settings  = field.getSettings();
+            final FieldSettings settings = field.getSettings();
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
             {
@@ -861,33 +861,37 @@ public final class EntryManager
     {
         if (FieldFlag.COMMAND_ON_ENTER.applies(field, player))
         {
-            if (!field.getSettings().getCommandOnEnter().isEmpty())
+            if (!field.getSettings().getCommandsOnEnter().isEmpty())
             {
-                String cmd = field.getSettings().getCommandOnEnter();
-                cmd = cmd.replace("{player}", player.getName());
-                cmd = cmd.replace("{owner}", field.getOwner());
-                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+                for (String cmd : field.getSettings().getCommandsOnEnter())
+                {
+                    cmd = cmd.replace("{player}", player.getName());
+                    cmd = cmd.replace("{owner}", field.getOwner());
+                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                    cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                }
             }
         }
 
         if (FieldFlag.PLAYER_COMMAND_ON_ENTER.applies(field, player))
         {
-            if (!field.getSettings().getPlayerCommandOnEnter().isEmpty())
+            if (!field.getSettings().getPlayerCommandsOnEnter().isEmpty())
             {
-                String cmd = field.getSettings().getPlayerCommandOnEnter();
-                cmd = cmd.replace("{player}", player.getName());
-                cmd = cmd.replace("{owner}", field.getOwner());
-                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+                for (String cmd : field.getSettings().getPlayerCommandsOnEnter())
+                {
+                    cmd = cmd.replace("{player}", player.getName());
+                    cmd = cmd.replace("{owner}", field.getOwner());
+                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                    cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
-                player.performCommand(cmd);
+                    player.performCommand(cmd);
+                }
             }
         }
     }
@@ -896,33 +900,37 @@ public final class EntryManager
     {
         if (FieldFlag.COMMAND_ON_EXIT.applies(field, player))
         {
-            if (!field.getSettings().getCommandOnExit().isEmpty())
+            if (!field.getSettings().getCommandsOnExit().isEmpty())
             {
-                String cmd = field.getSettings().getCommandOnExit();
-                cmd = cmd.replace("{player}", player.getName());
-                cmd = cmd.replace("{owner}", field.getOwner());
-                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+                for (String cmd : field.getSettings().getCommandsOnExit())
+                {
+                    cmd = cmd.replace("{player}", player.getName());
+                    cmd = cmd.replace("{owner}", field.getOwner());
+                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                    cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                }
             }
         }
 
         if (FieldFlag.PLAYER_COMMAND_ON_EXIT.applies(field, player))
         {
-            if (!field.getSettings().getPlayerCommandOnExit().isEmpty())
+            if (!field.getSettings().getPlayerCommandsOnExit().isEmpty())
             {
-                String cmd = field.getSettings().getPlayerCommandOnExit();
-                cmd = cmd.replace("{player}", player.getName());
-                cmd = cmd.replace("{owner}", field.getOwner());
-                cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
+                for (String cmd : field.getSettings().getPlayerCommandsOnExit())
+                {
+                    cmd = cmd.replace("{player}", player.getName());
+                    cmd = cmd.replace("{owner}", field.getOwner());
+                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
+                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
+                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                    cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
-                player.performCommand(cmd);
+                    player.performCommand(cmd);
+                }
             }
         }
     }
