@@ -918,6 +918,11 @@ public class FieldSettings
      */
     public boolean isTeleportHoldingItem(int itemId)
     {
+        if (teleportIfHasItems.contains(0) && itemId > 0)
+        {
+            return true;
+        }
+
         return teleportIfHoldingItems.contains(itemId);
     }
 
@@ -940,6 +945,11 @@ public class FieldSettings
      */
     public boolean isTeleportHasItem(int itemId)
     {
+        if (teleportIfHasItems.contains(0) && itemId > 0)
+        {
+            return true;
+        }
+
         return teleportIfHasItems.contains(itemId);
     }
 
