@@ -48,6 +48,7 @@ public class PotionManager
                 }
 
                 player.addPotionEffect(new PotionEffect(pot, 72000, intensity));
+                plugin.getPermissionsManager().allowFast(player);
                 names += pot.getName() + " ";
             }
         }
@@ -67,6 +68,7 @@ public class PotionManager
             if (player.hasPotionEffect(pot))
             {
                 player.removePotionEffect(pot);
+                plugin.getPermissionsManager().resetFast(player);
             }
         }
     }
@@ -80,6 +82,7 @@ public class PotionManager
             if (player.hasPotionEffect(pot))
             {
                 player.removePotionEffect(pot);
+                plugin.getPermissionsManager().resetFast(player);
                 plugin.getCommunicationManager().showNoPotion(player, pot.getName());
             }
         }

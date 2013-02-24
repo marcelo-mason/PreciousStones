@@ -548,4 +548,22 @@ public final class PermissionsManager
             AnticheatAPI.unexemptPlayer(player, CheckType.FLY);
         }
     }
+
+    public void allowFast(Player player)
+    {
+        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
+        {
+            AnticheatAPI.exemptPlayer(player, CheckType.FAST_BREAK);
+            AnticheatAPI.exemptPlayer(player, CheckType.FAST_PLACE);
+        }
+    }
+
+    public void resetFast(Player player)
+    {
+        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
+        {
+            AnticheatAPI.unexemptPlayer(player, CheckType.FAST_BREAK);
+            AnticheatAPI.unexemptPlayer(player, CheckType.FAST_PLACE);
+        }
+    }
 }
