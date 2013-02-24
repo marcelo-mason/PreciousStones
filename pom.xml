@@ -184,6 +184,12 @@
             <version>1.3.13-dev</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>net.h31ix.anticheat</groupId>
+            <artifactId>AntiCheat</artifactId>
+            <version>1.5.5</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <!-- Repository -->
@@ -192,6 +198,10 @@
         <repository>
             <id>remote-repos</id>
             <url>http://repo.sacredlabyrinth.net:8081/artifactory/remote-repos</url>
+        </repository>
+        <repository>
+            <id>gravity-repo</id>
+            <url>http://repo.gravitydevelopment.net/</url>
         </repository>
     </repositories>
 

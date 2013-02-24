@@ -8,10 +8,13 @@ import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
+import net.h31ix.anticheat.api.AnticheatAPI;
+import net.h31ix.anticheat.manage.CheckType;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -521,12 +524,28 @@ public final class PermissionsManager
 
         for (MetadataValue value : values)
         {
-            if(value.asBoolean())
+            if (value.asBoolean())
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public void allowFly(Player player)
+    {
+        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
+        {
+            AnticheatAPI.exemptPlayer(player, CheckType.FLY);
+        }
+    }
+
+    public void resetFly(Player player)
+    {
+        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
+        {
+            AnticheatAPI.unexemptPlayer(player, CheckType.FLY);
+        }
     }
 }

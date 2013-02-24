@@ -50,6 +50,7 @@ public class VelocityManager
                     {
                         public void run()
                         {
+                            plugin.getPermissionsManager().allowFly(player);
                             player.setVelocity(velocity);
 
                             plugin.getCommunicationManager().showLaunch(player);
@@ -80,6 +81,7 @@ public class VelocityManager
                     {
                         public void run()
                         {
+                            plugin.getPermissionsManager().allowFly(player);
                             player.setVelocity(new Vector(0, height, 0));
 
                             plugin.getCommunicationManager().showCannon(player);
@@ -129,6 +131,7 @@ public class VelocityManager
             public void run()
             {
                 fallDamageImmune.remove(name);
+                plugin.getPermissionsManager().resetFly(player);
             }
         }, 15 * 20L);
     }
