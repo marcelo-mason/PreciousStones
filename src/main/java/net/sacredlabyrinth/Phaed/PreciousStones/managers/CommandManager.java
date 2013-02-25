@@ -1746,6 +1746,75 @@ public final class CommandManager implements CommandExecutor
                         ChatBlock.send(sender, "configReloaded");
                         return true;
                     }
+                    else if (cmd.equals(ChatBlock.format("commandRent")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.rent"))
+                    {
+                        if (args.length > 0)
+                        {
+                            String sub = args[0];
+
+                            if (sub.equalsIgnoreCase(ChatBlock.format("commandRentClear")))
+                            {
+                                Field field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.RENTABLE);
+
+                                if (field != null)
+                                {
+                                    field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.SHAREABLE);
+                                }
+
+                                if (field != null)
+                                {
+                                    field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.BUYABLE);
+                                }
+
+                                if (field != null)
+                                {
+                                    if (field.clearRents())
+                                    {
+                                        ChatBlock.send(sender, "rentsCleared");
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.send(sender, "rentsClearedNone");
+                                    }
+                                }
+                                else
+                                {
+                                    ChatBlock.send(sender, "noPstonesFound");
+                                }
+                            }
+                            if (sub.equalsIgnoreCase(ChatBlock.format("commandRentRemove")))
+                            {
+                                Field field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.RENTABLE);
+
+                                if (field != null)
+                                {
+                                    field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.SHAREABLE);
+                                }
+
+                                if (field != null)
+                                {
+                                    field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.BUYABLE);
+                                }
+
+                                if (field != null)
+                                {
+                                    if (field.removeRents())
+                                    {
+                                        ChatBlock.send(sender, "rentsRemoved");
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.send(sender, "rentsRemovedNone");
+                                    }
+                                }
+                                else
+                                {
+                                    ChatBlock.send(sender, "noPstonesFound");
+                                }
+                            }
+                        }
+                        return true;
+                    }
                     else if (cmd.equals(ChatBlock.format("commandFields")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.fields"))
                     {
                         plugin.getCommunicationManager().showConfiguredFields(sender);

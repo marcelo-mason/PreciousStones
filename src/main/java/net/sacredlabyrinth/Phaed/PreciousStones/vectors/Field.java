@@ -2409,6 +2409,49 @@ public class Field extends AbstractVec implements Comparable<Field>
         PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 
+    public boolean clearRents()
+    {
+        if (isRented())
+        {
+            renterEntries.clear();
+            renters.clear();
+            purchase = null;
+            cleanFieldSign();
+
+            dirtyFlags();
+            PreciousStones.getInstance().getStorageManager().offerField(this);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeRents()
+    {
+        FieldSign s = getAttachedFieldSign();
+
+        if (s != null)
+        {
+            s.eject();
+
+            renterEntries.clear();
+            renters.clear();
+
+            if (purchase != null)
+            {
+                removeAllowed(purchase.getPlayer());
+                purchase = null;
+            }
+
+            payment.clear();
+
+            dirtyFlags();
+            PreciousStones.getInstance().getStorageManager().offerField(this);
+            return true;
+        }
+
+        return false;
+    }
+
     public void scheduleNextRentUpdate()
     {
         if (!renterEntries.isEmpty())

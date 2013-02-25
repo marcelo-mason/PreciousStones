@@ -2015,6 +2015,33 @@ public final class ForceFieldManager
     }
 
     /**
+     * Returns the field if he's standing in at least one field, optionally matching field flags
+     *
+     * @param blockInArea
+     * @param player
+     * @return the field
+     */
+    public Field getOneField(final Block blockInArea, final Player player, FieldFlag flag)
+    {
+        Field pointed = getPointedField(player);
+
+        if (pointed != null)
+        {
+            return pointed;
+        }
+
+        ResultsFilter envelopsFilter = new ResultsFilter()
+        {
+            public boolean Filter(Field field)
+            {
+                return field.envelops(blockInArea.getLocation());
+            }
+        };
+
+        return getSmallestSourceFieldInChunk(blockInArea.getLocation().getChunk(), flag, envelopsFilter);
+    }
+
+    /**
      * Return the first field that conflicts with the unbreakable
      *
      * @param placedBlock
