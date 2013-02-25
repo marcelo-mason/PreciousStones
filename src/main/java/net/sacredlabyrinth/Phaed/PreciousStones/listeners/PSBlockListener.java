@@ -467,7 +467,7 @@ public class PSBlockListener implements Listener
                         {
                             PreciousStones.debug("bypassed");
 
-                            if(field.getSettings().canGrief(block.getTypeId()))
+                            if (field.getSettings().canGrief(block.getTypeId()))
                             {
                                 PreciousStones.debug("can-grief");
                             }
@@ -528,6 +528,20 @@ public class PSBlockListener implements Listener
             {
                 event.setCancelled(true);
                 plugin.getTeleportationManager().teleport(player, field, "teleportAnnounceBreak");
+            }
+        }
+
+        // -------------------------------------------------------------------------------- about to break a field sign, clear it
+
+        FieldSign s = SignHelper.getFieldSign(block);
+
+        if (s != null)
+        {
+            Field f = s.getField();
+
+            if (f != null)
+            {
+                f.clearRents();
             }
         }
     }
@@ -1444,7 +1458,7 @@ public class PSBlockListener implements Listener
 
         List<Block> blocks = event.getBlocks();
 
-        for(Block block : blocks)
+        for (Block block : blocks)
         {
             if (SignHelper.cannotBreakFieldSign(block, null))
             {

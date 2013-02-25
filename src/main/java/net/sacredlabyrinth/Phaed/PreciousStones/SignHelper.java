@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -104,7 +105,18 @@ public class SignHelper
                         return true;
                     }
 
-                    if (!s.getField().isOwner(player.getName()))
+                    if (s.getField().isOwner(player.getName()))
+                    {
+                        Field field = s.getField();
+
+                        if (field.hasPendingPurchase())
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    }
+                    else
                     {
                         return true;
                     }
@@ -113,6 +125,31 @@ public class SignHelper
         }
 
         return false;
+    }
+
+    /**
+     * Returns the field sign out of sign
+     *
+     * @param sign
+     */
+    public static FieldSign getFieldSign(Block sign)
+    {
+        // prevent breaking license block or the block attached to it
+
+        if (sign != null)
+        {
+            if (isSign(sign))
+            {
+                FieldSign s = new FieldSign(sign);
+
+                if (s.isValid())
+                {
+                    return s;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
