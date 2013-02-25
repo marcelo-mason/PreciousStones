@@ -328,8 +328,6 @@ menu42: "{dark-red}  /ps revert <world>{aqua}- Reverts all orphan fields in the 
 menu43: "{dark-red}  /ps enableall [flag] {aqua}- Enables the flag on all fields"
 menu44: "{dark-red}  /ps disableall [flag] {aqua}- Disables the flag on all fields"
 menu45: "{dark-red}  /ps debug {aqua}- Prints timing info to console"
-menu46: "{dark-red}  /ps debugdb {aqua}- Prints out save process info"
-menu47: "{dark-red}  /ps debugsql {aqua}- Prints sql queries to console"
 menu48: "{dark-red}  /ps bypass <on/off>{aqua}- Toggle bypass mode"
 menu49: "{yellow}  /ps hide {aqua}- Hides field"
 menu50: "{yellow}  /ps unhide {aqua}- Unhides field"

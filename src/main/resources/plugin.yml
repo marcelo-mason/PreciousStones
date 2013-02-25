@@ -206,6 +206,8 @@ permissions:
     description: Gives you the counts of pstones each player hass
   preciousstones.admin.locations:
     description: Gives you the locations of pstones each player hass
+  preciousstones.admin.rent:
+    description: Lets admins use rent admin powers for renting
   preciousstones.override.notify:
     description: Can users will not be shown any notifications
   preciousstones.override.warn:
@@ -378,6 +380,7 @@ permissions:
       preciousstones.admin.enableall: true
       preciousstones.admin.disableall: true
       preciousstones.admin.hideall: true
+      preciousstones.admin.rent: true
   preciousstones.override.*:
     description: These players will receive no warnings or notifications
     default: false

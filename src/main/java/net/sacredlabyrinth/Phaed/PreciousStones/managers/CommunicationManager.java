@@ -3652,8 +3652,6 @@ public class CommunicationManager
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
         {
             cb.addRow("menu45");
-            cb.addRow("menu46");
-            cb.addRow("menu47");
         }
 
         if (cb.size() > 0)
