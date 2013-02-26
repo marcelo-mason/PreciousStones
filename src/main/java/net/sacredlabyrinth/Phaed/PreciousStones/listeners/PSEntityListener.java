@@ -100,6 +100,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onFoodLevelChange(FoodLevelChangeEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         if (event.getEntity() instanceof Player)
         {
             Player player = (Player) event.getEntity();
@@ -127,6 +132,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDamageByBlock(EntityDamageByBlockEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Entity entity = event.getEntity();
 
         if (entity instanceof Player)
@@ -162,6 +172,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Entity entity = event.getEntity();
         Location loc = event.getLocation();
 
@@ -818,6 +833,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDoorBreak(EntityBreakDoorEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         if (event.getBlock() == null)
         {
             return;
@@ -871,6 +891,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityChangeBlock(EntityChangeBlockEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Block block = event.getBlock();
         Entity entity = event.getEntity();
 
@@ -940,6 +965,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onPaintingBreak(PaintingBreakByEntityEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Painting painting = event.getPainting();
 
         if (plugin.getSettingsManager().isBlacklistedWorld(painting.getLocation().getWorld()))
@@ -976,6 +1006,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onPaintingPlace(PaintingPlaceEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Painting painting = event.getPainting();
         Player player = event.getPlayer();
 
@@ -1008,6 +1043,11 @@ public class PSEntityListener implements Listener
     @EventHandler
     public void onHangingBreakByEntityEvent(HangingBreakByEntityEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Hanging entity = event.getEntity();
         Entity remover = event.getRemover();
 
@@ -1048,6 +1088,11 @@ public class PSEntityListener implements Listener
     @EventHandler
     public void onHangingPlaceEvent(HangingPlaceEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Hanging entity = event.getEntity();
         Player player = event.getPlayer();
 
@@ -1074,6 +1119,11 @@ public class PSEntityListener implements Listener
     @EventHandler
     public void onHangingBreakEvent(HangingBreakEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Hanging entity = event.getEntity();
 
         if (plugin.getSettingsManager().isBlacklistedWorld(entity.getLocation().getWorld()))
@@ -1098,6 +1148,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onPotionSplash(PotionSplashEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         ThrownPotion potion = event.getPotion();
 
         LivingEntity shooter = potion.getShooter();
@@ -1127,6 +1182,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onProjectileThrow(ProjectileLaunchEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Projectile projectile = event.getEntity();
 
         LivingEntity shooter = projectile.getShooter();
@@ -1156,6 +1216,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onItemDrop(PlayerDropItemEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.NO_DROPPING_ITEMS);
 
         if (field != null)
@@ -1173,6 +1238,11 @@ public class PSEntityListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onCreeperPower(CreeperPowerEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_CREEPER_EXPLOSIONS);
 
         if (field != null)

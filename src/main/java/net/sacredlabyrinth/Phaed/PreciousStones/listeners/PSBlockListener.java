@@ -44,6 +44,11 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockFade(BlockFadeEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         //If the block is going to disappear because it's a field.(leaves, ice, etc)
         //Cancel the event
 
@@ -60,6 +65,11 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockFromTo(BlockFromToEvent event)
     {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
         Block source = event.getBlock();
         Block destination = event.getToBlock();
 
