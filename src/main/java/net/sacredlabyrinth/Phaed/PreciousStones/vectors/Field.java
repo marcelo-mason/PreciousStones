@@ -107,7 +107,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.type = type;
         this.lastUsed = lastUsed;
         this.self = this;
-        this.attachedSign = getAttachedFieldSign();
     }
 
     /**
@@ -136,7 +135,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.type = type;
         this.lastUsed = lastUsed;
         this.self = this;
-        this.attachedSign = getAttachedFieldSign();
 
         calculateDimensions();
 
@@ -158,7 +156,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = "";
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
         this.self = this;
-        this.attachedSign = getAttachedFieldSign();
 
         calculateDimensions();
     }
@@ -178,7 +175,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.owner = "";
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
         this.self = this;
-        this.attachedSign = getAttachedFieldSign();
 
         calculateDimensions();
     }
@@ -190,13 +186,11 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
         this.self = this;
-        this.attachedSign = getAttachedFieldSign();
     }
 
     public Field()
     {
         this.self = this;
-        this.attachedSign = getAttachedFieldSign();
     }
 
     private void calculateDimensions()
@@ -924,6 +918,11 @@ public class Field extends AbstractVec implements Comparable<Field>
             flags.add(flag);
         }
         this.settings = settings;
+
+        if (settings.hasDefaultFlag(FieldFlag.BUYABLE) || settings.hasDefaultFlag(FieldFlag.SHAREABLE) || settings.hasDefaultFlag(FieldFlag.RENTABLE))
+        {
+            this.attachedSign = getAttachedFieldSign();
+        }
     }
 
     /**
