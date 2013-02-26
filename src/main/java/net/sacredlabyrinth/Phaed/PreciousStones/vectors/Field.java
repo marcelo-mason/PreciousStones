@@ -921,7 +921,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         if (settings.hasDefaultFlag(FieldFlag.BUYABLE) || settings.hasDefaultFlag(FieldFlag.SHAREABLE) || settings.hasDefaultFlag(FieldFlag.RENTABLE))
         {
-            this.attachedSign = getAttachedFieldSign();
+            this.attachedSign = SignHelper.getAttachedFieldSign(getBlock());
         }
     }
 
@@ -2486,10 +2486,6 @@ public class Field extends AbstractVec implements Comparable<Field>
 
     public FieldSign getAttachedFieldSign()
     {
-        if (attachedSign == null)
-        {
-            attachedSign = SignHelper.getAttachedFieldSign(getBlock());
-        }
         return attachedSign;
     }
 
