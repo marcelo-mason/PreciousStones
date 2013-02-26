@@ -547,14 +547,15 @@ public class PSBlockListener implements Listener
 
         if (s != null)
         {
-            if (!s.isBuyable())
-            {
-                Field f = s.getField();
+            Field f = s.getField();
 
-                if (f != null)
+            if (f != null)
+            {
+                if (!s.isBuyable())
                 {
                     f.clearRents();
                 }
+                f.resetAttachedSign();
             }
         }
     }
