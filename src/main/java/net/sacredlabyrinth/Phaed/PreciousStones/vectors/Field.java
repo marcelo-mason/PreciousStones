@@ -2772,30 +2772,26 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                 }
             }
-
-            for (final RentEntry entry : renterEntries)
+            for (Iterator iter = renterEntries.iterator(); iter.hasNext(); )
             {
+                RentEntry entry = (RentEntry) iter.next();
+
                 if (entry.isDone())
                 {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable()
+                    renters.remove(entry.getPlayerName().toLowerCase());
+                    iter.remove();
+
+                    dirtyFlags();
+                    PreciousStones.getInstance().getStorageManager().offerField(self);
+
+                    if (getName().isEmpty())
                     {
-                        public void run()
-                        {
-                            // clean up expired
-
-                            removeRenter(entry);
-                            cleanFieldSign();
-
-                            if (getName().isEmpty())
-                            {
-                                ChatBlock.send(entry.getPlayerName(), "fieldSignRentExpiredNoName");
-                            }
-                            else
-                            {
-                                ChatBlock.send(entry.getPlayerName(), "fieldSignRentExpired", getName());
-                            }
-                        }
-                    }, 0);
+                        ChatBlock.send(entry.getPlayerName(), "fieldSignRentExpiredNoName");
+                    }
+                    else
+                    {
+                        ChatBlock.send(entry.getPlayerName(), "fieldSignRentExpired", getName());
+                    }
                 }
             }
 
