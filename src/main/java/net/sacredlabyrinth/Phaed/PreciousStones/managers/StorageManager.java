@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.scheduler.BukkitTask;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -283,7 +284,7 @@ public class StorageManager
      */
     public void loadWorldData()
     {
-        plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable()
+        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable()
         {
             @Override
             public void run()
@@ -2370,9 +2371,9 @@ public class StorageManager
      *
      * @return
      */
-    public int saverScheduler()
+    public BukkitTask saverScheduler()
     {
-        return Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable()
         {
             public void run()
             {

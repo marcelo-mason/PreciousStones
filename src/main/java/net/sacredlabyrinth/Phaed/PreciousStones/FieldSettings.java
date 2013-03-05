@@ -251,6 +251,8 @@ public class FieldSettings
         loadBoolean("prevent-potion-splash");
         loadBoolean("prevent-vehicle-enter");
         loadBoolean("prevent-vehicle-exit");
+        loadBoolean("prevent-item-frame-take");
+        loadBoolean("prevent-entity-interact");
         loadBoolean("protect-animals");
         loadBoolean("protect-villagers");
         loadBoolean("protect-crops");

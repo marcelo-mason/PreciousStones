@@ -20,8 +20,6 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import org.bukkit.event.painting.PaintingBreakByEntityEvent;
-import org.bukkit.event.painting.PaintingPlaceEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 import java.util.ArrayList;
@@ -954,85 +952,6 @@ public class PSEntityListener implements Listener
                 if (field != null)
                 {
                     event.setCancelled(true);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPaintingBreak(PaintingBreakByEntityEvent event)
-    {
-        if (event.isCancelled())
-        {
-            return;
-        }
-
-        Painting painting = event.getPainting();
-
-        if (plugin.getSettingsManager().isBlacklistedWorld(painting.getLocation().getWorld()))
-        {
-            return;
-        }
-
-        if (!(event.getRemover() instanceof Player))
-        {
-            return;
-        }
-
-        Player player = (Player) event.getRemover();
-        Location loc = event.getPainting().getLocation();
-
-        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
-        {
-            Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_DESTROY);
-
-            if (field != null)
-            {
-                if (FieldFlag.PREVENT_DESTROY.applies(field, player))
-                {
-                    event.setCancelled(true);
-                    plugin.getCommunicationManager().warnDestroyPainting(player, painting, field);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPaintingPlace(PaintingPlaceEvent event)
-    {
-        if (event.isCancelled())
-        {
-            return;
-        }
-
-        Painting painting = event.getPainting();
-        Player player = event.getPlayer();
-
-        if (plugin.getSettingsManager().isBlacklistedWorld(painting.getLocation().getWorld()))
-        {
-            return;
-        }
-
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_PLACE);
-
-        if (field != null)
-        {
-            if (FieldFlag.PREVENT_PLACE.applies(field, player))
-            {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
-                {
-                    plugin.getCommunicationManager().notifyPaintingBypassPlace(player, painting.getLocation(), field);
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.getCommunicationManager().warnPlacePainting(player, painting, field);
                 }
             }
         }

@@ -663,6 +663,20 @@ public class PSPlayerListener implements Listener
                 }
             }
         }
+
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entity-interact"))
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ENTITY_INTERACT);
+
+            if (field != null)
+            {
+                if (FieldFlag.PREVENT_ENTITY_INTERACT.applies(field, player))
+                {
+                    event.setCancelled(true);
+                }
+            }
+        }
+
     }
 
     /**

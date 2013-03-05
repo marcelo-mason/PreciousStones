@@ -131,7 +131,9 @@ permissions:
   preciousstones.bypass.commandblacklist:
     description: Can toggle bypass mode
   preciousstones.bypass.item-frame-take:
-    description: Can take other ppls items
+    description: Can toggle bypass mode
+  preciousstones.bypass.entity-interact:
+    description: Can bypass interaction with entity protections
   preciousstones.alert.notify.place:
     description: Gets alert for block placement notifys
   preciousstones.alert.notify.destroy:
@@ -335,6 +337,7 @@ permissions:
       preciousstones.bypass.hiding: true
       preciousstones.bypass.item-frame-take: true
       preciousstones.bypass.commandblacklist: true
+      preciousstones.bypass.entity-interact: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false
