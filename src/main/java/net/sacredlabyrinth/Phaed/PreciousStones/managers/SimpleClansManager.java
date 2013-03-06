@@ -1,14 +1,17 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.p000ison.dev.simpleclans2.api.SCCore;
+import com.p000ison.dev.simpleclans2.api.clan.Clan;
+import com.p000ison.dev.simpleclans2.api.clanplayer.ClanPlayer;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import net.sacredlabyrinth.phaed.simpleclans.Clan;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author phaed
@@ -16,6 +19,7 @@ import java.util.List;
 public final class SimpleClansManager
 {
     private PreciousStones plugin;
+    private SCCore core = null;
     private SimpleClans simpleClans;
 
     /**
@@ -25,6 +29,34 @@ public final class SimpleClansManager
     {
         plugin = PreciousStones.getInstance();
         getSimpleClans();
+        hookSimpleClans();
+    }
+
+    private void getSimpleClans()
+    {
+        if (simpleClans == null)
+        {
+            Plugin test = Bukkit.getServer().getPluginManager().getPlugin("SimpleClans");
+
+            if (test != null)
+            {
+                this.simpleClans = (SimpleClans) test;
+            }
+        }
+    }
+
+    private boolean hookSimpleClans()
+    {
+        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins())
+        {
+            if (plugin instanceof SCCore)
+            {
+                this.core = (SCCore) plugin;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -39,7 +71,22 @@ public final class SimpleClansManager
             return false;
         }
 
-        return simpleClans != null;
+        return simpleClans != null && core == null;
+    }
+
+    /**
+     * Whether SimpleClans was loaded
+     *
+     * @return
+     */
+    public boolean hasSimpleClans2()
+    {
+        if (plugin.getSettingsManager().isDisableSimpleClanHook())
+        {
+            return false;
+        }
+
+        return core != null;
     }
 
     /**
@@ -50,16 +97,23 @@ public final class SimpleClansManager
      */
     public void clanAnnounce(String playerName, String message)
     {
-        if (!hasSimpleClans())
+        if (hasSimpleClans())
         {
-            return;
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
+
+            if (cp != null)
+            {
+                cp.getClan().clanAnnounce("PreciousStones", message);
+            }
         }
-
-        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
-
-        if (cp != null)
+        else if (hasSimpleClans2())
         {
-            cp.getClan().clanAnnounce("PreciousStones", message);
+            ClanPlayer cp = core.getClanPlayerManager().getClanPlayer(playerName);
+
+            if (cp != null)
+            {
+                cp.getClan().announce(message);
+            }
         }
     }
 
@@ -71,16 +125,23 @@ public final class SimpleClansManager
      */
     public void addBB(Player player, String message)
     {
-        if (!hasSimpleClans())
+        if (hasSimpleClans())
         {
-            return;
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(player);
+
+            if (cp != null)
+            {
+                cp.getClan().addBb("[PreciousStones]", message);
+            }
         }
-
-        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(player);
-
-        if (cp != null)
+        else if (hasSimpleClans2())
         {
-            cp.getClan().addBb("[PreciousStones]", message);
+            ClanPlayer cp = core.getClanPlayerManager().getClanPlayer(player);
+
+            if (cp != null)
+            {
+                cp.getClan().addBBMessage(message);
+            }
         }
     }
 
@@ -92,18 +153,35 @@ public final class SimpleClansManager
      */
     public boolean isAnyOnline(String playerName)
     {
-        if (!hasSimpleClans())
+        if (hasSimpleClans())
         {
-            return false;
-        }
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
 
-        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
-
-        if (cp != null)
-        {
-            if (cp.getClan().isAnyOnline())
+            if (cp != null)
             {
-                return true;
+                if (cp.getClan().isAnyOnline())
+                {
+                    return true;
+                }
+            }
+        }
+        else if (hasSimpleClans2())
+        {
+            ClanPlayer cp = core.getClanPlayerManager().getClanPlayer(playerName);
+
+            if (cp != null)
+            {
+                Set<ClanPlayer> members = cp.getClan().getAllMembers();
+
+                for (ClanPlayer member : members)
+                {
+                    Player player = Bukkit.getServer().getPlayerExact(member.getName());
+
+                    if (player != null)
+                    {
+                        return true;
+                    }
+                }
             }
         }
 
@@ -119,25 +197,43 @@ public final class SimpleClansManager
      */
     public boolean inWar(Field field, String offenderName)
     {
-        if (!hasSimpleClans())
+        if (hasSimpleClans())
         {
-            return false;
-        }
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(offenderName);
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cpOwner = simpleClans.getClanManager().getClanPlayer(field.getOwner());
 
-        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(offenderName);
-        ClanPlayer cpOwner = simpleClans.getClanManager().getClanPlayer(field.getOwner());
-
-        if (cp != null && cpOwner != null)
-        {
-            List<Clan> warringClans = cp.getClan().getWarringClans();
-
-            String ownerClan = cpOwner.getTag();
-
-            for (Clan warring : warringClans)
+            if (cp != null && cpOwner != null)
             {
-                if (ownerClan.equals(warring.getTag()))
+                List<net.sacredlabyrinth.phaed.simpleclans.Clan> warringClans = cp.getClan().getWarringClans();
+
+                String ownerClan = cpOwner.getTag();
+
+                for (net.sacredlabyrinth.phaed.simpleclans.Clan warring : warringClans)
                 {
-                    return true;
+                    if (ownerClan.equals(warring.getTag()))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if (hasSimpleClans2())
+        {
+            ClanPlayer cp = core.getClanPlayerManager().getClanPlayer(offenderName);
+            ClanPlayer cpOwner = core.getClanPlayerManager().getClanPlayer(field.getOwner());
+
+            if (cp != null && cpOwner != null)
+            {
+                Set<Clan> warringClans = cp.getClan().getWarringClans();
+
+                String ownerClan = cpOwner.getClan().getTag();
+
+                for (Clan warring : warringClans)
+                {
+                    if (ownerClan.equals(warring.getTag()))
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -152,20 +248,33 @@ public final class SimpleClansManager
      */
     public boolean isAllyOwner(String owner, String playerName)
     {
-        if (!hasSimpleClans())
+        if (hasSimpleClans())
         {
-            return false;
-        }
+            Player player = plugin.getServer().getPlayerExact(playerName);
 
-        Player player = plugin.getServer().getPlayerExact(playerName);
-
-        if (player != null)
-        {
-            ClanPlayer cpOwner = simpleClans.getClanManager().getClanPlayer(owner);
-
-            if (cpOwner != null)
+            if (player != null)
             {
-                return cpOwner.isAlly(player);
+                net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cpOwner = simpleClans.getClanManager().getClanPlayer(owner);
+
+                if (cpOwner != null)
+                {
+                    return cpOwner.isAlly(player);
+                }
+            }
+        }
+        else if (hasSimpleClans2())
+        {
+            Player player = plugin.getServer().getPlayerExact(playerName);
+
+            if (player != null)
+            {
+                ClanPlayer cpOwner = core.getClanPlayerManager().getClanPlayer(owner);
+                ClanPlayer cpPlayer = core.getClanPlayerManager().getClanPlayer(owner);
+
+                if (cpOwner != null && cpPlayer != null)
+                {
+                    return cpOwner.getClan().isAlly(cpPlayer.getClan());
+                }
             }
         }
 
@@ -181,19 +290,30 @@ public final class SimpleClansManager
      */
     public boolean isClanMate(String playerOne, String playerTwo)
     {
-        if (!hasSimpleClans())
+        if (hasSimpleClans())
         {
-            return false;
-        }
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cp1 = simpleClans.getClanManager().getClanPlayer(playerOne);
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cp2 = simpleClans.getClanManager().getClanPlayer(playerTwo);
 
-        ClanPlayer cp1 = simpleClans.getClanManager().getClanPlayer(playerOne);
-        ClanPlayer cp2 = simpleClans.getClanManager().getClanPlayer(playerTwo);
-
-        if (cp1 != null && cp2 != null)
-        {
-            if (cp1.getClan().equals(cp2.getClan()))
+            if (cp1 != null && cp2 != null)
             {
-                return true;
+                if (cp1.getClan().equals(cp2.getClan()))
+                {
+                    return true;
+                }
+            }
+        }
+        else if (hasSimpleClans2())
+        {
+            ClanPlayer cp1 = core.getClanPlayerManager().getClanPlayer(playerOne);
+            ClanPlayer cp2 = core.getClanPlayerManager().getClanPlayer(playerTwo);
+
+            if (cp1 != null && cp2 != null)
+            {
+                if (cp1.getClan().equals(cp2.getClan()))
+                {
+                    return true;
+                }
             }
         }
 
@@ -209,18 +329,28 @@ public final class SimpleClansManager
      */
     public boolean isInClan(String playerName, String clanName)
     {
-        if (!hasSimpleClans())
+        if (hasSimpleClans())
         {
-            return false;
-        }
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
 
-        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
-
-        if (cp != null)
-        {
-            if (cp.getTag().equals(clanName))
+            if (cp != null)
             {
-                return true;
+                if (cp.getTag().equals(clanName))
+                {
+                    return true;
+                }
+            }
+        }
+        else if (hasSimpleClans2())
+        {
+            ClanPlayer cp = core.getClanPlayerManager().getClanPlayer(playerName);
+
+            if (cp != null)
+            {
+                if (cp.getClan().getCleanTag().equals(clanName))
+                {
+                    return true;
+                }
             }
         }
 
@@ -233,31 +363,25 @@ public final class SimpleClansManager
      */
     public String getClan(String playerName)
     {
-        if (!hasSimpleClans())
+        if (hasSimpleClans())
         {
-            return null;
+            net.sacredlabyrinth.phaed.simpleclans.ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
+
+            if (cp != null)
+            {
+                return cp.getTag();
+            }
         }
-
-        ClanPlayer cp = simpleClans.getClanManager().getClanPlayer(playerName);
-
-        if (cp != null)
+        else if (hasSimpleClans2())
         {
-            return cp.getTag();
+            ClanPlayer cp = core.getClanPlayerManager().getClanPlayer(playerName);
+
+            if (cp != null)
+            {
+                return cp.getClan().getCleanTag();
+            }
         }
 
         return null;
-    }
-
-    private void getSimpleClans()
-    {
-        if (simpleClans == null)
-        {
-            Plugin test = plugin.getServer().getPluginManager().getPlugin("SimpleClans");
-
-            if (test != null)
-            {
-                this.simpleClans = (SimpleClans) test;
-            }
-        }
     }
 }

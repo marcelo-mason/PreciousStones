@@ -4,7 +4,7 @@ main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
 version: ${project.version}
 dev-url: http://dev.bukkit.org/server-mods/preciousstones/
 load: 'postworld'
-softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC, Lockette, Spout, mcMMO]
+softdepend: [Permissions, PermissionsBukkit, SimpleClans, HawkEye, Vault, CombatTag, WorldGuard, LWC, Lockette, Spout, mcMMO, SCCore]
 commands:
   ps:
     description: All of the PreciousStones commands
