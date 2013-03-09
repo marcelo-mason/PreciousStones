@@ -2,6 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
@@ -1746,70 +1747,163 @@ public final class CommandManager implements CommandExecutor
                         ChatBlock.send(sender, "configReloaded");
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandRent")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.rent"))
+                    else if (cmd.equals(ChatBlock.format("commandBuy")))
                     {
-                        if (args.length > 0)
+                        if (plugin.getSettingsManager().isCommandsToRentBuy())
                         {
-                            String sub = args[0];
-
-                            if (sub.equalsIgnoreCase(ChatBlock.format("commandRentClear")))
+                            if (args.length == 0)
                             {
-                                Field field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.RENTABLE);
+                                Field field = plugin.getForceFieldManager().getOneNonOwnedField(block, player, FieldFlag.BUYABLE);
 
                                 if (field != null)
                                 {
-                                    field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.SHAREABLE);
-                                }
+                                    FieldSign s = field.getAttachedFieldSign();
 
-                                if (field != null)
-                                {
-                                    field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.BUYABLE);
-                                }
-
-                                if (field != null)
-                                {
-                                    if (field.clearRents())
+                                    if (s.isBuyable())
                                     {
-                                        ChatBlock.send(sender, "rentsCleared");
+                                        if (field.hasPendingPurchase())
+                                        {
+                                            ChatBlock.send(player, "fieldSignAlreadyBought");
+                                        }
+                                        else if (field.buy(player, s))
+                                        {
+                                            s.setBoughtColor(player);
+
+                                            PreciousStones.getInstance().getForceFieldManager().addAllowed(field, player.getName());
+
+                                            ChatBlock.send(player, "fieldSignBoughtAndAllowed");
+                                        }
+
+                                        return true;
                                     }
-                                    else
-                                    {
-                                        ChatBlock.send(sender, "rentsClearedNone");
-                                    }
-                                }
-                                else
-                                {
-                                    ChatBlock.send(sender, "noPstonesFound");
                                 }
                             }
-                            if (sub.equalsIgnoreCase(ChatBlock.format("commandRentRemove")))
+                            return true;
+                        }
+                    }
+                    else if (cmd.equals(ChatBlock.format("commandRent")))
+                    {
+                        if (plugin.getSettingsManager().isCommandsToRentBuy())
+                        {
+                            if (args.length == 0)
                             {
-                                Field field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.RENTABLE);
+                                Field field = plugin.getForceFieldManager().getOneNonOwnedField(block, player, FieldFlag.SHAREABLE);
 
-                                if (field != null)
+                                if (field == null)
                                 {
-                                    field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.SHAREABLE);
+                                    field = plugin.getForceFieldManager().getOneNonOwnedField(block, player, FieldFlag.RENTABLE);
                                 }
 
                                 if (field != null)
                                 {
-                                    field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.BUYABLE);
-                                }
+                                    FieldSign s = field.getAttachedFieldSign();
 
-                                if (field != null)
-                                {
-                                    if (field.removeRents())
+                                    if (s.isRentable())
                                     {
-                                        ChatBlock.send(sender, "rentsRemoved");
+                                        if (field.isRented())
+                                        {
+                                            if (!field.isRenter(player.getName()))
+                                            {
+                                                ChatBlock.send(player, "fieldSignAlreadyRented");
+                                                plugin.getCommunicationManager().showRenterInfo(player, field);
+                                                return true;
+                                            }
+                                            else
+                                            {
+                                                if (player.isSneaking())
+                                                {
+                                                    field.abandonRent(player);
+                                                    ChatBlock.send(player, "fieldSignRentAbandoned");
+                                                    return true;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (field.rent(player, s))
+                                    {
+                                        if (s.isRentable())
+                                        {
+                                            s.setRentedColor();
+                                        }
+                                        else if (s.isShareable())
+                                        {
+                                            s.setSharedColor();
+                                        }
+
+                                        return true;
+                                    }
+                                }
+                            }
+
+                            return true;
+                        }
+
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.rent"))
+                        {
+                            if (args.length > 0)
+                            {
+                                String sub = args[0];
+
+                                if (sub.equalsIgnoreCase(ChatBlock.format("commandRentClear")))
+                                {
+                                    Field field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.RENTABLE);
+
+                                    if (field != null)
+                                    {
+                                        field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.SHAREABLE);
+                                    }
+
+                                    if (field != null)
+                                    {
+                                        field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.BUYABLE);
+                                    }
+
+                                    if (field != null)
+                                    {
+                                        if (field.clearRents())
+                                        {
+                                            ChatBlock.send(sender, "rentsCleared");
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.send(sender, "rentsClearedNone");
+                                        }
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "rentsRemovedNone");
+                                        ChatBlock.send(sender, "noPstonesFound");
                                     }
                                 }
-                                else
+                                if (sub.equalsIgnoreCase(ChatBlock.format("commandRentRemove")))
                                 {
-                                    ChatBlock.send(sender, "noPstonesFound");
+                                    Field field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.RENTABLE);
+
+                                    if (field != null)
+                                    {
+                                        field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.SHAREABLE);
+                                    }
+
+                                    if (field != null)
+                                    {
+                                        field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.BUYABLE);
+                                    }
+
+                                    if (field != null)
+                                    {
+                                        if (field.removeRents())
+                                        {
+                                            ChatBlock.send(sender, "rentsRemoved");
+                                        }
+                                        else
+                                        {
+                                            ChatBlock.send(sender, "rentsRemovedNone");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.send(sender, "noPstonesFound");
+                                    }
                                 }
                             }
                         }

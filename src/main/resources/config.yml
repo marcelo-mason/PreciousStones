@@ -386,6 +386,7 @@ settings:
     check-once-per-block-on-move: false
     use-blockids-in-snitches: false
     fence-max-depth: 50
+    use-commands-to-rent: false;
     version: 12
 log:
     bypass-pvp: true

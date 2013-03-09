@@ -23,6 +23,7 @@ import java.util.*;
 public final class SettingsManager
 {
     private int version;
+    private boolean commandsToRentBuy;
     private boolean oncePerBlockOnMove;
     private int maxSizeTranslocation;
     private int maxSizeTranslocationForRedstone;
@@ -256,6 +257,7 @@ public final class SettingsManager
 
         // ********************************** Settings
 
+        commandsToRentBuy = loadBoolean("settings.use-commands-to-rent");
         disableSimpleClanHook = loadBoolean("settings.disable-simpleclans-hook");
         maxSizeTranslocation = loadInt("settings.max-size-translocation");
         maxSizeTranslocationForRedstone = loadInt("settings.max-size-translocation-for-redstone");
@@ -1574,5 +1576,10 @@ public final class SettingsManager
     public int getFenceMaxDepth()
     {
         return fenceMaxDepth;
+    }
+
+    public boolean isCommandsToRentBuy()
+    {
+        return commandsToRentBuy;
     }
 }

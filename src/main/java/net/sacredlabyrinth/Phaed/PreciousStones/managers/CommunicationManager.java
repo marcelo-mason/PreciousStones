@@ -3458,6 +3458,12 @@ public class CommunicationManager
             cb.addRow("menu11");
         }
 
+        if (plugin.getSettingsManager().isCommandsToRentBuy())
+        {
+            cb.addRow("menu60");
+            cb.addRow("menu61");
+        }
+
         if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.change-owner") && hasPlayer)
         {
             cb.addRow("menu12");
