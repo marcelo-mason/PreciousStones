@@ -223,7 +223,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             return settings.getCustomVolume();
         }
 
-        int side = ((settings.getRadius() * 2) + 1);
+        int side = Math.min((settings.getRadius() * 2) + 1, 1);
         return side * side * side;
     }
 
@@ -234,9 +234,9 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public int getActualVolume()
     {
-        int widthX = maxx - minx;
-        int widthZ = maxz - minz;
-        int height = maxy - miny;
+        int widthX = Math.min(maxx - minx, 1);
+        int widthZ = Math.min(maxz - minz, 1);
+        int height = Math.min(maxy - miny, 1);
         return (height * widthX * widthZ);
     }
 
@@ -248,8 +248,8 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public int getFlatVolume()
     {
-        int widthX = maxx - minx;
-        int widthZ = maxz - minz;
+        int widthX = Math.min(maxx - minx, 1);
+        int widthZ = Math.min(maxz - minz, 1);
         return (widthX * widthZ);
     }
 
