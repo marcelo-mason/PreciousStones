@@ -1424,6 +1424,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        // cannot place field in translocation fields
+
         Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
         if (field != null)

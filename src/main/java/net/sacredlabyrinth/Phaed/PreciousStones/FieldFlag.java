@@ -150,7 +150,8 @@ public enum FieldFlag
     SHAREABLE,
     BUYABLE,
     DELETE_IF_NO_PERMISSION,
-    COMMAND_BLACKLISTING
+    COMMAND_BLACKLISTING,
+    COMMAND_BLACKLIST
     ;
 
     /**
@@ -205,7 +206,8 @@ public enum FieldFlag
         FieldFlag.NO_DROPPING_ITEMS,
         FieldFlag.NO_PLAYER_SPRINT,
         FieldFlag.PREVENT_VEHICLE_ENTER,
-        FieldFlag.PREVENT_VEHICLE_EXIT
+        FieldFlag.PREVENT_VEHICLE_EXIT,
+        FieldFlag.COMMAND_BLACKLIST
     };
 
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
@@ -217,8 +219,7 @@ public enum FieldFlag
     private final static FieldFlag[] hidden = new FieldFlag[]
     {
         FieldFlag.ALL,
-        FieldFlag.DYNMAP_NO_TOGGLE,
-        FieldFlag.DYNMAP_NO_TOGGLE,
+        FieldFlag.DYNMAP_NO_TOGGLE
     };
 
     /**
@@ -286,7 +287,8 @@ public enum FieldFlag
         FieldFlag.ENABLE_ON_LOGON,
         FieldFlag.RENTABLE,
         FieldFlag.BUYABLE,
-        FieldFlag.SHAREABLE
+        FieldFlag.SHAREABLE,
+        FieldFlag.COMMAND_BLACKLIST
     };
 
     /**

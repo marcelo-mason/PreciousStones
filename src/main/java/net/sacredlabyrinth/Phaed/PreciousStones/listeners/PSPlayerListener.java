@@ -52,12 +52,29 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            if (field.getSettings().isCanceledCommand(event.getMessage()) || field.isBlacklistedCommand(event.getMessage()))
+            if (field.isBlacklistedCommand(event.getMessage()))
             {
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.commandblacklist"))
                 {
                     ChatBlock.send(player, "commandCanceled");
                     event.setCancelled(true);
+                }
+            }
+        }
+
+        field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.COMMAND_BLACKLIST);
+
+        if (field != null)
+        {
+            if (FieldFlag.COMMAND_BLACKLIST.applies(field, player))
+            {
+                if(field.getSettings().isCanceledCommand(event.getMessage()))
+                {
+                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.commandblacklist"))
+                    {
+                        ChatBlock.send(player, "commandCanceled");
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
