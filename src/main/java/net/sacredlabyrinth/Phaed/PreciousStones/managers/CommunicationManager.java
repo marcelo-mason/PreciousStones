@@ -3100,7 +3100,7 @@ public class CommunicationManager
         if (showLimits)
         {
             cb.setAlignment("l", "c", "c");
-            cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_field"), ChatBlock.format("_count"), ChatBlock.format("_count"));
+            cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_field"), ChatBlock.format("_count"), ChatBlock.format("_limit"));
         }
         else
         {
