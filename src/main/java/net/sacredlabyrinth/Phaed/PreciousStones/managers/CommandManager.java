@@ -1038,7 +1038,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         else if (args.length == 1)
                         {
-                            if (args[0].equals("commandSnitchClear"))
+                            if (args[0].equals(ChatBlock.format("commandSnitchClear")))
                             {
                                 Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.SNITCH);
 
