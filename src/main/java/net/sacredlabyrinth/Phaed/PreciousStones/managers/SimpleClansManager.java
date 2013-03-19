@@ -47,6 +47,12 @@ public final class SimpleClansManager
 
     private boolean hookSimpleClans()
     {
+        try {
+            Class.forName("com.p000ison.dev.simpleclans2.api.SCCore");
+        } catch(ClassNotFoundException e) {
+            return false;
+        }
+
         for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins())
         {
             if (plugin instanceof SCCore)
