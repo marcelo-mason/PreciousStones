@@ -127,7 +127,6 @@ public class FieldSign
             }
         }
 
-        field.setAttachedSign(this);
         return true;
     }
 

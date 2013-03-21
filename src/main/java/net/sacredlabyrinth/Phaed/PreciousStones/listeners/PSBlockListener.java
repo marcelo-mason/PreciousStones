@@ -555,7 +555,6 @@ public class PSBlockListener implements Listener
                 {
                     f.clearRents();
                 }
-                f.resetAttachedSign();
             }
         }
     }
