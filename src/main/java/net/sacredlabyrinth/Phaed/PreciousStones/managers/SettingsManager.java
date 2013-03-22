@@ -119,7 +119,7 @@ public final class SettingsManager
     private int fenceMaxDepth;
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 78, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
     private int[] naturalThroughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 51, 59, 78, 83, 104, 105, 106, 141, 142};
-    private int[] fragileBlocks = new int[]{7, 8, 9, 10, 11, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 97, 100, 123, 124, 129, 152, 153, 155};
+    private int[] fragileBlocks = new int[]{7, 8, 9, 10, 11, 14, 15, 16, 18, 20, 21, 30, 31, 52, 56, 73, 74, 79, 80, 89, 97, 100, 123, 124, 129, 152, 155};
     private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
     private HashSet<Integer> naturalThroughFieldSet = new HashSet<Integer>();
     private HashSet<Integer> fragileBlockSet = new HashSet<Integer>();
