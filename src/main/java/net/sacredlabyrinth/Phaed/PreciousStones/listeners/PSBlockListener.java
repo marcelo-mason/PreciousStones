@@ -912,6 +912,11 @@ public class PSBlockListener implements Listener
             {
                 plugin.getForceFieldManager().add(block, player, (BlockPlaceEvent) event);
             }
+
+            if (event.isCancelled())
+            {
+                return;
+            }
         }
 
         // -------------------------------------------------------------------------------------- placing an unbreakable
@@ -1221,6 +1226,30 @@ public class PSBlockListener implements Listener
             return false;
         }
 
+        // cannot place field in prevent place area
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
+
+        if (field != null)
+        {
+            if (!field.getSettings().inPlaceBlacklist(block))
+            {
+                if (FieldFlag.PREVENT_PLACE.applies(field, player))
+                {
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                    {
+                        plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
+                    }
+                    else
+                    {
+                        plugin.getCommunicationManager().warnPlace(player, block, field);
+                        event.setCancelled(true);
+                        return false;
+                    }
+                }
+            }
+        }
+
         // cannot place a field that conflicts with other fields
 
         Field conflictField = plugin.getForceFieldManager().fieldConflicts(block, player);
@@ -1425,7 +1454,7 @@ public class PSBlockListener implements Listener
 
         // cannot place field in translocation fields
 
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
+        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
         if (field != null)
         {
