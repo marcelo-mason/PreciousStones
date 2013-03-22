@@ -10,6 +10,8 @@ commands:
     description: All of the PreciousStones commands
     usage: Command not recognized
 permissions:
+  preciousstones.benefit.fields:
+    description: Can use /ps fields
   preciousstones.benefit.create.forcefield:
     description: Can create forcefield blocks
   preciousstones.benefit.create.unbreakable:
@@ -186,8 +188,6 @@ permissions:
     description: Can use /ps reload
   preciousstones.admin.setowner:
     description: Can use /ps setowner
-  preciousstones.admin.fields:
-    description: Can use /ps fields
   preciousstones.admin.clean:
     description: Can use /ps clean
   preciousstones.admin.revert:
@@ -260,6 +260,7 @@ permissions:
     default: false
     description: Can use PreciousStones
     children:
+      preciousstones.benefit.fields: true
       preciousstones.benefit.create.forcefield: true
       preciousstones.benefit.create.unbreakable: true
       preciousstones.benefit.heal: true
@@ -369,7 +370,6 @@ permissions:
       preciousstones.admin.list: true
       preciousstones.admin.reload: true
       preciousstones.admin.setowner: true
-      preciousstones.admin.fields: true
       preciousstones.admin.clean: true
       preciousstones.admin.revert: true
       preciousstones.admin.details: true

@@ -3403,6 +3403,11 @@ public class CommunicationManager
         cb.addRow("menuIdentifiers");
         cb.addRow("");
 
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.fields"))
+        {
+            cb.addRow("menu40");
+        }
+
         if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasPlayer)
         {
             cb.addRow("menu1");
@@ -3628,11 +3633,6 @@ public class CommunicationManager
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.reload"))
         {
             cb.addRow("menu39");
-        }
-
-        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.fields"))
-        {
-            cb.addRow("menu40");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.clean"))

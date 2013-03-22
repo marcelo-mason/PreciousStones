@@ -87,6 +87,12 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
+                    else if (cmd.equals(ChatBlock.format("commandFields")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.fields"))
+                    {
+                        plugin.getCommunicationManager().showConfiguredFields(sender);
+                        return true;
+                    }
+
                     else if (cmd.equals(ChatBlock.format("commandOn")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
                         boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
@@ -1907,11 +1913,6 @@ public final class CommandManager implements CommandExecutor
                                 }
                             }
                         }
-                        return true;
-                    }
-                    else if (cmd.equals(ChatBlock.format("commandFields")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.fields"))
-                    {
-                        plugin.getCommunicationManager().showConfiguredFields(sender);
                         return true;
                     }
                     else if (cmd.equals(ChatBlock.format("commandEnableall")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.enableall"))
