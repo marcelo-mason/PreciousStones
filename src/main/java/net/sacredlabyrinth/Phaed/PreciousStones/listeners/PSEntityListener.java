@@ -870,8 +870,8 @@ public class PSEntityListener implements Listener
             if (killer != null)
             {
                 plugin.getSnitchManager().recordSnitchPlayerKill(killer, player);
-                plugin.getCuboidManager().cancelOpenCuboid(player);
             }
+            plugin.getCuboidManager().cancelOpenCuboid(player);
         }
         else
         {
