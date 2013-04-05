@@ -97,8 +97,8 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.maxx = maxx;
         this.maxy = maxy;
         this.maxz = maxz;
-        this.radius = x - minx;
-        this.height = maxy - miny;
+        this.radius = Helper.getWidthFromCoords(x, minx);
+        this.height = Helper.getWidthFromCoords(maxy, miny);
 
         this.velocity = velocity;
         this.owner = owner;
@@ -233,9 +233,9 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public int getActualVolume()
     {
-        int widthX = Math.max(maxx - minx, 1);
-        int widthZ = Math.max(maxz - minz, 1);
-        int height = Math.max(maxy - miny, 1);
+        int widthX = Helper.getWidthFromCoords(maxx, minx);
+        int widthZ = Helper.getWidthFromCoords(maxz, minz);
+        int height = Helper.getWidthFromCoords(maxy, miny);
         return (height * widthX * widthZ);
     }
 
@@ -247,8 +247,8 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public int getFlatVolume()
     {
-        int widthX = Math.min(maxx - minx, 1);
-        int widthZ = Math.min(maxz - minz, 1);
+        int widthX = Helper.getWidthFromCoords(maxx, minx);
+        int widthZ = Helper.getWidthFromCoords(maxz, minz);
         return (widthX * widthZ);
     }
 
@@ -289,7 +289,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.maxy = maxY;
         this.maxz = maxZ;
 
-        this.radius = (((maxx - minx - 1) + (maxz - minz - 1)) / 2) / 2;
+        this.radius = (((Helper.getWidthFromCoords(maxx, minx) - 1) + (Helper.getWidthFromCoords(maxz, minz) - 1)) / 2) / 2;
         this.height = maxy - miny;
 
         dirty.add(DirtyFieldReason.DIMENSIONS);
@@ -976,7 +976,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         if (c == 0)
         {
-            this.getWorld().compareTo(field.getWorld());
+            c = this.getWorld().compareTo(field.getWorld());
         }
 
         return c;

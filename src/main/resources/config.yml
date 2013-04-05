@@ -93,7 +93,7 @@ force-field-blocks:
     prevent-mob-damage: true
     protect-animals: true
     protect-mobs: true
-    protect-nps: true
+    protect-villagers: true
     hidable: true
     cuboid: true
     mask-on-disabled: 80
@@ -109,6 +109,8 @@ force-field-blocks:
 -   title: Creature Repeller
     block: 30
     radius: 20
+    single-use: true
+    prevent-mob-damage: true
     prevent-mob-spawn: true
     prevent-animal-spawn: true
     remove-mob: true

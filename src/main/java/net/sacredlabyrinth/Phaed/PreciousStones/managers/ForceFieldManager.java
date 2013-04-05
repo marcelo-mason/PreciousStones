@@ -1599,25 +1599,40 @@ public final class ForceFieldManager
 
         Field absoluteSmallest = getSmallestVolumeField(allFields);
 
+        if (absoluteSmallest != null)
+        {
+            PreciousStones.debug("absoluteSmallest: %s", absoluteSmallest.getType());
+        }
+
         // find absolute smallest
 
-        if (absoluteSmallest.hasFlag(FieldFlag.PLOT))
+        if (absoluteSmallest != null)
         {
-            // if it doesn't have the flag don't return anything at all
-
-            if (!absoluteSmallest.hasFlag(flag))
+            if (absoluteSmallest.hasFlag(FieldFlag.PLOT))
             {
-                return null;
-            }
+                // if it doesn't have the flag don't return anything at all
 
-            return absoluteSmallest;
+                if (!absoluteSmallest.hasFlag(flag))
+                {
+                    return null;
+                }
+
+                return absoluteSmallest;
+            }
         }
 
         // otherwise return the smallest that matches that flag
 
         List<Field> fields = getSourceFieldsInChunk(cv, flag, filters);
 
-        return getSmallestVolumeField(fields);
+        Field smallest = getSmallestVolumeField(fields);
+
+        if (smallest != null)
+        {
+            PreciousStones.debug("smallest: %s", smallest.getType());
+        }
+
+        return smallest;
     }
 
     /**
@@ -1641,6 +1656,9 @@ public final class ForceFieldManager
             {
                 Integer o1 = f1.getFlatVolume();
                 Integer o2 = f2.getFlatVolume();
+
+                PreciousStones.debug("%s: %s", f1.getType(), o1);
+                PreciousStones.debug("%s: %s", f2.getType(), o2);
 
                 return o1.compareTo(o2);
             }

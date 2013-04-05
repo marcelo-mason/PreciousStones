@@ -792,4 +792,44 @@ public class Helper
 
         return Integer.parseInt(intString);
     }
+
+    public static int getWidthFromCoords(int a, int b)
+    {
+        if (a < 0 && b < 0)
+        {
+            if (a < b)
+            {
+                return Math.abs(a - b);
+            }
+            else
+            {
+                return Math.abs(b - a);
+            }
+
+        }
+
+        if (a >= 0 && b >= 0)
+        {
+            if (a > b)
+            {
+                return Math.abs(a - b);
+            }
+            else
+            {
+                return Math.abs(b - a);
+            }
+        }
+
+        if (a < 0 && b >= 0)
+        {
+            return Math.abs(a - b);
+        }
+
+        if (a >= 0 && b < 0)
+        {
+            return Math.abs(b - a);
+        }
+
+        return 0;
+    }
 }
