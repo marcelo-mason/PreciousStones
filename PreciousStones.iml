@@ -34,7 +34,7 @@
     <orderEntry type="library" name="Maven: org.mcstats:metrics:1.1" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.gmail.nossr50.mcMMO:mcMMO:1.3.13-dev" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.getspout:spoutplugin:1.4.7-R1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.getspout:spoutplugin:1.5.1-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.h31ix.anticheat:AntiCheat:1.5.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.p000ison.dev.simpleclans2:SimpleClans2:1.0-SNAPSHOT" level="project" />

@@ -319,8 +319,6 @@ public class TargetBlock
      */
     public boolean setTargetBlock(int typeID)
     {
-	if (Material.getMaterial(typeID) != null)
-	{
 	    this.reset();
 	    while (getNextBlock() != null && getCurrentBlock().getTypeId() == 0);
 	    if (getCurrentBlock() != null)
@@ -329,8 +327,7 @@ public class TargetBlock
 		blk.setTypeId(typeID);
 		return true;
 	    }
-	}
-	return false;
+        return false;
     }
 
     /**
@@ -503,16 +500,14 @@ public class TargetBlock
      */
     public boolean setCurrentBlock(int typeID)
     {
-	if (Material.getMaterial(typeID) != null)
-	{
 	    Block blk = getCurrentBlock();
 	    if (blk != null)
 	    {
 		blk.setTypeId(typeID);
 		return true;
 	    }
-	}
-	return false;
+
+        return false;
     }
 
     /**

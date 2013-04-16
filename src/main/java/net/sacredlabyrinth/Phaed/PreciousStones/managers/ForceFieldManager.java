@@ -906,9 +906,9 @@ public final class ForceFieldManager
             return false;
         }
 
-        Material topmat = block.getRelative(BlockFace.UP).getType();
+        int topId = block.getRelative(BlockFace.UP).getTypeId();
 
-        if (topmat.equals(Material.STONE_PLATE) || topmat.equals(Material.WOOD_PLATE))
+        if (topId == 70 || topId == 72) // plates
         {
             return true;
         }
@@ -918,23 +918,24 @@ public final class ForceFieldManager
         for (BlockFace face : faces)
         {
             Block faceblock = block.getRelative(face);
+            int faceId = faceblock.getTypeId();
 
-            if (faceblock.getType().equals(Material.REDSTONE_TORCH_OFF))
+            if (faceId == 75)  // redstone torch
             {
                 return true;
             }
 
-            if (faceblock.getType().equals(Material.STONE_BUTTON))
+            if (faceId == 77) // stone button
             {
                 return true;
             }
 
-            if (faceblock.getType().equals(Material.LEVER) && faceblock.getBlockPower() == 0)
+            if (faceId == 69 /* lever */ && faceblock.getBlockPower() == 0)
             {
                 return true;
             }
 
-            if (faceblock.getType().equals(Material.REDSTONE_WIRE) && faceblock.getBlockPower() == 0)
+            if (faceId == 55 /* redstone wire */ && faceblock.getBlockPower() == 0)
             {
                 return true;
             }
@@ -947,8 +948,9 @@ public final class ForceFieldManager
         for (BlockFace face : upfaces)
         {
             Block faceblock = upblock.getRelative(face);
+            int faceId = faceblock.getTypeId();
 
-            if (faceblock.getType().equals(Material.REDSTONE_WIRE) && faceblock.getBlockPower() == 0)
+            if (faceId == 55 /* redstone wire */ && faceblock.getBlockPower() == 0)
             {
                 return true;
             }
@@ -1014,7 +1016,7 @@ public final class ForceFieldManager
         {
             Block source = block.getRelative(face);
 
-            if (source.getType().equals(Material.REDSTONE_WIRE))
+            if (source.getTypeId() == 55) // redstone wire
             {
                 if (source.getBlockPower() > 0)
                 {
@@ -1031,7 +1033,7 @@ public final class ForceFieldManager
         {
             Block faceblock = upblock.getRelative(face);
 
-            if (faceblock.getType().equals(Material.REDSTONE_WIRE))
+            if (faceblock.getTypeId() == 55) // redstone wire
             {
                 if (faceblock.getBlockPower() > 0)
                 {
@@ -1604,7 +1606,7 @@ public final class ForceFieldManager
             PreciousStones.debug("absoluteSmallest: %s", absoluteSmallest.getType());
         }
 
-        // find absolute smallest
+        // find absolute smallest (regardless of whether it contains the queried flag or not)
 
         if (absoluteSmallest != null)
         {

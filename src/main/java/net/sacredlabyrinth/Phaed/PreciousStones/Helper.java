@@ -265,6 +265,22 @@ public class Helper
     /**
      * Convert block type names to friendly format
      *
+     * @param typeId
+     * @return
+     */
+    public static String friendlyBlockType(int typeId)
+    {
+        if (Material.getMaterial(typeId) == null)
+        {
+            return typeId + "";
+        }
+
+        return friendlyBlockType(Material.getMaterial(typeId).toString());
+    }
+
+    /**
+     * Convert block type names to friendly format
+     *
      * @param type
      * @return
      */
@@ -725,7 +741,7 @@ public class Helper
 
     public static boolean isDoor(Block block)
     {
-        return block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR);
+        return block.getTypeId() == 64 || block.getTypeId() == 71 || block.getTypeId() == 330; // doors
     }
 
     public static String getDetails(Block block)
@@ -831,5 +847,21 @@ public class Helper
         }
 
         return 0;
+    }
+
+    /**
+     * Returns the material string if its a vanilla block, the id if not
+     *
+     * @param typeId
+     * @return
+     */
+    public static String getMaterialString(int typeId)
+    {
+        if (Material.getMaterial(typeId) == null)
+        {
+            return typeId + "";
+        }
+
+        return Material.getMaterial(typeId).toString();
     }
 }

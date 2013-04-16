@@ -2,7 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.getspout.spoutapi.block.SpoutBlock;
@@ -200,8 +199,7 @@ public class BlockTypeEntry
             return true;
         }
 
-        Material material = Material.getMaterial(getTypeId());
-        return material != null;
+        return getTypeId() >= 0;
     }
 
     public String getFriendly()
@@ -212,7 +210,7 @@ public class BlockTypeEntry
         }
         else
         {
-            return Helper.friendlyBlockType(Material.getMaterial(getTypeId()).toString());
+            return Helper.friendlyBlockType(getTypeId());
         }
     }
 

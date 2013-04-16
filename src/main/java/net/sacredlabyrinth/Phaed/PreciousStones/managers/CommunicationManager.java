@@ -2982,15 +2982,9 @@ public class CommunicationManager
             String customHeight = fs.getHeight() > 0 ? " " + ChatBlock.format("headerConfiguredFields2", fs.getHeight()) : "";
 
             int id = fs.getTypeId();
-            Material material = Material.getMaterial(id);
             BlockTypeEntry entry = new BlockTypeEntry(fs.getTypeId(), fs.getData());
 
-            if (material == null)
-            {
-                continue;
-            }
-
-            cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), Helper.friendlyBlockType(material.toString()), entry.toString(), fs.getRadius()) + customHeight);
+            cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), Helper.friendlyBlockType(id), entry.toString(), fs.getRadius()) + customHeight);
         }
 
         if (cb.size() > 0)

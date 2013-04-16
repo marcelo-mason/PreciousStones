@@ -7,7 +7,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -908,307 +907,312 @@ public class PSBlockListener implements Listener
 
         if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
         {
+            PreciousStones.debug("before check");
             if (placingFieldChecks(player, block, event))
             {
+                PreciousStones.debug("after check");
                 plugin.getForceFieldManager().add(block, player, (BlockPlaceEvent) event);
             }
 
             if (event.isCancelled())
             {
+                PreciousStones.debug("post check canceleld");
                 return;
             }
         }
-
-        // -------------------------------------------------------------------------------------- placing an unbreakable
-
-        else if (!isDisabled && plugin.getSettingsManager().isUnbreakableType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.unbreakable"))
+        else
         {
-            Field conflictField = plugin.getForceFieldManager().unbreakableConflicts(block, player);
+            // -------------------------------------------------------------------------------------- placing an unbreakable
 
-            if (conflictField != null)
+            if (!isDisabled && plugin.getSettingsManager().isUnbreakableType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.unbreakable"))
             {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                Field conflictField = plugin.getForceFieldManager().unbreakableConflicts(block, player);
+
+                if (conflictField != null)
                 {
-                    if (plugin.getUnbreakableManager().add(block, player))
-                    {
-                        plugin.getCommunicationManager().notifyBypassPlaceU(player, block, conflictField);
-                    }
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.getCommunicationManager().warnConflictU(player, block, conflictField);
-                }
-            }
-            else
-            {
-                if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
-                {
-                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
                     {
                         if (plugin.getUnbreakableManager().add(block, player))
                         {
-                            plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
+                            plugin.getCommunicationManager().notifyBypassPlaceU(player, block, conflictField);
                         }
                     }
                     else
                     {
                         event.setCancelled(true);
-                        plugin.getCommunicationManager().warnUnbreakablePlaceTouchingUnprotectable(player, block);
+                        plugin.getCommunicationManager().warnConflictU(player, block, conflictField);
                     }
                 }
                 else
                 {
-                    if (plugin.getUnbreakableManager().add(block, player))
+                    if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
                     {
-                        plugin.getCommunicationManager().notifyPlaceU(player, block);
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                        {
+                            if (plugin.getUnbreakableManager().add(block, player))
+                            {
+                                plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
+                            }
+                        }
+                        else
+                        {
+                            event.setCancelled(true);
+                            plugin.getCommunicationManager().warnUnbreakablePlaceTouchingUnprotectable(player, block);
+                        }
+                    }
+                    else
+                    {
+                        if (plugin.getUnbreakableManager().add(block, player))
+                        {
+                            plugin.getCommunicationManager().notifyPlaceU(player, block);
+                        }
                     }
                 }
+                return;
             }
-            return;
-        }
 
-        // -------------------------------------------------------------------------------------- placing an unprotectable
+            // -------------------------------------------------------------------------------------- placing an unprotectable
 
-        if (plugin.getSettingsManager().isUnprotectableType(block))
-        {
-            Block unbreakableblock = plugin.getUnbreakableManager().touchingUnbrakableBlock(block);
-
-            if (unbreakableblock != null)
+            if (plugin.getSettingsManager().isUnprotectableType(block))
             {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                Block unbreakableblock = plugin.getUnbreakableManager().touchingUnbrakableBlock(block);
+
+                if (unbreakableblock != null)
                 {
-                    plugin.getCommunicationManager().notifyUnbreakableBypassUnprotectableTouching(player, block, unbreakableblock);
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                    {
+                        plugin.getCommunicationManager().notifyUnbreakableBypassUnprotectableTouching(player, block, unbreakableblock);
+                    }
+                    else
+                    {
+                        event.setCancelled(true);
+                        plugin.getCommunicationManager().warnUnbreakablePlaceUnprotectableTouching(player, block, unbreakableblock);
+                        return;
+                    }
                 }
-                else
+
+                Block fieldblock = plugin.getForceFieldManager().touchingFieldBlock(block);
+
+                if (fieldblock != null)
                 {
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                    {
+                        plugin.getCommunicationManager().notifyFieldBypassUnprotectableTouching(player, block, fieldblock);
+                    }
+                    else
+                    {
+                        event.setCancelled(true);
+                        plugin.getCommunicationManager().warnFieldPlaceUnprotectableTouching(player, block, fieldblock);
+                        return;
+                    }
+                }
+
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_UNPROTECTABLE);
+
+                if (field != null)
+                {
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                    {
+                        plugin.getCommunicationManager().notifyBypassPlaceUnprotectableInField(player, block, field);
+                    }
+                    else
+                    {
+                        event.setCancelled(true);
+                        plugin.getCommunicationManager().warnPlaceUnprotectableInField(player, block, field);
+                    }
+                }
+
+                field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
+
+                if (field != null)
+                {
+                    ChatBlock.send(player, "noUnbreakableInsideTranslocation");
                     event.setCancelled(true);
-                    plugin.getCommunicationManager().warnUnbreakablePlaceUnprotectableTouching(player, block, unbreakableblock);
+                }
+            }
+
+            // ------------------------------------------------------------------------------------------- placing a chest next to a field
+
+            if (block.getTypeId() == 54)
+            {
+                Field field = plugin.getForceFieldManager().getConflictSourceField(block.getLocation(), player.getName(), FieldFlag.ALL);
+
+                boolean conflicted = false;
+
+                if (block.getRelative(BlockFace.EAST).getTypeId() == 54)
+                {
+                    Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
+
+                    if (field1 != null)
+                    {
+                        if (field == null || field != field1)
+                        {
+                            conflicted = true;
+                        }
+                    }
+                }
+
+                if (block.getRelative(BlockFace.WEST).getTypeId() == 54)
+                {
+                    Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
+
+                    if (field2 != null)
+                    {
+                        if (field == null || field != field2)
+                        {
+                            conflicted = true;
+                        }
+                    }
+                }
+
+                if (block.getRelative(BlockFace.NORTH).getTypeId() == 54)
+                {
+                    Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
+
+                    if (field3 != null)
+                    {
+                        if (field == null || field != field3)
+                        {
+                            conflicted = true;
+                        }
+                    }
+                }
+
+                if (block.getRelative(BlockFace.SOUTH).getTypeId() == 54)
+                {
+                    Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
+
+                    if (field4 != null)
+                    {
+                        if (field == null || field != field4)
+                        {
+                            conflicted = true;
+                        }
+                    }
+                }
+
+                if (conflicted)
+                {
+                    ChatBlock.send(player, "noChestNextToField");
+                    event.setCancelled(true);
                     return;
                 }
             }
 
-            Block fieldblock = plugin.getForceFieldManager().touchingFieldBlock(block);
+            // -------------------------------------------------------------------------------------- placing in a prevent place area
 
-            if (fieldblock != null)
-            {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
-                {
-                    plugin.getCommunicationManager().notifyFieldBypassUnprotectableTouching(player, block, fieldblock);
-                }
-                else
-                {
-                    event.setCancelled(true);
-                    plugin.getCommunicationManager().warnFieldPlaceUnprotectableTouching(player, block, fieldblock);
-                    return;
-                }
-            }
-
-            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_UNPROTECTABLE);
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
 
             if (field != null)
             {
-                if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.unprotectable"))
+                if (!field.getSettings().inPlaceBlacklist(block))
                 {
-                    plugin.getCommunicationManager().notifyBypassPlaceUnprotectableInField(player, block, field);
+                    if (FieldFlag.PREVENT_PLACE.applies(field, player))
+                    {
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                        {
+                            plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
+                        }
+                        else
+                        {
+                            event.setCancelled(true);
+                            plugin.getCommunicationManager().warnPlace(player, block, field);
+                        }
+                    }
+                }
+            }
+
+            // -------------------------------------------------------------------------------------- placing in a grief revert area
+
+            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
+
+            if (field != null)
+            {
+                if (FieldFlag.GRIEF_REVERT.applies(field, player))
+                {
+                    if (field.hasFlag(FieldFlag.PLACE_GRIEF))
+                    {
+                        if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
+                        {
+                            if (event instanceof BlockPlaceEvent)
+                            {
+                                BlockPlaceEvent e = (BlockPlaceEvent) event;
+                                BlockState blockState = e.getBlockReplacedState();
+
+                                plugin.getGriefUndoManager().addBlock(field, blockState);
+                            }
+
+                            plugin.getStorageManager().offerGrief(field);
+                        }
+                    }
+                    else
+                    {
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
+                        {
+                            plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
+                            plugin.getStorageManager().deleteBlockGrief(block);
+                        }
+                        else
+                        {
+                            event.setCancelled(true);
+                            plugin.getCommunicationManager().warnPlace(player, block, field);
+                        }
+                    }
                 }
                 else
                 {
-                    event.setCancelled(true);
-                    plugin.getCommunicationManager().warnPlaceUnprotectableInField(player, block, field);
+                    plugin.getStorageManager().deleteBlockGrief(block);
                 }
             }
+
+            // -------------------------------------------------------------------------------------- placing in a translocation area
 
             field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
 
             if (field != null)
             {
-                ChatBlock.send(player, "noUnbreakableInsideTranslocation");
-                event.setCancelled(true);
-            }
-        }
-
-        // ------------------------------------------------------------------------------------------- placing a chest next to a field
-
-        if (block.getType().equals(Material.CHEST))
-        {
-            Field field = plugin.getForceFieldManager().getConflictSourceField(block.getLocation(), player.getName(), FieldFlag.ALL);
-
-            boolean conflicted = false;
-
-            if (block.getRelative(BlockFace.EAST).getType().equals(Material.CHEST))
-            {
-                Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
-
-                if (field1 != null)
+                if (FieldFlag.TRANSLOCATION.applies(field, player))
                 {
-                    if (field == null || field != field1)
+                    if (field.getSettings().canTranslocate(new BlockTypeEntry(block)))
                     {
-                        conflicted = true;
-                    }
-                }
-            }
-
-            if (block.getRelative(BlockFace.WEST).getType().equals(Material.CHEST))
-            {
-                Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
-
-                if (field2 != null)
-                {
-                    if (field == null || field != field2)
-                    {
-                        conflicted = true;
-                    }
-                }
-            }
-
-            if (block.getRelative(BlockFace.NORTH).getType().equals(Material.CHEST))
-            {
-                Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
-
-                if (field3 != null)
-                {
-                    if (field == null || field != field3)
-                    {
-                        conflicted = true;
-                    }
-                }
-            }
-
-            if (block.getRelative(BlockFace.SOUTH).getType().equals(Material.CHEST))
-            {
-                Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
-
-                if (field4 != null)
-                {
-                    if (field == null || field != field4)
-                    {
-                        conflicted = true;
-                    }
-                }
-            }
-
-            if (conflicted)
-            {
-                ChatBlock.send(player, "noChestNextToField");
-                event.setCancelled(true);
-                return;
-            }
-        }
-
-        // -------------------------------------------------------------------------------------- placing in a prevent place area
-
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
-
-        if (field != null)
-        {
-            if (!field.getSettings().inPlaceBlacklist(block))
-            {
-                if (FieldFlag.PREVENT_PLACE.applies(field, player))
-                {
-                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
-                    {
-                        plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
-                    }
-                    else
-                    {
-                        event.setCancelled(true);
-                        plugin.getCommunicationManager().warnPlace(player, block, field);
-                    }
-                }
-            }
-        }
-
-        // -------------------------------------------------------------------------------------- placing in a grief revert area
-
-        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
-
-        if (field != null)
-        {
-            if (FieldFlag.GRIEF_REVERT.applies(field, player))
-            {
-                if (field.hasFlag(FieldFlag.PLACE_GRIEF))
-                {
-                    if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
-                    {
-                        if (event instanceof BlockPlaceEvent)
+                        if (field.getName().length() == 0)
                         {
-                            BlockPlaceEvent e = (BlockPlaceEvent) event;
-                            BlockState blockState = e.getBlockReplacedState();
-
-                            plugin.getGriefUndoManager().addBlock(field, blockState);
+                            ChatBlock.send(player, "translocatorNameToBegin");
+                            event.setCancelled(true);
+                            return;
                         }
 
-                        plugin.getStorageManager().offerGrief(field);
-                    }
-                }
-                else
-                {
-                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
-                    {
-                        plugin.getCommunicationManager().notifyBypassPlace(player, block, field);
-                        plugin.getStorageManager().deleteBlockGrief(block);
-                    }
-                    else
-                    {
-                        event.setCancelled(true);
-                        plugin.getCommunicationManager().warnPlace(player, block, field);
-                    }
-                }
-            }
-            else
-            {
-                plugin.getStorageManager().deleteBlockGrief(block);
-            }
-        }
-
-        // -------------------------------------------------------------------------------------- placing in a translocation area
-
-        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
-
-        if (field != null)
-        {
-            if (FieldFlag.TRANSLOCATION.applies(field, player))
-            {
-                if (field.getSettings().canTranslocate(new BlockTypeEntry(block)))
-                {
-                    if (field.getName().length() == 0)
-                    {
-                        ChatBlock.send(player, "translocatorNameToBegin");
-                        event.setCancelled(true);
-                        return;
-                    }
-
-                    if (field.isOverTranslocationMax(1))
-                    {
-                        ChatBlock.send(player, "translocationReachedSize");
-                        event.setCancelled(true);
-                        return;
-                    }
-
-                    final Field finalField = field;
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                    {
-                        public void run()
+                        if (field.isOverTranslocationMax(1))
                         {
-                            plugin.getTranslocationManager().addBlock(finalField, block);
-                            plugin.getTranslocationManager().flashFieldBlock(finalField, player);
+                            ChatBlock.send(player, "translocationReachedSize");
+                            event.setCancelled(true);
+                            return;
                         }
-                    }, 10);
+
+                        final Field finalField = field;
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                        {
+                            public void run()
+                            {
+                                plugin.getTranslocationManager().addBlock(finalField, block);
+                                plugin.getTranslocationManager().flashFieldBlock(finalField, player);
+                            }
+                        }, 10);
+                    }
                 }
             }
-        }
 
-        // -------------------------------------------------------------------------------- placing inside a teleport field
+            // -------------------------------------------------------------------------------- placing inside a teleport field
 
-        field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.TELEPORT_ON_BLOCK_PLACE);
+            field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.TELEPORT_ON_BLOCK_PLACE);
 
-        if (field != null)
-        {
-            if (FieldFlag.TELEPORT_ON_BLOCK_PLACE.applies(field, player))
+            if (field != null)
             {
-                event.setCancelled(true);
-                plugin.getTeleportationManager().teleport(player, field, "teleportAnnouncePlace");
+                if (FieldFlag.TELEPORT_ON_BLOCK_PLACE.applies(field, player))
+                {
+                    event.setCancelled(true);
+                    plugin.getTeleportationManager().teleport(player, field, "teleportAnnouncePlace");
+                }
             }
         }
 
@@ -1244,6 +1248,7 @@ public class PSBlockListener implements Listener
                     {
                         plugin.getCommunicationManager().warnPlace(player, block, field);
                         event.setCancelled(true);
+                        PreciousStones.debug("1");
                         return false;
                     }
                 }
@@ -1257,6 +1262,7 @@ public class PSBlockListener implements Listener
         if (conflictField != null)
         {
             event.setCancelled(true);
+            PreciousStones.debug("2");
             plugin.getCommunicationManager().warnConflictFF(player, block, conflictField);
             return false;
         }
@@ -1289,6 +1295,7 @@ public class PSBlockListener implements Listener
             {
                 plugin.getCommunicationManager().warnFieldPlaceTouchingUnprotectable(player, block);
                 event.setCancelled(true);
+                PreciousStones.debug("3");
                 return false;
             }
 
@@ -1303,6 +1310,7 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "mustBeAbove", fs.getMustBeAbove());
                 event.setCancelled(true);
+                PreciousStones.debug("4");
                 return false;
             }
         }
@@ -1313,6 +1321,7 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "mustBeBelow", fs.getMustBeBelow());
                 event.setCancelled(true);
+                PreciousStones.debug("5");
                 return false;
             }
         }
@@ -1327,6 +1336,7 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "noConfiscatingBelowField");
                 event.setCancelled(true);
+                PreciousStones.debug("6");
                 return false;
             }
 
@@ -1334,6 +1344,7 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "noConfiscatingBelowUnbreakable");
                 event.setCancelled(true);
+                PreciousStones.debug("7");
                 return false;
             }
         }
@@ -1348,6 +1359,7 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "noFieldNearPlayer");
                 event.setCancelled(true);
+                PreciousStones.debug("8");
                 return false;
             }
         }
@@ -1360,6 +1372,7 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "noPlaceInWG");
                 event.setCancelled(true);
+                PreciousStones.debug("9");
                 return false;
             }
         }
@@ -1376,6 +1389,7 @@ public class PSBlockListener implements Listener
                 {
                     plugin.getCommunicationManager().warnPlaceFieldInUnprotectable(player, foundblock, block);
                     event.setCancelled(true);
+                    PreciousStones.debug("10");
                     return false;
                 }
 
@@ -1419,6 +1433,7 @@ public class PSBlockListener implements Listener
                 {
                     ChatBlock.send(player, "fieldInsideAllowedInside", fs.getTitle(), fs.getAllowedOnlyInsideString());
                     event.setCancelled(true);
+                    PreciousStones.debug("11");
                     return false;
                 }
             }
@@ -1447,6 +1462,7 @@ public class PSBlockListener implements Listener
                 {
                     ChatBlock.send(player, "fieldOutsideAllowedOutside", fs.getTitle(), fs.getAllowedOnlyOutsideString());
                     event.setCancelled(true);
+                    PreciousStones.debug("12");
                     return false;
                 }
             }
@@ -1460,6 +1476,19 @@ public class PSBlockListener implements Listener
         {
             ChatBlock.send(player, "translocationNoFields");
             event.setCancelled(true);
+            PreciousStones.debug("13");
+            return false;
+        }
+
+        // cannot place field in grief revert fields
+
+        field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
+
+        if (field != null)
+        {
+            ChatBlock.send(player, "translocationNoFields");
+            event.setCancelled(true);
+            PreciousStones.debug("14");
             return false;
         }
 

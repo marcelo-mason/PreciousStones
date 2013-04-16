@@ -10,7 +10,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ItemStackEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -134,27 +133,27 @@ public class ConfiscationManager
 
             for (ItemStackEntry e : confiscated)
             {
-                msg += e.getAmount() + " " + Helper.friendlyBlockType(Material.getMaterial(e.getTypeId()).name()) + ", ";
+                msg += e.getAmount() + " " + Helper.friendlyBlockType(e.getTypeId()) + ", ";
             }
 
             if (helmet != null)
             {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(helmet.getTypeId()).name()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(helmet.getTypeId()) + ", ";
             }
 
             if (chestplate != null)
             {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(chestplate.getTypeId()).name()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(chestplate.getTypeId()) + ", ";
             }
 
             if (leggings != null)
             {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(leggings.getTypeId()).name()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(leggings.getTypeId()) + ", ";
             }
 
             if (boots != null)
             {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(boots.getTypeId()).name()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(boots.getTypeId()) + ", ";
             }
 
             msg = Helper.stripTrailing(msg, ", ");
@@ -220,27 +219,27 @@ public class ConfiscationManager
 
             for (ItemStackEntry e : confiscated)
             {
-                msg += e.getAmount() + " " + Helper.friendlyBlockType(Material.getMaterial(e.getTypeId()).name()) + ", ";
+                msg += e.getAmount() + " " + Helper.friendlyBlockType(e.getTypeId()) + ", ";
             }
 
             if (helmet != null)
             {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(helmet.getTypeId()).name()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(helmet.getTypeId()) + ", ";
             }
 
             if (chestplate != null)
             {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(chestplate.getTypeId()).name()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(chestplate.getTypeId()) + ", ";
             }
 
             if (leggings != null)
             {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(leggings.getTypeId()).name()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(leggings.getTypeId()) + ", ";
             }
 
             if (boots != null)
             {
-                msg += "1 " + Helper.friendlyBlockType(Material.getMaterial(boots.getTypeId()).name()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(boots.getTypeId()) + ", ";
             }
 
             msg = Helper.stripTrailing(msg, ", ");

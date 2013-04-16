@@ -6,7 +6,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Rollback;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.GriefBlock;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -106,14 +105,14 @@ public final class GriefUndoManager
 
         // record wood doors in correct order
 
-        if (block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR))
+        if (block.getTypeId() == 64 || block.getTypeId() == 71 || block.getTypeId() == 330) // doors
         {
             field.addGriefBlock(new GriefBlock(block));
 
             Block bottom = block.getRelative(BlockFace.DOWN);
             Block top = block.getRelative(BlockFace.UP);
 
-            if (bottom.getType().equals(Material.WOODEN_DOOR) || bottom.getType().equals(Material.IRON_DOOR))
+            if (bottom.getTypeId() == 64 || bottom.getTypeId() == 71 || bottom.getTypeId() == 330) // doors
             {
                 field.addGriefBlock(new GriefBlock(bottom));
                 if (clear)
@@ -123,7 +122,7 @@ public final class GriefUndoManager
                 }
             }
 
-            if (top.getType().equals(Material.WOODEN_DOOR) || top.getType().equals(Material.IRON_DOOR))
+            if (top.getTypeId() == 64 || top.getTypeId() == 71 || top.getTypeId() == 330) // doors
             {
                 field.addGriefBlock(new GriefBlock(top));
                 if (clear)

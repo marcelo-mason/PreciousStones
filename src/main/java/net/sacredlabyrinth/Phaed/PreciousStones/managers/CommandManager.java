@@ -7,7 +7,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -1130,7 +1129,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (count > 0)
                                         {
-                                            ChatBlock.send(sender, "translocationDeletedBlocks", count, Helper.friendlyBlockType(Material.getMaterial(entry.getTypeId()).toString()), field.getName());
+                                            ChatBlock.send(sender, "translocationDeletedBlocks", count, Helper.friendlyBlockType(entry.getTypeId()), field.getName());
                                         }
                                         else
                                         {
@@ -1479,12 +1478,12 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fields > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedFields", fields, Material.getMaterial(type.getTypeId()));
+                                        ChatBlock.send(sender, "deletedFields", fields, Helper.getMaterialString(type.getTypeId()));
                                     }
 
                                     if (ubs > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedUnbreakables", ubs, Material.getMaterial(type.getTypeId()));
+                                        ChatBlock.send(sender, "deletedUnbreakables", ubs, Helper.getMaterialString(type.getTypeId()));
                                     }
 
                                     if (ubs == 0 && fields == 0)
@@ -1532,7 +1531,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fields > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedFields", fields, Material.getMaterial(type.getTypeId()));
+                                        ChatBlock.send(sender, "deletedFields", fields, Helper.getMaterialString(type.getTypeId()));
                                     }
                                     else
                                     {

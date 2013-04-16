@@ -20,6 +20,7 @@ force-field-blocks:
     prevent-flow: true
     protect-crops: true
     prevent-use: [23, 54, 61, 62]
+    prevent-place-blacklist: [153]
     ?welcome-message: true
     ?farewell-message: true
     ?prevent-portal-enter: true
@@ -41,6 +42,7 @@ force-field-blocks:
     custom-height: 15
     allowed-only-inside: ["City Protection"]
     plot: true
+    no-conflict: true
     prevent-fire: true
     prevent-place: true
     prevent-destroy: true
