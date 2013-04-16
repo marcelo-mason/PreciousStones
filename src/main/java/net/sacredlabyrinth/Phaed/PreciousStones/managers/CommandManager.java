@@ -302,7 +302,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length >= 1)
                         {
-                            if ((args[0]).equals("commandCuboidOpen"))
+                            if ((args[0]).equals(ChatBlock.format("commandCuboidOpen")))
                             {
                                 Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
 
@@ -321,7 +321,7 @@ public final class CommandManager implements CommandExecutor
                                     plugin.getCommunicationManager().showNotFound(player);
                                 }
                             }
-                            else if ((args[0]).equals("commandCuboidClose"))
+                            else if ((args[0]).equals(ChatBlock.format("commandCuboidClose")))
                             {
                                 plugin.getCuboidManager().closeCuboid(player);
                             }
