@@ -222,8 +222,15 @@ public class Field extends AbstractVec implements Comparable<Field>
             return settings.getCustomVolume();
         }
 
-        int side = Math.max ((settings.getRadius() * 2) + 1, 1);
-        return side * side * side;
+        int side = Math.max((settings.getRadius() * 2) + 1, 1);
+        int h = side;
+
+        if (height > 0)
+        {
+            h = height;
+        }
+
+        return side * side * h;
     }
 
     /**
