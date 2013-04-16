@@ -3581,6 +3581,7 @@ public class CommunicationManager
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasPlayer)
         {
             cb.addRow("menu29");
+            cb.addRow("menu62");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.reset") && hasPlayer)
