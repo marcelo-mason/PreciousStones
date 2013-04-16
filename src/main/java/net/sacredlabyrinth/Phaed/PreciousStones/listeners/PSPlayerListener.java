@@ -1090,6 +1090,7 @@ public class PSPlayerListener implements Listener
                                             }
                                         }
 
+                                        event.setCancelled(true);
                                         plugin.getCuboidManager().openCuboid(player, field);
                                     }
                                     return;
