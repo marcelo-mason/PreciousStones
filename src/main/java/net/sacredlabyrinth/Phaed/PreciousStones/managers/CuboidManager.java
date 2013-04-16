@@ -335,7 +335,7 @@ public class CuboidManager
 
             plugin.getForceFieldManager().addSourceField(field);
             plugin.getForceFieldManager().addAllowOverlappingOwners(field);
-            plugin.getVisualizationManager().visualizeSingleFieldFast(player, field);
+            plugin.getVisualizationManager().visualizeSingleField(player, field);
             plugin.getStorageManager().offerField(field);
             plugin.getCommunicationManager().notifyPlaceCuboid(player, field);
             return true;

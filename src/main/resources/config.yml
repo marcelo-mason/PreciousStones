@@ -414,6 +414,7 @@ cuboid:
     visualization-blocktype: 20
     defining-blocktype: 49
 visualization:
+    new-dotted-style: true
     block-type: 20
     seconds: 30
     mark-block-type: 49

@@ -46,6 +46,7 @@ public final class SettingsManager
     private int saveFrequency;
     private List<String> griefUndoBlackList;
     private int griefRevertMinInterval;
+    private boolean visualizationNewStyle;
     private int visualizeMarkBlock;
     private int visualizeFrameBlock;
     private int visualizeBlock;
@@ -305,6 +306,7 @@ public final class SettingsManager
         visualizeFrameBlock = loadInt("visualization.frame-block-type");
         visualizeBlock = loadInt("visualization.block-type");
         visualizeSeconds = loadInt("visualization.seconds");
+        visualizationNewStyle = loadBoolean("visualization.new-dotted-style");
         visualizeEndOnMove = loadBoolean("visualization.end-on-player-move");
         visualizeMarkBlock = loadInt("visualization.mark-block-type");
         visualizeDensity = loadInt("visualization.default-density");
@@ -1581,5 +1583,10 @@ public final class SettingsManager
     public boolean isCommandsToRentBuy()
     {
         return commandsToRentBuy;
+    }
+
+    public boolean isVisualizationNewStyle()
+    {
+        return visualizationNewStyle;
     }
 }

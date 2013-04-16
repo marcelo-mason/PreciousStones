@@ -864,4 +864,10 @@ public class Helper
 
         return Material.getMaterial(typeId).toString();
     }
+
+    public static boolean isAirOrWater(Location loc)
+    {
+        int id = loc.getWorld().getBlockTypeIdAt(loc);
+        return id == 0 || id == 8 || id == 9;
+    }
 }
