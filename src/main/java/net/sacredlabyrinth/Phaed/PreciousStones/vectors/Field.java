@@ -53,6 +53,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<FieldFlag> flags = new ArrayList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
     private List<FieldFlag> insertedFlags = new ArrayList<FieldFlag>();
+    private List<FieldFlag> clearedFlags = new ArrayList<FieldFlag>();
     private List<BlockEntry> fenceBlocks = new ArrayList<BlockEntry>();
     private List<RentEntry> renterEntries = new ArrayList<RentEntry>();
     private long lastUsed;
@@ -1150,6 +1151,9 @@ public class Field extends AbstractVec implements Comparable<Field>
         JSONArray disabledFlags = new JSONArray();
         disabledFlags.addAll(getDisabledFlagsStringList());
 
+        JSONArray clearedFlags = new JSONArray();
+        clearedFlags.addAll(getClearedFlagsStringList());
+
         JSONArray insertedFlags = new JSONArray();
         insertedFlags.addAll(getInsertedFlagsStringList());
 
@@ -1178,6 +1182,11 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (!insertedFlags.isEmpty())
         {
             json.put("insertedFlags", insertedFlags);
+        }
+
+        if (!clearedFlags.isEmpty())
+        {
+            json.put("clearedFlags", clearedFlags);
         }
 
         if (!blacklistedCommandsList.isEmpty())
@@ -1248,6 +1257,16 @@ public class Field extends AbstractVec implements Comparable<Field>
         return ll;
     }
 
+    public ArrayList<String> getClearedFlagsStringList()
+    {
+        ArrayList<String> ll = new ArrayList<String>();
+        for (FieldFlag flag : clearedFlags)
+        {
+            ll.add(Helper.toFlagStr(flag));
+        }
+        return ll;
+    }
+
     public ArrayList<String> getRentersString()
     {
         ArrayList<String> ll = new ArrayList<String>();
@@ -1266,6 +1285,16 @@ public class Field extends AbstractVec implements Comparable<Field>
     public List<FieldFlag> getInsertedFlags()
     {
         return insertedFlags;
+    }
+
+    /**
+     * Returns inserted flags
+     *
+     * @return
+     */
+    public List<FieldFlag> getClearedFlags()
+    {
+        return clearedFlags;
     }
 
     /**
@@ -1312,6 +1341,15 @@ public class Field extends AbstractVec implements Comparable<Field>
                             for (Object flagStr : localFlags)
                             {
                                 insertFieldFlag(flagStr.toString());
+                            }
+                        }
+                        else if (flag.equals("clearedFlags"))
+                        {
+                            JSONArray localFlags = (JSONArray) flags.get(flag);
+
+                            for (Object flagStr : localFlags)
+                            {
+                                clearFieldFlag(flagStr.toString());
                             }
                         }
                         else if (flag.equals("renters"))
@@ -1531,6 +1569,38 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
+     * Clear a field flag from the field
+     *
+     * @param flagStr
+     */
+    public boolean clearFieldFlag(String flagStr)
+    {
+        boolean cleared = false;
+
+        if (insertedFlags.contains(Helper.toFieldFlag(flagStr)))
+        {
+            insertedFlags.remove(Helper.toFieldFlag(flagStr));
+            cleared = true;
+        }
+
+        if (disabledFlags.contains(Helper.toFieldFlag(flagStr)))
+        {
+            disabledFlags.remove(Helper.toFieldFlag(flagStr));
+            cleared = true;
+        }
+
+        if (flags.contains(Helper.toFieldFlag(flagStr)))
+        {
+            flags.remove(Helper.toFieldFlag(flagStr));
+            cleared = true;
+        }
+
+        clearedFlags.add(Helper.toFieldFlag(flagStr));
+
+        return cleared;
+    }
+
+    /**
      * Insert a field flag into the field
      *
      * @param flagStr
@@ -1540,6 +1610,12 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (!insertedFlags.contains(Helper.toFieldFlag(flagStr)))
         {
             insertedFlags.add(Helper.toFieldFlag(flagStr));
+
+            if (clearedFlags.contains(Helper.toFieldFlag(flagStr)))
+            {
+                clearedFlags.remove(Helper.toFieldFlag(flagStr));
+            }
+
             return true;
         }
 

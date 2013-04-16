@@ -2798,8 +2798,10 @@ public class CommunicationManager
 
 
         List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlags());
+        List<FieldFlag> insertedFlags = field.getInsertedFlags();
         List<FieldFlag> disabledFlags = field.getDisabledFlags();
 
+        flags.addAll(insertedFlags);
         flags.addAll(disabledFlags);
 
         for (FieldFlag hid : FieldFlag.getHidden())

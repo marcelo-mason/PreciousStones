@@ -950,7 +950,46 @@ public final class CommandManager implements CommandExecutor
                                     if (field.insertFieldFlag(flagStr))
                                     {
                                         field.dirtyFlags();
+                                        plugin.getStorageManager().offerField(field);
                                         ChatBlock.send(sender, "flagInserted");
+                                    }
+                                    else
+                                    {
+                                        ChatBlock.send(sender, "flagNotExists");
+                                    }
+                                    plugin.getForceFieldManager().addSourceField(field);
+                                }
+                                else
+                                {
+                                    ChatBlock.send(sender, "flagExists");
+                                }
+                            }
+                            else
+                            {
+                                plugin.getCommunicationManager().showNotFound(player);
+                            }
+                            return true;
+                        }
+                    }
+                    else if (cmd.equals(ChatBlock.format("commandClear")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasplayer)
+                    {
+                        if (args.length == 1)
+                        {
+                            String flagStr = args[0];
+
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
+
+                            if (field != null)
+                            {
+                                if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
+                                {
+                                    plugin.getForceFieldManager().removeSourceField(field);
+
+                                    if (field.clearFieldFlag(flagStr))
+                                    {
+                                        field.dirtyFlags();
+                                        plugin.getStorageManager().offerField(field);
+                                        ChatBlock.send(sender, "flagCleared");
                                     }
                                     else
                                     {
