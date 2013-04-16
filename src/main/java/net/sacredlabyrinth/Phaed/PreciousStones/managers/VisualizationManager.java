@@ -376,47 +376,53 @@ public class VisualizationManager
 
         for (int x = minx; x <= maxx; x++)
         {
+            int frame =  (x == minx || x == maxx) ? 89 : frameType;
+
             Location loc = new Location(player.getWorld(), x, miny, maxz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), x, maxy, minz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), x, miny, minz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), x, maxy, maxz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
         for (int y = miny; y <= maxy; y++)
         {
+            int frame =  (y == miny || y == maxy) ? 89 : frameType;
+
             Location loc = new Location(player.getWorld(), minx, y, maxz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, y, minz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, y, minz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, y, maxz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
         for (int z = minz; z <= maxz; z++)
         {
+            int frame =  (z == minz || z == maxz) ? 89 : frameType;
+
             Location loc = new Location(player.getWorld(), minx, maxy, z);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, miny, z);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, miny, z);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, maxy, z);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
         // visualize all the new blocks that are left to visualize
@@ -460,47 +466,53 @@ public class VisualizationManager
 
         for (int x = minx; x <= maxx; x++)
         {
+            int frame =  (x == minx || x == maxx) ? 89 : frameType;
+
             Location loc = new Location(player.getWorld(), x, miny, maxz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), x, maxy, minz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), x, miny, minz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), x, maxy, maxz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
         for (int y = miny; y <= maxy; y++)
         {
+            int frame =  (y == miny || y == maxy) ? 89 : frameType;
+
             Location loc = new Location(player.getWorld(), minx, y, maxz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, y, minz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, y, minz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, y, maxz);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
         for (int z = minz; z <= maxz; z++)
         {
+            int frame =  (z == minz || z == maxz) ? 89 : frameType;
+
             Location loc = new Location(player.getWorld(), minx, maxy, z);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, miny, z);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), minx, miny, z);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
             loc = new Location(player.getWorld(), maxx, maxy, z);
-            newBlocks.add(new BlockEntry(loc, frameType, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
         // revert the blocks that are no longer in the new set and should be reverted
