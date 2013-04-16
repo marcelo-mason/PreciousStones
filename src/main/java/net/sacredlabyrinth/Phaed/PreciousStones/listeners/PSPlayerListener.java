@@ -961,6 +961,7 @@ public class PSPlayerListener implements Listener
 
                     if (player.isSneaking())
                     {
+                        event.setCancelled(true);
                         plugin.getCuboidManager().closeCuboid(player);
                         return;
                     }
@@ -969,6 +970,7 @@ public class PSPlayerListener implements Listener
 
                     if (plugin.getCuboidManager().isOpenCuboid(player, target))
                     {
+                        event.setCancelled(true);
                         plugin.getCuboidManager().closeCuboid(player);
                         return;
                     }
