@@ -926,17 +926,6 @@ public class PSPlayerListener implements Listener
         {
             if (plugin.getCuboidManager().hasOpenCuboid(player))
             {
-                if (player.isSneaking())
-                {
-                    // handle cuboid undo
-
-                    if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-                    {
-                        plugin.getCuboidManager().revertLastSelection(player);
-                        return;
-                    }
-                }
-
                 // handle cuboid expand
 
                 if (event.getAction().equals(Action.RIGHT_CLICK_AIR))
