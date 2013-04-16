@@ -1193,28 +1193,26 @@ public final class ForceFieldManager
      * Whether the player is allowed in the field
      *
      * @param field
-     * @param playerName
+     * @param target
      * @return
      */
-    public boolean isAllowed(Field field, String playerName)
+    public boolean isAllowed(Field field, String target)
     {
-        if (field == null || playerName == null)
+        if (field == null || target == null)
         {
             return false;
         }
 
-        Player player = Bukkit.getServer().getPlayerExact(playerName);
+        Player player = Bukkit.getServer().getPlayerExact(target);
 
-        if (player == null)
+        if (player != null)
         {
-            return false;
-        }
+            // allow if admin
 
-        // allow if admin
-
-        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
-        {
-            return true;
+            if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
+            {
+                return true;
+            }
         }
 
         // false if settings missing
@@ -1236,26 +1234,26 @@ public final class ForceFieldManager
 
         // allow if in global allowed list
 
-        if (field.getSettings().inAllowedList(playerName))
+        if (field.getSettings().inAllowedList(target))
         {
             return true;
         }
 
         // allow if in global deny list
 
-        if (field.getSettings().inDeniedList(playerName))
+        if (field.getSettings().inDeniedList(target))
         {
             return false;
         }
 
         // always allow if in war
 
-        if (plugin.getSimpleClansManager().inWar(field, playerName))
+        if (plugin.getSimpleClansManager().inWar(field, target))
         {
             return true;
         }
 
-        return field.isAllowed(playerName);
+        return field.isAllowed(target);
     }
 
     /**
@@ -1428,10 +1426,10 @@ public final class ForceFieldManager
      * Remove allowed player to all your force fields
      *
      * @param player
-     * @param allowedName
+     * @param target
      * @return count of fields the player was removed from
      */
-    public int removeAll(Player player, String allowedName)
+    public int removeAll(Player player, String target)
     {
         List<Field> fields = getOwnersFields(player, FieldFlag.ALL);
 
@@ -1440,7 +1438,7 @@ public final class ForceFieldManager
 
         for (Field field : fields)
         {
-            if (field.containsPlayer(allowedName))
+            if (field.containsPlayer(target))
             {
                 ChatBlock.send(player, "playerInsideNotRemoved");
                 continue;
@@ -1458,15 +1456,15 @@ public final class ForceFieldManager
                 }
             }
 
-            if (conflictOfInterestExists(field, allowedName))
+            if (conflictOfInterestExists(field, target))
             {
-                ChatBlock.send(player, "playerNotDisallowed", allowedName, field);
+                ChatBlock.send(player, "playerNotDisallowed", target, field);
                 continue;
             }
 
-            if (isAllowed(field, allowedName))
+            if (isAllowed(field, target))
             {
-                field.removeAllowed(allowedName);
+                field.removeAllowed(target);
                 removedCount++;
             }
             plugin.getStorageManager().offerField(field);
