@@ -2807,9 +2807,7 @@ public class CommunicationManager
             flags.remove(hid);
         }
 
-        int rows = (int) Math.ceil(((double) flags.size()) / 2.0);
-
-        for (int i = 0; i < rows; i++)
+        for (int i = 0; i < flags.size(); i++)
         {
             String title = "";
 
@@ -2818,7 +2816,7 @@ public class CommunicationManager
                 title = color + ChatBlock.format("_flags") + ": ";
             }
 
-            cb.addRow("  " + title, getFlag(disabledFlags, field.getSettings(), flags, i * 2), getFlag(disabledFlags, field.getSettings(), flags, (i * 2) + 1));
+            cb.addRow("  " + title, getFlag(disabledFlags, field.getSettings(), flags, i));
         }
 
         if (field.hasFlag(FieldFlag.POTIONS))
@@ -2845,12 +2843,17 @@ public class CommunicationManager
                 ChatBlock.saySingle(player, "sepFieldInfo");
             }
 
-            cb.sendBlock(player);
+            boolean more = cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
+
+            if (more)
+            {
+                ChatBlock.sendBlank(player);
+                ChatBlock.send(player, "moreNextPage");
+            }
 
             if (field.isDisabled())
             {
                 ChatBlock.sendBlank(player);
-
                 showMessage = false;
             }
         }
