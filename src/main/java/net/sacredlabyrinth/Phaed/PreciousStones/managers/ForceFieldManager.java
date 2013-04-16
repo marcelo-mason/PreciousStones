@@ -1745,7 +1745,22 @@ public final class ForceFieldManager
             }
         };
 
-        return getSourceFieldsInChunk(new ChunkVec(loc.getChunk()), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter, disableIfOnlineFilter);
+        Chunk c = null;
+        try
+        {
+            c = loc.getChunk();
+        }
+        catch (Exception e)
+        {
+            // some weird stuffs going on
+        }
+
+        if (c == null)
+        {
+            return new ArrayList<Field>();
+        }
+
+        return getSourceFieldsInChunk(new ChunkVec(c), flag, envelopsFilter, disabledFlagFilter, notDisabledFilter, disableIfOnlineFilter);
     }
 
     /**
