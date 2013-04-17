@@ -2809,16 +2809,43 @@ public class CommunicationManager
             flags.remove(hid);
         }
 
-        for (int i = 0; i < flags.size(); i++)
+        boolean addedTitle = false;
+
+        for(FieldFlag flag : flags)
         {
             String title = "";
 
-            if (i == 0)
+            if (!addedTitle)
             {
                 title = color + ChatBlock.format("_flags") + ": ";
+                addedTitle = true;
             }
 
-            cb.addRow("  " + title, getFlag(disabledFlags, field.getSettings(), flags, i));
+            ChatColor c = ChatColor.WHITE;
+
+            if (disabledFlags.contains(flag))
+            {
+                c = ChatColor.DARK_GRAY;
+            }
+
+            if (flag.isUnToggable())
+            {
+                c = ChatColor.AQUA;
+            }
+
+            String flagStr = Helper.toFlagStr(flag);
+
+            if (field.getSettings().isReversedFlag(flag))
+            {
+                flagStr = "~" + flagStr;
+            }
+
+            if (field.getSettings().isAlledFlag(flag))
+            {
+                flagStr = "^" + flagStr;
+            }
+
+            cb.addRow("  " + title, c + flagStr);
         }
 
         if (field.hasFlag(FieldFlag.POTIONS))
@@ -2909,42 +2936,6 @@ public class CommunicationManager
             cb.sendBlock(player);
             ChatBlock.sendBlank(player);
         }
-    }
-
-    private String getFlag(List<FieldFlag> disabledFlags, FieldSettings settings, List<FieldFlag> flags, int index)
-    {
-        if (index < flags.size())
-        {
-            FieldFlag flag = flags.get(index);
-
-            ChatColor color = ChatColor.WHITE;
-
-            if (disabledFlags.contains(flag))
-            {
-                color = ChatColor.DARK_GRAY;
-            }
-
-            if (flag.isUnToggable())
-            {
-                color = ChatColor.AQUA;
-            }
-
-            String flagStr = Helper.toFlagStr(flag);
-
-            if (settings.isReversedFlag(flag))
-            {
-                flagStr = "~" + flagStr;
-            }
-
-            if (settings.isAlledFlag(flag))
-            {
-                flagStr = "^" + flagStr;
-            }
-
-            return color + flagStr;
-        }
-
-        return "";
     }
 
     private String getAllowed(List<String> allowed, int index)
