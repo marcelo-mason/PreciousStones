@@ -306,7 +306,7 @@ public class VisualizationManager
             PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
             int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
 
-            for (int x = minx; x <= maxx; x = x + spacing)
+            for (int x = minx; x <= maxx; x++)
             {
                 int frame = (x == minx || x == maxx) ? 89 : frameType;
 
@@ -364,7 +364,7 @@ public class VisualizationManager
                 }
             }
 
-            for (int z = minz; z <= maxz; z = z + spacing)
+            for (int z = minz; z <= maxz; z++)
             {
                 int frame = (z == minz || z == maxz) ? 89 : frameType;
 
@@ -491,7 +491,7 @@ public class VisualizationManager
             PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
             int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
 
-            for (int x = minx; x <= maxx; x = x + spacing)
+            for (int x = minx; x <= maxx; x++)
             {
                 int frame = (x == minx || x == maxx) ? 89 : frameType;
 
@@ -548,7 +548,7 @@ public class VisualizationManager
                 }
             }
 
-            for (int z = minz; z <= maxz; z = z + spacing)
+            for (int z = minz; z <= maxz; z++)
             {
                 int frame = (z == minz || z == maxz) ? 89 : frameType;
 
