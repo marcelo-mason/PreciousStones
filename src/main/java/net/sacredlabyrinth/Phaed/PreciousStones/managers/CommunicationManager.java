@@ -5,7 +5,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Hanging;
@@ -2725,6 +2728,7 @@ public class CommunicationManager
         {
             return false;
         }
+        PreciousStones.debug("1");
 
         ChatBlock cb = getNewChatBlock(player);
         FieldSettings fs = field.getSettings();
@@ -2749,6 +2753,8 @@ public class CommunicationManager
             }
         }
 
+        PreciousStones.debug("2");
+
         cb.addRow("  " + color + ChatBlock.format("_owner") + ": ", ChatColor.AQUA + field.getOwner(), "");
 
         if (field.getAllowed().size() > 0)
@@ -2769,6 +2775,8 @@ public class CommunicationManager
                 cb.addRow("  " + title, ChatColor.WHITE + getAllowed(allowed, i * 2), getAllowed(allowed, (i * 2) + 1));
             }
         }
+
+        PreciousStones.debug("3");
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
@@ -2796,6 +2804,7 @@ public class CommunicationManager
 
         cb.addRow("  " + color + ChatBlock.format("_location") + ": ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 
+        PreciousStones.debug("4");
 
         List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlags());
         List<FieldFlag> insertedFlags = field.getInsertedFlags();
@@ -2809,10 +2818,17 @@ public class CommunicationManager
             flags.remove(hid);
         }
 
+        PreciousStones.debug("5");
+
         boolean addedTitle = false;
 
-        for(FieldFlag flag : flags)
+        for (FieldFlag flag : flags)
         {
+            if (flag == null)
+            {
+                continue;
+            }
+
             String title = "";
 
             if (!addedTitle)
@@ -2847,6 +2863,8 @@ public class CommunicationManager
 
             cb.addRow("  " + title, c + flagStr);
         }
+
+        PreciousStones.debug("6");
 
         if (field.hasFlag(FieldFlag.POTIONS))
         {
@@ -2886,6 +2904,7 @@ public class CommunicationManager
                 showMessage = false;
             }
         }
+        PreciousStones.debug("7");
 
         return showMessage;
     }

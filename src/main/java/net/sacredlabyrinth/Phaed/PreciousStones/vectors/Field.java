@@ -18,7 +18,7 @@ import org.json.simple.JSONValue;
 
 import java.util.*;
 
-/**
+/**disabledFlags
  * A field object
  *
  * @author phaed
