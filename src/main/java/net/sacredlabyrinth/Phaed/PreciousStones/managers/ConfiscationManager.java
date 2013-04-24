@@ -210,6 +210,12 @@ public class ConfiscationManager
 
         for (ItemStackEntry item : confiscated)
         {
+            if (inventory.firstEmpty() == -1)
+            {
+                player.getWorld().dropItemNaturally(player.getLocation(), item.toItemStack());
+                continue;
+            }
+
             inventory.addItem(item.toItemStack());
         }
 
