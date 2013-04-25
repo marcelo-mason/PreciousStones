@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -110,7 +111,12 @@ public class ForesterEntry
         {
             Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
             block.setTypeId(0, false);
-            world.generateTree(block.getLocation(), plugin.getForesterManager().getTree(field.getSettings()));
+            block.getLocation().add(0, -1, 0).getBlock().setTypeId(field.getSettings().getGroundBlock(), false);
+
+            if (!field.getSettings().getTreeTypes().isEmpty())
+            {
+                world.generateTree(block.getLocation(), ForesterManager.getTree(field.getSettings()));
+            }
 
             plugin.getForesterManager().doCreatureSpawns(field);
             plugin.getForceFieldManager().releaseNoDrop(field);
