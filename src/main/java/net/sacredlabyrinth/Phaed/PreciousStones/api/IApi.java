@@ -72,4 +72,22 @@ public interface IApi
      * @return whether th eflag applies to the player
      */
     boolean flagAppliesToPlayer(Player player, FieldFlag flag, Location location);
+
+    /**
+     * Returns a count of fields the player has placed
+     *
+     * @param player the player whose fields you want counted
+     * @param flag the flag that will identify the field.  Use FieldFlag.ALL to count all of his fields
+     * @return the number of fields this player has placed
+     */
+    int getPlayerFieldCount(Player player, FieldFlag flag);
+
+    /**
+     * Returns all of tje fields the player has placed
+     *
+     * @param player the player whose fields you want counted
+     * @param flag   the flag that will identify the field.  Use FieldFlag.ALL to count all of his fields
+     * @return a list of fields the player placed, it is never null.  If the player has not placed any fields it will be empty
+     */
+    List<Field> getPlayerFields(Player player, FieldFlag flag);
 }

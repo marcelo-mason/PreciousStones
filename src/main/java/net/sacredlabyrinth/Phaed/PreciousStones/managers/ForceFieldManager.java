@@ -2976,6 +2976,7 @@ public final class ForceFieldManager
                         if (!plugin.getPermissionsManager().has(player, permission))
                         {
                             queueRelease(field);
+                            deletedCount++;
                         }
                     }
                 }
@@ -2987,5 +2988,24 @@ public final class ForceFieldManager
                 }
             }
         }
+    }
+
+    /**
+     * Return all of a player's fields, by type
+     *
+     * @param playerName
+     * @param flag
+     * @return
+     */
+    public List<Field> getPlayerFields(String playerName, FieldFlag flag)
+    {
+        Map<FieldFlag, List<Field>> fields = fieldsByOwnerAndFlag.get(playerName);
+
+        if(fields == null)
+        {
+            return null;
+        }
+
+        return fields.get(flag);
     }
 }
