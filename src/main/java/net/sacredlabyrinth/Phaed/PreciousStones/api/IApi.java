@@ -83,9 +83,9 @@ public interface IApi
     int getPlayerFieldCount(Player player, FieldFlag flag);
 
     /**
-     * Returns all of tje fields the player has placed
+     * Returns all of the fields the player has placed
      *
-     * @param player the player whose fields you want counted
+     * @param player the player whose fields you want
      * @param flag   the flag that will identify the field.  Use FieldFlag.ALL to count all of his fields
      * @return a list of fields the player placed, it is never null.  If the player has not placed any fields it will be empty
      */
