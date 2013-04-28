@@ -69,7 +69,7 @@ public interface IApi
      * @param player the player who will be affected by the flag
      * @param flag the flag that you want to test against
      * @param location the location you want to test against
-     * @return whether th eflag applies to the player
+     * @return whether the flag applies to the player
      */
     boolean flagAppliesToPlayer(Player player, FieldFlag flag, Location location);
 
