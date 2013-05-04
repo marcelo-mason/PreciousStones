@@ -151,7 +151,8 @@ public enum FieldFlag
     BUYABLE,
     DELETE_IF_NO_PERMISSION,
     COMMAND_BLACKLISTING,
-    COMMAND_BLACKLIST
+    COMMAND_BLACKLIST,
+    ANTI_PLOT
     ;
 
     /**

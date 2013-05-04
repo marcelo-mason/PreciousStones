@@ -1668,6 +1668,11 @@ public final class ForceFieldManager
 
         for (Field smallest : fields)
         {
+            if (smallest.hasFlag(FieldFlag.ANTI_PLOT))
+            {
+                continue;
+            }
+
             if (smallest.getActualVolume() > 1 && smallest.getComputedHeight() > 1)
             {
                 return smallest;
@@ -3001,7 +3006,7 @@ public final class ForceFieldManager
     {
         Map<FieldFlag, List<Field>> fields = fieldsByOwnerAndFlag.get(playerName);
 
-        if(fields == null)
+        if (fields == null)
         {
             return null;
         }

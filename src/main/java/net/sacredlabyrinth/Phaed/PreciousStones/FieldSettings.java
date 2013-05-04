@@ -333,6 +333,7 @@ public class FieldSettings
         loadBoolean("buyable");
         loadBoolean("rentable");
         loadBoolean("command-blacklisting");
+        loadBoolean("anti-plot");
 
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");
