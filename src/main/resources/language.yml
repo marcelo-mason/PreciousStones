@@ -346,6 +346,7 @@ menu59: "{dark-red}  /ps rent <clear/remove> - Clear out renters or remove rent"
 menu60: "{yellow}  /ps rent - Rent the field you are pointing at"
 menu61: "{yellow}  /ps buy - Buy the field you are pointing at"
 menu62: "{dark-red}  /ps clear [flag]{aqua}- Clears flags from field"
+menu63: "{dark-red}  /ps pull - Pull all data from the database"
 confiscatedFrom: "Confiscated {1.items} from {2.player} at {3.coords}. Leave the area to get your item back."
 confiscated: "{aqua}Confiscated: {white}{1.image}"
 returnedTo: "Returned {1.items} to {2.player}"
@@ -560,7 +561,7 @@ rentsCleared: "{aqua} Renters cleared"
 rentsClearedNone: "{aqua} There are no renters in this field"
 rentsRemoved: "{aqua} Rent removed"
 rentsRemovedNone: "{aqua} There are no rent/share/buy signs on this field"
-
+commandPull: pull
 
 
 

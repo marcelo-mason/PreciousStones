@@ -192,6 +192,8 @@ permissions:
     description: Can use /ps clean
   preciousstones.admin.revert:
     description: Can use /ps revert
+  preciousstones.admin.pull:
+    description: Can use /ps pull
   preciousstones.admin.details:
     description: Can view all details with right-click
   preciousstones.admin.bypass.log:
@@ -372,6 +374,7 @@ permissions:
       preciousstones.admin.setowner: true
       preciousstones.admin.clean: true
       preciousstones.admin.revert: true
+      preciousstones.admin.pull: true
       preciousstones.admin.details: true
       preciousstones.admin.bypass.log: true
       preciousstones.admin.viewconflicting: true

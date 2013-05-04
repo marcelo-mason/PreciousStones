@@ -2114,6 +2114,11 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
+                    else if (cmd.equals(ChatBlock.format("commandPull")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.pull"))
+                    {
+                        plugin.getStorageManager().loadWorldData();
+                        return true;
+                    }
                     else if (cmd.equals(ChatBlock.format("commandBypass")) && plugin.getPermissionsManager().has(player, "preciousstones.bypass.toggle"))
                     {
                         PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());

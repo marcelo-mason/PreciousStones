@@ -87,6 +87,7 @@
                                 <excludes>
                                     <exclude>org.bukkit:bukkit</exclude>
                                     <exclude>org.yaml:snakeyaml</exclude>
+                                    <exclude>org.joda.time.tz.*:joda-time</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
