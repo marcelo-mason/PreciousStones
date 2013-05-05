@@ -398,8 +398,12 @@ public class CuboidManager
     {
         plugin.getVisualizationManager().revert(player);
         plugin.getVisualizationManager().revertOutline(player);
-        openCuboids.remove(player.getName());
-        ChatBlock.send(player, "cuboidCancelled");
+
+        if (openCuboids.containsKey(player.getName()))
+        {
+            openCuboids.remove(player.getName());
+            ChatBlock.send(player, "cuboidCancelled");
+        }
     }
 
     /**
