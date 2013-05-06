@@ -72,7 +72,7 @@ public final class EntryManager
     {
         try
         {
-            for (String playerName : dynamicEntries.keySet())
+            entries: for (String playerName : dynamicEntries.keySet())
             {
                 Player player = Bukkit.getServer().getPlayerExact(playerName);
 
@@ -121,7 +121,7 @@ public final class EntryManager
                                     player.setRemainingAir(600);
                                     plugin.getCommunicationManager().showGiveAir(player);
                                     hasAir = true;
-                                    continue;
+                                    continue entries;
                                 }
                             }
                         }
@@ -139,7 +139,7 @@ public final class EntryManager
                                     player.setFoodLevel(food + field.getSettings().getFeed());
                                     plugin.getCommunicationManager().showFeeding(player);
                                     hasFeeding = true;
-                                    continue;
+                                    continue entries;
                                 }
                             }
                         }
@@ -156,7 +156,7 @@ public final class EntryManager
                                     player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
                                     plugin.getCommunicationManager().showHeal(player);
                                     hasHeal = true;
-                                    continue;
+                                    continue entries;
                                 }
 
                             }
@@ -195,7 +195,7 @@ public final class EntryManager
 
                                 if (updated)
                                 {
-                                    continue;
+                                    continue entries;
                                 }
 
                                 ItemStack[] items = player.getInventory().getContents();
@@ -225,7 +225,7 @@ public final class EntryManager
 
                                 if (updated)
                                 {
-                                    continue;
+                                    continue entries;
                                 }
                             }
                         }
@@ -257,7 +257,7 @@ public final class EntryManager
                                             plugin.getCommunicationManager().showDamage(player);
                                         }
                                         hasDamage = true;
-                                        continue;
+                                        continue entries;
                                     }
                                 }
                             }
@@ -272,7 +272,7 @@ public final class EntryManager
                             {
                                 plugin.getPotionManager().applyPotions(player, field);
                                 hasPotion = true;
-                                continue;
+                                continue entries;
                             }
                         }
                     }
