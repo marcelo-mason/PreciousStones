@@ -68,7 +68,7 @@ public class PSPlayerListener implements Listener
         {
             if (FieldFlag.COMMAND_BLACKLIST.applies(field, player))
             {
-                if(field.getSettings().isCanceledCommand(event.getMessage()))
+                if (field.getSettings().isCanceledCommand(event.getMessage()))
                 {
                     if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.commandblacklist"))
                     {
@@ -1357,9 +1357,12 @@ public class PSPlayerListener implements Listener
 
                             if (!field.getSettings().getRequiredPermissionUse().isEmpty())
                             {
-                                if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionUse()))
+                                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.required-permission"))
                                 {
-                                    return;
+                                    if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionUse()))
+                                    {
+                                        return;
+                                    }
                                 }
                             }
 

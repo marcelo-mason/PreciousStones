@@ -1226,9 +1226,12 @@ public final class ForceFieldManager
 
         if (!field.getSettings().getRequiredPermissionAllow().isEmpty())
         {
-            if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionAllow()))
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.required-permission"))
             {
-                return false;
+                if (!plugin.getPermissionsManager().has(player, field.getSettings().getRequiredPermissionAllow()))
+                {
+                    return false;
+                }
             }
         }
 

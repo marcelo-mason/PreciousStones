@@ -154,10 +154,13 @@ public final class CommandManager implements CommandExecutor
 
                                     if (!field.getSettings().getRequiredPermissionAllow().isEmpty())
                                     {
-                                        if (!plugin.getPermissionsManager().has(allowed, field.getSettings().getRequiredPermissionAllow()))
+                                        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.required-permission"))
                                         {
-                                            ChatBlock.send(sender, "noPermsForAllow", playerName);
-                                            continue;
+                                            if (!plugin.getPermissionsManager().has(allowed, field.getSettings().getRequiredPermissionAllow()))
+                                            {
+                                                ChatBlock.send(sender, "noPermsForAllow", playerName);
+                                                continue;
+                                            }
                                         }
                                     }
 

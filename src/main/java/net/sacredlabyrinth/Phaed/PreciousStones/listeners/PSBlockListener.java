@@ -1281,9 +1281,12 @@ public class PSBlockListener implements Listener
 
         if (!fs.getRequiredPermission().isEmpty())
         {
-            if (!plugin.getPermissionsManager().has(player, fs.getRequiredPermission()))
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.required-permission"))
             {
-                return false;
+                if (!plugin.getPermissionsManager().has(player, fs.getRequiredPermission()))
+                {
+                    return false;
+                }
             }
         }
 
