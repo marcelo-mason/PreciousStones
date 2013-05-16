@@ -2553,7 +2553,7 @@ public final class ForceFieldManager
     {
         // prevent tekkit blocks from dropping and crashing client
 
-        if (block.getTypeId() > 124)
+        if (block.getTypeId() > 255)
         {
             return;
         }

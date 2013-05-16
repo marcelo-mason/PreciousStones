@@ -5,10 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.TreeType;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
@@ -349,7 +346,6 @@ public final class ForesterManager
      * @param fs
      * @return
      */
-
     public static EntityType getEntity(FieldSettings fs)
     {
         Random r = new Random();
