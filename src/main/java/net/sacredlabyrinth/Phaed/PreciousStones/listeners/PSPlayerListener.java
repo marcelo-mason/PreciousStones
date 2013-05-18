@@ -1372,9 +1372,7 @@ public class PSPlayerListener implements Listener
                             {
                                 if (field.getNewOwner().equalsIgnoreCase(player.getName()))
                                 {
-                                    PreciousStones plugin = PreciousStones.getInstance();
-
-                                    PreciousStones.getInstance().getStorageManager().changeTranslocationOwner(field, field.getNewOwner());
+                                    plugin.getStorageManager().changeTranslocationOwner(field, field.getNewOwner());
 
                                     String oldOwnerName = field.getOwner();
 
@@ -1382,7 +1380,7 @@ public class PSPlayerListener implements Listener
 
                                     plugin.getStorageManager().offerPlayer(field.getOwner());
                                     plugin.getStorageManager().offerPlayer(oldOwnerName);
-                                    PreciousStones.getInstance().getStorageManager().offerField(field);
+                                    plugin.getStorageManager().offerField(field);
 
                                     ChatBlock.send(player, "takenFieldOwnership", oldOwnerName);
 
