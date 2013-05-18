@@ -289,6 +289,7 @@ public class StorageManager
             @Override
             public void run()
             {
+                plugin.getForceFieldManager().doFinalize();
                 processQueue();
 
                 plugin.getForceFieldManager().clearChunkLists();

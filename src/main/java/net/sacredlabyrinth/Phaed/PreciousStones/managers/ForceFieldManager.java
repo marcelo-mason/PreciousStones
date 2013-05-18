@@ -737,14 +737,11 @@ public final class ForceFieldManager
     {
         Collection<Field> fields = fieldsByVec.values();
 
-        if (fields != null)
+        for (Field field : fields)
         {
-            for (Field field : fields)
+            if (field.isDirty())
             {
-                if (field.isDirty())
-                {
-                    plugin.getStorageManager().offerField(field);
-                }
+                plugin.getStorageManager().offerField(field);
             }
         }
     }
