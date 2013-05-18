@@ -1741,12 +1741,8 @@ public final class ForceFieldManager
         {
             public boolean Filter(Field field)
             {
-                if (field.hasFlag(FieldFlag.DISABLE_WHEN_ONLINE))
-                {
-                    return !field.hasOnlineAllowed();
-                }
+                return !field.hasFlag(FieldFlag.DISABLE_WHEN_ONLINE) || !field.hasOnlineAllowed();
 
-                return true;
             }
         };
 

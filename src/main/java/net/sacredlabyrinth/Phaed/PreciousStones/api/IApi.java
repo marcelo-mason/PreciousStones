@@ -38,7 +38,8 @@ public interface IApi
     boolean isPStone(Location location);
 
     /**
-     * If a field with the specified flag is currently protecting the area
+     * If an enabled field with the specified enabled flag is currently protecting the area,
+     * use this to know whether a block is being affected by a field.
      *
      * @param flag the flag that is protecting the area (use FieldFlag.ALL to target any flag)
      * @param location the location that is being protected
@@ -47,7 +48,7 @@ public interface IApi
     boolean isFieldProtectingArea(FieldFlag flag, Location location);
 
     /**
-     * Returns the fields with the specified flag that are currently protecting the area
+     * Returns the enabled fields with the specified enabled flag that are currently protecting the area
      *
      * @param flag the flag that is protecting the area (use FieldFlag.ALL to target any flag)
      * @param location the location that is being protected

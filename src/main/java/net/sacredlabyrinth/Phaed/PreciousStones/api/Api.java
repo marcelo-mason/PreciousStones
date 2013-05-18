@@ -9,11 +9,11 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class facade implements IApi
+public class Api implements IApi
 {
     private PreciousStones plugin;
 
-    public facade()
+    public Api()
     {
         plugin = PreciousStones.getInstance();
     }
@@ -75,8 +75,8 @@ public class facade implements IApi
     }
 
     /**
-     * If a field with the specified flag is currently protecting the area, use this to know whether a block
-     * is being affected by a field.
+     * If an enabled field with the specified enabled flag is currently protecting the area,
+     * use this to know whether a block is being affected by a field.
      *
      * @param flag     the flag that is protecting the area (use FieldFlag.ALL to target any flag)
      * @param location the location that is being protected
@@ -88,7 +88,7 @@ public class facade implements IApi
     }
 
     /**
-     * Returns the fields with the specified flag that are currently protecting the area
+     * Returns the enabled fields with the specified enabled flag that are currently protecting the area
      *
      * @param flag     the flag that is protecting the area (use FieldFlag.ALL to target any flag)
      * @param location the location that is being protected
