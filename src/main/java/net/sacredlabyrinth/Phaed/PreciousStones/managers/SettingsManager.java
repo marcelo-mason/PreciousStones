@@ -40,7 +40,6 @@ public final class SettingsManager
     private int cuboidVisualizationType;
     private boolean logToHawkEye;
     private List<String> blacklistedWorlds;
-    private int purgeSnitchAfterDays;
     private int purgeAfterDays;
     private int maxSnitchRecords;
     private int saveFrequency;
@@ -293,7 +292,6 @@ public final class SettingsManager
         // ********************************** Cleanup
 
         purgeAfterDays = loadInt("cleanup.player-inactivity-purge-days");
-        purgeSnitchAfterDays = loadInt("cleanup.snitch-unused-purge-days");
         purgeBannedPlayers = loadBoolean("cleanup.purge-banned-players");
 
         // ********************************** Saving
@@ -836,14 +834,6 @@ public final class SettingsManager
     public List<String> getBlacklistedWorlds()
     {
         return Collections.unmodifiableList(blacklistedWorlds);
-    }
-
-    /**
-     * @return the purgeSnitchAfterDays
-     */
-    public int getPurgeSnitchAfterDays()
-    {
-        return purgeSnitchAfterDays;
     }
 
     /**

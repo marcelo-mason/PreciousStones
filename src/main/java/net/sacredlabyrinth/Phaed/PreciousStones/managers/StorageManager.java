@@ -612,24 +612,6 @@ public class StorageManager
 
                         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
-                        // check for snitch fields to purge
-
-                        if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
-                        {
-                            PreciousStones.debug("Snitch age: %s", field.getAgeInDays());
-
-                            if (field.getAgeInDays() >= plugin.getSettingsManager().getPurgeSnitchAfterDays())
-                            {
-                                PreciousStones.debug("PURGED %s", field.toString());
-
-                                deleteSnitchEntries(field);
-                                field.markForDeletion();
-                                offerField(field);
-                                purged++;
-                                continue;
-                            }
-                        }
-
                         if (fs != null)
                         {
                             field.setSettings(fs);
@@ -730,24 +712,6 @@ public class StorageManager
 
                         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
-                        // check for fields to purge
-
-                        if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
-                        {
-                            PreciousStones.debug("Snitch age: %s", field.getAgeInDays());
-
-                            if (field.getAgeInDays() >= plugin.getSettingsManager().getPurgeSnitchAfterDays())
-                            {
-                                PreciousStones.debug("PURGED %s", field.toString());
-
-                                deleteSnitchEntries(field);
-                                field.markForDeletion();
-                                offerField(field);
-                                purged++;
-                                continue;
-                            }
-                        }
-
                         if (fs != null)
                         {
                             field.setSettings(fs);
@@ -838,18 +802,6 @@ public class StorageManager
                         field.setId(id);
 
                         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
-
-                        if (field.getAgeInDays() > plugin.getSettingsManager().getPurgeSnitchAfterDays())
-                        {
-                            if (fs != null && fs.hasDefaultFlag(FieldFlag.SNITCH))
-                            {
-                                deleteSnitchEntries(field);
-                                field.markForDeletion();
-                                offerField(field);
-                                purged++;
-                                continue;
-                            }
-                        }
 
                         if (fs != null)
                         {

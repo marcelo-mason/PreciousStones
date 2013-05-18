@@ -363,7 +363,6 @@ warn:
     place: true
 cleanup:
     player-inactivity-purge-days: 180
-    snitch-unused-purge-days: 30
     purge-banned-players: true
 settings:
     max-size-translocation: 100000
@@ -439,7 +438,7 @@ grief-revert:
     black-list:
     - 92
 saving:
-    frequency-seconds: 15
+    frequency-seconds: 5
     max-records-per-snitch: 50
 mysql:
     username: ''
