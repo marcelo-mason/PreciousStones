@@ -19,7 +19,7 @@ force-field-blocks:
     prevent-item-frame-take: true
     prevent-flow: true
     protect-crops: true
-    prevent-use: [23, 54, 61, 62]
+    protect-inventories: true
     prevent-place-blacklist: [153]
     ?welcome-message: true
     ?farewell-message: true
@@ -50,6 +50,7 @@ force-field-blocks:
     prevent-enderman-destroy: true
     prevent-explosions: true
     prevent-unprotectable: true
+    protect-inventories: true
     prevent-flow: true
     ?prevent-teleport: true
     protect-crops: true
