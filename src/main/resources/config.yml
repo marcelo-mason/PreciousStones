@@ -439,7 +439,7 @@ grief-revert:
     black-list:
     - 92
 saving:
-    frequency-seconds: 5
+    frequency-seconds: 1
     max-records-per-snitch: 50
 mysql:
     username: ''
