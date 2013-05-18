@@ -16,6 +16,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 
 import java.util.List;
 import java.util.Set;
@@ -1692,6 +1694,34 @@ public class PSBlockListener implements Listener
                 }
 
                 event.setCancelled(true);
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInventoryOpenEvent(InventoryOpenEvent event)
+    {
+        if (event.getInventory() == null || !(event.getPlayer() instanceof Player))
+        {
+            return;
+        }
+
+        if (!event.getInventory().getType().equals(InventoryType.PLAYER))
+        {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.PROTECT_INVENTORIES);
+
+            if (field != null)
+            {
+                Player player = (Player) event.getPlayer();
+
+                if (FieldFlag.PROTECT_INVENTORIES.applies(field, player))
+                {
+                    event.setCancelled(true);
+                    ChatBlock.send(player, "inventoryDeny");
+                }
             }
         }
     }

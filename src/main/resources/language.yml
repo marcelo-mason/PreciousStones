@@ -562,6 +562,6 @@ rentsClearedNone: "{aqua} There are no renters in this field"
 rentsRemoved: "{aqua} Rent removed"
 rentsRemovedNone: "{aqua} There are no rent/share/buy signs on this field"
 commandPull: pull
-
+inventoryDeny: "{red} You do not have permission to access this inventory"
 
 

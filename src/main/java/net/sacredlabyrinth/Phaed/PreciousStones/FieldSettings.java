@@ -258,6 +258,7 @@ public class FieldSettings
         loadBoolean("protect-crops");
         loadBoolean("protect-mobs");
         loadBoolean("protect-lwc");
+        loadBoolean("protect-inventories");
         loadBoolean("remove-mob");
         loadBoolean("worldguard-repellent");
         loadBoolean("breakable");
