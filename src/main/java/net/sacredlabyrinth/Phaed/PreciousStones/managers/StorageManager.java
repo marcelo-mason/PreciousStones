@@ -1039,7 +1039,7 @@ public class StorageManager
 
         if (field.isDirty(DirtyFieldReason.OWNER))
         {
-            subQuery += "owner = '" + field.getOwner() + "', ";
+            subQuery += "owner = '" + Helper.escapeQuotes(field.getOwner()) + "', ";
         }
 
         if (field.isDirty(DirtyFieldReason.RADIUS))
@@ -1061,6 +1061,7 @@ public class StorageManager
         {
             subQuery += "name = '" + Helper.escapeQuotes(field.getName()) + "', ";
         }
+
         if (field.isDirty(DirtyFieldReason.ALLOWED))
         {
             subQuery += "packed_allowed = '" + Helper.escapeQuotes(field.getPackedAllowed()) + "', ";
@@ -1083,11 +1084,11 @@ public class StorageManager
 
         if (!subQuery.isEmpty())
         {
-            String query = "UPDATE `pstone_fields` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+            String query = "UPDATE `pstone_fields` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
             if (field.hasFlag(FieldFlag.CUBOID))
             {
-                query = "UPDATE `pstone_cuboids` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + field.getWorld() + "';";
+                query = "UPDATE `pstone_cuboids` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
             }
 
             core.execute(query);

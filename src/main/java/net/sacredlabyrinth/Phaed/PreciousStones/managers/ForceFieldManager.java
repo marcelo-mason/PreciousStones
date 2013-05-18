@@ -1314,7 +1314,6 @@ public final class ForceFieldManager
         if (field.isInAllowedList(target))
         {
             field.removeAllowed(target);
-
             plugin.getStorageManager().offerField(field);
             return true;
         }

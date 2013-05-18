@@ -98,7 +98,7 @@ public class PreciousStones extends JavaPlugin
      */
     public static void log(Level level, Object msg, Object... arg)
     {
-        logger.log(level, new StringBuilder().append("[PreciousStones] ").append(ChatBlock.format(msg.toString(), arg)).toString());
+        logger.log(level, "[PreciousStones] " + ChatBlock.format(msg.toString(), arg));
     }
 
     /**
