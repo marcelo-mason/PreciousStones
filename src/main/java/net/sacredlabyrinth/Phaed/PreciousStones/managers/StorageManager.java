@@ -994,60 +994,59 @@ public class StorageManager
 
         if (field.isDirty(DirtyFieldReason.OWNER))
         {
-            subQuery += "owner = '" + Helper.escapeQuotes(field.getOwner()) + "', ";
+            subQuery += "owner = '" + Helper.escapeQuotes(field.getOwner()) + "',";
         }
 
         if (field.isDirty(DirtyFieldReason.RADIUS))
         {
-            subQuery += "radius = " + field.getRadius() + ", ";
+            subQuery += "radius = " + field.getRadius() + ",";
         }
 
         if (field.isDirty(DirtyFieldReason.HEIGHT))
         {
-            subQuery += "height = " + field.getHeight() + ", ";
+            subQuery += "height = " + field.getHeight() + ",";
         }
 
         if (field.isDirty(DirtyFieldReason.VELOCITY))
         {
-            subQuery += "velocity = " + field.getVelocity() + ", ";
+            subQuery += "velocity = " + field.getVelocity() + ",";
         }
 
         if (field.isDirty(DirtyFieldReason.NAME))
         {
-            subQuery += "name = '" + Helper.escapeQuotes(field.getName()) + "', ";
+            subQuery += "name = '" + Helper.escapeQuotes(field.getName()) + "',";
         }
 
         if (field.isDirty(DirtyFieldReason.ALLOWED))
         {
-            subQuery += "packed_allowed = '" + Helper.escapeQuotes(field.getPackedAllowed()) + "', ";
+            subQuery += "packed_allowed = '" + Helper.escapeQuotes(field.getPackedAllowed()) + "',";
         }
 
         if (field.isDirty(DirtyFieldReason.LASTUSED))
         {
-            subQuery += "last_used = " + (new DateTime()).getMillis() + ", ";
+            subQuery += "last_used = " + (new DateTime()).getMillis() + ",";
         }
 
         if (field.isDirty(DirtyFieldReason.FLAGS))
         {
-            subQuery += "flags = '" + Helper.escapeQuotes(field.getFlagsAsString()) + "', ";
+            subQuery += "flags = '" + Helper.escapeQuotes(field.getFlagsAsString()) + "',";
         }
 
         if (field.isDirty(DirtyFieldReason.DIMENSIONS))
         {
-            subQuery += "minx = " + field.getMinx() + ", " + "miny = " + field.getMiny() + ", " + "minz = " + field.getMinz() + ", " + "maxx = " + field.getMaxx() + ", " + "maxy = " + field.getMaxy() + ", " + "maxz = " + field.getMaxz() + ", ";
+            subQuery += "minx = " + field.getMinx() + "," + "miny = " + field.getMiny() + "," + "minz = " + field.getMinz() + "," + "maxx = " + field.getMaxx() + "," + "maxy = " + field.getMaxy() + "," + "maxz = " + field.getMaxz() + ",";
         }
 
         if (!subQuery.isEmpty())
         {
-            String query = "UPDATE `pstone_fields` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
+            String query = "UPDATE `pstone_fields` SET " + Helper.stripTrailing(subQuery, ",") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
 
             if (field.hasFlag(FieldFlag.CUBOID))
             {
-                query = "UPDATE `pstone_cuboids` SET " + Helper.stripTrailing(subQuery, ", ") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
+                query = "UPDATE `pstone_cuboids` SET " + Helper.stripTrailing(subQuery, ",") + " WHERE x = " + field.getX() + " AND y = " + field.getY() + " AND z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "';";
             }
 
             core.execute(query);
-
         }
 
         field.clearDirty();

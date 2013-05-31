@@ -1598,11 +1598,6 @@ public final class ForceFieldManager
 
         Field absoluteSmallest = getSmallestVolumeField(allFields);
 
-        if (absoluteSmallest != null)
-        {
-            PreciousStones.debug("absoluteSmallest: %s", absoluteSmallest.getType());
-        }
-
         // find absolute smallest (regardless of whether it contains the queried flag or not)
 
         if (absoluteSmallest != null)
@@ -1625,11 +1620,6 @@ public final class ForceFieldManager
         List<Field> fields = getSourceFieldsInChunk(cv, flag, filters);
 
         Field smallest = getSmallestVolumeField(fields);
-
-        if (smallest != null)
-        {
-            PreciousStones.debug("smallest: %s", smallest.getType());
-        }
 
         return smallest;
     }

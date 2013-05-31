@@ -2728,7 +2728,6 @@ public class CommunicationManager
         {
             return false;
         }
-        PreciousStones.debug("1");
 
         ChatBlock cb = getNewChatBlock(player);
         FieldSettings fs = field.getSettings();
@@ -2753,15 +2752,13 @@ public class CommunicationManager
             }
         }
 
-        PreciousStones.debug("2");
-
         cb.addRow("  " + color + ChatBlock.format("_owner") + ": ", ChatColor.AQUA + field.getOwner(), "");
 
         if (field.getAllowed().size() > 0)
         {
             List<String> allowed = field.getAllowed();
 
-            int rows = (int) Math.max(Math.ceil(allowed.size() / 2), 1);
+            int rows = (int) Math.max(Math.ceil(allowed.size() / 2.0), 1);
 
             for (int i = 0; i < rows; i++)
             {
@@ -2775,8 +2772,6 @@ public class CommunicationManager
                 cb.addRow("  " + title, ChatColor.WHITE + getAllowed(allowed, i * 2), getAllowed(allowed, (i * 2) + 1));
             }
         }
-
-        PreciousStones.debug("3");
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
@@ -2804,8 +2799,6 @@ public class CommunicationManager
 
         cb.addRow("  " + color + ChatBlock.format("_location") + ": ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 
-        PreciousStones.debug("4");
-
         List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlags());
         List<FieldFlag> insertedFlags = field.getInsertedFlags();
         List<FieldFlag> disabledFlags = field.getDisabledFlags();
@@ -2817,8 +2810,6 @@ public class CommunicationManager
         {
             flags.remove(hid);
         }
-
-        PreciousStones.debug("5");
 
         boolean addedTitle = false;
 
@@ -2864,8 +2855,6 @@ public class CommunicationManager
             cb.addRow("  " + title, c + flagStr);
         }
 
-        PreciousStones.debug("6");
-
         if (field.hasFlag(FieldFlag.POTIONS))
         {
             cb.addRow("  " + color + ChatBlock.format("_potions") + ": ", ChatColor.WHITE + field.getSettings().getPotionString(), "");
@@ -2904,7 +2893,6 @@ public class CommunicationManager
                 showMessage = false;
             }
         }
-        PreciousStones.debug("7");
 
         return showMessage;
     }
@@ -2922,7 +2910,7 @@ public class CommunicationManager
         {
             List<String> renters = field.getRenters();
 
-            int rows = (int) Math.max(Math.ceil(renters.size() / 2), 1);
+            int rows = (int) Math.max(Math.ceil(renters.size() / 2.0), 1);
 
             for (int i = 0; i < rows; i++)
             {

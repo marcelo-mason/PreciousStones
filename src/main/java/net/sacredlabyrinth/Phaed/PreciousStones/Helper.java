@@ -366,6 +366,7 @@ public class Helper
         List<String> results = new ArrayList<String>();
         Collections.addAll(results, values);
         results.remove("");
+
         return results;
     }
 

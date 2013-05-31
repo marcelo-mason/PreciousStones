@@ -139,8 +139,8 @@ public final class ForesterManager
         int maxx = field.getX() + field.getRadius();
         int minz = field.getZ() - field.getRadius();
         int maxz = field.getZ() + field.getRadius();
-        int miny = field.getY() - (int) Math.floor(((double) field.getHeight()) / 2);
-        int maxy = field.getY() + (int) Math.ceil(((double) field.getHeight()) / 2);
+        int miny = field.getY() - (int) Math.floor(((double) field.getHeight()) / 2.0);
+        int maxy = field.getY() + (int) Math.ceil(((double) field.getHeight()) / 2.0);
 
         Random r = new Random();
 
