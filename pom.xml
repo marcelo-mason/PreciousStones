@@ -22,6 +22,7 @@
                     <include>plugin.yml</include>
                     <include>config.yml</include>
                     <include>language.yml</include>
+                    <include>language_*.yml</include>
                 </includes>
             </resource>
         </resources>

@@ -1,0 +1,556 @@
+psDisabled: '{red}在这个世界上宝石已禁用'
+psLoaded: '版本 {1.version} 加载完毕'
+debugEnabled: '{aqua}启用调试输出'
+debugDisabled: '{aqua}禁用调试输出'
+placingEnabled: '{aqua}已对宝石启用付费'
+placingAlreadyEnabled: '{red}宝石的放置已经启用'
+placingDisabled: '{aqua}已对宝石禁用付费'
+placingAlreadyDisabled: '{red}宝石的放置已经被禁用'
+onlyModWhileDisabled: '{red}在禁用此字段只能修改'
+noPermsForAllow: '{red}{1.player} 没有权限被允许'
+hasBeenAllowed: '{aqua}{1.player} 已被允许在该领域'
+alreadyAllowed: '{aqua}{1.player} 已被允许'
+hasBeenAllowedIn: '{aqua}{1.player} 没有权限进入 {2.count} 领域'
+isAlreadyAllowedOnAll: '{aqua}{1.player} 已经在您的列表'
+cannotRemovePlayerInField: '{red}无法删除正在你的领域中的玩家'
+cannotDisallowWhenOverlap: '{red}你不能禁止玩家 {1.player}, 他的以其中一个领域与你的相交'
+removedFromField: '{aqua}从领域中删除玩家 {1.player}'
+playerNotFound: '{red}{1.player} 未找到'
+removedFromFields: '{aqua}{1.player} 已从 {2.count} 个领域移除'
+nothingToBeDone: '{aqua}没有什么可以做'
+allowedList: '{yellow}已允许: {aqua}{1.allowed}'
+noPlayersAllowedOnField: '{red}该领域不允许任何玩家进入'
+noPlayersFoundOnField: '{red}在现场没有发现玩家'
+inhabitantsList: '{yellow}居民: {aqua}{1.inhabitants}'
+translocationUnlinked: '{yellow}移位器链接 {1.field} 解除了 {2.count} 块'
+translocationNothingToUnlink: '{red}没有要断开链接的块'
+translocationExists: '{red}一个易位块已经存在同名'
+translocationHasBlocks: '{aqua}移位器 {1.field} 存储了 {2.count} 个方块'
+translocationCreated: '{aqua}移位器 {1.field} 创建。正在记录更改...'
+translocationRenamed: '{aqua}已经重命名到 {1.name}'
+translocationCannotReshape: '{red}，无法重塑移位块，一旦它在使用'
+translocationMenu1: '* （除list外) 所有命令，您都需要将指着领域方块或站在领域中'
+translocationMenu2: '{red}用法： /ps translocation list'
+translocationMenu3: '{red}用法: /ps translocation import {gray} * 导入任何东西'
+translocationMenu4: '{red}用法: /ps translocation delet {gray} * 将删除所有内容'
+translocationMenu5: '{red}用法: /ps  translocation import [id] [id]......'
+translocationMenu6: '{red}用法: /ps translocation remove [id] [id]......'
+translocationMenu7: '{red}用法: /ps translocation delete [id] [id]......'
+translocationTakingPlace: '{red}目前正在进行易位'
+translocationNamedFirst: '{red}您必须首先命名您的转移器领域'
+translocationDeleted: '{aqua}{1.translocation} 已被删除'
+translocationDeletedBlocks: '{aqua}已从{3.field} 删除 {1.count} {2.blockid} '
+translocationEnabledFirst: '{red}必须启用转移器领域才能移除方块'
+translocationEnabledToUnlink: '{red}必须启用转移器领域才能进行断开链接'
+translocationEnabledToImport: '{red}必须启用易位领域导入块'
+translocationNotFound: '{red}找不到转移器'
+fieldNameCleared: '{aqua}领域的名称已被清除'
+noNameableFieldFound: '{red}没有拥有名字的字段'
+radiusSet: '{aqua}半径设置为 {1.radius}'
+radiusMustBeLessThan: '{red}半径必须小于或等于 {1.radius}'
+cuboidCannotChangeRadius: '{red}不能改变一个长方体的半径'
+griefRevertIntervalSet: '{aqua}破坏恢复间隔已设置为 {1.count} 秒'
+minInterval: '{red}最小间隔是 {1.count} 秒'
+notPointingAtGriefRevert: '{red}你不能指向一个破坏恢复方块'
+notPointingAtSnitch: '{red}你没有指向一个报告方块'
+notPointingAtTranslocation: '{red}你没有指向转移器方块'
+notPointingAtPstone: '{aqua}你没有指向一个领域或不可破坏方块'
+clearedSnitch: '{aqua}清除探查器列表'
+snitchEmpty: '{red}探查器列表为空'
+notValidBlockId: '{red}{1.blockid} 不是一个有效的方块 id, 跳过.'
+noBlocksMatched: '{red}没有匹配的方块'
+usageTranslocationRemove: '{red}用法: /ps translocation remove [id] [id]......'
+blockIsBlacklisted: '{red}{1.blockid} 已列入黑名单，跳过。'
+moreNextPage: '{dark-gray}输入 /ps more 以查看下一页面'
+moreNothingMore: '{gold}没有更多的信息.'
+playerHasNoFields: '{red}玩家没有任何领域'
+notValidFieldType: '{red}不是一个有效的字段类型'
+protectionRemoved: '{aqua}除去从该块的保护字段'
+protectionRemovedFrom: '保护领域从 {1.count} 方块中移除'
+deletedFields: '{aqua}已删除 {1.count} {2.block-type} 领域'
+deletedUnbreakables: '{aqua}已删除 {1.count} {2.block-type} 不可破坏方块'
+deletedCountFields: "{aqua}已删除 {1.player}'s {2.count} 领域"
+deletedCountUnbreakables: '{aqua}删除 {1.player} 的 {2.count} 不可破坏方块'
+noPstonesFound: '{aqua}找不到领域或不可破坏方块'
+playerHasNoPstones: '{aqua}该玩家没有宝石'
+cannotAssignAsOwners: '{aqua}不能指定组或家族作为所有者'
+ownerSetTo: '{aqua}所有者设置为 {1.player}'
+fieldCanBeTaken: '{aqua}现在用鼠标右键单击可以转移领域给 {1.player}'
+fieldCannotChangeOwner: '{aqua}字段类型不支持的所有权的变化'
+ownerCanOnlyChangeOwner: '{aqua}只有该字段的所有者可以改变其所有者'
+fieldsDown: '{aqua}在处理时所有的领域都暂时关闭'
+noFieldsFoundWithFlag: '{aqua}没有栏位与标志启用'
+flagEnabledOn: '{aqua}标志在 {1.count} 领域启用'
+flagDisabledOn: '{aqua}标志在 {1.count} 领域禁用'
+cleanedOrphanedFields: '{aqua}清除 {1.count} 孤立的领域'
+cleanedOrphanedUnbreakables: '{aqua}清除 {1.count} 孤立的牢不可破的块'
+noOrphansFound: '{aqua}找不到孤立的'
+revertedOrphanFields: '{aqua}已恢复 {1.count} 无主的领域'
+revertedOrphanUnbreakables: '{aqua}已恢复 {1.count} 无主的不可破坏方块'
+notValidCommand: '{red}不是有效的命令或没有足够的权限'
+velocityMustBe: '{red}速度必须是从0到5'
+velocitySetTo: '{aqua}速度设置为 {1.player}'
+fieldDisabled: '{aqua}领域已禁用'
+fieldAlreadyDisabled: '{red}领域已经禁用'
+fieldEnabled: '{aqua}领域已启用'
+fieldAlreadyEnabled: '{red}领域已经启用'
+visualizationChanged: '{aqua}可视化密度改为 {1.density}'
+visualizationSet: '{aqua}你的可视化密度已设置为 {1.density}'
+flagsToggledWhileDisabled: '{red}此领域的标志仅可以在禁用时切换'
+flagCannottoggle: '{red}该标志不能切换'
+flagEnabled: '{aqua}{1.flag} 标识已被启用.'
+flagDisabled: '{aqua}{1.flag} 标识已被禁用.'
+flagNotFound: '{red}该领域不包含此标志'
+flagInserted: '{aqua}插入领域标志'
+flagNotExists: '{red}标志进入的领域不存在'
+flagExists: '{red}该领域中已经包含该标志'
+flagsReverted: '{aqua} 领域标志已被恢复为默认值.'
+visualizing: '{aqua}可视化...'
+noFieldsInArea: '{red}区域中没有领域'
+visualizationNotWhileCuboid: '{red}无法在定义长方体时进行可视化'
+fieldTypeEnabled: '{aqua}{1.field-type} 领域已经启用'
+fieldTypeDisabled: '{aqua}{1.field-type} 领域已经禁用'
+noIntruders: '{aqua}这里没有任何入侵者'
+noGriefRecorded: '{aqua}在该领域中没有破坏记录'
+usageToggle: "{dark-gray}使用： '/ps toggle [flag]' 来禁用单个标志"
+notInsideField: '{red}你没有在一个领域内'
+visualizationTakingPlace: '{red}可视化已经处于启用中'
+markingFields: '{aqua}标记 {1.count} 领域方块...'
+markingNotWhileCuboid: '{red}无法在定义方形选区时标记领域'
+configReloaded: '{aqua}重新载入配置文件和语言文件'
+cannotReshapeWhileCuboid: '{red}，无法重塑移位块，一旦它在使用'
+cannotRedefineWhileCuboid: '{red}该领域具有子领域因而无法被重新定义.'
+redefineWhileDisabled: '{red}此领域的方形选区只能在禁用时被重新定义'
+takenFieldOwnership: '{aqua}你已从 {1.old-owner} 获取领域的所有权'
+tookOwnership: '{aqua}{1.player} 你的领域已拥有'
+cannotTakeOwnership: '{aqua}你不能获取这一领域的所有权。它已被转移给：{1.new-owner}'
+translocatorNameToBegin: '{yellow}要开始存储，您必须首先使用 /ps setname 选择你的易位的名称'
+translocationReachedSize: '{red}您已到达全服务器最大移位大小。'
+cannotChangeGameMode: '{red}在这一领域不能改变你的游戏模式'
+pickaxeDisabled: '{aqua}究极锄头已禁用'
+pickaxeEnabled: '{aqua}究极锄头已启用'
+cannotRemoveWithSubplots: '{red}不能删除拥有情节字段的领域。在删除此领域之前，您必须首先删除它们。'
+notifyUnbreakablePlaced: '{aqua}坚不可摧的块放置'
+notifyRollbackGrief: '{dark-gray} * {aqua} 成功回滚 {1.count} 破坏记录 {2.coords}'
+notifyTranslocatorEnabled: '{aqua}移位器 {1.name} 启用。(记录中)'
+notifyTranslocatorDisabled: '{aqua}移位器 {1.name} 被禁用。（可被安全破坏）'
+notifyFieldPlaced: '{aqua}{1.field-type} placed'
+notifyCuboidClosed: '{aqua}{1.field-type} 长方体场关闭'
+notifyBreakablePlaced: '{aqua}Breakable {1.field-type} 放置'
+notifyUnbreakableDestroyed: '{aqua}坚不可摧的块被破坏'
+notifyFieldDestroyed: '{aqua}{1.field-type} 破坏'
+notifyBreakableDestroyed: "{aqua}{1.owner}'s breakable {2.field-type} 破坏"
+notifyBypassPlaced: "{aqua}Block bypass-placed inside {1.owner}'s {2.field-type} 领域"
+notifyUnbreakableBypassPlaced: "{aqua}Unbreakable block bypass-placed inside {1.owner}'s {2.field-type} 领域"
+notifyBypassDestroyed: "{aqua}Block bypass-destroyed in {1.owner}'s {2.field-type} 领域"
+notifyVehicleBypassDestroyed: "{aqua}Vehicle bypass-destroyed in {1.owner}'s {2.field-type} 领域"
+notifyUnbreakableBypassDestroyed: '{aqua}{1.owner} 牢不可破块无法被摧毁'
+notifyFieldBypassDestroyed: '{aqua}{1.owner} 的 {2.field-type} 领域无法被摧毁'
+warnEnterProtectedArea: '{aqua}无法进入保护区'
+warnPlaceFires: '{aqua}不能将火灾在这里'
+warnPlace: '{aqua}不能放在这里'
+warnUse: '{aqua}无法使用此'
+warnEmpty: '{aqua}不能放在这里'
+warnOwnerRemove: '{aqua}只有所有者可以删除此块'
+warnDestroy: '{aqua}不能破坏这里'
+warnDestroyVehicle: '{aqua}也无法破坏这种车辆'
+warnConflictUnbreakablePlace: '{aqua}不能在这里放置牢不可破块。与 {1.owner} 的 {2.field-type} 领域冲突 {3.details}'
+warnConflictUnbreakablePlace2: '{aqua}不能将牢不可破的块'
+warnConflictFieldPlace: '{aqua}不能在这里放置领域。与 {1.owner} 的 {2.field-类型} 领域冲突 {3.details}'
+warnConflictFieldPlace2: '{aqua}不能把领域'
+warnPvP: '{aqua}在这方面的PvP禁用'
+warnFire: '{1.player} 尝试在 {2.owner} 的 {3.field-type} 领域点火 {4.details}'
+notifyPvPBypass: '{aqua}PvP广播旁路'
+warnFieldPlaceUnprotectableTouching: '{aqua}Cannot place unprotectable {1.block-type} 阻止在这里'
+warnUnbreakablePlaceUnprotectableTouching: '{aqua}Cannot place unprotectable {1.block-type} 阻止在这里'
+warnCannotProtect: '{aqua}不能保护 {1.block-type}'
+warnCannotProtectInside: '{aqua}Cannot protect {1.block-type} inside this {2.field-type} 领域'
+warnPlaceFieldInUnprotectable: '{aqua}Cannot place {1.field-type} field. A {2.block-type} 发现在该地区'
+warnBypassPlacedUnprotectableInField: '{aqua}Unprotectable block {1.block-type} bypass-placed near {2.block-type} 领域'
+warnBypassPlacedUnprotectableInUnbreakable: '{aqua}Unprotectable block {1.block-type} bypass-placed near {2.block-type} 牢不可破'
+warnUnprotectableBypassProtected: '{aqua}不可保护块 {1.block-type} 无法进行保护'
+warnUnprotectableBypassPlaced: '{aqua}Unprotectable block {1.block-type} bypass-placed in {2.field-type} 领域'
+warnFieldBypassPlacedUnprotectable: '{aqua}{1.field-type} field bypass-placed in an area with an {2.block-type} 不受保护的块'
+logUnbreakablePlace: '{1.player} 放置了一个牢不可破的块 {2.details}'
+logBlockReverted: '{1.owner} 的 {2.field-type} 块恢复了 {3.count} {4.coords}'
+logTranslocationTranslocated: '{1.owner} 的转移块转移了{1.owner} 的 {3.count} {4.coords}'
+logTranslocationStored: '{1.owner} 的易位 {2.field} 存储 {3.count} 块 {4.coords}'
+logFieldPlaced: '{1.player} 放置了一个 {2.field-type} 领域 {3.details}'
+logCuboidFieldPlaced: '{1.player} 放置了 {2.field-type} 长方体领域 {3.details}'
+logBreakablePlaced: '{1.player} 放置 {2.field-type} 可破坏领域 {3.details}'
+logDestroyedOwnUnbreakable: '{1.player} 破坏了他的不可破坏方块 {2.details}'
+logDestroyedOwnField: '{1.player} 破坏了他的 {2.field-type} 领域 {3.details}'
+logDestroyedOthersField: '{1.player} 破坏了 {2.owner} 的 {3.field-type} {4.details}'
+logBypassPlacedPainting: '{1.player} 绕过限制在 {2.owner} 的 {3.field-type} 领域 {4.details} 放置一幅画'
+logBypassPlacedUnbreakable: '{1.player} 绕过限制在 {2.owner} 的 {3.field-type} 领域 {4.details} 放置一个不可破坏方块'
+logBypassDestroy: '{1.player} 无视限制在 {3.owner} 的 {4.field-type} 领域 {5.details} 中 破坏一个方块 {2.coords} '
+logBypassDestroyVehicle: '{1.player} 无视限制破坏 {2.coords} 在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+logBypassDestroyUnbreakable: '{1.player} 绕过破坏 {2.owner} 的不可破坏方块 {3.details}'
+logBypassDestroyField: '{1.player} 绕过破坏 {2.owner} 的 {3.field-type} 领域 {4.details}'
+logEntry: '{1.player} 试图进入 {2.owner} 的 {3.field-type} 领域 {4.details} '
+logFire: '{1.player} 尝试在 {2.owner} 的 {3.field-type} 领域点火 {4.details}'
+logUse: '{1.player} 试图使用 {2.coords} 在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+logBucketEmpty: '{1.player} 试图使用 {2.coords} 在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+logDestroyUnbreakable: '{1.player} 试图破坏 {2.owner} 的不可破坏方块 {3.details}'
+logDestroyField: '{1.player} 试图破坏 {2.owner} 的 {3.field-type} 领域 {4.details}'
+logDestroyInField: '{1.player} 试图破坏一个方块 {2.coords} 在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+logDestroyVehicle: '{1.player} 试图破坏交通工具 {2.coords} 在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+logDestroyOthers: '{1.player} 破坏了 {2.owner} 的 {3.field-type} {4.details}'
+logDestroyBreakableField: '{1.player} 破坏了 {2.owner} 的易破坏的 {3.field-type} 领域 {4.details}'
+logPlaceUnbreakableConflict: '{1.player} 试图放置一个不可破坏的方块 {2.coords} 发生冲突在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+logPlaceFieldConflit: '{1.player} 试图设置领域 {2.coords} 发生冲突在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+logPvP: '{1.attacker} 试图攻击 {2.victim} 在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+warnProectionIgnored: '{aqua}“的PvP保护被忽略的打击'
+logBypassAttack: '{1.attacker} 无视限制攻击 {2.victim} 在 {3.owner} 的 {4.field-type} 领域 {5.details}'
+logPlaceUnprotectableTouchingField: '{1.player} 试图放置不可破坏方块 {2.unprotectable-details} 在 {3.field-details} 附近'
+logPlaceUnprotectableTouchingUnbreakable: '{1.player} 试图放置不可破坏方块 {2.unprotectable-details} 在 {3.field-details} 附近'
+logPlaceTouchingUnbreakableUnprotectable: '{1.player} 试图保护不可保护方块 {2.details}'
+logPlaceTouchingFieldUnprotectable: '{1.player} 试图保护不可保护方块 {2.details}'
+logPlaceUnprotectableInField: '{1.player} 试图保护不可保护方块 {2.unprotectable-details} 在领域 {3.field-details}'
+logPlaceFieldUnprotectableInArea: '{1.player} 试图放置领域 [{2.field-type}] 但是发现在该领域不可保护 {3.unprotectable-details}'
+logUnbreakableBypassUnprotectableTouching: '{1.player} 绕过限制在 {3.unbreakable-details} 附近放置不可保护方块 {2.unprotectable-details} '
+logFieldBypassUnprotectableTouching: '{1.player} 绕过限制在 {3.field-details} 附近放置不可保护方块 {2.unprotectable-details}  '
+logBypassTouchingUnprotectable: '{1.player} 无视限制保护一个不可保护方块 {2.details} 在不可保护方块附近 {3.unprotectable-details}'
+logBypassPlaceUnprotectableInField: '{1.player} 绕过限制放置一个不可保护方块 {2.unprotectable-details} 在领域 {3.field-details}'
+logBypassFieldInUnprotectable: '{1.player} 绕过限制放置领域 [{2.field-type}] 使用一个不可保护方块在一个区域 {3.unprotectable-details}'
+logPayment: '{1.renter} 租用 {2.period} 时间 {3.owner} 的 {4.field} 领域使用了 {5.amount} {6.item} {7.coords}'
+logPaymentCollect: '{1.owner} 收集了 {2.amount} {3.item} 从租借的 {4.renter} {5.coords}'
+logPurchase: '{1.buyer} 购买 {2.owner} 的 {3.field} 领域 使用 {4.amount} {6.item} {7.coords}'
+logPurchaseCollect: '{1.owner} 收集了 {2.amount} {3.item} 从购买的 {4.buyer} {5.coords}'
+logDeletedNoPermission: 'Deleted {1.count} fields belonging to {2.player} 由于缺乏权限'
+enteringField: "{aqua}Entering {1.owner}'s {2.field-type} 领域"
+enteringNamedField: '{aqua}进入 {1.field}'
+leavingField: "{aqua}Leaving {1.owner}'s {2.field-type} 领域"
+leavingNamedField: '{aqua}离开 {1.field}'
+potionNeutralized: '{white}*{1.potion} 中立化 *'
+noFieldsFound: '{red}没有找到的字段'
+notifyDoDamage: '{dark-red}*受到伤害*'
+notifyDoHealed: '{white} * 治愈 *'
+notifyDoAir: '{white} * 空气 *'
+notifyDoLaunch: '{light-purple}* 发射 *'
+notifyDoCannon: '{light-purple} *轰*'
+notifyDoMine: '{red}*再见*'
+notifyDoLightning: '{red}*崩溃*'
+notifyDoFall: '{dark-gray}*噔*'
+notifyDoFeeding: '{white}~投食~'
+notifyRepairing: '{white}+修理+'
+showOwner: '{yellow}主人sama: {aqua}{1.owner}'
+showProtected: '{white}保护'
+showProtectedLocations: '{yellow}{1.field-type}: {aqua}{2.coords}'
+_fieldDisabled: 领地禁用
+_type: 类型
+_name: 名称
+_owner: 主人sama
+_limit: 限制
+_field: Field
+_entry: 条目
+_everyone: 敏娜桑
+_count: 次数
+_location: 位置
+_none: 无
+_appliesTo: 适用于
+_reason: 原因
+_details: 详细信息
+_allowed: 允许
+_dimensions: 尺寸
+_distance: 距离
+_coords: 坐标
+_velocity: 速度
+_interval: 时间间隔
+_flags: 标志
+_potions: 药水
+_neutralizes: 保持中立
+_intruderLog: 入侵记录
+_kill: 杀死
+_blockBreak: 方块破坏
+_blockPlace: 方块放置
+_bucketEmpty: 空桶
+_bucketFilled: 桶已装满
+_used: 已使用
+_shopped: 已购买
+_ignited: 已点燃
+_LWC: LWC
+_blacklistedCommands: 列入黑名单的命令
+sepFieldInfo: '{white}领域信息 {dark-gray}----------------------------------------------------------------------------------------'
+sepFieldInfoDisabled: '{white}领域信息 {red}(已禁用) {dark-gray}----------------------------------------------------------------------------------------'
+sepStoredTranslocations: '{white}储存的转移器 {dark-gray}----------------------------------------------------------------------------------------'
+sepCounts: '{white}{1.field-type} 数量 {dark-gray} ----------------------------------------------------------------------------------------'
+sepConfiguredFields: '{white}已配置的领域 {dark-gray}----------------------------------------------------------------------------------------'
+sepFieldCounts: '{1.player} 的领地数量 {dark-gray}  ----------------------------------------------------------------------------------------'
+sepFieldLocations: '{1.player} 在 {world} 世界的领地 {dark-gray} ----------------------------------------------------------------------------------------'
+sepMenu: '{1.plugin-name} {2.plugin-version} {dark-gray} ----------------------------------------------------------------------------------------'
+headerConfiguredFields: '{aqua}{1.field-type}{gray}({2.block-type}) {yellow}id:{white}{3.blockid} {yellow}r:{white}{4.radius}'
+headerConfiguredFields2: '{yellow}h:{white}{1.height}'
+menuIdentifiers: '{gray}  标识符: {dark-gray}玩家, g:group, c:clan, *'
+menu1: '{yellow}  /ps on/off {aqua}- 禁用/启用pstones配置'
+menu2: '{yellow}  /ps enable/disable {aqua}- 启用/禁用领地'
+menu3: '{yellow}  /ps allow [identifier(s)] {aqua}- 从领地允许'
+menu4: '{yellow}  /ps allowall [identifier(s)] {aqua}- 从领地允许所有'
+menu5: '{yellow}  /ps remove [identifier(s)] {aqua}- 从领地删除'
+menu6: '{yellow}  /ps removeall [identifier(s)] {aqua}- 从领地删除所有'
+menu7: '{yellow}  /ps allowed {aqua}- 显示领地上被许可的玩家'
+menu8: '{yellow}  /ps who {aqua}- 显示领地上的所有玩家'
+menu9: '{yellow}  /ps counts {aqua}- 查看您的领地数量'
+menu10: '{yellow}  /ps locations {aqua}- 显示您的领地位于神马世界'
+menu11: '{yellow}  /ps toggle [flag]{aqua}- 启用/禁用一个领地标识'
+menu12: '{yellow}  /ps changeowner [name] {aqua}- 更改领地的主人'
+menu13: '{yellow}  /ps setname [name] {aqua}- 设置领地的名字'
+menu14: '{yellow}  /ps setradius [radius] {aqua}- 设置领地的范围'
+menu15: '{yellow}  /ps setvelocity [.1-5] {aqua}- 设定发射器/加农炮 (0=自动)'
+menu16: '{yellow}  /ps setinterval [秒] {aqua}- 设置伤害回复'
+menu17: '{yellow}  /ps snitch <clear> {aqua}- 显示/清除指定的告密者'
+menu18: '{yellow}  /ps visualize {aqua}- 想象你所处的领地'
+menu19: '{yellow}  /ps visualize [radius]{aqua}- 想象领地的范围'
+menu20: '{yellow}  /ps density [1-100]{aqua}- 改变可视化密度'
+menu21: '{yellow} /ps mark{aqua}- 标记领域的位置'
+menu22: '{yellow}  /ps translocation list {aqua}- 列出所储存的转移器'
+menu23: '{yellow}  /ps translocation import {aqua}- 导入领域中的所有方块'
+menu24: '{yellow}  /ps translocation import [id] [id] ... {aqua}- 导入特定的方块'
+menu25: '{yellow}  /ps translocation delete {aqua}- 删除领域中的所有方块'
+menu26: '{yellow}  /ps translocation delete [id] [id] ... {aqua}- 删除特定的方块'
+menu27: '{yellow}  /ps translocation remove [id] [id] ... {aqua}- 移除特定的方块'
+menu28: '{yellow}  /ps translocation unlink {aqua}- 断开方块链接'
+menu29: '{dark-red}  /ps insert [标志]{aqua}- 插入领域标志'
+menu30: '{dark-red}  /ps reset{aqua}- 将领域的标志重置为默认值'
+menu31: '{dark-red}  /ps mark{aqua}- 标记领域的位置'
+menu34: '{dark-red}  /ps info {aqua}- 获得你所在的领域的信息'
+menu35: '{dark-red}  /ps counts [identifier(s)] {aqua}- 查看领域计数'
+menu36: '{dark-red}  /ps locations [identifier(s)] <typeid> {aqua}- 查看领域的位置'
+menu37: '{dark-red}  /ps list [chunks-in-radius]{aqua}- 列出在区域中的所有宝石'
+menu38: '{dark-red}  /ps setowner [player] {aqua}- 设置你所指向的领域的主人'
+menu39: '{dark-red}  /ps reload {aqua}- 重新加载配置文件'
+menu40: '{dark-red}  /ps fields {aqua}- 列出所有领域类型'
+menu41: '{dark-red}  /ps clean <world>{aqua}- 清除世界中所有孤立的领域'
+menu42: '{dark-red}  /ps revert <world>{aqua}- 恢复世界中所有孤立的领域'
+menu43: '{dark-red}  /ps enableall [flag] {aqua}- 对所有的领域启用这个标志'
+menu44: '{dark-red}  /ps disableall [flag] {aqua}- 对所有的领域禁用这个标志'
+menu45: '{dark-red}  /ps debug {aqua}- 输出计时信息到控制台'
+menu48: '{dark-red}  /ps bypass <on/off>{aqua}- 切换无视限制模式'
+menu49: '{yellow}  /ps hide {aqua}- 隐藏领域'
+menu50: '{yellow}  /ps unhide {aqua}- 取消隐藏领域'
+menu51: '{yellow}  /ps hide <all>{aqua}- 隐藏所有领域'
+menu52: '{yellow}  /ps unhide <all>{aqua}- 取消隐藏所有领域'
+menu53: '{yellow}  /ps cuboid [open/close] {aqua}- 打开长方体模式'
+menu54: '{yellow}  /ps setlimit [time] {aqua}- 设置一个领域的租用时间限制'
+menu32: '{dark-red}  /ps delete {aqua}- 删除你所在的领域'
+menu33: '{dark-red}  /ps delete [player] {aqua}- 删除玩家的所有宝石'
+menu55: '{dark-red}  /ps delete [typeId] {aqua}- 删除特定类型的宝石方块'
+menu56: '{dark-red}  /ps delete [player] [typeId] {aqua}- 删除玩家的领域'
+menu57: '{yellow}  /ps blacklistcommand [command] - 领域中的命令黑名单'
+menu58: '{yellow}  /ps blacklistcommand clear - 清除黑名单'
+menu59: '{dark-red}  /ps rent <clear/remove> - 清除所有租客或者取消出租'
+menu60: '{yellow}  /ps rent - 出租你所指向的领域'
+menu61: '{yellow}  /ps buy - 购买你所指向的领域'
+confiscatedFrom: '从 {2.player} 在 {3.coords} 没收 {1.items} '
+confiscated: '{aqua}没收: {white}{1.image}'
+returnedTo: '返还 {1.items} 给 {2.player}'
+returned: '{aqua}已返还: {white}{1.items}'
+mustBeInCuboidToExpand: '{red}必须是长方体内扩大'
+cuboidAvailableProtection: '{aqua}Available protection: {yellow}{1.volume} 块'
+cuboidAvailableProtectionBypass: '{aqua}可用的保护: {red}{1.volume} 方块 (无限制)'
+cuboidCannotExtendWG: '{red}WorldGuard区域内无法扩展'
+cuboidExceeds: '{red}长方体的体积超过了可用'
+cuboidOutline: '{red}不能点击的轮廓'
+cuboidDrawingMode: '{aqua}你正处于绘图模式. 点击方块来结束.'
+cuboidExceedsMax: '{red}长方体的体积超过了可用'
+cuboidConflicts: '{red}长方体与其他领域冲突'
+cuboidConflictsWG: '{red}长方体与worldguard地区冲突'
+cuboidCancelled: '{red}长方体已被取消.'
+cuboidReverted: '{aqua}选择恢复'
+noFlyEnter: '{yellow}进入禁飞区'
+noFlyLeave: '{yellow}离开禁飞区'
+entryAnnounce: '{1.player} 在 {2.field} {dark-gray}{3.coords}'
+fieldWillDisable: '{yellow}{1.field-type} field will disable itself after {2.count} 秒'
+fieldHasDisabled: '{yellow}{1.field-type} 领域已禁用'
+flagsImported: '{yellow}{1.field-type} 的标志已导入'
+announceToAllowedPlayers: ' {dark-gray}* {aqua}{1.message}'
+fieldsSkipped: '{red}{1.not-allowed} 领域被跳过，只能修改，则禁用'
+playerInsideNotRemoved: '{red}播放器不能从一个领域，因为他是目前内'
+playerNotDisallowed: '{red}{1.player} 不被允许, 其中一个领域与你相交 {2.coords}'
+economyNotEnoughMoney: '{red}您没有足够的钱在您的帐户'
+economyNotEnoughItems: '{red}没有规定的付款'
+economyAccountCredited: '{aqua}您的帐户已计入'
+limitsCannotPlace: '{red}您不能放置任何 {1.field-type}'
+limitsReached: '{red}您已到达 {2.limit} {1.field-type} 的极限'
+limitsReachedGlobal: '{red}您已到达 {1.limit} 的全局领域限制'
+cannotPlaceNextToRedstone: '{red}你不能在一个不属于你的红石启用领域旁边放置方块'
+fieldsDontMix: '{red}The field type does not mix'
+noUnbreakableInsideTranslocation: '{red}，不能将牢不可破块内转场'
+noChestNextToField: '{red}你不能在别人的领域旁边放置箱子'
+noConfiscatingBelowField: '{red}不能把没收下面的字段的字段块'
+noConfiscatingBelowUnbreakable: '{red}不能把没收下面的一个牢不可破的领域'
+noFieldNearPlayer: '{red}不能把场附近的玩家'
+noPlaceInWG: '{red}不能把领域中worldguard地区'
+foresterNeedsFertile: '{aqua}{1.field-type} 块必须放置在肥沃的土地，以激活'
+fieldInsideAllowedInside: '{red}{1.field-type} 需要被放在 {2.allowed-inside-fields} 中'
+fieldOutsideAllowedOutside: '{red}{1.field-type} 需要被放在 {2.allowed-outisde-fields} 中'
+translocationNoFields: '{red}不能把田区块内转场'
+importComplete: '{aqua}导入完成'
+importedBlocks: '{aqua}Imported {1.count} 块'
+translocationImportingBlocks: '{aqua}导入 {1.count} 方块到转移器...'
+translocationSkippedDueToLimit: '{red}{1.count} 由于最大易位限制块跳过'
+nothingToImport: '{red}没有要导入的块'
+translocationRemovingBlocks: '{aqua}从转移器移除 {1.count} 方块'
+nothingToRemove: '{red}没有要删除的块'
+removalComplete: '{aqua}移除完成'
+blocksSkipped: '{red}{1.count} 个方块被跳过.'
+blocksSkipped2: '{red}(该目标位置已经有方块)'
+removedBlocks: '{aqua}Removed {1.count} 块'
+countsOrphan: '({1.world}) 孤立的领域: {2.count}'
+countsFields: '({1.world}) 领域： {2.count}'
+countsCuboids: '({1.world}) 长方体: {2.count}'
+countsUnbreakables: '({1.world}) 不可破坏方块: {2.count}'
+countsPurgedSnitches: '({1.world}) 清除未使用报告方块: {2.count}'
+fieldsInWrongTable: 在错误的表中找到领域, 移动中...
+countsPurgedFields: '({1.player}) inactivity purge: {2.count} 领域'
+countsPurgedUnbreakables: '({1.player}) 清除非活动状态: {2.count} 不可破坏方块'
+countsPurgedUnbreakabes2: '({1.world}) 清除不可破坏方块: {2.count}'
+countsOrphanedUnbreakables: '({1.world}) 孤立的不可破坏方块: {2.count}'
+dbMysqlConnected: MySQL 连接成功
+dbMysqlFailed: MySQL 连接失败
+dbSqliteConnected: SQLite 连接成功
+dbSqliteFailed: SQLite 连接失败
+commandDebug: debug
+commandOn: on
+commandOff: off
+commandAll: all
+commandAllow: allow
+commandAllowall: allowall
+commandRemove: remove
+commandRemoveall: removeall
+commandAllowed: allowed
+commandCuboid: cuboid
+commandCuboidOpen: open
+commandCuboidClose: close
+commandWho: who
+commandSetname: setname
+commandSetradius: setradius
+commandSetvelocity: setvelocity
+commandDisable: disable
+commandEnable: enable
+commandDensity: density
+commandToggle: toggle
+commandVisualize: visualize
+commandMark: mark
+commandInsert: insert
+commandReset: reset
+commandSetinterval: setinterval
+commandSnitch: snitch
+commandSnitchClear: clear
+commandTranslocation: translocation
+commandTranslocationList: list
+commandTranslocationDelete: delete
+commandTranslocationRemove: remove
+commandTranslocationUnlink: unlink
+commandTranslocationImport: import
+commandMore: more
+commandCounts: counts
+commandLocations: locations
+commandInfo: info
+commandDelete: delete
+commandSetowner: setowner
+commandChangeowner: changeowner
+commandList: list
+commandReload: reload
+commandFields: fields
+commandEnableall: enableall
+commandDisableall: disableall
+commandClean: clean
+commandRevert: revert
+commandBypass: bypass
+commandHide: hide
+commandUnhide: unhide
+commandRent: rent
+commandBuy: buy
+commandRentClear: clear
+commandRentRemove: remove
+commandBlacklisting: blacklistcommand
+rentQuestion: '{dark-gray}* {aqua}Type {green}/ps rent {aqua} 租'
+buyQuestion: '{dark-gray}* {aqua}Type {green}/ps buy {aqua} 购买'
+noSharing: You cannot allow others into this field
+teleportAnnounceHasItems: '{aqua}*你因为持有违禁品而被驱逐*'
+teleportAnnounceNotHasItems: '{aqua}*你因为没有持有必需品而被驱逐*'
+teleportAnnounceHoldingItems: '{aqua}*你因为手上拿着违禁品而被驱逐*'
+teleportAnnounceNotHoldingItems: '{aqua}*你因手上没有持有必需品而被驱逐*'
+teleportAnnounceWalking: '{aqua}*你因在禁区移动而被驱逐*'
+teleportAnnounceNotWalking: '{aqua}*你因未在规定范围内移动而被驱逐*'
+teleportAnnounceDeath: '{aqua}*临死前传送*'
+teleportAnnounceFeeding: '{aqua}*你因在领域内喂养动物而被驱逐*'
+teleportAnnounceFire: '{aqua}*你因在领域内点火而被驱逐*'
+teleportAnnouncePvp: '{aqua}*你因在领域内PVP而被驱逐*'
+teleportAnnounceBreak: '{aqua}*你因在领域内破坏方块而被驱逐*'
+teleportAnnouncePlace: '{aqua}*你因在领域内放置方块而被驱逐*'
+teleportAnnounceExit: '{aqua}*离开领域传送*'
+teleportAnnounceEnter: '{aqua}*进入领域传送*'
+teleportAnnounceDamage: '{aqua}*受伤传送*'
+teleportAnnounce: '{aqua}*已传送*'
+teleportAnnounceBack: '{aqua}*你将会在 {1.seconds} 秒内返回*'
+teleportMaxDistance: '你的传送设置超出了最长 {1.distance} 方块数量的限制, 传送已取消'
+bypassEnabled: '{aqua}启用旁路模式'
+bypassDisabled: '{aqua}禁止旁路模式'
+hideHide: '{aqua}该栏已经被隐藏'
+hideUnhide: '{aqua}该字段是现在可见'
+hideHideAll: '{aqua}Hid {1.count} 领域'
+hideUnhideAll: '{aqua}UnHid {1.count} 领域'
+hideHiddenAlready: '{red}该领域已隐藏'
+hideUnHiddenAlready: '{red}该领域已是可见的'
+hideCannot: '{red}这种类型的字段，是不能隐藏'
+hideNoneFound: '{red}没有指向一个隐藏的块'
+commandCanceled: '{red}您不能使用该命令'
+cuboidCannotMix: 无法合并不在同一个组内的领域.
+cuboidCannotAddProps: 无法在更有价值的字段上增加属性
+fieldIntersectsWG: 区域与世界保护区有冲突
+worldNotFound: 找不到世界
+mustBeAbove: '该领域必须高于 y={1.level}'
+mustBeBelow: '该领地必须低于 y={1.level}'
+cannotEnable: 无法启用该领域
+cuboidSelectionConflicts: '{red}无法扩大领地：与他人领地冲突'
+fieldSignRentExpired: '{yellow}{bold}*** 你的领地 {1.field} 的租金已到期***'
+fieldSignRentExpiredNoName: '{yellow}{bold}*** 你的租金已到期 ***'
+fieldSignRentAbandoned: '{aqua}你放弃了你的租金'
+fieldSignRentRented: '{aqua}你购买了 {1.period} 时间的租期'
+fieldSignRentError: '{red}时间格式错误，请提醒所有者修复'
+fieldSignRent: '[出租]'
+fieldSignBuy: '[买]'
+fieldSignShare: '[共享]'
+fieldSignBuyCreated: '{aqua}购买签署创建成功'
+fieldSignRentCreated: '{aqua}租签署创建成功'
+fieldSignMustBeOnField: '{red}无法对未设定领域的土地设定领域标识'
+fieldSignBadFormat: '{red}领域编号格式不正确'
+fieldSignCannotChange: '{red}该领地正在出租，因此不能修改'
+fieldSignCannotDestroy: '{red}该领地正在出租或出售，因此不能销毁'
+fieldSignCannotDisable: '{red}你不能禁用该领地，因为它已经出租了'
+fieldSignCannotRentDisabled: '{red}该领域已被所有者禁用，请稍候再试'
+fieldSignAlreadyRented: '{red}该领域已出租，请以后再试'
+fieldSignBoughtAndAllowed: '{aqua}你已经买下这块领域, 对方收到付款后将立即转移所有权限给你。从现在开始你可以在领域上行动。'
+fieldSignPaymentReceivedNoName: '{yellow}* {aqua}你接受了来自 {2.player} 的总计 {yellow}{1.amount} {aqua}的付款'
+fieldSignItemPaymentReceivedNoName: '{yellow}* {aqua}你接受了来自 {3.player} 总计 {yellow}{1.amount} {2.item} {aqua}的付款 '
+fieldSignPaymentReceived: '{yellow}* {aqua}你接受了来自{2.player}总计 {yellow}{1.amount} {aqua}的付款 ({3.field})'
+fieldSignItemPaymentReceived: '{yellow}* {aqua}你接受了来自{3.player}总计{yellow}{1.amount} {2.item} {aqua}的付款 ({4.field})'
+fieldSignNoTennant: '{red}该领域没有租户'
+fieldSignOnlyOne: '{red}每块领域只能设定一个领域标识'
+fieldSignNoEco: '{red}你必须在括号中指定一个物品ID'
+fieldSignAlreadyBought: '{red}对不起，该领域已售出'
+_tenant: 租客
+_tenants: 租客
+commandSetLimit: setlimit
+limitReached: '{red} 租用此领域已达到极限'
+limitMalformed: '{red} 租赁限制在了错误的格式'
+limitMalformed2: '{red}格式： w = 一周内，d = 天，h = 小时，m = 分钟'
+limitMalformed3: '{red} 如： /ps setlimit 3d12h'
+limitSet: '{aqua} 限制已被设置'
+_rentingLimit: 出租的限制
+limitBadField: '{red} 出租的限制无法设置一个领域是不可出租或共享'
+fenceGenerated: '{aqua} 已创建的栅栏'
+cannotHideOrphan: '{red} 无法隐藏孤立的领域'
+noBlacklistingFieldFound: '{red}不站在或指向具有命令黑名单标志字段'
+commandBlacklistUsage: '{red}用法: /ps blacklistcommand who'
+commandBlacklistCleared: '{aqua} 被列入黑名单的命令清除'
+commandBlacklistAdded: '{aqua} 该命令已被列入黑名单'
+cannotTeleportInsideField: '{red}不能瞬移到一个带有"防止瞬移"标识的领域'
+notAllowedToCreateLWC: '{red} 在这个领域，只允许玩家可以创造出低定量涂布纸的保护'
+notAllowedToDestroyLWC: '{red} 只有alowed玩家可以内摧毁LWC protecitons，这一领域'
+rentsCleared: '{aqua} 房客清除'
+rentsClearedNone: '{aqua} 在这个领域有没有租房'
+rentsRemoved: '{aqua} 租删除'
+rentsRemovedNone: '{aqua}在此领域上没有 租/共享/买 等记录'
