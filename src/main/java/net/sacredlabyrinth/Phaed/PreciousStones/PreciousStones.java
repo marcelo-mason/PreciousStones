@@ -176,6 +176,7 @@ public class PreciousStones extends JavaPlugin
     private void displayStatusInfo()
     {
         log("psLoaded", getDescription().getVersion());
+        log("psLocaleLoaded", getLanguageManager().getCurrentLocale());
     }
 
     private void metrics()

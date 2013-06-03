@@ -35,7 +35,6 @@ public class LanguageManager
         String[] codes = currentLocale.split("_");
         if (codes.length > 1) tryLoad(I18N + "_" + currentLocale + ".yml");
         if (codes.length > 0) tryLoad(I18N + "_" + codes[0] + ".yml");
-        PreciousStones.log("psLocaleLoaded", currentLocale);
     }
 
     private boolean tryLoad(String resname)
@@ -59,5 +58,10 @@ public class LanguageManager
         }
 
         return null;
+    }
+
+    public String getCurrentLocale()
+    {
+        return currentLocale;
     }
 }

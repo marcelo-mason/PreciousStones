@@ -1,6 +1,6 @@
 psDisabled: '{red}在这个世界上宝石已禁用'
 psLoaded: '版本 {1.version} 加载完毕'
-psLocaleLoaded: "使用语言 {1.locale}"
+psLocaleLoaded: '使用语言 {1.locale}'
 debugEnabled: '{aqua}启用调试输出'
 debugDisabled: '{aqua}禁用调试输出'
 placingEnabled: '{aqua}已对宝石启用付费'
