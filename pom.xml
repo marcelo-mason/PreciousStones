@@ -103,7 +103,7 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <!--<version>1.4.7-R1.0</version>-->
-            <version>1.5.2-R0.2-SNAPSHOT</version>
+            <version>1.5.2-R1.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

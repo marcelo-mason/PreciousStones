@@ -3,12 +3,12 @@ package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -18,7 +18,8 @@ import org.json.simple.JSONValue;
 
 import java.util.*;
 
-/**disabledFlags
+/**
+ * disabledFlags
  * A field object
  *
  * @author phaed
@@ -532,6 +533,24 @@ public class Field extends AbstractVec implements Comparable<Field>
             if (allowed.contains("c:" + clan))
             {
                 return true;
+            }
+        }
+
+        OfflinePlayer offlinePlayer = PreciousStones.getInstance().getServer().getOfflinePlayer(target);
+
+        if (offlinePlayer != null)
+        {
+            ScoreboardManager manager = Bukkit.getScoreboardManager();
+            Scoreboard board = manager.getNewScoreboard();
+
+            Team team = board.getPlayerTeam(offlinePlayer);
+
+            if (team != null)
+            {
+                if (allowed.contains("t:" + team.getName()))
+                {
+                    return true;
+                }
             }
         }
 

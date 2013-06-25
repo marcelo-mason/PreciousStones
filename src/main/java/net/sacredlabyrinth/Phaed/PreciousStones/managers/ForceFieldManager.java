@@ -15,6 +15,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 
 import java.util.*;
 
@@ -256,6 +259,26 @@ public final class ForceFieldManager
             if (clan != null)
             {
                 field.addAllowed("c:" + clan);
+            }
+        }
+
+        // add llowed team
+
+        if (plugin.getSettingsManager().isAutoAddClan())
+        {
+            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(player.getName());
+
+            if (offlinePlayer != null)
+            {
+                ScoreboardManager manager = Bukkit.getScoreboardManager();
+                Scoreboard board = manager.getNewScoreboard();
+
+                Team team = board.getPlayerTeam(offlinePlayer);
+
+                if (team != null)
+                {
+                    field.addAllowed("t:" + team.getName());
+                }
             }
         }
 
@@ -657,6 +680,30 @@ public final class ForceFieldManager
                     if (plugin.getSimpleClansManager().isInClan(field.getOwner(), clan))
                     {
                         out.add(field);
+                    }
+                    continue;
+                }
+
+                if (target.contains("t:"))
+                {
+                    String tm = target.substring(2);
+
+                    OfflinePlayer offlinePlayer = PreciousStones.getInstance().getServer().getOfflinePlayer(field.getOwner());
+
+                    if (offlinePlayer != null)
+                    {
+                        ScoreboardManager manager = Bukkit.getScoreboardManager();
+                        Scoreboard board = manager.getNewScoreboard();
+
+                        Team team = board.getPlayerTeam(offlinePlayer);
+
+                        if (team != null)
+                        {
+                            if (tm.equals(team.getName()))
+                            {
+                                out.add(field);
+                            }
+                        }
                     }
                     continue;
                 }
