@@ -909,16 +909,13 @@ public class PSBlockListener implements Listener
 
         if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
         {
-            PreciousStones.debug("before check");
             if (placingFieldChecks(player, block, event))
             {
-                PreciousStones.debug("after check");
                 plugin.getForceFieldManager().add(block, player, (BlockPlaceEvent) event);
             }
 
             if (event.isCancelled())
             {
-                PreciousStones.debug("post check canceleld");
                 return;
             }
         }
@@ -1232,6 +1229,15 @@ public class PSBlockListener implements Listener
             return false;
         }
 
+        // cannot place on bad surfaces
+
+        if (!fs.isSurface(block))
+        {
+            ChatBlock.send(player, "surfaceWarning", fs.getSurfaceString());
+            event.setCancelled(true);
+            return false;
+        }
+
         // cannot place field in prevent place area
 
         Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
@@ -1250,7 +1256,6 @@ public class PSBlockListener implements Listener
                     {
                         plugin.getCommunicationManager().warnPlace(player, block, field);
                         event.setCancelled(true);
-                        PreciousStones.debug("1");
                         return false;
                     }
                 }
@@ -1264,7 +1269,6 @@ public class PSBlockListener implements Listener
         if (conflictField != null)
         {
             event.setCancelled(true);
-            PreciousStones.debug("2");
             plugin.getCommunicationManager().warnConflictFF(player, block, conflictField);
             return false;
         }
@@ -1300,7 +1304,6 @@ public class PSBlockListener implements Listener
             {
                 plugin.getCommunicationManager().warnFieldPlaceTouchingUnprotectable(player, block);
                 event.setCancelled(true);
-                PreciousStones.debug("3");
                 return false;
             }
 
@@ -1315,7 +1318,6 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "mustBeAbove", fs.getMustBeAbove());
                 event.setCancelled(true);
-                PreciousStones.debug("4");
                 return false;
             }
         }
@@ -1326,7 +1328,6 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "mustBeBelow", fs.getMustBeBelow());
                 event.setCancelled(true);
-                PreciousStones.debug("5");
                 return false;
             }
         }
@@ -1341,7 +1342,6 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "noConfiscatingBelowField");
                 event.setCancelled(true);
-                PreciousStones.debug("6");
                 return false;
             }
 
@@ -1349,7 +1349,6 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "noConfiscatingBelowUnbreakable");
                 event.setCancelled(true);
-                PreciousStones.debug("7");
                 return false;
             }
         }
@@ -1364,7 +1363,6 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "noFieldNearPlayer");
                 event.setCancelled(true);
-                PreciousStones.debug("8");
                 return false;
             }
         }
@@ -1377,7 +1375,6 @@ public class PSBlockListener implements Listener
             {
                 ChatBlock.send(player, "noPlaceInWG");
                 event.setCancelled(true);
-                PreciousStones.debug("9");
                 return false;
             }
         }
@@ -1394,7 +1391,6 @@ public class PSBlockListener implements Listener
                 {
                     plugin.getCommunicationManager().warnPlaceFieldInUnprotectable(player, foundblock, block);
                     event.setCancelled(true);
-                    PreciousStones.debug("10");
                     return false;
                 }
 
@@ -1438,7 +1434,6 @@ public class PSBlockListener implements Listener
                 {
                     ChatBlock.send(player, "fieldInsideAllowedInside", fs.getTitle(), fs.getAllowedOnlyInsideString());
                     event.setCancelled(true);
-                    PreciousStones.debug("11");
                     return false;
                 }
             }
@@ -1467,7 +1462,6 @@ public class PSBlockListener implements Listener
                 {
                     ChatBlock.send(player, "fieldOutsideAllowedOutside", fs.getTitle(), fs.getAllowedOnlyOutsideString());
                     event.setCancelled(true);
-                    PreciousStones.debug("12");
                     return false;
                 }
             }
@@ -1481,7 +1475,6 @@ public class PSBlockListener implements Listener
         {
             ChatBlock.send(player, "translocationNoFields");
             event.setCancelled(true);
-            PreciousStones.debug("13");
             return false;
         }
 
@@ -1493,7 +1486,6 @@ public class PSBlockListener implements Listener
         {
             ChatBlock.send(player, "translocationNoFields");
             event.setCancelled(true);
-            PreciousStones.debug("14");
             return false;
         }
 

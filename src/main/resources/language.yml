@@ -561,7 +561,8 @@ rentsCleared: "{aqua} Renters cleared"
 rentsClearedNone: "{aqua} There are no renters in this field"
 rentsRemoved: "{aqua} Rent removed"
 rentsRemovedNone: "{aqua} There are no rent/share/buy signs on this field"
-commandPull: pull
+commandPull: "pull"
 inventoryDeny: "{red} You do not have permission to access this inventory"
+surfaceWarning: "{red} You can only place this field on the following blocks: {1.blocks}"
 
 

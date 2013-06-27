@@ -701,7 +701,7 @@ public final class ForceFieldManager
                         {
                             if (tm.equals(team.getName()))
                             {
-                                out.add(field);
+                                  out.add(field);
                             }
                         }
                     }

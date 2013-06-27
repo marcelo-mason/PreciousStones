@@ -78,6 +78,7 @@ public class FieldSettings
     private List<String> creatureTypes = new ArrayList<String>();
     private List<Integer> fertileBlocks = new ArrayList<Integer>();
     private List<Integer> limits = new ArrayList<Integer>();
+    private List<BlockTypeEntry> surfaces = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> translocationBlacklist = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> preventPlaceBlacklist = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> preventDestroyBlacklist = new ArrayList<BlockTypeEntry>();
@@ -336,6 +337,7 @@ public class FieldSettings
         loadBoolean("command-blacklisting");
         loadBoolean("anti-plot");
 
+        surfaces = loadTypeEntries("surfaces");
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");
         requiredPermissionAllow = loadString("required-permission-allow");
@@ -1517,5 +1519,27 @@ public class FieldSettings
     public int getFenceItemPrice()
     {
         return fenceItemPrice;
+    }
+
+    public boolean isSurface(Block fieldBlock)
+    {
+        if (surfaces.isEmpty())
+        {
+            return true;
+        }
+
+        return surfaces.contains(new BlockTypeEntry(fieldBlock.getLocation().add(0, -1, 0).getBlock()));
+    }
+
+    public String getSurfaceString()
+    {
+        String out = "";
+
+        for (BlockTypeEntry entry : surfaces)
+        {
+            out += entry.getFriendly() + ", ";
+        }
+
+        return Helper.stripTrailing(out, ", ");
     }
 }
