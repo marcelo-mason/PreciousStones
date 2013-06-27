@@ -1412,7 +1412,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                         }
                         else if (flag.equals("disabled"))
                         {
-                            setDisabled(((Boolean) flags.get(flag)));
+                            setDisabledNoMask(((Boolean) flags.get(flag)));
                         }
                         else if (flag.equals("hidden"))
                         {
@@ -1435,10 +1435,11 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                     catch (Exception ex)
                     {
+                        System.out.print("Failed reading field flag: " + flag);
+                        System.out.print("Value: " + flags.get(flag));
+
                         for (StackTraceElement el : ex.getStackTrace())
                         {
-                            System.out.print("Failed reading flag: " + flag);
-                            System.out.print("Value: " + flags.get(flag));
                             System.out.print(el.toString());
                         }
                     }
@@ -1710,7 +1711,17 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public void setDisabled(boolean disabled)
     {
-        setDisabled(disabled, null);
+        setDisabled(disabled, null, false);
+    }
+
+    /**
+     * Disables the field but skips masking, used on world load operations
+     *
+     * @param disabled
+     */
+    public void setDisabledNoMask(boolean disabled)
+    {
+        setDisabled(disabled, null, true);
     }
 
     /**
@@ -1718,7 +1729,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      *
      * @param disabled
      */
-    public boolean setDisabled(boolean disabled, Player player)
+    public boolean setDisabled(boolean disabled, Player player, boolean skipMask)
     {
         PreciousStones plugin = PreciousStones.getInstance();
 
@@ -1728,14 +1739,17 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (disabled)
             {
-                if (hasFlag(FieldFlag.MASK_ON_DISABLED))
+                if (!skipMask)
                 {
-                    mask();
-                }
+                    if (hasFlag(FieldFlag.MASK_ON_DISABLED))
+                    {
+                        mask();
+                    }
 
-                if (hasFlag(FieldFlag.MASK_ON_ENABLED))
-                {
-                    unmask();
+                    if (hasFlag(FieldFlag.MASK_ON_ENABLED))
+                    {
+                        unmask();
+                    }
                 }
 
                 if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
@@ -1768,14 +1782,17 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                 }
 
-                if (hasFlag(FieldFlag.MASK_ON_DISABLED))
+                if (!skipMask)
                 {
-                    unmask();
-                }
+                    if (hasFlag(FieldFlag.MASK_ON_DISABLED))
+                    {
+                        unmask();
+                    }
 
-                if (hasFlag(FieldFlag.MASK_ON_ENABLED))
-                {
-                    mask();
+                    if (hasFlag(FieldFlag.MASK_ON_ENABLED))
+                    {
+                        mask();
+                    }
                 }
 
                 startDisabler();

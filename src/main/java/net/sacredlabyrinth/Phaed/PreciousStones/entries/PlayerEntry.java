@@ -381,7 +381,7 @@ public class PlayerEntry
                     }
                     catch (Exception ex)
                     {
-                        System.out.print("Failed reading flag: " + flag);
+                        System.out.print("Failed reading player flag: " + flag);
                         System.out.print("Value: " + flags.get(flag));
                         System.out.print("Error: " + ex.getMessage());
 
