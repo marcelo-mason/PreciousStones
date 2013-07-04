@@ -41,7 +41,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.trove4j:trove4j:3.0.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.h31ix.anticheat:AntiCheat:1.5.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.p000ison.dev.simpleclans2:SimpleClans2:1.0-SNAPSHOT" level="project" />
   </component>
 </module>
 
