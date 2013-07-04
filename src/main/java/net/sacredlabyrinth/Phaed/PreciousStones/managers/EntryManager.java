@@ -241,7 +241,7 @@ public final class EntryManager
                                 {
                                     if (player.getHealth() > 0)
                                     {
-                                        int health = healthCheck(player.getHealth() - field.getSettings().getDamage());
+                                        double health = healthCheck(player.getHealth() - field.getSettings().getDamage());
                                         player.setHealth(Math.max(health, 0));
 
                                         if (health <= 1)
@@ -794,7 +794,7 @@ public final class EntryManager
         return false;
     }
 
-    private int healthCheck(int health)
+    private double healthCheck(double health)
     {
         if (health < 0)
         {

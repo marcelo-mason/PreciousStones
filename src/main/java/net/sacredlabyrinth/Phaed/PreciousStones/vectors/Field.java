@@ -1729,6 +1729,16 @@ public class Field extends AbstractVec implements Comparable<Field>
      *
      * @param disabled
      */
+    public boolean setDisabled(boolean disabled, Player player)
+    {
+        return setDisabled(disabled, player, false);
+    }
+
+    /**
+     * Disables the field
+     *
+     * @param disabled
+     */
     public boolean setDisabled(boolean disabled, Player player, boolean skipMask)
     {
         PreciousStones plugin = PreciousStones.getInstance();
