@@ -1715,6 +1715,16 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
+     * Disables the field
+     *
+     * @param disabled
+     */
+    public void setDisabled(boolean disabled, boolean skipMask)
+    {
+        setDisabled(disabled, null, true);
+    }
+
+    /**
      * Disables the field but skips masking, used on world load operations
      *
      * @param disabled

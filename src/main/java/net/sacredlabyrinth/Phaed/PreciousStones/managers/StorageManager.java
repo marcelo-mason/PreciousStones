@@ -366,7 +366,7 @@ public class StorageManager
                 if (field.isNamed())
                 {
                     boolean applied = isTranslocationApplied(field.getName(), field.getOwner());
-                    field.setDisabled(!applied);
+                    field.setDisabled(!applied, true);
 
                     int count = totalTranslocationCount(field.getName(), field.getOwner());
                     field.setTranslocationSize(count);
@@ -622,7 +622,7 @@ public class StorageManager
 
                             if (fs.getAutoDisableSeconds() > 0)
                             {
-                                field.setDisabled(true);
+                                field.setDisabled(true, true);
                             }
 
                             out.add(field);
@@ -722,7 +722,7 @@ public class StorageManager
 
                             if (fs.getAutoDisableSeconds() > 0)
                             {
-                                field.setDisabled(true);
+                                field.setDisabled(true, true);
                             }
 
                             out.put(id, field);
