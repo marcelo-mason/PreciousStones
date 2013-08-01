@@ -1480,6 +1480,7 @@ public class PSBlockListener implements Listener
 
         // cannot place field in grief revert fields
 
+        /*
         field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
         if (field != null)
@@ -1487,7 +1488,7 @@ public class PSBlockListener implements Listener
             ChatBlock.send(player, "translocationNoFields");
             event.setCancelled(true);
             return false;
-        }
+        }*/
 
         return true;
     }
