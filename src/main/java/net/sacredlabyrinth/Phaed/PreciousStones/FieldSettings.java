@@ -820,14 +820,9 @@ public class FieldSettings
     /**
      * @return
      */
-    public int getHeight()
+    public int getCustomHeight()
     {
-        if (this.customHeight > 0)
-        {
-            return this.customHeight;
-        }
-
-        return (this.getRadius() * 2) + 1;
+        return this.customHeight;
     }
 
     /**

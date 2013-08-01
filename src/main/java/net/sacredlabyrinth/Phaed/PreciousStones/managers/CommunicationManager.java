@@ -2982,7 +2982,7 @@ public class CommunicationManager
 
         for (FieldSettings fs : fss.values())
         {
-            String customHeight = fs.getHeight() > 0 ? " " + ChatBlock.format("headerConfiguredFields2", fs.getHeight()) : "";
+            String customHeight = fs.getCustomHeight() > 0 ? " " + ChatBlock.format("headerConfiguredFields2", fs.getCustomHeight()) : "";
 
             int id = fs.getTypeId();
             BlockTypeEntry entry = new BlockTypeEntry(fs.getTypeId(), fs.getData());

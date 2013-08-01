@@ -816,11 +816,11 @@ public class Helper
         {
             if (a < b)
             {
-                return Math.abs(a - b);
+                return Math.abs(a - b) + 1;
             }
             else
             {
-                return Math.abs(b - a);
+                return Math.abs(b - a) + 1;
             }
 
         }
@@ -829,22 +829,22 @@ public class Helper
         {
             if (a > b)
             {
-                return Math.abs(a - b);
+                return Math.abs(a - b) + 1;
             }
             else
             {
-                return Math.abs(b - a);
+                return Math.abs(b - a) + 1;
             }
         }
 
         if (a < 0 && b >= 0)
         {
-            return Math.abs(a - b);
+            return Math.abs(a - b) + 1;
         }
 
         if (a >= 0 && b < 0)
         {
-            return Math.abs(b - a);
+            return Math.abs(b - a) + 1;
         }
 
         return 0;

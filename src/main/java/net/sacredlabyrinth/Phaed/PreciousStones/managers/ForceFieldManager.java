@@ -164,7 +164,7 @@ public final class ForceFieldManager
         }
         else
         {
-            field = new Field(fieldBlock, fs.getRadius(), fs.getHeight(), owner);
+            field = new Field(fieldBlock, fs.getRadius(), fs.getCustomHeight(), owner);
         }
 
         field.setSettings(fs);
@@ -1709,7 +1709,7 @@ public final class ForceFieldManager
                 continue;
             }
 
-            if (smallest.getActualVolume() > 1 && smallest.getComputedHeight() > 1)
+            if (smallest.getActualVolume() > 1 && smallest.getHeight() > 1)
             {
                 return smallest;
             }
@@ -2203,7 +2203,7 @@ public final class ForceFieldManager
 
         // create throwaway field to test intersection
 
-        Field placedField = new Field(placedBlock, fs.getRadius(), fs.getHeight());
+        Field placedField = new Field(placedBlock, fs.getRadius(), fs.getCustomHeight());
 
         Set<Field> intersecting = placedField.getIntersectingFields();
 
@@ -2755,7 +2755,7 @@ public final class ForceFieldManager
 
         // create throwaway field to test intersections
 
-        Field field = new Field(block, fs.getRadius(), fs.getHeight());
+        Field field = new Field(block, fs.getRadius(), fs.getCustomHeight());
 
         List<Player> players = block.getWorld().getPlayers();
 

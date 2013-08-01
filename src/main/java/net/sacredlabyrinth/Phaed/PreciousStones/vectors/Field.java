@@ -100,7 +100,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.maxy = maxy;
         this.maxz = maxz;
         this.radius = Helper.getWidthFromCoords(x, minx);
-        this.height = Helper.getWidthFromCoords(maxy, miny);
+        this.height = 0;
 
         this.velocity = velocity;
         this.owner = owner;
@@ -287,11 +287,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         return newVolume - volume;
     }
 
-    public boolean canSetRadius(int radius)
-    {
-        return radius <= settings.getRadius();
-    }
-
     /**
      * Sets the cuboid data
      *
@@ -312,7 +307,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.maxz = maxZ;
 
         this.radius = (((Helper.getWidthFromCoords(maxx, minx) - 1) + (Helper.getWidthFromCoords(maxz, minz) - 1)) / 2) / 2;
-        this.height = maxy - miny;
 
         dirty.add(DirtyFieldReason.DIMENSIONS);
     }
@@ -401,22 +395,12 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public int getHeight()
     {
-        return this.height;
-    }
-
-    /**
-     * returns the computed height, whether custom height was used or not
-     *
-     * @return
-     */
-    public int getComputedHeight()
-    {
-        if (this.height > 0)
+        if (this.height == 0)
         {
-            return this.height;
+            return (this.radius * 2) + 1;
         }
 
-        return (this.radius * 2) + 1;
+        return this.height;
     }
 
     /**

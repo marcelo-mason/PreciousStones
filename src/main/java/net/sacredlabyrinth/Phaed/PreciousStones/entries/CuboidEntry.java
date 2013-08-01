@@ -1,6 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -177,7 +179,7 @@ public class CuboidEntry
             return null;
         }
 
-        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(Math.max(maxx - miny, maxz - minz), maxy - miny), 256));
+        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(Math.max(Helper.getWidthFromCoords(maxx,miny), Helper.getWidthFromCoords(maxz, minz)), Helper.getWidthFromCoords(maxy, miny)), 256));
 
         for (Block block : lineOfSight)
         {
@@ -260,7 +262,7 @@ public class CuboidEntry
             maxzt = newLoc.getBlockZ();
         }
 
-        int testVolume = (maxyt - minyt) * (maxxt - minxt) * (maxzt - minzt);
+        int testVolume = Helper.getWidthFromCoords(maxyt, minyt) * Helper.getWidthFromCoords(maxxt, minxt) * Helper.getWidthFromCoords(maxzt, minzt);
 
         return testVolume <= getMaxVolume();
     }
@@ -272,7 +274,7 @@ public class CuboidEntry
      */
     public int getVolume()
     {
-        return (maxy - miny) * (maxx - minx) * (maxz - minz);
+        return Helper.getWidthFromCoords(maxy, miny) * Helper.getWidthFromCoords(maxx, minx) * Helper.getWidthFromCoords(maxz, minz);
     }
 
     /**
@@ -299,6 +301,13 @@ public class CuboidEntry
      */
     public int getAvailableVolume()
     {
+        PreciousStones.debug("x: %s %s", minx, maxx);
+        PreciousStones.debug("y: %s %s", miny, maxy);
+        PreciousStones.debug("z: %s %s", minz, maxz);
+        PreciousStones.debug("Lengths: %s %s %s", Helper.getWidthFromCoords(maxx, minx), Helper.getWidthFromCoords(maxy, miny), Helper.getWidthFromCoords(maxz, minz));
+        PreciousStones.debug("Max volume: %s", getMaxVolume());
+        PreciousStones.debug("Volume: %s", getVolume());
+
         return getMaxVolume() - getVolume();
     }
 
