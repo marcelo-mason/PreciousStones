@@ -528,35 +528,46 @@ public final class CommandManager implements CommandExecutor
                                     return true;
                                 }
 
-                                if (!field.hasFlag(FieldFlag.CUBOID))
+                                if (radius < 0)
                                 {
-                                    if (radius >= 0 && (radius <= fs.getRadius() || plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius")))
+                                    return false;
+                                }
+
+                                if (field.hasFlag(FieldFlag.CUBOID))
+                                {
+                                    int overflow = field.canSetCuboidRadius(radius);
+
+                                    if (overflow > 0  && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius"))
                                     {
-                                        plugin.getForceFieldManager().removeSourceField(field);
-
-                                        field.setRadius(radius);
-                                        plugin.getStorageManager().offerField(field);
-
-                                        plugin.getForceFieldManager().addSourceField(field);
-
-                                        ChatBlock.send(sender, "radiusSet", radius);
-                                    }
-                                    else
-                                    {
-                                        ChatBlock.send(sender, "radiusMustBeLessThan", fs.getRadius());
+                                        ChatBlock.send(sender, "radiusOverFlow", fs.getRadius());
+                                        return true;
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "cuboidCannotChangeRadius");
+                                    if (radius > fs.getRadius() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius"))
+                                    {
+                                        ChatBlock.send(sender, "radiusMustBeLessThan", fs.getRadius());
+                                        return true;
+                                    }
                                 }
+
+                                plugin.getForceFieldManager().removeSourceField(field);
+
+                                field.setRadius(radius);
+
+                                plugin.getStorageManager().offerField(field);
+
+                                plugin.getForceFieldManager().addSourceField(field);
+
+                                ChatBlock.send(sender, "radiusSet", radius);
+
                                 return true;
                             }
                             else
                             {
                                 plugin.getCommunicationManager().showNotFound(player);
-                            }
-                            return true;
+                            } return true;
                         }
                     }
                     else if (cmd.equals(ChatBlock.format("commandSetvelocity")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasplayer)
@@ -2263,7 +2274,9 @@ public final class CommandManager implements CommandExecutor
                 return true;
             }
         }
+
         catch (Exception ex)
+
         {
             System.out.print("Error: " + ex.getMessage());
 
