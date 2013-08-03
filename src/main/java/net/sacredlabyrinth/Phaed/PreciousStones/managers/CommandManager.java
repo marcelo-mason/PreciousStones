@@ -224,10 +224,14 @@ public final class CommandManager implements CommandExecutor
 
                                 for (String playerName : args)
                                 {
-                                    if (field.containsPlayer(playerName))
+
+                                    if (plugin.getSettingsManager().isPreventRemovalIfPlayerInField())
                                     {
-                                        ChatBlock.send(sender, "cannotRemovePlayerInField");
-                                        return true;
+                                        if (field.containsPlayer(playerName))
+                                        {
+                                            ChatBlock.send(sender, "cannotRemovePlayerInField");
+                                            return true;
+                                        }
                                     }
 
                                     if (plugin.getForceFieldManager().conflictOfInterestExists(field, playerName))
@@ -537,7 +541,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     int overflow = field.canSetCuboidRadius(radius);
 
-                                    if (overflow > 0  && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius"))
+                                    if (overflow > 0 && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius"))
                                     {
                                         ChatBlock.send(sender, "radiusOverFlow", fs.getRadius());
                                         return true;
@@ -567,7 +571,8 @@ public final class CommandManager implements CommandExecutor
                             else
                             {
                                 plugin.getCommunicationManager().showNotFound(player);
-                            } return true;
+                            }
+                            return true;
                         }
                     }
                     else if (cmd.equals(ChatBlock.format("commandSetvelocity")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasplayer)

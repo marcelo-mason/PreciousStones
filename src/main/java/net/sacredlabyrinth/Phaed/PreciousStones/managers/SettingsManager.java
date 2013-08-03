@@ -33,6 +33,7 @@ public final class SettingsManager
     private boolean showDefaultWelcomeFarewellMessages;
     private boolean sneakNormalBlock;
     private boolean disableGroundInfo;
+    private boolean preventRemovalIfPlayerInField;
     private boolean autoAddClan;
     private int globalFieldLimit;
     private boolean noRefunds;
@@ -257,6 +258,7 @@ public final class SettingsManager
 
         // ********************************** Settings
 
+        preventRemovalIfPlayerInField = loadBoolean("settings.prevent-removal-if-player-in-field");
         commandsToRentBuy = loadBoolean("settings.use-commands-to-rent");
         disableSimpleClanHook = loadBoolean("settings.disable-simpleclans-hook");
         maxSizeTranslocation = loadInt("settings.max-size-translocation");
@@ -1578,5 +1580,10 @@ public final class SettingsManager
     public boolean isVisualizationNewStyle()
     {
         return visualizationNewStyle;
+    }
+
+    public boolean isPreventRemovalIfPlayerInField()
+    {
+        return preventRemovalIfPlayerInField;
     }
 }
