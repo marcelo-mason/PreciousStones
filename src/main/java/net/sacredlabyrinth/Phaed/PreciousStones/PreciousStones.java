@@ -119,7 +119,7 @@ public class PreciousStones extends JavaPlugin
     {
         instance = this;
         settingsManager = new SettingsManager();
-        languageManager = new LanguageManager();
+        languageManager = new LanguageManager(settingsManager.getLocale());
 
         displayStatusInfo();
 
@@ -176,6 +176,7 @@ public class PreciousStones extends JavaPlugin
     private void displayStatusInfo()
     {
         log("psLoaded", getDescription().getVersion());
+        log("psLocaleLoaded", getLanguageManager().getCurrentLocale());
     }
 
     private void metrics()

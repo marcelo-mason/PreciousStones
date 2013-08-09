@@ -1,5 +1,6 @@
 psDisabled: "{red}PreciousStones disabled in this world"
 psLoaded: "Version {1.version} loaded"
+psLocaleLoaded: "Using locale {1.locale}"
 debugEnabled: "{aqua}Debug output enabled"
 debugDisabled: "{aqua}Debug output disabled"
 placingEnabled: "{aqua}Enabled the placing of pstones"
