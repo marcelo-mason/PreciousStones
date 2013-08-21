@@ -209,7 +209,10 @@ public class Field extends AbstractVec implements Comparable<Field>
             this.maxy = getY() + ((height - 1) / 2);
         }
 
-        dirty.add(DirtyFieldReason.DIMENSIONS);
+        if (hasFlag(FieldFlag.CUBOID))
+        {
+            dirty.add(DirtyFieldReason.DIMENSIONS);
+        }
     }
 
     /**
