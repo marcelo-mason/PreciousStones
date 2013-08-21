@@ -257,22 +257,21 @@ public class SQLiteCore implements DBCore
         try
         {
             Statement statement = getConnection().createStatement();
-            Boolean result = false;
             try
             {
-                result = statement.execute(query);
+                statement.execute(query);
             }
             finally
             {
                 statement.close();
-                return result;
             }
         }
         catch (SQLException ex)
         {
-            log.severe(ex.getMessage());
+            log.severe("Error at SQL Query: " + ex.getMessage());
             return false;
         }
+        return true;
     }
 
     /**

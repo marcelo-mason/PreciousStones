@@ -257,14 +257,14 @@ public class MySQLCore implements DBCore
             finally
             {
                 statement.close();
-                return true;
             }
         }
         catch (SQLException ex)
         {
-            log.severe(ex.getMessage());
+            log.severe("Error at SQL Query: " + ex.getMessage());
             return false;
         }
+        return true;
     }
 
     /**
