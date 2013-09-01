@@ -91,7 +91,7 @@ permissions:
   preciousstones.bypass.use:
     description: Canuse blocks in use-protected fields
   preciousstones.bypass.destroy:
-  description: Canuse blocks in use-protected fields
+    description: Canuse blocks in use-protected fields
   preciousstones.bypass.destroy-everywhere:
     description: Can destroy blocks in destroy-everywhere worlds
   preciousstones.bypass.protection:
