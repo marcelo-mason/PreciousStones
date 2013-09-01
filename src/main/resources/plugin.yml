@@ -86,10 +86,14 @@ permissions:
     description: Can hit peple in pvp free fields
   preciousstones.bypass.place:
     description: Can place blocks in place-protected fields
+  preciousstones.bypass.place-everywhere:
+    description: Can place blocks in place-everywhere worlds
   preciousstones.bypass.use:
     description: Canuse blocks in use-protected fields
   preciousstones.bypass.destroy:
-    description: Can destroy blocks in destroy-protected fields
+  description: Canuse blocks in use-protected fields
+  preciousstones.bypass.destroy-everywhere:
+    description: Can destroy blocks in destroy-everywhere worlds
   preciousstones.bypass.protection:
     description: Can break other peoples protection blocks
   preciousstones.bypass.unbreakable:
@@ -319,8 +323,10 @@ permissions:
       preciousstones.bypass.entry: true
       preciousstones.bypass.pvp: true
       preciousstones.bypass.place: true
+      preciousstones.bypass.place-everywhere: true
       preciousstones.bypass.use: true
       preciousstones.bypass.destroy: true
+      preciousstones.bypass.destroy-everywhere: true
       preciousstones.bypass.protection: true
       preciousstones.bypass.unbreakable: true
       preciousstones.bypass.unprotectable: true
