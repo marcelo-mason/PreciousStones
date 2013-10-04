@@ -4,7 +4,7 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>9.6.1-SNAPSHOT</version>
+    <version>9.6.2-SNAPSHOT</version>
     <name>PreciousStones</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
@@ -103,7 +103,7 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <!--<version>1.4.7-R1.0</version>-->
-            <version>1.6.2-R0.1-SNAPSHOT</version>
+            <version>1.6.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -216,8 +216,8 @@
         <connection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</connection>
         <developerConnection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</developerConnection>
         <url>http://github.com/SacredCoding/PreciousStones.git/tree/master/</url>
-      <tag>PreciousStones-9.5.1</tag>
-  </scm>
+        <tag>PreciousStones-9.6.2</tag>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

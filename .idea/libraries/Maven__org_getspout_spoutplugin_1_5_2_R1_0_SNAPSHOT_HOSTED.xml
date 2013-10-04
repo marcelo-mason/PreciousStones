@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.getspout:spoutplugin:1.5.2-R1.0-SNAPSHOT-HOSTED">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/1.5.2-R1.0-SNAPSHOT-HOSTED/spoutplugin-1.5.2-R1.0-SNAPSHOT-HOSTED.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/1.5.2-R1.0-SNAPSHOT-HOSTED/spoutplugin-1.5.2-R1.0-SNAPSHOT-HOSTED-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/1.5.2-R1.0-SNAPSHOT-HOSTED/spoutplugin-1.5.2-R1.0-SNAPSHOT-HOSTED-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
