@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
@@ -1364,6 +1365,14 @@ public class PSPlayerListener implements Listener
                                         return;
                                     }
                                 }
+                            }
+
+                            // -------------------------------------------------------------------------------- handle forester uses
+
+
+                            if (field.hasFlag(FieldFlag.FORESTER) && field.hasForesterUse() && !field.isForesting())
+                            {
+                                ForesterEntry fe = new ForesterEntry(field, player);
                             }
 
                             // -------------------------------------------------------------------------------- handle changing owners

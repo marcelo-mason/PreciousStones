@@ -18,6 +18,7 @@ import java.util.logging.Level;
  */
 public class FieldSettings
 {
+    private int foresterUses = 1;
     private int groundBlock = 2;
     private int treeCount = 64;
     private int creatureCount = 6;
@@ -337,6 +338,7 @@ public class FieldSettings
         loadBoolean("command-blacklisting");
         loadBoolean("anti-plot");
 
+        foresterUses = loadInt("forester-uses");
         surfaces = loadTypeEntries("surfaces");
         requiredPermission = loadString("required-permission");
         requiredPermissionUse = loadString("required-permission-use");
@@ -1536,5 +1538,10 @@ public class FieldSettings
         }
 
         return Helper.stripTrailing(out, ", ");
+    }
+
+    public int getForesterUses()
+    {
+        return foresterUses;
     }
 }

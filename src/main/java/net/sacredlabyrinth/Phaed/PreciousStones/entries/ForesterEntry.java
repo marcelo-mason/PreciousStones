@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.ChatBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
@@ -22,18 +23,26 @@ public class ForesterEntry
 
     /**
      * @param field
-     * @param playerName
+     * @param player
      */
-    public ForesterEntry(Field field, String playerName)
+    public ForesterEntry(Field field, Player player)
     {
         this.field = field;
-        this.playerName = playerName;
+        this.playerName = player.getName();
         this.count = 0;
         this.growTime = Math.max(field.getSettings().getGrowTime(), 2);
         plugin = PreciousStones.getInstance();
 
         scheduleNextUpdate();
-        field.setForested(true);
+        field.recordForesterUse();
+        field.setForesting(true);
+
+        ChatBlock.send(player, "foresterActivating");
+
+        if (field.hasForesterUse())
+        {
+            ChatBlock.send(player, "foresterUsesLeft", field.foresterUsesLeft());
+        }
     }
 
     /**
@@ -109,17 +118,23 @@ public class ForesterEntry
 
         if (count >= field.getSettings().getTreeCount())
         {
-            Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
-            block.setTypeId(0, false);
-            block.getLocation().add(0, -1, 0).getBlock().setTypeId(field.getSettings().getGroundBlock(), false);
+            plugin.getForesterManager().doCreatureSpawns(field);
 
-            if (!field.getSettings().getTreeTypes().isEmpty())
+            if (!field.hasForesterUse())
             {
-                world.generateTree(block.getLocation(), ForesterManager.getTree(field.getSettings()));
+                Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
+                block.setTypeId(0, false);
+                block.getLocation().add(0, -1, 0).getBlock().setTypeId(field.getSettings().getGroundBlock(), false);
+
+                if (!field.getSettings().getTreeTypes().isEmpty())
+                {
+                    world.generateTree(block.getLocation(), ForesterManager.getTree(field.getSettings()));
+                }
+
+                plugin.getForceFieldManager().releaseNoDrop(field);
             }
 
-            plugin.getForesterManager().doCreatureSpawns(field);
-            plugin.getForceFieldManager().releaseNoDrop(field);
+            field.setForesting(false);
             return false;
         }
 

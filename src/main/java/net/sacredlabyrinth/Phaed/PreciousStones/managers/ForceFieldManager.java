@@ -175,7 +175,7 @@ public final class ForceFieldManager
         {
             if (!field.hasFlag(FieldFlag.PLACE_DISABLED))
             {
-                ForesterEntry fe = new ForesterEntry(field, player.getName());
+                ForesterEntry fe = new ForesterEntry(field, player);
             }
         }
         else

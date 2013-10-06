@@ -66,11 +66,12 @@ public class Field extends AbstractVec implements Comparable<Field>
     private boolean translocating;
     private int translocationSize;
     private boolean hidden;
-    private boolean forested;
     private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
     private PaymentEntry purchase;
     private boolean singIsClean;
     private int limitSeconds;
+    private int foresterUsed;
+    private boolean foresting;
 
     /**
      * @param x
@@ -1243,6 +1244,11 @@ public class Field extends AbstractVec implements Comparable<Field>
             json.put("purchase", purchase);
         }
 
+        if (foresterUsed > 0)
+        {
+            json.put("foresterUsed", foresterUsed);
+        }
+
         return json.toString();
     }
 
@@ -1401,6 +1407,10 @@ public class Field extends AbstractVec implements Comparable<Field>
                             {
                                 whitelistedBlocks.add(new BlockTypeEntry(flagStr.toString()));
                             }
+                        }
+                        else if (flag.equals("foresterUsed"))
+                        {
+                            foresterUsed = ((Long) flags.get(flag)).intValue();
                         }
                         else if (flag.equals("revertSecs"))
                         {
@@ -1828,11 +1838,11 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                 }
 
-                if (hasFlag(FieldFlag.FORESTER) && !forested)
+                if (hasFlag(FieldFlag.FORESTER) && hasForesterUse() && !isForesting())
                 {
                     if (player != null)
                     {
-                        ForesterEntry fe = new ForesterEntry(this, player.getName());
+                        ForesterEntry fe = new ForesterEntry(this, player);
                     }
                 }
 
@@ -2474,16 +2484,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
     }
 
-    public boolean isForested()
-    {
-        return forested;
-    }
-
-    public void setForested(boolean forested)
-    {
-        this.forested = forested;
-    }
-
     public RentEntry getRenter(Player player)
     {
         for (RentEntry entry : renterEntries)
@@ -2864,6 +2864,21 @@ public class Field extends AbstractVec implements Comparable<Field>
         PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 
+    public int getForesterUsed()
+    {
+        return foresterUsed;
+    }
+
+    public boolean isForesting()
+    {
+        return foresting;
+    }
+
+    public void setForesting(boolean foresting)
+    {
+        this.foresting = foresting;
+    }
+
     private class Update implements Runnable
     {
         public void run()
@@ -2994,6 +3009,23 @@ public class Field extends AbstractVec implements Comparable<Field>
     public void deleteWhitelistedBlock(BlockTypeEntry type)
     {
         whitelistedBlocks.remove(type);
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public boolean hasForesterUse()
+    {
+        return settings.getForesterUses() - foresterUsed > 0;
+    }
+
+    public int foresterUsesLeft()
+    {
+        return settings.getForesterUses() - foresterUsed;
+    }
+
+    public void recordForesterUse()
+    {
+        foresterUsed++;
         dirtyFlags();
         PreciousStones.getInstance().getStorageManager().offerField(this);
     }
