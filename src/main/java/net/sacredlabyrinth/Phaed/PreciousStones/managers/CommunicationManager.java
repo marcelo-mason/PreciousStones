@@ -1174,7 +1174,7 @@ public class CommunicationManager
             }
             else
             {
-                PreciousStones.log("logFire", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+                PreciousStones.log("logPlace", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
 
@@ -1187,7 +1187,7 @@ public class CommunicationManager
 
             if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.place") && canAlert(pl))
             {
-                ChatBlock.sendPs(pl, "logFire", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+                ChatBlock.sendPs(pl, "logPlace", player.getName(), (new Vec(block)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
     }
@@ -1225,7 +1225,7 @@ public class CommunicationManager
             }
             else
             {
-                PreciousStones.log("logFire", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+                PreciousStones.log("logPlace", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
 
@@ -1238,7 +1238,7 @@ public class CommunicationManager
 
             if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.place") && canAlert(pl))
             {
-                ChatBlock.sendPs(pl, "logFire", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+                ChatBlock.sendPs(pl, "logPlace", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
     }
@@ -1276,7 +1276,7 @@ public class CommunicationManager
             }
             else
             {
-                PreciousStones.log("logFire", player.getName(), (new Vec(painting.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+                PreciousStones.log("logPlace", player.getName(), (new Vec(painting.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
 
@@ -1289,7 +1289,7 @@ public class CommunicationManager
 
             if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.place") && canAlert(pl))
             {
-                ChatBlock.sendPs(pl, "logFire", player.getName(), (new Vec(painting.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+                ChatBlock.sendPs(pl, "logPlace", player.getName(), (new Vec(painting.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
     }

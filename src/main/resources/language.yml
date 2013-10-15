@@ -189,7 +189,6 @@ logBypassDestroyVehicle: "{1.player} bypass-destroyed a vehicle {2.coords} in {3
 logBypassDestroyUnbreakable: "{1.player} bypass-destroyed {2.owner}'s unbreakable block {3.details}"
 logBypassDestroyField: "{1.player} bypass-destroyed {2.owner}'s {3.field-type} field {4.details}"
 logEntry: "{1.player} attempted entry into {2.owner}'s {3.field-type} field {4.details}"
-logFire: "{1.player} attempted to light fire in {2.owner}'s {3.field-type} field {4.details}"
 logUse: "{1.player} attempted to use a {2.coords} in {3.owner}'s {4.field-type} field {5.details}"
 logBucketEmpty: "{1.player} attempted empty a {2.coords} in {3.owner}'s {4.field-type} field {5.details}"
 logDestroyUnbreakable: "{1.player} attempted to destroy {2.owner}'s unbreakable block {3.details}"
