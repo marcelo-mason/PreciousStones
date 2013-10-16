@@ -1866,12 +1866,12 @@ public class CommunicationManager
 
         if (canNotify(attacker))
         {
-            ChatBlock.send(attacker, "wanrProectionIgnored");
+            ChatBlock.send(attacker, "warnProtectionIgnored");
         }
 
         if (canNotify(victim))
         {
-            ChatBlock.send(victim, "wanrProectionIgnored");
+            ChatBlock.send(victim, "warnProtectionIgnored");
         }
     }
 
