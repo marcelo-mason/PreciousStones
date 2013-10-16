@@ -202,6 +202,7 @@ logPlaceFieldConflit: "{1.player} attempted to place a field {2.coords} conflict
 logPvP: "{1.attacker} tried to attack {2.victim} in {3.owner}'s {4.field-type} field {5.details}"
 warnProectionIgnored: "{aqua}PvP Protection Ignored due to combat"
 logBypassAttack: "{1.attacker} bypass-attack {2.victim} in {3.owner}'s {4.field-type} field {5.details}"
+logPlace: "{1.player} attempted to place a block {2.coords} inside {3.owner}''s {4.field-type} field {5.details}"
 logPlaceUnprotectableTouchingField: "{1.player} attempted to place an unprotectable block {2.unprotectable-details} near {3.field-details}"
 logPlaceUnprotectableTouchingUnbreakable: "{1.player} attempted to place an unprotectable block {2.unprotectable-details} near {3.unbreakable-details}"
 logPlaceTouchingUnbreakableUnprotectable: "{1.player} attempted to protect an unprotectable block {2.details}"
