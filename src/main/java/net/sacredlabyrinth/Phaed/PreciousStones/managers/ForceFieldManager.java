@@ -701,7 +701,7 @@ public final class ForceFieldManager
                         {
                             if (tm.equals(team.getName()))
                             {
-                                  out.add(field);
+                                out.add(field);
                             }
                         }
                     }
@@ -1295,9 +1295,12 @@ public final class ForceFieldManager
 
         // always allow if in war
 
-        if (plugin.getSimpleClansManager().inWar(field, target))
+        if (plugin.getSettingsManager().isWarAllow())
         {
-            return true;
+            if (plugin.getSimpleClansManager().inWar(field, target))
+            {
+                return true;
+            }
         }
 
         return field.isAllowed(target);

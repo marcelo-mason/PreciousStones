@@ -366,6 +366,7 @@ cleanup:
     player-inactivity-purge-days: 180
     purge-banned-players: true
 settings:
+    allow-waring-clans-into-protections: false
     prevent-removal-if-player-in-field: true
     max-size-translocation: 100000
     max-size-translocation-for-redstone: 1000

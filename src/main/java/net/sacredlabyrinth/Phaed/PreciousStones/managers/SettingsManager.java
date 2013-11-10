@@ -24,6 +24,7 @@ public final class SettingsManager
 {
     private int version;
     private boolean commandsToRentBuy;
+    private boolean warAllow;
     private boolean oncePerBlockOnMove;
     private int maxSizeTranslocation;
     private int maxSizeTranslocationForRedstone;
@@ -258,6 +259,7 @@ public final class SettingsManager
 
         // ********************************** Settings
 
+        warAllow = loadBoolean("settings.allow-waring-clans-into-protections");
         preventRemovalIfPlayerInField = loadBoolean("settings.prevent-removal-if-player-in-field");
         commandsToRentBuy = loadBoolean("settings.use-commands-to-rent");
         disableSimpleClanHook = loadBoolean("settings.disable-simpleclans-hook");
@@ -1585,5 +1587,15 @@ public final class SettingsManager
     public boolean isPreventRemovalIfPlayerInField()
     {
         return preventRemovalIfPlayerInField;
+    }
+
+    public boolean isWarAllow()
+    {
+        return warAllow;
+    }
+
+    public void setWarAllow(boolean warAllow)
+    {
+        this.warAllow = warAllow;
     }
 }
