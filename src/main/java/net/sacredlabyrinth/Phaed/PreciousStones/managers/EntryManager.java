@@ -153,7 +153,7 @@ public final class EntryManager
                             {
                                 if (player.getHealth() < 20 && player.getHealth() > 0)
                                 {
-                                    player.setHealth(healthCheck(player.getHealth() + field.getSettings().getHeal()));
+                                    player.setHealth((int) healthCheck(player.getHealth() + field.getSettings().getHeal()));
                                     plugin.getCommunicationManager().showHeal(player);
                                     hasHeal = true;
                                     continue entries;
@@ -242,7 +242,7 @@ public final class EntryManager
                                     if (player.getHealth() > 0)
                                     {
                                         double health = healthCheck(player.getHealth() - field.getSettings().getDamage());
-                                        player.setHealth(Math.max(health, 0));
+                                        player.setHealth((int) Math.max(health, 0));
 
                                         if (health <= 1)
                                         {

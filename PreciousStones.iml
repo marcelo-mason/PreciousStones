@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.6.4-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.6.4-R2.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:Vault:1.2.25" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun.bukkit:Permissions:2.7.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.7" level="project" />
