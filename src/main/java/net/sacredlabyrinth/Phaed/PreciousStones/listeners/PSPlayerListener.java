@@ -6,10 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -99,6 +96,14 @@ public class PSPlayerListener implements Listener
                 plugin.getForceFieldManager().removeFieldsIfNoPermission(playerName);
             }
         }, 10);
+
+        if (event.getPlayer().isOp())
+        {
+            for (String message : plugin.getMessages())
+            {
+                event.getPlayer().sendMessage(ChatColor.YELLOW + message);
+            }
+        }
     }
 
 

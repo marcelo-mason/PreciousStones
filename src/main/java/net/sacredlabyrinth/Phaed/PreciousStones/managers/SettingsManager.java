@@ -40,6 +40,7 @@ public final class SettingsManager
     private boolean noRefunds;
     private int cuboidDefiningType;
     private int cuboidVisualizationType;
+    private boolean disableMessages;
     private boolean logToHawkEye;
     private List<String> blacklistedWorlds;
     private int purgeAfterDays;
@@ -259,6 +260,7 @@ public final class SettingsManager
 
         // ********************************** Settings
 
+        disableMessages = loadBoolean("settings.disable-messages");
         warAllow = loadBoolean("settings.allow-waring-clans-into-protections");
         preventRemovalIfPlayerInField = loadBoolean("settings.prevent-removal-if-player-in-field");
         commandsToRentBuy = loadBoolean("settings.use-commands-to-rent");
@@ -1597,5 +1599,10 @@ public final class SettingsManager
     public void setWarAllow(boolean warAllow)
     {
         this.warAllow = warAllow;
+    }
+
+    public boolean isDisableMessages()
+    {
+        return disableMessages;
     }
 }

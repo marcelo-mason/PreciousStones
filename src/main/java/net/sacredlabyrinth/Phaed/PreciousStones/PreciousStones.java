@@ -4,10 +4,15 @@ import net.sacredlabyrinth.Phaed.PreciousStones.api.Api;
 import net.sacredlabyrinth.Phaed.PreciousStones.api.IApi;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +24,7 @@ import java.util.logging.Logger;
 public class PreciousStones extends JavaPlugin
 {
     private static PreciousStones instance;
+    private ArrayList<String> messages = new ArrayList<String>();
     private static Logger logger = Logger.getLogger("Minecraft");
     private LanguageManager languageManager;
     private SettingsManager settingsManager;
@@ -171,6 +177,7 @@ public class PreciousStones extends JavaPlugin
         registerEvents();
         registerCommands();
         metrics();
+        pullMessages();
     }
 
     private void displayStatusInfo()
@@ -247,6 +254,32 @@ public class PreciousStones extends JavaPlugin
         getStorageManager().processQueue();
         getServer().getScheduler().cancelTasks(this);
         getStorageManager().closeConnection();
+    }
+
+    public void pullMessages()
+    {
+        if (getSettingsManager().isDisableMessages())
+        {
+            return;
+        }
+
+        try
+        {
+            BufferedReader in = new BufferedReader(new InputStreamReader(new URL("http://minecraftcubed.net/pluginmessage/").openStream()));
+
+            String message;
+            while ((message = in.readLine()) != null)
+            {
+                messages.add(message);
+                getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + message);
+            }
+            in.close();
+
+        }
+        catch (IOException e)
+        {
+            // do nothing
+        }
     }
 
     /**
@@ -474,5 +507,10 @@ public class PreciousStones extends JavaPlugin
     public static boolean hasSpout()
     {
         return PreciousStones.getInstance().getPermissionsManager().hasSpout();
+    }
+
+    public ArrayList<String> getMessages()
+    {
+        return messages;
     }
 }
