@@ -91,7 +91,6 @@ public final class CommandManager implements CommandExecutor
                         plugin.getCommunicationManager().showConfiguredFields(sender);
                         return true;
                     }
-
                     else if (cmd.equals(ChatBlock.format("commandOn")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
                         boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
@@ -571,6 +570,70 @@ public final class CommandManager implements CommandExecutor
                             else
                             {
                                 plugin.getCommunicationManager().showNotFound(player);
+                            }
+                            return true;
+                        }
+                    }
+                    else if (cmd.equals(ChatBlock.format("commandExpand")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.expand") && hasplayer)
+                    {
+                        if (args.length == 2)
+                        {
+                            int num = Integer.parseInt(args[0]);
+                            String dir = args[1];
+
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
+
+                            if (field != null)
+                            {
+                                int overflow = field.expand(num, dir);
+
+                                if (overflow <= 0)
+                                {
+                                    ChatBlock.send(sender, "cuboidExpanded");
+                                }
+                                else
+                                {
+                                    ChatBlock.send(sender, "cannotExpand", overflow);
+                                }
+
+                                return true;
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "noCuboidsFound");
+                            }
+                            return true;
+                        }
+
+                        if (args.length == 6)
+                        {
+                            int u = Integer.parseInt(args[0]);
+                            int d = Integer.parseInt(args[1]);
+                            int n = Integer.parseInt(args[2]);
+                            int s = Integer.parseInt(args[3]);
+                            int e = Integer.parseInt(args[4]);
+                            int w = Integer.parseInt(args[5]);
+
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
+
+                            if (field != null)
+                            {
+                                int overflow = field.expand(u,d,n,s,e,w);
+
+                                if (overflow <= 0)
+                                {
+                                    ChatBlock.send(sender, "cuboidExpanded");
+                                }
+                                else
+                                {
+                                    ChatBlock.send(sender, "cannotExpand", overflow);
+                                }
+
+                                return true;
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "noCuboidsFound");
                             }
                             return true;
                         }

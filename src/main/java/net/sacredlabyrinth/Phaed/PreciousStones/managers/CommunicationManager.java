@@ -3378,7 +3378,7 @@ public class CommunicationManager
         }
         else
         {
-            plugin.getCommunicationManager().showNotFound(player);
+            showNotFound(player);
         }
 
         return false;
@@ -3486,6 +3486,12 @@ public class CommunicationManager
         if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.setradius") && hasPlayer)
         {
             cb.addRow("menu14");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.expand") && hasPlayer)
+        {
+            cb.addRow("menu64");
+            cb.addRow("menu65");
         }
 
         if (plugin.getSettingsManager().haveVelocity() && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasPlayer)

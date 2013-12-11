@@ -286,9 +286,55 @@ public class Field extends AbstractVec implements Comparable<Field>
     public int canSetCuboidRadius(int radius)
     {
         int volume = getMaxVolume();
-        int newVolume = ((this.radius * 2) + 1) * 3;
+        int newVolume = ((radius * 2) + 1) * 3;
 
         return newVolume - volume;
+    }
+
+    /**
+     *  Expand cuboid
+     *
+     * @param num
+     * @param dir
+     * @return the overflow if any
+     */
+    public int expand(int num, String dir)
+    {
+        CuboidEntry ce = new CuboidEntry(this);
+        ce.expand(num, dir);
+        int overflow = ce.getOverflow();
+
+        if (overflow <= 0)
+        {
+            ce.finalizeField();
+        }
+
+        return overflow;
+    }
+
+    /**
+     * Expand cuboid
+     *
+     * @param u
+     * @param d
+     * @param n
+     * @param s
+     * @param e
+     * @param w
+     * @return the overflow if any
+     */
+    public int expand(int u, int d, int n, int s, int e, int w)
+    {
+        CuboidEntry ce = new CuboidEntry(this);
+        ce.expand(u, d, n, s, e, w);
+        int overflow = ce.getOverflow();
+
+        if (overflow <= 0)
+        {
+            ce.finalizeField();
+        }
+
+        return overflow;
     }
 
     /**

@@ -46,6 +46,7 @@ public class CuboidEntry
         this.selected = new ArrayList<BlockEntry>(selected);
         this.expanded = expanded;
     }
+
     /**
      * Add a single selected block
      *
@@ -163,6 +164,61 @@ public class CuboidEntry
     }
 
     /**
+     * Expand cuboid
+     *
+     * @param num
+     * @param dir
+     */
+    public void expand(int num, String dir)
+    {
+        if (dir.toLowerCase().startsWith("u"))
+        {
+            this.maxy = this.maxy + num;
+        }
+        else if (dir.toLowerCase().startsWith("d"))
+        {
+            this.miny = this.miny - num;
+        }
+        else if (dir.toLowerCase().startsWith("n"))
+        {
+            this.minz = this.minz - num;
+        }
+        else if (dir.toLowerCase().startsWith("s"))
+        {
+            this.maxz = this.maxz + num;
+        }
+        else if (dir.toLowerCase().startsWith("e"))
+        {
+            this.maxx = this.maxx + num;
+        }
+        else if (dir.toLowerCase().startsWith("w"))
+        {
+            this.minx = this.minx - num;
+        }
+    }
+
+    /**
+     *
+     * Expand cuboid
+     *
+     * @param u
+     * @param d
+     * @param n
+     * @param s
+     * @param e
+     * @param w
+     */
+    public void expand(int u, int d, int n, int s, int e, int w)
+    {
+        this.maxy = this.maxy + u;
+        this.miny = this.miny - d;
+        this.minz = this.minz - n;
+        this.maxz = this.maxz + s;
+        this.maxx = this.maxx + e;
+        this.minx = this.minx - w;
+    }
+
+    /**
      * Get one block outside of the players facing direction
      *
      * @return
@@ -179,7 +235,7 @@ public class CuboidEntry
             return null;
         }
 
-        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(Math.max(Helper.getWidthFromCoords(maxx,miny), Helper.getWidthFromCoords(maxz, minz)), Helper.getWidthFromCoords(maxy, miny)), 256));
+        List<Block> lineOfSight = player.getLineOfSight(null, Math.max(Math.max(Math.max(Helper.getWidthFromCoords(maxx, miny), Helper.getWidthFromCoords(maxz, minz)), Helper.getWidthFromCoords(maxy, miny)), 256));
 
         for (Block block : lineOfSight)
         {
@@ -265,6 +321,11 @@ public class CuboidEntry
         int testVolume = Helper.getWidthFromCoords(maxyt, minyt) * Helper.getWidthFromCoords(maxxt, minxt) * Helper.getWidthFromCoords(maxzt, minzt);
 
         return testVolume <= getMaxVolume();
+    }
+
+    public int getOverflow()
+    {
+        return getMaxVolume() - getVolume();
     }
 
     /**
@@ -393,7 +454,7 @@ public class CuboidEntry
 
     public Field getMockField()
     {
-        return new Field(field.getX(), field.getY(), field.getZ(),minx,  miny,  minz,  maxx,  maxy,  maxz, 0, field.getWorld(), field.getTypeEntry(), field.getOwner(), field.getName(), 0);
+        return new Field(field.getX(), field.getY(), field.getZ(), minx, miny, minz, maxx, maxy, maxz, 0, field.getWorld(), field.getTypeEntry(), field.getOwner(), field.getName(), 0);
     }
 
     public CuboidEntry Clone()

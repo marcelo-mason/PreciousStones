@@ -106,6 +106,8 @@ permissions:
     description: Wont show up on any snitch lists
   preciousstones.bypass.setradius:
     description: Can set larger radius than the limit
+  preciousstones.bypass.expand:
+    description: Can set expand his cuboid
   preciousstones.bypass.no-allowing:
     description: Can add players to allowed lists
   preciousstones.bypass.mine:
@@ -278,6 +280,7 @@ permissions:
       preciousstones.benefit.bounce: true
       preciousstones.benefit.setname: true
       preciousstones.benefit.setradius: true
+      preciousstones.benefit.expand: true
       preciousstones.benefit.setvelocity: true
       preciousstones.benefit.mark: true
       preciousstones.benefit.visualize: true
