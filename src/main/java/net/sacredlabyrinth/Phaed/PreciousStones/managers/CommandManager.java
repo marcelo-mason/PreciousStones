@@ -640,6 +640,53 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
+                    else if (cmd.equals(ChatBlock.format("commandContract")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.contract") && hasplayer)
+                    {
+                        if (args.length == 2)
+                        {
+                            int num = Integer.parseInt(args[0]);
+                            String dir = args[1];
+
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
+
+                            if (field != null)
+                            {
+                                field.contract(num, dir);
+                                ChatBlock.send(sender, "cuboidContracted");
+                                return true;
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "noCuboidsFound");
+                            }
+                            return true;
+                        }
+
+                        if (args.length == 6)
+                        {
+                            int u = Integer.parseInt(args[0]);
+                            int d = Integer.parseInt(args[1]);
+                            int n = Integer.parseInt(args[2]);
+                            int s = Integer.parseInt(args[3]);
+                            int e = Integer.parseInt(args[4]);
+                            int w = Integer.parseInt(args[5]);
+
+                            Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
+
+                            if (field != null)
+                            {
+                                field.contract(u,d,n,s,e,w);
+                                ChatBlock.send(sender, "cuboidContracted");
+
+                                return true;
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "noCuboidsFound");
+                            }
+                            return true;
+                        }
+                    }
                     else if (cmd.equals(ChatBlock.format("commandSetvelocity")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isFloat(args[0]))

@@ -338,6 +338,38 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
+     *  Contract cuboid
+     *
+     * @param num
+     * @param dir
+     * @return the overflow if any
+     */
+    public void contract(int num, String dir)
+    {
+        CuboidEntry ce = new CuboidEntry(this, true);
+        ce.contract(num, dir);
+        ce.finalizeField();
+    }
+
+    /**
+     * Contract cuboid
+     *
+     * @param u
+     * @param d
+     * @param n
+     * @param s
+     * @param e
+     * @param w
+     * @return the overflow if any
+     */
+    public void contract(int u, int d, int n, int s, int e, int w)
+    {
+        CuboidEntry ce = new CuboidEntry(this, true);
+        ce.contract(u, d, n, s, e, w);
+        ce.finalizeField();
+    }
+
+    /**
      * Sets the cuboid data
      *
      * @param minX

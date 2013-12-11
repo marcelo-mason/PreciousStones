@@ -242,6 +242,97 @@ public class CuboidEntry
     }
 
     /**
+     * Contract cuboid
+     *
+     * @param num
+     * @param dir
+     */
+    public void contract(int num, String dir)
+    {
+        if (dir.toLowerCase().startsWith("u"))
+        {
+            this.maxy = this.maxy - num;
+        }
+        else if (dir.toLowerCase().startsWith("d"))
+        {
+            this.miny = this.miny + num;
+        }
+        else if (dir.toLowerCase().startsWith("n"))
+        {
+            this.minz = this.minz + num;
+        }
+        else if (dir.toLowerCase().startsWith("s"))
+        {
+            this.maxz = this.maxz - num;
+        }
+        else if (dir.toLowerCase().startsWith("e"))
+        {
+            this.maxx = this.maxx - num;
+        }
+        else if (dir.toLowerCase().startsWith("w"))
+        {
+            this.minx = this.minx + num;
+        }
+
+        fixOverContract();
+    }
+
+    /**
+     * Contract cuboid
+     *
+     * @param u
+     * @param d
+     * @param n
+     * @param s
+     * @param e
+     * @param w
+     */
+    public void contract(int u, int d, int n, int s, int e, int w)
+    {
+        this.maxy = this.maxy - u;
+        this.miny = this.miny + d;
+        this.minz = this.minz + n;
+        this.maxz = this.maxz - s;
+        this.maxx = this.maxx - e;
+        this.minx = this.minx + w;
+
+        fixOverContract();
+    }
+
+    public void fixOverContract()
+    {
+        if (maxy < field.getY())
+        {
+            maxy = field.getY();
+        }
+
+        if (miny > field.getY())
+        {
+            miny = field.getY();
+        }
+
+        if (minz > field.getZ())
+        {
+            minz = field.getZ();
+        }
+
+        if (maxz < field.getZ())
+        {
+            maxz = field.getZ();
+        }
+
+        if (maxx < field.getX())
+        {
+            maxx = field.getX();
+        }
+
+        if (minx > field.getX())
+        {
+            minx = field.getX();
+        }
+    }
+
+    /**
      * Get one block outside of the players facing direction
      *
      * @return

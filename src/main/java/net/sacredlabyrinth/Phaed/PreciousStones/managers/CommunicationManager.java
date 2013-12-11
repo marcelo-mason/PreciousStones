@@ -3494,6 +3494,12 @@ public class CommunicationManager
             cb.addRow("menu65");
         }
 
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.contract") && hasPlayer)
+        {
+            cb.addRow("menu66");
+            cb.addRow("menu67");
+        }
+
         if (plugin.getSettingsManager().haveVelocity() && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasPlayer)
         {
             cb.addRow("menu15");
