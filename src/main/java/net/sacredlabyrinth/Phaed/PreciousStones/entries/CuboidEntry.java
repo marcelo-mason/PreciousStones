@@ -34,6 +34,30 @@ public class CuboidEntry
         maxz = field.getZ();
     }
 
+    public CuboidEntry(Field field, boolean existing)
+    {
+        this.field = field;
+
+        if (existing)
+        {
+            minx = field.getMinx();
+            miny = field.getMiny();
+            minz = field.getMinz();
+            maxx = field.getMaxx();
+            maxy = field.getMaxy();
+            maxz = field.getMaxz();
+        }
+        else
+        {
+            minx = field.getX();
+            miny = field.getY();
+            minz = field.getZ();
+            maxx = field.getX();
+            maxy = field.getY();
+            maxz = field.getZ();
+        }
+    }
+
     public CuboidEntry(Field field, int minx, int maxx, int miny, int maxy, int minz, int maxz, List<BlockEntry> selected, Location expanded)
     {
         this.field = field;
@@ -198,7 +222,6 @@ public class CuboidEntry
     }
 
     /**
-     *
      * Expand cuboid
      *
      * @param u

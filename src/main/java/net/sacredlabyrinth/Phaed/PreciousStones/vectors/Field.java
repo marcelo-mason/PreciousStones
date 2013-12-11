@@ -298,13 +298,13 @@ public class Field extends AbstractVec implements Comparable<Field>
      * @param dir
      * @return the overflow if any
      */
-    public int expand(int num, String dir)
+    public int expand(int num, String dir, boolean bypass)
     {
-        CuboidEntry ce = new CuboidEntry(this);
+        CuboidEntry ce = new CuboidEntry(this, true);
         ce.expand(num, dir);
         int overflow = ce.getOverflow();
 
-        if (overflow <= 0)
+        if (overflow <= 0 || bypass)
         {
             ce.finalizeField();
         }
@@ -323,13 +323,13 @@ public class Field extends AbstractVec implements Comparable<Field>
      * @param w
      * @return the overflow if any
      */
-    public int expand(int u, int d, int n, int s, int e, int w)
+    public int expand(int u, int d, int n, int s, int e, int w, boolean bypass)
     {
-        CuboidEntry ce = new CuboidEntry(this);
+        CuboidEntry ce = new CuboidEntry(this, true);
         ce.expand(u, d, n, s, e, w);
         int overflow = ce.getOverflow();
 
-        if (overflow <= 0)
+        if (overflow <= 0 || bypass)
         {
             ce.finalizeField();
         }

@@ -585,9 +585,10 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                int overflow = field.expand(num, dir);
+                                boolean bypass = plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid");
+                                int overflow = field.expand(num, dir, bypass);
 
-                                if (overflow <= 0)
+                                if (overflow <= 0 || bypass)
                                 {
                                     ChatBlock.send(sender, "cuboidExpanded");
                                 }
@@ -618,9 +619,10 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                int overflow = field.expand(u,d,n,s,e,w);
+                                boolean bypass = plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid");
+                                int overflow = field.expand(u,d,n,s,e,w,bypass);
 
-                                if (overflow <= 0)
+                                if (overflow <= 0 || bypass)
                                 {
                                     ChatBlock.send(sender, "cuboidExpanded");
                                 }
