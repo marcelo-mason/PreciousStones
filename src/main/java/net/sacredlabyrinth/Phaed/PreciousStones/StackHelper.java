@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,57 @@ import java.util.List;
 
 public class StackHelper
 {
+    public static void unHoldItem(Player player)
+    {
+        ItemStack item = player.getItemInHand();
+        PlayerInventory inv = player.getInventory();
+        int slot = inv.getHeldItemSlot();
+        int empty = -1;
+
+        if (item != null)
+        {
+            if (slot > 0)
+            {
+                ItemStack left = inv.getItem(slot - 1);
+
+                if (left.getType() == Material.AIR)
+                {
+                    empty = slot - 1;
+                }
+            }
+
+            if (empty == -1)
+            {
+                if (slot < 8)
+                {
+                    ItemStack right = inv.getItem(slot + 1);
+
+                    if (right.getType() == Material.AIR)
+                    {
+                        empty = slot + 1;
+                    }
+                }
+            }
+
+            if (empty == -1)
+            {
+                empty = inv.firstEmpty();
+            }
+
+            if (empty == -1)
+            {
+                player.getWorld().dropItemNaturally(player.getLocation(), item);
+            }
+            else
+            {
+                inv.setItem(empty, item);
+            }
+
+            inv.setItem(slot, new ItemStack(Material.AIR));
+            player.updateInventory();
+        }
+    }
+
     public static void remove(Player player, BlockTypeEntry item, int amount)
     {
         for (ItemStack stack : makeStacks(item, amount))

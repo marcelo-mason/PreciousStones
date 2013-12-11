@@ -567,3 +567,4 @@ surfaceWarning: "{red} You can only place this field on the following blocks: {1
 radiusOverFlow: "{red} Could not set the radious.  It is larger than the available volume by {1.overflow} blocks."
 foresterActivating: "{yellow} Activating..."
 foresterUsesLeft: "{yellow} {1.amount} uses left."
+cannotUseItemHere: "{red} You cannot use that item inside this field."

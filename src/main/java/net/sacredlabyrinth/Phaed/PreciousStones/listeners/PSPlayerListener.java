@@ -2025,4 +2025,31 @@ public class PSPlayerListener implements Listener
             }
         }
     }
+
+    @EventHandler
+    public void onPlayerItemHeldEvent(final PlayerItemHeldEvent event)
+    {
+        if (event == null)
+        {
+            return;
+        }
+
+        final Player player = event.getPlayer();
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.UNUSABLE_ITEMS);
+
+        if (field != null)
+        {
+            if (FieldFlag.UNUSABLE_ITEMS.applies(field, event.getPlayer()))
+            {
+                ItemStack item = player.getItemInHand();
+
+                if (field.getSettings().isUnusableItem(item.getTypeId(), item.getData().getData()))
+                {
+                    StackHelper.unHoldItem(player);
+                    ChatBlock.send(player, "cannotUseItemHere");
+                }
+            }
+        }
+    }
 }

@@ -72,6 +72,7 @@ public class FieldSettings
     private List<Integer> teleportIfNotHoldingItems = new ArrayList<Integer>();
     private List<Integer> teleportIfHasItems = new ArrayList<Integer>();
     private List<Integer> teleportIfNotHasItems = new ArrayList<Integer>();
+    private List<BlockTypeEntry> unusableItems = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> teleportIfWalkingOn = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> teleportIfNotWalkingOn = new ArrayList<BlockTypeEntry>();
     private List<Integer> treeTypes = new ArrayList<Integer>();
@@ -373,6 +374,7 @@ public class FieldSettings
         limits = loadIntList("limits");
         price = loadInt("price");
         refund = loadInt("refund", -1);
+        unusableItems = loadTypeEntries("unusable-items");
         translocationBlacklist = loadTypeEntries("translocation-blacklist");
         preventPlaceBlacklist = loadTypeEntries("prevent-place-blacklist");
         preventDestroyBlacklist = loadTypeEntries("prevent-destroy-blacklist");
@@ -999,6 +1001,40 @@ public class FieldSettings
     {
         return !preventUse.contains(type);
 
+    }
+
+    /**
+     * Whether an item is an unusable item
+     *
+     * @param type
+     * @return
+     */
+    public boolean isUnusableItem(int type, byte data)
+    {
+        for (BlockTypeEntry entry : unusableItems)
+        {
+            // if the banned item has no data, then that means
+            // they want to ban all ids for that block
+
+            // otherwise match the type and data exactly
+
+            if (entry.getData() == 0)
+            {
+                if (entry.getTypeId() == type)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (entry.getTypeId() == type && entry.getData() == data)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
