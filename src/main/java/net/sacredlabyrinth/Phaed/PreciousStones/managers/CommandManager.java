@@ -581,6 +581,12 @@ public final class CommandManager implements CommandExecutor
                             int num = Integer.parseInt(args[0]);
                             String dir = args[1];
 
+                            if (num < 0)
+                            {
+                                ChatBlock.send(sender, "noNegative");
+                                return true;
+                            }
+
                             Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
 
                             if (field != null)
@@ -615,12 +621,18 @@ public final class CommandManager implements CommandExecutor
                             int e = Integer.parseInt(args[4]);
                             int w = Integer.parseInt(args[5]);
 
+                            if (u < 0 || d < 0 || n < 0 || s < 0 || e < 0 || w < 0)
+                            {
+                                ChatBlock.send(sender, "noNegative");
+                                return true;
+                            }
+
                             Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
 
                             if (field != null)
                             {
                                 boolean bypass = plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid");
-                                int overflow = field.expand(u,d,n,s,e,w,bypass);
+                                int overflow = field.expand(u, d, n, s, e, w, bypass);
 
                                 if (overflow <= 0 || bypass)
                                 {
@@ -647,6 +659,12 @@ public final class CommandManager implements CommandExecutor
                             int num = Integer.parseInt(args[0]);
                             String dir = args[1];
 
+                            if (num > 0)
+                            {
+                                ChatBlock.send(sender, "noPositive");
+                                return true;
+                            }
+
                             Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
 
                             if (field != null)
@@ -671,11 +689,17 @@ public final class CommandManager implements CommandExecutor
                             int e = Integer.parseInt(args[4]);
                             int w = Integer.parseInt(args[5]);
 
+                            if (u > 0 || d > 0 || n > 0 || s > 0 || e > 0 || w > 0)
+                            {
+                                ChatBlock.send(sender, "noPositive");
+                                return true;
+                            }
+
                             Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
 
                             if (field != null)
                             {
-                                field.contract(u,d,n,s,e,w);
+                                field.contract(u, d, n, s, e, w);
                                 ChatBlock.send(sender, "cuboidContracted");
 
                                 return true;
