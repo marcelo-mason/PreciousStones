@@ -571,6 +571,7 @@ surfaceWarning: "{red} You can only place this field on the following blocks: {1
 radiusOverFlow: "{red} Could not set the radious.  It is larger than the available volume by {1.overflow} blocks."
 foresterActivating: "{yellow} Activating..."
 foresterUsesLeft: "{yellow} {1.amount} uses left."
-cannotUseItemHere: "{red} You cannot use that item inside this field."
 cuboidExpanded: "{aqua} The field was expanded."
 cannotExpand: "{red} Cannot expand the field, it overflows available volume by {1.volume} blocks."
+cannotUseItemMoved: "{red} You cannot hold that item here, it has been moved out of the way."
+cannotUseItemHere: "{red} You cannot hold that item here."

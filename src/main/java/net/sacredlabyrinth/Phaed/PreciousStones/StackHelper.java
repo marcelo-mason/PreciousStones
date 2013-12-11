@@ -12,41 +12,23 @@ import java.util.List;
 
 public class StackHelper
 {
-    public static void unHoldItem(Player player)
+    public static void unHoldItem(Player player, int slot)
     {
-        ItemStack item = player.getItemInHand();
         PlayerInventory inv = player.getInventory();
-        int slot = inv.getHeldItemSlot();
+        ItemStack item = inv.getItem(slot);
         int empty = -1;
 
         if (item != null)
         {
-            if (slot > 0)
+            for (int i = 9; i <= 35; i++)
             {
-                ItemStack left = inv.getItem(slot - 1);
+                ItemStack test = inv.getItem(i);
 
-                if (left.getType() == Material.AIR)
+                if (test == null)
                 {
-                    empty = slot - 1;
+                    empty = i;
+                    break;
                 }
-            }
-
-            if (empty == -1)
-            {
-                if (slot < 8)
-                {
-                    ItemStack right = inv.getItem(slot + 1);
-
-                    if (right.getType() == Material.AIR)
-                    {
-                        empty = slot + 1;
-                    }
-                }
-            }
-
-            if (empty == -1)
-            {
-                empty = inv.firstEmpty();
             }
 
             if (empty == -1)

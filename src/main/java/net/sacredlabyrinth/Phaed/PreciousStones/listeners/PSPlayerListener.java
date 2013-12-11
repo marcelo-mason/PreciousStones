@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -2027,27 +2028,85 @@ public class PSPlayerListener implements Listener
     }
 
     @EventHandler
-    public void onPlayerItemHeldEvent(final PlayerItemHeldEvent event)
+    public void onPlayerItemHeldEvent(PlayerItemHeldEvent event)
     {
         if (event == null)
         {
             return;
         }
 
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
 
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.UNUSABLE_ITEMS);
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.UNUSABLE_ITEMS);
 
         if (field != null)
         {
-            if (FieldFlag.UNUSABLE_ITEMS.applies(field, event.getPlayer()))
+            if (FieldFlag.UNUSABLE_ITEMS.applies(field, player))
             {
-                ItemStack item = player.getItemInHand();
+                PlayerInventory inv = player.getInventory();
+                int slot = event.getNewSlot();
+                ItemStack item = inv.getItem(slot);
 
-                if (field.getSettings().isUnusableItem(item.getTypeId(), item.getData().getData()))
+                if (item != null)
                 {
-                    StackHelper.unHoldItem(player);
-                    ChatBlock.send(player, "cannotUseItemHere");
+                    if (field.getSettings().isUnusableItem(item.getTypeId(), item.getData().getData()))
+                    {
+                        StackHelper.unHoldItem(player, slot);
+                        ChatBlock.send(player, "cannotUseItemMoved");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onItemPickup(PlayerPickupItemEvent event)
+    {
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.UNUSABLE_ITEMS);
+
+        if (field != null)
+        {
+            if (FieldFlag.UNUSABLE_ITEMS.applies(field, player))
+            {
+                if (player.getItemInHand().getTypeId() == event.getItem().getItemStack().getTypeId())
+                {
+                    if (field.getSettings().isUnusableItem(event.getItem().getItemStack().getTypeId(), event.getItem().getItemStack().getData().getData()))
+                    {
+                        ChatBlock.send(player, "cannotUseItemHere");
+                        StackHelper.unHoldItem(player, player.getInventory().getHeldItemSlot());
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onInventoryCloseEvent(InventoryCloseEvent event)
+    {
+        if (event.getPlayer() instanceof Player)
+        {
+            Player player = (Player) event.getPlayer();
+
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.UNUSABLE_ITEMS);
+
+            if (field != null)
+            {
+                if (FieldFlag.UNUSABLE_ITEMS.applies(field, player))
+                {
+                    if (field.getSettings().isUnusableItem(player.getItemInHand().getTypeId(),player.getItemInHand().getData().getData()))
+                    {
+                        ChatBlock.send(player, "cannotUseItemHere");
+                        StackHelper.unHoldItem(player, player.getInventory().getHeldItemSlot());
+                    }
                 }
             }
         }
