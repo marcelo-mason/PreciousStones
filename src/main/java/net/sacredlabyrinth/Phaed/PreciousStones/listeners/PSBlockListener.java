@@ -62,6 +62,50 @@ public class PSBlockListener implements Listener
     /**
      * @param event
      */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockSpreadEvent(BlockSpreadEvent event)
+    {
+        if (event.getBlock() == null)
+        {
+            return;
+        }
+
+
+        Block source = event.getSource();
+        Block destination = event.getBlock();
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(source.getWorld()))
+        {
+            return;
+        }
+
+        if (Helper.isSameBlock(source.getLocation(), destination.getLocation()))
+        {
+            return;
+        }
+
+        // if the destination area is not protected, don't bother
+
+        Field destField = plugin.getForceFieldManager().getEnabledSourceField(destination.getLocation(), FieldFlag.PREVENT_FIRE);
+
+        if (destField == null)
+        {
+            return;
+        }
+
+        // if the source is outside protection, or if its protected by a different owner, then block the water
+
+        Field sourceField = plugin.getForceFieldManager().getEnabledSourceField(source.getLocation(), FieldFlag.PREVENT_FIRE);
+
+        if (sourceField == null || !sourceField.getOwner().equalsIgnoreCase(destField.getOwner()))
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * @param event
+     */
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockFromTo(BlockFromToEvent event)
