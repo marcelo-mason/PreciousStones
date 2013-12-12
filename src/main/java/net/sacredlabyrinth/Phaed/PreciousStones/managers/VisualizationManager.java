@@ -1,6 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.Visualization;
+import net.sacredlabyrinth.Phaed.PreciousStones.Visualize;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
@@ -137,92 +140,162 @@ public class VisualizationManager
             maxy = field.getMaxy() + 1;
         }
 
-        Location loc = null;
-
         for (int x = minx; x <= maxx; x++)
         {
-            int frame = (x == minx || x == maxx) ? 89 : frameType;
-
-            loc = new Location(player.getWorld(), x, miny, maxz);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, frame, (byte) 0);
-            }
+            Location loc = new Location(player.getWorld(), x, miny, maxz);
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), x, maxy, minz);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, frame, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), x, miny, minz);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, frame, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), x, maxy, maxz);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, frame, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
         }
 
         for (int y = miny; y <= maxy; y++)
         {
-            loc = new Location(player.getWorld(), minx, y, maxz);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, 89, (byte) 0);
-            }
+            Location loc = new Location(player.getWorld(), minx, y, maxz);
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), maxx, y, minz);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, 89, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), minx, y, minz);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, 89, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), maxx, y, maxz);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, 89, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
         }
 
         for (int z = minz; z <= maxz; z++)
         {
-            int frame = (z == minz || z == maxz) ? 89 : frameType;
-
-            loc = new Location(player.getWorld(), minx, maxy, z);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, frame, (byte) 0);
-            }
+            Location loc = new Location(player.getWorld(), minx, maxy, z);
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), maxx, miny, z);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, frame, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), minx, miny, z);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, frame, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
 
             loc = new Location(player.getWorld(), maxx, maxy, z);
-            if (Helper.isAirOrWater(loc))
-            {
-                vis.addBlock(loc, frame, (byte) 0);
-            }
+            vis.addBlock(loc, frameType, (byte) 0);
         }
+
+        int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
+
+        for (int y = miny; y <= maxy; y++)
+        {
+            boolean yTurn = turnCounter(player.getName() + 1, spacing);
+
+            if (maxy - y < spacing)
+            {
+                yTurn = false;
+            }
+
+            int count = 0;
+            for (int z = minz; z <= maxz; z++)
+            {
+                if (yTurn || turnCounter(player.getName() + 2, spacing))
+                {
+                    if (maxz - z < spacing && !yTurn)
+                    {
+                        break;
+                    }
+
+                    if (!yTurn && count >= data.getDensity() - 1)
+                    {
+                        break;
+                    }
+
+                    Location loc = new Location(player.getWorld(), minx, y, z);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+
+                    loc = new Location(player.getWorld(), maxx, y, z);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    count++;
+                }
+            }
+            counts.put(player.getName() + 2, 0);
+        }
+        counts.put(player.getName() + 1, 0);
+
+
+        for (int x = minx; x <= maxx; x++)
+        {
+            boolean xTurn = turnCounter(player.getName() + 1, spacing);
+
+            if (maxx - x < spacing)
+            {
+                xTurn = false;
+            }
+
+            int count = 0;
+            for (int z = minz; z <= maxz; z++)
+            {
+                if (xTurn || turnCounter(player.getName() + 2, spacing))
+                {
+                    if (maxz - z < spacing && !xTurn)
+                    {
+                        break;
+                    }
+
+                    if (!xTurn && count >= data.getDensity() - 1)
+                    {
+                        break;
+                    }
+
+                    Location loc = new Location(player.getWorld(), x, miny, z);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+
+                    loc = new Location(player.getWorld(), x, maxy, z);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    count++;
+                }
+            }
+            counts.put(player.getName() + 2, 0);
+        }
+        counts.put(player.getName() + 1, 0);
+
+
+        for (int y = miny; y <= maxy; y++)
+        {
+            boolean yTurn = turnCounter(player.getName() + 1, spacing);
+
+            if (maxy - y < spacing)
+            {
+                yTurn = false;
+            }
+
+            int count = 0;
+            for (int x = minx; x <= maxx; x++)
+            {
+                if (maxx - x < spacing && !yTurn)
+                {
+                    break;
+                }
+
+                if (!yTurn && count >= data.getDensity() - 1)
+                {
+                    break;
+                }
+
+                if (yTurn || turnCounter(player.getName() + 2, spacing))
+                {
+                    Location loc = new Location(player.getWorld(), x, y, minz);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+
+                    loc = new Location(player.getWorld(), x, y, maxz);
+                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    count++;
+                }
+            }
+            counts.put(player.getName() + 2, 0);
+        }
+        counts.put(player.getName() + 1, 0);
 
         visualizations.put(player.getName(), vis);
     }
@@ -301,150 +374,55 @@ public class VisualizationManager
 
         // add  the blocks for the new outline
 
-        if (plugin.getSettingsManager().isVisualizationNewStyle())
+        for (int x = minx; x <= maxx; x++)
         {
-            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
-            int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
+            int frame =  (x == minx || x == maxx) ? 89 : frameType;
 
-            for (int x = minx; x <= maxx; x++)
-            {
-                int frame = (x == minx || x == maxx) ? 89 : frameType;
+            Location loc = new Location(player.getWorld(), x, miny, maxz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                Location loc = new Location(player.getWorld(), x, miny, maxz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
+            loc = new Location(player.getWorld(), x, maxy, minz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, maxy, minz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
+            loc = new Location(player.getWorld(), x, miny, minz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, miny, minz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), x, maxy, maxz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-            }
-
-            for (int y = miny; y <= maxy; y++)
-            {
-                int frame = (y == miny || y == maxy) ? 89 : frameType;
-
-                Location loc = new Location(player.getWorld(), minx, y, maxz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), maxx, y, minz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), minx, y, minz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), maxx, y, maxz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-            }
-
-            for (int z = minz; z <= maxz; z++)
-            {
-                int frame = (z == minz || z == maxz) ? 89 : frameType;
-
-                Location loc = new Location(player.getWorld(), minx, maxy, z);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), maxx, miny, z);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), minx, miny, z);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), maxx, maxy, z);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-            }
+            loc = new Location(player.getWorld(), x, maxy, maxz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
-        else
+
+        for (int y = miny; y <= maxy; y++)
         {
-            for (int x = minx; x <= maxx; x++)
-            {
-                int frame = (x == minx || x == maxx) ? 89 : frameType;
+            int frame =  (y == miny || y == maxy) ? 89 : frameType;
 
-                Location loc = new Location(player.getWorld(), x, miny, maxz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            Location loc = new Location(player.getWorld(), minx, y, maxz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, maxy, minz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            loc = new Location(player.getWorld(), maxx, y, minz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, miny, minz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            loc = new Location(player.getWorld(), minx, y, minz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, maxy, maxz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-            }
+            loc = new Location(player.getWorld(), maxx, y, maxz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+        }
 
-            for (int y = miny; y <= maxy; y++)
-            {
-                int frame = (y == miny || y == maxy) ? 89 : frameType;
+        for (int z = minz; z <= maxz; z++)
+        {
+            int frame =  (z == minz || z == maxz) ? 89 : frameType;
 
-                Location loc = new Location(player.getWorld(), minx, y, maxz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            Location loc = new Location(player.getWorld(), minx, maxy, z);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), maxx, y, minz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            loc = new Location(player.getWorld(), maxx, miny, z);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), minx, y, minz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            loc = new Location(player.getWorld(), minx, miny, z);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), maxx, y, maxz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-            }
-
-            for (int z = minz; z <= maxz; z++)
-            {
-                int frame = (z == minz || z == maxz) ? 89 : frameType;
-
-                Location loc = new Location(player.getWorld(), minx, maxy, z);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-
-                loc = new Location(player.getWorld(), maxx, miny, z);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-
-                loc = new Location(player.getWorld(), minx, miny, z);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-
-                loc = new Location(player.getWorld(), maxx, maxy, z);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-            }
+            loc = new Location(player.getWorld(), maxx, maxy, z);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
         // visualize all the new blocks that are left to visualize
@@ -486,149 +464,55 @@ public class VisualizationManager
 
         // add  the blocks for the new outline
 
-        if (plugin.getSettingsManager().isVisualizationNewStyle())
+        for (int x = minx; x <= maxx; x++)
         {
-            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
-            int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
+            int frame =  (x == minx || x == maxx) ? 89 : frameType;
 
-            for (int x = minx; x <= maxx; x++)
-            {
-                int frame = (x == minx || x == maxx) ? 89 : frameType;
+            Location loc = new Location(player.getWorld(), x, miny, maxz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                Location loc = new Location(player.getWorld(), x, miny, maxz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
+            loc = new Location(player.getWorld(), x, maxy, minz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, maxy, minz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
+            loc = new Location(player.getWorld(), x, miny, minz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, miny, minz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-                loc = new Location(player.getWorld(), x, maxy, maxz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-            }
-
-            for (int y = miny; y <= maxy; y++)
-            {
-                int frame = (y == miny || y == maxy) ? 89 : frameType;
-
-                Location loc = new Location(player.getWorld(), minx, y, maxz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), maxx, y, minz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), minx, y, minz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), maxx, y, maxz);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-            }
-
-            for (int z = minz; z <= maxz; z++)
-            {
-                int frame = (z == minz || z == maxz) ? 89 : frameType;
-
-                Location loc = new Location(player.getWorld(), minx, maxy, z);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), maxx, miny, z);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), minx, miny, z);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-
-                loc = new Location(player.getWorld(), maxx, maxy, z);
-                if (Helper.isAirOrWater(loc))
-                {
-                    newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-                }
-            }
+            loc = new Location(player.getWorld(), x, maxy, maxz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
-        else
+
+        for (int y = miny; y <= maxy; y++)
         {
-            for (int x = minx; x <= maxx; x++)
-            {
-                int frame = (x == minx || x == maxx) ? 89 : frameType;
+            int frame =  (y == miny || y == maxy) ? 89 : frameType;
 
-                Location loc = new Location(player.getWorld(), x, miny, maxz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            Location loc = new Location(player.getWorld(), minx, y, maxz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, maxy, minz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            loc = new Location(player.getWorld(), maxx, y, minz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, miny, minz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            loc = new Location(player.getWorld(), minx, y, minz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), x, maxy, maxz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-            }
+            loc = new Location(player.getWorld(), maxx, y, maxz);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+        }
 
-            for (int y = miny; y <= maxy; y++)
-            {
-                int frame = (y == miny || y == maxy) ? 89 : frameType;
+        for (int z = minz; z <= maxz; z++)
+        {
+            int frame =  (z == minz || z == maxz) ? 89 : frameType;
 
-                Location loc = new Location(player.getWorld(), minx, y, maxz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            Location loc = new Location(player.getWorld(), minx, maxy, z);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), maxx, y, minz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            loc = new Location(player.getWorld(), maxx, miny, z);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), minx, y, minz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            loc = new Location(player.getWorld(), minx, miny, z);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
 
-                loc = new Location(player.getWorld(), maxx, y, maxz);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-            }
-
-            for (int z = minz; z <= maxz; z++)
-            {
-                int frame = (z == minz || z == maxz) ? 89 : frameType;
-
-                Location loc = new Location(player.getWorld(), minx, maxy, z);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-
-                loc = new Location(player.getWorld(), maxx, miny, z);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-
-                loc = new Location(player.getWorld(), minx, miny, z);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-
-                loc = new Location(player.getWorld(), maxx, maxy, z);
-                newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
-            }
+            loc = new Location(player.getWorld(), maxx, maxy, z);
+            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
         // revert the blocks that are no longer in the new set and should be reverted
