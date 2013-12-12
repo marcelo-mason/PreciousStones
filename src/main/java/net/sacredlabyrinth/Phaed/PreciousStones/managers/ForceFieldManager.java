@@ -1255,7 +1255,10 @@ public final class ForceFieldManager
 
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
             {
-                return true;
+                if (!field.hasFlag(FieldFlag.NO_ALLOWING))
+                {
+                    return true;
+                }
             }
         }
 
@@ -1324,7 +1327,10 @@ public final class ForceFieldManager
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.allowed"))
         {
-            return true;
+            if (!field.hasFlag(FieldFlag.NO_ALLOWING))
+            {
+                return true;
+            }
         }
 
         return field.isOwner(player.getName());
