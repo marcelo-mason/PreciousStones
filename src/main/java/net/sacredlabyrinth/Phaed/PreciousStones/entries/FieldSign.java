@@ -17,38 +17,38 @@ public class FieldSign
     private boolean fieldSign;
     private String period;
     private int price;
-    private boolean noEconomy;
     private BlockTypeEntry item;
     private String playerName;
+    private String failReason;
 
-    public FieldSign(Block block)
+    public FieldSign(Block signBlock)
     {
-        if (!SignHelper.isSign(block))
+        if (!SignHelper.isSign(signBlock))
         {
             valid = false;
             return;
         }
 
-        sign = ((Sign) block.getState());
+        sign = ((Sign) signBlock.getState());
 
         String[] lines = sign.getLines();
 
-        valid = extractData(block, lines);
+        valid = extractData(signBlock, lines);
     }
 
-    public FieldSign(Block block, String[] lines, Player player)
+    public FieldSign(Block signBlock, String[] lines, Player player)
     {
-        if (!SignHelper.isSign(block))
+        if (!SignHelper.isSign(signBlock))
         {
             valid = false;
             return;
         }
 
-        valid = extractData(block, lines);
+        valid = extractData(signBlock, lines);
         playerName = player.getName();
     }
 
-    public boolean extractData(Block block, String[] lines)
+    public boolean extractData(Block signBlock, String[] lines)
     {
         tag = ChatColor.stripColor(lines[0]);
 
@@ -56,6 +56,7 @@ public class FieldSign
 
         if (price == 0)
         {
+            failReason = "fieldSignNoPrice";
             return false;
         }
 
@@ -67,31 +68,34 @@ public class FieldSign
 
             if (!SignHelper.isValidPeriod(period))
             {
+                failReason = "fieldSignInvalidPeriod";
                 return false;
             }
+        }
 
-            fieldSign = tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
+        fieldSign = tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
 
-            if (!fieldSign)
-            {
-                return false;
-            }
+        if (!fieldSign)
+        {
+            failReason = "fieldSignBadTag";
+            return false;
         }
 
         if (item == null)
         {
             if (!PreciousStones.getInstance().getPermissionsManager().hasEconomy())
             {
-                noEconomy = true;
+                failReason = "fieldSignNoEco";
                 return false;
             }
         }
 
-        Block attachedBlock = SignHelper.getAttachedBlock(block);
+        Block attachedBlock = SignHelper.getAttachedBlock(signBlock);
         field = PreciousStones.getInstance().getForceFieldManager().getField(attachedBlock);
 
         if (field == null)
         {
+            failReason = "fieldSignMustBeOnField";
             return false;
         }
 
@@ -99,6 +103,7 @@ public class FieldSign
         {
             if (!field.isOwner(playerName))
             {
+                failReason = "fieldSignNotOwner";
                 return false;
             }
         }
@@ -107,6 +112,7 @@ public class FieldSign
         {
             if (!field.hasFlag(FieldFlag.RENTABLE))
             {
+                failReason = "fieldSignNotRentable";
                 return false;
             }
         }
@@ -115,6 +121,7 @@ public class FieldSign
         {
             if (!field.hasFlag(FieldFlag.SHAREABLE))
             {
+                failReason = "fieldSignNotShareable";
                 return false;
             }
         }
@@ -123,6 +130,7 @@ public class FieldSign
         {
             if (!field.hasFlag(FieldFlag.BUYABLE))
             {
+                failReason = "fieldSignNotBuyable";
                 return false;
             }
         }
@@ -211,11 +219,6 @@ public class FieldSign
         return field;
     }
 
-    public boolean foundField()
-    {
-        return field != null;
-    }
-
     public boolean isFieldSign()
     {
         return fieldSign;
@@ -241,8 +244,13 @@ public class FieldSign
         return sign;
     }
 
-    public boolean isNoEconomy()
+    public String getFailReason()
     {
-        return noEconomy;
+        return failReason;
+    }
+
+    public void setFailReason(String failReason)
+    {
+        this.failReason = failReason;
     }
 }

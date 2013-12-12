@@ -2561,6 +2561,115 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
     }
+    public int getFencePrice()
+    {
+        return fenceBlocks.size() * settings.getFenceItemPrice();
+    }
+
+    public void addBlacklistedCommand(String command)
+    {
+        if (!blacklistedCommands.contains(command))
+        {
+            blacklistedCommands.add(command);
+        }
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void clearBlacklistedCommands()
+    {
+        blacklistedCommands.clear();
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public boolean isBlacklistedCommand(String command)
+    {
+        if (hasFlag(FieldFlag.COMMAND_BLACKLISTING))
+        {
+            command = command.replace("/", "");
+
+            int i = command.indexOf(' ');
+
+            if (i > -1)
+            {
+                command = command.substring(0, i);
+            }
+
+            PreciousStones.debug(command);
+
+            return blacklistedCommands.contains(command);
+        }
+        return false;
+    }
+
+    public boolean hasBlacklistedComands()
+    {
+        return blacklistedCommands.size() > 0;
+    }
+
+    public String getBlacklistedCommandsList()
+    {
+        String out = "";
+
+        for (String cmd : blacklistedCommands)
+        {
+            out += cmd + ", ";
+        }
+
+        return Helper.stripTrailing(out, ", ");
+    }
+
+    public void addWhitelistedBlock(BlockTypeEntry type)
+    {
+        if (!whitelistedBlocks.contains(type))
+        {
+            whitelistedBlocks.add(type);
+        }
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public void deleteWhitelistedBlock(BlockTypeEntry type)
+    {
+        whitelistedBlocks.remove(type);
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public boolean hasForesterUse()
+    {
+        return settings.getForesterUses() - foresterUsed > 0;
+    }
+
+    public int foresterUsesLeft()
+    {
+        return settings.getForesterUses() - foresterUsed;
+    }
+
+    public void recordForesterUse()
+    {
+        foresterUsed++;
+        dirtyFlags();
+        PreciousStones.getInstance().getStorageManager().offerField(this);
+    }
+
+    public int getForesterUsed()
+    {
+        return foresterUsed;
+    }
+
+    public boolean isForesting()
+    {
+        return foresting;
+    }
+
+    public void setForesting(boolean foresting)
+    {
+        this.foresting = foresting;
+    }
+
+    /*******************************************************************************************************************/
 
     public RentEntry getRenter(Player player)
     {
@@ -2667,14 +2776,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
 
         return false;
-    }
-
-    public void scheduleNextRentUpdate()
-    {
-        if (!renterEntries.isEmpty())
-        {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Update(), 20);
-        }
     }
 
     public List<RentEntry> getRenterEntries()
@@ -2942,21 +3043,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 
-    public int getForesterUsed()
-    {
-        return foresterUsed;
-    }
-
-    public boolean isForesting()
-    {
-        return foresting;
-    }
-
-    public void setForesting(boolean foresting)
-    {
-        this.foresting = foresting;
-    }
-
     private class Update implements Runnable
     {
         public void run()
@@ -3015,96 +3101,13 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
     }
 
-    public int getFencePrice()
+    public void scheduleNextRentUpdate()
     {
-        return fenceBlocks.size() * settings.getFenceItemPrice();
-    }
-
-    public void addBlacklistedCommand(String command)
-    {
-        if (!blacklistedCommands.contains(command))
+        if (!renterEntries.isEmpty())
         {
-            blacklistedCommands.add(command);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Update(), 20);
         }
-        dirtyFlags();
-        PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 
-    public void clearBlacklistedCommands()
-    {
-        blacklistedCommands.clear();
-        dirtyFlags();
-        PreciousStones.getInstance().getStorageManager().offerField(this);
-    }
-
-    public boolean isBlacklistedCommand(String command)
-    {
-        if (hasFlag(FieldFlag.COMMAND_BLACKLISTING))
-        {
-            command = command.replace("/", "");
-
-            int i = command.indexOf(' ');
-
-            if (i > -1)
-            {
-                command = command.substring(0, i);
-            }
-
-            PreciousStones.debug(command);
-
-            return blacklistedCommands.contains(command);
-        }
-        return false;
-    }
-
-    public boolean hasBlacklistedComands()
-    {
-        return blacklistedCommands.size() > 0;
-    }
-
-    public String getBlacklistedCommandsList()
-    {
-        String out = "";
-
-        for (String cmd : blacklistedCommands)
-        {
-            out += cmd + ", ";
-        }
-
-        return Helper.stripTrailing(out, ", ");
-    }
-
-    public void addWhitelistedBlock(BlockTypeEntry type)
-    {
-        if (!whitelistedBlocks.contains(type))
-        {
-            whitelistedBlocks.add(type);
-        }
-        dirtyFlags();
-        PreciousStones.getInstance().getStorageManager().offerField(this);
-    }
-
-    public void deleteWhitelistedBlock(BlockTypeEntry type)
-    {
-        whitelistedBlocks.remove(type);
-        dirtyFlags();
-        PreciousStones.getInstance().getStorageManager().offerField(this);
-    }
-
-    public boolean hasForesterUse()
-    {
-        return settings.getForesterUses() - foresterUsed > 0;
-    }
-
-    public int foresterUsesLeft()
-    {
-        return settings.getForesterUses() - foresterUsed;
-    }
-
-    public void recordForesterUse()
-    {
-        foresterUsed++;
-        dirtyFlags();
-        PreciousStones.getInstance().getStorageManager().offerField(this);
-    }
+    /*******************************************************************************************************************/
 }

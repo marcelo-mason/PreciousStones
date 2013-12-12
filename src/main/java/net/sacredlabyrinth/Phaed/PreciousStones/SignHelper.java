@@ -34,19 +34,19 @@ public class SignHelper
     /**
      * Get a sign's attached block
      *
-     * @param attachable
+     * @param signBlock
      * @return
      */
-    public static Block getAttachedBlock(Block attachable)
+    public static Block getAttachedBlock(Block signBlock)
     {
-        MaterialData m = attachable.getState().getData();
+        MaterialData m = signBlock.getState().getData();
         BlockFace face = BlockFace.DOWN;
 
         if (m instanceof Attachable)
         {
             face = ((Attachable) m).getAttachedFace();
         }
-        return attachable.getRelative(face);
+        return signBlock.getRelative(face);
     }
 
     /**

@@ -904,6 +904,10 @@ public class PSPlayerListener implements Listener
                         }
                     }
                 }
+                else
+                {
+                    ChatBlock.send(player, s.getFailReason());
+                }
             }
         }
 
