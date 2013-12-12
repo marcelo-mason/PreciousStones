@@ -574,6 +574,22 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
+                    else if (cmd.equals(ChatBlock.format("commandTake")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.take") && hasplayer)
+                    {
+                        Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
+
+                        if (field != null)
+                        {
+                            field.take(player);
+                            ChatBlock.send(sender, "taken", field.getType(), field.getCoords());
+                        }
+                        else
+                        {
+                            plugin.getCommunicationManager().showNotFound(player);
+                        }
+                        return true;
+
+                    }
                     else if (cmd.equals(ChatBlock.format("commandExpand")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.expand") && hasplayer)
                     {
                         if (args.length == 2)

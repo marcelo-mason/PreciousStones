@@ -292,7 +292,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *  Expand cuboid
+     * Expand cuboid
      *
      * @param num
      * @param dir
@@ -338,7 +338,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     *  Contract cuboid
+     * Contract cuboid
      *
      * @param num
      * @param dir
@@ -2561,6 +2561,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
     }
+
     public int getFencePrice()
     {
         return fenceBlocks.size() * settings.getFenceItemPrice();
@@ -2669,7 +2670,16 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.foresting = foresting;
     }
 
-    /*******************************************************************************************************************/
+    public void take(Player player)
+    {
+        PreciousStones.getInstance().getForceFieldManager().deleteField(this);
+        getBlock().setType(Material.AIR);
+        StackHelper.give(player, type, 1);
+    }
+
+    /**
+     * ***************************************************************************************************************
+     */
 
     public RentEntry getRenter(Player player)
     {
