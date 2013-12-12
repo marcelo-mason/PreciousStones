@@ -139,7 +139,7 @@ public class Api implements IApi
      */
     public int getPlayerFieldCount(Player player, FieldFlag flag)
     {
-        List<Field> fields = plugin.getForceFieldManager().getPlayerFields(player.getName(), flag);
+        List<Field> fields = plugin.getForceFieldManager().getPlayerFields(player.getName().toLowerCase(), flag);
 
         if (fields == null)
         {
@@ -158,7 +158,7 @@ public class Api implements IApi
      */
     public List<Field> getPlayerFields(Player player, FieldFlag flag)
     {
-        List<Field> fields = plugin.getForceFieldManager().getPlayerFields(player.getName(), flag);
+        List<Field> fields = plugin.getForceFieldManager().getPlayerFields(player.getName().toLowerCase(), flag);
 
         if (fields == null)
         {
