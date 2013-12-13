@@ -310,7 +310,7 @@ public class SignHelper
 
     public static boolean isValidPeriod(String period)
     {
-        String string = period.replaceAll(" ", "").replaceAll("[wdhms]", "");
+        String string = period.replaceAll(" ", "").toLowerCase().replaceAll("[wdhms]", "");
         return Helper.isInteger(string);
     }
 
