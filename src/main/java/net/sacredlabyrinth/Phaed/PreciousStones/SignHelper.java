@@ -165,7 +165,7 @@ public class SignHelper
         int seconds = 0;
 
         ArrayList<String> strings = new ArrayList<String>();
-        String[] chars = period.replace(" ", "").toLowerCase().split("");
+        String[] chars = period.replaceAll(" ", "").toLowerCase().split("");
         String word = "";
 
         for (String ch : chars)
@@ -310,7 +310,7 @@ public class SignHelper
 
     public static boolean isValidPeriod(String period)
     {
-        String string = period.replace(" ", "").replaceAll("[wdhms]", "");
+        String string = period.replaceAll(" ", "").replaceAll("[wdhms]", "");
         return Helper.isInteger(string);
     }
 
