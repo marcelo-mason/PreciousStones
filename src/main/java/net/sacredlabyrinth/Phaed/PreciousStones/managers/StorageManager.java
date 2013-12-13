@@ -38,6 +38,7 @@ public class StorageManager
     private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
     private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
     private final List<SnitchEntry> pendingSnitchEntries = new ArrayList<SnitchEntry>();
+    private boolean haltUpdates;
 
     /**
      *
@@ -1406,6 +1407,11 @@ public class StorageManager
      */
     public Queue<GriefBlock> retrieveBlockGrief(Field field)
     {
+        synchronized (this)
+        {
+            haltUpdates = true;
+        }
+
         Set<Field> workingGrief = new HashSet<Field>();
 
         synchronized (pendingGrief)
@@ -1472,6 +1478,11 @@ public class StorageManager
                 PreciousStones.debug("Deleting grief from the db");
                 deleteBlockGrief(field);
             }
+        }
+
+        synchronized (this)
+        {
+            haltUpdates = false;
         }
 
         return out;
@@ -2342,6 +2353,14 @@ public class StorageManager
      */
     public void processQueue()
     {
+        synchronized (this)
+        {
+            if (haltUpdates)
+            {
+                return;
+            }
+        }
+
         Map<Vec, Field> working = new HashMap<Vec, Field>();
         Map<Unbreakable, Boolean> workingUb = new HashMap<Unbreakable, Boolean>();
         Map<String, Boolean> workingPlayers = new HashMap<String, Boolean>();
