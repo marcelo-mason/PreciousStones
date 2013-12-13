@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -162,12 +163,25 @@ public class SignHelper
     {
         int counter = 0;
         int seconds = 0;
+        ArrayList<String> strings = new ArrayList<String>();
 
-        String[] strings = period.split(" ");
+        String[] chars = period.replace(" ", "").toLowerCase().split("");
+
+        String word = "";
+
+        for (String ch : chars)
+        {
+            word += ch;
+
+            if (ch.equals("w") || ch.equals("d") || ch.equals("h") || ch.equals("m") || ch.equals("s"))
+            {
+                strings.add(word);
+                word = "";
+            }
+        }
 
         for (String string : strings)
         {
-
             if (string.contains("w"))
             {
                 string = string.replace("w", "");
