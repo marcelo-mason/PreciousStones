@@ -72,7 +72,8 @@ public final class EntryManager
     {
         try
         {
-            entries: for (String playerName : dynamicEntries.keySet())
+            entries:
+            for (String playerName : dynamicEntries.keySet())
             {
                 Player player = Bukkit.getServer().getPlayerExact(playerName);
 
@@ -319,7 +320,7 @@ public final class EntryManager
      */
     public void enterOverlappedArea(Player player, Field field)
     {
-        if (FieldFlag.WELCOME_MESSAGE.applies(field, player))
+        if (field.hasFlag(FieldFlag.WELCOME_MESSAGE))
         {
             plugin.getCommunicationManager().showWelcomeMessage(player, field);
         }
@@ -383,7 +384,7 @@ public final class EntryManager
      */
     public void leaveOverlappedArea(final Player player, final Field field)
     {
-        if (FieldFlag.FAREWELL_MESSAGE.applies(field, player))
+        if (field.hasFlag(FieldFlag.FAREWELL_MESSAGE))
         {
             plugin.getCommunicationManager().showFarewellMessage(player, field);
         }
