@@ -163,10 +163,9 @@ public class SignHelper
     {
         int counter = 0;
         int seconds = 0;
+
         ArrayList<String> strings = new ArrayList<String>();
-
         String[] chars = period.replace(" ", "").toLowerCase().split("");
-
         String word = "";
 
         for (String ch : chars)
@@ -311,26 +310,8 @@ public class SignHelper
 
     public static boolean isValidPeriod(String period)
     {
-        String[] strings = period.split(" ");
-
-        for (String string : strings)
-        {
-            if (string.contains("w") || string.contains("d") || string.contains("h") || string.contains("m") || string.contains("s"))
-            {
-                string = string.replaceAll("[wdhms]", "");
-
-                if (!Helper.isInteger(string))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        return true;
+        String string = period.replace(" ", "").replaceAll("[wdhms]", "");
+        return Helper.isInteger(string);
     }
 
     public static BlockTypeEntry extractItemFromParenthesis(String line)
