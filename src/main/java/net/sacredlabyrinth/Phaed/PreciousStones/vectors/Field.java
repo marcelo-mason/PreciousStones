@@ -1981,7 +1981,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean startDisabler()
     {
-        if (settings != null && settings.getAutoDisableSeconds() > 0)
+        if (settings != null && settings.getAutoDisableTime() > 0)
         {
             Player player = Bukkit.getServer().getPlayerExact(owner);
             final String theOwner = owner;
@@ -1989,7 +1989,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (player != null)
             {
-                ChatBlock.send(player, "fieldWillDisable", settings.getTitle(), settings.getAutoDisableSeconds());
+                ChatBlock.send(player, "fieldWillDisable", settings.getTitle(), settings.getAutoDisableTime());
             }
 
             if (disablerId > 0)
@@ -2014,7 +2014,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                         thisField.dirtyFlags();
                     }
                 }
-            }, 20L * settings.getAutoDisableSeconds());
+            }, 20L * settings.getAutoDisableTime());
 
             return true;
         }

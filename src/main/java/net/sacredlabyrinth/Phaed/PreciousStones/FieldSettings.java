@@ -44,7 +44,7 @@ public class FieldSettings
     private int lightningDelaySeconds = 0;
     private int lightningReplaceBlock = 0;
     private int mixingGroup = 0;
-    private int autoDisableSeconds = 0;
+    private int autoDisableTime = 0;
     private int mustBeAbove = 0;
     private int mustBeBelow = 0;
     private boolean mineHasFire = false;
@@ -346,7 +346,7 @@ public class FieldSettings
         requiredPermissionAllow = loadString("required-permission-allow");
         deleteIfNoPermission = loadString("delete-if-no-permission");
         groupOnEntry = loadString("group-on-entry");
-        autoDisableSeconds = loadInt("auto-disable");
+        autoDisableTime = loadPeriodSeconds("auto-disable");
         radius = loadInt("radius");
         mixingGroup = loadInt("mixing-group");
         customVolume = loadInt("custom-volume");
@@ -476,6 +476,36 @@ public class FieldSettings
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
         return "";
+    }
+
+    private int loadPeriodSeconds(String flagStr)
+    {
+        if (containsKey(flagStr))
+        {
+            if (Helper.isInteger(getValue(flagStr)))
+            {
+                int value = (Integer) getValue(flagStr);
+
+                loadFlags(getKey(flagStr));
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+
+            if (Helper.isString(getValue(flagStr)))
+            {
+                String str = (String) getValue(flagStr);
+
+                int value = SignHelper.periodToSeconds(str);
+
+                loadFlags(getKey(flagStr));
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+            PreciousStones.debug("   %s: *bad*", flagStr);
+        }
+        return 0;
     }
 
     private BlockTypeEntry loadTypeEntry(String flagStr)
@@ -1330,9 +1360,9 @@ public class FieldSettings
         return requiredPermission;
     }
 
-    public int getAutoDisableSeconds()
+    public int getAutoDisableTime()
     {
-        return autoDisableSeconds;
+        return autoDisableTime;
     }
 
     public String getGroupOnEntry()

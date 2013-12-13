@@ -621,7 +621,7 @@ public class StorageManager
                             field.setSettings(fs);
                             field.setFlags(flags);
 
-                            if (fs.getAutoDisableSeconds() > 0)
+                            if (fs.getAutoDisableTime() > 0)
                             {
                                 field.setDisabled(true, true);
                             }
@@ -721,7 +721,7 @@ public class StorageManager
                             field.setSettings(fs);
                             field.setFlags(flags);
 
-                            if (fs.getAutoDisableSeconds() > 0)
+                            if (fs.getAutoDisableTime() > 0)
                             {
                                 field.setDisabled(true, true);
                             }
