@@ -253,9 +253,4 @@ public class FieldSign
     {
         return failReason;
     }
-
-    public void setFailReason(String failReason)
-    {
-        this.failReason = failReason;
-    }
 }

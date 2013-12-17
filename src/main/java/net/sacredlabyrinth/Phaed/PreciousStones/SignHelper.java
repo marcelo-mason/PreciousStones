@@ -2,7 +2,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -108,9 +107,7 @@ public class SignHelper
 
                     if (s.getField().isOwner(player.getName()))
                     {
-                        Field field = s.getField();
-
-                        if (field.hasPendingPurchase())
+                        if (s.getField().hasPendingPurchase())
                         {
                             return true;
                         }
