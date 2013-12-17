@@ -179,14 +179,14 @@ public class FieldSign
 
     public void setAvailableColor()
     {
-        sign.setLine(0, ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) +  ChatColor.BOLD);
+        sign.setLine(0, ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) + ChatColor.BOLD);
         sign.setLine(3, "");
         sign.update();
     }
 
     public void updateRemainingTime(int seconds)
     {
-        sign.setLine(3, ChatColor.BOLD + SignHelper.secondsToPeriods(seconds) +  ChatColor.BOLD);
+        sign.setLine(3, ChatColor.BOLD + SignHelper.secondsToPeriods(seconds) + ChatColor.BOLD);
         sign.update();
     }
 
@@ -216,7 +216,12 @@ public class FieldSign
 
     public Field getField()
     {
-        return field;
+        if (field != null)
+        {
+            return field;
+        }
+
+        return PreciousStones.getInstance().getForceFieldManager().getField(getAttachedBlock());
     }
 
     public boolean isFieldSign()
