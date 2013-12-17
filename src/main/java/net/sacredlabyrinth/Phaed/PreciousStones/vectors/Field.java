@@ -2670,11 +2670,19 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.foresting = foresting;
     }
 
-    public void take(Player player)
+    public boolean take(Player player)
     {
+        Block block = getBlock();
+
+        if (block.getTypeId() != type.getTypeId())
+        {
+            return false;
+        }
+
         PreciousStones.getInstance().getForceFieldManager().deleteField(this);
-        getBlock().setType(Material.AIR);
+        block.setType(Material.AIR);
         StackHelper.give(player, type, 1);
+        return true;
     }
 
     /**

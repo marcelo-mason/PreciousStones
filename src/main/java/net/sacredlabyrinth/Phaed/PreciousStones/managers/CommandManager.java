@@ -580,8 +580,12 @@ public final class CommandManager implements CommandExecutor
 
                         if (field != null)
                         {
-                            field.take(player);
-                            ChatBlock.send(sender, "taken", field.getType(), field.getCoords());
+                            boolean taken = field.take(player);
+
+                            if (taken)
+                            {
+                                ChatBlock.send(sender, "taken", field.getType(), field.getCoords());
+                            }
                         }
                         else
                         {
