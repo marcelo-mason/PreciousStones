@@ -866,7 +866,6 @@ public class PSPlayerListener implements Listener
                                     }
                                 }
 
-                                plugin.getVisualizationManager().visualizeSingleOutline(player, field, true);
                                 plugin.getCommunicationManager().showFieldDetails(player, field);
                                 plugin.getCommunicationManager().showRenterInfo(player, field);
                             }
