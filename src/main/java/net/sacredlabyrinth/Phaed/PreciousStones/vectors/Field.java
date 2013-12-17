@@ -68,7 +68,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private boolean hidden;
     private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
     private PaymentEntry purchase;
-    private boolean singIsClean;
+    private boolean signIsClean;
     private int limitSeconds;
     private int foresterUsed;
     private boolean foresting;
@@ -2875,7 +2875,22 @@ public class Field extends AbstractVec implements Comparable<Field>
             }
         }
 
-        if (s.getItem() == null)
+        if (s.getItem() != null)
+        {
+            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
+            {
+                StackHelper.remove(player, s.getItem(), s.getPrice());
+
+                addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
+                addRent(player);
+
+                PreciousStones.getInstance().getCommunicationManager().logPayment(getOwner(), player.getName(), s);
+                return true;
+            }
+
+            ChatBlock.send(player, "economyNotEnoughItems");
+        }
+        else
         {
             if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
             {
@@ -2893,21 +2908,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 ChatBlock.send(player, "economyNotEnoughMoney");
             }
         }
-        else
-        {
-            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
-            {
-                StackHelper.remove(player, s.getItem(), s.getPrice());
 
-                addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
-                addRent(player);
-
-                PreciousStones.getInstance().getCommunicationManager().logPayment(getOwner(), player.getName(), s);
-                return true;
-            }
-
-            ChatBlock.send(player, "economyNotEnoughItems");
-        }
         return false;
     }
 
@@ -3063,7 +3064,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                 if (s != null)
                 {
-                    if (s.isRentable() && s.isValid())
+                    if (s.isRentable())
                     {
                         boolean foundSomeone = false;
 
@@ -3073,13 +3074,14 @@ public class Field extends AbstractVec implements Comparable<Field>
                             {
                                 s.updateRemainingTime(entry.remainingRent());
                                 foundSomeone = true;
+                                signIsClean = false;
                             }
                         }
 
-                        if (!foundSomeone && !singIsClean)
+                        if (!foundSomeone && !signIsClean)
                         {
                             s.cleanRemainingTime();
-                            singIsClean = true;
+                            signIsClean = true;
                         }
                     }
                 }

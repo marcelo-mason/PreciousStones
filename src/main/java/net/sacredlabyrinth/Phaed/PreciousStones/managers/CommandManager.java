@@ -2002,6 +2002,8 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (args.length == 0)
                             {
+                                // both sharable and rentable fields are allowed the rent command
+
                                 Field field = plugin.getForceFieldManager().getOneNonOwnedField(block, player, FieldFlag.SHAREABLE);
 
                                 if (field == null)
@@ -2013,18 +2015,24 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     FieldSign s = field.getAttachedFieldSign();
 
+                                    // only allow one renter if rentable
+
                                     if (s.isRentable())
                                     {
                                         if (field.isRented())
                                         {
                                             if (!field.isRenter(player.getName()))
                                             {
+                                                // if already rented and player is not the renter, tell them so
+
                                                 ChatBlock.send(player, "fieldSignAlreadyRented");
                                                 plugin.getCommunicationManager().showRenterInfo(player, field);
                                                 return true;
                                             }
                                             else
                                             {
+                                                // if the player is the renter and they are sneaking, then abandon rent
+
                                                 if (player.isSneaking())
                                                 {
                                                     field.abandonRent(player);
@@ -2034,6 +2042,8 @@ public final class CommandManager implements CommandExecutor
                                             }
                                         }
                                     }
+
+                                    // initiate rent and set color for sign
 
                                     if (field.rent(player, s))
                                     {
