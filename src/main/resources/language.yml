@@ -587,5 +587,4 @@ cannotExpand: "{red} Cannot expand the field, it overflows available volume by {
 cannotUseItemMoved: "{red}You cannot hold that item here, it has been moved out of the way."
 cannotUseItemHere: "{red}You cannot hold that item here."
 noPositive: "{red}No positive values allowed."
-noNegative: "{red}No negative values allowed."
 taken: "{aqua}You have taken the {1.type} field at {2.location}."

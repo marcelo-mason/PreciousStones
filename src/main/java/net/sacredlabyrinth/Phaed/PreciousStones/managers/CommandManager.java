@@ -675,9 +675,9 @@ public final class CommandManager implements CommandExecutor
                             int num = Integer.parseInt(args[0]);
                             String dir = args[1];
 
-                            if (num > 0)
+                            if (num < 0)
                             {
-                                ChatBlock.send(sender, "noPositive");
+                                ChatBlock.send(sender, "noNegative");
                                 return true;
                             }
 
@@ -705,9 +705,9 @@ public final class CommandManager implements CommandExecutor
                             int e = Integer.parseInt(args[4]);
                             int w = Integer.parseInt(args[5]);
 
-                            if (u > 0 || d > 0 || n > 0 || s > 0 || e > 0 || w > 0)
+                            if (u < 0 || d < 0 || n < 0 || s < 0 || e < 0 || w < 0)
                             {
-                                ChatBlock.send(sender, "noPositive");
+                                ChatBlock.send(sender, "noNegative");
                                 return true;
                             }
 
