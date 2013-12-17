@@ -3086,6 +3086,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                 }
             }
+
             for (Iterator iter = renterEntries.iterator(); iter.hasNext(); )
             {
                 RentEntry entry = (RentEntry) iter.next();

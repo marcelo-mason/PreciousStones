@@ -19,15 +19,15 @@ public class Visualize implements Runnable
     private Queue<BlockEntry> visualizationQueue = new LinkedList<BlockEntry>();
     private final int timerID;
     private final Player player;
-    private final boolean revert;
+    private final boolean reverting;
     private final boolean skipRevert;
     private final int seconds;
 
-    public Visualize(List<BlockEntry> blocks, Player player, boolean revert, boolean skipRevert, int seconds)
+    public Visualize(List<BlockEntry> blocks, Player player, boolean reverting, boolean skipRevert, int seconds)
     {
         this.visualizationQueue.addAll(blocks);
         this.plugin = PreciousStones.getInstance();
-        this.revert = revert;
+        this.reverting = reverting;
         this.player = player;
         this.skipRevert = skipRevert;
         this.seconds = seconds;
@@ -45,14 +45,14 @@ public class Visualize implements Runnable
 
             if (!loc.equals(player.getLocation()) && !loc.equals(player.getLocation().add(0, 1, 0)))
             {
-                if (!revert)
-                {
-                    player.sendBlockChange(loc, bd.getTypeId(), bd.getData());
-                }
-                else
+                if (reverting)
                 {
                     Block block = bd.getBlock();
                     player.sendBlockChange(loc, block.getType(), block.getData());
+                }
+                else
+                {
+                    player.sendBlockChange(loc, bd.getTypeId(), bd.getData());
                 }
             }
             i++;
@@ -62,7 +62,7 @@ public class Visualize implements Runnable
         {
             Bukkit.getServer().getScheduler().cancelTask(timerID);
 
-            if (!revert)
+            if (!reverting)
             {
                 if (!skipRevert)
                 {
