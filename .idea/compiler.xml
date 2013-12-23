@@ -27,7 +27,7 @@
         <module name="PreciousStones" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.7">
       <module name="PreciousStones" target="1.6" />
     </bytecodeTargetLevel>
   </component>

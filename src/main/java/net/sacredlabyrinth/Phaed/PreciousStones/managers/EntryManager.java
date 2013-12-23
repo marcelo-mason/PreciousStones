@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -372,6 +373,22 @@ public final class EntryManager
         if (field.hasFlag(FieldFlag.COMMANDS_ON_OVERLAP))
         {
             fireEnterCommands(field, player);
+        }
+
+        if (FieldFlag.UNUSABLE_ITEMS.applies(field, player))
+        {
+            PlayerInventory inv = player.getInventory();
+            int slot = inv.getHeldItemSlot();
+            ItemStack item = inv.getItem(slot);
+
+            if (item != null)
+            {
+                if (field.getSettings().isUnusableItem(item.getTypeId(), item.getData().getData()))
+                {
+                    StackHelper.unHoldItem(player, slot);
+                    ChatBlock.send(player, "cannotUseItemMoved");
+                }
+            }
         }
     }
 

@@ -8,7 +8,6 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/com/griefcraft/LWC/4.3.1/LWC-4.3.1-sources.jar!/" />
-      <root url="file://$USER_HOME$/Desktop/lwc/LWC/src/main/java" />
     </SOURCES>
   </library>
 </component>
