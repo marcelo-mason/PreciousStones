@@ -11,8 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -1739,12 +1739,19 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        if (!event.getInventory().getType().equals(InventoryType.PLAYER) && !event.getInventory().getType().equals(InventoryType.ENDER_CHEST))
+        InventoryType type = event.getInventory().getType();
+        if (!type.equals(InventoryType.PLAYER) && !type.equals(InventoryType.ENDER_CHEST) && !type.equals(InventoryType.ANVIL))
         {
             Location location;
             InventoryHolder holder = event.getInventory().getHolder();
 
-            if (holder instanceof Horse)
+            if (holder == null)
+            {
+                System.out.println("Holder is null for " + event.getInventory().getType());
+                return;
+            }
+
+            else if (holder instanceof Horse)
             {
                 if (event.getPlayer().equals(((Horse) holder).getOwner()))
                 {
@@ -1755,17 +1762,26 @@ public class PSBlockListener implements Listener
                     location = ((Horse) holder).getLocation();
                 }
             }
-            else if (holder instanceof Minecart)
+            else if (holder instanceof Entity)
             {
-                location = ((Minecart) holder).getLocation();
+                location = ((Entity) holder).getLocation();
             }
             else if (holder instanceof DoubleChest)
             {
                 location = ((DoubleChest) holder).getLocation();
             }
-            else
+            else if (holder instanceof BlockState)
             {
                 location = ((BlockState) holder).getBlock().getLocation();
+            }
+            else if (holder instanceof Block)
+            {
+                location = ((Block) holder).getLocation();
+            }
+            else
+            {
+                System.out.println("Unknown entity/block was triggered: " + holder.getClass().getName());
+                location = event.getPlayer().getLocation();
             }
 
             Field field = plugin.getForceFieldManager().getEnabledSourceField(location, FieldFlag.PROTECT_INVENTORIES);
