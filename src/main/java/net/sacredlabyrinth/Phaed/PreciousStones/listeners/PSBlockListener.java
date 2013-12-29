@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -18,6 +20,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.Location;
 
 import java.util.List;
 import java.util.Set;
@@ -1734,9 +1738,25 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        if (!event.getInventory().getType().equals(InventoryType.PLAYER))
+        if (!event.getInventory().getType().equals(InventoryType.PLAYER) && !event.getInventory().getType().equals(InventoryType.ENDER_CHEST))
         {
-            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.PROTECT_INVENTORIES);
+            Location location;
+            InventoryHolder holder = event.getInventory().getHolder();
+
+            if (holder instanceof DoubleChest)
+            {
+                location = ((DoubleChest) holder).getLocation();
+            }
+            else if (holder instanceof Entity)
+            {
+                location = ((Entity) holder).getLocation();
+            }
+            else
+            {
+                location = ((BlockState) holder).getBlock().getLocation();
+            }
+
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(location, FieldFlag.PROTECT_INVENTORIES);
 
             if (field != null)
             {
