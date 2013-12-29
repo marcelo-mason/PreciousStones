@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityPortalExitEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -153,7 +154,7 @@ public class PSPlayerListener implements Listener
             @Override
             public void run()
             {
-                handlePlayerSpawn(player);
+                reevaluateEnteredFields(player);
             }
         }, 5);
     }
@@ -171,12 +172,12 @@ public class PSPlayerListener implements Listener
             @Override
             public void run()
             {
-                handlePlayerSpawn(player);
+                reevaluateEnteredFields(player);
             }
         }, 5);
     }
 
-    private void handlePlayerSpawn(Player player)
+    private void reevaluateEnteredFields(Player player)
     {
         if (plugin.getSettingsManager().isBlacklistedWorld(player.getWorld()))
         {
@@ -1999,9 +2000,9 @@ public class PSPlayerListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPortalEnter(PlayerPortalEvent event)
+    public void onPortalEnter(final PlayerPortalEvent event)
     {
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.PREVENT_PORTAL_ENTER);
+        final Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getPlayer().getLocation(), FieldFlag.PREVENT_PORTAL_ENTER);
 
         if (field != null)
         {
@@ -2009,6 +2010,27 @@ public class PSPlayerListener implements Listener
             {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPortalExit(final EntityPortalExitEvent event)
+    {
+        if (event.getEntity() instanceof Player)
+        {
+            final Player player = (Player) event.getEntity();
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    reevaluateEnteredFields(player);
+                }
+            }, 1);
         }
     }
 
