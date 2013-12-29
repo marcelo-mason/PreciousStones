@@ -73,7 +73,6 @@ public final class EntryManager
     {
         try
         {
-            entries:
             for (String playerName : dynamicEntries.keySet())
             {
                 Player player = Bukkit.getServer().getPlayerExact(playerName);
@@ -123,7 +122,6 @@ public final class EntryManager
                                     player.setRemainingAir(600);
                                     plugin.getCommunicationManager().showGiveAir(player);
                                     hasAir = true;
-                                    continue entries;
                                 }
                             }
                         }
@@ -141,7 +139,6 @@ public final class EntryManager
                                     player.setFoodLevel(food + field.getSettings().getFeed());
                                     plugin.getCommunicationManager().showFeeding(player);
                                     hasFeeding = true;
-                                    continue entries;
                                 }
                             }
                         }
@@ -158,7 +155,6 @@ public final class EntryManager
                                     player.setHealth((int) healthCheck(player.getHealth() + field.getSettings().getHeal()));
                                     plugin.getCommunicationManager().showHeal(player);
                                     hasHeal = true;
-                                    continue entries;
                                 }
 
                             }
@@ -171,8 +167,6 @@ public final class EntryManager
                         {
                             if (FieldFlag.REPAIR.applies(field, player))
                             {
-                                boolean updated = false;
-
                                 ItemStack[] armors = player.getInventory().getArmorContents();
                                 for (ItemStack armor : armors)
                                 {
@@ -188,16 +182,10 @@ public final class EntryManager
                                             }
                                             armor.setDurability(dur);
                                             plugin.getCommunicationManager().showRepair(player);
-                                            updated = true;
                                             hasRepair = true;
                                             break;
                                         }
                                     }
-                                }
-
-                                if (updated)
-                                {
-                                    continue entries;
                                 }
 
                                 ItemStack[] items = player.getInventory().getContents();
@@ -217,17 +205,11 @@ public final class EntryManager
                                                 }
                                                 item.setDurability(dur);
                                                 plugin.getCommunicationManager().showRepair(player);
-                                                updated = true;
                                                 hasRepair = true;
                                                 break;
                                             }
                                         }
                                     }
-                                }
-
-                                if (updated)
-                                {
-                                    continue entries;
                                 }
                             }
                         }
@@ -259,7 +241,6 @@ public final class EntryManager
                                             plugin.getCommunicationManager().showDamage(player);
                                         }
                                         hasDamage = true;
-                                        continue entries;
                                     }
                                 }
                             }
@@ -274,7 +255,6 @@ public final class EntryManager
                             {
                                 plugin.getPotionManager().applyPotions(player, field);
                                 hasPotion = true;
-                                continue entries;
                             }
                         }
                     }
