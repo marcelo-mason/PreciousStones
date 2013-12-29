@@ -48,6 +48,6 @@ public class CombatTagManager {
             return false;
         }
 
-        return ct.isInCombat(player);
+        return ct.isInCombat(player.getName());
     }
 }

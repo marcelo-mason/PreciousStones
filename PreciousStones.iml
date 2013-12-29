@@ -25,7 +25,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun:iconomy:5.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.khelekore:prtree:1.5.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: ru.tehkode:PermissionsEx:1.19.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.trc202:CombatTag:3.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.trc202.CombatTag:CombatTag:6.0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.griefcraft:LWC:4.3.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yi.acru.bukkit:Lockette:1.7.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sacredlabyrinth.phaed:simpleclans:2.3.3" level="project" />
