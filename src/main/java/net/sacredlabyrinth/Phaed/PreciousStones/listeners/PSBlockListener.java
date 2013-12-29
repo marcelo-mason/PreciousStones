@@ -11,8 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -1755,9 +1755,9 @@ public class PSBlockListener implements Listener
                     location = ((Horse) holder).getLocation();
                 }
             }
-            else if (holder instanceof Minecart)
+            else if (holder instanceof Entity)
             {
-                location = ((Minecart) holder).getLocation();
+                location = ((Entity) holder).getLocation();
             }
             else if (holder instanceof DoubleChest)
             {
