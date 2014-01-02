@@ -540,6 +540,32 @@ public class PSEntityListener implements Listener
             return;
         }
 
+        if (event.getEntity() instanceof ItemFrame)
+        {
+            if (event instanceof EntityDamageByEntityEvent)
+            {
+                EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+
+                if (sub.getDamager() instanceof Player)
+                {
+                    Player player = (Player) sub.getDamager();
+
+                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.item-frame-take"))
+                    {
+                        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_ITEM_FRAME_TAKE);
+
+                        if (field != null)
+                        {
+                            if (FieldFlag.PREVENT_ITEM_FRAME_TAKE.applies(field, player))
+                            {
+                                event.setCancelled(true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         if (event.getEntity() instanceof Player)
         {
             Player player = (Player) event.getEntity();
