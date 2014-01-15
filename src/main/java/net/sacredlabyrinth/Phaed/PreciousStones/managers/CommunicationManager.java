@@ -2982,19 +2982,12 @@ public class CommunicationManager
 
         for (FieldSettings fs : fss.values())
         {
-            String customHeight = fs.getCustomHeight() > 0 ? " " + ChatBlock.format("headerConfiguredFields2", fs.getCustomHeight()) : "";
+            String customHeight = fs.getCustomHeight() > 0 ? " " + ChatBlock.format("headerConfiguredFieldsHeight", fs.getCustomHeight()) : "";
+            String customVolume = fs.getCustomVolume() > 0 ? " " + ChatBlock.format("headerConfiguredFieldsVolume", fs.getCustomVolume()) : "";
 
-            int id = fs.getTypeId();
             BlockTypeEntry entry = new BlockTypeEntry(fs.getTypeId(), fs.getData());
 
-            if (fs.getCustomVolume() > 0)
-            {
-                cb.addRow(ChatBlock.format("headerConfiguredFields3", fs.getTitle(), entry.toString(), fs.getRadius()) + customHeight, fs.getCustomVolume() + "");
-            }
-            else
-            {
-                cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), entry.toString(), fs.getRadius()) + customHeight);
-            }
+            cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), entry.toString(), fs.getRadius()) + customHeight + customVolume);
         }
 
         if (cb.size() > 0)
