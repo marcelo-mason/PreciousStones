@@ -1740,6 +1740,7 @@ public class PSBlockListener implements Listener
         }
 
         InventoryType type = event.getInventory().getType();
+
         if (!type.equals(InventoryType.PLAYER) && !type.equals(InventoryType.ENDER_CHEST) && !type.equals(InventoryType.ANVIL))
         {
             Location location;
@@ -1747,10 +1748,8 @@ public class PSBlockListener implements Listener
 
             if (holder == null)
             {
-                System.out.println("Holder is null for " + event.getInventory().getType());
                 return;
             }
-
             else if (holder instanceof Horse)
             {
                 if (event.getPlayer().equals(((Horse) holder).getOwner()))
@@ -1780,7 +1779,6 @@ public class PSBlockListener implements Listener
             }
             else
             {
-                System.out.println("Unknown entity/block was triggered: " + holder.getClass().getName());
                 location = event.getPlayer().getLocation();
             }
 
