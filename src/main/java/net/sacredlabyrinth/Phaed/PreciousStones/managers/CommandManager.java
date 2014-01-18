@@ -606,10 +606,14 @@ public final class CommandManager implements CommandExecutor
                                 num = Integer.parseInt(args[0]);
                                 dir = args[1];
                             }
-                            else
+                            else if (Helper.isInteger(args[1]))
                             {
                                 num = Integer.parseInt(args[1]);
                                 dir = args[0];
+                            }
+                            else
+                            {
+                                return true;
                             }
 
                             if (num < 0)
@@ -695,10 +699,14 @@ public final class CommandManager implements CommandExecutor
                                 num = Integer.parseInt(args[0]);
                                 dir = args[1];
                             }
-                            else
+                            else if (Helper.isInteger(args[1]))
                             {
                                 num = Integer.parseInt(args[1]);
                                 dir = args[0];
+                            }
+                            else
+                            {
+                                return true;
                             }
 
                             if (num < 0)
