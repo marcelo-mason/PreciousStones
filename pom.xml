@@ -209,13 +209,13 @@
 
     <ciManagement>
         <system>jenkins</system>
-        <url>http://sacredlabyrinth.net:8080</url>
+        <url>http://repo.sacredlabyrinth.net:8080</url>
     </ciManagement>
 
     <scm>
-        <connection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</connection>
-        <developerConnection>scm:git:git:@github.com:SacredCoding/PreciousStones.git</developerConnection>
-        <url>http://github.com/SacredCoding/PreciousStones.git/tree/master/</url>
+        <connection>scm:git:git:@github.com:phaed420/PreciousStones.git</connection>
+        <developerConnection>scm:git:git:@github.com:phaed420/PreciousStones.git</developerConnection>
+        <url>http://github.com/phaed420/PreciousStones.git/tree/master/</url>
         <tag>PreciousStones-9.6.2</tag>
     </scm>
 
