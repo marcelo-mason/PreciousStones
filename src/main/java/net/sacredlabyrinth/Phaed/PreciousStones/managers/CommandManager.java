@@ -598,8 +598,19 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length == 2)
                         {
-                            int num = Integer.parseInt(args[0]);
-                            String dir = args[1];
+                            int num = 0;
+                            String dir = "";
+
+                            if (Helper.isInteger(args[0]))
+                            {
+                                num = Integer.parseInt(args[0]);
+                                dir = args[1];
+                            }
+                            else
+                            {
+                                num = Integer.parseInt(args[1]);
+                                dir = args[0];
+                            }
 
                             if (num < 0)
                             {
@@ -676,8 +687,19 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length == 2)
                         {
-                            int num = Integer.parseInt(args[0]);
-                            String dir = args[1];
+                            int num = 0;
+                            String dir = "";
+
+                            if (Helper.isInteger(args[0]))
+                            {
+                                num = Integer.parseInt(args[0]);
+                                dir = args[1];
+                            }
+                            else
+                            {
+                                num = Integer.parseInt(args[1]);
+                                dir = args[0];
+                            }
 
                             if (num < 0)
                             {
