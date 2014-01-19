@@ -144,6 +144,27 @@ public class PSPlayerListener implements Listener
     /**
      * @param event
      */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPortalExit(final EntityPortalExitEvent event)
+    {
+        if (event.getEntity() instanceof Player)
+        {
+            final Player player = (Player) event.getEntity();
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    reevaluateEnteredFields(player);
+                }
+            }, 1);
+        }
+    }
+
+    /**
+     * @param event
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event)
     {
@@ -179,11 +200,6 @@ public class PSPlayerListener implements Listener
 
     private void reevaluateEnteredFields(Player player)
     {
-        if (plugin.getSettingsManager().isBlacklistedWorld(player.getWorld()))
-        {
-            return;
-        }
-
         // refund confiscated items if not in confiscation fields
 
         Field confField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.CONFISCATE_ITEMS);
@@ -953,7 +969,7 @@ public class PSPlayerListener implements Listener
 
                 if (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
                 {
-                    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                    TargetBlock aiming = new TargetBlock(player, plugin.getSettingsManager().getMaxTargetDistance(), 0.2, plugin.getSettingsManager().getThroughFieldsSet());
                     Block target = aiming.getTargetBlock();
 
                     if (target == null)
@@ -1026,7 +1042,7 @@ public class PSPlayerListener implements Listener
                 {
                     try
                     {
-                        TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                        TargetBlock aiming = new TargetBlock(player, plugin.getSettingsManager().getMaxTargetDistance(), 0.2, plugin.getSettingsManager().getThroughFieldsSet());
                         Block target = aiming.getTargetBlock();
 
                         if (target == null)
@@ -1134,7 +1150,7 @@ public class PSPlayerListener implements Listener
                             {
                                 try
                                 {
-                                    TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                                    TargetBlock aiming = new TargetBlock(player, plugin.getSettingsManager().getMaxTargetDistance(), 0.2, plugin.getSettingsManager().getThroughFieldsSet());
                                     Block targetBlock = aiming.getTargetBlock();
 
                                     if (targetBlock != null)
@@ -1346,7 +1362,7 @@ public class PSPlayerListener implements Listener
                         {
                             // makes sure water/see-through fields can be right clicked
 
-                            TargetBlock aiming = new TargetBlock(player, 1000, 0.2, new int[]{0});
+                            TargetBlock aiming = new TargetBlock(player, plugin.getSettingsManager().getMaxTargetDistance(), 0.2, new int[]{0});
                             Block targetBlock = aiming.getTargetBlock();
 
                             if (targetBlock != null && plugin.getForceFieldManager().isField(targetBlock))
@@ -2010,27 +2026,6 @@ public class PSPlayerListener implements Listener
             {
                 event.setCancelled(true);
             }
-        }
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPortalExit(final EntityPortalExitEvent event)
-    {
-        if (event.getEntity() instanceof Player)
-        {
-            final Player player = (Player) event.getEntity();
-
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    reevaluateEnteredFields(player);
-                }
-            }, 1);
         }
     }
 

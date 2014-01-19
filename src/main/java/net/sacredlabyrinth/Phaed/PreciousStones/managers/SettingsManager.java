@@ -23,6 +23,7 @@ import java.util.*;
 public final class SettingsManager
 {
     private int version;
+    private int maxTargetDistance;
     private boolean commandsToRentBuy;
     private boolean warAllow;
     private boolean oncePerBlockOnMove;
@@ -289,6 +290,7 @@ public final class SettingsManager
         oncePerBlockOnMove = loadBoolean("settings.check-once-per-block-on-move");
         useIdInSnitches = loadBoolean("settings.use-blockids-in-snitches");
         fenceMaxDepth = loadInt("settings.fence-max-depth");
+        maxTargetDistance = loadInt("loadInt");
 
         // ********************************** Cuboid
 
@@ -1604,5 +1606,10 @@ public final class SettingsManager
     public boolean isDisableMessages()
     {
         return disableMessages;
+    }
+
+    public int getMaxTargetDistance()
+    {
+        return maxTargetDistance;
     }
 }

@@ -1920,7 +1920,7 @@ public final class CommandManager implements CommandExecutor
                                 return true;
                             }
 
-                            TargetBlock aiming = new TargetBlock(player, 1000, 0.2, plugin.getSettingsManager().getThroughFieldsSet());
+                            TargetBlock aiming = new TargetBlock(player, plugin.getSettingsManager().getMaxTargetDistance(), 0.2, plugin.getSettingsManager().getThroughFieldsSet());
                             Block targetBlock = aiming.getTargetBlock();
 
                             if (targetBlock != null)
