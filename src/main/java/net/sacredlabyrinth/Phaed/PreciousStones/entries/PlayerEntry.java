@@ -21,7 +21,6 @@ public class PlayerEntry
     private boolean disabled;
     private boolean online;
     private int density;
-    private boolean superduperpickaxe;
     private boolean bypassDisabled;
     private Location outsideLocation;
     private JSONArray confiscatedInventory = new JSONArray();
@@ -221,11 +220,6 @@ public class PlayerEntry
 
         // writing the list of flags to json
 
-        if (superduperpickaxe)
-        {
-            json.put("superduperpickaxe", superduperpickaxe);
-        }
-
         if (disabled)
         {
             json.put("disabled", disabled);
@@ -305,11 +299,6 @@ public class PlayerEntry
                         if (flag.equals("disabled"))
                         {
                             disabled = (Boolean) flags.get(flag);
-                        }
-
-                        if (flag.equals("superduperpickaxe"))
-                        {
-                            superduperpickaxe = (Boolean) flags.get(flag);
                         }
 
                         if (flag.equals("density"))
@@ -446,16 +435,6 @@ public class PlayerEntry
     public void setDensity(int density)
     {
         this.density = density;
-    }
-
-    public boolean isSuperduperpickaxe()
-    {
-        return superduperpickaxe;
-    }
-
-    public void setSuperduperpickaxe(boolean superduperpickaxe)
-    {
-        this.superduperpickaxe = superduperpickaxe;
     }
 
     public boolean isTeleporting()

@@ -180,8 +180,6 @@ permissions:
     description: Can disable all flags in a field
   preciousstones.admin.enableall:
     description: Can enable all flags in a field
-  preciousstones.admin.superduperpickaxe:
-    description: Can use superduperpickaxe
   preciousstones.admin.mark:
     description: Can use /ps mark (Can mark everyone's fields)
   preciousstones.admin.visualize:
@@ -400,7 +398,6 @@ permissions:
       preciousstones.admin.counts: true
       preciousstones.admin.locations: true
       preciousstones.admin.insert: true
-      preciousstones.admin.superduperpickaxe: true
       preciousstones.admin.enableall: true
       preciousstones.admin.disableall: true
       preciousstones.admin.hideall: true
