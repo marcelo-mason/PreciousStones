@@ -21,6 +21,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1101,7 +1102,7 @@ public class PSEntityListener implements Listener
 
         ThrownPotion potion = event.getPotion();
 
-        LivingEntity shooter = potion.getShooter();
+        ProjectileSource shooter = potion.getShooter();
 
         if (shooter != null)
         {
@@ -1135,7 +1136,7 @@ public class PSEntityListener implements Listener
 
         Projectile projectile = event.getEntity();
 
-        LivingEntity shooter = projectile.getShooter();
+        ProjectileSource shooter = projectile.getShooter();
 
         if (shooter != null)
         {
