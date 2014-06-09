@@ -3,8 +3,13 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -870,5 +875,43 @@ public class Helper
     {
         int id = loc.getWorld().getBlockTypeIdAt(loc);
         return id == 0 || id == 8 || id == 9;
+    }
+
+    /**
+     * Gets the player that was responsible for the damage. If no player was
+     * responsible, <code>null</code> is returned.
+     *
+     * <ul>
+     *     <li>If the entity was damaged by a player, that player
+     *     is returned.</li>
+     *     <li>If the entity was damaged by a projectile, and the projectile
+     *     was shot by a player, that player is returned.</li>
+     * </ul>
+     *
+     * @param event The damage event.
+     * @return The player, or <code>null</code> if not found.
+     */
+    public static Player getDamagingPlayer(EntityDamageEvent event)
+    {
+        if (!(event instanceof EntityDamageByEntityEvent))
+        {
+            return null;
+        }
+
+        Entity damager = ((EntityDamageByEntityEvent) event).getDamager();
+        if (damager instanceof Player)
+        {
+            return (Player) damager;
+        }
+        if (damager instanceof Projectile)
+        {
+            ProjectileSource shooter = ((Projectile) damager).getShooter();
+            if (shooter instanceof Player)
+            {
+                return (Player) shooter;
+            }
+        }
+
+        return null;
     }
 }
