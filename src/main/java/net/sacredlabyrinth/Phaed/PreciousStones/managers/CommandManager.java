@@ -14,10 +14,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author phaed
@@ -1653,7 +1650,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return false;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandInfo")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.info") && hasplayer)
+                    else if (cmd.equals(ChatBlock.format("commandInfo")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.info") && hasplayer)
                     {
                         Field pointing = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
                         List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
@@ -1663,12 +1660,34 @@ public final class CommandManager implements CommandExecutor
                             fields.add(pointing);
                         }
 
+                        Field field = fields.get(0);
+                        block = field.getBlock();
+
                         if (fields.size() == 1)
                         {
-                            plugin.getCommunicationManager().showFieldDetails(player, fields.get(0));
+                            if (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
+                            {
+                                plugin.getCommunicationManager().showFieldDetails(player, field);
+                            }
+                            else
+                            {
+                                plugin.getCommunicationManager().showFieldOwner(player, block);
+
+                            }
                         }
                         else
                         {
+                            Iterator<Field> iter = fields.iterator();
+                            while (iter.hasNext()) {
+                                Field f = iter.next();
+                                block = f.getBlock();
+
+                                if(!(plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details")))
+                                {
+                                    iter.remove();
+                                }
+                            }
+
                             plugin.getCommunicationManager().showFieldDetails(player, fields);
                         }
 

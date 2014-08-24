@@ -190,7 +190,7 @@ permissions:
     description: Can trigger anyone's undo grief blocks
   preciousstones.admin.delete:
     description: Can use /ps delete
-  preciousstones.admin.info:
+  preciousstones.benefit.info:
     description: Can use /ps info
   preciousstones.admin.list:
     description: Can use /ps list
@@ -273,6 +273,7 @@ permissions:
     description: Can use PreciousStones
     children:
       preciousstones.benefit.fields: true
+      preciousstones.benefit.info: true
       preciousstones.benefit.create.forcefield: true
       preciousstones.benefit.create.unbreakable: true
       preciousstones.benefit.heal: true
@@ -384,7 +385,6 @@ permissions:
       preciousstones.admin.allowed: true
       preciousstones.admin.undo: true
       preciousstones.admin.delete: true
-      preciousstones.admin.info: true
       preciousstones.admin.list: true
       preciousstones.admin.reload: true
       preciousstones.admin.setowner: true

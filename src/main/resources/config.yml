@@ -34,8 +34,8 @@ force-field-blocks:
     enable-on-src: true
     mixing-group: 1
     hidable: true
-    rentable: true;
-    buyable: true;
+    rentable: true
+    buyable: true
     cuboid: true
     mask-on-disabled: 80
 -   title: City Plot
@@ -62,8 +62,8 @@ force-field-blocks:
     enable-on-src: true
     mixing-group: 1
     hidable: true
-    rentable: true;
-    buyable: true;
+    rentable: true
+    buyable: true
     cuboid: true
     mask-on-disabled: 80
 -   title: Entry Bouncer
