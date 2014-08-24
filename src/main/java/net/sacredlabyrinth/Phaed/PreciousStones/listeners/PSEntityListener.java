@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
@@ -543,25 +544,17 @@ public class PSEntityListener implements Listener
 
         if (event.getEntity() instanceof ItemFrame)
         {
-            if (event instanceof EntityDamageByEntityEvent)
+            Player player = Helper.getDamagingPlayer(event);
+
+            if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.item-frame-take"))
             {
-                EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_ITEM_FRAME_TAKE);
 
-                if (sub.getDamager() instanceof Player)
+                if (field != null)
                 {
-                    Player player = (Player) sub.getDamager();
-
-                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.item-frame-take"))
+                    if (FieldFlag.PREVENT_ITEM_FRAME_TAKE.applies(field, player))
                     {
-                        Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_ITEM_FRAME_TAKE);
-
-                        if (field != null)
-                        {
-                            if (FieldFlag.PREVENT_ITEM_FRAME_TAKE.applies(field, player))
-                            {
-                                event.setCancelled(true);
-                            }
-                        }
+                        event.setCancelled(true);
                     }
                 }
             }
