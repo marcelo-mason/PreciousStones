@@ -526,7 +526,7 @@ public final class PermissionsManager
         {
             if (value.asBoolean())
             {
-                return true;
+                return true; 
             }
         }
 
