@@ -774,7 +774,7 @@ public class PSPlayerListener implements Listener
 
                 if (field != null)
                 {
-                    FieldSign s = new FieldSign(block);
+                    FieldSign s = new FieldSign(block, true);
 
                     if (s.isValid())
                     {

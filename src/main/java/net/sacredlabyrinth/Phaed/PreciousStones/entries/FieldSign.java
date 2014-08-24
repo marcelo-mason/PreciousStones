@@ -33,7 +33,22 @@ public class FieldSign
 
         String[] lines = sign.getLines();
 
-        valid = extractData(signBlock, lines);
+        valid = extractData(signBlock, lines, false);
+    }
+
+    public FieldSign(Block signBlock, boolean silent)
+    {
+        if (!SignHelper.isSign(signBlock))
+        {
+            valid = false;
+            return;
+        }
+
+        sign = ((Sign) signBlock.getState());
+
+        String[] lines = sign.getLines();
+
+        valid = extractData(signBlock, lines, silent);
     }
 
     public FieldSign(Block signBlock, String[] lines, Player player)
@@ -44,11 +59,11 @@ public class FieldSign
             return;
         }
 
-        valid = extractData(signBlock, lines);
+        valid = extractData(signBlock, lines, false);
         playerName = player.getName();
     }
 
-    public boolean extractData(Block signBlock, String[] lines)
+    public boolean extractData(Block signBlock, String[] lines, boolean silent)
     {
         tag = ChatColor.stripColor(lines[0]);
 
