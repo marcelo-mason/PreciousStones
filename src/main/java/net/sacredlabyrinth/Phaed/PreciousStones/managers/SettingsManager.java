@@ -290,7 +290,7 @@ public final class SettingsManager
         oncePerBlockOnMove = loadBoolean("settings.check-once-per-block-on-move");
         useIdInSnitches = loadBoolean("settings.use-blockids-in-snitches");
         fenceMaxDepth = loadInt("settings.fence-max-depth");
-        maxTargetDistance = loadInt("loadInt");
+        maxTargetDistance = loadInt("settings.max-target-distance");
 
         // ********************************** Cuboid
 

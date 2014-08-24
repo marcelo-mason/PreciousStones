@@ -393,7 +393,7 @@ settings:
     use-blockids-in-snitches: false
     fence-max-depth: 50
     use-commands-to-rent: false;
-    max-target-distance: 10
+    max-target-distance: 100
     version: 12
 log:
     bypass-pvp: true
