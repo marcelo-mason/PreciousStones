@@ -386,7 +386,7 @@ settings:
     no-refund-for-fields: false
     off-by-default: false
     log-to-hawkeye: false
-    lines-per-page: 12
+    lines-per-page: 100
     disable-bypass-alerts-for-admins: false
     disable-alerts-for-admins: true
     public-block-details: false
