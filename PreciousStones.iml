@@ -14,7 +14,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:VaultAPI:1.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun.bukkit:Permissions:2.7.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldguard:5.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldguard:5.8.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:5.5.8" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />
@@ -23,7 +23,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:commandbook:2.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.opencsv:opencsv:2.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun:iconomy:5.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.khelekore:prtree:1.5.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: ru.tehkode:PermissionsEx:1.22.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />
