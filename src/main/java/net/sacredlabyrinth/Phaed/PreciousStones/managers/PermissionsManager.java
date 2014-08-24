@@ -8,8 +8,8 @@ import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
-import net.h31ix.anticheat.api.AnticheatAPI;
-import net.h31ix.anticheat.manage.CheckType;
+import net.gravitydevelopment.anticheat.api.AntiCheatAPI;
+import net.gravitydevelopment.anticheat.check.CheckType;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -537,7 +537,7 @@ public final class PermissionsManager
     {
         if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
         {
-            AnticheatAPI.exemptPlayer(player, CheckType.FLY);
+            AntiCheatAPI.exemptPlayer(player, CheckType.FLY);
         }
     }
 
@@ -545,7 +545,7 @@ public final class PermissionsManager
     {
         if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
         {
-            AnticheatAPI.unexemptPlayer(player, CheckType.FLY);
+            AntiCheatAPI.unexemptPlayer(player, CheckType.FLY);
         }
     }
 
@@ -553,8 +553,8 @@ public final class PermissionsManager
     {
         if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
         {
-            AnticheatAPI.exemptPlayer(player, CheckType.FAST_BREAK);
-            AnticheatAPI.exemptPlayer(player, CheckType.FAST_PLACE);
+            AntiCheatAPI.exemptPlayer(player, CheckType.FAST_BREAK);
+            AntiCheatAPI.exemptPlayer(player, CheckType.FAST_PLACE);
         }
     }
 
@@ -562,8 +562,8 @@ public final class PermissionsManager
     {
         if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
         {
-            AnticheatAPI.unexemptPlayer(player, CheckType.FAST_BREAK);
-            AnticheatAPI.unexemptPlayer(player, CheckType.FAST_PLACE);
+            AntiCheatAPI.unexemptPlayer(player, CheckType.FAST_BREAK);
+            AntiCheatAPI.unexemptPlayer(player, CheckType.FAST_PLACE);
         }
     }
 }
