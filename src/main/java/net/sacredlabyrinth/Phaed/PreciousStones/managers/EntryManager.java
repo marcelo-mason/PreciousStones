@@ -831,6 +831,53 @@ public final class EntryManager
      * @param field
      * @return
      */
+    public Player getClosestInhabitant(Field field)
+    {
+        HashSet<String> inhabitants = new HashSet<String>();
+
+        synchronized (entriesByPlayer)
+        {
+            for (String playerName : entriesByPlayer.keySet())
+            {
+                EntryFields ef = entriesByPlayer.get(playerName);
+                List<Field> fields = ef.getFields();
+
+                for (Field testfield : fields)
+                {
+                    if (field.equals(testfield))
+                    {
+                        inhabitants.add(playerName);
+                    }
+                }
+            }
+        }
+
+        Player closestPlayer = null;
+        double closestDistance = 9999999;
+
+        for (String inhabitant : inhabitants)
+        {
+            Player player = PreciousStones.getInstance().getServer().getPlayer(inhabitant);
+
+            if (player != null)
+            {
+                double distance = player.getLocation().distance(field.getLocation());
+
+                if (distance < closestDistance)
+                {
+                    closestPlayer = player;
+                    closestDistance = distance;
+                }
+            }
+        }
+
+        return closestPlayer;
+    }
+
+    /**
+     * @param field
+     * @return
+     */
     public HashSet<String> getInhabitants(Field field)
     {
         HashSet<String> inhabitants = new HashSet<String>();

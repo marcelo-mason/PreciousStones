@@ -3077,17 +3077,22 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                 if (s != null)
                 {
-                    if (s.isRentable())
+                    if (s.isRentable() || s.isShareable())
                     {
                         boolean foundSomeone = false;
 
                         if (PreciousStones.getInstance().getEntryManager().hasInhabitants(self))
                         {
+                            Player closest = PreciousStones.getInstance().getEntryManager().getClosestInhabitant(self);
+
                             for (RentEntry entry : renterEntries)
                             {
-                                s.updateRemainingTime(entry.remainingRent());
-                                foundSomeone = true;
-                                signIsClean = false;
+                                if (entry.getPlayerName().equalsIgnoreCase(closest.getName()))
+                                {
+                                    s.updateRemainingTime(entry.remainingRent());
+                                    foundSomeone = true;
+                                    signIsClean = false;
+                                }
                             }
                         }
 
