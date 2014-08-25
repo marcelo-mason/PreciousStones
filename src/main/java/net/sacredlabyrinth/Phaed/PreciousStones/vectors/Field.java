@@ -2869,6 +2869,8 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         if (field.getLimitSeconds() > 0)
         {
+            PreciousStones.debug("field has rent limits in place: " + field.getLimitSeconds());
+
             RentEntry renter = getRenter(player);
 
             if (renter != null)
@@ -2877,6 +2879,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                 if (renter.getPeriodSeconds() + seconds > field.getLimitSeconds())
                 {
+                    PreciousStones.debug("limit reached");
                     ChatBlock.send(player, "limitReached");
                     return false;
                 }
@@ -2885,6 +2888,8 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         if (s.getItem() != null)
         {
+            PreciousStones.debug("is item rent");
+
             if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
             {
                 StackHelper.remove(player, s.getItem(), s.getPrice());
@@ -2971,7 +2976,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         return purchase != null && purchase.getPlayer().equals(player.getName());
     }
 
-    public void retrievePayment(Player player)
+    public void takePayment(Player player)
     {
         for (PaymentEntry entry : payment)
         {
@@ -3010,7 +3015,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         PreciousStones.getInstance().getStorageManager().offerField(this);
     }
 
-    public void retrievePurchase(Player player)
+    public void completePurchase(Player player)
     {
         setOwner(purchase.getPlayer());
         allowed.clear();

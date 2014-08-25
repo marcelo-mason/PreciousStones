@@ -23,6 +23,7 @@ import java.util.*;
 public final class SettingsManager
 {
     private int version;
+    private BlockTypeEntry defaulItemCurrency;
     private int maxTargetDistance;
     private boolean commandsToRentBuy;
     private boolean warAllow;
@@ -291,6 +292,7 @@ public final class SettingsManager
         useIdInSnitches = loadBoolean("settings.use-blockids-in-snitches");
         fenceMaxDepth = loadInt("settings.fence-max-depth");
         maxTargetDistance = loadInt("settings.max-target-distance");
+        defaulItemCurrency = loadTypeEntry("settings.default-item-currency");
 
         // ********************************** Cuboid
 
@@ -384,6 +386,19 @@ public final class SettingsManager
         }
 
         return 0;
+    }
+
+    private BlockTypeEntry loadTypeEntry(String path)
+    {
+        String value = config.getString(path);
+
+        if (Helper.isTypeEntry(value))
+        {
+            cleanConfig.set(path, value);
+            return Helper.toTypeEntry(value);
+        }
+
+        return null;
     }
 
     private List<Integer> loadIntList(String path)
@@ -1612,4 +1627,6 @@ public final class SettingsManager
     {
         return maxTargetDistance;
     }
+
+    public BlockTypeEntry getDefaulItemCurrency() { return defaulItemCurrency; }
 }

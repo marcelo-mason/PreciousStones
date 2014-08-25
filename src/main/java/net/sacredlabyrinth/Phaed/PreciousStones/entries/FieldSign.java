@@ -65,7 +65,19 @@ public class FieldSign
 
     public boolean extractData(Block signBlock, String[] lines)
     {
+        // extract the tag line, exit if not recognized
+
         tag = ChatColor.stripColor(lines[0]);
+        fieldSign = tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
+
+        if (!fieldSign)
+        {
+            // reason removed due to it being triggered by using signs for other plugins
+            failReason = null;
+            return false;
+        }
+
+        // extract the price
 
         price = SignHelper.extractPrice(ChatColor.stripColor(lines[1]));
 
@@ -75,7 +87,43 @@ public class FieldSign
             return false;
         }
 
+        // extract the item from the price
+        // use the default item currency if nothing found in parenthesis and no economy plugin is being used
+
         item = SignHelper.extractItemFromParenthesis(ChatColor.stripColor(lines[1]));
+
+        if (item == null)
+        {
+            if (!PreciousStones.getInstance().getPermissionsManager().hasEconomy())
+            {
+                item = PreciousStones.getInstance().getSettingsManager().getDefaulItemCurrency();
+            }
+        }
+
+        Block attachedBlock = SignHelper.getAttachedBlock(signBlock);
+        field = PreciousStones.getInstance().getForceFieldManager().getField(attachedBlock);
+
+        // trying to create a rent sign on a block that is not a field
+
+        if (field == null)
+        {
+            // reason removed due to it being triggered by using signs for other plugins
+            failReason = null;
+            return false;
+        }
+
+        // trying to create a rent sign on someone elses field
+
+        if (playerName != null)
+        {
+            if (!field.isOwner(playerName))
+            {
+                failReason = "fieldSignNotOwner";
+                return false;
+            }
+        }
+
+        // make sure the time period is valid
 
         if (!isBuyable())
         {
@@ -88,40 +136,7 @@ public class FieldSign
             }
         }
 
-        fieldSign = tag.contains(ChatBlock.format("fieldSignRent").toLowerCase()) || tag.contains(ChatBlock.format("fieldSignBuy").toLowerCase()) || tag.contains(ChatBlock.format("fieldSignShare").toLowerCase());
-
-        if (!fieldSign)
-        {
-            failReason = "fieldSignBadTag";
-            return false;
-        }
-
-        if (item == null)
-        {
-            if (!PreciousStones.getInstance().getPermissionsManager().hasEconomy())
-            {
-                failReason = "fieldSignNoEco";
-                return false;
-            }
-        }
-
-        Block attachedBlock = SignHelper.getAttachedBlock(signBlock);
-        field = PreciousStones.getInstance().getForceFieldManager().getField(attachedBlock);
-
-        if (field == null)
-        {
-            failReason = "fieldSignMustBeOnField";
-            return false;
-        }
-
-        if (playerName != null)
-        {
-            if (!field.isOwner(playerName))
-            {
-                failReason = "fieldSignNotOwner";
-                return false;
-            }
-        }
+        // creating a rent sign on a non-rent field
 
         if (isRentable())
         {
@@ -132,6 +147,8 @@ public class FieldSign
             }
         }
 
+        // creating a rent sign on a non-share field
+
         if (isShareable())
         {
             if (!field.hasFlag(FieldFlag.SHAREABLE))
@@ -140,6 +157,8 @@ public class FieldSign
                 return false;
             }
         }
+
+        // creating a rent sign on a non-buy field
 
         if (isBuyable())
         {
@@ -160,20 +179,17 @@ public class FieldSign
 
     public boolean isRentable()
     {
-        PreciousStones.debug("isRentable: " + tag);
-        return tag.contains(ChatBlock.format("fieldSignRent").toLowerCase());
+        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent"));
     }
 
     public boolean isBuyable()
     {
-        PreciousStones.debug("isBuyable: " + tag);
-        return tag.contains(ChatBlock.format("fieldSignBuy").toLowerCase());
+        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy"));
     }
 
     public boolean isShareable()
     {
-        PreciousStones.debug("isShareable: " + tag);
-        return tag.contains(ChatBlock.format("fieldSignShare").toLowerCase());
+        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
     }
 
     public void setRentedColor()
