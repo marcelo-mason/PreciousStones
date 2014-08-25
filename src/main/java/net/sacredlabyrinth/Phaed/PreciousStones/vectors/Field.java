@@ -275,12 +275,18 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (height == 0)
         {
             this.height = (this.radius * 2) + 1;
-            dirty.add(DirtyFieldReason.HEIGHT);
         }
-
-        dirty.add(DirtyFieldReason.RADIUS);
-
         calculateDimensions();
+
+        if (hasFlag(FieldFlag.CUBOID))
+        {
+            dirty.add(DirtyFieldReason.DIMENSIONS);
+        }
+        else
+        {
+            dirty.add(DirtyFieldReason.HEIGHT);
+            dirty.add(DirtyFieldReason.RADIUS);
+        }
     }
 
     public int canSetCuboidRadius(int radius)

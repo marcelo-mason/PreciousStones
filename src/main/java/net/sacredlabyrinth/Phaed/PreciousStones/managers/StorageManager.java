@@ -578,7 +578,6 @@ public class StorageManager
     {
         List<Field> out = new ArrayList<Field>();
         boolean foundInWrongTable = false;
-        int purged = 0;
 
         String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM pstone_fields WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
@@ -657,10 +656,6 @@ public class StorageManager
             System.out.print("[PreciousStones] Fields found in wrong table, moving...");
         }
 
-        if (purged > 0)
-        {
-            PreciousStones.log("countsPurgedSnitches", worldName, purged);
-        }
         return out;
     }
 
