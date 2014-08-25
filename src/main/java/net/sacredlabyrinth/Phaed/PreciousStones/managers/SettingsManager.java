@@ -193,19 +193,18 @@ public final class SettingsManager
             config.options().copyDefaults(true);
         }
 
+        // ********************************** Field configs
+
+        unbreakableBlocks = Helper.toTypeEntries(loadStringList("unbreakable-blocks"));
+        forceFieldBlocks = (ArrayList) loadObject("force-field-blocks");
 
         // ********************************** Lists
 
         bypassBlocks = Helper.toTypeEntries(loadStringList("bypass-blocks"));
         unprotectableBlocks = Helper.toTypeEntries(loadStringList("unprotectable-blocks"));
-        unbreakableBlocks = Helper.toTypeEntries(loadStringList("unbreakable-blocks"));
         hidingMaskBlocs = Helper.toTypeEntries(loadStringList("hiding-mask-blocks"));
         toolItems = loadIntList("tool-items");
         repairableItems = loadIntList("repairable-items");
-
-        // ********************************** Field configs
-
-        forceFieldBlocks = (ArrayList) loadObject("force-field-blocks");
 
         // ********************************** Log
 
