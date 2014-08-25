@@ -880,12 +880,12 @@ public class Helper
     /**
      * Gets the player that was responsible for the damage. If no player was
      * responsible, <code>null</code> is returned.
-     *
+     * <p/>
      * <ul>
-     *     <li>If the entity was damaged by a player, that player
-     *     is returned.</li>
-     *     <li>If the entity was damaged by a projectile, and the projectile
-     *     was shot by a player, that player is returned.</li>
+     * <li>If the entity was damaged by a player, that player
+     * is returned.</li>
+     * <li>If the entity was damaged by a projectile, and the projectile
+     * was shot by a player, that player is returned.</li>
      * </ul>
      *
      * @param event The damage event.
@@ -913,5 +913,33 @@ public class Helper
         }
 
         return null;
+    }
+
+    /**
+     * Returns the closest player to the target within a radius
+     *
+     * @param target
+     * @return closest player
+     */
+    public static Player getClosestPlayer(Location target, int radius)
+    {
+        Player[] players = PreciousStones.getInstance().getServer().getOnlinePlayers();
+
+        double closestDistance = radius;
+        Player closestPlayer = null;
+
+        for (Player player : players)
+        {
+            Location loc = player.getLocation();
+            double distance = loc.distance(target);
+
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestPlayer = player;
+            }
+        }
+
+        return closestPlayer;
     }
 }

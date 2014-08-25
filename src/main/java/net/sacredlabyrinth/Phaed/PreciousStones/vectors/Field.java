@@ -3089,7 +3089,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                         if (PreciousStones.getInstance().getEntryManager().hasInhabitants(self))
                         {
-                            Player closest = PreciousStones.getInstance().getEntryManager().getClosestInhabitant(self);
+                            Player closest = Helper.getClosestPlayer(s.getAttachedBlock().getLocation(), 64);
 
                             for (RentEntry entry : renterEntries)
                             {
