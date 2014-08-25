@@ -552,6 +552,7 @@ fieldSignItemPaymentReceived: "{yellow}* {aqua}Received {yellow}{1.amount} {2.it
 fieldSignNoTennant: "{red}The field has no tennant"
 fieldSignOnlyOne: "{red}You can only have one field-sign per field"
 fieldSignAlreadyBought: "{red}Sorry, this place has already been sold"
+fieldSignBadTag: "{red}The tag on the field sign is bad"
 _tenant: "Tenant"
 _tenants: "Tenants"
 commandSetLimit: "setlimit"

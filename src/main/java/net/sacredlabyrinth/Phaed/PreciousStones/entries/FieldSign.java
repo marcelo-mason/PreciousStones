@@ -33,7 +33,7 @@ public class FieldSign
 
         String[] lines = sign.getLines();
 
-        valid = extractData(signBlock, lines, false);
+        valid = extractData(signBlock, lines);
     }
 
     public FieldSign(Block signBlock, boolean silent)
@@ -48,7 +48,7 @@ public class FieldSign
 
         String[] lines = sign.getLines();
 
-        valid = extractData(signBlock, lines, silent);
+        valid = extractData(signBlock, lines);
     }
 
     public FieldSign(Block signBlock, String[] lines, Player player)
@@ -59,11 +59,11 @@ public class FieldSign
             return;
         }
 
-        valid = extractData(signBlock, lines, false);
+        valid = extractData(signBlock, lines);
         playerName = player.getName();
     }
 
-    public boolean extractData(Block signBlock, String[] lines, boolean silent)
+    public boolean extractData(Block signBlock, String[] lines)
     {
         tag = ChatColor.stripColor(lines[0]);
 
@@ -88,7 +88,7 @@ public class FieldSign
             }
         }
 
-        fieldSign = tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
+        fieldSign = tag.contains(ChatBlock.format("fieldSignRent").toLowerCase()) || tag.contains(ChatBlock.format("fieldSignBuy").toLowerCase()) || tag.contains(ChatBlock.format("fieldSignShare").toLowerCase());
 
         if (!fieldSign)
         {
@@ -160,48 +160,51 @@ public class FieldSign
 
     public boolean isRentable()
     {
-        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent"));
+        PreciousStones.debug("isRentable: " + tag);
+        return tag.contains(ChatBlock.format("fieldSignRent").toLowerCase());
     }
 
     public boolean isBuyable()
     {
-        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy"));
+        PreciousStones.debug("isBuyable: " + tag);
+        return tag.contains(ChatBlock.format("fieldSignBuy").toLowerCase());
     }
 
     public boolean isShareable()
     {
-        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
+        PreciousStones.debug("isShareable: " + tag);
+        return tag.contains(ChatBlock.format("fieldSignShare").toLowerCase());
     }
 
     public void setRentedColor()
     {
-        sign.setLine(0, ChatColor.RED + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) + ChatColor.RED + "" + ChatColor.BOLD);
+        sign.setLine(0, ChatColor.RED + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)));
         sign.update();
     }
 
     public void setBoughtColor(Player player)
     {
-        sign.setLine(0, ChatColor.RED + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) + ChatColor.RED + "" + ChatColor.BOLD);
-        sign.setLine(3, ChatColor.BOLD + player.getName() + ChatColor.BOLD);
+        sign.setLine(0, ChatColor.RED + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)));
+        sign.setLine(3, ChatColor.BOLD + player.getName());
         sign.update();
     }
 
     public void setSharedColor()
     {
-        sign.setLine(0, ChatColor.GOLD + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) + ChatColor.RED + "" + ChatColor.BOLD);
+        sign.setLine(0, ChatColor.GOLD + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)));
         sign.update();
     }
 
     public void setAvailableColor()
     {
-        sign.setLine(0, ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)) + ChatColor.BOLD);
+        sign.setLine(0, ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)));
         sign.setLine(3, "");
         sign.update();
     }
 
     public void updateRemainingTime(int seconds)
     {
-        sign.setLine(3, ChatColor.BOLD + SignHelper.secondsToPeriods(seconds) + ChatColor.BOLD);
+        sign.setLine(3, ChatColor.BOLD + SignHelper.secondsToPeriods(seconds));
         sign.update();
     }
 
