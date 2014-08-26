@@ -629,6 +629,13 @@ public final class CommandManager implements CommandExecutor
                                 if (overflow <= 0 || bypass)
                                 {
                                     ChatBlock.send(sender, "cuboidExpanded");
+
+                                    if (plugin.getSettingsManager().isVisualizeOnExpand())
+                                    {
+                                        plugin.getVisualizationManager().revert(player);
+                                        plugin.getVisualizationManager().addVisualizationField(player, field);
+                                        plugin.getVisualizationManager().displayVisualization(player, true);
+                                    }
                                 }
                                 else
                                 {
@@ -748,6 +755,13 @@ public final class CommandManager implements CommandExecutor
                             {
                                 field.contract(u, d, n, s, e, w);
                                 ChatBlock.send(sender, "cuboidContracted");
+
+                                if (plugin.getSettingsManager().isVisualizeOnExpand())
+                                {
+                                    plugin.getVisualizationManager().revert(player);
+                                    plugin.getVisualizationManager().addVisualizationField(player, field);
+                                    plugin.getVisualizationManager().displayVisualization(player, true);
+                                }
 
                                 return true;
                             }

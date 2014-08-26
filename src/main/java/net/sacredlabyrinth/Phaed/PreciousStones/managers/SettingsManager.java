@@ -59,6 +59,7 @@ public final class SettingsManager
     private int visualizeTicksBetweenSends;
     private int visualizeSendSize;
     private int visualizeMaxFields;
+    private boolean visualizeOnExpand;
     private boolean visualizeEndOnMove;
     private boolean debug;
     private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
@@ -320,6 +321,7 @@ public final class SettingsManager
         visualizeSendSize = loadInt("visualization.blocks-to-send");
         visualizeMaxFields = loadInt("visualization.max-fields-to-visualize-at-once");
         visualizeTicksBetweenSends = loadInt("visualization.ticks-between-sends");
+        visualizeOnExpand = loadBoolean("visualization.visualize-on-expand");
 
         // ********************************** Grief Revert
 
@@ -1628,4 +1630,9 @@ public final class SettingsManager
     }
 
     public BlockTypeEntry getDefaulItemCurrency() { return defaulItemCurrency; }
+
+    public boolean isVisualizeOnExpand()
+    {
+        return visualizeOnExpand;
+    }
 }

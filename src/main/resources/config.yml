@@ -432,6 +432,7 @@ visualization:
     ticks-between-sends: 10
     default-density: 8
     max-fields-to-visualize-at-once: 5
+    visualize-on-expand: true
 notify:
     destroy: true
     bypass-pvp: true
