@@ -457,12 +457,7 @@ public class CuboidEntry
 
     public int getOverflow()
     {
-        PreciousStones.debug("overflow");
-        PreciousStones.debug("max:" + getMaxVolume());
-        PreciousStones.debug("volume:" + getVolume());
-        PreciousStones.debug("max - volume:" + (getMaxVolume() - getVolume()));
-
-        return getMaxVolume() - getVolume();
+        return getVolume() - getMaxVolume();
     }
 
     /**
