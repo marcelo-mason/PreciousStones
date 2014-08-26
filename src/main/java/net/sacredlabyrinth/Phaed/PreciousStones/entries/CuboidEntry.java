@@ -219,6 +219,15 @@ public class CuboidEntry
         {
             this.minx = this.minx - num;
         }
+        else if (dir.toLowerCase().startsWith("a"))
+        {
+            this.minx = this.minx - num;
+            this.miny = this.miny - num;
+            this.minz = this.minz - num;
+            this.maxz = this.maxz + num;
+            this.maxx = this.maxx + num;
+            this.minx = this.minx - num;
+        }
     }
 
     /**
@@ -271,6 +280,15 @@ public class CuboidEntry
         }
         else if (dir.toLowerCase().startsWith("w"))
         {
+            this.minx = this.minx + num;
+        }
+        else if (dir.toLowerCase().startsWith("a"))
+        {
+            this.maxy = this.maxy - num;
+            this.miny = this.miny + num;
+            this.minz = this.minz + num;
+            this.maxz = this.maxz - num;
+            this.maxx = this.maxx - num;
             this.minx = this.minx + num;
         }
 
@@ -439,6 +457,11 @@ public class CuboidEntry
 
     public int getOverflow()
     {
+        PreciousStones.debug("overflow");
+        PreciousStones.debug("max:" + getMaxVolume());
+        PreciousStones.debug("volume:" + getVolume());
+        PreciousStones.debug("max - volume:" + (getMaxVolume() - getVolume()));
+
         return getMaxVolume() - getVolume();
     }
 

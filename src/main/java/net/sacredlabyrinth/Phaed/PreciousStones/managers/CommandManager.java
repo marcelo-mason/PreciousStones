@@ -593,24 +593,32 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals(ChatBlock.format("commandExpand")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.expand") && hasplayer)
                     {
-                        if (args.length == 2)
+                        if (args.length == 1 || args.length == 2)
                         {
                             int num = 0;
                             String dir = "";
 
-                            if (Helper.isInteger(args[0]))
+                            if (args.length == 1)
                             {
                                 num = Integer.parseInt(args[0]);
-                                dir = args[1];
-                            }
-                            else if (Helper.isInteger(args[1]))
-                            {
-                                num = Integer.parseInt(args[1]);
-                                dir = args[0];
+                                dir = "all";
                             }
                             else
                             {
-                                return true;
+                                if (Helper.isInteger(args[0]))
+                                {
+                                    num = Integer.parseInt(args[0]);
+                                    dir = args[1];
+                                }
+                                else if (Helper.isInteger(args[1]))
+                                {
+                                    num = Integer.parseInt(args[1]);
+                                    dir = args[0];
+                                }
+                                else
+                                {
+                                    return true;
+                                }
                             }
 
                             if (num < 0)
@@ -693,24 +701,32 @@ public final class CommandManager implements CommandExecutor
                     }
                     else if (cmd.equals(ChatBlock.format("commandContract")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.contract") && hasplayer)
                     {
-                        if (args.length == 2)
+                        if (args.length == 1 || args.length == 2)
                         {
                             int num = 0;
                             String dir = "";
 
-                            if (Helper.isInteger(args[0]))
+                            if (args.length == 1)
                             {
                                 num = Integer.parseInt(args[0]);
-                                dir = args[1];
-                            }
-                            else if (Helper.isInteger(args[1]))
-                            {
-                                num = Integer.parseInt(args[1]);
-                                dir = args[0];
+                                dir = "all";
                             }
                             else
                             {
-                                return true;
+                                if (Helper.isInteger(args[0]))
+                                {
+                                    num = Integer.parseInt(args[0]);
+                                    dir = args[1];
+                                }
+                                else if (Helper.isInteger(args[1]))
+                                {
+                                    num = Integer.parseInt(args[1]);
+                                    dir = args[0];
+                                }
+                                else
+                                {
+                                    return true;
+                                }
                             }
 
                             if (num < 0)
@@ -1692,11 +1708,12 @@ public final class CommandManager implements CommandExecutor
                         else
                         {
                             Iterator<Field> iter = fields.iterator();
-                            while (iter.hasNext()) {
+                            while (iter.hasNext())
+                            {
                                 Field f = iter.next();
                                 block = f.getBlock();
 
-                                if(!(plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details")))
+                                if (!(plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details")))
                                 {
                                     iter.remove();
                                 }
