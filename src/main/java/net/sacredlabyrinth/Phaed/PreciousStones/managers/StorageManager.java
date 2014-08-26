@@ -285,38 +285,47 @@ public class StorageManager
      */
     public void loadWorldData()
     {
+        PreciousStones.debug("finalizing queue");
+        plugin.getForceFieldManager().doFinalize();
+        processQueue();
+
+        PreciousStones.debug("clearing fields from memory");
+        plugin.getForceFieldManager().clearChunkLists();
+        plugin.getUnbreakableManager().clearChunkLists();
+
+        List<World> worlds = plugin.getServer().getWorlds();
+
+        final List<String> filtered = new ArrayList<String>();
+
+        for (World world : worlds)
+        {
+            filtered.add(world.getName());
+        }
+
         plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable()
         {
             @Override
             public void run()
             {
-                plugin.getForceFieldManager().doFinalize();
-                processQueue();
 
-                plugin.getForceFieldManager().clearChunkLists();
-                plugin.getUnbreakableManager().clearChunkLists();
+                PreciousStones.debug("loading fields by world");
 
-                List<World> worlds = plugin.getServer().getWorlds();
-                Map<String, World> filtered = new HashMap<String, World>();
-
-                for (World world : worlds)
+                for (String worldName : filtered)
                 {
-                    filtered.put(world.getName(), world);
-                }
-
-                for (World world : filtered.values())
-                {
-                    loadWorldFields(world.getName());
-                    loadWorldUnbreakables(world.getName());
+                    loadWorldFields(worldName);
+                    loadWorldUnbreakables(worldName);
                 }
             }
         }, 0);
 
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable()
         {
             @Override
             public void run()
             {
+
+                PreciousStones.debug("pulling the full player list");
+
                 extractPlayers();
             }
         }, 20);
@@ -337,12 +346,12 @@ public class StorageManager
         synchronized (this)
         {
             fields = getFields(world);
-
             fieldCount = fields.size();
+            PreciousStones.debug("pulled", fieldCount, "fields in", world);
 
             Collection<Field> cuboids = getCuboidFields(world);
-
             cuboidCount = cuboids.size();
+            PreciousStones.debug("pulled", fieldCount, "cuboids in", world);
 
             fields.addAll(cuboids);
         }
@@ -471,19 +480,17 @@ public class StorageManager
         synchronized (this)
         {
             unbreakables = getUnbreakables(world);
+            PreciousStones.debug("pulled", unbreakables.size(), "unbreakables in", world);
         }
 
-        if (unbreakables != null)
+        for (Unbreakable ub : unbreakables)
         {
-            for (Unbreakable ub : unbreakables)
-            {
-                plugin.getUnbreakableManager().addToCollection(ub);
-            }
+            plugin.getUnbreakableManager().addToCollection(ub);
+        }
 
-            if (unbreakables.size() > 0)
-            {
-                PreciousStones.log("countsUnbreakables", world, unbreakables.size());
-            }
+        if (unbreakables.size() > 0)
+        {
+            PreciousStones.log("countsUnbreakables", world, unbreakables.size());
         }
     }
 
