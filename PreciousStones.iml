@@ -10,9 +10,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:1.7.10-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.7.9-R0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:VaultAPI:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.7.9-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.nijikokun.bukkit:Permissions:2.7.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldguard:5.8.1-SNAPSHOT" level="project" />
