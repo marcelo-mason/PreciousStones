@@ -931,6 +931,12 @@ public class Helper
         for (Player player : players)
         {
             Location loc = player.getLocation();
+
+            if (!loc.getWorld().getName().equals(target.getWorld().getName()))
+            {
+                continue;
+            }
+
             double distance = loc.distance(target);
 
             if (distance < closestDistance)
