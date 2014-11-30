@@ -11,10 +11,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -923,7 +920,7 @@ public class Helper
      */
     public static Player getClosestPlayer(Location target, int radius)
     {
-        Player[] players = PreciousStones.getInstance().getServer().getOnlinePlayers();
+        Collection<Player> players = (Collection<Player>) PreciousStones.getInstance().getServer().getOnlinePlayers();
 
         double closestDistance = radius;
         Player closestPlayer = null;

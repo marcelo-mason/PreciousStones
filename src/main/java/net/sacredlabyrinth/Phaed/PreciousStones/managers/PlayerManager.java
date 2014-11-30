@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.TreeMap;
 
 /**
@@ -164,7 +165,7 @@ public class PlayerManager
 
     public void savePlayerEntries()
     {
-        Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+        Collection<Player> onlinePlayers = (Collection<Player>) Bukkit.getServer().getOnlinePlayers();
 
         for (Player player : onlinePlayers)
         {
