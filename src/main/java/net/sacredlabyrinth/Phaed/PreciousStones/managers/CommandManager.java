@@ -1693,7 +1693,11 @@ public final class CommandManager implements CommandExecutor
                         Field field = fields.get(0);
                         block = field.getBlock();
 
-                        if (fields.size() == 1)
+                        if (fields.isEmpty())
+                        {
+                            plugin.getCommunicationManager().showNotFound(player);
+                        }
+                        else if (fields.size() == 1)
                         {
                             if (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
                             {
@@ -1722,10 +1726,6 @@ public final class CommandManager implements CommandExecutor
                             plugin.getCommunicationManager().showFieldDetails(player, fields);
                         }
 
-                        if (fields.isEmpty())
-                        {
-                            plugin.getCommunicationManager().showNotFound(player);
-                        }
                         return true;
                     }
                     else if (cmd.equals(ChatBlock.format("commandDelete")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.delete"))
