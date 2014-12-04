@@ -141,8 +141,8 @@ public class PSPlayerListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPortalExit(final EntityPortalExitEvent event)
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPortalExit(EntityPortalExitEvent event)
     {
         if (event.getEntity() instanceof Player)
         {
@@ -162,7 +162,7 @@ public class PSPlayerListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerRespawn(PlayerRespawnEvent event)
     {
         final Player player = event.getPlayer();
@@ -175,6 +175,8 @@ public class PSPlayerListener implements Listener
                 reevaluateEnteredFields(player);
             }
         }, 5);
+
+
     }
 
     private void reevaluateEnteredFields(Player player)
