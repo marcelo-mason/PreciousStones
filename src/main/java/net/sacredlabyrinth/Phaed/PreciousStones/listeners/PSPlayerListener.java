@@ -83,21 +83,18 @@ public class PSPlayerListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerLogin(PlayerLoginEvent event)
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event)
     {
+        final Player player = event.getPlayer();
         final String playerName = event.getPlayer().getName();
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-        {
-            public void run()
-            {
-                plugin.getPlayerManager().playerLogin(playerName);
-                plugin.getStorageManager().offerPlayer(playerName);
-                plugin.getForceFieldManager().enableFieldsOnLogon(playerName);
-                plugin.getForceFieldManager().removeFieldsIfNoPermission(playerName);
-            }
-        }, 10);
+        reevaluateEnteredFields(player);
+
+        plugin.getPlayerManager().playerLogin(playerName);
+        plugin.getStorageManager().offerPlayer(playerName);
+        plugin.getForceFieldManager().enableFieldsOnLogon(playerName);
+        plugin.getForceFieldManager().removeFieldsIfNoPermission(playerName);
 
         if (event.getPlayer().isOp())
         {
@@ -167,24 +164,6 @@ public class PSPlayerListener implements Listener
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event)
-    {
-        final Player player = event.getPlayer();
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                reevaluateEnteredFields(player);
-            }
-        }, 5);
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerJoin(PlayerJoinEvent event)
     {
         final Player player = event.getPlayer();
 
