@@ -249,10 +249,19 @@ public class PreciousStones extends JavaPlugin
 
     public void onDisable()
     {
-        getForceFieldManager().doFinalize();
-        getPlayerManager().savePlayerEntries();
-        getStorageManager().processQueue();
+        PreciousStones.log("Shutting Down: Cancelling all tasks...");
         getServer().getScheduler().cancelTasks(this);
+
+        PreciousStones.log("Shutting Down: Saving all pending data...");
+        getForceFieldManager().offerAllDirtyFields();
+        getPlayerManager().offerOnlinePlayerEntries();
+        getStorageManager().processQueue();
+
+        PreciousStones.log("Shutting Down: Clearing chunks from memory...");
+        getForceFieldManager().clearChunkLists();
+        getUnbreakableManager().clearChunkLists();
+
+        PreciousStones.log("Shutting Down: Closing db connection...");
         getStorageManager().closeConnection();
     }
 

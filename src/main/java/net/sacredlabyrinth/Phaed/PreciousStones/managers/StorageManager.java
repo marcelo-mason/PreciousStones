@@ -286,7 +286,7 @@ public class StorageManager
     public void loadWorldData()
     {
         PreciousStones.debug("finalizing queue");
-        plugin.getForceFieldManager().doFinalize();
+        plugin.getForceFieldManager().offerAllDirtyFields();
         processQueue();
 
         PreciousStones.debug("clearing fields from memory");

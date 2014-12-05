@@ -163,7 +163,7 @@ public class PlayerManager
         return false;
     }
 
-    public void savePlayerEntries()
+    public void offerOnlinePlayerEntries()
     {
         Collection<Player> onlinePlayers = (Collection<Player>) Bukkit.getServer().getOnlinePlayers();
 

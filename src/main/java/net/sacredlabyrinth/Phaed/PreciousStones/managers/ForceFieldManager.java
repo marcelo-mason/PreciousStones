@@ -780,7 +780,7 @@ public final class ForceFieldManager
     /**
      * things to do before shutdown
      */
-    public void doFinalize()
+    public void offerAllDirtyFields()
     {
         Collection<Field> fields = fieldsByVec.values();
 
