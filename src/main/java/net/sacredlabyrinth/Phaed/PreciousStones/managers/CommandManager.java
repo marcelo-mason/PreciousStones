@@ -1690,15 +1690,15 @@ public final class CommandManager implements CommandExecutor
                             fields.add(pointing);
                         }
 
-                        Field field = fields.get(0);
-                        block = field.getBlock();
-
                         if (fields.isEmpty())
                         {
                             plugin.getCommunicationManager().showNotFound(player);
                         }
                         else if (fields.size() == 1)
                         {
+                            Field field = fields.get(0);
+                            block = field.getBlock();
+
                             if (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details"))
                             {
                                 plugin.getCommunicationManager().showFieldDetails(player, field);
