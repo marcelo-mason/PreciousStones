@@ -1690,7 +1690,7 @@ public final class CommandManager implements CommandExecutor
                             fields.add(pointing);
                         }
 
-                        if (fields.isEmpty())
+                        if (fields == null || fields.size() == 0)
                         {
                             plugin.getCommunicationManager().showNotFound(player);
                         }
