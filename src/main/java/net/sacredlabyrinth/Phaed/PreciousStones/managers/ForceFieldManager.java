@@ -271,7 +271,7 @@ public final class ForceFieldManager
             if (offlinePlayer != null)
             {
                 ScoreboardManager manager = Bukkit.getScoreboardManager();
-                Scoreboard board = manager.getNewScoreboard();
+                Scoreboard board = manager.getMainScoreboard();
 
                 Team team = board.getPlayerTeam(offlinePlayer);
 
@@ -693,13 +693,13 @@ public final class ForceFieldManager
                     if (offlinePlayer != null)
                     {
                         ScoreboardManager manager = Bukkit.getScoreboardManager();
-                        Scoreboard board = manager.getNewScoreboard();
+                        Scoreboard board = manager.getMainScoreboard();
 
                         Team team = board.getPlayerTeam(offlinePlayer);
 
                         if (team != null)
                         {
-                            if (tm.equals(team.getName()))
+                            if (tm.equalsIgnoreCase(team.getName()))
                             {
                                 out.add(field);
                             }

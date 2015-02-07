@@ -626,13 +626,13 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (offlinePlayer != null)
         {
             ScoreboardManager manager = Bukkit.getScoreboardManager();
-            Scoreboard board = manager.getNewScoreboard();
+            Scoreboard board = manager.getMainScoreboard();
 
             Team team = board.getPlayerTeam(offlinePlayer);
 
             if (team != null)
             {
-                if (allowed.contains("t:" + team.getName()))
+                if (allowed.contains("t:" + team.getName().toLowerCase()))
                 {
                     return true;
                 }
