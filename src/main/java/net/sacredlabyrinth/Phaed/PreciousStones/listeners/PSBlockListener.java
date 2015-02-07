@@ -1721,7 +1721,10 @@ public class PSBlockListener implements Listener
         {
             if (s.isFieldSign())
             {
-                ChatBlock.send(player, s.getFailReason());
+                if (s.getFailReason() != null)
+                {
+                    ChatBlock.send(player, s.getFailReason());
+                }
 
                 event.setCancelled(true);
             }
