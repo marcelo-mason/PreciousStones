@@ -22,6 +22,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
@@ -871,6 +872,40 @@ public class PSEntityListener implements Listener
         if (field != null)
         {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerInteractAtEntityEvent(PlayerInteractAtEntityEvent event)
+    {
+
+        if (event.isCancelled())
+        {
+            return;
+        }
+
+        Entity entity = event.getRightClicked();
+        Player player = event.getPlayer();
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(entity.getLocation().getWorld()))
+        {
+            return;
+        }
+
+        if (entity.getType().equals(EntityType.ARMOR_STAND))
+        {
+            if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.item-frame-take"))
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ITEM_FRAME_TAKE);
+
+                if (field != null)
+                {
+                    if (FieldFlag.PREVENT_ITEM_FRAME_TAKE.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                    }
+                }
+            }
         }
     }
 
