@@ -172,7 +172,7 @@ public final class GriefUndoManager
     }
 
     /**
-    /**
+     * /**
      * Undo the grief recorded in one field
      *
      * @param field
