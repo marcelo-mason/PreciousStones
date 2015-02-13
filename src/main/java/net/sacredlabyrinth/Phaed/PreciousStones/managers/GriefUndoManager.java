@@ -310,6 +310,6 @@ public final class GriefUndoManager
             {
                 undoGrief(field);
             }
-        }, field.getRevertSecs() * 60 * 20L, field.getRevertSecs() * 60 * 20L);
+        }, field.getRevertSecs() * 20L, field.getRevertSecs() * 20L);
     }
 }
