@@ -49,8 +49,8 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <outputDirectory>${basedir}/out/</outputDirectory>
-                    <!--<outputDirectory>~/Minecraft/server/plugins/</outputDirectory>-->
+                    <!--<outputDirectory>${basedir}/out/</outputDirectory>-->
+                    <outputDirectory>/home/phaed/Minecraft/Server/plugins/</outputDirectory>
                 </configuration>
             </plugin>
 
