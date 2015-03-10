@@ -50,7 +50,7 @@
                 <version>2.4</version>
                 <configuration>
                     <outputDirectory>${basedir}/out/</outputDirectory>
-                    <!--<outputDirectory>F:\Minecraft\server\plugins\</outputDirectory>-->
+                    <!--<outputDirectory>~/Minecraft/server/plugins/</outputDirectory>-->
                 </configuration>
             </plugin>
 
