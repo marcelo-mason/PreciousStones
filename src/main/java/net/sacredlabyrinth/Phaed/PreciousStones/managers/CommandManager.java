@@ -7,6 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -362,7 +363,7 @@ public final class CommandManager implements CommandExecutor
 
                         if (args.length >= 1)
                         {
-                            fieldName = Helper.toMessage(args);
+                            fieldName = ChatColor.translateAlternateColorCodes('&', Helper.toMessage(args));
                         }
 
                         Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);

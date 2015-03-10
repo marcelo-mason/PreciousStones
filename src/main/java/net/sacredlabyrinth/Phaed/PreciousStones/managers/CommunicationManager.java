@@ -75,7 +75,8 @@ public class CommunicationManager
         if (sender instanceof Player)
         {
             chatBlocks.put(sender.getName(), cb);
-        } else
+        }
+        else
         {
             chatBlocks.put("console", cb);
         }
@@ -243,7 +244,8 @@ public class CommunicationManager
 
             ChatBlock.sendBlank(player);
             return true;
-        } else
+        }
+        else
         {
             ChatBlock.send(player, "translocationNotFound");
             return false;
@@ -1529,7 +1531,8 @@ public class CommunicationManager
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.viewconflicting"))
             {
                 ChatBlock.send(player, "warnConflictUnbreakablePlace", field.getOwner(), field.getSettings().getTitle(), field.getDetails());
-            } else
+            }
+            else
             {
                 ChatBlock.send(player, "warnConflictUnbreakablePlace2");
             }
@@ -1587,7 +1590,8 @@ public class CommunicationManager
             if (plugin.getPermissionsManager().has(player, "preciousstones.admin.viewconflicting"))
             {
                 ChatBlock.send(player, "warnConflictFieldPlace", field.getOwner(), field.getSettings().getTitle(), field.getDetails());
-            } else
+            }
+            else
             {
                 ChatBlock.send(player, "warnConflictFieldPlace2");
             }
@@ -2209,7 +2213,8 @@ public class CommunicationManager
         if (field.isNamed())
         {
             ChatBlock.send(player, "enteringNamedField", field.getName());
-        } else
+        }
+        else
         {
             if (plugin.getSettingsManager().isShowDefaultWelcomeFarewellMessages())
             {
@@ -2232,7 +2237,8 @@ public class CommunicationManager
         if (field.isNamed())
         {
             ChatBlock.send(player, "leavingNamedField", field.getName());
-        } else
+        }
+        else
         {
             if (plugin.getSettingsManager().isShowDefaultWelcomeFarewellMessages())
             {
@@ -2488,7 +2494,8 @@ public class CommunicationManager
             if (field.isNamed())
             {
                 cb.addRow("  " + color + ChatBlock.format("_name") + ": ", ChatColor.AQUA + field.getName(), "");
-            } else
+            }
+            else
             {
                 cb.addRow("  " + color + ChatBlock.format("_name") + ": ", ChatColor.GRAY + ChatBlock.format("_none"), "");
             }
@@ -2518,7 +2525,8 @@ public class CommunicationManager
         if (field.hasFlag(FieldFlag.CUBOID))
         {
             cb.addRow("  " + color + ChatBlock.format("_dimensions") + ": ", ChatColor.AQUA + "" + (field.getMaxx() - field.getMinx() + 1) + "x" + (field.getMaxy() - field.getMiny() + 1) + "x" + (field.getMaxz() - field.getMinz() + 1), "");
-        } else
+        }
+        else
         {
             cb.addRow("  " + color + ChatBlock.format("_dimensions") + ": ", ChatColor.AQUA + "" + ((field.getRadius() * 2) + 1) + "x" + field.getHeight() + "x" + ((field.getRadius() * 2) + 1), "");
         }
@@ -2614,7 +2622,8 @@ public class CommunicationManager
             if (field.isDisabled())
             {
                 ChatBlock.saySingle(player, "sepFieldInfoDisabled");
-            } else
+            }
+            else
             {
                 ChatBlock.saySingle(player, "sepFieldInfo");
             }
@@ -2661,7 +2670,8 @@ public class CommunicationManager
                     if (renters.size() == 1)
                     {
                         title = ChatColor.YELLOW + ChatBlock.format("_tenant") + ": ";
-                    } else
+                    }
+                    else
                     {
                         title = ChatColor.YELLOW + ChatBlock.format("_tenants") + ": ";
                     }
@@ -2800,7 +2810,8 @@ public class CommunicationManager
             }
 
             ChatBlock.sendBlank(sender);
-        } else
+        }
+        else
         {
             ChatBlock.send(sender, "noFieldsFound");
         }
@@ -2822,7 +2833,8 @@ public class CommunicationManager
         if (sender instanceof Player)
         {
             player = (Player) sender;
-        } else
+        }
+        else
         {
             sender = Bukkit.getServer().getConsoleSender();
         }
@@ -2835,7 +2847,8 @@ public class CommunicationManager
         {
             cb.setAlignment("l", "c", "c");
             cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_field"), ChatBlock.format("_count"), ChatBlock.format("_limit"));
-        } else
+        }
+        else
         {
             cb.setAlignment("l", "c");
             cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_field"), ChatBlock.format("_count"));
@@ -2870,7 +2883,8 @@ public class CommunicationManager
             if (plugin.getSettingsManager().haveLimits())
             {
                 cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), "{yellow} " + count, ChatColor.WHITE + " " + strLimit);
-            } else
+            }
+            else
             {
                 cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), ChatColor.WHITE + " " + count);
             }
@@ -2881,7 +2895,8 @@ public class CommunicationManager
         if (target.contains(":"))
         {
             targetName = target.substring(2);
-        } else if (target.contains("*"))
+        }
+        else if (target.contains("*"))
         {
             targetName = ChatBlock.format("_everyone");
         }
@@ -2901,7 +2916,8 @@ public class CommunicationManager
             }
 
             ChatBlock.sendBlank(sender);
-        } else
+        }
+        else
         {
             ChatBlock.send(sender, "noFieldsFound");
         }
@@ -2923,7 +2939,8 @@ public class CommunicationManager
         if (sender instanceof Player)
         {
             player = (Player) sender;
-        } else
+        }
+        else
         {
             sender = Bukkit.getServer().getConsoleSender();
         }
@@ -2936,7 +2953,8 @@ public class CommunicationManager
         {
             cb.setAlignment("l", "c", "c", "c");
             cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_field"), ChatBlock.format("_distance"), ChatBlock.format("_coords"), ChatBlock.format("_owner"));
-        } else
+        }
+        else
         {
             cb.setAlignment("l", "c", "c");
             cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_field"), ChatBlock.format("_distance"), ChatBlock.format("_coords"));
@@ -2947,7 +2965,8 @@ public class CommunicationManager
         if (player != null)
         {
             fields = plugin.getForceFieldManager().getFields(target, player.getWorld());
-        } else
+        }
+        else
         {
             for (World world : plugin.getServer().getWorlds())
             {
@@ -2977,7 +2996,8 @@ public class CommunicationManager
         if (target.contains(":"))
         {
             targetName = target.substring(2);
-        } else if (target.contains("*"))
+        }
+        else if (target.contains("*"))
         {
             targetName = ChatBlock.format("_everyone");
         }
@@ -2990,7 +3010,8 @@ public class CommunicationManager
             if (admin)
             {
                 cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), ChatColor.WHITE + "" + distance, ChatColor.YELLOW + Helper.toLocationString(field.getLocation()), ChatColor.WHITE + field.getOwner());
-            } else
+            }
+            else
             {
                 cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), ChatColor.WHITE + "" + distance, ChatColor.YELLOW + Helper.toLocationString(field.getLocation()));
             }
@@ -3003,7 +3024,8 @@ public class CommunicationManager
             if (player != null)
             {
                 ChatBlock.saySingle(sender, "sepFieldLocations", targetName, player.getWorld().getName());
-            } else
+            }
+            else
             {
                 ChatBlock.saySingle(sender, "sepFieldLocations", targetName, "");
             }
@@ -3019,7 +3041,8 @@ public class CommunicationManager
             }
 
             ChatBlock.sendBlank(sender);
-        } else
+        }
+        else
         {
             ChatBlock.send(sender, "noFieldsFound");
         }
@@ -3094,7 +3117,8 @@ public class CommunicationManager
             }
 
             return !snitches.isEmpty();
-        } else
+        }
+        else
         {
             showNotFound(player);
         }
@@ -3112,7 +3136,8 @@ public class CommunicationManager
         if (sender instanceof Player)
         {
             player = (Player) sender;
-        } else
+        }
+        else
         {
             sender = Bukkit.getServer().getConsoleSender();
         }
