@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.getspout:spoutplugin:dev-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/dev-SNAPSHOT/spoutplugin-dev-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/dev-SNAPSHOT/spoutplugin-dev-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/getspout/spoutplugin/dev-SNAPSHOT/spoutplugin-dev-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

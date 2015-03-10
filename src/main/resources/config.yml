@@ -385,7 +385,6 @@ settings:
     global-field-limit: 1000000
     no-refund-for-fields: false
     off-by-default: false
-    log-to-hawkeye: false
     lines-per-page: 100
     disable-bypass-alerts-for-admins: false
     disable-alerts-for-admins: true

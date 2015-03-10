@@ -43,7 +43,6 @@ public final class SettingsManager
     private int cuboidDefiningType;
     private int cuboidVisualizationType;
     private boolean disableMessages;
-    private boolean logToHawkEye;
     private List<String> blacklistedWorlds;
     private int purgeAfterDays;
     private int maxSnitchRecords;
@@ -284,7 +283,6 @@ public final class SettingsManager
         disableBypassAlertsForAdmins = loadBoolean("settings.disable-bypass-alerts-for-admins");
         offByDefault = loadBoolean("settings.off-by-default");
         linesPerPage = loadInt("settings.lines-per-page");
-        logToHawkEye = loadBoolean("settings.log-to-hawkeye");
         debug = loadBoolean("settings.show-debug-info");
         blacklistedWorlds = loadStringList("settings.blacklisted-worlds");
         autoAddClan = loadBoolean("settings.auto-allow-clan-on-fields");
@@ -842,14 +840,6 @@ public final class SettingsManager
         HashMap<BlockTypeEntry, FieldSettings> fs = new HashMap<BlockTypeEntry, FieldSettings>();
         fs.putAll(fieldDefinitions);
         return fs;
-    }
-
-    /**
-     * @return the logToHawkEye
-     */
-    public boolean isLogToHawkEye()
-    {
-        return logToHawkEye;
     }
 
     /**
