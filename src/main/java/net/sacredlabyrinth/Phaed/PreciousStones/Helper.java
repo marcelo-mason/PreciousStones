@@ -653,30 +653,6 @@ public class Helper
     }
 
     /**
-     * Returns a type entry from a string
-     *
-     * @param rawItem
-     * @return
-     */
-    public static BlockTypeEntry toSpoutTypeEntry(String rawItem)
-    {
-        if (hasData(rawItem))
-        {
-            String[] split = rawItem.split("[:]");
-            return new BlockTypeEntry(Integer.parseInt(split[0]), Byte.parseByte(split[1]), true);
-        }
-        else
-        {
-            if (!isInteger(rawItem))
-            {
-                return null;
-            }
-
-            return new BlockTypeEntry(Integer.parseInt(rawItem), (byte) 0, true);
-        }
-    }
-
-    /**
      * Returns a list of type entries from a string list
      *
      * @param rawList

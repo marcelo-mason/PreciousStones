@@ -26,7 +26,6 @@ public class FieldSettings
     private int shrubDensity = 64;
     private boolean validField = true;
     private BlockTypeEntry type;
-    private boolean spoutBlock;
     private int radius = 0;
     private int fenceItem = 0;
     private int fenceItemPrice = 0;
@@ -132,23 +131,7 @@ public class FieldSettings
             return;
         }
 
-        spoutBlock = loadBoolean("spout");
-
-        if (spoutBlock)
-        {
-            if (PreciousStones.hasSpout())
-            {
-                type = loadSpoutTypeEntry("block");
-            }
-            else
-            {
-                PreciousStones.log(Level.WARNING, "** Spout not loaded, spout field skipped: %s", title);
-            }
-        }
-        else
-        {
-            type = loadTypeEntry("block");
-        }
+        type = loadTypeEntry("block");
 
         if (type == null)
         {
@@ -528,44 +511,6 @@ public class FieldSettings
                 else if (Helper.isInteger(typeStr.toString()))
                 {
                     value = new BlockTypeEntry(Integer.parseInt(typeStr.toString()), ((byte) 0));
-                }
-                else
-                {
-                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
-                }
-            }
-
-            if (value != null)
-            {
-                loadFlags(getKey(flagStr));
-                PreciousStones.debug("   %s: %s", flagStr, value);
-                return value;
-            }
-            PreciousStones.debug("   %s: *bad*", flagStr);
-        }
-        return null;
-    }
-
-    private BlockTypeEntry loadSpoutTypeEntry(String flagStr)
-    {
-        if (containsKey(flagStr))
-        {
-            BlockTypeEntry value = null;
-            Object typeStr = getValue(flagStr);
-
-            if (Helper.isString(typeStr) && Helper.isTypeEntry((String) typeStr) && Helper.hasData(typeStr.toString()))
-            {
-                value = Helper.toSpoutTypeEntry(typeStr.toString());
-            }
-            else
-            {
-                if (Helper.isInteger(typeStr))
-                {
-                    value = new BlockTypeEntry((Integer) typeStr, ((byte) 0), true);
-                }
-                else if (Helper.isInteger(typeStr.toString()))
-                {
-                    value = new BlockTypeEntry(Integer.parseInt(typeStr.toString()), ((byte) 0), true);
                 }
                 else
                 {
@@ -1562,11 +1507,6 @@ public class FieldSettings
     public int getPayToEnable()
     {
         return payToEnable;
-    }
-
-    public boolean isSpoutBlock()
-    {
-        return spoutBlock;
     }
 
     public String getDeleteIfNoPermission()

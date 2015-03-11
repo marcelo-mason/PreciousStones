@@ -583,7 +583,6 @@ public final class SettingsManager
         return false;
     }
 
-    //TODO: Spout
     public boolean isCrop(Block block)
     {
         return block.getType().equals(Material.SOIL) ||

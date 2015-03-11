@@ -996,8 +996,6 @@ public class PSEntityListener implements Listener
         }
     }
 
-    //TODO: Spout
-
     @EventHandler
     public void onHangingBreakByEntityEvent(HangingBreakByEntityEvent event)
     {
