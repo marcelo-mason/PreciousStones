@@ -1,7 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
+import net.milkbowl.vault.item.ItemInfo;
+import net.milkbowl.vault.item.Items;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
@@ -10,31 +12,22 @@ import org.bukkit.block.BlockState;
  */
 public class BlockTypeEntry
 {
-    private final int typeId;
-    private byte data;
+    private ItemInfo info;
+
+    /**
+     * @param string
+     */
+    public BlockTypeEntry(String string)
+    {
+        info = Items.itemByString(string);
+    }
 
     /**
      * @param block
      */
     public BlockTypeEntry(Block block)
     {
-        this.typeId = block.getTypeId();
-        this.data = block.getData();
-    }
-
-    public BlockTypeEntry(String packed)
-    {
-        String[] unpacked = packed.split("[:]");
-        this.typeId = Integer.parseInt(unpacked[0]);
-
-        if (unpacked.length > 1)
-        {
-            this.data = Byte.parseByte(unpacked[1]);
-        }
-        else
-        {
-            this.data = 0;
-        }
+        info = Items.itemByType(block.getType());
     }
 
     /**
@@ -42,18 +35,16 @@ public class BlockTypeEntry
      */
     public BlockTypeEntry(BlockState block)
     {
-        this.typeId = block.getTypeId();
-        this.data = block.getRawData();
+        info = Items.itemByType(block.getType());
     }
 
     /**
      * @param typeId
      * @param data
      */
-    public BlockTypeEntry(int typeId, byte data)
+    public BlockTypeEntry(int typeId, short data)
     {
-        this.typeId = typeId;
-        this.data = data;
+        info = Items.itemByType(Material.getMaterial(typeId), data);
     }
 
     /**
@@ -61,8 +52,7 @@ public class BlockTypeEntry
      */
     public BlockTypeEntry(int typeId)
     {
-        this.typeId = typeId;
-        this.data = 0;
+        info = Items.itemByType(Material.getMaterial(typeId), (short) 0);
     }
 
     /**
@@ -70,15 +60,15 @@ public class BlockTypeEntry
      */
     public int getTypeId()
     {
-        return typeId;
+        return info.getId();
     }
 
     /**
      * @return the data
      */
-    public byte getData()
+    public short getSubTypeId()
     {
-        return data;
+        return info.getSubTypeId();
     }
 
     @Override
@@ -93,10 +83,10 @@ public class BlockTypeEntry
 
         int id1 = this.getTypeId();
         int id2 = other.getTypeId();
-        byte data1 = this.getData();
-        byte data2 = other.getData();
+        short data1 = this.getSubTypeId();
+        short data2 = other.getSubTypeId();
 
-        if (getData() == 0 || other.getData() == 0)
+        if (getSubTypeId() == 0 || other.getSubTypeId() == 0)
         {
             if (id1 == id2)
             {
@@ -124,26 +114,23 @@ public class BlockTypeEntry
     @Override
     public int hashCode()
     {
-        int hash = 7;
-        hash = 47 * hash + this.getTypeId();
-        hash = 47 * hash + this.getData();
-        return hash;
+        return info.hashCode();
     }
 
     @Override
     public String toString()
     {
-        if (getData() == 0)
+        if (getSubTypeId() == 0)
         {
             return getTypeId() + "";
         }
 
-        return getTypeId() + ":" + getData();
+        return getTypeId() + ":" + getSubTypeId();
     }
 
-    public void setData(byte data)
+    public ItemInfo getInfo()
     {
-        this.data = data;
+        return info;
     }
 
     public boolean isValid()

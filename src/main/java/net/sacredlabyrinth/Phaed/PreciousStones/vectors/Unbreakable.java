@@ -69,9 +69,9 @@ public class Unbreakable extends AbstractVec
     /**
      * @return the block data
      */
-    public byte getData()
+    public short getData()
     {
-        return type.getData();
+        return type.getSubTypeId();
     }
 
     /**

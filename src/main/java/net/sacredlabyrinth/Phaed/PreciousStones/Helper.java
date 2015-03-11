@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
+import net.milkbowl.vault.item.ItemInfo;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import org.bukkit.*;
 import org.bukkit.block.Block;

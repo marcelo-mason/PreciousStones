@@ -721,7 +721,7 @@ public class PSBlockListener implements Listener
             }
             else
             {
-                if (plugin.getSettingsManager().isFragileBlock(new BlockTypeEntry(field.getTypeId(), field.getData())))
+                if (plugin.getSettingsManager().isFragileBlock(new BlockTypeEntry(field.getTypeId(), (byte)field.getData())))
                 {
                     PreciousStones.debug("fragile block broken");
                     plugin.getForceFieldManager().releaseNoClean(field);

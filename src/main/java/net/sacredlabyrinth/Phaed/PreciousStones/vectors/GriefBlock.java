@@ -20,8 +20,7 @@ public class GriefBlock extends AbstractVec
      * @param y
      * @param z
      * @param world
-     * @param typeId
-     * @param data
+     * @param type
      */
     public GriefBlock(int x, int y, int z, String world, BlockTypeEntry type)
     {
@@ -31,8 +30,7 @@ public class GriefBlock extends AbstractVec
 
     /**
      * @param loc
-     * @param typeId
-     * @param data
+     * @param type
      */
     public GriefBlock(Location loc, BlockTypeEntry type)
     {
@@ -50,7 +48,7 @@ public class GriefBlock extends AbstractVec
     }
 
     /**
-     * @param block
+     * @param state
      */
     public GriefBlock(BlockState state)
     {
@@ -70,9 +68,9 @@ public class GriefBlock extends AbstractVec
     /**
      * @return the data
      */
-    public byte getData()
+    public short getSubTypeId()
     {
-        return type.getData();
+        return type.getSubTypeId();
     }
 
     /**
@@ -112,6 +110,6 @@ public class GriefBlock extends AbstractVec
 
     public String serialize()
     {
-        return getTypeId() + "|" + getData() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
+        return getTypeId() + "|" + getSubTypeId() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
     }
 }

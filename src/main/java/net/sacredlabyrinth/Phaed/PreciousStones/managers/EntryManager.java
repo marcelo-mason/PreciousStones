@@ -570,7 +570,7 @@ public final class EntryManager
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.hiding"))
                 {
-                    player.sendBlockChange(field.getLocation(), field.getTypeId(), field.getData());
+                    player.sendBlockChange(field.getLocation(), field.getTypeId(), (byte)field.getData());
                 }
             }
         }

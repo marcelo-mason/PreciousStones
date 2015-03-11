@@ -993,7 +993,7 @@ public class FieldSettings
 
             // otherwise match the type and data exactly
 
-            if (entry.getData() == 0)
+            if (entry.getSubTypeId() == 0)
             {
                 if (entry.getTypeId() == type)
                 {
@@ -1002,7 +1002,7 @@ public class FieldSettings
             }
             else
             {
-                if (entry.getTypeId() == type && entry.getData() == data)
+                if (entry.getTypeId() == type && entry.getSubTypeId() == data)
                 {
                     return true;
                 }
@@ -1032,7 +1032,7 @@ public class FieldSettings
 
             // otherwise match the type and data exactly
 
-            if (entry.getData() == 0)
+            if (entry.getSubTypeId() == 0)
             {
                 if (entry.getTypeId() == type)
                 {
@@ -1041,7 +1041,7 @@ public class FieldSettings
             }
             else
             {
-                if (entry.getTypeId() == type && entry.getData() == data)
+                if (entry.getTypeId() == type && entry.getSubTypeId() == data)
                 {
                     return false;
                 }
@@ -1200,9 +1200,9 @@ public class FieldSettings
     /**
      * @return the block data
      */
-    public byte getData()
+    public short getData()
     {
-        return type.getData();
+        return type.getSubTypeId();
     }
 
     /**

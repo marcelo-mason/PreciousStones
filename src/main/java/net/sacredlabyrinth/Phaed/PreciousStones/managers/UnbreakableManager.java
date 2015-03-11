@@ -370,7 +370,7 @@ public final class UnbreakableManager
                     {
                         revertedCount++;
                         block.setTypeId(unbreakable.getTypeId());
-                        block.setData(unbreakable.getData());
+                        block.setData((byte)unbreakable.getData());
                     }
                 }
             }

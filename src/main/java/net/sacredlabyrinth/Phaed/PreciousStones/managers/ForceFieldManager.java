@@ -908,7 +908,7 @@ public final class ForceFieldManager
                     {
                         Block block = field.getBlock();
                         block.setTypeId(field.getTypeId());
-                        block.setData(field.getData());
+                        block.setData((byte)field.getData());
                         revertedCount++;
                     }
                 }
@@ -2576,7 +2576,7 @@ public final class ForceFieldManager
         {
             World world = field.getLocation().getWorld();
 
-            ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, field.getData());
+            ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, (byte)field.getData());
 
             world.dropItemNaturally(field.getLocation(), is);
         }

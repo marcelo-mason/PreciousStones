@@ -228,7 +228,7 @@ public final class TranslocationManager
 
         if (tb.isEmpty())
         {
-            block.setTypeIdAndData(tb.getTypeId(), tb.getData(), true);
+            block.setTypeIdAndData(tb.getTypeId(), (byte)tb.getData(), true);
             return true;
         }
 
@@ -264,7 +264,7 @@ public final class TranslocationManager
 
         if (noConflict)
         {
-            block.setTypeIdAndData(tb.getTypeId(), tb.getData(), true);
+            block.setTypeIdAndData(tb.getTypeId(), (byte)tb.getData(), true);
 
             if (block.getState() instanceof Sign && !tb.getSignText().isEmpty())
             {
@@ -457,7 +457,7 @@ public final class TranslocationManager
             {
                 for (Player p : inhabitants)
                 {
-                    p.sendBlockChange(field.getLocation(), field.getTypeId(), field.getData());
+                    p.sendBlockChange(field.getLocation(), field.getTypeId(), (byte)field.getData());
                 }
             }
         }, 20);

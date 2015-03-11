@@ -85,7 +85,7 @@ public class StackHelper
         for (int i = 0; i < blocks; i++)
         {
             ItemStack is = new ItemStack(material, 64);
-            is.setDurability(item.getData());
+            is.setDurability(item.getSubTypeId());
             out.add(is);
         }
 
@@ -94,7 +94,7 @@ public class StackHelper
         if (remainder > 0)
         {
             ItemStack is = new ItemStack(material, remainder);
-            is.setDurability(item.getData());
+            is.setDurability(item.getSubTypeId());
             out.add(is);
         }
 
@@ -112,7 +112,7 @@ public class StackHelper
 
             if (i.getTypeId() == item.getTypeId())
             {
-                if (item.getData() == 0 || i.getData().getData() == item.getData())
+                if (item.getSubTypeId() == 0 || i.getData().getData() == item.getSubTypeId())
                 {
                     amount -= i.getAmount();
                 }

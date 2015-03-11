@@ -94,9 +94,9 @@ public class TranslocationBlock extends AbstractVec
     /**
      * @return the data
      */
-    public byte getData()
+    public short getData()
     {
-        return type.getData();
+        return type.getSubTypeId();
     }
 
     /**
@@ -104,7 +104,7 @@ public class TranslocationBlock extends AbstractVec
      */
     public void setData(byte data)
     {
-        type.setData(data);
+        type = new BlockTypeEntry(type.getTypeId(), data);
     }
 
     /**

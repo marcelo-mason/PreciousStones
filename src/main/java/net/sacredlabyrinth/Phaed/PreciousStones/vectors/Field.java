@@ -449,9 +449,9 @@ public class Field extends AbstractVec implements Comparable<Field>
     /**
      * @return the block data
      */
-    public byte getData()
+    public short getData()
     {
-        return type.getData();
+        return type.getSubTypeId();
     }
 
     /**
@@ -2353,7 +2353,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         for (Player player : fieldInhabitants)
         {
-            player.sendBlockChange(getLocation(), getTypeId(), getData());
+            player.sendBlockChange(getLocation(), getTypeId(), (byte)getData());
         }
     }
 
@@ -2389,7 +2389,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             BlockTypeEntry maskType = findMaskType();
             Block block = getBlock();
             block.setTypeId(maskType.getTypeId());
-            block.setData(maskType.getData());
+            block.setData((byte)maskType.getSubTypeId());
 
             PreciousStones.getInstance().getStorageManager().offerField(this);
         }
@@ -2426,7 +2426,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             Block block = getBlock();
             block.setTypeId(getTypeId());
-            block.setData(getData());
+            block.setData((byte)getData());
 
             PreciousStones.getInstance().getStorageManager().offerField(this);
         }
