@@ -56,6 +56,17 @@ public class BlockTypeEntry
             return;
         }
 
+        // string:int
+        matcher.reset();
+        pattern = Pattern.compile("(?i)^(.*):(\\d+)$");
+        matcher = pattern.matcher(string);
+        if (matcher.find())
+        {
+            this.material = MaterialName.getBlockMaterial(matcher.group(1));
+            this.data = Byte.parseByte(matcher.group(2));
+            return;
+        }
+
         // name
         matcher.reset();
         pattern = Pattern.compile("(?i)^(.*)$");

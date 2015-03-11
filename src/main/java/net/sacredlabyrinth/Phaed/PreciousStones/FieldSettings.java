@@ -75,8 +75,8 @@ public class FieldSettings
     private List<BlockTypeEntry> unusableItems = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> teleportIfWalkingOn = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> teleportIfNotWalkingOn = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> treeTypes = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> shrubTypes = new ArrayList<BlockTypeEntry>();
+    private List<Integer> treeTypes = new ArrayList<Integer>();
+    private List<Integer> shrubTypes = new ArrayList<Integer>();
     private List<String> creatureTypes = new ArrayList<String>();
     private List<BlockTypeEntry> fertileBlocks = new ArrayList<BlockTypeEntry>();
     private List<Integer> limits = new ArrayList<Integer>();
@@ -349,8 +349,8 @@ public class FieldSettings
         allowedPlayers = loadStringList("always-allow-players");
         deniedPlayers = loadStringList("always-deny-players");
         allowGrief = loadTypeEntries("allow-grief");
-        treeTypes = loadTypeEntries("tree-types");
-        shrubTypes = loadTypeEntries("shrub-types");
+        treeTypes = loadIntList("tree-types");
+        shrubTypes = loadIntList("shrub-types");
         creatureTypes = loadStringList("creature-types");
         fertileBlocks = loadTypeEntries("fertile-blocks");
         allowedWorlds = loadStringList("allowed-worlds");
@@ -1355,14 +1355,14 @@ public class FieldSettings
         return repair;
     }
 
-    public List<BlockTypeEntry> getTreeTypes()
+    public List<Integer> getTreeTypes()
     {
-        return new ArrayList<BlockTypeEntry>(treeTypes);
+        return new ArrayList<Integer>(treeTypes);
     }
 
-    public List<BlockTypeEntry> getShrubTypes()
+    public List<Integer> getShrubTypes()
     {
-        return new ArrayList<BlockTypeEntry>(shrubTypes);
+        return new ArrayList<Integer>(shrubTypes);
     }
 
     public int getShrubDensity()

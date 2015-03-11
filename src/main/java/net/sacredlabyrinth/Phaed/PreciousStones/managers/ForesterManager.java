@@ -213,7 +213,7 @@ public final class ForesterManager
     {
         Random r = new Random();
 
-        List<BlockTypeEntry> treeTypes = fs.getTreeTypes();
+        List<Integer> treeTypes = fs.getTreeTypes();
 
         if (treeTypes.isEmpty())
         {
@@ -221,7 +221,7 @@ public final class ForesterManager
         }
 
         int rand = r.nextInt(treeTypes.size());
-        int tree = treeTypes.get(rand).getTypeId();
+        int tree = treeTypes.get(rand);
 
         PreciousStones.debug("tree: " + tree);
 
@@ -261,11 +261,11 @@ public final class ForesterManager
     {
         Random r = new Random();
 
-        List<BlockTypeEntry> treeTypes = fs.getShrubTypes();
+        List<Integer> treeTypes = fs.getShrubTypes();
 
         int rand = r.nextInt(treeTypes.size());
 
-        switch (treeTypes.get(rand).getTypeId())
+        switch (treeTypes.get(rand))
         {
             case 0:
                 block.setTypeIdAndData(31, (byte) 0, false);

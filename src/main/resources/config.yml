@@ -1,7 +1,7 @@
 unbreakable-blocks: []
 force-field-blocks:
 -   title: City Protection
-    block: 57
+    block: diamond_block
     radius: 20
     custom-height: 15
     prevent-fire: true
@@ -34,12 +34,13 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: City Plot
-    block: 153
+    block: quartz_ore
     radius: 20
     custom-height: 15
     allowed-only-inside: ["City Protection"]
     plot: true
     no-conflict: true
+    prevent-use: [wooden_door, iron_door, spruce_door, birch_door, jungle_door, acacia_door, dark_oak_door]
     prevent-fire: true
     prevent-place: true
     prevent-destroy: true
@@ -62,7 +63,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Entry Bouncer
-    block: 22
+    block: lapis_block
     radius: 5
     prevent-entry: true
     prevent-unprotectable: true
@@ -73,7 +74,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Grief Revert
-    block: 41
+    block: gold_block
     radius: 20
     custom-height: 15
     allow-grief: [37, 38, 39, 40]
@@ -88,7 +89,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Peace Keeper
-    block: 19
+    block: sponge
     radius: 10
     prevent-pvp: true
     no-player-place: true
@@ -100,7 +101,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Jack-o-Death
-    block: 91
+    block: lit_pumpkin
     radius: 5
     damage: 4
     no-conflict: true
@@ -109,7 +110,7 @@ force-field-blocks:
     mixing-group: 2
     mask-on-disabled: 80
 -   title: Creature Repeller
-    block: 30
+    block: web
     radius: 20
     single-use: true
     prevent-mob-damage: true
@@ -122,7 +123,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Air of Atlantis
-    block: 21
+    block: lapis_ore
     radius: 10
     custom-height: 256
     air: true
@@ -132,7 +133,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Proximity Snitch
-    block: 25
+    block: noteblock
     radius: 5
     snitch: true
     entry-alert: true
@@ -142,7 +143,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: The Shocker
-    block: 97
+    block: monster_egg
     radius: 0
     custom-height: 3
     lightning: true
@@ -153,7 +154,7 @@ force-field-blocks:
     mixing-group: 2
     mask-on-disabled: 80
 -   title: Proximity Mine
-    block: 73
+    block: redstone_ore
     radius: 1
     custom-height: 5
     mine: 5
@@ -165,7 +166,7 @@ force-field-blocks:
     no-conflict: true
     mask-on-disabled: 80
 -   title: Launch Pad
-    block: 15
+    block: iron_ore
     radius: 1
     launch: true
     no-conflict: true
@@ -175,7 +176,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Sky Cannon
-    block: 16
+    block: coal_ore
     radius: 0
     custom-height: 3
     custom-volume: 20
@@ -187,7 +188,7 @@ force-field-blocks:
     enable-with-redstone: true
     mask-on-disabled: 80
 -   title: Translocator
-    block: '100:14'
+    block: 'stonebrick:14'
     radius: 8
     custom-volume: 5000
     enable-with-redstone: true
@@ -201,7 +202,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 17
 -   title: GodStone
-    block: 99
+    block: stonebrick
     radius: 5
     heal: 4
     feed: 2
@@ -212,7 +213,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 80
 -   title: Miner's Haste
-    block: 79
+    block: ice
     radius: 10
     custom-height: 128
     cuboid: true
@@ -229,7 +230,7 @@ force-field-blocks:
     no-fall-damage: true
     mask-on-disabled: 17
 -   title: Mild Forester
-    block: '18:4'
+    block: 'leaves:4'
     radius: 20
     custom-height: 15
     forester: true
@@ -262,7 +263,7 @@ force-field-blocks:
     no-owner: true
     no-conflict: false
 -   title: Redwood Forester
-    block: '18:5'
+    block: 'leaves:5'
     radius: 20
     custom-height: 15
     forester: true
@@ -287,7 +288,7 @@ force-field-blocks:
     no-owner: true
     no-conflict: false
 -   title: Jungle Forester
-    block: '18:6'
+    block: 'leaves:6'
     radius: 20
     custom-height: 15
     forester: true
@@ -317,7 +318,7 @@ force-field-blocks:
     no-owner: true
     no-conflict: false
 -   title: Birch Forester
-    block: '18:7'
+    block: 'leaves:7'
     radius: 20
     custom-height: 15
     forester: true
