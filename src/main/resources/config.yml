@@ -195,7 +195,7 @@ force-field-blocks:
     enable-with-redstone: true
     mask-on-disabled: 80
 -   title: Translocator
-    block: 'stonebrick:14'
+    block: 'red_mushroom_block:14'
     radius: 8
     custom-volume: 5000
     enable-with-redstone: true
@@ -209,7 +209,7 @@ force-field-blocks:
     cuboid: true
     mask-on-disabled: 17
 -   title: GodStone
-    block: stonebrick
+    block: brown_mushroom_block
     radius: 5
     heal: 4
     feed: 2
