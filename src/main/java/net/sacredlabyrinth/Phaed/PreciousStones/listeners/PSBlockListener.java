@@ -523,11 +523,11 @@ public class PSBlockListener implements Listener
                 {
                     if (FieldFlag.GRIEF_REVERT.applies(field, player))
                     {
-                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy") || field.getSettings().canGrief(block.getTypeId()))
+                        if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy") || field.getSettings().canGrief(new BlockTypeEntry(block)))
                         {
                             PreciousStones.debug("bypassed");
 
-                            if (field.getSettings().canGrief(block.getTypeId()))
+                            if (field.getSettings().canGrief(new BlockTypeEntry(block)))
                             {
                                 PreciousStones.debug("can-grief");
                             }
@@ -1453,7 +1453,7 @@ public class PSBlockListener implements Listener
         {
             Block floor = block.getRelative(BlockFace.DOWN);
 
-            if (!fs.isFertileType(floor.getTypeId()) && floor.getTypeId() != fs.getGroundBlock())
+            if (!fs.isFertileType(new BlockTypeEntry(floor)) && floor.getTypeId() != fs.getGroundBlock())
             {
                 ChatBlock.send(player, "foresterNeedsFertile", fs.getTitle());
                 return false;

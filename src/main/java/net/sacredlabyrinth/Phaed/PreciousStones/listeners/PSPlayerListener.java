@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.milkbowl.vault.item.ItemInfo;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
@@ -547,7 +546,7 @@ public class PSPlayerListener implements Listener
                         continue;
                     }
 
-                    if (futureField.getSettings().isTeleportHasItem(stack.getTypeId()))
+                    if (futureField.getSettings().isTeleportHasItem(new BlockTypeEntry(stack.getType())))
                     {
                         if (FieldFlag.TELEPORT_IF_HAS_ITEMS.applies(futureField, player))
                         {
@@ -571,7 +570,7 @@ public class PSPlayerListener implements Listener
 
                     if (FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS.applies(futureField, player))
                     {
-                        if (futureField.getSettings().isTeleportHasNotItem(stack.getTypeId()))
+                        if (futureField.getSettings().isTeleportHasNotItem(new BlockTypeEntry(stack.getType())))
                         {
                             hasItem = true;
                         }
@@ -605,7 +604,7 @@ public class PSPlayerListener implements Listener
 
             if (itemInHand != null && itemInHand.getTypeId() != 0)
             {
-                if (futureField.getSettings().isTeleportHoldingItem(itemInHand.getTypeId()))
+                if (futureField.getSettings().isTeleportHoldingItem(new BlockTypeEntry(itemInHand.getType())))
                 {
                     if (FieldFlag.TELEPORT_IF_HOLDING_ITEMS.applies(futureField, player))
                     {
@@ -632,7 +631,7 @@ public class PSPlayerListener implements Listener
 
             if (itemInHand != null && itemInHand.getTypeId() != 0)
             {
-                if (!futureField.getSettings().isTeleportNotHoldingItem(itemInHand.getTypeId()))
+                if (!futureField.getSettings().isTeleportNotHoldingItem(new BlockTypeEntry(itemInHand.getType())))
                 {
                     if (FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS.applies(futureField, player))
                     {
@@ -734,7 +733,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (FieldFlag.PREVENT_USE.applies(useField, player))
                     {
-                        if (!useField.getSettings().canUse(block.getTypeId()))
+                        if (!useField.getSettings().canUse(new BlockTypeEntry(block)))
                         {
                             plugin.getCommunicationManager().warnUse(player, block, useField);
                             event.setCancelled(true);
@@ -986,7 +985,7 @@ public class PSPlayerListener implements Listener
 
         // -------------------------------------------------------------------------------- actions during an open cuboid
 
-        boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(is.getTypeId()) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()));
+        boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(new BlockTypeEntry(is.getType())) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()));
 
         if (hasCuboidHand)
         {
@@ -1198,7 +1197,7 @@ public class PSPlayerListener implements Listener
 
                 if (is != null)
                 {
-                    if (plugin.getSettingsManager().isToolItemType(is.getTypeId()))
+                    if (plugin.getSettingsManager().isToolItemType(new BlockTypeEntry(is.getType())))
                     {
                         if (plugin.getSettingsManager().isBypassBlock(block))
                         {
@@ -1571,7 +1570,7 @@ public class PSPlayerListener implements Listener
         {
             if (FieldFlag.GRIEF_REVERT.applies(field, player))
             {
-                if (field.getSettings().canGrief(block.getTypeId()))
+                if (field.getSettings().canGrief(new BlockTypeEntry(block)))
                 {
                     return;
                 }

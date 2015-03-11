@@ -249,7 +249,7 @@ public final class GriefUndoManager
 
         if (gb.isEmpty())
         {
-            block.setTypeIdAndData(gb.getTypeId(), (byte)gb.getSubTypeId(), true);
+            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), true);
             return;
         }
 
@@ -286,7 +286,7 @@ public final class GriefUndoManager
 
         if (noConflict)
         {
-            block.setTypeIdAndData(gb.getTypeId(), (byte)gb.getSubTypeId(), true);
+            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), true);
 
             if (block.getState() instanceof Sign && gb.getSignText().length() > 0)
             {

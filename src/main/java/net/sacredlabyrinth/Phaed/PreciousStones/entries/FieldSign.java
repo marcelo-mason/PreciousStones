@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -97,6 +98,11 @@ public class FieldSign
             if (!PreciousStones.getInstance().getPermissionsManager().hasEconomy())
             {
                 item = PreciousStones.getInstance().getSettingsManager().getDefaulItemCurrency();
+            }
+
+            if (!item.isValid())
+            {
+                item = new BlockTypeEntry(Material.GOLD_INGOT);
             }
         }
 

@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -362,7 +363,7 @@ public class PSEntityListener implements Listener
 
             Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
-            if (field != null && !field.getSettings().canGrief(block.getTypeId()))
+            if (field != null && !field.getSettings().canGrief(new BlockTypeEntry(block.getType())))
             {
                 if (block.getTypeId() == 46)
                 {

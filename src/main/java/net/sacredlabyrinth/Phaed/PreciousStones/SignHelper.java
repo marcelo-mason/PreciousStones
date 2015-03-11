@@ -317,7 +317,12 @@ public class SignHelper
         Matcher m = p.matcher(line);
         if (m.find())
         {
-            return Helper.toTypeEntry(m.group(1));
+            BlockTypeEntry entry = new BlockTypeEntry(m.group(1));
+
+            if (entry.isValid())
+            {
+                return entry;
+            }
         }
         return null;
     }

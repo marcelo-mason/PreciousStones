@@ -1389,9 +1389,9 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     for (String arg : args)
                                     {
-                                        BlockTypeEntry entry = Helper.toTypeEntry(arg);
+                                        BlockTypeEntry entry = new BlockTypeEntry(arg);
 
-                                        if (entry == null)
+                                        if (!entry.isValid())
                                         {
                                             ChatBlock.send(sender, "notValidBlockId", arg);
                                             continue;
@@ -1449,9 +1449,9 @@ public final class CommandManager implements CommandExecutor
 
                                     for (String arg : args)
                                     {
-                                        BlockTypeEntry entry = Helper.toTypeEntry(arg);
+                                        BlockTypeEntry entry = new BlockTypeEntry(arg);
 
-                                        if (entry == null)
+                                        if (!entry.isValid())
                                         {
                                             ChatBlock.send(sender, "notValidBlockId", arg);
                                             continue;
@@ -1563,9 +1563,9 @@ public final class CommandManager implements CommandExecutor
 
                                     for (String arg : args)
                                     {
-                                        BlockTypeEntry entry = Helper.toTypeEntry(arg);
+                                        BlockTypeEntry entry = new BlockTypeEntry(arg);
 
-                                        if (entry == null)
+                                        if (!entry.isValid())
                                         {
                                             ChatBlock.send(sender, "notValidBlockId", arg);
                                             continue;
@@ -1632,11 +1632,11 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (Helper.isTypeEntry(args[0]))
                             {
-                                BlockTypeEntry type = Helper.toTypeEntry(args[0]);
+                                BlockTypeEntry entry = new BlockTypeEntry(args[0]);
 
-                                if (type != null)
+                                if (!entry.isValid())
                                 {
-                                    if (!plugin.getCommunicationManager().showCounts(sender, type))
+                                    if (!plugin.getCommunicationManager().showCounts(sender, entry))
                                     {
                                         ChatBlock.send(sender, "notValidFieldType");
                                     }
@@ -1765,21 +1765,21 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (Helper.isTypeEntry(args[0]))
                             {
-                                BlockTypeEntry type = Helper.toTypeEntry(args[0]);
+                                BlockTypeEntry entry = new BlockTypeEntry(args[0]);
 
-                                if (type != null)
+                                if (!entry.isValid())
                                 {
-                                    int fields = plugin.getForceFieldManager().deleteFieldsOfType(type);
-                                    int ubs = plugin.getUnbreakableManager().deleteUnbreakablesOfType(type);
+                                    int fields = plugin.getForceFieldManager().deleteFieldsOfType(entry);
+                                    int ubs = plugin.getUnbreakableManager().deleteUnbreakablesOfType(entry);
 
                                     if (fields > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedFields", fields, Helper.getMaterialString(type.getTypeId()));
+                                        ChatBlock.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getTypeId()));
                                     }
 
                                     if (ubs > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedUnbreakables", ubs, Helper.getMaterialString(type.getTypeId()));
+                                        ChatBlock.send(sender, "deletedUnbreakables", ubs, Helper.getMaterialString(entry.getTypeId()));
                                     }
 
                                     if (ubs == 0 && fields == 0)
@@ -1819,15 +1819,15 @@ public final class CommandManager implements CommandExecutor
                             if (Helper.isTypeEntry(args[1]))
                             {
                                 String name = args[0];
-                                BlockTypeEntry type = Helper.toTypeEntry(args[1]);
+                                BlockTypeEntry entry = new BlockTypeEntry(args[1]);
 
-                                if (type != null)
+                                if (!entry.isValid())
                                 {
-                                    int fields = plugin.getForceFieldManager().deletePlayerFieldsOfType(name, type);
+                                    int fields = plugin.getForceFieldManager().deletePlayerFieldsOfType(name, entry);
 
                                     if (fields > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedFields", fields, Helper.getMaterialString(type.getTypeId()));
+                                        ChatBlock.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getTypeId()));
                                     }
                                     else
                                     {

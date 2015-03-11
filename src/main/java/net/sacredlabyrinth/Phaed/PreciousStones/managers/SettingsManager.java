@@ -66,8 +66,8 @@ public final class SettingsManager
     private List<BlockTypeEntry> bypassBlocks = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> unprotectableBlocks = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> hidingMaskBlocs = new ArrayList<BlockTypeEntry>();
-    private List<Integer> toolItems = new ArrayList<Integer>();
-    private List<Integer> repairableItems = new ArrayList<Integer>();
+    private List<BlockTypeEntry> toolItems = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> repairableItems = new ArrayList<BlockTypeEntry>();
     private List<String> allEntryGroups = new ArrayList<String>();
     private boolean logRollback;
     private boolean logTranslocation;
@@ -203,8 +203,8 @@ public final class SettingsManager
         bypassBlocks = Helper.toTypeEntries(loadStringList("bypass-blocks"));
         unprotectableBlocks = Helper.toTypeEntries(loadStringList("unprotectable-blocks"));
         hidingMaskBlocs = Helper.toTypeEntries(loadStringList("hiding-mask-blocks"));
-        toolItems = loadIntList("tool-items");
-        repairableItems = loadIntList("repairable-items");
+        toolItems = Helper.toTypeEntries(loadStringList("tool-items"));
+        repairableItems = Helper.toTypeEntries(loadStringList("repairable-items"));
 
         // ********************************** Log
 
@@ -390,9 +390,8 @@ public final class SettingsManager
     private BlockTypeEntry loadTypeEntry(String path)
     {
         String value = config.getString(path);
-
         cleanConfig.set(path, value);
-        return Helper.toTypeEntry(value);
+        return new BlockTypeEntry(value);
     }
 
     private List<Integer> loadIntList(String path)
@@ -696,23 +695,33 @@ public final class SettingsManager
     /**
      * Check if a block is one of the tool item types
      *
-     * @param typeId
+     * @param entry
      * @return
      */
-    public boolean isToolItemType(int typeId)
+    public boolean isToolItemType(BlockTypeEntry entry)
     {
-        return getToolItems().contains(typeId);
+        if (!entry.isValid())
+        {
+            return false;
+        }
+
+        return toolItems.contains(entry);
     }
 
     /**
      * Check if a item is one of the repairable item types
      *
-     * @param typeId
+     * @param entry
      * @return
      */
-    public boolean isRepairableItemType(int typeId)
+    public boolean isRepairableItemType(BlockTypeEntry entry)
     {
-        return repairableItems.contains(typeId);
+        if (!entry.isValid())
+        {
+            return false;
+        }
+
+        return repairableItems.contains(entry);
     }
 
     /**
@@ -946,22 +955,6 @@ public final class SettingsManager
     public List<BlockTypeEntry> getUnprotectableBlocks()
     {
         return Collections.unmodifiableList(unprotectableBlocks);
-    }
-
-    /**
-     * @return the toolItems
-     */
-    public List<Integer> getToolItems()
-    {
-        return Collections.unmodifiableList(toolItems);
-    }
-
-    /**
-     * @return the repairableItems
-     */
-    public List<Integer> getRepairableItems()
-    {
-        return Collections.unmodifiableList(repairableItems);
     }
 
     /**
@@ -1372,6 +1365,11 @@ public final class SettingsManager
 
     public boolean isFragileBlock(BlockTypeEntry entry)
     {
+        if (!entry.isValid())
+        {
+            return false;
+        }
+
         return fragileBlockSet.contains(entry.getTypeId());
     }
 

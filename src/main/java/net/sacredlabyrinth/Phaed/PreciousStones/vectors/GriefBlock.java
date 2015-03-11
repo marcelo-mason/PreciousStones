@@ -68,9 +68,9 @@ public class GriefBlock extends AbstractVec
     /**
      * @return the data
      */
-    public short getSubTypeId()
+    public byte getData()
     {
-        return type.getSubTypeId();
+        return type.getData();
     }
 
     /**
@@ -110,6 +110,6 @@ public class GriefBlock extends AbstractVec
 
     public String serialize()
     {
-        return getTypeId() + "|" + getSubTypeId() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
+        return getTypeId() + "|" + getData() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
     }
 }

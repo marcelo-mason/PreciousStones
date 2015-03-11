@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -67,23 +68,23 @@ public class FieldSettings
     private List<String> commandOnExit = new ArrayList<String>();
     private List<String> playerCommandOnEnter = new ArrayList<String>();
     private List<String> playerCommandOnExit = new ArrayList<String>();
-    private List<Integer> teleportIfHoldingItems = new ArrayList<Integer>();
-    private List<Integer> teleportIfNotHoldingItems = new ArrayList<Integer>();
-    private List<Integer> teleportIfHasItems = new ArrayList<Integer>();
-    private List<Integer> teleportIfNotHasItems = new ArrayList<Integer>();
+    private List<BlockTypeEntry> teleportIfHoldingItems = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> teleportIfNotHoldingItems = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> teleportIfHasItems = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> teleportIfNotHasItems = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> unusableItems = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> teleportIfWalkingOn = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> teleportIfNotWalkingOn = new ArrayList<BlockTypeEntry>();
-    private List<Integer> treeTypes = new ArrayList<Integer>();
-    private List<Integer> shrubTypes = new ArrayList<Integer>();
+    private List<BlockTypeEntry> treeTypes = new ArrayList<BlockTypeEntry>();
+    private List<BlockTypeEntry> shrubTypes = new ArrayList<BlockTypeEntry>();
     private List<String> creatureTypes = new ArrayList<String>();
-    private List<Integer> fertileBlocks = new ArrayList<Integer>();
+    private List<BlockTypeEntry> fertileBlocks = new ArrayList<BlockTypeEntry>();
     private List<Integer> limits = new ArrayList<Integer>();
     private List<BlockTypeEntry> surfaces = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> translocationBlacklist = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> preventPlaceBlacklist = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> preventDestroyBlacklist = new ArrayList<BlockTypeEntry>();
-    private List<Integer> preventUse = new ArrayList<Integer>();
+    private List<BlockTypeEntry> preventUse = new ArrayList<BlockTypeEntry>();
     private List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
     private List<String> allowedWorlds = new ArrayList<String>();
     private List<String> allowedOnlyInside = new ArrayList<String>();
@@ -93,7 +94,7 @@ public class FieldSettings
     private List<FieldFlag> reversedFlags = new ArrayList<FieldFlag>();
     private List<FieldFlag> alledflags = new ArrayList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
-    private List<Integer> allowGrief = new ArrayList<Integer>();
+    private List<BlockTypeEntry> allowGrief = new ArrayList<BlockTypeEntry>();
     private HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
     private List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();
     private List<String> allowedPlayers = new ArrayList<String>();
@@ -343,15 +344,15 @@ public class FieldSettings
         growTime = loadInt("grow-time");
         shrubDensity = loadInt("shrub-density");
         groundBlock = loadInt("ground-block");
-        preventUse = loadIntList("prevent-use");
+        preventUse = loadTypeEntries("prevent-use");
         confiscatedItems = loadTypeEntries("confiscate-items");
         allowedPlayers = loadStringList("always-allow-players");
         deniedPlayers = loadStringList("always-deny-players");
-        allowGrief = loadIntList("allow-grief");
-        treeTypes = loadIntList("tree-types");
-        shrubTypes = loadIntList("shrub-types");
+        allowGrief = loadTypeEntries("allow-grief");
+        treeTypes = loadTypeEntries("tree-types");
+        shrubTypes = loadTypeEntries("shrub-types");
         creatureTypes = loadStringList("creature-types");
-        fertileBlocks = loadIntList("fertile-blocks");
+        fertileBlocks = loadTypeEntries("fertile-blocks");
         allowedWorlds = loadStringList("allowed-worlds");
         creatureCount = loadInt("creature-count");
         limits = loadIntList("limits");
@@ -382,10 +383,10 @@ public class FieldSettings
         teleportMaxDistance = loadInt("teleport-max-distance");
         teleportIfWalkingOn = loadTypeEntries("teleport-if-walking-on");
         teleportIfNotWalkingOn = loadTypeEntries("teleport-if-not-walking-on");
-        teleportIfHoldingItems = loadIntList("teleport-if-holding-items");
-        teleportIfNotHoldingItems = loadIntList("teleport-if-not-holding-items");
-        teleportIfHasItems = loadIntList("teleport-if-has-items");
-        teleportIfNotHasItems = loadIntList("teleport-if-not-has-items");
+        teleportIfHoldingItems = loadTypeEntries("teleport-if-holding-items");
+        teleportIfNotHoldingItems = loadTypeEntries("teleport-if-not-holding-items");
+        teleportIfHasItems = loadTypeEntries("teleport-if-has-items");
+        teleportIfNotHasItems = loadTypeEntries("teleport-if-not-has-items");
         mustBeAbove = loadInt("must-be-above");
         mustBeBelow = loadInt("must-be-below");
         payToEnable = loadInt("pay-to-enable");
@@ -873,55 +874,75 @@ public class FieldSettings
     /**
      * Checks to see if a player should be teleported for holding this item
      *
-     * @param itemId
+     * @param entry
      * @return
      */
-    public boolean isTeleportHoldingItem(int itemId)
+    public boolean isTeleportHoldingItem(BlockTypeEntry entry)
     {
-        if (teleportIfHasItems.contains(0) && itemId > 0)
+        if (!entry.isValid())
         {
             return true;
         }
 
-        return teleportIfHoldingItems.contains(itemId);
+        if (teleportIfHasItems.contains(new BlockTypeEntry(0)) && entry.getTypeId() != 0)
+        {
+            return true;
+        }
+
+        return teleportIfHoldingItems.contains(entry);
     }
 
     /**
      * Checks to see if a player should be teleported for not holding this item
      *
-     * @param itemId
+     * @param entry
      * @return
      */
-    public boolean isTeleportNotHoldingItem(int itemId)
+    public boolean isTeleportNotHoldingItem(BlockTypeEntry entry)
     {
-        return teleportIfNotHoldingItems.contains(itemId);
+        if (!entry.isValid())
+        {
+            return true;
+        }
+
+        return teleportIfNotHoldingItems.contains(entry);
     }
 
     /**
      * Checks to see if a player should be teleported for having this item
      *
-     * @param itemId
+     * @param entry
      * @return
      */
-    public boolean isTeleportHasItem(int itemId)
+    public boolean isTeleportHasItem(BlockTypeEntry entry)
     {
-        if (teleportIfHasItems.contains(0) && itemId > 0)
+        if (!entry.isValid())
+        {
+            return false;
+        }
+
+        if (teleportIfHasItems.contains(new BlockTypeEntry(0)) && entry.getTypeId() != 0)
         {
             return true;
         }
 
-        return teleportIfHasItems.contains(itemId);
+        return teleportIfHasItems.contains(entry);
     }
 
     /**
      * Checks to see if a player should be teleported for not having this item
      *
-     * @param itemId
+     * @param entry
      * @return
      */
-    public boolean isTeleportHasNotItem(int itemId)
+    public boolean isTeleportHasNotItem(BlockTypeEntry entry)
     {
-        return teleportIfNotHasItems.contains(itemId);
+        if (!entry.isValid())
+        {
+            return false;
+        }
+
+        return teleportIfNotHasItems.contains(entry);
     }
 
     /**
@@ -949,13 +970,17 @@ public class FieldSettings
     /**
      * Whether a block type can be used in this field
      *
-     * @param type
+     * @param entry
      * @return
      */
-    public boolean canUse(int type)
+    public boolean canUse(BlockTypeEntry entry)
     {
-        return !preventUse.contains(type);
+        if (!entry.isValid())
+        {
+            return true;
+        }
 
+        return !preventUse.contains(entry);
     }
 
     /**
@@ -973,7 +998,7 @@ public class FieldSettings
 
             // otherwise match the type and data exactly
 
-            if (entry.getSubTypeId() == 0)
+            if (entry.getData() == 0)
             {
                 if (entry.getTypeId() == type)
                 {
@@ -982,7 +1007,7 @@ public class FieldSettings
             }
             else
             {
-                if (entry.getTypeId() == type && entry.getSubTypeId() == data)
+                if (entry.getTypeId() == type && entry.getData() == data)
                 {
                     return true;
                 }
@@ -1012,7 +1037,7 @@ public class FieldSettings
 
             // otherwise match the type and data exactly
 
-            if (entry.getSubTypeId() == 0)
+            if (entry.getData() == 0)
             {
                 if (entry.getTypeId() == type)
                 {
@@ -1021,7 +1046,7 @@ public class FieldSettings
             }
             else
             {
-                if (entry.getTypeId() == type && entry.getSubTypeId() == data)
+                if (entry.getTypeId() == type && entry.getData() == data)
                 {
                     return false;
                 }
@@ -1090,12 +1115,17 @@ public class FieldSettings
     /**
      * Whether a block type can be griefed in a grief revert field
      *
-     * @param type
+     * @param entry
      * @return
      */
-    public boolean canGrief(int type)
+    public boolean canGrief(BlockTypeEntry entry)
     {
-        return allowGrief.contains(type);
+        if (!entry.isValid())
+        {
+            return false;
+        }
+
+        return allowGrief.contains(entry);
     }
 
     /**
@@ -1180,9 +1210,9 @@ public class FieldSettings
     /**
      * @return the block data
      */
-    public short getData()
+    public byte getData()
     {
-        return type.getSubTypeId();
+        return type.getData();
     }
 
     /**
@@ -1325,14 +1355,14 @@ public class FieldSettings
         return repair;
     }
 
-    public List<Integer> getTreeTypes()
+    public List<BlockTypeEntry> getTreeTypes()
     {
-        return new ArrayList<Integer>(treeTypes);
+        return new ArrayList<BlockTypeEntry>(treeTypes);
     }
 
-    public List<Integer> getShrubTypes()
+    public List<BlockTypeEntry> getShrubTypes()
     {
-        return new ArrayList<Integer>(shrubTypes);
+        return new ArrayList<BlockTypeEntry>(shrubTypes);
     }
 
     public int getShrubDensity()
@@ -1350,9 +1380,14 @@ public class FieldSettings
         return growTime;
     }
 
-    public boolean isFertileType(int type)
+    public boolean isFertileType(BlockTypeEntry entry)
     {
-        return fertileBlocks.contains(type);
+        if (!entry.isValid())
+        {
+            return false;
+        }
+
+        return fertileBlocks.contains(entry);
     }
 
     public int getGroundBlock()

@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
@@ -170,7 +171,7 @@ public final class EntryManager
                                 ItemStack[] armors = player.getInventory().getArmorContents();
                                 for (ItemStack armor : armors)
                                 {
-                                    if (plugin.getSettingsManager().isRepairableItemType(armor.getTypeId()))
+                                    if (plugin.getSettingsManager().isRepairableItemType(new BlockTypeEntry(armor.getType())))
                                     {
                                         short dur = armor.getDurability();
                                         if (dur > 0)
@@ -193,7 +194,7 @@ public final class EntryManager
                                 {
                                     if (item != null)
                                     {
-                                        if (plugin.getSettingsManager().isRepairableItemType(item.getTypeId()))
+                                        if (plugin.getSettingsManager().isRepairableItemType(new BlockTypeEntry(item.getType())))
                                         {
                                             short dur = item.getDurability();
                                             if (dur > 0)

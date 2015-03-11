@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.*;
@@ -95,7 +96,7 @@ public final class ForesterManager
                     {
                         int type = world.getBlockTypeIdAt(vec.getX(), vec.getY(), vec.getZ());
 
-                        if (field.getSettings().isFertileType(type))
+                        if (field.getSettings().isFertileType(new BlockTypeEntry(type)))
                         {
                             Block fertile = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
                             fertile.setTypeId(field.getSettings().getGroundBlock());
@@ -212,7 +213,7 @@ public final class ForesterManager
     {
         Random r = new Random();
 
-        List<Integer> treeTypes = fs.getTreeTypes();
+        List<BlockTypeEntry> treeTypes = fs.getTreeTypes();
 
         if (treeTypes.isEmpty())
         {
@@ -220,7 +221,7 @@ public final class ForesterManager
         }
 
         int rand = r.nextInt(treeTypes.size());
-        int tree = treeTypes.get(rand);
+        int tree = treeTypes.get(rand).getTypeId();
 
         PreciousStones.debug("tree: " + tree);
 
@@ -260,11 +261,11 @@ public final class ForesterManager
     {
         Random r = new Random();
 
-        List<Integer> treeTypes = fs.getShrubTypes();
+        List<BlockTypeEntry> treeTypes = fs.getShrubTypes();
 
         int rand = r.nextInt(treeTypes.size());
 
-        switch (treeTypes.get(rand))
+        switch (treeTypes.get(rand).getTypeId())
         {
             case 0:
                 block.setTypeIdAndData(31, (byte) 0, false);

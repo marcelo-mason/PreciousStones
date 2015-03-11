@@ -629,24 +629,6 @@ public class Helper
     }
 
     /**
-     * Returns a type entry from a string
-     *
-     * @param string
-     * @return
-     */
-    public static BlockTypeEntry toTypeEntry(String string)
-    {
-        BlockTypeEntry entry = new BlockTypeEntry(string);
-
-        if (entry.isValid())
-        {
-            return entry;
-        }
-
-        return null;
-    }
-
-    /**
      * Returns a list of type entries from a string list
      *
      * @param rawList
@@ -658,7 +640,7 @@ public class Helper
 
         for (Object rawItem : rawList)
         {
-            BlockTypeEntry entry = Helper.toTypeEntry(rawItem.toString());
+            BlockTypeEntry entry = new BlockTypeEntry(rawItem.toString());
 
             if (entry.isValid())
             {
@@ -681,7 +663,7 @@ public class Helper
 
         for (String rawItem : rawList)
         {
-            BlockTypeEntry entry = Helper.toTypeEntry(rawItem);
+            BlockTypeEntry entry = new BlockTypeEntry(rawItem);
 
             if (entry.isValid())
             {

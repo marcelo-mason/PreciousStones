@@ -451,7 +451,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public short getData()
     {
-        return type.getSubTypeId();
+        return type.getData();
     }
 
     /**
@@ -2389,7 +2389,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             BlockTypeEntry maskType = findMaskType();
             Block block = getBlock();
             block.setTypeId(maskType.getTypeId());
-            block.setData((byte)maskType.getSubTypeId());
+            block.setData(maskType.getData());
 
             PreciousStones.getInstance().getStorageManager().offerField(this);
         }
