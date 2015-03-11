@@ -2736,7 +2736,10 @@ public class CommunicationManager
 
             BlockTypeEntry entry = new BlockTypeEntry(fs.getTypeId(), fs.getData());
 
-            cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), entry.toString(), fs.getRadius()) + customHeight + customVolume);
+            if (entry.isValid())
+            {
+                cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), entry.toString(), fs.getRadius()) + customHeight + customVolume);
+            }
         }
 
         if (cb.size() > 0)

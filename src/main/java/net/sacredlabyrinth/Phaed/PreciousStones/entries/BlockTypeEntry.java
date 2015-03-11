@@ -135,7 +135,7 @@ public class BlockTypeEntry
 
     public boolean isValid()
     {
-        return getTypeId() >= 0;
+        return info != null;
     }
 
     public String getFriendly()

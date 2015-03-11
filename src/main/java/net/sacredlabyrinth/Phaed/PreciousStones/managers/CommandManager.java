@@ -1391,7 +1391,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         BlockTypeEntry entry = Helper.toTypeEntry(arg);
 
-                                        if (entry == null || !entry.isValid())
+                                        if (entry == null)
                                         {
                                             ChatBlock.send(sender, "notValidBlockId", arg);
                                             continue;
@@ -1451,7 +1451,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         BlockTypeEntry entry = Helper.toTypeEntry(arg);
 
-                                        if (entry == null || !entry.isValid())
+                                        if (entry == null)
                                         {
                                             ChatBlock.send(sender, "notValidBlockId", arg);
                                             continue;
@@ -1565,7 +1565,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         BlockTypeEntry entry = Helper.toTypeEntry(arg);
 
-                                        if (entry == null || !entry.isValid())
+                                        if (entry == null)
                                         {
                                             ChatBlock.send(sender, "notValidBlockId", arg);
                                             continue;

@@ -495,30 +495,10 @@ public class FieldSettings
     {
         if (containsKey(flagStr))
         {
-            BlockTypeEntry value = null;
             Object typeStr = getValue(flagStr);
+            BlockTypeEntry value = new BlockTypeEntry(typeStr.toString());
 
-            if (Helper.isString(typeStr) && Helper.isTypeEntry((String) typeStr) && Helper.hasData(typeStr.toString()))
-            {
-                value = Helper.toTypeEntry(typeStr.toString());
-            }
-            else
-            {
-                if (Helper.isInteger(typeStr))
-                {
-                    value = new BlockTypeEntry((Integer) typeStr, ((byte) 0));
-                }
-                else if (Helper.isInteger(typeStr.toString()))
-                {
-                    value = new BlockTypeEntry(Integer.parseInt(typeStr.toString()), ((byte) 0));
-                }
-                else
-                {
-                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
-                }
-            }
-
-            if (value != null)
+            if (value.isValid())
             {
                 loadFlags(getKey(flagStr));
                 PreciousStones.debug("   %s: %s", flagStr, value);

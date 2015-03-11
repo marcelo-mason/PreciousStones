@@ -391,13 +391,8 @@ public final class SettingsManager
     {
         String value = config.getString(path);
 
-        if (Helper.isTypeEntry(value))
-        {
-            cleanConfig.set(path, value);
-            return Helper.toTypeEntry(value);
-        }
-
-        return null;
+        cleanConfig.set(path, value);
+        return Helper.toTypeEntry(value);
     }
 
     private List<Integer> loadIntList(String path)

@@ -315,12 +315,9 @@ public class SignHelper
     {
         Pattern p = Pattern.compile("\\((.*?)\\)", Pattern.DOTALL);
         Matcher m = p.matcher(line);
-        while (m.find())
+        if (m.find())
         {
-            if (Helper.isTypeEntry(m.group(1)))
-            {
-                return new BlockTypeEntry(m.group(1));
-            }
+            return Helper.toTypeEntry(m.group(1));
         }
         return null;
     }

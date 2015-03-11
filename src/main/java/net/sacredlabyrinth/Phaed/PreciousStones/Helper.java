@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import net.milkbowl.vault.item.ItemInfo;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -632,25 +631,19 @@ public class Helper
     /**
      * Returns a type entry from a string
      *
-     * @param rawItem
+     * @param string
      * @return
      */
-    public static BlockTypeEntry toTypeEntry(String rawItem)
+    public static BlockTypeEntry toTypeEntry(String string)
     {
-        if (hasData(rawItem))
-        {
-            String[] split = rawItem.split("[:]");
-            return new BlockTypeEntry(Integer.parseInt(split[0]), Byte.parseByte(split[1]));
-        }
-        else
-        {
-            if (!isInteger(rawItem))
-            {
-                return null;
-            }
+        BlockTypeEntry entry = new BlockTypeEntry(string);
 
-            return new BlockTypeEntry(Integer.parseInt(rawItem), (byte) 0);
+        if (entry.isValid())
+        {
+            return entry;
         }
+
+        return null;
     }
 
     /**
@@ -665,11 +658,11 @@ public class Helper
 
         for (Object rawItem : rawList)
         {
-            BlockTypeEntry type = Helper.toTypeEntry(rawItem.toString());
+            BlockTypeEntry entry = Helper.toTypeEntry(rawItem.toString());
 
-            if (type != null)
+            if (entry.isValid())
             {
-                types.add(type);
+                types.add(entry);
             }
         }
 
@@ -688,11 +681,11 @@ public class Helper
 
         for (String rawItem : rawList)
         {
-            BlockTypeEntry type = Helper.toTypeEntry(rawItem);
+            BlockTypeEntry entry = Helper.toTypeEntry(rawItem);
 
-            if (type != null)
+            if (entry.isValid())
             {
-                types.add(type);
+                types.add(entry);
             }
         }
 
