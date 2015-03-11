@@ -2992,11 +2992,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                 if (entry.getFieldName().isEmpty())
                 {
-                    ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", entry.getAmount(), entry.getItem().getFriendly(), entry.getPlayer());
+                    ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", entry.getAmount(), entry.getItem(), entry.getPlayer());
                 }
                 else
                 {
-                    ChatBlock.send(player, "fieldSignItemPaymentReceived", entry.getAmount(), entry.getItem().getFriendly(), entry.getPlayer(), entry.getFieldName());
+                    ChatBlock.send(player, "fieldSignItemPaymentReceived", entry.getAmount(), entry.getItem(), entry.getPlayer(), entry.getFieldName());
                 }
             }
             else
@@ -3032,11 +3032,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (purchase.getFieldName().isEmpty())
             {
-                ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", purchase.getAmount(), purchase.getItem().getFriendly(), purchase.getPlayer());
+                ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", purchase.getAmount(), purchase.getItem(), purchase.getPlayer());
             }
             else
             {
-                ChatBlock.send(player, "fieldSignItemPaymentReceived", purchase.getAmount(), purchase.getItem().getFriendly(), purchase.getPlayer(), purchase.getFieldName());
+                ChatBlock.send(player, "fieldSignItemPaymentReceived", purchase.getAmount(), purchase.getItem(), purchase.getPlayer(), purchase.getFieldName());
             }
         }
         else

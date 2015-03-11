@@ -107,7 +107,7 @@ public class CommunicationManager
     {
         if (plugin.getSettingsManager().isLogRentsAndPurchases())
         {
-            PreciousStones.log("logPayment", renter, s.getPeriod(), owner, s.getField().getType(), s.getPrice(), (s.getItem() != null) ? s.getItem().getFriendly() : "", s.getField().getCoords());
+            PreciousStones.log("logPayment", renter, s.getPeriod(), owner, s.getField().getType(), s.getPrice(), (s.getItem() != null) ? s.getItem(): "", s.getField().getCoords());
         }
     }
 
@@ -115,7 +115,7 @@ public class CommunicationManager
     {
         if (plugin.getSettingsManager().isLogRentsAndPurchases())
         {
-            PreciousStones.log("logPaymentCollect", owner, s.getPrice(), (s.getItem() != null) ? s.getItem().getFriendly() : "", renter, s.getField().getCoords());
+            PreciousStones.log("logPaymentCollect", owner, s.getPrice(), (s.getItem() != null) ? s.getItem() : "", renter, s.getField().getCoords());
         }
     }
 
@@ -123,7 +123,7 @@ public class CommunicationManager
     {
         if (plugin.getSettingsManager().isLogRentsAndPurchases())
         {
-            PreciousStones.log("logPurchase", renter, owner, s.getField().getType(), s.getPrice(), (s.getItem() != null) ? s.getItem().getFriendly() : "", s.getField().getCoords());
+            PreciousStones.log("logPurchase", renter, owner, s.getField().getType(), s.getPrice(), (s.getItem() != null) ? s.getItem() : "", s.getField().getCoords());
         }
     }
 
@@ -131,7 +131,7 @@ public class CommunicationManager
     {
         if (plugin.getSettingsManager().isLogRentsAndPurchases())
         {
-            PreciousStones.log("logPurchaseCollect", owner, s.getPrice(), (s.getItem() != null) ? s.getItem().getFriendly() : "", renter, s.getField().getCoords());
+            PreciousStones.log("logPurchaseCollect", owner, s.getPrice(), (s.getItem() != null) ? s.getItem(): "", renter, s.getField().getCoords());
         }
     }
 
@@ -1745,7 +1745,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnFieldPlaceUnprotectableTouching", Helper.friendlyBlockType(unprotectableblock.getType().toString()));
+            ChatBlock.send(player, "warnFieldPlaceUnprotectableTouching", Helper.friendlyBlockType(unprotectableblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -1783,7 +1783,7 @@ public class CommunicationManager
     {
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnUnbreakablePlaceUnprotectableTouching", Helper.friendlyBlockType(unprotectableblock.getType().toString()));
+            ChatBlock.send(player, "warnUnbreakablePlaceUnprotectableTouching", Helper.friendlyBlockType(unprotectableblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -1822,7 +1822,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnCannotProtect", Helper.friendlyBlockType(touchingblock.getType().toString()));
+            ChatBlock.send(player, "warnCannotProtect", Helper.friendlyBlockType(touchingblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -1868,7 +1868,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnCannotProtect", Helper.friendlyBlockType(touchingblock.getType().toString()));
+            ChatBlock.send(player, "warnCannotProtect", Helper.friendlyBlockType(touchingblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -1913,7 +1913,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnCannotProtectInside", Helper.friendlyBlockType(unprotectableblock.getType().toString()), fs.getTitle());
+            ChatBlock.send(player, "warnCannotProtectInside", Helper.friendlyBlockType(unprotectableblock.getType().getId()), fs.getTitle());
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -1958,7 +1958,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnPlaceFieldInUnprotectable", fs.getTitle(), Helper.friendlyBlockType(unprotectableblock.getType().toString()));
+            ChatBlock.send(player, "warnPlaceFieldInUnprotectable", fs.getTitle(), Helper.friendlyBlockType(unprotectableblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -1996,7 +1996,7 @@ public class CommunicationManager
     {
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnBypassPlacedUnprotectableInUnbreakable", Helper.friendlyBlockType(unprotectableblock.getType().toString()), Helper.friendlyBlockType(protectionblock.getType().toString()));
+            ChatBlock.send(player, "warnBypassPlacedUnprotectableInUnbreakable", Helper.friendlyBlockType(unprotectableblock.getType().getId()), Helper.friendlyBlockType(protectionblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -2041,7 +2041,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnBypassPlacedUnprotectableInField", Helper.friendlyBlockType(unprotectableblock.getType().toString()), Helper.friendlyBlockType(protectionblock.getType().toString()));
+            ChatBlock.send(player, "warnBypassPlacedUnprotectableInField", Helper.friendlyBlockType(unprotectableblock.getType().getId()), Helper.friendlyBlockType(protectionblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -2080,7 +2080,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnUnprotectableBypassProtected", Helper.friendlyBlockType(unprotectableblock.getType().toString()));
+            ChatBlock.send(player, "warnUnprotectableBypassProtected", Helper.friendlyBlockType(unprotectableblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -2125,7 +2125,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnUnprotectableBypassPlaced", Helper.friendlyBlockType(unprotectableblock.getType().toString()), fs.getTitle());
+            ChatBlock.send(player, "warnUnprotectableBypassPlaced", Helper.friendlyBlockType(unprotectableblock.getType().getId()), fs.getTitle());
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -2170,7 +2170,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player))
         {
-            ChatBlock.send(player, "warnFieldBypassPlacedUnprotectable", fs.getTitle(), Helper.friendlyBlockType(unprotectableblock.getType().toString()));
+            ChatBlock.send(player, "warnFieldBypassPlacedUnprotectable", fs.getTitle(), Helper.friendlyBlockType(unprotectableblock.getType().getId()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
@@ -2738,7 +2738,7 @@ public class CommunicationManager
 
             if (entry.isValid())
             {
-                cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), entry.toString(), fs.getRadius()) + customHeight + customVolume);
+                cb.addRow(ChatBlock.format("headerConfiguredFields", fs.getTitle(), entry, fs.getRadius()) + customHeight + customVolume);
             }
         }
 
@@ -2885,7 +2885,7 @@ public class CommunicationManager
 
             if (plugin.getSettingsManager().haveLimits())
             {
-                cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), "{yellow} " + count, ChatColor.WHITE + " " + strLimit);
+                cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), "{yellow} " + count, color + " " + strLimit);
             }
             else
             {

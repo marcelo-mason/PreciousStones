@@ -148,7 +148,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    String details = Helper.friendlyBlockType(type) + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
+                    String details = type + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
 
                     plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_bucketEmpty"), details, 1));
                 }
@@ -329,6 +329,6 @@ public class SnitchManager
             return (new BlockTypeEntry(block).toString()) + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
         }
 
-        return Helper.friendlyBlockType(block.getType().toString()) + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
+        return new BlockTypeEntry(block).toString() + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
     }
 }

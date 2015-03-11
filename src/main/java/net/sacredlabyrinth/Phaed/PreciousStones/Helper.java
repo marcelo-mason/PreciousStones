@@ -277,16 +277,16 @@ public class Helper
             return typeId + "";
         }
 
-        return friendlyBlockType(Material.getMaterial(typeId).toString());
+        return MaterialName.getIDName(Material.getMaterial(typeId));
     }
 
     /**
-     * Convert block type names to friendly format
+     * Convert names to friendly format
      *
      * @param type
      * @return
      */
-    public static String friendlyBlockType(String type)
+    public static String friendlyName(String type)
     {
         String out = "";
 

@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class BlockTypeEntry
 {
-    private final int typeId;
+    private final Material material;
     private byte data = 0;
 
     /**
@@ -22,7 +22,7 @@ public class BlockTypeEntry
      */
     public BlockTypeEntry(Block block)
     {
-        this.typeId = block.getTypeId();
+        this.material = block.getType();
         this.data = block.getData();
     }
 
@@ -31,7 +31,7 @@ public class BlockTypeEntry
      */
     public BlockTypeEntry(Material material)
     {
-        this.typeId = material.getId();
+        this.material = material;
     }
 
     public BlockTypeEntry(String string)
@@ -41,7 +41,7 @@ public class BlockTypeEntry
         Matcher matcher = pattern.matcher(string);
         if (matcher.find())
         {
-            this.typeId = Integer.parseInt(matcher.group(1));
+            this.material = Material.getMaterial(Integer.parseInt(matcher.group(1)));
             return;
         }
 
@@ -51,7 +51,7 @@ public class BlockTypeEntry
         matcher = pattern.matcher(string);
         if (matcher.find())
         {
-            this.typeId = Integer.parseInt(matcher.group(1));
+            this.material = Material.getMaterial(Integer.parseInt(matcher.group(1)));
             this.data = Byte.parseByte(matcher.group(2));
             return;
         }
@@ -63,25 +63,25 @@ public class BlockTypeEntry
         if (matcher.find())
         {
             String name = matcher.group(1);
-            Material material = MaterialName.getBlockMaterial(name);
+            Material m = MaterialName.getBlockMaterial(name);
 
-            if (material == null)
+            if (m == null)
             {
-                material = MaterialName.getItemMaterial(name);
+                m = MaterialName.getItemMaterial(name);
             }
 
-            if (material != null)
+            if (m != null)
             {
-                this.typeId = material.getId();
+                this.material = m;
             }
             else
             {
-                this.typeId = -1;
+                this.material = null;
             }
         }
         else
         {
-            this.typeId = -1;
+            this.material = null;
         }
     }
 
@@ -90,7 +90,7 @@ public class BlockTypeEntry
      */
     public BlockTypeEntry(BlockState block)
     {
-        this.typeId = block.getTypeId();
+        this.material = block.getType();
         this.data = block.getRawData();
     }
 
@@ -100,7 +100,7 @@ public class BlockTypeEntry
      */
     public BlockTypeEntry(int typeId, byte data)
     {
-        this.typeId = typeId;
+        this.material = Material.getMaterial(typeId);
         this.data = data;
     }
 
@@ -109,7 +109,7 @@ public class BlockTypeEntry
      */
     public BlockTypeEntry(int typeId)
     {
-        this.typeId = typeId;
+        this.material = Material.getMaterial(typeId);
     }
 
     /**
@@ -117,7 +117,7 @@ public class BlockTypeEntry
      */
     public int getTypeId()
     {
-        return typeId;
+        return this.material.getId();
     }
 
     /**
@@ -182,10 +182,10 @@ public class BlockTypeEntry
     {
         if (getData() == 0)
         {
-            return getTypeId() + "";
+            return MaterialName.getIDName(material) + "";
         }
 
-        return getTypeId() + ":" + getData();
+        return MaterialName.getIDName(material) + ":" + getData();
     }
 
     public void setData(byte data)
@@ -195,12 +195,7 @@ public class BlockTypeEntry
 
     public boolean isValid()
     {
-        return getTypeId() >= 0;
-    }
-
-    public String getFriendly()
-    {
-        return Helper.friendlyBlockType(getTypeId());
+        return material != null;
     }
 }
 

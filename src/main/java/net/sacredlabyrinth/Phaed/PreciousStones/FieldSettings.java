@@ -1067,7 +1067,7 @@ public class FieldSettings
 
         for (PotionEffectType potion : potions.keySet())
         {
-            out += Helper.friendlyBlockType(potion.getName()) + ", ";
+            out += Helper.friendlyName(potion.getName()) + ", ";
         }
 
         return Helper.stripTrailing(out, ", ");
@@ -1084,7 +1084,7 @@ public class FieldSettings
 
         for (PotionEffectType potion : neutralizePotions)
         {
-            out += Helper.friendlyBlockType(potion.getName()) + ", ";
+            out += Helper.friendlyName(potion.getName()) + ", ";
         }
 
         return Helper.stripTrailing(out, ", ");
@@ -1555,7 +1555,7 @@ public class FieldSettings
 
         for (BlockTypeEntry entry : surfaces)
         {
-            out += entry.getFriendly() + ", ";
+            out += entry + ", ";
         }
 
         return Helper.stripTrailing(out, ", ");
