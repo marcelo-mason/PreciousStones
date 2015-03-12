@@ -7,10 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.DoubleChest;
+import org.bukkit.block.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
@@ -1764,13 +1761,13 @@ public class PSBlockListener implements Listener
                     location = ((Horse) holder).getLocation();
                 }
             }
-            else if (holder instanceof Entity)
-            {
-                location = ((Entity) holder).getLocation();
-            }
             else if (holder instanceof DoubleChest)
             {
                 location = ((DoubleChest) holder).getLocation();
+            }
+            else if (holder instanceof Chest)
+            {
+                location = ((Chest) holder).getLocation();
             }
             else if (holder instanceof BlockState)
             {
@@ -1779,6 +1776,10 @@ public class PSBlockListener implements Listener
             else if (holder instanceof Block)
             {
                 location = ((Block) holder).getLocation();
+            }
+            else if (holder instanceof Entity)
+            {
+                location = ((Entity) holder).getLocation();
             }
             else
             {
