@@ -50,8 +50,8 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <!--<outputDirectory>${basedir}/out/</outputDirectory>-->
-                    <outputDirectory>/home/phaed/Minecraft/Server/plugins/</outputDirectory>
+                    <outputDirectory>${basedir}/out/</outputDirectory>
+                    <!--<outputDirectory>/home/phaed/Minecraft/Server/plugins/</outputDirectory>-->
                 </configuration>
             </plugin>
 
@@ -152,7 +152,7 @@
         <dependency>
             <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
             <artifactId>SimpleClans</artifactId>
-            <version>Legacy</version>
+            <version>2.5.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

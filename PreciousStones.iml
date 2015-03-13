@@ -39,9 +39,8 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.trc202.CombatTag:CombatTag:6.2.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.griefcraft:LWC:4.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yi.acru.bukkit:Lockette:1.7.12" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sacredlabyrinth.phaed.simpleclans:SimpleClans:Legacy" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sacredlabyrinth.phaed.simpleclans:SimpleClans:2.5.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.getspout:spoutplugin:dev-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: n.mDev.MiracleM4n.mChatSuite:mChatSuite:1.4.5-R0.1.9-Unknown" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.platymuus:bukkit-permissions:2.3" level="project" />
     <orderEntry type="library" name="Maven: org.mcstats:metrics:1.1" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.1" level="project" />
