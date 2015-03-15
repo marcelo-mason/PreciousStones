@@ -216,6 +216,8 @@ permissions:
     description: Can use /ps reset
   preciousstones.admin.isadmin:
     description: Can used internally to detect admins
+  preciousstones.admin.migrate:
+    description: Can migrate all fields from one to another
   preciousstones.admin.counts:
     description: Gives you the counts of pstones each player hass
   preciousstones.admin.locations:
@@ -402,6 +404,7 @@ permissions:
       preciousstones.admin.disableall: true
       preciousstones.admin.hideall: true
       preciousstones.admin.rent: true
+      preciousstones.admin.migrate: true
   preciousstones.override.*:
     description: These players will receive no warnings or notifications
     default: false

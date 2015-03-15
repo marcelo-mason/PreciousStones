@@ -2386,6 +2386,18 @@ public final class CommandManager implements CommandExecutor
                         plugin.getStorageManager().loadWorldData();
                         return true;
                     }
+                    else if (cmd.equals(ChatBlock.format("commandMigrate")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.migrate"))
+                    {
+                        if (args.length == 2)
+                        {
+                            String oldUsername = args[0];
+                            String newUsername = args[1];
+
+                            PreciousStones.getInstance().getStorageManager().migrate(oldUsername, newUsername);
+                            ChatBlock.send(sender, "migrateDone");
+                            return true;
+                        }
+                    }
                     else if (cmd.equals(ChatBlock.format("commandBypass")) && plugin.getPermissionsManager().has(player, "preciousstones.bypass.toggle"))
                     {
                         PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());

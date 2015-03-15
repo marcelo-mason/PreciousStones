@@ -874,7 +874,6 @@ public class StorageManager
         String query = "SELECT player_name FROM `pstone_players` WHERE uuid = '" + player.getUniqueId().toString() + "';";
         ResultSet res = core.select(query);
 
-        String updateQuery;
 
         if (res != null)
         {
@@ -884,22 +883,11 @@ public class StorageManager
                 {
                     try
                     {
-                        String nameOnDatabase = res.getString("player_name");
+                        String oldUsername = res.getString("player_name");
 
-                        if (!nameOnDatabase.equals(player.getName()))
+                        if (!oldUsername.equals(player.getName()))
                         {
-                            PreciousStones.getInstance().getPlayerManager().migrateUsername(nameOnDatabase, player.getName());
-                            PreciousStones.getInstance().getForceFieldManager().migrateUsername(nameOnDatabase, player.getName());
-                            PreciousStones.getInstance().getUnbreakableManager().migrateUsername(nameOnDatabase, player.getName());
 
-                            updateQuery = "UPDATE `pstone_storedblocks` SET player_name = '" + player.getName() + "' WHERE player_name = '" + nameOnDatabase + "';";
-                            core.execute(updateQuery);
-
-                            updateQuery = "UPDATE `pstone_translocations` SET player_name = '" + player.getName() + "' WHERE player_name = '" + nameOnDatabase + "';";
-                            core.execute(updateQuery);
-
-                            PreciousStones.log("[Username Changed] From: " + nameOnDatabase + " To: " + nameOnDatabase + " UUID: " + player.getUniqueId().toString());
-                            ChatBlock.send(player, "usernameChanged");
                         }
                     }
                     catch (Exception ex)
@@ -913,6 +901,29 @@ public class StorageManager
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
             }
+        }
+    }
+
+    public void migrate(String oldUsername, String newUsername)
+    {
+        PreciousStones.getInstance().getPlayerManager().migrateUsername(oldUsername, newUsername);
+        PreciousStones.getInstance().getForceFieldManager().migrateUsername(oldUsername, newUsername);
+        PreciousStones.getInstance().getUnbreakableManager().migrateUsername(oldUsername, newUsername);
+
+        String updateQuery;
+        updateQuery = "UPDATE `pstone_storedblocks` SET player_name = '" + newUsername + "' WHERE player_name = '" + oldUsername + "';";
+        core.execute(updateQuery);
+
+        updateQuery = "UPDATE `pstone_translocations` SET player_name = '" + newUsername + "' WHERE player_name = '" + oldUsername + "';";
+        core.execute(updateQuery);
+
+        PreciousStones.log("[Username Changed] From: " + oldUsername + " To: " + oldUsername);
+
+        Player player = PreciousStones.getInstance().getServer().getPlayerExact(newUsername);
+
+        if (player != null)
+        {
+            ChatBlock.send(player, "usernameChanged");
         }
     }
 
