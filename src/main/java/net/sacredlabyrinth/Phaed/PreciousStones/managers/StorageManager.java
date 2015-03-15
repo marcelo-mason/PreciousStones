@@ -887,7 +887,7 @@ public class StorageManager
 
                         if (!oldUsername.equals(player.getName()))
                         {
-
+                            migrate(oldUsername, player.getName());
                         }
                     }
                     catch (Exception ex)
