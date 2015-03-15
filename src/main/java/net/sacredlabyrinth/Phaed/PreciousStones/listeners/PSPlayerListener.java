@@ -89,12 +89,12 @@ public class PSPlayerListener implements Listener
         final Player player = event.getPlayer();
         final String playerName = event.getPlayer().getName();
 
+        plugin.getPlayerManager().playerLogin(playerName);
         plugin.getStorageManager().findUUIDMismatch(player);
+        plugin.getStorageManager().offerPlayer(playerName);
 
         reevaluateEnteredFields(player);
 
-        plugin.getPlayerManager().playerLogin(playerName);
-        plugin.getStorageManager().offerPlayer(playerName);
         plugin.getForceFieldManager().enableFieldsOnLogon(playerName);
         plugin.getForceFieldManager().removeFieldsIfNoPermission(playerName);
 

@@ -2394,6 +2394,7 @@ public final class CommandManager implements CommandExecutor
                             String newUsername = args[1];
 
                             PreciousStones.getInstance().getStorageManager().migrate(oldUsername, newUsername);
+                            plugin.getStorageManager().offerPlayer(newUsername);
                             ChatBlock.send(sender, "migrateDone");
                             return true;
                         }

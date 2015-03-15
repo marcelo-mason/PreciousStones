@@ -111,7 +111,6 @@ public class StorageManager
                     PreciousStones.log("Creating table: pstone_players");
 
                     core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT default NULL, PRIMARY KEY  (`player_name`));");
-                    touchAllPlayers();
                 }
 
                 if (!core.existsTable("pstone_snitches"))
@@ -181,7 +180,6 @@ public class StorageManager
                     PreciousStones.log("Creating table: pstone_players");
 
                     core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT default NULL, PRIMARY KEY (`player_name`));");
-                    touchAllPlayers();
                 }
 
                 if (!core.existsTable("pstone_snitches"))
@@ -235,15 +233,10 @@ public class StorageManager
     {
         String query;
 
-        if (!core.existsColumn("pstone_players", "uuid"))
-        {
-            query = "ALTER TABLE pstone_players ADD uuid VARCHAR( 255 ) NULL DEFAULT NULL;";
-            core.execute(query);
-            query = "ALTER TABLE pstone_players ADD UNIQUE (uuid);";
-            core.execute(query);
+        query = "ALTER TABLE `pstone_players` ADD `uuid` VARCHAR( 255 ) DEFAULT NULL;";
+        core.execute(query);
 
-            PreciousStones.log("Added UUID modification to database");
-        }
+        PreciousStones.log("Added UUID modification to database");
     }
 
     public void addIndexes()
@@ -258,7 +251,7 @@ public class StorageManager
             query = "ALTER TABLE `pstone_fields` ADD INDEX `indx_field_owner` (`owner`);";
             core.execute(query);
 
-            query = "ALTER TABLE `pstone_players` ADD INDEX `indx_players_uuid` (`uuid`);";
+            query = "ALTER TABLE `pstone_players` ADD CONSTRAINT `unq_uuid` (uuid);";
             core.execute(query);
 
             query = "ALTER TABLE `pstone_cuboids` ADD INDEX `indx_cuboids_owner` (`owner`);";
@@ -278,19 +271,19 @@ public class StorageManager
         }
         else
         {
-            query = "CREATE UNIQUE INDEX `indx_field_owner` ON `pstone_fields` (`owner`);";
+            query = "CREATE INDEX IF NOT EXISTS `indx_field_owner` ON `pstone_fields` (`owner`);";
             core.execute(query);
 
-            query = "CREATE UNIQUE INDEX `indx_players_uuid` ON `pstone_players` (`uuid`);";
+            query = "CREATE UNIQUE INDEX IF NOT EXISTS `indx_players_uuid` ON `pstone_players` (`uuid`);";
             core.execute(query);
 
-            query = "CREATE UNIQUE INDEX `indx_cuboids_owner` ON `pstone_cuboids` (`owner`);";
+            query = "CREATE INDEX IF NOT EXISTS `indx_cuboids_owner` ON `pstone_cuboids` (`owner`);";
             core.execute(query);
 
-            query = "CREATE UNIQUE INDEX `indx_cuboids_parent` ON `pstone_cuboids` (`parent`);";
+            query = "CREATE INDEX IF NOT EXISTS `indx_cuboids_parent` ON `pstone_cuboids` (`parent`);";
             core.execute(query);
 
-            query = "CREATE UNIQUE INDEX `indx_unbreakables_owner` ON `pstone_unbreakables` (`owner`);";
+            query = "CREATE INDEX IF NOT EXISTS `indx_unbreakables_owner` ON `pstone_unbreakables` (`owner`);";
             core.execute(query);
         }
 
@@ -428,12 +421,8 @@ public class StorageManager
         {
             fields = getFields(world);
             fieldCount = fields.size();
-            PreciousStones.debug("pulled", fieldCount, "fields in", world);
-
             Collection<Field> cuboids = getCuboidFields(world);
             cuboidCount = cuboids.size();
-            PreciousStones.debug("pulled", fieldCount, "cuboids in", world);
-
             fields.addAll(cuboids);
         }
 
@@ -561,7 +550,6 @@ public class StorageManager
         synchronized (this)
         {
             unbreakables = getUnbreakables(world);
-            PreciousStones.debug("pulled", unbreakables.size(), "unbreakables in", world);
         }
 
         for (Unbreakable ub : unbreakables)
@@ -928,7 +916,6 @@ public class StorageManager
         String query = "SELECT player_name FROM `pstone_players` WHERE uuid = '" + player.getUniqueId().toString() + "';";
         ResultSet res = core.select(query);
 
-
         if (res != null)
         {
             try
@@ -1043,6 +1030,7 @@ public class StorageManager
                         }
 
                         PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(name);
+                        data.setFlags(flags);
 
                         if (uuid != null)
                         {
@@ -1055,10 +1043,9 @@ public class StorageManager
                             {
                                 data.setOnlineUUID(pulledUUID);
                                 PreciousStones.log("[Online UUID Found] Player: " + name + " UUID: " + pulledUUID.toString());
+                                PreciousStones.getInstance().getStorageManager().updatePlayerUUID(name, pulledUUID);
                             }
                         }
-
-                        data.setFlags(flags);
                     }
                     catch (Exception ex)
                     {
@@ -1474,8 +1461,8 @@ public class StorageManager
 
         if (plugin.getSettingsManager().isUseMysql())
         {
-            String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
-            String values = "VALUES ( '" + playerName + "', " + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "') ";
+            String query = "INSERT INTO `pstone_players` (`player_name`,  `uuid`,  `last_seen`, `flags`) ";
+            String values = "VALUES ( '" + playerName + "', '" + data.getOnlineUUID() + "', " + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "') ";
             String update = "ON DUPLICATE KEY UPDATE last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "'";
 
             synchronized (this)
@@ -1485,8 +1472,8 @@ public class StorageManager
         }
         else
         {
-            String query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
-            String values = "VALUES ( '" + playerName + "'," + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "');";
+            String query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `uuid`,  `last_seen`, `flags`) ";
+            String values = "VALUES ( '" + playerName + "', '" + data.getOnlineUUID() + "', " + time + ",'" + Helper.escapeQuotes(data.getFlags()) + "');";
             String update = "UPDATE `pstone_players` SET last_seen = " + time + ", flags = '" + Helper.escapeQuotes(data.getFlags()) + "' WHERE player_name = '" + playerName + "';";
 
             synchronized (this)
@@ -1496,45 +1483,18 @@ public class StorageManager
         }
     }
 
-    private void touchAllPlayers()
+    /**
+     * Update the player's uuid
+     *
+     * @param playerName
+     */
+    public void updatePlayerUUID(String playerName, UUID uuid)
     {
-        long time = (new DateTime()).getMillis();
+        String update = "UPDATE `pstone_players` SET `uuid` = '" + uuid.toString() + "' WHERE `player_name` = '" + playerName + "';";
 
-        if (plugin.getSettingsManager().isUseMysql())
+        synchronized (this)
         {
-            String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
-            String values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_fields ";
-
-            synchronized (this)
-            {
-                core.insert(query + values);
-            }
-
-            query = "INSERT IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
-            values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_unbreakables ";
-
-            synchronized (this)
-            {
-                core.insert(query + values);
-            }
-        }
-        else
-        {
-            String query = "INSERT INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
-            String values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_fields ";
-
-            synchronized (this)
-            {
-                core.insert(query + values);
-            }
-
-            query = "INSERT OR IGNORE INTO `pstone_players` ( `player_name`,  `last_seen`, `flags`) ";
-            values = "SELECT DISTINCT `owner`, " + time + " as last_seen, '' as flags FROM pstone_unbreakables ";
-
-            synchronized (this)
-            {
-                core.insert(query + values);
-            }
+            core.update(update);
         }
     }
 

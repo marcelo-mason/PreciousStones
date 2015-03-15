@@ -55,12 +55,6 @@ public class PlayerManager
         if (data == null)
         {
             data = new PlayerEntry();
-            UUID pulledUUID = UUIDMigration.findPlayerUUID(playerName);
-            if(pulledUUID != null)
-            {
-                data.setOnlineUUID(pulledUUID);
-                PreciousStones.log("[Online UUID Found] Player: " + playerName + " UUID: " + pulledUUID.toString());
-            }
             data.setName(playerName);
             players.put(playerName.toLowerCase(), data);
         }
@@ -69,14 +63,29 @@ public class PlayerManager
     }
 
     /**
-     * Set player as online
+     * Player entry operations to do when player logs in
      *
      * @param playerName
      */
     public void playerLogin(String playerName)
     {
+        //set online
+
         PlayerEntry data = getPlayerEntry(playerName);
         data.setOnline(true);
+
+        // find uuid if missing
+
+        if (data.getOnlineUUID() == null)
+        {
+            UUID pulledUUID = UUIDMigration.findPlayerUUID(playerName);
+            if (pulledUUID != null)
+            {
+                data.setOnlineUUID(pulledUUID);
+                PreciousStones.log("[Online UUID Found] Player: " + playerName + " UUID: " + pulledUUID.toString());
+                PreciousStones.getInstance().getStorageManager().updatePlayerUUID(playerName, pulledUUID);
+            }
+        }
     }
 
     /**
@@ -198,7 +207,5 @@ public class PlayerManager
 
         players.remove(oldName.toLowerCase());
         players.put(newName.toLowerCase(), data);
-
-        plugin.getStorageManager().offerPlayer(newName);
     }
 }
