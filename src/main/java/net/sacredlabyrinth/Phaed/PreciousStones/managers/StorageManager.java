@@ -241,6 +241,8 @@ public class StorageManager
             core.execute(query);
             query = "ALTER TABLE pstone_players ADD UNIQUE (uuid);";
             core.execute(query);
+
+            PreciousStones.log("Added UUID modification to database");
         }
     }
 
@@ -291,6 +293,9 @@ public class StorageManager
             query = "CREATE UNIQUE INDEX `indx_unbreakables_owner` ON `pstone_unbreakables` (`owner`);";
             core.execute(query);
         }
+
+
+        PreciousStones.log("Added new indexes to database");
     }
 
     private void resetLastSeem()
