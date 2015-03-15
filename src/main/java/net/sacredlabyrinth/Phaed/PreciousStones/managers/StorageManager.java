@@ -9,7 +9,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.uuid.UUIDMigration;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import org.apache.commons.io.Charsets;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -222,6 +221,7 @@ public class StorageManager
         if (plugin.getSettingsManager().getVersion() < 13)
         {
             updateUUID();
+            addIndexes();
             plugin.getSettingsManager().setVersion(13);
         }
     }
@@ -240,6 +240,55 @@ public class StorageManager
             query = "ALTER TABLE pstone_players ADD uuid VARCHAR( 255 ) NULL DEFAULT NULL;";
             core.execute(query);
             query = "ALTER TABLE pstone_players ADD UNIQUE (uuid);";
+            core.execute(query);
+        }
+    }
+
+    public void addIndexes()
+    {
+        String query;
+
+        if (plugin.getSettingsManager().isUseMysql())
+        {
+            query = "ALTER TABLE `pstone_grief_undo` ADD UNIQUE KEY `key_grief_locs` (`x`, `y`, `z`, `world`);";
+            core.execute(query);
+
+            query = "ALTER TABLE `pstone_fields` ADD INDEX `indx_field_owner` (`owner`);";
+            core.execute(query);
+
+            query = "ALTER TABLE `pstone_players` ADD INDEX `indx_players_uuid` (`uuid`);";
+            core.execute(query);
+
+            query = "ALTER TABLE `pstone_cuboids` ADD INDEX `indx_cuboids_owner` (`owner`);";
+            core.execute(query);
+
+            query = "ALTER TABLE `pstone_cuboids` ADD INDEX `indx_cuboids_parent` (`parent`);";
+            core.execute(query);
+
+            query = "ALTER TABLE `pstone_unbreakables` ADD INDEX `indx_unbreakables_owner` (`owner`);";
+            core.execute(query);
+
+            query = "ALTER TABLE `pstone_storedblocks` ADD INDEX `indx_storedblocks_1` (`name`, `player_name`, `applied`);";
+            core.execute(query);
+
+            query = "ALTER TABLE `pstone_storedblocks` ADD INDEX `indx_storedblocks_2` (`name`, `player_name`, `applied`, `type_id`, `data`);";
+            core.execute(query);
+        }
+        else
+        {
+            query = "CREATE UNIQUE INDEX `indx_field_owner` ON `pstone_fields` (`owner`);";
+            core.execute(query);
+
+            query = "CREATE UNIQUE INDEX `indx_players_uuid` ON `pstone_players` (`uuid`);";
+            core.execute(query);
+
+            query = "CREATE UNIQUE INDEX `indx_cuboids_owner` ON `pstone_cuboids` (`owner`);";
+            core.execute(query);
+
+            query = "CREATE UNIQUE INDEX `indx_cuboids_parent` ON `pstone_cuboids` (`parent`);";
+            core.execute(query);
+
+            query = "CREATE UNIQUE INDEX `indx_unbreakables_owner` ON `pstone_unbreakables` (`owner`);";
             core.execute(query);
         }
     }
