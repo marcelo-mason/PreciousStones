@@ -591,5 +591,5 @@ cannotUseItemMoved: "{red}You cannot hold that item here, it has been moved out 
 cannotUseItemHere: "{red}You cannot hold that item here."
 noPositive: "{red}No positive values allowed."
 taken: "{aqua}You have taken the {1.type} field at {2.location}."
-usernameChanged: "{aqua}Username migration has completed. You now have ownership of the fields from your old username."
+usernameChanged: "{yellow}Username migration has completed. You now have ownership of the fields from your old username."
 migrateDone: "{yellow} All fields belonging to {1.old} have been migrated to {2.new}"
