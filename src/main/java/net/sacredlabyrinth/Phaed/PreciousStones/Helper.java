@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -872,7 +873,7 @@ public class Helper
      */
     public static Player getClosestPlayer(Location target, int radius)
     {
-        Collection<Player> players = (Collection<Player>) PreciousStones.getInstance().getServer().getOnlinePlayers();
+        Collection<Player> players = getOnlinePlayers();
 
         double closestDistance = radius;
         Player closestPlayer = null;
@@ -896,5 +897,31 @@ public class Helper
         }
 
         return closestPlayer;
+    }
+
+
+
+    public static Collection<Player> getOnlinePlayers()
+    {
+        try
+        {
+            Method method = Bukkit.class.getDeclaredMethod("getOnlinePlayers");
+            Object players = method.invoke(null);
+
+            if (players instanceof Player[])
+            {
+                return new ArrayList<>(Arrays.asList((Player[])players));
+            }
+            else
+            {
+                return ((Collection<Player>) players);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>();
     }
 }

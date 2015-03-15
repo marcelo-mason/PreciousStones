@@ -908,7 +908,7 @@ public final class ForceFieldManager
                     {
                         Block block = field.getBlock();
                         block.setTypeId(field.getTypeId());
-                        block.setData((byte)field.getData());
+                        block.setData((byte) field.getData());
                         revertedCount++;
                     }
                 }
@@ -2576,7 +2576,7 @@ public final class ForceFieldManager
         {
             World world = field.getLocation().getWorld();
 
-            ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, (byte)field.getData());
+            ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, (byte) field.getData());
 
             world.dropItemNaturally(field.getLocation(), is);
         }
@@ -3053,5 +3053,22 @@ public final class ForceFieldManager
         }
 
         return fields.get(flag);
+    }
+
+    /**
+     * Changes username of all fields to a new one
+     *
+     * @param oldName
+     * @param newName
+     */
+    public void migrateUsername(String oldName, String newName)
+    {
+        List<Field> fields = fieldsByOwner.get(oldName.toLowerCase());
+
+        for (Field field : fields)
+        {
+            field.setOwner(newName);
+            PreciousStones.getInstance().getStorageManager().offerField(field);
+        }
     }
 }

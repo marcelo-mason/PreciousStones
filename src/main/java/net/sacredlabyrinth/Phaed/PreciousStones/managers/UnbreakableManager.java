@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Location;
@@ -632,5 +633,30 @@ public final class UnbreakableManager
         // delete unbreakable form database
 
         plugin.getStorageManager().offerUnbreakable(ub, false);
+    }
+
+
+    /**
+     * Changes username of all unbreakables to a new one
+     *
+     * @param oldName
+     * @param newName
+     */
+    public void migrateUsername(String oldName, String newName)
+    {
+        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values())
+        {
+            for (HashMap<Vec, Unbreakable> ubs : w.values())
+            {
+                for (Unbreakable ub : ubs.values())
+                {
+                    if (ub.getOwner().equalsIgnoreCase(oldName))
+                    {
+                        ub.setOwner(newName);
+                        plugin.getStorageManager().offerUnbreakable(ub, false);
+                    }
+                }
+            }
+        }
     }
 }

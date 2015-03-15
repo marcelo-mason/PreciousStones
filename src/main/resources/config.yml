@@ -405,7 +405,7 @@ settings:
     fence-max-depth: 50
     use-commands-to-rent: false
     max-target-distance: 100
-    version: 12
+    version: 13
     default-item-currency: '266'
 log:
     bypass-pvp: true

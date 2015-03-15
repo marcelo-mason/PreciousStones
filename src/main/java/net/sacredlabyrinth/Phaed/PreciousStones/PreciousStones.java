@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.api.Api;
 import net.sacredlabyrinth.Phaed.PreciousStones.api.IApi;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.uuid.UUIDMigration;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
@@ -62,7 +63,6 @@ public class PreciousStones extends JavaPlugin
     private McMMOListener mcmmoListener;
     private LWCListener lwcListener;
     private static IApi api;
-
     /**
      * @return the instance
      */
@@ -108,7 +108,7 @@ public class PreciousStones extends JavaPlugin
     }
 
     /**
-     * Parameterized info logger
+     * Parametrized info logger
      *
      * @param msg
      * @param arg
@@ -123,6 +123,12 @@ public class PreciousStones extends JavaPlugin
      */
     public void onEnable()
     {
+        if (!UUIDMigration.canReturnUUID())
+        {
+            log("This version of PreciousStones only works with Bukkit 1.7.5+");
+            return;
+        }
+
         instance = this;
         settingsManager = new SettingsManager();
         languageManager = new LanguageManager();

@@ -11,12 +11,15 @@ import org.json.simple.JSONValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author phaed
  */
 public class PlayerEntry
 {
+    private UUID onlineUUID;
+    private UUID offlineUUID;
     private String name;
     private boolean disabled;
     private boolean online;
@@ -475,5 +478,38 @@ public class PlayerEntry
     public void setBypassDisabled(boolean bypassDisabled)
     {
         this.bypassDisabled = bypassDisabled;
+    }
+
+    public UUID getCurrentUUID()
+    {
+        if (PreciousStones.getInstance().getServer().getOnlineMode())
+        {
+            return getOnlineUUID();
+        }
+        else
+        {
+            return getOfflineUUID();
+        }
+    }
+
+    public void setOnlineUUID(UUID uuid)
+    {
+
+        this.onlineUUID = uuid;
+    }
+
+    public void setOfflineUUID(UUID uuid)
+    {
+        this.offlineUUID = uuid;
+    }
+
+    public UUID getOnlineUUID()
+    {
+        return onlineUUID;
+    }
+
+    public UUID getOfflineUUID()
+    {
+        return offlineUUID;
     }
 }

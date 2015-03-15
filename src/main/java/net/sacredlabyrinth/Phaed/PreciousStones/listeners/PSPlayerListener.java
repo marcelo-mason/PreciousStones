@@ -89,6 +89,8 @@ public class PSPlayerListener implements Listener
         final Player player = event.getPlayer();
         final String playerName = event.getPlayer().getName();
 
+        plugin.getStorageManager().findUUIDMismatch(player);
+
         reevaluateEnteredFields(player);
 
         plugin.getPlayerManager().playerLogin(playerName);

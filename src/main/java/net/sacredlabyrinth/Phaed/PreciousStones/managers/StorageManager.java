@@ -7,12 +7,15 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
+import net.sacredlabyrinth.Phaed.PreciousStones.uuid.UUIDMigration;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
+import org.apache.commons.io.Charsets;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -214,6 +217,30 @@ public class StorageManager
                 resetLastSeem();
                 plugin.getSettingsManager().setVersion(12);
             }
+        }
+
+        if (plugin.getSettingsManager().getVersion() < 13)
+        {
+            updateUUID();
+            plugin.getSettingsManager().setVersion(13);
+        }
+    }
+
+    /**
+     * Bukkit 1.7.5+ UUID updates
+     *
+     * @param
+     */
+    private void updateUUID()
+    {
+        String query;
+
+        if (!core.existsColumn("pstone_players", "uuid"))
+        {
+            query = "ALTER TABLE pstone_players ADD uuid VARCHAR( 255 ) NULL DEFAULT NULL;";
+            core.execute(query);
+            query = "ALTER TABLE pstone_players ADD UNIQUE (uuid);";
+            core.execute(query);
         }
     }
 
@@ -675,7 +702,6 @@ public class StorageManager
     public Collection<Field> getCuboidFields(String worldName)
     {
         HashMap<Long, Field> out = new HashMap<Long, Field>();
-        int purged = 0;
         boolean foundInWrongTable = false;
 
         String query = "SELECT pstone_cuboids.id as id, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags  FROM  pstone_cuboids WHERE pstone_cuboids.parent = 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
@@ -835,12 +861,59 @@ public class StorageManager
             PreciousStones.log("fieldsInWrongTable");
         }
 
-        if (purged > 0)
+        return out.values();
+    }
+
+    public void findUUIDMismatch(Player player)
+    {
+        if (!PreciousStones.getInstance().getServer().getOnlineMode())
         {
-            PreciousStones.log("countsPurgedSnitches", worldName, purged);
+            return;
         }
 
-        return out.values();
+        String query = "SELECT player_name FROM `pstone_players` WHERE uuid = '" + player.getUniqueId().toString() + "';";
+        ResultSet res = core.select(query);
+
+        String updateQuery;
+
+        if (res != null)
+        {
+            try
+            {
+                while (res.next())
+                {
+                    try
+                    {
+                        String nameOnDatabase = res.getString("player_name");
+
+                        if (!nameOnDatabase.equals(player.getName()))
+                        {
+                            PreciousStones.getInstance().getPlayerManager().migrateUsername(nameOnDatabase, player.getName());
+                            PreciousStones.getInstance().getForceFieldManager().migrateUsername(nameOnDatabase, player.getName());
+                            PreciousStones.getInstance().getUnbreakableManager().migrateUsername(nameOnDatabase, player.getName());
+
+                            updateQuery = "UPDATE `pstone_storedblocks` SET player_name = '" + player.getName() + "' WHERE player_name = '" + nameOnDatabase + "';";
+                            core.execute(updateQuery);
+
+                            updateQuery = "UPDATE `pstone_translocations` SET player_name = '" + player.getName() + "' WHERE player_name = '" + nameOnDatabase + "';";
+                            core.execute(updateQuery);
+
+                            PreciousStones.log("[Username Changed] From: " + nameOnDatabase + " To: " + nameOnDatabase + " UUID: " + player.getUniqueId().toString());
+                            ChatBlock.send(player, "usernameChanged");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        PreciousStones.getLog().info(ex.getMessage());
+                    }
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.print(ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -870,6 +943,7 @@ public class StorageManager
                 {
                     try
                     {
+                        String uuid = res.getString("uuid");
                         String name = res.getString("player_name");
                         long last_seen = res.getLong("last_seen");
                         String flags = res.getString("flags");
@@ -904,6 +978,22 @@ public class StorageManager
                         }
 
                         PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(name);
+
+                        if (uuid != null)
+                        {
+                            data.setOnlineUUID(UUID.fromString(uuid));
+                        }
+                        else
+                        {
+                            UUID pulledUUID = UUIDMigration.findPlayerUUID(name);
+                            if (pulledUUID != null)
+                            {
+                                data.setOnlineUUID(pulledUUID);
+                                PreciousStones.log("[Online UUID Found] Player: " + name + " UUID: " + pulledUUID.toString());
+                            }
+                        }
+
+                        data.setOfflineUUID(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)));
                         data.setFlags(flags);
                     }
                     catch (Exception ex)
@@ -2245,7 +2335,7 @@ public class StorageManager
 
         synchronized (this)
         {
-            core.delete(query);
+            core.update(query);
         }
     }
 
