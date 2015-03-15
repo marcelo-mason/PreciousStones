@@ -1004,7 +1004,6 @@ public class StorageManager
                             }
                         }
 
-                        data.setOfflineUUID(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)));
                         data.setFlags(flags);
                     }
                     catch (Exception ex)

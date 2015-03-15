@@ -61,7 +61,6 @@ public class PlayerManager
                 data.setOnlineUUID(pulledUUID);
                 PreciousStones.log("[Online UUID Found] Player: " + playerName + " UUID: " + pulledUUID.toString());
             }
-            data.setOfflineUUID(UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + playerName ).getBytes( Charsets.UTF_8 ) ));
             data.setName(playerName);
             players.put(playerName.toLowerCase(), data);
         }
