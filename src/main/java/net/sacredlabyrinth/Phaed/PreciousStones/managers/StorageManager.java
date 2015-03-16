@@ -47,7 +47,7 @@ public class StorageManager
      */
     public StorageManager()
     {
-        plugin = PreciousStones.getInstance();
+        plugin = plugin;
 
         initiateDB();
         loadWorldData();
@@ -286,7 +286,6 @@ public class StorageManager
             query = "CREATE INDEX IF NOT EXISTS `indx_unbreakables_owner` ON `pstone_unbreakables` (`owner`);";
             core.execute(query);
         }
-
 
         PreciousStones.log("Added new indexes to database");
     }
@@ -908,7 +907,7 @@ public class StorageManager
 
     public void findUUIDMismatch(Player player)
     {
-        if (!PreciousStones.getInstance().getServer().getOnlineMode())
+        if (!plugin.getServer().getOnlineMode())
         {
             return;
         }
@@ -947,9 +946,9 @@ public class StorageManager
 
     public void migrate(String oldUsername, String newUsername)
     {
-        PreciousStones.getInstance().getPlayerManager().migrateUsername(oldUsername, newUsername);
-        PreciousStones.getInstance().getForceFieldManager().migrateUsername(oldUsername, newUsername);
-        PreciousStones.getInstance().getUnbreakableManager().migrateUsername(oldUsername, newUsername);
+        plugin.getPlayerManager().migrateUsername(oldUsername, newUsername);
+        plugin.getForceFieldManager().migrateUsername(oldUsername, newUsername);
+        plugin.getUnbreakableManager().migrateUsername(oldUsername, newUsername);
 
         String updateQuery;
         updateQuery = "UPDATE `pstone_storedblocks` SET player_name = '" + newUsername + "' WHERE player_name = '" + oldUsername + "';";
@@ -960,7 +959,7 @@ public class StorageManager
 
         PreciousStones.log("[Username Changed] From: " + oldUsername + " To: " + oldUsername);
 
-        Player player = PreciousStones.getInstance().getServer().getPlayerExact(newUsername);
+        Player player = plugin.getServer().getPlayerExact(newUsername);
 
         if (player != null)
         {
@@ -1043,7 +1042,7 @@ public class StorageManager
                             {
                                 data.setOnlineUUID(pulledUUID);
                                 PreciousStones.log("[Online UUID Found] Player: " + name + " UUID: " + pulledUUID.toString());
-                                PreciousStones.getInstance().getStorageManager().updatePlayerUUID(name, pulledUUID);
+                                plugin.getStorageManager().updatePlayerUUID(name, pulledUUID);
                             }
                         }
                     }
