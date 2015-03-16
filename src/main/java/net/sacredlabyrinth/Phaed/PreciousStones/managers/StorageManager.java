@@ -251,7 +251,7 @@ public class StorageManager
             query = "ALTER TABLE `pstone_fields` ADD INDEX `indx_field_owner` (`owner`);";
             core.execute(query);
 
-            query = "ALTER TABLE `pstone_players` ADD CONSTRAINT `unq_uuid` (uuid);";
+            query = "ALTER TABLE `pstone_players` ADD UNIQUE `unq_uuid` (uuid);";
             core.execute(query);
 
             query = "ALTER TABLE `pstone_cuboids` ADD INDEX `indx_cuboids_owner` (`owner`);";
