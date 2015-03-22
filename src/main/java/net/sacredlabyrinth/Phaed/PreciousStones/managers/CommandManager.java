@@ -1846,7 +1846,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandBlacklisting")) && hasplayer)
+                    else if (cmd.equals(ChatBlock.format("commandBlacklisting")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.blacklistcommand") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 

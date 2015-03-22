@@ -68,6 +68,8 @@ permissions:
     description: Can hide/unhide his fields
   preciousstones.benefit.setlimit:
     description: Can set renting limits
+  preciousstones.benefit.blacklistcommand:
+    description: Can blacklist commands
   preciousstones.admin.hideall:
     description: Can hide/unhide all of his fields
   preciousstones.whitelist.allow:
@@ -306,6 +308,7 @@ permissions:
       preciousstones.benefit.hide: true
       preciousstones.benefit.setlimit: true
       preciousstones.benefit.take: true
+      preciousstones.benefit.blacklistcommand: true
   preciousstones.whitelist.*:
     description: Can whitelist others into fields
     default: false

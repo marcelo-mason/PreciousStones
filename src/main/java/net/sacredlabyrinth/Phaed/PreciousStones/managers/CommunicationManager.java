@@ -3265,7 +3265,7 @@ public class CommunicationManager
             cb.addRow("menu54");
         }
 
-        if (hasPlayer)
+        if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.blacklistcommand") && hasPlayer)
         {
             cb.addRow("menu57");
             cb.addRow("menu58");
