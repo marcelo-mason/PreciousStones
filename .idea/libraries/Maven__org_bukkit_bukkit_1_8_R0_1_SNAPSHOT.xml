@@ -8,6 +8,9 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/bukkit/bukkit/1.8-R0.1-SNAPSHOT/bukkit-1.8-R0.1-20141130.213831-1-sources.jar!/" />
+      <root url="file://F:/Minecraft/sources/Bukkit/src/main/java" />
+      <root url="file://F:/Minecraft/sources/Bukkit/src/main/javadoc" />
+      <root url="file://F:/Minecraft/sources/Bukkit/src/test/java" />
     </SOURCES>
   </library>
 </component>
