@@ -47,7 +47,7 @@ public class StorageManager
      */
     public StorageManager()
     {
-        plugin = plugin;
+        plugin = PreciousStones.getInstance();
 
         initiateDB();
         loadWorldData();
