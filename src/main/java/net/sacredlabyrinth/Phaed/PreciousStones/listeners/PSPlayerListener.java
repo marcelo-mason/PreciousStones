@@ -706,7 +706,7 @@ public class PSPlayerListener implements Listener
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent event)
     {
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getPlayer().getLocation().getWorld()))
@@ -717,11 +717,6 @@ public class PSPlayerListener implements Listener
         final Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         ItemStack is = player.getItemInHand();
-
-        if (player == null)
-        {
-            return;
-        }
 
         // -------------------------------------------------------------------------------- interacting with use protected block
 
