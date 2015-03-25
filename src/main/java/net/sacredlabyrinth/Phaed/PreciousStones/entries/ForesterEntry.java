@@ -124,7 +124,7 @@ public class ForesterEntry
             {
                 Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
                 block.setTypeId(0, false);
-                block.getLocation().add(0, -1, 0).getBlock().setTypeId(field.getSettings().getGroundBlock(), false);
+                block.getLocation().add(0, -1, 0).getBlock().setTypeId(field.getSettings().getGroundBlock().getTypeId(), false);
 
                 if (!field.getSettings().getTreeTypes().isEmpty())
                 {

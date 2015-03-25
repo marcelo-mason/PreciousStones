@@ -99,7 +99,7 @@ public final class ForesterManager
                         if (field.getSettings().isFertileType(new BlockTypeEntry(type)))
                         {
                             Block fertile = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
-                            fertile.setTypeId(field.getSettings().getGroundBlock());
+                            fertile.setTypeId(field.getSettings().getGroundBlock().getTypeId());
 
                             if (!field.getSettings().getShrubTypes().isEmpty())
                             {
@@ -155,7 +155,7 @@ public final class ForesterManager
 
             if (!isSeeThrough(type))
             {
-                if (type == field.getSettings().getGroundBlock())
+                if (type == field.getSettings().getGroundBlock().getTypeId())
                 {
                     Block block = world.getBlockAt(xr, y + 1, zr);
 

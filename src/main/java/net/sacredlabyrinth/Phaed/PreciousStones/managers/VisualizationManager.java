@@ -120,8 +120,8 @@ public class VisualizationManager
 
         vis.addField(field);
 
-        int visualizationType = field.hasFlag(FieldFlag.CUBOID) ? plugin.getSettingsManager().getCuboidVisualizationType() : plugin.getSettingsManager().getVisualizeBlock();
-        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
+        int visualizationType = field.hasFlag(FieldFlag.CUBOID) ? plugin.getSettingsManager().getCuboidVisualizationType().getTypeId() : plugin.getSettingsManager().getVisualizeBlock().getTypeId();
+        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getTypeId();
 
         int minx = field.getX() - field.getRadius() - 1;
         int maxx = field.getX() + field.getRadius() + 1;
@@ -353,7 +353,7 @@ public class VisualizationManager
 
         List<BlockEntry> newBlocks = new ArrayList<BlockEntry>();
 
-        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
+        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getTypeId();
 
         int minx = field.getX() - field.getRadius() - 1;
         int maxx = field.getX() + field.getRadius() + 1;
@@ -451,7 +451,7 @@ public class VisualizationManager
         List<BlockEntry> oldBlocks = new ArrayList<BlockEntry>(vis.getOutlineBlocks());
         List<BlockEntry> newBlocks = new ArrayList<BlockEntry>();
 
-        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock();
+        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getTypeId();
 
         int offset = ce.selectedCount() > 1 ? 1 : 0;
 
@@ -577,7 +577,7 @@ public class VisualizationManager
 
                 if (plugin.getSettingsManager().isThroughType(typeId))
                 {
-                    vis.addBlock(new Location(world, field.getX(), y, field.getZ()), plugin.getSettingsManager().getVisualizeMarkBlock(), (byte) 0);
+                    vis.addBlock(new Location(world, field.getX(), y, field.getZ()), plugin.getSettingsManager().getVisualizeMarkBlock().getTypeId(), (byte) 0);
                 }
             }
         }

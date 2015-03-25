@@ -40,8 +40,8 @@ public final class SettingsManager
     private boolean autoAddClan;
     private int globalFieldLimit;
     private boolean noRefunds;
-    private int cuboidDefiningType;
-    private int cuboidVisualizationType;
+    private BlockTypeEntry cuboidDefiningType;
+    private BlockTypeEntry cuboidVisualizationType;
     private boolean disableMessages;
     private List<String> blacklistedWorlds;
     private int maxSnitchRecords;
@@ -49,9 +49,9 @@ public final class SettingsManager
     private List<String> griefUndoBlackList;
     private int griefRevertMinInterval;
     private boolean visualizationNewStyle;
-    private int visualizeMarkBlock;
-    private int visualizeFrameBlock;
-    private int visualizeBlock;
+    private BlockTypeEntry visualizeMarkBlock;
+    private BlockTypeEntry visualizeFrameBlock;
+    private BlockTypeEntry visualizeBlock;
     private int visualizeSeconds;
     private int visualizeDensity;
     private int visualizeTicksBetweenSends;
@@ -298,8 +298,8 @@ public final class SettingsManager
 
         // ********************************** Cuboid
 
-        cuboidDefiningType = loadInt("cuboid.defining-blocktype");
-        cuboidVisualizationType = loadInt("cuboid.visualization-blocktype");
+        cuboidDefiningType = loadTypeEntry("cuboid.defining-blocktype");
+        cuboidVisualizationType = loadTypeEntry("cuboid.visualization-blocktype");
 
 
         // ********************************** Saving
@@ -309,12 +309,12 @@ public final class SettingsManager
 
         // ********************************** Visualization
 
-        visualizeFrameBlock = loadInt("visualization.frame-block-type");
-        visualizeBlock = loadInt("visualization.block-type");
+        visualizeFrameBlock = loadTypeEntry("visualization.frame-block-type");
+        visualizeBlock = loadTypeEntry("visualization.block-type");
         visualizeSeconds = loadInt("visualization.seconds");
         visualizationNewStyle = loadBoolean("visualization.new-dotted-style");
         visualizeEndOnMove = loadBoolean("visualization.end-on-player-move");
-        visualizeMarkBlock = loadInt("visualization.mark-block-type");
+        visualizeMarkBlock = loadTypeEntry("visualization.mark-block-type");
         visualizeDensity = loadInt("visualization.default-density");
         visualizeSendSize = loadInt("visualization.blocks-to-send");
         visualizeMaxFields = loadInt("visualization.max-fields-to-visualize-at-once");
@@ -880,7 +880,7 @@ public final class SettingsManager
     /**
      * @return the visualizeMarkBlock
      */
-    public int getVisualizeMarkBlock()
+    public BlockTypeEntry getVisualizeMarkBlock()
     {
         return visualizeMarkBlock;
     }
@@ -888,7 +888,7 @@ public final class SettingsManager
     /**
      * @return the visualizeBlock
      */
-    public int getVisualizeBlock()
+    public BlockTypeEntry getVisualizeBlock()
     {
         return visualizeBlock;
     }
@@ -1373,17 +1373,17 @@ public final class SettingsManager
         return fragileBlockSet.contains(entry.getTypeId());
     }
 
-    public int getCuboidDefiningType()
+    public BlockTypeEntry getCuboidDefiningType()
     {
         return cuboidDefiningType;
     }
 
-    public int getCuboidVisualizationType()
+    public BlockTypeEntry getCuboidVisualizationType()
     {
         return cuboidVisualizationType;
     }
 
-    public int getVisualizeFrameBlock()
+    public BlockTypeEntry getVisualizeFrameBlock()
     {
         return visualizeFrameBlock;
     }

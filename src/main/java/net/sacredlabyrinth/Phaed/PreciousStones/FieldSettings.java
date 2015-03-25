@@ -5,7 +5,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -20,7 +19,7 @@ import java.util.logging.Level;
 public class FieldSettings
 {
     private int foresterUses = 1;
-    private int groundBlock = 2;
+    private BlockTypeEntry groundBlock;
     private int treeCount = 64;
     private int creatureCount = 6;
     private int growTime = 20;
@@ -343,7 +342,7 @@ public class FieldSettings
         treeCount = loadInt("tree-count");
         growTime = loadInt("grow-time");
         shrubDensity = loadInt("shrub-density");
-        groundBlock = loadInt("ground-block");
+        groundBlock = loadTypeEntry("ground-block");
         preventUse = loadTypeEntries("prevent-use");
         confiscatedItems = loadTypeEntries("confiscate-items");
         allowedPlayers = loadStringList("always-allow-players");
@@ -1390,7 +1389,7 @@ public class FieldSettings
         return fertileBlocks.contains(entry);
     }
 
-    public int getGroundBlock()
+    public BlockTypeEntry getGroundBlock()
     {
         return groundBlock;
     }

@@ -1450,7 +1450,7 @@ public class PSBlockListener implements Listener
         {
             Block floor = block.getRelative(BlockFace.DOWN);
 
-            if (!fs.isFertileType(new BlockTypeEntry(floor)) && floor.getTypeId() != fs.getGroundBlock())
+            if (!fs.isFertileType(new BlockTypeEntry(floor)) && floor.getTypeId() != fs.getGroundBlock().getTypeId())
             {
                 ChatBlock.send(player, "foresterNeedsFertile", fs.getTitle());
                 return false;

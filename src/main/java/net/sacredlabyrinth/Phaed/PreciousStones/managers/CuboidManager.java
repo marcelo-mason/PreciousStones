@@ -9,7 +9,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -166,7 +165,7 @@ public class CuboidManager
                             // add block
 
                             ce.addSelected(block);
-                            plugin.getVisualizationManager().displaySingle(player, Material.getMaterial(plugin.getSettingsManager().getCuboidDefiningType()), block);
+                            plugin.getVisualizationManager().displaySingle(player, plugin.getSettingsManager().getCuboidDefiningType().getMaterial(), block);
                         }
 
                         int newVolume = ce.getAvailableVolume();

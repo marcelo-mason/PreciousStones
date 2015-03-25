@@ -1,6 +1,5 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.MaterialName;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -128,7 +127,7 @@ public class BlockTypeEntry
      */
     public int getTypeId()
     {
-        return this.material.getId();
+        return this.getMaterial().getId();
     }
 
     /**
@@ -193,10 +192,10 @@ public class BlockTypeEntry
     {
         if (getData() == 0)
         {
-            return MaterialName.getIDName(material) + "";
+            return MaterialName.getIDName(getMaterial()) + "";
         }
 
-        return MaterialName.getIDName(material) + ":" + getData();
+        return MaterialName.getIDName(getMaterial()) + ":" + getData();
     }
 
     public void setData(byte data)
@@ -206,7 +205,12 @@ public class BlockTypeEntry
 
     public boolean isValid()
     {
-        return material != null;
+        return getMaterial() != null;
+    }
+
+    public Material getMaterial()
+    {
+        return material;
     }
 }
 
