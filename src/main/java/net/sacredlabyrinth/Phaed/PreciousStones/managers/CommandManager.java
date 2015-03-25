@@ -2006,8 +2006,11 @@ public final class CommandManager implements CommandExecutor
                                     }
                                 }
                             }
+                            else
+                            {
+                                ChatBlock.send(sender, "notPointingAtPstone");
+                            }
 
-                            ChatBlock.send(sender, "notPointingAtPstone");
                             return true;
                         }
                     }
