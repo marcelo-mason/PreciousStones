@@ -3,18 +3,13 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.uuid.UUIDMigration;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
-import org.apache.commons.io.Charsets;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.TreeMap;
-import java.util.UUID;
 
 /**
  * @author phaed
@@ -33,16 +28,6 @@ public class PlayerManager
     }
 
     /**
-     * @return the players
-     */
-    public TreeMap<String, PlayerEntry> getPlayers()
-    {
-        TreeMap<String, PlayerEntry> p = new TreeMap<String, PlayerEntry>();
-        p.putAll(players);
-        return p;
-    }
-
-    /**
      * Get a player's data file
      *
      * @param playerName
@@ -50,12 +35,15 @@ public class PlayerManager
      */
     public PlayerEntry getPlayerEntry(String playerName)
     {
+        // look for player in memory
+
         PlayerEntry data = players.get(playerName.toLowerCase());
+
+        // otherwise look in database
 
         if (data == null)
         {
-            data = new PlayerEntry();
-            data.setName(playerName);
+            data = plugin.getStorageManager().extractPlayer(playerName);
             players.put(playerName.toLowerCase(), data);
         }
 
@@ -73,19 +61,6 @@ public class PlayerManager
 
         PlayerEntry data = getPlayerEntry(playerName);
         data.setOnline(true);
-
-        // find uuid if missing
-
-        if (data.getOnlineUUID() == null)
-        {
-            UUID pulledUUID = UUIDMigration.findPlayerUUID(playerName);
-            if (pulledUUID != null)
-            {
-                data.setOnlineUUID(pulledUUID);
-                PreciousStones.log("[Online UUID Found] Player: " + playerName + " UUID: " + pulledUUID.toString());
-                PreciousStones.getInstance().getStorageManager().updatePlayerUUID(playerName, pulledUUID);
-            }
-        }
     }
 
     /**
@@ -193,7 +168,6 @@ public class PlayerManager
         }
     }
 
-
     /**
      * Changes username of player
      *
@@ -202,7 +176,7 @@ public class PlayerManager
      */
     public void migrateUsername(String oldName, String newName)
     {
-        PlayerEntry data = players.get(oldName.toLowerCase());
+        PlayerEntry data = getPlayerEntry(oldName.toLowerCase());
         data.setName(newName);
 
         players.remove(oldName.toLowerCase());

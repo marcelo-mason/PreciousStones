@@ -44,7 +44,6 @@ public final class SettingsManager
     private int cuboidVisualizationType;
     private boolean disableMessages;
     private List<String> blacklistedWorlds;
-    private int purgeAfterDays;
     private int maxSnitchRecords;
     private int saveFrequency;
     private List<String> griefUndoBlackList;
@@ -119,7 +118,6 @@ public final class SettingsManager
     private boolean disableBypassAlertsForAdmins;
     private boolean disableSimpleClanHook;
     private boolean offByDefault;
-    private boolean purgeBannedPlayers;
     private boolean useIdInSnitches;
     private int fenceMaxDepth;
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 78, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
@@ -303,10 +301,6 @@ public final class SettingsManager
         cuboidDefiningType = loadInt("cuboid.defining-blocktype");
         cuboidVisualizationType = loadInt("cuboid.visualization-blocktype");
 
-        // ********************************** Cleanup
-
-        purgeAfterDays = loadInt("cleanup.player-inactivity-purge-days");
-        purgeBannedPlayers = loadBoolean("cleanup.purge-banned-players");
 
         // ********************************** Saving
 
@@ -857,14 +851,6 @@ public final class SettingsManager
     public List<String> getBlacklistedWorlds()
     {
         return Collections.unmodifiableList(blacklistedWorlds);
-    }
-
-    /**
-     * @return the purgeAfterDays
-     */
-    public int getPurgeAfterDays()
-    {
-        return purgeAfterDays;
     }
 
     /**
@@ -1553,11 +1539,6 @@ public final class SettingsManager
     public boolean isDisableSimpleClanHook()
     {
         return disableSimpleClanHook;
-    }
-
-    public boolean isPurgeBannedPlayers()
-    {
-        return purgeBannedPlayers;
     }
 
     public boolean isLogRentsAndPurchases()

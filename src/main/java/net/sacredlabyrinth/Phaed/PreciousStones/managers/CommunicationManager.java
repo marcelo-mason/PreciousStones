@@ -2782,13 +2782,13 @@ public class CommunicationManager
             return false;
         }
 
-        TreeMap<String, PlayerEntry> players = plugin.getPlayerManager().getPlayers();
+        Map<String, List<Field>> fieldsByOwner = plugin.getForceFieldManager().getFieldsByOwner();
 
         cb.setAlignment("l", "c");
 
         cb.addRow("  " + ChatColor.GRAY + ChatBlock.format("_name"), ChatBlock.format("_count"));
 
-        for (String playerName : players.keySet())
+        for (String playerName : fieldsByOwner.keySet())
         {
             int count = plugin.getForceFieldManager().getFieldCount(playerName, type);
 

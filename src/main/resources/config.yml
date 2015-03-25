@@ -374,9 +374,6 @@ warn:
     mine: true
     slow-repair: true
     place: true
-cleanup:
-    player-inactivity-purge-days: 180
-    purge-banned-players: true
 settings:
     disable-messages: false
     prevent-removal-if-player-in-field: true

@@ -11,7 +11,6 @@ import net.sacredlabyrinth.Phaed.PreciousStones.uuid.UUIDMigration;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -390,18 +389,6 @@ public class StorageManager
                 }
             }
         }, 0);
-
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-
-                PreciousStones.debug("pulling the full player list");
-
-                extractPlayers();
-            }
-        }, 20);
     }
 
     /**
@@ -970,21 +957,10 @@ public class StorageManager
     /**
      * Retrieves all players from the database
      */
-    public void extractPlayers()
+    public PlayerEntry extractPlayer(String playerName)
     {
-        String query = "SELECT * FROM pstone_players;";
+        String query = "SELECT * FROM pstone_players WHERE player_name = '" + Helper.escapeQuotes(playerName) + "';";
         ResultSet res = core.select(query);
-
-        Set<OfflinePlayer> bannedPlayers = Bukkit.getBannedPlayers();
-        List<String> banned = new ArrayList<String>();
-
-        if (plugin.getSettingsManager().isPurgeBannedPlayers())
-        {
-            for (OfflinePlayer player : bannedPlayers)
-            {
-                banned.add(player.getName());
-            }
-        }
 
         if (res != null)
         {
@@ -1002,33 +978,11 @@ public class StorageManager
                         if (last_seen > 0)
                         {
                             int lastSeenDays = Days.daysBetween(new DateTime(last_seen), new DateTime()).getDays();
-
                             PreciousStones.debug("Player last seen: %s [%s]", lastSeenDays, name);
-
-                            if (banned.contains(name) || lastSeenDays >= plugin.getSettingsManager().getPurgeAfterDays())
-                            {
-                                PreciousStones.debug("PURGED %s", name);
-
-                                int purged = plugin.getForceFieldManager().deleteBelonging(name);
-
-                                if (purged > 0)
-                                {
-                                    PreciousStones.log("countsPurgedFields", name, purged);
-                                }
-
-                                purged = plugin.getUnbreakableManager().deleteBelonging(name);
-
-                                if (purged > 0)
-                                {
-                                    PreciousStones.log("countsPurgedUnbreakables", name, purged);
-                                }
-
-                                offerDeletePlayer(name);
-                                continue;
-                            }
                         }
 
-                        PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(name);
+                        PlayerEntry data = new PlayerEntry();
+                        data.setName(name);
                         data.setFlags(flags);
 
                         if (uuid != null)
@@ -1045,6 +999,8 @@ public class StorageManager
                                 plugin.getStorageManager().updatePlayerUUID(name, pulledUUID);
                             }
                         }
+
+                        return data;
                     }
                     catch (Exception ex)
                     {
@@ -1058,6 +1014,8 @@ public class StorageManager
                 ex.printStackTrace();
             }
         }
+
+        return null;
     }
 
     /**
@@ -1069,7 +1027,6 @@ public class StorageManager
     public List<Unbreakable> getUnbreakables(String worldName)
     {
         List<Unbreakable> out = new ArrayList<Unbreakable>();
-        int purged = 0;
 
         String query = "SELECT * FROM  `pstone_unbreakables` WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
@@ -1108,11 +1065,6 @@ public class StorageManager
                 System.out.print(ex.getMessage());
                 ex.printStackTrace();
             }
-        }
-
-        if (purged > 0)
-        {
-            PreciousStones.log("countsPurgedUnbreakabes2", worldName, purged);
         }
 
         return out;

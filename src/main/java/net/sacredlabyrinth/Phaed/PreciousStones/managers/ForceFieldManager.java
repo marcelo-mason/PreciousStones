@@ -55,7 +55,7 @@ public final class ForceFieldManager
     {
         fieldsByFlag.clear();
         fieldsByWorld.clear();
-        fieldsByOwner.clear();
+        getFieldsByOwner().clear();
         fieldsByOwnerAndType.clear();
         fieldsByOwnerAndFlag.clear();
         fieldsByVec.clear();
@@ -354,7 +354,7 @@ public final class ForceFieldManager
 
         // add to owners collection
 
-        fields = fieldsByOwner.get(field.getOwner().toLowerCase());
+        fields = getFieldsByOwner().get(field.getOwner().toLowerCase());
 
         if (fields == null)
         {
@@ -362,7 +362,7 @@ public final class ForceFieldManager
         }
 
         fields.add(field);
-        fieldsByOwner.put(field.getOwner().toLowerCase(), fields);
+        getFieldsByOwner().put(field.getOwner().toLowerCase(), fields);
 
         // add to owner and type collection
 
@@ -491,7 +491,7 @@ public final class ForceFieldManager
 
         // remove from owners collection
 
-        List<Field> owned = fieldsByOwner.get(field.getOwner().toLowerCase());
+        List<Field> owned = getFieldsByOwner().get(field.getOwner().toLowerCase());
 
         if (owned != null)
         {
@@ -2353,7 +2353,7 @@ public final class ForceFieldManager
     {
         int deletedFields = 0;
 
-        List<Field> fields = fieldsByOwner.get(playerName.toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(playerName.toLowerCase());
 
         if (fields != null)
         {
@@ -2383,7 +2383,7 @@ public final class ForceFieldManager
     {
         int hiddenFields = 0;
 
-        List<Field> fields = fieldsByOwner.get(playerName.toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(playerName.toLowerCase());
 
         if (fields != null)
         {
@@ -2423,7 +2423,7 @@ public final class ForceFieldManager
     {
         int unhiddenFields = 0;
 
-        List<Field> fields = fieldsByOwner.get(playerName.toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(playerName.toLowerCase());
 
         if (fields != null)
         {
@@ -2818,13 +2818,13 @@ public final class ForceFieldManager
      */
     public void changeOwner(Field field, String owner)
     {
-        List<Field> fields = fieldsByOwner.get(field.getOwner().toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(field.getOwner().toLowerCase());
 
         if (fields != null)
         {
             fields.remove(field);
             field.setNewOwner(owner);
-            fields = fieldsByOwner.get(owner.toLowerCase());
+            fields = getFieldsByOwner().get(owner.toLowerCase());
 
             if (fields == null)
             {
@@ -2833,7 +2833,7 @@ public final class ForceFieldManager
 
             fields.add(field);
 
-            fieldsByOwner.put(owner.toLowerCase(), fields);
+            getFieldsByOwner().put(owner.toLowerCase(), fields);
         }
     }
 
@@ -2848,7 +2848,7 @@ public final class ForceFieldManager
     {
         List<Field> out = new ArrayList<Field>();
 
-        List<Field> fields = fieldsByOwner.get(owner.toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(owner.toLowerCase());
 
         if (fields != null)
         {
@@ -2891,7 +2891,7 @@ public final class ForceFieldManager
      */
     public void disableFieldsOnLogoff(String name)
     {
-        List<Field> fields = fieldsByOwner.get(name.toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(name.toLowerCase());
 
         if (fields != null)
         {
@@ -2929,7 +2929,7 @@ public final class ForceFieldManager
      */
     public void enableFieldsOnLogon(String name)
     {
-        List<Field> fields = fieldsByOwner.get(name.toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(name.toLowerCase());
 
         if (fields != null)
         {
@@ -2979,7 +2979,7 @@ public final class ForceFieldManager
 
     public int getTotalFieldCount(String playerName)
     {
-        List<Field> fields = fieldsByOwner.get(playerName.toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(playerName.toLowerCase());
 
         if (fields != null)
         {
@@ -3063,12 +3063,17 @@ public final class ForceFieldManager
      */
     public void migrateUsername(String oldName, String newName)
     {
-        List<Field> fields = fieldsByOwner.get(oldName.toLowerCase());
+        List<Field> fields = getFieldsByOwner().get(oldName.toLowerCase());
 
         for (Field field : fields)
         {
             field.setOwner(newName);
             PreciousStones.getInstance().getStorageManager().offerField(field);
         }
+    }
+
+    public Map<String, List<Field>> getFieldsByOwner()
+    {
+        return fieldsByOwner;
     }
 }
