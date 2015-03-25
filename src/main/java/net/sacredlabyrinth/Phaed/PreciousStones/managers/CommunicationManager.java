@@ -2790,7 +2790,7 @@ public class CommunicationManager
 
         for (String playerName : fieldsByOwner.keySet())
         {
-            int count = plugin.getForceFieldManager().getFieldCount(playerName, type);
+            int count = fieldsByOwner.get(playerName).size();
 
             if (count > 0)
             {
