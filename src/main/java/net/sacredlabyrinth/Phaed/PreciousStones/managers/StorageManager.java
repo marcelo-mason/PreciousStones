@@ -616,7 +616,6 @@ public class StorageManager
         }
     }
 
-
     /**
      * Puts the snitch list up for future storage
      *
@@ -962,6 +961,9 @@ public class StorageManager
         String query = "SELECT * FROM pstone_players WHERE player_name = '" + Helper.escapeQuotes(playerName) + "';";
         ResultSet res = core.select(query);
 
+        PlayerEntry data = new PlayerEntry();
+        data.setName(playerName);
+
         if (res != null)
         {
             try
@@ -981,8 +983,6 @@ public class StorageManager
                             PreciousStones.debug("Player last seen: %s [%s]", lastSeenDays, name);
                         }
 
-                        PlayerEntry data = new PlayerEntry();
-                        data.setName(name);
                         data.setFlags(flags);
 
                         if (uuid != null)
@@ -1015,7 +1015,7 @@ public class StorageManager
             }
         }
 
-        return null;
+        return data;
     }
 
     /**
