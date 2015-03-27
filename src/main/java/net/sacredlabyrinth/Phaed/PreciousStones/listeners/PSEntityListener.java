@@ -541,7 +541,7 @@ public class PSEntityListener implements Listener
             return;
         }
 
-        if (event.getEntity() instanceof ItemFrame || event.getEntity() instanceof ArmorStand)
+        if (event.getEntity().getType().equals(EntityType.ITEM_FRAME))
         {
             Player player = Helper.getDamagingPlayer(event);
 
@@ -552,6 +552,24 @@ public class PSEntityListener implements Listener
                 if (field != null)
                 {
                     if (FieldFlag.PREVENT_ITEM_FRAME_TAKE.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+
+        if (event.getEntity().getType().equals(EntityType.ARMOR_STAND))
+        {
+            Player player = Helper.getDamagingPlayer(event);
+
+            if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_ARMOR_STAND_TAKE);
+
+                if (field != null)
+                {
+                    if (FieldFlag.PREVENT_ARMOR_STAND_TAKE.applies(field, player))
                     {
                         event.setCancelled(true);
                     }
@@ -881,13 +899,13 @@ public class PSEntityListener implements Listener
 
         if (entity.getType().equals(EntityType.ARMOR_STAND))
         {
-            if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.item-frame-take"))
+            if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
             {
-                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ITEM_FRAME_TAKE);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ARMOR_STAND_TAKE);
 
                 if (field != null)
                 {
-                    if (FieldFlag.PREVENT_ITEM_FRAME_TAKE.applies(field, player))
+                    if (FieldFlag.PREVENT_ARMOR_STAND_TAKE.applies(field, player))
                     {
                         event.setCancelled(true);
                     }

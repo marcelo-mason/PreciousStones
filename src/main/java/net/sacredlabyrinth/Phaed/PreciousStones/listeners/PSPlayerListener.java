@@ -688,6 +688,22 @@ public class PSPlayerListener implements Listener
             }
         }
 
+        if (entity.getType().equals(EntityType.ARMOR_STAND))
+        {
+            if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ARMOR_STAND_TAKE);
+
+                if (field != null)
+                {
+                    if (FieldFlag.PREVENT_ARMOR_STAND_TAKE.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entity-interact"))
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ENTITY_INTERACT);
