@@ -215,11 +215,10 @@ public class StorageManager
             }
         }
 
-        if (plugin.getSettingsManager().getVersion() < 13)
+        if (!core.existsColumn("pstone_players", "uuid"))
         {
             updateUUID();
             addIndexes();
-            plugin.getSettingsManager().setVersion(13);
         }
     }
 
