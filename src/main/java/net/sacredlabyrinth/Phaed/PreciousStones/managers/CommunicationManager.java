@@ -15,6 +15,7 @@ import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -1095,9 +1096,7 @@ public class CommunicationManager
 
         if (plugin.getSettingsManager().isLogPlaceArea())
         {
-
             PreciousStones.log("logPlace", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
-
         }
 
         for (Player pl : plugin.getServer().getOnlinePlayers())
@@ -1110,6 +1109,50 @@ public class CommunicationManager
             if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.place") && canAlert(pl))
             {
                 ChatBlock.sendPs(pl, "logPlace", player.getName(), (new Vec(hanging.getLocation())).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+            }
+        }
+    }
+
+    /**
+     * @param player
+     * @param item
+     * @param loc
+     * @param field
+     */
+    public void warnPlaceItem(Player player, ItemStack item, Location loc, Field field)
+    {
+        if (field == null)
+        {
+            return;
+        }
+
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isWarnPlace() && canWarn(player))
+        {
+            ChatBlock.send(player, "warnPlace");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log"))
+        {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogPlaceArea())
+        {
+            PreciousStones.log("logPlace", player.getName(), (new Vec(loc)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers())
+        {
+            if (pl.equals(player))
+            {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.place") && canAlert(pl))
+            {
+                ChatBlock.sendPs(pl, "logPlace", player.getName(), (new Vec(loc)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
     }

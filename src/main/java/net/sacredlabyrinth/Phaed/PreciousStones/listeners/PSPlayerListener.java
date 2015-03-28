@@ -692,11 +692,11 @@ public class PSPlayerListener implements Listener
         {
             if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
             {
-                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ARMOR_STAND_TAKE);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PROTECT_ARMOR_STAND);
 
                 if (field != null)
                 {
-                    if (FieldFlag.PREVENT_ARMOR_STAND_TAKE.applies(field, player))
+                    if (FieldFlag.PROTECT_ARMOR_STAND.applies(field, player))
                     {
                         event.setCancelled(true);
                     }
@@ -733,6 +733,27 @@ public class PSPlayerListener implements Listener
         final Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         ItemStack is = player.getItemInHand();
+
+        // -------------------------------------------------------------------------------- trying to place an armor stand entity
+
+
+        if (is.getType().equals(Material.ARMOR_STAND))
+        {
+            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
+            {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PROTECT_ARMOR_STAND);
+
+                if (field != null)
+                {
+                    if (FieldFlag.PROTECT_ARMOR_STAND.applies(field, player))
+                    {
+                        event.setCancelled(true);
+                        plugin.getCommunicationManager().warnPlaceItem(player, is, block.getLocation(), field);
+                        return;
+                    }
+                }
+            }
+        }
 
         // -------------------------------------------------------------------------------- interacting with use protected block
 

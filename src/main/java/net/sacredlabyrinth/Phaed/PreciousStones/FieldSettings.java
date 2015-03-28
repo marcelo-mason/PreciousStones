@@ -238,7 +238,7 @@ public class FieldSettings
         loadBoolean("prevent-vehicle-enter");
         loadBoolean("prevent-vehicle-exit");
         loadBoolean("prevent-item-frame-take");
-        loadBoolean("prevent-armor-stand-take");
+        loadBoolean("protect-armor-stand");
         loadBoolean("prevent-entity-interact");
         loadBoolean("protect-animals");
         loadBoolean("protect-villagers");

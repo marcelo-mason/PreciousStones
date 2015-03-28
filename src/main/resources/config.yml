@@ -12,7 +12,7 @@ force-field-blocks:
     prevent-explosions: true
     prevent-unprotectable: true
     prevent-item-frame-take: true
-    prevent-armor-stand-take: true
+    protect-armor-stand: true
     prevent-flow: true
     protect-crops: true
     protect-inventories: true

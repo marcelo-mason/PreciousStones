@@ -565,11 +565,11 @@ public class PSEntityListener implements Listener
 
             if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
             {
-                Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PREVENT_ARMOR_STAND_TAKE);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_ARMOR_STAND);
 
                 if (field != null)
                 {
-                    if (FieldFlag.PREVENT_ARMOR_STAND_TAKE.applies(field, player))
+                    if (FieldFlag.PROTECT_ARMOR_STAND.applies(field, player))
                     {
                         event.setCancelled(true);
                     }
@@ -901,11 +901,11 @@ public class PSEntityListener implements Listener
         {
             if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
             {
-                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_ARMOR_STAND_TAKE);
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PROTECT_ARMOR_STAND);
 
                 if (field != null)
                 {
-                    if (FieldFlag.PREVENT_ARMOR_STAND_TAKE.applies(field, player))
+                    if (FieldFlag.PROTECT_ARMOR_STAND.applies(field, player))
                     {
                         event.setCancelled(true);
                     }
