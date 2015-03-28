@@ -7,6 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -72,7 +73,6 @@ public class PSBlockListener implements Listener
             return;
         }
 
-
         Block source = event.getSource();
         Block destination = event.getBlock();
 
@@ -86,22 +86,37 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        // if the destination area is not protected, don't bother
-
-        Field destField = plugin.getForceFieldManager().getEnabledSourceField(destination.getLocation(), FieldFlag.PREVENT_FIRE);
-
-        if (destField == null)
+        if (event.getNewState().getType().equals(Material.FIRE))
         {
-            return;
-        }
+            // prevent fire spread
 
-        // if the source is outside protection, or if its protected by a different owner, then block the water
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(source.getLocation(), FieldFlag.PREVENT_FIRE_SPREAD);
 
-        Field sourceField = plugin.getForceFieldManager().getEnabledSourceField(source.getLocation(), FieldFlag.PREVENT_FIRE);
+            if (field != null)
+            {
+                event.setCancelled(true);
+                return;
+            }
 
-        if (sourceField == null || !sourceField.getOwner().equalsIgnoreCase(destField.getOwner()))
-        {
-            event.setCancelled(true);
+            // prevent fire spread from the outside to inside
+
+            // if the destination area is not protected, don't bother
+
+            Field destField = plugin.getForceFieldManager().getEnabledSourceField(destination.getLocation(), FieldFlag.PREVENT_FIRE);
+
+            if (destField == null)
+            {
+                return;
+            }
+
+            // if the source is outside protection, or if its protected by a different owner, then block the spread
+
+            Field sourceField = plugin.getForceFieldManager().getEnabledSourceField(source.getLocation(), FieldFlag.PREVENT_FIRE);
+
+            if (sourceField == null || !sourceField.getOwner().equalsIgnoreCase(destField.getOwner()))
+            {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -718,7 +733,7 @@ public class PSBlockListener implements Listener
             }
             else
             {
-                if (plugin.getSettingsManager().isFragileBlock(new BlockTypeEntry(field.getTypeId(), (byte)field.getData())))
+                if (plugin.getSettingsManager().isFragileBlock(new BlockTypeEntry(field.getTypeId(), (byte) field.getData())))
                 {
                     PreciousStones.debug("fragile block broken");
                     plugin.getForceFieldManager().releaseNoClean(field);
