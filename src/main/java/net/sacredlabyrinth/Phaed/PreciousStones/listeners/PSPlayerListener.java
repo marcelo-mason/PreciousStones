@@ -140,47 +140,6 @@ public class PSPlayerListener implements Listener
         }
     }
 
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPortalExit(EntityPortalExitEvent event)
-    {
-        if (event.getEntity() instanceof Player)
-        {
-            final Player player = (Player) event.getEntity();
-
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    reevaluateEnteredFields(player);
-                }
-            }, 1);
-        }
-    }
-
-    /**
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerRespawn(PlayerRespawnEvent event)
-    {
-        final Player player = event.getPlayer();
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                reevaluateEnteredFields(player);
-            }
-        }, 5);
-
-
-    }
-
     private void reevaluateEnteredFields(Player player)
     {
         // refund confiscated items if not in confiscation fields
@@ -1866,6 +1825,45 @@ public class PSPlayerListener implements Listener
                 event.setCancelled(true);
             }
         }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPortalExit(EntityPortalExitEvent event)
+    {
+        if (event.getEntity() instanceof Player)
+        {
+            final Player player = (Player) event.getEntity();
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    reevaluateEnteredFields(player);
+                }
+            }, 1);
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerRespawn(PlayerRespawnEvent event)
+    {
+        final Player player = event.getPlayer();
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                reevaluateEnteredFields(player);
+            }
+        }, 5);
     }
 
     /**
