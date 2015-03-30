@@ -109,7 +109,7 @@ public class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_players");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT default NULL, PRIMARY KEY  (`player_name`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `uuid` varchar(255) default NULL, `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT default NULL, PRIMARY KEY  (`player_name`));");
                 }
 
                 if (!core.existsTable("pstone_snitches"))
@@ -117,6 +117,8 @@ public class StorageManager
                     PreciousStones.log("Creating table: pstone_snitches");
 
                     core.execute("CREATE TABLE IF NOT EXISTS `pstone_snitches` ( `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL, `name` varchar(16) NOT NULL, `reason` varchar(20) default NULL, `details` varchar(50) default NULL, `count` int(11) default NULL, `date` varchar(25) default NULL, PRIMARY KEY  (`x`, `y`, `z`, `world`, `name`, `reason`, `details`));");
+
+                    addIndexes();
                 }
             }
             else
@@ -178,7 +180,7 @@ public class StorageManager
                 {
                     PreciousStones.log("Creating table: pstone_players");
 
-                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT default NULL, PRIMARY KEY (`player_name`));");
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_players` ( `id` bigint(20), `uuid` varchar(255) default NULL, `player_name` varchar(16) NOT NULL, `last_seen` bigint(20) default NULL, flags TEXT default NULL, PRIMARY KEY (`player_name`));");
                 }
 
                 if (!core.existsTable("pstone_snitches"))
@@ -186,6 +188,8 @@ public class StorageManager
                     PreciousStones.log("Creating table: pstone_snitches");
 
                     core.execute("CREATE TABLE IF NOT EXISTS `pstone_snitches` ( `id` bigint(20), `x` int(11) default NULL,  `y` int(11) default NULL, `z` int(11) default NULL,  `world` varchar(25) default NULL, `name` varchar(16) NOT NULL, `reason` varchar(20) default NULL, `details` varchar(50) default NULL, `count` int(11) default NULL, `date` varchar(25) default NULL, PRIMARY KEY  (`x`, `y`, `z`, `world`, `name`, `reason`, `details`));");
+
+                    addIndexes();
                 }
             }
             else
