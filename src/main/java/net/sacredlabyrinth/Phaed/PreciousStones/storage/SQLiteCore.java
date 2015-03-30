@@ -289,7 +289,7 @@ public class SQLiteCore implements DBCore
         }
         catch (SQLException e)
         {
-            log.severe("Failed to check if table \"" + table + "\" exists: " + e.getMessage());
+            log.severe("Failed to check if table " + table + " exists: " + e.getMessage());
             return false;
         }
     }
@@ -301,24 +301,16 @@ public class SQLiteCore implements DBCore
      * @param column
      * @return
      */
-    public Boolean existsColumn(String column, String table)
+    public Boolean existsColumn(String table, String column)
     {
         try
         {
-            Statement statement = getConnection().createStatement();
-
-            try
-            {
-                statement.executeQuery("SELECT " + column + " FROM " + table);
-            }
-            finally
-            {
-                statement.close();
-                return true;
-            }
+            ResultSet col = getConnection().getMetaData().getColumns(null, null, table, column);
+            return col.next();
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
+            log.severe("Failed to check if column " + column + " exists in table " + table + " : " + e.getMessage());
             return false;
         }
     }

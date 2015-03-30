@@ -277,26 +277,12 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            Statement statement = getConnection().createStatement();
-            ResultSet result = null;
-
-            try
-            {
-                result = statement.executeQuery("SELECT * FROM " + table);
-            }
-            finally
-            {
-                statement.close();
-
-                return result != null;
-            }
+            ResultSet tables = getConnection().getMetaData().getTables(null, null, table, null);
+            return tables.next();
         }
-        catch (SQLException ex)
+        catch (SQLException e)
         {
-            if (!ex.getMessage().contains("exist"))
-            {
-                log.warning("Error at SQL Query: " + ex.getMessage());
-            }
+            log.severe("Failed to check if table " + table + " exists: " + e.getMessage());
             return false;
         }
     }
@@ -312,20 +298,12 @@ public class MySQLCore implements DBCore
     {
         try
         {
-            Statement statement = getConnection().createStatement();
-
-            try
-            {
-                statement.executeQuery("SELECT " + column + " FROM " + table);
-            }
-            finally
-            {
-                statement.close();
-                return true;
-            }
+            ResultSet col = getConnection().getMetaData().getColumns(null, null, table, column);
+            return col.next();
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
+            log.severe("Failed to check if column " + column + " exists in table " + table + " : " + e.getMessage());
             return false;
         }
     }
