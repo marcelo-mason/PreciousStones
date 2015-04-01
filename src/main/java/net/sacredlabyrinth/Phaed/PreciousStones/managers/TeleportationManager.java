@@ -56,9 +56,9 @@ public class TeleportationManager
             {
                 if (plugin.getPermissionsManager().hasEconomy())
                 {
-                    if (PermissionsManager.hasMoney(sourceField.getOwner(), sourceField.getSettings().getTeleportCost()))
+                    if (PermissionsManager.hasMoney(Bukkit.getServer().getPlayerExact(sourceField.getOwner()), sourceField.getSettings().getTeleportCost()))
                     {
-                        plugin.getPermissionsManager().playerCharge(sourceField.getOwner(), sourceField.getSettings().getTeleportCost());
+                        plugin.getPermissionsManager().playerCharge(Bukkit.getServer().getPlayerExact(sourceField.getOwner()), sourceField.getSettings().getTeleportCost());
                     }
                     else
                     {

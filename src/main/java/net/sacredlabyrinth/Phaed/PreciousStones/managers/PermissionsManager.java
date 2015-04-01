@@ -406,19 +406,7 @@ public final class PermissionsManager
      */
     public boolean playerCharge(Player player, double amount)
     {
-        return economy.withdrawPlayer(player.getName(), amount).transactionSuccess();
-    }
-
-    /**
-     * Charge player money
-     *
-     * @param playerName
-     * @param amount
-     * @return
-     */
-    public boolean playerCharge(String playerName, double amount)
-    {
-        return economy.withdrawPlayer(playerName, amount).transactionSuccess();
+        return economy.withdrawPlayer(player, amount).transactionSuccess();
     }
 
     /**
@@ -430,7 +418,7 @@ public final class PermissionsManager
      */
     public boolean playerCredit(Player player, double amount)
     {
-        return economy.depositPlayer(player.getName(), amount).transactionSuccess();
+        return economy.depositPlayer(player, amount).transactionSuccess();
     }
 
     /**
@@ -442,19 +430,7 @@ public final class PermissionsManager
      */
     public static boolean hasMoney(Player player, double amount)
     {
-        return economy.has(player.getName(), amount);
-    }
-
-    /**
-     * Check whether player has money
-     *
-     * @param playerName
-     * @param amount
-     * @return
-     */
-    public static boolean hasMoney(String playerName, double amount)
-    {
-        return economy.has(playerName, amount);
+        return economy.has(player, amount);
     }
 
     public boolean lwcProtected(Player player, Block block)
