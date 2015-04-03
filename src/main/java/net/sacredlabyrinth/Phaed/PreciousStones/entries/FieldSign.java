@@ -99,11 +99,6 @@ public class FieldSign
             {
                 item = PreciousStones.getInstance().getSettingsManager().getDefaulItemCurrency();
             }
-
-            if (item == null || !item.isValid())
-            {
-                item = new BlockTypeEntry(Material.GOLD_INGOT);
-            }
         }
 
         Block attachedBlock = SignHelper.getAttachedBlock(signBlock);
