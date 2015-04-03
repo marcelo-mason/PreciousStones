@@ -818,6 +818,8 @@ public class PSBlockListener implements Listener
             return;
         }
 
+        Timing timing = new Timing("onBlockPlace");
+
         // -------------------------------------------------------------------------------------- placing a block on top of a field
 
         if (event instanceof BlockPlaceEvent)
@@ -841,6 +843,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("placing a block on top of a field");
+
         // -------------------------------------------------------------------------------------- placing blocks touching a field block that you don't own
 
         Block fieldBlock = plugin.getForceFieldManager().touchingFieldBlock(block);
@@ -861,6 +865,8 @@ public class PSBlockListener implements Listener
                 }
             }
         }
+
+        timing.poll("placing blocks touching a field block that you don't own");
 
         // -------------------------------------------------------------------------------------- placing with an open cuboid
 
@@ -884,6 +890,8 @@ public class PSBlockListener implements Listener
                 }
             }
         }
+
+        timing.poll("placing with an open cuboid");
 
         // -------------------------------------------------------------------------------------- prevent place everywhere
 
@@ -923,6 +931,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("prevent place everywhere");
+
         // -------------------------------------------------------------------------------------- placing a field
 
         boolean isDisabled = false;
@@ -937,6 +947,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("allow place field if sneaking");
+
         // bypass place field if sneaking
 
         if (plugin.getSettingsManager().isSneakNormalBlock())
@@ -946,6 +958,8 @@ public class PSBlockListener implements Listener
                 isDisabled = true;
             }
         }
+
+        timing.poll("bypass place field if sneaking");
 
         // allow or bypass field placement based on sneak-to-place flag
 
@@ -959,12 +973,16 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("allow or bypass field placement based on sneak-to-place flag");
+
         // if the user has it manually off then disable placing
 
         if (plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled())
         {
             isDisabled = true;
         }
+
+        timing.poll("if the user has it manually off then disable placing");
 
         // -------------------------------------------------------------------------------------- placing a field
 
@@ -973,6 +991,8 @@ public class PSBlockListener implements Listener
             if (placingFieldChecks(player, block, event))
             {
                 plugin.getForceFieldManager().add(block, player, (BlockPlaceEvent) event);
+
+                timing.poll("placing a field");
             }
 
             if (event.isCancelled())
@@ -1278,11 +1298,15 @@ public class PSBlockListener implements Listener
 
         // --------------------------------------------------------------------------------------
 
+        timing.last("placing inside a teleport field");
+
         plugin.getSnitchManager().recordSnitchBlockPlace(player, block);
     }
 
     private boolean placingFieldChecks(Player player, Block block, Cancellable event)
     {
+        Timing timing = new Timing("placingFieldChecks");
+
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block);
 
         if (fs == null)
@@ -1323,6 +1347,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("cannot place field in prevent place area");
+
         // cannot place a field that conflicts with other fields
 
         Field conflictField = plugin.getForceFieldManager().fieldConflicts(block, player);
@@ -1333,6 +1359,8 @@ public class PSBlockListener implements Listener
             plugin.getCommunicationManager().warnConflictFF(player, block, conflictField);
             return false;
         }
+
+        timing.poll("cannot place a field that conflicts with other fields");
 
         // if not allowed in this world then place as regular block
 
@@ -1357,6 +1385,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("ensure placement of only those with the required permission");
+
         // cannot place a field touching an unprotectable block
 
         if (plugin.getUnprotectableManager().touchingUnprotectableBlock(block))
@@ -1370,6 +1400,8 @@ public class PSBlockListener implements Listener
 
             plugin.getCommunicationManager().notifyBypassTouchingUnprotectable(player, block);
         }
+
+        timing.poll("cannot place a field touching an unprotectable block");
 
         // must obey y coord
 
@@ -1393,6 +1425,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("must obey y coord");
+
         // cannot place a confiscate field below a field or unbreakable
 
         if (fs.hasDefaultFlag(FieldFlag.CONFISCATE_ITEMS))
@@ -1414,6 +1448,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("cannot place a confiscate field below a field or unbreakable");
+
         // cannot place a field that contains players inside of it if no-player-place flag exists
 
         if (fs.hasDefaultFlag(FieldFlag.NO_PLAYER_PLACE))
@@ -1428,6 +1464,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("cannot place a field that contains players inside of it if no-player-place flag exists");
+
         // cannot place a field that contains players inside of worldguard regions
 
         if (fs.hasDefaultFlag(FieldFlag.WORLDGUARD_REPELLENT))
@@ -1439,6 +1477,8 @@ public class PSBlockListener implements Listener
                 return false;
             }
         }
+
+        timing.poll("cannot place a field that contains players inside of worldguard regions");
 
         // cannot place a field that contains unprotectable blocks inside of it if prevent-unprotectable flag exists
 
@@ -1459,6 +1499,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("cannot place a field that contains unprotectable blocks inside of it if prevent-unprotectable flag exists");
+
         // forester blocks need to be placed in fertile lands
 
         if (fs.hasDefaultFlag(FieldFlag.FORESTER))
@@ -1471,6 +1513,8 @@ public class PSBlockListener implements Listener
                 return false;
             }
         }
+
+        timing.poll("forester blocks need to be placed in fertile lands");
 
         // ensure placement inside allowed only fields
 
@@ -1500,6 +1544,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("ensure placement inside allowed only fields");
+
         // ensure placement outside allowed only outside fields
 
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.allowed-only-outside"))
@@ -1528,6 +1574,8 @@ public class PSBlockListener implements Listener
             }
         }
 
+        timing.poll("ensure placement outside allowed only outside fields");
+
         // cannot place field in translocation fields
 
         field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.TRANSLOCATION);
@@ -1538,6 +1586,8 @@ public class PSBlockListener implements Listener
             event.setCancelled(true);
             return false;
         }
+
+        timing.last("cannot place field in translocation fields");
 
         // cannot place field in grief revert fields
 
