@@ -98,6 +98,11 @@ public class FieldSign
             if (!PreciousStones.getInstance().getPermissionsManager().hasEconomy())
             {
                 item = PreciousStones.getInstance().getSettingsManager().getDefaulItemCurrency();
+
+                if (item == null)
+                {
+                    item = new BlockTypeEntry(Material.GOLD_INGOT);
+                }
             }
         }
 
