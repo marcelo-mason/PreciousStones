@@ -1787,8 +1787,6 @@ public class PSBlockListener implements Listener
                 {
                     ChatBlock.send(player, s.getFailReason());
                 }
-
-                event.setCancelled(true);
             }
         }
     }

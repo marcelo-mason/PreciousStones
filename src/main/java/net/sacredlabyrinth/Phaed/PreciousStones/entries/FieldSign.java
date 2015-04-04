@@ -37,21 +37,6 @@ public class FieldSign
         valid = extractData(signBlock, lines);
     }
 
-    public FieldSign(Block signBlock, boolean silent)
-    {
-        if (!SignHelper.isSign(signBlock))
-        {
-            valid = false;
-            return;
-        }
-
-        sign = ((Sign) signBlock.getState());
-
-        String[] lines = sign.getLines();
-
-        valid = extractData(signBlock, lines);
-    }
-
     public FieldSign(Block signBlock, String[] lines, Player player)
     {
         if (!SignHelper.isSign(signBlock))
