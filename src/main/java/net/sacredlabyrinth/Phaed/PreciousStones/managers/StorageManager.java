@@ -256,6 +256,9 @@ public class StorageManager
             query = "ALTER TABLE `pstone_players` ADD UNIQUE `unq_uuid` (uuid);";
             core.execute(query);
 
+            query = "ALTER TABLE `pstone_players` ADD INDEX `inx_player_name` (player_name);";
+            core.execute(query);
+
             query = "ALTER TABLE `pstone_cuboids` ADD INDEX `indx_cuboids_owner` (`owner`);";
             core.execute(query);
 
@@ -277,6 +280,9 @@ public class StorageManager
             core.execute(query);
 
             query = "CREATE UNIQUE INDEX IF NOT EXISTS `indx_players_uuid` ON `pstone_players` (`uuid`);";
+            core.execute(query);
+
+            query = "CREATE UNIQUE INDEX IF NOT EXISTS `indx_player_name` ON `pstone_players` (`player_name`);";
             core.execute(query);
 
             query = "CREATE INDEX IF NOT EXISTS `indx_cuboids_owner` ON `pstone_cuboids` (`owner`);";
