@@ -280,7 +280,7 @@ public class PreciousStones extends JavaPlugin
 
         try
         {
-            BufferedReader in = new BufferedReader(new InputStreamReader(new URL("http://minecraftcubed.net/pluginmessage/").openStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(new URL("https://minecraftcubed.net/pluginmessage/").openStream()));
 
             String message;
             while ((message = in.readLine()) != null)
