@@ -782,7 +782,7 @@ public final class ForceFieldManager
      */
     public void offerAllDirtyFields()
     {
-        Collection<Field> fields = fieldsByVec.values();
+        Collection<Field> fields = new ArrayList<>(fieldsByVec.values());
 
         for (Field field : fields)
         {
