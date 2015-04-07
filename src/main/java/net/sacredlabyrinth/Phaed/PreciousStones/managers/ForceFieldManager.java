@@ -222,7 +222,7 @@ public final class ForceFieldManager
 
         for (FieldFlag flag : field.getSettings().getDisabledFlags())
         {
-            field.disableFlag(flag.toString());
+            field.disableFlag(flag.toString(), true);
         }
 
         // places the field in a disabled state

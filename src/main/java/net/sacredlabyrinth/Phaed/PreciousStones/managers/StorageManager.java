@@ -490,7 +490,7 @@ public class StorageManager
             if (field.hasFlag(flagStr))
             {
                 changed++;
-                field.disableFlag(flagStr);
+                field.disableFlag(flagStr, false);
                 field.dirtyFlags("enableAllFlags");
             }
 

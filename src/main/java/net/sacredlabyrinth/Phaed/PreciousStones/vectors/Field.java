@@ -1440,7 +1440,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                                     }
                                 }
 
-                                disableFlag(flagStr.toString());
+                                disableFlag(flagStr.toString(), true);
                             }
                         }
                         else if (flag.equals("insertedFlags"))
@@ -1576,7 +1576,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      *
      * @param flagStr
      */
-    public void disableFlag(String flagStr)
+    public void disableFlag(String flagStr, boolean skipSave)
     {
         boolean hasFlag = false;
 
@@ -1593,8 +1593,12 @@ public class Field extends AbstractVec implements Comparable<Field>
         if (hasFlag && !disabledFlags.contains(Helper.toFieldFlag(flagStr)))
         {
             disabledFlags.add(Helper.toFieldFlag(flagStr));
-            dirty.add(DirtyFieldReason.FLAGS);
-            PreciousStones.debug("DirtyFlags: disableFlag");
+
+            if (!skipSave)
+            {
+                dirty.add(DirtyFieldReason.FLAGS);
+                PreciousStones.debug("DirtyFlags: disableFlag");
+            }
         }
     }
 
@@ -1648,7 +1652,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
         if (hasFlag)
         {
-            disableFlag(flagStr);
+            disableFlag(flagStr, false);
             return false;
         }
         else
