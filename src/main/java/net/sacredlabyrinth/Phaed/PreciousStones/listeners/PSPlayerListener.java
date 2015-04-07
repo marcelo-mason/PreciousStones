@@ -1312,13 +1312,13 @@ public class PSPlayerListener implements Listener
                                                 ChatBlock.send(player, "cannotEnable");
                                                 return;
                                             }
-                                            field.dirtyFlags();
+                                            field.dirtyFlags("visualize/enable on sneaking right click1");
                                         }
                                         else
                                         {
                                             ChatBlock.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
                                             field.setDisabled(true, player);
-                                            field.dirtyFlags();
+                                            field.dirtyFlags("visualize/enable on sneaking right click2");
                                         }
                                     }
                                 }
@@ -1381,7 +1381,7 @@ public class PSPlayerListener implements Listener
                                                     {
                                                         PreciousStones.debug("disabled");
                                                         field.setDisabled(true, player);
-                                                        field.dirtyFlags();
+                                                        field.dirtyFlags("right click translocation1");
                                                         return;
                                                     }
                                                 }
@@ -1404,7 +1404,7 @@ public class PSPlayerListener implements Listener
                                                             ChatBlock.send(player, "cannotEnable");
                                                             return;
                                                         }
-                                                        field.dirtyFlags();
+                                                        field.dirtyFlags("right click translocation2");
                                                         return;
                                                     }
                                                 }

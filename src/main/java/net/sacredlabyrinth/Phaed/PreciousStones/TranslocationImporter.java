@@ -118,7 +118,7 @@ public class TranslocationImporter implements Runnable
                     Bukkit.getServer().getScheduler().cancelTask(timerID);
                     field.setDisabled(true);
                     field.setTranslocating(false);
-                    field.dirtyFlags();
+                    field.dirtyFlags("TranslocationImporter");
                     ChatBlock.send(player, "importComplete");
                 }
             }

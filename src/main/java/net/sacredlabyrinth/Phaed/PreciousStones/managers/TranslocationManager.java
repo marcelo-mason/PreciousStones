@@ -497,7 +497,7 @@ public final class TranslocationManager
         }
 
         field.setDisabled(true);
-        field.dirtyFlags();
+        field.dirtyFlags("importBlocks");
     }
 
     /**
@@ -533,7 +533,7 @@ public final class TranslocationManager
         }
 
         field.setDisabled(true);
-        field.dirtyFlags();
+        field.dirtyFlags("removeBlocks");
     }
 
     private final class ProcessResult

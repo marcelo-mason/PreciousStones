@@ -311,14 +311,14 @@ public class PSBlockListener implements Listener
                     {
                         plugin.getTranslocationManager().applyTranslocation(field);
                         field.setDisabled(false);
-                        field.dirtyFlags();
+                        field.dirtyFlags("onBlockRedstoneChange1");
                     }
                 }
                 else
                 {
                     plugin.getTranslocationManager().clearTranslocation(field);
                     field.setDisabled(true);
-                    field.dirtyFlags();
+                    field.dirtyFlags("onBlockRedstoneChange2");
                 }
             }
             return;

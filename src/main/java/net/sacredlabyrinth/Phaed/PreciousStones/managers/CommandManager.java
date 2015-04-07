@@ -425,7 +425,7 @@ public final class CommandManager implements CommandExecutor
                                 if (plugin.getStorageManager().existsTranslocationDataWithName(fieldName, field.getOwner()))
                                 {
                                     field.setDisabled(true, player);
-                                    field.dirtyFlags();
+                                    field.dirtyFlags("commandSetname1");
                                 }
                                 else
                                 {
@@ -436,7 +436,7 @@ public final class CommandManager implements CommandExecutor
                                         ChatBlock.send(player, "cannotEnable");
                                         return true;
                                     }
-                                    field.dirtyFlags();
+                                    field.dirtyFlags("commandSetname2");
                                 }
                             }
 
@@ -858,7 +858,7 @@ public final class CommandManager implements CommandExecutor
                                 }
 
                                 field.setDisabled(true, player);
-                                field.dirtyFlags();
+                                field.dirtyFlags("commandDisable");
                                 ChatBlock.send(sender, "fieldDisabled");
                             }
                             else
@@ -899,7 +899,7 @@ public final class CommandManager implements CommandExecutor
                                     return true;
                                 }
 
-                                field.dirtyFlags();
+                                field.dirtyFlags("commandEnable");
                                 ChatBlock.send(sender, "fieldEnabled");
                             }
                             else
@@ -1182,7 +1182,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (field.insertFieldFlag(flagStr))
                                     {
-                                        field.dirtyFlags();
+                                        field.dirtyFlags("commandInsert");
                                         plugin.getStorageManager().offerField(field);
                                         ChatBlock.send(sender, "flagInserted");
                                     }
@@ -1220,7 +1220,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (field.clearFieldFlag(flagStr))
                                     {
-                                        field.dirtyFlags();
+                                        field.dirtyFlags("commandClear");
                                         plugin.getStorageManager().offerField(field);
                                         ChatBlock.send(sender, "flagCleared");
                                     }

@@ -491,7 +491,7 @@ public class StorageManager
             {
                 changed++;
                 field.disableFlag(flagStr);
-                plugin.getStorageManager().offerField(field);
+                field.dirtyFlags("enableAllFlags");
             }
 
             plugin.getForceFieldManager().addToCollection(field);
@@ -524,7 +524,7 @@ public class StorageManager
             {
                 changed++;
                 field.enableFlag(flagStr);
-                field.dirtyFlags();
+                field.dirtyFlags("disableAllFlags");
             }
 
             plugin.getForceFieldManager().addToCollection(field);
