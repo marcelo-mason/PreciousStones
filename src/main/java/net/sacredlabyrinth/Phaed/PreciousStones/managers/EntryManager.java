@@ -346,7 +346,10 @@ public final class EntryManager
             {
                 if (!field.hasFlag(FieldFlag.SNEAKING_BYPASS) || !player.isSneaking())
                 {
-                    plugin.getForceFieldManager().announceAllowedPlayers(field, ChatBlock.format("entryAnnounce", player.getName(), field.getName(), field.getCoords()));
+                    if (!plugin.getPermissionsManager().isVanished(player))
+                    {
+                        plugin.getForceFieldManager().announceAllowedPlayers(field, ChatBlock.format("entryAnnounce", player.getName(), field.getName(), field.getCoords()));
+                    }
                 }
             }
         }
@@ -571,7 +574,7 @@ public final class EntryManager
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.hiding"))
                 {
-                    player.sendBlockChange(field.getLocation(), field.getTypeId(), (byte)field.getData());
+                    player.sendBlockChange(field.getLocation(), field.getTypeId(), (byte) field.getData());
                 }
             }
         }
