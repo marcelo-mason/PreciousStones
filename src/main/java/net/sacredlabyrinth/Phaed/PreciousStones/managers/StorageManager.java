@@ -963,7 +963,7 @@ public class StorageManager
     }
 
     /**
-     * Retrieves all players from the database
+     * Retrieves a player from the database
      */
     public PlayerEntry extractPlayer(String playerName)
     {
