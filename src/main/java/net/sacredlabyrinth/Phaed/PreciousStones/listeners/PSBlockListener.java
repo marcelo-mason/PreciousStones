@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Set;
@@ -708,43 +709,17 @@ public class PSBlockListener implements Listener
     private void removeAndRefundBlock(Player player, Block block, Field field, Cancellable event)
     {
         PreciousStones.debug("releasing field");
+        event.setCancelled(true);
 
         if (field.hasFlag(FieldFlag.SINGLE_USE))
         {
-            event.setCancelled(true);
             plugin.getForceFieldManager().releaseWipe(block);
         }
         else
         {
-            if (block.getTypeId() == field.getTypeId())
-            {
-                if (plugin.getSettingsManager().isFragileBlock(block))
-                {
-                    PreciousStones.debug("fragile block broken");
-                    event.setCancelled(true);
-                    plugin.getForceFieldManager().release(block);
-                }
-                else
-                {
-                    PreciousStones.debug("silent break");
-                    event.setCancelled(false);
-                    plugin.getForceFieldManager().releaseNoDrop(block);
-                }
-            }
-            else
-            {
-                if (plugin.getSettingsManager().isFragileBlock(new BlockTypeEntry(field.getTypeId(), (byte) field.getData())))
-                {
-                    PreciousStones.debug("fragile block broken");
-                    plugin.getForceFieldManager().releaseNoClean(field);
-                }
-                else
-                {
-                    PreciousStones.debug("silent break");
-                    plugin.getForceFieldManager().releaseNoDrop(block);
-                }
-            }
+            plugin.getForceFieldManager().release(block);
         }
+
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase"))
         {
             if (!plugin.getSettingsManager().isNoRefunds())
@@ -1286,6 +1261,13 @@ public class PSBlockListener implements Listener
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block);
 
         if (fs == null)
+        {
+            return false;
+        }
+
+        // if the field has a meta name, only items with that name can be placed
+
+        if (!fs.matchesMetaName(player.getItemInHand()))
         {
             return false;
         }

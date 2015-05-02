@@ -14,6 +14,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -2449,14 +2450,18 @@ public final class ForceFieldManager
     }
 
     /**
-     * Deletes a liquid based field from the collection
+     * Deletes a field from the collection
      *
-     * @param field
+     * @param block
      */
-    public void releaseNoClean(Field field)
+    public void release(Block block)
     {
-        deleteField(field);
-        dropBlockNoClean(field);
+        Field field = getField(block);
+
+        if (field != null)
+        {
+            release(field);
+        }
     }
 
     /**
@@ -2467,20 +2472,7 @@ public final class ForceFieldManager
     public void release(Field field)
     {
         deleteField(field);
-        dropBlock(field.getBlock());
-    }
-
-    /**
-     * Deletes a field from the collection
-     *
-     * @param block
-     */
-    public void release(Block block)
-    {
-        Field field = getField(block);
-
-        deleteField(field);
-        dropBlock(block);
+        dropField(field);
     }
 
     /**
@@ -2492,16 +2484,6 @@ public final class ForceFieldManager
     {
         deleteField(getField(block));
         block.setType(Material.AIR);
-    }
-
-    /**
-     * Deletes a field silently (no drop)
-     *
-     * @param block
-     */
-    public void releaseNoDrop(Block block)
-    {
-        deleteField(getField(block));
     }
 
     /**
@@ -2537,81 +2519,42 @@ public final class ForceFieldManager
             Field pending = deletionQueue.poll();
 
             deleteField(pending);
-            dropBlock(pending);
+            dropField(pending);
         }
     }
 
     /**
-     * Drops a block
+     * Drops a field
      *
      * @param field
      */
-    public void dropBlock(Field field)
+    public void dropField(Field field)
     {
-        dropBlock(field.getBlock());
-    }
-
-    /**
-     * Drops a block
-     *
-     * @param field
-     */
-    public void dropBlockNoClean(Field field)
-    {
-        // prevent tekkit blocks from dropping and crashing client
-
-        if (field.getTypeId() > 124)
-        {
-            return;
-        }
+        // unhide it
 
         field.unHide();
 
-        if (field.getBlock().getTypeId() == 0)
-        {
-            return;
-        }
+        // build item
 
-        if (plugin.getSettingsManager().isDropOnDelete())
-        {
-            World world = field.getLocation().getWorld();
-
-            ItemStack is = new ItemStack(field.getTypeId(), 1, (short) 0, (byte) field.getData());
-
-            world.dropItemNaturally(field.getLocation(), is);
-        }
-    }
-
-    /**
-     * Drops a block
-     *
-     * @param block
-     */
-    public void dropBlock(Block block)
-    {
-        // prevent tekkit blocks from dropping and crashing client
-
-        if (block.getTypeId() > 255)
-        {
-            return;
-        }
-
-        Field field = plugin.getForceFieldManager().getField(block);
-
-        if (field != null)
-        {
-            field.unHide();
-        }
-
-        if (block.getTypeId() == 0)
-        {
-            return;
-        }
-
+        Block block = field.getBlock();
         World world = block.getWorld();
-        ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+        ItemStack is = new ItemStack(field.getTypeEntry().getTypeId(), 1, (short) 0, field.getTypeEntry().getData());
+
+        // apply meta name and lore
+
+        if (field.getSettings().hasMetaName())
+        {
+            ItemMeta meta = is.getItemMeta();
+            meta.setDisplayName(field.getSettings().getMetaName());
+            meta.setLore(field.getSettings().getMetaLore());
+            is.setItemMeta(meta);
+        }
+
+        // wipe previous block
 
         block.setType(Material.AIR);
+
+        // drop item
 
         if (plugin.getSettingsManager().isDropOnDelete())
         {

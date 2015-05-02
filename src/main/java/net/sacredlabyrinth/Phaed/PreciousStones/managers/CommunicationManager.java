@@ -108,7 +108,7 @@ public class CommunicationManager
     {
         if (plugin.getSettingsManager().isLogRentsAndPurchases())
         {
-            PreciousStones.log("logPayment", renter, s.getPeriod(), owner, s.getField().getType(), s.getPrice(), (s.getItem() != null) ? s.getItem(): "", s.getField().getCoords());
+            PreciousStones.log("logPayment", renter, s.getPeriod(), owner, s.getField().getType(), s.getPrice(), (s.getItem() != null) ? s.getItem() : "", s.getField().getCoords());
         }
     }
 
@@ -132,7 +132,7 @@ public class CommunicationManager
     {
         if (plugin.getSettingsManager().isLogRentsAndPurchases())
         {
-            PreciousStones.log("logPurchaseCollect", owner, s.getPrice(), (s.getItem() != null) ? s.getItem(): "", renter, s.getField().getCoords());
+            PreciousStones.log("logPurchaseCollect", owner, s.getPrice(), (s.getItem() != null) ? s.getItem() : "", renter, s.getField().getCoords());
         }
     }
 
@@ -2531,6 +2531,32 @@ public class CommunicationManager
         boolean showMessage = true;
 
         cb.addRow("  " + color + ChatBlock.format("_type") + ": ", ChatColor.AQUA + fs.getTitle(), "");
+
+        if (fs.hasMetaName())
+        {
+            List<String> lore = fs.getMetaLore();
+
+            boolean firstAdded = false;
+
+            for (int i = 0; i < lore.size(); i++)
+            {
+                if (lore.get(i) == null || lore.get(i).isEmpty())
+                {
+                    continue;
+                }
+
+                if (!firstAdded)
+                {
+                    cb.addRow("  " + color + ChatBlock.format("_lore") + ": ", lore.get(i), "");
+                    firstAdded = true;
+                }
+                else
+
+                {
+                    cb.addRow("  ", ChatColor.AQUA + lore.get(i), "");
+                }
+            }
+        }
 
         if (fs.hasNameableFlag())
         {

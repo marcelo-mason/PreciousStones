@@ -3,11 +3,11 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -18,6 +18,8 @@ import java.util.logging.Level;
  */
 public class FieldSettings
 {
+    private String metaName = "";
+    private List<String> metaLore = new ArrayList<String>();
     private int foresterUses = 1;
     private BlockTypeEntry groundBlock;
     private int treeCount = 64;
@@ -324,6 +326,8 @@ public class FieldSettings
         loadBoolean("command-blacklisting");
         loadBoolean("anti-plot");
 
+        metaName = loadString("meta-name");
+        metaLore = loadStringList("meta-lore");
         foresterUses = loadInt("forester-uses");
         surfaces = loadTypeEntries("surfaces");
         requiredPermission = loadString("required-permission");
@@ -449,14 +453,15 @@ public class FieldSettings
                     {
                         loadFlags(getKey(flagStr));
                     }
+
+                    PreciousStones.debug("   %s: %s", flagStr, value);
+                    return ChatColor.translateAlternateColorCodes('&', value);
                 }
                 else
                 {
                     PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
+                    return null;
                 }
-
-                PreciousStones.debug("   %s: %s", flagStr, value);
-                return value;
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
@@ -525,14 +530,28 @@ public class FieldSettings
                     {
                         loadFlags(getKey(flagStr));
                     }
+
+                    PreciousStones.debug("   %s: %s", flagStr, value);
+
+                    List<String> colored = new ArrayList<String>();
+
+                    for (String s : value)
+                    {
+                        if (s == null || s.isEmpty())
+                        {
+                            colored.add("");
+                        }
+                        else
+                        {
+                            colored.add(ChatColor.translateAlternateColorCodes('&', s));
+                        }
+                    }
+                    return colored;
                 }
                 else
                 {
                     PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
-
-                PreciousStones.debug("   %s: %s", flagStr, value);
-                return value;
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
@@ -553,14 +572,14 @@ public class FieldSettings
                     {
                         loadFlags(getKey(flagStr));
                     }
+
+                    PreciousStones.debug("   %s: %s", flagStr, value);
+                    return value;
                 }
                 else
                 {
                     PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
-
-                PreciousStones.debug("   %s: %s", flagStr, value);
-                return value;
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
@@ -581,14 +600,14 @@ public class FieldSettings
                     {
                         loadFlags(getKey(flagStr));
                     }
+
+                    PreciousStones.debug("   %s: %s", flagStr, value);
+                    return value;
                 }
                 else
                 {
                     PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
-
-                PreciousStones.debug("   %s: %s", flagStr, value);
-                return value;
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
@@ -1565,5 +1584,37 @@ public class FieldSettings
     public int getForesterUses()
     {
         return foresterUses;
+    }
+
+    public boolean matchesMetaName(ItemStack item)
+    {
+        if (metaName == null || metaName.isEmpty())
+        {
+            return true;
+        }
+
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null && meta.getDisplayName() != null)
+        {
+            return meta.getDisplayName().equals(metaName);
+        }
+
+        return false;
+    }
+
+    public boolean hasMetaName()
+    {
+        return metaName != null && !metaName.isEmpty();
+    }
+
+    public String getMetaName()
+    {
+        return metaName;
+    }
+
+    public List<String> getMetaLore()
+    {
+        return metaLore;
     }
 }
