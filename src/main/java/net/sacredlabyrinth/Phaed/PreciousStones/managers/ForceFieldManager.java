@@ -2471,8 +2471,8 @@ public final class ForceFieldManager
      */
     public void release(Field field)
     {
-        deleteField(field);
         dropField(field);
+        deleteField(field);
     }
 
     /**
@@ -2518,8 +2518,8 @@ public final class ForceFieldManager
         {
             Field pending = deletionQueue.poll();
 
-            deleteField(pending);
             dropField(pending);
+            deleteField(pending);
         }
     }
 
