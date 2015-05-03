@@ -4,6 +4,12 @@ force-field-blocks:
     block: diamond_block
     radius: 20
     custom-height: 15
+    meta-name: '&bCity Protection'
+    meta-autoset: true
+    meta-lore:
+    - '&eThis will protect a city'
+    - '&eIt covers an area of 20 radius'
+    - '&eWith a max height of 15'
     prevent-fire: true
     prevent-place: true
     prevent-destroy: true
@@ -38,6 +44,12 @@ force-field-blocks:
     block: quartz_ore
     radius: 20
     custom-height: 15
+    meta-name: '&bCity Plot'
+    meta-autoset: true
+    meta-lore:
+    - '&eCity Protection plots'
+    - '&eIt covers an area of 20 radius'
+    - '&eWith a max height of 15'
     allowed-only-inside: ["City Protection"]
     plot: true
     no-conflict: true
@@ -73,6 +85,11 @@ force-field-blocks:
 -   title: Entry Bouncer
     block: lapis_block
     radius: 5
+    meta-name: '&bEntry Bouncer'
+    meta-autoset: true
+    meta-lore:
+    - '&ePrevents entry into an area'
+    - '&eIt covers an area of 5 radius'
     prevent-entry: true
     prevent-unprotectable: true
     prevent-flow: true
@@ -85,6 +102,12 @@ force-field-blocks:
     block: gold_block
     radius: 20
     custom-height: 15
+    meta-name: '&bGrief Revert'
+    meta-autoset: true
+    meta-lore:
+    - '&eReverts grief in an area'
+    - '&eIt covers an area of 20 radius'
+    - '&eWith a max height of 15'
     allow-grief: [37, 38, 39, 40]
     grief-revert: true
     grief-revert-safety: true
@@ -99,6 +122,11 @@ force-field-blocks:
 -   title: Peace Keeper
     block: sponge
     radius: 10
+    meta-name: '&bPeace Keeper'
+    meta-autoset: true
+    meta-lore:
+    - '&eMakes peaceful areas'
+    - '&eIt covers an area of 10 radius'
     prevent-pvp: true
     no-player-place: true
     prevent-mob-damage: true
@@ -108,18 +136,15 @@ force-field-blocks:
     hidable: true
     cuboid: true
     mask-on-disabled: 80
--   title: Jack-o-Death
-    block: lit_pumpkin
-    radius: 5
-    damage: 4
-    no-conflict: true
-    sneaking-bypass: true
-    no-player-place: true
-    mixing-group: 2
-    mask-on-disabled: 80
 -   title: Creature Repeller
     block: web
     radius: 20
+    meta-name: '&bCreature Repeller'
+    meta-autoset: true
+    meta-lore:
+    - '&ePrevents creature spawning'
+    - '&eAnd removes all mobs in an area'
+    - '&eIt covers an area of 20 radius'
     single-use: true
     prevent-mob-damage: true
     prevent-mob-spawn: true
@@ -134,6 +159,12 @@ force-field-blocks:
     block: lapis_ore
     radius: 10
     custom-height: 256
+    meta-name: '&9Air of Atlantis'
+    meta-autoset: true
+    meta-lore:
+    - '&fAllows you to breathe underwater'
+    - '&fIt covers an area of 10 radius'
+    - '&fbut unlimmited height'
     air: true
     no-conflict: true
     mixing-group: 1
@@ -143,6 +174,12 @@ force-field-blocks:
 -   title: Proximity Snitch
     block: noteblock
     radius: 5
+    meta-name: '&1Proximity Snitch'
+    meta-autoset: true
+    meta-lore:
+    - '&9Will report to you when someone'
+    - '&9enters your base.'
+    - '&9It covers an area of 5 radius'
     snitch: true
     entry-alert: true
     no-conflict: true
@@ -150,10 +187,33 @@ force-field-blocks:
     mixing-group: 2
     cuboid: true
     mask-on-disabled: 80
+-   title: Jack-o-Death
+    block: lit_pumpkin
+    radius: 5
+    damage: 4
+    meta-name: '&4Jack-o-Death'
+    meta-autoset: true
+    meta-lore:
+    - '&6Does damage to anyone near it'
+    - '&6Sneak to bypass'
+    - '&6It covers an area of 5 radius'
+    - '&6You can allow people to be immune'
+    no-conflict: true
+    sneaking-bypass: true
+    no-player-place: true
+    mixing-group: 2
+    mask-on-disabled: 80
 -   title: The Shocker
     block: monster_egg
     radius: 0
     custom-height: 3
+    meta-name: '&4The Shocker'
+    meta-autoset: true
+    meta-lore:
+    - '&6Drops a lightning bolt to anyone'
+    - '&6who steps on it.'
+    - '&6It can be bypassed by sneaking'
+    - '&6You can allow people to be immune'
     lightning: true
     lightning-replace-block: 0
     sneaking-bypass: true
@@ -165,6 +225,12 @@ force-field-blocks:
     block: redstone_ore
     radius: 1
     custom-height: 5
+    meta-name: '&4Proximity Mine'
+    meta-autoset: true
+    meta-lore:
+    - '&6Blows up when someone gets near it'
+    - '&6It can be bypassed by sneaking'
+    - '&6You can allow people to be immune'
     mine: 5
     mine-has-fire: true
     mine-delay-seconds: 0
@@ -176,6 +242,17 @@ force-field-blocks:
 -   title: Launch Pad
     block: iron_ore
     radius: 1
+    custom-height: 3
+    custom-volume: 20
+    meta-name: '&9Launch Pad'
+    meta-autoset: true
+    meta-lore:
+    - '&fLaunches players in the air'
+    - '&fin the direction they are walking'
+    - '&fwhen they step over it.'
+    - '&fWhile looking up = fast'
+    - '&fWhile looking down = slow'
+    - '&fWorks for only players allowed'
     launch: true
     no-conflict: true
     sneaking-bypass: true
@@ -188,6 +265,15 @@ force-field-blocks:
     radius: 0
     custom-height: 3
     custom-volume: 20
+    meta-name: '&9Sky Cannon'
+    meta-autoset: true
+    meta-lore:
+    - '&fLaunches players in the air'
+    - '&fstraight up'
+    - '&fwhen they step over it.'
+    - '&fWhile looking up = fast'
+    - '&fWhile looking down = slow'
+    - '&fWorks for only players allowed'
     sneaking-bypass: true
     cannon: true
     no-conflict: true
@@ -199,6 +285,12 @@ force-field-blocks:
     block: 'red_mushroom_block:14'
     radius: 8
     custom-volume: 5000
+    meta-name: '&9Translocator'
+    meta-autoset: true
+    meta-lore:
+    - '&fAllows you to move your builds'
+    - '&fIt covers an area of 8 radiuss'
+    - '&fbut can be expanded'
     enable-with-redstone: true
     translocation: true
     dynmap-area: true
@@ -212,6 +304,12 @@ force-field-blocks:
 -   title: GodStone
     block: brown_mushroom_block
     radius: 5
+    meta-name: '&eGodStone'
+    meta-autoset: true
+    meta-lore:
+    - '&fHeal, feed, repair, neutralize portions'
+    - '&6It covers an area of 5 radius'
+    - '&fWorks for only players allowed'
     heal: 4
     feed: 2
     repair: 25
@@ -223,6 +321,12 @@ force-field-blocks:
 -   title: Miner's Haste
     block: ice
     radius: 10
+    meta-name: "&eMiner's Haste"
+    meta-autoset: true
+    meta-lore:
+    - '&fDig fast, Run fast, Jump, high'
+    - '&fIt covers an area of 10 radius'
+    - '&fWorks for only players allowed'
     custom-height: 128
     cuboid: true
     dynmap-area: true
@@ -241,6 +345,13 @@ force-field-blocks:
     block: 'leaves:4'
     radius: 20
     custom-height: 15
+    meta-name: '&2Mild Forester'
+    meta-autoset: true
+    meta-lore:
+    - '&aGrow a forest around an area'
+    - '&aRegular small and large trees'
+    - '&aAnd a little bit of birch'
+    - '&aIt covers an area of 20 radius'
     forester: true
     ground-block: dirt
     fertile-blocks:
@@ -274,6 +385,12 @@ force-field-blocks:
     block: 'leaves:5'
     radius: 20
     custom-height: 15
+    meta-name: '&2Redwood Forester'
+    meta-autoset: true
+    meta-lore:
+    - '&aGrow a forest around an area'
+    - '&aRedwood and tall redwood only'
+    - '&aIt covers an area of 20 radius'
     forester: true
     ground-block: dirt
     fertile-blocks:
@@ -299,6 +416,12 @@ force-field-blocks:
     block: 'leaves:6'
     radius: 20
     custom-height: 15
+    meta-name: '&2Jungle Forester'
+    meta-autoset: true
+    meta-lore:
+    - '&aGrow a jungle around an area'
+    - '&aRegular, jungle trees and bushes'
+    - '&aAnd a little bit of birch'
     forester: true
     ground-block: dirt
     fertile-blocks:
@@ -329,6 +452,12 @@ force-field-blocks:
     block: 'leaves:7'
     radius: 20
     custom-height: 15
+    meta-name: '&2Birch Forester'
+    meta-autoset: true
+    meta-lore:
+    - '&aGrow a birch forest around an area'
+    - '&aMostly birch with a bit of tall trees'
+    - '&aand jungle trees'
     forester: true
     ground-block: dirt
     fertile-blocks:
@@ -341,8 +470,9 @@ force-field-blocks:
     tree-types:
     - 4
     - 4
-    - 8
-    - 8
+    - 4
+    - 4
+    - 1
     - 7
     shrub-types:
     - 2
