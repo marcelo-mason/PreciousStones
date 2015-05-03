@@ -19,6 +19,7 @@ import java.util.logging.Level;
 public class FieldSettings
 {
     private String metaName = "";
+    private boolean metaAutoSet = false;
     private List<String> metaLore = new ArrayList<String>();
     private int foresterUses = 1;
     private BlockTypeEntry groundBlock;
@@ -326,6 +327,7 @@ public class FieldSettings
         loadBoolean("command-blacklisting");
         loadBoolean("anti-plot");
 
+        metaAutoSet = loadBoolean("meta-autoset");
         metaName = loadString("meta-name");
         metaLore = loadStringList("meta-lore");
         foresterUses = loadInt("forester-uses");
@@ -1588,7 +1590,7 @@ public class FieldSettings
 
     public boolean matchesMetaName(ItemStack item)
     {
-        if (metaName == null || metaName.isEmpty())
+        if (!hasMetaName())
         {
             return true;
         }
@@ -1616,5 +1618,10 @@ public class FieldSettings
     public List<String> getMetaLore()
     {
         return metaLore;
+    }
+
+    public boolean isMetaAutoSet()
+    {
+        return metaAutoSet;
     }
 }

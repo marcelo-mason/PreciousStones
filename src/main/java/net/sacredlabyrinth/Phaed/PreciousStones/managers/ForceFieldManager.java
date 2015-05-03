@@ -2482,7 +2482,7 @@ public final class ForceFieldManager
      */
     public void releaseWipe(Block block)
     {
-        deleteField(getField(block));
+        dropFieldBlock(block);
         block.setType(Material.AIR);
     }
 
@@ -2530,23 +2530,48 @@ public final class ForceFieldManager
      */
     public void dropField(Field field)
     {
+        dropFieldBlock(field.getBlock());
+    }
+
+    /**
+     * Drops a block
+     *
+     * @param block
+     */
+    public void dropFieldBlock(Block block)
+    {
+        Field field = getField(block);
+
         // unhide it
 
         field.unHide();
 
+        // drop it
+
+        dropBlock(block, field.getTypeEntry(), field.getSettings());
+    }
+
+    /**
+     * Drop a block with a specific type and metadata (if applicable)
+     *
+     * @param block
+     * @param type
+     * @param settings
+     */
+    public void dropBlock(Block block, BlockTypeEntry type, FieldSettings settings)
+    {
         // build item
 
-        Block block = field.getBlock();
         World world = block.getWorld();
-        ItemStack is = new ItemStack(field.getTypeEntry().getTypeId(), 1, (short) 0, field.getTypeEntry().getData());
+        ItemStack is = new ItemStack(type.getTypeId(), 1, (short) 0, type.getData());
 
         // apply meta name and lore
 
-        if (field.getSettings().hasMetaName())
+        if (settings.hasMetaName())
         {
             ItemMeta meta = is.getItemMeta();
-            meta.setDisplayName(field.getSettings().getMetaName());
-            meta.setLore(field.getSettings().getMetaLore());
+            meta.setDisplayName(settings.getMetaName());
+            meta.setLore(settings.getMetaLore());
             is.setItemMeta(meta);
         }
 

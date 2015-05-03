@@ -22,6 +22,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.Set;
@@ -396,11 +397,6 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        handleBreak(player, block, event);
-    }
-
-    private void handleBreak(Player player, Block block, Cancellable event)
-    {
         // do not allow break of non-field blocks during cuboid definition
 
         if (plugin.getCuboidManager().hasOpenCuboid(player) && !plugin.getForceFieldManager().isField(block))
@@ -618,6 +614,19 @@ public class PSBlockListener implements Listener
                 {
                     f.clearRents();
                 }
+            }
+        }
+
+        // -------------------------------------------------------------------------------- set metadata
+
+        FieldSettings settings = plugin.getSettingsManager().getFieldSettings(block);
+
+        if (settings != null)
+        {
+            if (settings.isMetaAutoSet())
+            {
+                block.getDrops().clear();
+                plugin.getForceFieldManager().dropBlock(block, new BlockTypeEntry(block), settings);
             }
         }
     }
