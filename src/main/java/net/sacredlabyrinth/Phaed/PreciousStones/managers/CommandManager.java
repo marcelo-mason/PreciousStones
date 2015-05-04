@@ -540,7 +540,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (overflow > 0 && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius"))
                                     {
-                                        ChatBlock.send(sender, "radiusOverFlow", fs.getRadius());
+                                        ChatBlock.send(sender, "radiusOverFlow", overflow);
                                         return true;
                                     }
                                 }

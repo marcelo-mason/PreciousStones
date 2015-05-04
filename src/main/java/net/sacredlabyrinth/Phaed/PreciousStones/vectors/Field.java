@@ -292,7 +292,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     public int canSetCuboidRadius(int radius)
     {
         int volume = getMaxVolume();
-        int newVolume = ((radius * 2) + 1) * 3;
+        int newVolume = (int) Math.pow((radius * 2) + 1, 3.0);
 
         return newVolume - volume;
     }
