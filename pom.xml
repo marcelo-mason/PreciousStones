@@ -203,9 +203,9 @@
     </ciManagement>
 
     <scm>
-        <connection>scm:git:git:@github.com:phaed420/PreciousStones.git</connection>
-        <developerConnection>scm:git:git:@github.com:phaed420/PreciousStones.git</developerConnection>
-        <url>http://github.com/phaed420/PreciousStones.git/tree/master/</url>
+        <connection>scm:git:git:@github.com:marcelo-mason/PreciousStones.git</connection>
+        <developerConnection>scm:git:git:@github.com:marcelo-mason/PreciousStones.git</developerConnection>
+        <url>http://github.com/marcelo-mason/PreciousStones.git/tree/master/</url>
         <tag>PreciousStones</tag>
 
     </scm>
