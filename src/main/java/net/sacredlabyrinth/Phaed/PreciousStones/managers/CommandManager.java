@@ -165,6 +165,8 @@ public final class CommandManager implements CommandExecutor
 
                                     if (done)
                                     {
+                                        plugin.getEntryManager().reevaluateEnteredFields(allowed);
+
                                         ChatBlock.send(sender, "hasBeenAllowed", playerName);
                                     }
                                     else
@@ -191,6 +193,8 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
+                                    plugin.getEntryManager().reevaluateEnteredFields(Bukkit.getServer().getPlayerExact(playerName));
+
                                     ChatBlock.send(sender, "hasBeenAllowedIn", playerName, count);
                                 }
                                 else
@@ -241,6 +245,8 @@ public final class CommandManager implements CommandExecutor
 
                                     if (done)
                                     {
+                                        plugin.getEntryManager().reevaluateEnteredFields(Bukkit.getServer().getPlayerExact(playerName));
+
                                         ChatBlock.send(sender, "removedFromField", playerName);
                                     }
                                     else
@@ -267,6 +273,8 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
+                                    plugin.getEntryManager().reevaluateEnteredFields(Bukkit.getServer().getPlayerExact(playerName));
+
                                     ChatBlock.send(sender, "removedFromFields", playerName, count);
                                 }
                                 else

@@ -93,7 +93,7 @@ public class PSPlayerListener implements Listener
         plugin.getStorageManager().findUUIDMismatch(player);
         plugin.getStorageManager().offerPlayer(playerName);
 
-        reevaluateEnteredFields(player);
+        plugin.getEntryManager().reevaluateEnteredFields(player);
 
         plugin.getForceFieldManager().enableFieldsOnLogon(playerName);
         plugin.getForceFieldManager().removeFieldsIfNoPermission(playerName);
@@ -136,101 +136,6 @@ public class PSPlayerListener implements Listener
             if (FieldFlag.TELEPORT_ON_SNEAK.applies(field, player))
             {
                 plugin.getTeleportationManager().teleport(player, field);
-            }
-        }
-    }
-
-    private void reevaluateEnteredFields(Player player)
-    {
-        // refund confiscated items if not in confiscation fields
-
-        Field confField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.CONFISCATE_ITEMS);
-
-        if (confField == null)
-        {
-            plugin.getConfiscationManager().returnItems(player);
-        }
-
-        // undo a player's visualization if it exists
-
-        if (plugin.getSettingsManager().isVisualizeEndOnMove())
-        {
-            if (!plugin.getPermissionsManager().has(player, "preciousstones.admin.visualize"))
-            {
-                if (!plugin.getCuboidManager().hasOpenCuboid(player))
-                {
-                    plugin.getVisualizationManager().revert(player);
-                }
-            }
-        }
-
-        // remove player from any entry field he is not currently in
-
-        List<Field> entryFields = plugin.getEntryManager().getPlayerEntryFields(player);
-
-        if (entryFields != null)
-        {
-            for (Field entryField : entryFields)
-            {
-                if (!entryField.envelops(player.getLocation()))
-                {
-                    plugin.getEntryManager().leaveField(player, entryField);
-
-                    if (!plugin.getEntryManager().containsSameNameOwnedField(player, entryField))
-                    {
-                        plugin.getEntryManager().leaveOverlappedArea(player, entryField);
-                    }
-                }
-            }
-        }
-
-        // get all the fields the player is currently standing in
-
-        List<Field> currentFields = plugin.getForceFieldManager().getEnabledSourceFields(player.getLocation(), FieldFlag.ALL);
-
-        // check for prevent-entry fields and teleport him away if hes not allowed in it
-
-        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.entry"))
-        {
-            for (Field field : currentFields)
-            {
-                if (FieldFlag.PREVENT_ENTRY.applies(field, player))
-                {
-                    Location loc = plugin.getPlayerManager().getOutsideFieldLocation(field, player);
-                    Location outside = plugin.getPlayerManager().getOutsideLocation(player);
-
-                    if (outside != null)
-                    {
-                        Field f = plugin.getForceFieldManager().getEnabledSourceField(outside, FieldFlag.PREVENT_ENTRY);
-
-                        if (f != null)
-                        {
-                            loc = outside;
-                        }
-                    }
-
-                    player.teleport(loc);
-                    plugin.getCommunicationManager().warnEntry(player, field);
-                    return;
-                }
-            }
-        }
-
-        // did not get teleported out so now we update his last known outside location
-
-        plugin.getPlayerManager().updateOutsideLocation(player);
-
-        // enter all fields hes is not currently entered into yet
-
-        for (Field currentField : currentFields)
-        {
-            if (!plugin.getEntryManager().enteredField(player, currentField))
-            {
-                if (!plugin.getEntryManager().containsSameNameOwnedField(player, currentField))
-                {
-                    plugin.getEntryManager().enterOverlappedArea(player, currentField);
-                }
-                plugin.getEntryManager().enterField(player, currentField);
             }
         }
     }
@@ -1842,7 +1747,7 @@ public class PSPlayerListener implements Listener
                 @Override
                 public void run()
                 {
-                    reevaluateEnteredFields(player);
+                    plugin.getEntryManager().reevaluateEnteredFields(player);
                 }
             }, 1);
         }
@@ -1861,7 +1766,7 @@ public class PSPlayerListener implements Listener
             @Override
             public void run()
             {
-                reevaluateEnteredFields(player);
+                plugin.getEntryManager().reevaluateEnteredFields(player);
             }
         }, 5);
     }
