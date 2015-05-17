@@ -314,7 +314,7 @@ public final class CommandManager implements CommandExecutor
                     {
                         if (args.length >= 1)
                         {
-                            if ((args[0]).equals(ChatBlock.format("commandCuboidOpen")))
+                            if ((args[0]).equals(ChatBlock.format("commandCuboidOpen")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.open.forcefield"))
                             {
                                 Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
 
