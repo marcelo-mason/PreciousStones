@@ -310,11 +310,11 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandCuboid")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield") && hasplayer)
+                    else if (cmd.equals(ChatBlock.format("commandCuboid")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.openclose.forcefield") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
-                            if ((args[0]).equals(ChatBlock.format("commandCuboidOpen")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.open.forcefield"))
+                            if ((args[0]).equals(ChatBlock.format("commandCuboidOpen")))
                             {
                                 Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
 

@@ -14,8 +14,8 @@ permissions:
     description: Can use /ps fields
   preciousstones.benefit.create.forcefield:
     description: Can create forcefield blocks
-  preciousstones.benefit.open.forcefield:
-    description: Can open forcefields
+  preciousstones.benefit.openclose.forcefield:
+    description: Can open or close forcefields
   preciousstones.benefit.create.unbreakable:
     description: Can create unbreakable blocks
   preciousstones.benefit.disable:
@@ -284,7 +284,7 @@ permissions:
       preciousstones.benefit.info: true
       preciousstones.benefit.create.forcefield: true
       preciousstones.benefit.create.unbreakable: true
-      preciousstones.benefit.open.forcefield: true
+      preciousstones.benefit.openclose.forcefield: true
       preciousstones.benefit.heal: true
       preciousstones.benefit.potions: true
       preciousstones.benefit.giveair: true
