@@ -38,6 +38,7 @@ public final class SettingsManager
     private boolean disableGroundInfo;
     private boolean preventRemovalIfPlayerInField;
     private boolean autoAddClan;
+    private boolean autoAddTeam;
     private int globalFieldLimit;
     private boolean noRefunds;
     private BlockTypeEntry cuboidDefiningType;
@@ -283,6 +284,7 @@ public final class SettingsManager
         debug = loadBoolean("settings.show-debug-info");
         blacklistedWorlds = loadStringList("settings.blacklisted-worlds");
         autoAddClan = loadBoolean("settings.auto-allow-clan-on-fields");
+        autoAddTeam = loadBoolean("settings.auto-allow-team-on-fields");
         oncePerBlockOnMove = loadBoolean("settings.check-once-per-block-on-move");
         useIdInSnitches = loadBoolean("settings.use-blockids-in-snitches");
         fenceMaxDepth = loadInt("settings.fence-max-depth");
@@ -1589,5 +1591,10 @@ public final class SettingsManager
     public boolean isVisualizeOnExpand()
     {
         return visualizeOnExpand;
+    }
+
+    public boolean isAutoAddTeam()
+    {
+        return autoAddTeam;
     }
 }

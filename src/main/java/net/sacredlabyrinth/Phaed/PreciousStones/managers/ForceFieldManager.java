@@ -263,9 +263,9 @@ public final class ForceFieldManager
             }
         }
 
-        // add llowed team
+        // add allowed team
 
-        if (plugin.getSettingsManager().isAutoAddClan())
+        if (plugin.getSettingsManager().isAutoAddTeam())
         {
             OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(player.getName());
 

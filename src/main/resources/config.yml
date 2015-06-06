@@ -528,6 +528,7 @@ settings:
     blacklisted-worlds: [creative_world]
     drop-on-delete: true
     auto-allow-clan-on-fields: true
+    auto-allow-team-on-fields: false
     check-once-per-block-on-move: false
     use-blockids-in-snitches: false
     fence-max-depth: 50

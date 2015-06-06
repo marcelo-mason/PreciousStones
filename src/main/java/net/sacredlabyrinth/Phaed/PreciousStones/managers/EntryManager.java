@@ -297,9 +297,11 @@ public final class EntryManager
 
     public void reevaluateEnteredFields(Player player)
     {
-        if (player == null) {
+        if (player == null)
+        {
             return;
         }
+
         // refund confiscated items if not in confiscation fields
 
         Field confField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.CONFISCATE_ITEMS);
