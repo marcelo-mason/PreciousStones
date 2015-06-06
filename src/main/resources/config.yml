@@ -35,7 +35,6 @@ force-field-blocks:
     can-change-owner: true
     enable-on-src: true
     mixing-group: 1
-    hidable: true
     rentable: true
     buyable: true
     cuboid: true
@@ -77,7 +76,6 @@ force-field-blocks:
     can-change-owner: true
     enable-on-src: true
     mixing-group: 1
-    hidable: true
     rentable: true
     buyable: true
     cuboid: true
@@ -95,7 +93,6 @@ force-field-blocks:
     prevent-flow: true
     enable-on-src: true
     can-change-owner: true
-    hidable: true
     cuboid: true
     mask-on-disabled: 80
 -   title: Grief Revert
@@ -115,7 +112,6 @@ force-field-blocks:
     ?farewell-message: true
     enable-on-src: true
     can-change-owner: true
-    hidable: true
     mixing-group: 1
     cuboid: true
     mask-on-disabled: 80
@@ -133,7 +129,6 @@ force-field-blocks:
     protect-animals: true
     protect-mobs: true
     protect-villagers: true
-    hidable: true
     cuboid: true
     mask-on-disabled: 80
 -   title: Creature Repeller
@@ -152,7 +147,6 @@ force-field-blocks:
     remove-mob: true
     no-conflict: true
     mixing-group: 1
-    hidable: true
     cuboid: true
     mask-on-disabled: 80
 -   title: Air of Atlantis
@@ -168,7 +162,6 @@ force-field-blocks:
     air: true
     no-conflict: true
     mixing-group: 1
-    hidable: true
     cuboid: true
     mask-on-disabled: 80
 -   title: Proximity Snitch
@@ -183,7 +176,6 @@ force-field-blocks:
     snitch: true
     entry-alert: true
     no-conflict: true
-    hidable: true
     mixing-group: 2
     cuboid: true
     mask-on-disabled: 80
@@ -295,7 +287,6 @@ force-field-blocks:
     translocation: true
     dynmap-area: true
     dynmap-disabled: true
-    hidable: true
     translocation-blacklist:
     - diamond_block
     - gold_block
