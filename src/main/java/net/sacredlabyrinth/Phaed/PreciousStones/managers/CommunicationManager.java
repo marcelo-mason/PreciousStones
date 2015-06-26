@@ -3425,6 +3425,11 @@ public class CommunicationManager
             cb.addRow("menu62");
         }
 
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.give"))
+        {
+            cb.addRow("menu70");
+        }
+
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.reset") && hasPlayer)
         {
             cb.addRow("menu30");

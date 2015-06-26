@@ -2540,6 +2540,44 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
+                    else if (cmd.equals(ChatBlock.format("commandGive")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.give"))
+                    {
+                        if (args.length >= 2)
+                        {
+                            String playerName = args[0];
+                            String fieldName = args[1];
+                            int count = 1;
+
+                            if (args.length > 2)
+                            {
+                                count = Integer.parseInt(args[2]);
+                            }
+
+                            Player recipient = plugin.getServer().getPlayer(playerName);
+
+                            if (recipient != null)
+                            {
+                                FieldSettings settings = plugin.getSettingsManager().getFieldSettings(fieldName);
+
+                                if (settings != null)
+                                {
+                                    plugin.getForceFieldManager().giveField(recipient, settings, count);
+                                    ChatBlock.send(sender, "fieldsGiven", playerName, settings.getTitle(), count);
+                                    ChatBlock.send(recipient, "fieldsGivenPlayer", sender.getName(), settings.getTitle(), count);
+                                }
+                                else
+                                {
+                                    ChatBlock.send(sender, "fieldNotFound", fieldName);
+                                }
+                            }
+                            else
+                            {
+                                ChatBlock.send(sender, "playerNotFound", playerName);
+                            }
+                        }
+
+                        return true;
+                    }
 
                     ChatBlock.send(sender, "notValidCommand");
                     return true;
@@ -2551,9 +2589,7 @@ public final class CommandManager implements CommandExecutor
                 return true;
             }
         }
-
         catch (Exception ex)
-
         {
             System.out.print("Error: " + ex.getMessage());
 

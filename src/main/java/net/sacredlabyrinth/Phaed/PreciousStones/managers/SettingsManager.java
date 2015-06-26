@@ -841,6 +841,40 @@ public final class SettingsManager
     }
 
     /**
+     * Get a single field by name
+     *
+     * @return
+     */
+    public FieldSettings getFieldSettings(String name)
+    {
+        for (FieldSettings fs : fieldDefinitions.values())
+        {
+            if (fs.getTitle().equals(name))
+            {
+                return fs;
+            }
+        }
+
+        for (FieldSettings fs : fieldDefinitions.values())
+        {
+            if (fs.getTitle().startsWith(name))
+            {
+                return fs;
+            }
+        }
+
+        for (FieldSettings fs : fieldDefinitions.values())
+        {
+            if (fs.getTitle().contains(name))
+            {
+                return fs;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return the blacklistedWorlds
      */
     public List<String> getBlacklistedWorlds()
@@ -1586,7 +1620,10 @@ public final class SettingsManager
         return maxTargetDistance;
     }
 
-    public BlockTypeEntry getDefaulItemCurrency() { return defaulItemCurrency; }
+    public BlockTypeEntry getDefaulItemCurrency()
+    {
+        return defaulItemCurrency;
+    }
 
     public boolean isVisualizeOnExpand()
     {

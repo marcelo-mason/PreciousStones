@@ -3044,4 +3044,23 @@ public final class ForceFieldManager
     {
         return fieldsByOwner;
     }
+
+    public void giveField(Player player, FieldSettings settings, int count)
+    {
+        // build item
+
+        ItemStack is = new ItemStack(settings.getTypeId(), count, (short) 0, settings.getData());
+
+        // apply meta name and lore
+
+        if (settings.hasMetaName())
+        {
+            ItemMeta meta = is.getItemMeta();
+            meta.setDisplayName(settings.getMetaName());
+            meta.setLore(settings.getMetaLore());
+            is.setItemMeta(meta);
+        }
+
+        player.getInventory().addItem(is);
+    }
 }
