@@ -554,7 +554,7 @@ public class PSPlayerListener implements Listener
 
         if (entity.getType().equals(EntityType.ARMOR_STAND))
         {
-            if (player == null || !plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
+            if (player != null && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
             {
                 Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PROTECT_ARMOR_STANDS);
 
@@ -720,7 +720,7 @@ public class PSPlayerListener implements Listener
                                                     {
                                                         PreciousStones.debug("and sneaking");
 
-                                                        field.abandonRent(player);
+
                                                         ChatBlock.send(player, "fieldSignRentAbandoned");
                                                         event.setCancelled(true);
                                                         return;
