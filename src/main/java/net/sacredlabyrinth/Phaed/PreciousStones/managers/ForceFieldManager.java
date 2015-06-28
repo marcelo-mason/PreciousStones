@@ -1427,15 +1427,17 @@ public final class ForceFieldManager
     }
 
     /**
-     * Whether another field that is intersecting the field is owned by the allowedName
+     * Removed intersecting fields owned by player
      *
      * @param field
      * @param allowedName
      * @return
      */
-    public boolean conflictOfInterestExists(Field field, String allowedName)
+    public int removeConflictingFields(Field field, String allowedName)
     {
         Set<Field> sources = field.getIntersectingFields();
+
+        int conflicted = 0;
 
         for (Field source : sources)
         {
@@ -1451,11 +1453,12 @@ public final class ForceFieldManager
 
             if (source.isOwner(allowedName))
             {
-                return true;
+                deleteField(source);
+                conflicted++;
             }
         }
 
-        return false;
+        return conflicted;
     }
 
     /**
@@ -1512,9 +1515,11 @@ public final class ForceFieldManager
                 }
             }
 
-            if (conflictOfInterestExists(field, target))
+            int conflicted = plugin.getForceFieldManager().removeConflictingFields(field, target);
+
+            if (conflicted > 0)
             {
-                ChatBlock.send(player, "playerNotDisallowed", target, field);
+                ChatBlock.send(player, "removedConflictingFields", conflicted, target);
                 continue;
             }
 

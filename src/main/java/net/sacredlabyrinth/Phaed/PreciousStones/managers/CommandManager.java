@@ -235,9 +235,11 @@ public final class CommandManager implements CommandExecutor
                                         }
                                     }
 
-                                    if (plugin.getForceFieldManager().conflictOfInterestExists(field, playerName))
+                                    int conflicted = plugin.getForceFieldManager().removeConflictingFields(field, playerName);
+
+                                    if (conflicted > 0)
                                     {
-                                        ChatBlock.send(sender, "cannotDisallowWhenOverlap", playerName);
+                                        ChatBlock.send(sender, "removedConflictingFields", conflicted, playerName);
                                         return true;
                                     }
 
