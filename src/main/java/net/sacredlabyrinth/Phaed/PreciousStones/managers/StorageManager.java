@@ -5,6 +5,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.blocks.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
@@ -959,7 +961,7 @@ public class StorageManager
 
         if (player != null)
         {
-            ChatBlock.send(player, "usernameChanged");
+            ChatHelper.send(player, "usernameChanged");
         }
     }
 

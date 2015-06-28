@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
@@ -46,7 +46,7 @@ public class TeleportationManager
 
                     if (player != null)
                     {
-                        ChatBlock.send(player, "teleportMaxDistance", sourceField.getSettings().getTeleportMaxDistance());
+                        ChatHelper.send(player, "teleportMaxDistance", sourceField.getSettings().getTeleportMaxDistance());
                     }
                     return false;
                 }
@@ -66,7 +66,7 @@ public class TeleportationManager
 
                         if (player != null)
                         {
-                            ChatBlock.send(player, "economyNotEnoughMoney");
+                            ChatHelper.send(player, "economyNotEnoughMoney");
                         }
                         return false;
                     }
@@ -171,7 +171,7 @@ public class TeleportationManager
                 {
                     if (!entry.getAnnounce().isEmpty())
                     {
-                        ChatBlock.send(player, entry.getAnnounce());
+                        ChatHelper.send(player, entry.getAnnounce());
                     }
                 }
 
@@ -181,7 +181,7 @@ public class TeleportationManager
                 {
                     if (sourceField.hasFlag(FieldFlag.TELEPORT_ANNOUNCE))
                     {
-                        ChatBlock.send(player, "teleportAnnounceBack", sourceField.getSettings().getTeleportBackAfterSeconds());
+                        ChatHelper.send(player, "teleportAnnounceBack", sourceField.getSettings().getTeleportBackAfterSeconds());
                     }
 
                     PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player.getName());

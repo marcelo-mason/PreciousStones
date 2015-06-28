@@ -1,9 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
@@ -436,7 +437,7 @@ public final class EntryManager
         {
             if (plugin.getSettingsManager().isNotifyFlyZones())
             {
-                ChatBlock.send(player, "noFlyEnter");
+                ChatHelper.send(player, "noFlyEnter");
             }
 
             player.setAllowFlight(false);
@@ -450,7 +451,7 @@ public final class EntryManager
                 {
                     if (!plugin.getPermissionsManager().isVanished(player))
                     {
-                        plugin.getForceFieldManager().announceAllowedPlayers(field, ChatBlock.format("entryAnnounce", player.getName(), field.getName(), field.getCoords()));
+                        plugin.getForceFieldManager().announceAllowedPlayers(field, ChatHelper.format("entryAnnounce", player.getName(), field.getName(), field.getCoords()));
                     }
                 }
             }
@@ -472,7 +473,7 @@ public final class EntryManager
                 if (field.getSettings().isUnusableItem(item.getTypeId(), item.getData().getData()))
                 {
                     StackHelper.unHoldItem(player, slot);
-                    ChatBlock.send(player, "cannotUseItemMoved");
+                    ChatHelper.send(player, "cannotUseItemMoved");
                 }
             }
         }
@@ -574,7 +575,7 @@ public final class EntryManager
             {
                 if (plugin.getSettingsManager().isNotifyFlyZones())
                 {
-                    ChatBlock.send(player, "noFlyLeave");
+                    ChatHelper.send(player, "noFlyLeave");
                 }
 
                 player.setAllowFlight(true);

@@ -1,13 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Unbreakable;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -60,7 +62,7 @@ public final class CommandManager implements CommandExecutor
                 {
                     if (plugin.getSettingsManager().isBlacklistedWorld(player.getWorld()))
                     {
-                        ChatBlock.send(player, "psDisabled");
+                        ChatHelper.send(player, "psDisabled");
                         return true;
                     }
                 }
@@ -72,54 +74,54 @@ public final class CommandManager implements CommandExecutor
 
                     Block block = hasplayer ? player.getWorld().getBlockAt(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ()) : null;
 
-                    if (cmd.equals(ChatBlock.format("commandDebug")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
+                    if (cmd.equals(ChatHelper.format("commandDebug")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.debug"))
                     {
                         plugin.getSettingsManager().setDebug(!plugin.getSettingsManager().isDebug());
 
                         if (plugin.getSettingsManager().isDebug())
                         {
-                            ChatBlock.send(sender, "debugEnabled");
+                            ChatHelper.send(sender, "debugEnabled");
                         }
                         else
                         {
-                            ChatBlock.send(sender, "debugDisabled");
+                            ChatHelper.send(sender, "debugDisabled");
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandFields")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.fields"))
+                    else if (cmd.equals(ChatHelper.format("commandFields")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.fields"))
                     {
                         plugin.getCommunicationManager().showConfiguredFields(sender);
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandOn")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandOn")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
                         boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
                         if (isDisabled)
                         {
                             plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(false);
-                            ChatBlock.send(sender, "placingEnabled");
+                            ChatHelper.send(sender, "placingEnabled");
                         }
                         else
                         {
-                            ChatBlock.send(sender, "placingAlreadyEnabled");
+                            ChatHelper.send(sender, "placingAlreadyEnabled");
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandOff")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandOff")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer)
                     {
                         boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
                         if (!isDisabled)
                         {
                             plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(true);
-                            ChatBlock.send(sender, "placingDisabled");
+                            ChatHelper.send(sender, "placingDisabled");
                         }
                         else
                         {
-                            ChatBlock.send(sender, "placingAlreadyDisabled");
+                            ChatHelper.send(sender, "placingAlreadyDisabled");
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandAllow")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allow") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandAllow")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allow") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -131,7 +133,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (field.hasFlag(FieldFlag.NO_ALLOWING))
                                     {
-                                        ChatBlock.send(sender, "noSharing");
+                                        ChatHelper.send(sender, "noSharing");
                                         return true;
                                     }
                                 }
@@ -140,7 +142,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isDisabled())
                                     {
-                                        ChatBlock.send(sender, "onlyModWhileDisabled");
+                                        ChatHelper.send(sender, "onlyModWhileDisabled");
                                         return true;
                                     }
                                 }
@@ -157,7 +159,7 @@ public final class CommandManager implements CommandExecutor
                                         {
                                             if (!plugin.getPermissionsManager().has(allowed, field.getSettings().getRequiredPermissionAllow()))
                                             {
-                                                ChatBlock.send(sender, "noPermsForAllow", playerName);
+                                                ChatHelper.send(sender, "noPermsForAllow", playerName);
                                                 continue;
                                             }
                                         }
@@ -169,11 +171,11 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         plugin.getEntryManager().reevaluateEnteredFields(allowed);
 
-                                        ChatBlock.send(sender, "hasBeenAllowed", playerName);
+                                        ChatHelper.send(sender, "hasBeenAllowed", playerName);
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "alreadyAllowed", playerName);
+                                        ChatHelper.send(sender, "alreadyAllowed", playerName);
                                     }
                                 }
                             }
@@ -185,7 +187,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandAllowall")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandAllowall")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -197,18 +199,18 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     plugin.getEntryManager().reevaluateEnteredFields(Bukkit.getServer().getPlayerExact(playerName));
 
-                                    ChatBlock.send(sender, "hasBeenAllowedIn", playerName, count);
+                                    ChatHelper.send(sender, "hasBeenAllowedIn", playerName, count);
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "isAlreadyAllowedOnAll", playerName);
+                                    ChatHelper.send(sender, "isAlreadyAllowedOnAll", playerName);
                                 }
                             }
 
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandRemove")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.remove") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandRemove")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.remove") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -220,7 +222,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isDisabled())
                                     {
-                                        ChatBlock.send(sender, "onlyModWhileDisabled");
+                                        ChatHelper.send(sender, "onlyModWhileDisabled");
                                         return true;
                                     }
                                 }
@@ -232,7 +234,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (field.containsPlayer(playerName))
                                         {
-                                            ChatBlock.send(sender, "cannotRemovePlayerInField");
+                                            ChatHelper.send(sender, "cannotRemovePlayerInField");
                                             return true;
                                         }
                                     }
@@ -241,7 +243,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (conflicted > 0)
                                     {
-                                        ChatBlock.send(sender, "removedConflictingFields", conflicted, playerName);
+                                        ChatHelper.send(sender, "removedConflictingFields", conflicted, playerName);
                                         return true;
                                     }
 
@@ -251,11 +253,11 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         plugin.getEntryManager().reevaluateEnteredFields(Bukkit.getServer().getPlayerExact(playerName));
 
-                                        ChatBlock.send(sender, "removedFromField", playerName);
+                                        ChatHelper.send(sender, "removedFromField", playerName);
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "playerNotFound", playerName);
+                                        ChatHelper.send(sender, "playerNotFound", playerName);
                                     }
                                 }
                             }
@@ -267,7 +269,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandRemoveall")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.removeall") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandRemoveall")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.removeall") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
@@ -279,18 +281,18 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     plugin.getEntryManager().reevaluateEnteredFields(Bukkit.getServer().getPlayerExact(playerName));
 
-                                    ChatBlock.send(sender, "removedFromFields", playerName, count);
+                                    ChatHelper.send(sender, "removedFromFields", playerName, count);
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "nothingToBeDone");
+                                    ChatHelper.send(sender, "nothingToBeDone");
                                 }
                             }
 
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandAllowed")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowed") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandAllowed")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowed") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
@@ -300,11 +302,11 @@ public final class CommandManager implements CommandExecutor
 
                             if (allowed.size() > 0)
                             {
-                                ChatBlock.send(sender, "allowedList", Helper.toMessage(new ArrayList<String>(allowed), ", "));
+                                ChatHelper.send(sender, "allowedList", Helper.toMessage(new ArrayList<String>(allowed), ", "));
                             }
                             else
                             {
-                                ChatBlock.send(sender, "noPlayersAllowedOnField");
+                                ChatHelper.send(sender, "noPlayersAllowedOnField");
                             }
                         }
                         else
@@ -314,11 +316,11 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandCuboid")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.openclose.forcefield") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandCuboid")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.openclose.forcefield") && hasplayer)
                     {
                         if (args.length >= 1)
                         {
-                            if ((args[0]).equals(ChatBlock.format("commandCuboidOpen")))
+                            if ((args[0]).equals(ChatHelper.format("commandCuboidOpen")))
                             {
                                 Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.CUBOID);
 
@@ -326,7 +328,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (field.isRented())
                                     {
-                                        ChatBlock.send(player, "fieldSignCannotChange");
+                                        ChatHelper.send(player, "fieldSignCannotChange");
                                         return true;
                                     }
 
@@ -337,7 +339,7 @@ public final class CommandManager implements CommandExecutor
                                     plugin.getCommunicationManager().showNotFound(player);
                                 }
                             }
-                            else if ((args[0]).equals(ChatBlock.format("commandCuboidClose")))
+                            else if ((args[0]).equals(ChatHelper.format("commandCuboidClose")))
                             {
                                 plugin.getCuboidManager().closeCuboid(player);
                             }
@@ -345,7 +347,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandWho")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.who") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandWho")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.who") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -355,11 +357,11 @@ public final class CommandManager implements CommandExecutor
 
                             if (inhabitants.size() > 0)
                             {
-                                ChatBlock.send(sender, "inhabitantsList", Helper.toMessage(new ArrayList<String>(inhabitants), ", "));
+                                ChatHelper.send(sender, "inhabitantsList", Helper.toMessage(new ArrayList<String>(inhabitants), ", "));
                             }
                             else
                             {
-                                ChatBlock.send(sender, "noPlayersFoundOnField");
+                                ChatHelper.send(sender, "noPlayersFoundOnField");
                             }
                         }
                         else
@@ -369,7 +371,7 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandSetname")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setname") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandSetname")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setname") && hasplayer)
                     {
                         String fieldName = null;
 
@@ -384,7 +386,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (field.isRented())
                             {
-                                ChatBlock.send(player, "fieldSignCannotChange");
+                                ChatHelper.send(player, "fieldSignCannotChange");
                                 return true;
                             }
 
@@ -407,7 +409,7 @@ public final class CommandManager implements CommandExecutor
                                             plugin.getStorageManager().deleteTranslocationHead(field.getName(), field.getOwner());
                                         }
 
-                                        ChatBlock.send(player, "translocationUnlinked", field.getName(), count);
+                                        ChatHelper.send(player, "translocationUnlinked", field.getName(), count);
                                     }
                                 }
 
@@ -415,7 +417,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (plugin.getStorageManager().existsFieldWithName(fieldName, player.getName()))
                                 {
-                                    ChatBlock.send(sender, "translocationExists");
+                                    ChatHelper.send(sender, "translocationExists");
                                     return true;
                                 }
 
@@ -445,7 +447,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (!disabled)
                                     {
-                                        ChatBlock.send(player, "cannotEnable");
+                                        ChatHelper.send(player, "cannotEnable");
                                         return true;
                                     }
                                     field.dirtyFlags("commandSetname2");
@@ -456,7 +458,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (!field.isDisabled())
                                 {
-                                    ChatBlock.send(sender, "onlyModWhileDisabled");
+                                    ChatHelper.send(sender, "onlyModWhileDisabled");
                                     return true;
                                 }
                             }
@@ -467,11 +469,11 @@ public final class CommandManager implements CommandExecutor
 
                                 if (done)
                                 {
-                                    ChatBlock.send(sender, "fieldNameCleared");
+                                    ChatHelper.send(sender, "fieldNameCleared");
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "noNameableFieldFound");
+                                    ChatHelper.send(sender, "noNameableFieldFound");
                                 }
                             }
                             else
@@ -486,21 +488,21 @@ public final class CommandManager implements CommandExecutor
 
                                         if (count > 0)
                                         {
-                                            ChatBlock.send(sender, "translocationHasBlocks", fieldName, count);
+                                            ChatHelper.send(sender, "translocationHasBlocks", fieldName, count);
                                         }
                                         else
                                         {
-                                            ChatBlock.send(sender, "translocationCreated", fieldName);
+                                            ChatHelper.send(sender, "translocationCreated", fieldName);
                                         }
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "translocationRenamed", fieldName);
+                                        ChatHelper.send(sender, "translocationRenamed", fieldName);
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "noNameableFieldFound");
+                                    ChatHelper.send(sender, "noNameableFieldFound");
                                 }
                             }
                             return true;
@@ -511,7 +513,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandSetradius")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setradius") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandSetradius")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setradius") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))
                         {
@@ -529,7 +531,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (plugin.getStorageManager().existsTranslocatior(field.getName(), field.getOwner()))
                                         {
-                                            ChatBlock.send(player, "translocationCannotReshape");
+                                            ChatHelper.send(player, "translocationCannotReshape");
                                             return true;
                                         }
                                     }
@@ -537,7 +539,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field.isRented())
                                 {
-                                    ChatBlock.send(player, "fieldSignCannotChange");
+                                    ChatHelper.send(player, "fieldSignCannotChange");
                                     return true;
                                 }
 
@@ -552,7 +554,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (overflow > 0 && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius"))
                                     {
-                                        ChatBlock.send(sender, "radiusOverFlow", overflow);
+                                        ChatHelper.send(sender, "radiusOverFlow", overflow);
                                         return true;
                                     }
                                 }
@@ -560,7 +562,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (radius > fs.getRadius() && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.setradius"))
                                     {
-                                        ChatBlock.send(sender, "radiusMustBeLessThan", fs.getRadius());
+                                        ChatHelper.send(sender, "radiusMustBeLessThan", fs.getRadius());
                                         return true;
                                     }
                                 }
@@ -573,7 +575,7 @@ public final class CommandManager implements CommandExecutor
 
                                 plugin.getForceFieldManager().addSourceField(field);
 
-                                ChatBlock.send(sender, "radiusSet", radius);
+                                ChatHelper.send(sender, "radiusSet", radius);
 
                                 return true;
                             }
@@ -584,7 +586,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandTake")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.take") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandTake")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.take") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
@@ -594,7 +596,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (taken)
                             {
-                                ChatBlock.send(sender, "taken", field.getType(), field.getCoords());
+                                ChatHelper.send(sender, "taken", field.getType(), field.getCoords());
                             }
                         }
                         else
@@ -604,7 +606,7 @@ public final class CommandManager implements CommandExecutor
                         return true;
 
                     }
-                    else if (cmd.equals(ChatBlock.format("commandExpand")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.expand") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandExpand")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.expand") && hasplayer)
                     {
                         if (args.length == 1 || args.length == 2)
                         {
@@ -636,7 +638,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (num < 0)
                             {
-                                ChatBlock.send(sender, "noNegative");
+                                ChatHelper.send(sender, "noNegative");
                                 return true;
                             }
 
@@ -649,7 +651,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (overflow <= 0 || bypass)
                                 {
-                                    ChatBlock.send(sender, "cuboidExpanded");
+                                    ChatHelper.send(sender, "cuboidExpanded");
 
                                     if (plugin.getSettingsManager().isVisualizeOnExpand())
                                     {
@@ -660,14 +662,14 @@ public final class CommandManager implements CommandExecutor
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "cannotExpand", overflow);
+                                    ChatHelper.send(sender, "cannotExpand", overflow);
                                 }
 
                                 return true;
                             }
                             else
                             {
-                                ChatBlock.send(sender, "noCuboidsFound");
+                                ChatHelper.send(sender, "noCuboidsFound");
                             }
                             return true;
                         }
@@ -683,7 +685,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (u < 0 || d < 0 || n < 0 || s < 0 || e < 0 || w < 0)
                             {
-                                ChatBlock.send(sender, "noNegative");
+                                ChatHelper.send(sender, "noNegative");
                                 return true;
                             }
 
@@ -696,23 +698,23 @@ public final class CommandManager implements CommandExecutor
 
                                 if (overflow <= 0 || bypass)
                                 {
-                                    ChatBlock.send(sender, "cuboidExpanded");
+                                    ChatHelper.send(sender, "cuboidExpanded");
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "cannotExpand", overflow);
+                                    ChatHelper.send(sender, "cannotExpand", overflow);
                                 }
 
                                 return true;
                             }
                             else
                             {
-                                ChatBlock.send(sender, "noCuboidsFound");
+                                ChatHelper.send(sender, "noCuboidsFound");
                             }
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandContract")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.contract") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandContract")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.contract") && hasplayer)
                     {
                         if (args.length == 1 || args.length == 2)
                         {
@@ -744,7 +746,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (num < 0)
                             {
-                                ChatBlock.send(sender, "noNegative");
+                                ChatHelper.send(sender, "noNegative");
                                 return true;
                             }
 
@@ -753,12 +755,12 @@ public final class CommandManager implements CommandExecutor
                             if (field != null)
                             {
                                 field.contract(num, dir);
-                                ChatBlock.send(sender, "cuboidContracted");
+                                ChatHelper.send(sender, "cuboidContracted");
                                 return true;
                             }
                             else
                             {
-                                ChatBlock.send(sender, "noCuboidsFound");
+                                ChatHelper.send(sender, "noCuboidsFound");
                             }
                             return true;
                         }
@@ -774,7 +776,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (u < 0 || d < 0 || n < 0 || s < 0 || e < 0 || w < 0)
                             {
-                                ChatBlock.send(sender, "noNegative");
+                                ChatHelper.send(sender, "noNegative");
                                 return true;
                             }
 
@@ -783,7 +785,7 @@ public final class CommandManager implements CommandExecutor
                             if (field != null)
                             {
                                 field.contract(u, d, n, s, e, w);
-                                ChatBlock.send(sender, "cuboidContracted");
+                                ChatHelper.send(sender, "cuboidContracted");
 
                                 if (plugin.getSettingsManager().isVisualizeOnExpand())
                                 {
@@ -796,12 +798,12 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
-                                ChatBlock.send(sender, "noCuboidsFound");
+                                ChatHelper.send(sender, "noCuboidsFound");
                             }
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandSetvelocity")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandSetvelocity")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setvelocity") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isFloat(args[0]))
                         {
@@ -815,7 +817,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isDisabled())
                                     {
-                                        ChatBlock.send(sender, "onlyModWhileDisabled");
+                                        ChatHelper.send(sender, "onlyModWhileDisabled");
                                         return true;
                                     }
                                 }
@@ -826,13 +828,13 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (velocity < 0 || velocity > 5)
                                     {
-                                        ChatBlock.send(sender, "velocityMustBe");
+                                        ChatHelper.send(sender, "velocityMustBe");
                                         return true;
                                     }
 
                                     field.setVelocity(velocity);
                                     plugin.getStorageManager().offerField(field);
-                                    ChatBlock.send(sender, "velocitySetTo", velocity);
+                                    ChatHelper.send(sender, "velocitySetTo", velocity);
                                 }
                                 else
                                 {
@@ -847,7 +849,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandDisable")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.disable") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandDisable")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.disable") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -865,17 +867,17 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field.isRented())
                                 {
-                                    ChatBlock.send(player, "fieldSignCannotDisable");
+                                    ChatHelper.send(player, "fieldSignCannotDisable");
                                     return true;
                                 }
 
                                 field.setDisabled(true, player);
                                 field.dirtyFlags("commandDisable");
-                                ChatBlock.send(sender, "fieldDisabled");
+                                ChatHelper.send(sender, "fieldDisabled");
                             }
                             else
                             {
-                                ChatBlock.send(sender, "fieldAlreadyDisabled");
+                                ChatHelper.send(sender, "fieldAlreadyDisabled");
                             }
                             return true;
                         }
@@ -885,7 +887,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandEnable")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.enable") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandEnable")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.enable") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -907,16 +909,16 @@ public final class CommandManager implements CommandExecutor
 
                                 if (!disabled)
                                 {
-                                    ChatBlock.send(sender, "cannotEnable");
+                                    ChatHelper.send(sender, "cannotEnable");
                                     return true;
                                 }
 
                                 field.dirtyFlags("commandEnable");
-                                ChatBlock.send(sender, "fieldEnabled");
+                                ChatHelper.send(sender, "fieldEnabled");
                             }
                             else
                             {
-                                ChatBlock.send(sender, "fieldAlreadyEnabled");
+                                ChatHelper.send(sender, "fieldAlreadyEnabled");
                             }
                             return true;
                         }
@@ -926,7 +928,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandDensity")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.density") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandDensity")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.density") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))
                         {
@@ -936,16 +938,16 @@ public final class CommandManager implements CommandExecutor
                             data.setDensity(density);
                             plugin.getStorageManager().offerPlayer(player.getName());
 
-                            ChatBlock.send(sender, "visualizationChanged", density);
+                            ChatHelper.send(sender, "visualizationChanged", density);
                             return true;
                         }
                         else if (args.length == 0)
                         {
                             PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
-                            ChatBlock.send(sender, "visualizationSet", data.getDensity());
+                            ChatHelper.send(sender, "visualizationSet", data.getDensity());
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandToggle")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandToggle")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -961,7 +963,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (!field.isDisabled())
                                         {
-                                            ChatBlock.send(sender, "flagsToggledWhileDisabled");
+                                            ChatHelper.send(sender, "flagsToggledWhileDisabled");
                                             return true;
                                         }
                                     }
@@ -969,7 +971,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field.isRented())
                                 {
-                                    ChatBlock.send(player, "fieldSignCannotChange");
+                                    ChatHelper.send(player, "fieldSignCannotChange");
                                     return true;
                                 }
 
@@ -999,13 +1001,13 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     catch (Exception ex)
                                     {
-                                        ChatBlock.send(sender, "flagNotFound");
+                                        ChatHelper.send(sender, "flagNotFound");
                                         return true;
                                     }
 
                                     if (unToggable)
                                     {
-                                        ChatBlock.send(sender, "flagCannottoggle");
+                                        ChatHelper.send(sender, "flagCannottoggle");
                                         return true;
                                     }
 
@@ -1013,18 +1015,18 @@ public final class CommandManager implements CommandExecutor
 
                                     if (enabled)
                                     {
-                                        ChatBlock.send(sender, "flagEnabled", flagStr);
+                                        ChatHelper.send(sender, "flagEnabled", flagStr);
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "flagDisabled", flagStr);
+                                        ChatHelper.send(sender, "flagDisabled", flagStr);
                                     }
 
                                     plugin.getStorageManager().offerField(field);
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "flagNotFound");
+                                    ChatHelper.send(sender, "flagNotFound");
                                 }
                             }
                             else
@@ -1034,7 +1036,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if ((cmd.equals(ChatBlock.format("commandVisualize")) || cmd.equals("visualise")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize") && hasplayer)
+                    else if ((cmd.equals(ChatHelper.format("commandVisualize")) || cmd.equals("visualise")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize") && hasplayer)
                     {
                         if (!plugin.getCuboidManager().hasOpenCuboid(player))
                         {
@@ -1059,7 +1061,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (fieldsInArea != null && fieldsInArea.size() > 0)
                                         {
-                                            ChatBlock.send(sender, "visualizing");
+                                            ChatHelper.send(sender, "visualizing");
 
                                             int count = 0;
                                             for (Field f : fieldsInArea)
@@ -1077,7 +1079,7 @@ public final class CommandManager implements CommandExecutor
                                         }
                                         else
                                         {
-                                            ChatBlock.send(sender, "noFieldsInArea");
+                                            ChatHelper.send(sender, "noFieldsInArea");
                                         }
                                     }
                                     else
@@ -1086,30 +1088,30 @@ public final class CommandManager implements CommandExecutor
 
                                         if (field != null)
                                         {
-                                            ChatBlock.send(sender, "visualizing");
+                                            ChatHelper.send(sender, "visualizing");
 
                                             plugin.getVisualizationManager().addVisualizationField(player, field);
                                             plugin.getVisualizationManager().displayVisualization(player, true);
                                         }
                                         else
                                         {
-                                            ChatBlock.send(sender, "notInsideField");
+                                            ChatHelper.send(sender, "notInsideField");
                                         }
                                     }
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "visualizationTakingPlace");
+                                ChatHelper.send(sender, "visualizationTakingPlace");
                             }
                         }
                         else
                         {
-                            ChatBlock.send(sender, "visualizationNotWhileCuboid");
+                            ChatHelper.send(sender, "visualizationNotWhileCuboid");
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandMark")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.mark") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandMark")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.mark") && hasplayer)
                     {
                         if (!plugin.getCuboidManager().hasOpenCuboid(player))
                         {
@@ -1121,7 +1123,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fieldsInArea.size() > 0)
                                     {
-                                        ChatBlock.send(sender, "markingFields", fieldsInArea.size());
+                                        ChatHelper.send(sender, "markingFields", fieldsInArea.size());
 
                                         for (Field f : fieldsInArea)
                                         {
@@ -1132,7 +1134,7 @@ public final class CommandManager implements CommandExecutor
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "noFieldsInArea");
+                                        ChatHelper.send(sender, "noFieldsInArea");
                                     }
                                 }
                                 else
@@ -1153,32 +1155,32 @@ public final class CommandManager implements CommandExecutor
 
                                         if (count > 0)
                                         {
-                                            ChatBlock.send(sender, "markingFields", count);
+                                            ChatHelper.send(sender, "markingFields", count);
                                             plugin.getVisualizationManager().displayVisualization(player, false);
                                         }
                                         else
                                         {
-                                            ChatBlock.send(sender, "noFieldsInArea");
+                                            ChatHelper.send(sender, "noFieldsInArea");
                                         }
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "noFieldsInArea");
+                                        ChatHelper.send(sender, "noFieldsInArea");
                                     }
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "visualizationTakingPlace");
+                                ChatHelper.send(sender, "visualizationTakingPlace");
                             }
                         }
                         else
                         {
-                            ChatBlock.send(sender, "markingNotWhileCuboid");
+                            ChatHelper.send(sender, "markingNotWhileCuboid");
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandInsert")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandInsert")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -1196,17 +1198,17 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         field.dirtyFlags("commandInsert");
                                         plugin.getStorageManager().offerField(field);
-                                        ChatBlock.send(sender, "flagInserted");
+                                        ChatHelper.send(sender, "flagInserted");
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "flagNotExists");
+                                        ChatHelper.send(sender, "flagNotExists");
                                     }
                                     plugin.getForceFieldManager().addSourceField(field);
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "flagExists");
+                                    ChatHelper.send(sender, "flagExists");
                                 }
                             }
                             else
@@ -1216,7 +1218,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandClear")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandClear")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.insert") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -1234,17 +1236,17 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         field.dirtyFlags("commandClear");
                                         plugin.getStorageManager().offerField(field);
-                                        ChatBlock.send(sender, "flagCleared");
+                                        ChatHelper.send(sender, "flagCleared");
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "flagNotExists");
+                                        ChatHelper.send(sender, "flagNotExists");
                                     }
                                     plugin.getForceFieldManager().addSourceField(field);
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "flagExists");
+                                    ChatHelper.send(sender, "flagExists");
                                 }
                             }
                             else
@@ -1254,7 +1256,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandReset")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.reset") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandReset")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.reset") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
 
@@ -1262,7 +1264,7 @@ public final class CommandManager implements CommandExecutor
                         {
                             field.RevertFlags();
                             plugin.getStorageManager().offerField(field);
-                            ChatBlock.send(sender, "flagsReverted");
+                            ChatHelper.send(sender, "flagsReverted");
                         }
                         else
                         {
@@ -1270,7 +1272,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandSetinterval")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setinterval") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandSetinterval")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setinterval") && hasplayer)
                     {
                         if (args.length == 1 && Helper.isInteger(args[0]))
                         {
@@ -1284,7 +1286,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!field.isDisabled())
                                     {
-                                        ChatBlock.send(sender, "onlyModWhileDisabled");
+                                        ChatHelper.send(sender, "onlyModWhileDisabled");
                                         return true;
                                     }
                                 }
@@ -1294,21 +1296,21 @@ public final class CommandManager implements CommandExecutor
                                     field.setRevertSecs(interval);
                                     plugin.getGriefUndoManager().register(field);
                                     plugin.getStorageManager().offerField(field);
-                                    ChatBlock.send(sender, "griefRevertIntervalSet", interval);
+                                    ChatHelper.send(sender, "griefRevertIntervalSet", interval);
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "minInterval", plugin.getSettingsManager().getGriefRevertMinInterval());
+                                    ChatHelper.send(sender, "minInterval", plugin.getSettingsManager().getGriefRevertMinInterval());
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "notPointingAtGriefRevert");
+                                ChatHelper.send(sender, "notPointingAtGriefRevert");
                             }
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandSnitch")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandSnitch")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.snitch") && hasplayer)
                     {
                         if (args.length == 0)
                         {
@@ -1320,14 +1322,14 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
-                                ChatBlock.send(sender, "notPointingAtSnitch");
+                                ChatHelper.send(sender, "notPointingAtSnitch");
                             }
 
                             return true;
                         }
                         else if (args.length == 1)
                         {
-                            if (args[0].equals(ChatBlock.format("commandSnitchClear")))
+                            if (args[0].equals(ChatHelper.format("commandSnitchClear")))
                             {
                                 Field field = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.SNITCH);
 
@@ -1337,11 +1339,11 @@ public final class CommandManager implements CommandExecutor
 
                                     if (cleaned)
                                     {
-                                        ChatBlock.send(sender, "clearedSnitch");
+                                        ChatHelper.send(sender, "clearedSnitch");
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "snitchEmpty");
+                                        ChatHelper.send(sender, "snitchEmpty");
                                     }
                                 }
                                 else
@@ -1352,27 +1354,27 @@ public final class CommandManager implements CommandExecutor
                             }
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandTranslocation")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.use") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandTranslocation")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.use") && hasplayer)
                     {
                         if (args.length == 0)
                         {
-                            ChatBlock.send(sender, "translocationMenu1");
-                            ChatBlock.send(sender, "translocationMenu2");
-                            ChatBlock.send(sender, "translocationMenu3");
-                            ChatBlock.send(sender, "translocationMenu4");
-                            ChatBlock.send(sender, "translocationMenu5");
-                            ChatBlock.send(sender, "translocationMenu6");
-                            ChatBlock.send(sender, "translocationMenu7");
+                            ChatHelper.send(sender, "translocationMenu1");
+                            ChatHelper.send(sender, "translocationMenu2");
+                            ChatHelper.send(sender, "translocationMenu3");
+                            ChatHelper.send(sender, "translocationMenu4");
+                            ChatHelper.send(sender, "translocationMenu5");
+                            ChatHelper.send(sender, "translocationMenu6");
+                            ChatHelper.send(sender, "translocationMenu7");
                             return true;
                         }
 
-                        if (args[0].equals(ChatBlock.format("commandTranslocationList")))
+                        if (args[0].equals(ChatHelper.format("commandTranslocationList")))
                         {
                             plugin.getCommunicationManager().notifyStoredTranslocations(player);
                             return true;
                         }
 
-                        if (args[0].equals(ChatBlock.format("commandTranslocationDelete")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.delete"))
+                        if (args[0].equals(ChatHelper.format("commandTranslocationDelete")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.delete"))
                         {
                             args = Helper.removeFirst(args);
 
@@ -1382,20 +1384,20 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.isTranslocating())
                                 {
-                                    ChatBlock.send(sender, "translocationTakingPlace");
+                                    ChatHelper.send(sender, "translocationTakingPlace");
                                     return true;
                                 }
 
                                 if (!field.isNamed())
                                 {
-                                    ChatBlock.send(sender, "translocationNamedFirst");
+                                    ChatHelper.send(sender, "translocationNamedFirst");
                                     return true;
                                 }
 
                                 if (args.length == 0)
                                 {
                                     plugin.getStorageManager().deleteTranslocation(args[1], player.getName());
-                                    ChatBlock.send(sender, "translocationDeleted", args[0]);
+                                    ChatHelper.send(sender, "translocationDeleted", args[0]);
                                 }
                                 else
                                 {
@@ -1405,7 +1407,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (!entry.isValid())
                                         {
-                                            ChatBlock.send(sender, "notValidBlockId", arg);
+                                            ChatHelper.send(sender, "notValidBlockId", arg);
                                             continue;
                                         }
 
@@ -1413,23 +1415,23 @@ public final class CommandManager implements CommandExecutor
 
                                         if (count > 0)
                                         {
-                                            ChatBlock.send(sender, "translocationDeletedBlocks", count, Helper.friendlyBlockType(entry.getTypeId()), field.getName());
+                                            ChatHelper.send(sender, "translocationDeletedBlocks", count, Helper.friendlyBlockType(entry.getTypeId()), field.getName());
                                         }
                                         else
                                         {
-                                            ChatBlock.send(sender, "noBlocksMatched", arg);
+                                            ChatHelper.send(sender, "noBlocksMatched", arg);
                                         }
                                     }
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "notPointingAtTranslocation");
+                                ChatHelper.send(sender, "notPointingAtTranslocation");
                             }
                             return true;
                         }
 
-                        if (args[0].equals(ChatBlock.format("commandTranslocationRemove")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.remove"))
+                        if (args[0].equals(ChatHelper.format("commandTranslocationRemove")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.remove"))
                         {
                             args = Helper.removeFirst(args);
 
@@ -1439,19 +1441,19 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.isTranslocating())
                                 {
-                                    ChatBlock.send(sender, "translocationTakingPlace");
+                                    ChatHelper.send(sender, "translocationTakingPlace");
                                     return true;
                                 }
 
                                 if (!field.isNamed())
                                 {
-                                    ChatBlock.send(sender, "translocationNamedFirst");
+                                    ChatHelper.send(sender, "translocationNamedFirst");
                                     return true;
                                 }
 
                                 if (field.isDisabled())
                                 {
-                                    ChatBlock.send(sender, "translocationEnabledFirst");
+                                    ChatHelper.send(sender, "translocationEnabledFirst");
                                     return true;
                                 }
 
@@ -1465,7 +1467,7 @@ public final class CommandManager implements CommandExecutor
 
                                         if (!entry.isValid())
                                         {
-                                            ChatBlock.send(sender, "notValidBlockId", arg);
+                                            ChatHelper.send(sender, "notValidBlockId", arg);
                                             continue;
                                         }
 
@@ -1479,17 +1481,17 @@ public final class CommandManager implements CommandExecutor
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "usageTranslocationRemove");
+                                    ChatHelper.send(sender, "usageTranslocationRemove");
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "notPointingAtTranslocation");
+                                ChatHelper.send(sender, "notPointingAtTranslocation");
                             }
                             return true;
                         }
 
-                        if (args[0].equals(ChatBlock.format("commandTranslocationUnlink")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.unlink"))
+                        if (args[0].equals(ChatHelper.format("commandTranslocationUnlink")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.unlink"))
                         {
                             Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.TRANSLOCATION);
 
@@ -1497,19 +1499,19 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.isTranslocating())
                                 {
-                                    ChatBlock.send(sender, "translocationTakingPlace");
+                                    ChatHelper.send(sender, "translocationTakingPlace");
                                     return true;
                                 }
 
                                 if (!field.isNamed())
                                 {
-                                    ChatBlock.send(sender, "translocationNamedFirst");
+                                    ChatHelper.send(sender, "translocationNamedFirst");
                                     return true;
                                 }
 
                                 if (field.isDisabled())
                                 {
-                                    ChatBlock.send(sender, "translocationEnabledToUnlink");
+                                    ChatHelper.send(sender, "translocationEnabledToUnlink");
                                     return true;
                                 }
 
@@ -1524,22 +1526,22 @@ public final class CommandManager implements CommandExecutor
                                         plugin.getStorageManager().deleteTranslocationHead(field.getName(), field.getOwner());
                                     }
 
-                                    ChatBlock.send(player, "translocationUnlinked", field.getName(), count);
+                                    ChatHelper.send(player, "translocationUnlinked", field.getName(), count);
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "translocationNothingToUnlink");
+                                    ChatHelper.send(sender, "translocationNothingToUnlink");
                                     return true;
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "notPointingAtTranslocation");
+                                ChatHelper.send(sender, "notPointingAtTranslocation");
                             }
                             return true;
                         }
 
-                        if (args[0].equals(ChatBlock.format("commandTranslocationImport")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.import"))
+                        if (args[0].equals(ChatHelper.format("commandTranslocationImport")) && plugin.getPermissionsManager().has(player, "preciousstones.translocation.import"))
                         {
                             args = Helper.removeFirst(args);
 
@@ -1549,19 +1551,19 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.isTranslocating())
                                 {
-                                    ChatBlock.send(sender, "translocationTakingPlace");
+                                    ChatHelper.send(sender, "translocationTakingPlace");
                                     return true;
                                 }
 
                                 if (!field.isNamed())
                                 {
-                                    ChatBlock.send(sender, "translocationNamedFirst");
+                                    ChatHelper.send(sender, "translocationNamedFirst");
                                     return true;
                                 }
 
                                 if (field.isDisabled())
                                 {
-                                    ChatBlock.send(sender, "translocationEnabledToImport");
+                                    ChatHelper.send(sender, "translocationEnabledToImport");
                                     return true;
                                 }
 
@@ -1579,13 +1581,13 @@ public final class CommandManager implements CommandExecutor
 
                                         if (!entry.isValid())
                                         {
-                                            ChatBlock.send(sender, "notValidBlockId", arg);
+                                            ChatHelper.send(sender, "notValidBlockId", arg);
                                             continue;
                                         }
 
                                         if (!field.getSettings().canTranslocate(entry))
                                         {
-                                            ChatBlock.send(sender, "blockIsBlacklisted", arg);
+                                            ChatHelper.send(sender, "blockIsBlacklisted", arg);
                                             continue;
                                         }
 
@@ -1600,42 +1602,42 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
-                                ChatBlock.send(sender, "notPointingAtTranslocation");
+                                ChatHelper.send(sender, "notPointingAtTranslocation");
                             }
                             return true;
 
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandMore")) && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandMore")) && hasplayer)
                     {
-                        ChatBlock cb = plugin.getCommunicationManager().getChatBlock(player);
+                        ChatHelper cb = plugin.getCommunicationManager().getChatBlock(player);
 
                         if (cb.size() > 0)
                         {
-                            ChatBlock.sendBlank(player);
+                            ChatHelper.sendBlank(player);
 
                             cb.sendBlock(player, plugin.getSettingsManager().getLinesPerPage());
 
                             if (cb.size() > 0)
                             {
-                                ChatBlock.sendBlank(player);
-                                ChatBlock.send(sender, "moreNextPage");
+                                ChatHelper.sendBlank(player);
+                                ChatHelper.send(sender, "moreNextPage");
                             }
-                            ChatBlock.sendBlank(player);
+                            ChatHelper.sendBlank(player);
 
                             return true;
                         }
 
-                        ChatBlock.send(sender, "moreNothingMore");
+                        ChatHelper.send(sender, "moreNothingMore");
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandCounts")))
+                    else if (cmd.equals(ChatHelper.format("commandCounts")))
                     {
                         if (args.length == 0 && plugin.getPermissionsManager().has(player, "preciousstones.benefit.counts") && hasplayer)
                         {
                             if (!plugin.getCommunicationManager().showFieldCounts(player, player.getName()))
                             {
-                                ChatBlock.send(sender, "playerHasNoFields");
+                                ChatHelper.send(sender, "playerHasNoFields");
                             }
                             return true;
                         }
@@ -1650,7 +1652,7 @@ public final class CommandManager implements CommandExecutor
                                 {
                                     if (!plugin.getCommunicationManager().showCounts(sender, entry))
                                     {
-                                        ChatBlock.send(sender, "notValidFieldType");
+                                        ChatHelper.send(sender, "notValidFieldType");
                                     }
                                 }
                             }
@@ -1660,14 +1662,14 @@ public final class CommandManager implements CommandExecutor
 
                                 if (!plugin.getCommunicationManager().showFieldCounts(player, target))
                                 {
-                                    ChatBlock.send(sender, "playerHasNoFields");
+                                    ChatHelper.send(sender, "playerHasNoFields");
                                 }
                             }
                             return true;
                         }
                         return false;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandLocations")))
+                    else if (cmd.equals(ChatHelper.format("commandLocations")))
                     {
                         if (args.length == 0 && plugin.getPermissionsManager().has(player, "preciousstones.benefit.locations") && hasplayer)
                         {
@@ -1693,7 +1695,7 @@ public final class CommandManager implements CommandExecutor
                         }
                         return false;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandInfo")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.info") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandInfo")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.info") && hasplayer)
                     {
                         Field pointing = plugin.getForceFieldManager().getOneAllowedField(block, player, FieldFlag.ALL);
                         List<Field> fields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
@@ -1742,7 +1744,7 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandDelete")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.delete"))
+                    else if (cmd.equals(ChatHelper.format("commandDelete")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.delete"))
                     {
                         if (args.length == 0 && hasplayer)
                         {
@@ -1754,7 +1756,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.send(sender, "protectionRemoved");
+                                    ChatHelper.send(sender, "protectionRemoved");
 
                                     if (plugin.getSettingsManager().isLogBypassDelete())
                                     {
@@ -1786,17 +1788,17 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fields > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getTypeId()));
+                                        ChatHelper.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getTypeId()));
                                     }
 
                                     if (ubs > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedUnbreakables", ubs, Helper.getMaterialString(entry.getTypeId()));
+                                        ChatHelper.send(sender, "deletedUnbreakables", ubs, Helper.getMaterialString(entry.getTypeId()));
                                     }
 
                                     if (ubs == 0 && fields == 0)
                                     {
-                                        ChatBlock.send(sender, "noPstonesFound");
+                                        ChatHelper.send(sender, "noPstonesFound");
                                     }
                                 }
                                 else
@@ -1811,17 +1813,17 @@ public final class CommandManager implements CommandExecutor
 
                                 if (fields > 0)
                                 {
-                                    ChatBlock.send(sender, "deletedCountFields", args[0], fields);
+                                    ChatHelper.send(sender, "deletedCountFields", args[0], fields);
                                 }
 
                                 if (ubs > 0)
                                 {
-                                    ChatBlock.send(sender, "deletedCountUnbreakables", args[0], ubs);
+                                    ChatHelper.send(sender, "deletedCountUnbreakables", args[0], ubs);
                                 }
 
                                 if (ubs == 0 && fields == 0)
                                 {
-                                    ChatBlock.send(sender, "playerHasNoPstones");
+                                    ChatHelper.send(sender, "playerHasNoPstones");
                                 }
                             }
                             return true;
@@ -1839,11 +1841,11 @@ public final class CommandManager implements CommandExecutor
 
                                     if (fields > 0)
                                     {
-                                        ChatBlock.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getTypeId()));
+                                        ChatHelper.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getTypeId()));
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "noPstonesFound");
+                                        ChatHelper.send(sender, "noPstonesFound");
                                     }
                                 }
                                 else
@@ -1853,18 +1855,18 @@ public final class CommandManager implements CommandExecutor
                             }
                             else
                             {
-                                ChatBlock.send(sender, "notValidBlockId", args[1]);
+                                ChatHelper.send(sender, "notValidBlockId", args[1]);
                             }
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandBlacklisting")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.blacklistcommand") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandBlacklisting")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.blacklistcommand") && hasplayer)
                     {
                         Field field = plugin.getForceFieldManager().getOneOwnedField(block, player, FieldFlag.ALL);
 
                         if (args.length == 0 || args.length > 1 || args[0].contains("/"))
                         {
-                            ChatBlock.send(sender, "commandBlacklistUsage");
+                            ChatHelper.send(sender, "commandBlacklistUsage");
                             return true;
                         }
 
@@ -1877,17 +1879,17 @@ public final class CommandManager implements CommandExecutor
                                 if (blacklistedCommand.equalsIgnoreCase("clear"))
                                 {
                                     field.clearBlacklistedCommands();
-                                    ChatBlock.send(sender, "commandBlacklistCleared");
+                                    ChatHelper.send(sender, "commandBlacklistCleared");
                                 }
                                 else
                                 {
                                     field.addBlacklistedCommand(blacklistedCommand);
-                                    ChatBlock.send(sender, "commandBlacklistAdded");
+                                    ChatHelper.send(sender, "commandBlacklistAdded");
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "noBlacklistingFieldFound");
+                                ChatHelper.send(sender, "noBlacklistingFieldFound");
                             }
                         }
                         else
@@ -1897,7 +1899,7 @@ public final class CommandManager implements CommandExecutor
 
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandSetLimit")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setlimit") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandSetLimit")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.setlimit") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -1909,20 +1911,20 @@ public final class CommandManager implements CommandExecutor
 
                                 if (!SignHelper.isValidPeriod(period))
                                 {
-                                    ChatBlock.send(sender, "limitMalformed");
-                                    ChatBlock.send(sender, "limitMalformed2");
-                                    ChatBlock.send(sender, "limitMalformed3");
+                                    ChatHelper.send(sender, "limitMalformed");
+                                    ChatHelper.send(sender, "limitMalformed2");
+                                    ChatHelper.send(sender, "limitMalformed3");
                                     return true;
                                 }
 
                                 if (!field.hasFlag(FieldFlag.RENTABLE) && !field.hasFlag(FieldFlag.SHAREABLE))
                                 {
-                                    ChatBlock.send(sender, "limitBadField");
+                                    ChatHelper.send(sender, "limitBadField");
                                     return true;
                                 }
 
                                 field.setLimitSeconds(SignHelper.periodToSeconds(period));
-                                ChatBlock.send(sender, "limitSet");
+                                ChatHelper.send(sender, "limitSet");
                             }
                             else
                             {
@@ -1932,7 +1934,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandSetowner")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.setowner") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandSetowner")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.setowner") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -1940,7 +1942,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (owner.contains(":"))
                             {
-                                ChatBlock.send(sender, "cannotAssignAsOwners");
+                                ChatHelper.send(sender, "cannotAssignAsOwners");
                                 return true;
                             }
 
@@ -1963,16 +1965,16 @@ public final class CommandManager implements CommandExecutor
 
                                     field.setOwner(owner);
                                     plugin.getStorageManager().offerField(field);
-                                    ChatBlock.send(sender, "ownerSetTo", owner);
+                                    ChatHelper.send(sender, "ownerSetTo", owner);
                                     return true;
                                 }
                             }
 
-                            ChatBlock.send(sender, "notPointingAtPstone");
+                            ChatHelper.send(sender, "notPointingAtPstone");
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandChangeowner")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.change-owner") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandChangeowner")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.change-owner") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -1980,7 +1982,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (owner.contains(":"))
                             {
-                                ChatBlock.send(sender, "cannotAssignAsOwners");
+                                ChatHelper.send(sender, "cannotAssignAsOwners");
                                 return true;
                             }
 
@@ -1999,34 +2001,34 @@ public final class CommandManager implements CommandExecutor
                                         {
                                             if (field.isBought())
                                             {
-                                                ChatBlock.send(player, "fieldSignCannotChange");
+                                                ChatHelper.send(player, "fieldSignCannotChange");
                                                 return true;
                                             }
 
                                             plugin.getForceFieldManager().changeOwner(field, owner);
-                                            ChatBlock.send(sender, "fieldCanBeTaken", owner);
+                                            ChatHelper.send(sender, "fieldCanBeTaken", owner);
                                             return true;
                                         }
                                         else
                                         {
-                                            ChatBlock.send(sender, "fieldCannotChangeOwner");
+                                            ChatHelper.send(sender, "fieldCannotChangeOwner");
                                         }
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "ownerCanOnlyChangeOwner");
+                                        ChatHelper.send(sender, "ownerCanOnlyChangeOwner");
                                     }
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "notPointingAtPstone");
+                                ChatHelper.send(sender, "notPointingAtPstone");
                             }
 
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandList")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.list") && hasplayer)
+                    else if (cmd.equals(ChatHelper.format("commandList")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.list") && hasplayer)
                     {
                         if (args.length == 1)
                         {
@@ -2039,31 +2041,31 @@ public final class CommandManager implements CommandExecutor
 
                                 for (Unbreakable u : unbreakables)
                                 {
-                                    ChatBlock.send(sender, "{aqua}{unbreakable}", u.toString());
+                                    ChatHelper.send(sender, "{aqua}{unbreakable}", u.toString());
                                 }
 
                                 for (Field f : fields)
                                 {
-                                    ChatBlock.send(sender, "{aqua}{field}", f.toString());
+                                    ChatHelper.send(sender, "{aqua}{field}", f.toString());
                                 }
 
                                 if (unbreakables.isEmpty() && fields.isEmpty())
                                 {
-                                    ChatBlock.send(sender, "noPstonesFound");
+                                    ChatHelper.send(sender, "noPstonesFound");
                                 }
                                 return true;
                             }
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandReload")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.reload"))
+                    else if (cmd.equals(ChatHelper.format("commandReload")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.reload"))
                     {
                         plugin.getSettingsManager().load();
                         plugin.getLanguageManager().load();
 
-                        ChatBlock.send(sender, "configReloaded");
+                        ChatHelper.send(sender, "configReloaded");
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandBuy")))
+                    else if (cmd.equals(ChatHelper.format("commandBuy")))
                     {
                         if (plugin.getSettingsManager().isCommandsToRentBuy())
                         {
@@ -2079,7 +2081,7 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (field.hasPendingPurchase())
                                         {
-                                            ChatBlock.send(player, "fieldSignAlreadyBought");
+                                            ChatHelper.send(player, "fieldSignAlreadyBought");
                                         }
                                         else if (field.buy(player, s))
                                         {
@@ -2087,7 +2089,7 @@ public final class CommandManager implements CommandExecutor
 
                                             PreciousStones.getInstance().getForceFieldManager().addAllowed(field, player.getName());
 
-                                            ChatBlock.send(player, "fieldSignBoughtAndAllowed");
+                                            ChatHelper.send(player, "fieldSignBoughtAndAllowed");
                                         }
 
                                         return true;
@@ -2097,7 +2099,7 @@ public final class CommandManager implements CommandExecutor
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandRent")))
+                    else if (cmd.equals(ChatHelper.format("commandRent")))
                     {
                         if (plugin.getSettingsManager().isCommandsToRentBuy())
                         {
@@ -2126,7 +2128,7 @@ public final class CommandManager implements CommandExecutor
                                             {
                                                 // if already rented and player is not the renter, tell them so
 
-                                                ChatBlock.send(player, "fieldSignAlreadyRented");
+                                                ChatHelper.send(player, "fieldSignAlreadyRented");
                                                 plugin.getCommunicationManager().showRenterInfo(player, field);
                                                 return true;
                                             }
@@ -2137,7 +2139,7 @@ public final class CommandManager implements CommandExecutor
                                                 if (player.isSneaking())
                                                 {
                                                     field.abandonRent(player);
-                                                    ChatBlock.send(player, "fieldSignRentAbandoned");
+                                                    ChatHelper.send(player, "fieldSignRentAbandoned");
                                                     return true;
                                                 }
                                             }
@@ -2171,7 +2173,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 String sub = args[0];
 
-                                if (sub.equalsIgnoreCase(ChatBlock.format("commandRentClear")))
+                                if (sub.equalsIgnoreCase(ChatHelper.format("commandRentClear")))
                                 {
                                     Field field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.RENTABLE);
 
@@ -2189,19 +2191,19 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (field.clearRents())
                                         {
-                                            ChatBlock.send(sender, "rentsCleared");
+                                            ChatHelper.send(sender, "rentsCleared");
                                         }
                                         else
                                         {
-                                            ChatBlock.send(sender, "rentsClearedNone");
+                                            ChatHelper.send(sender, "rentsClearedNone");
                                         }
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "noPstonesFound");
+                                        ChatHelper.send(sender, "noPstonesFound");
                                     }
                                 }
-                                if (sub.equalsIgnoreCase(ChatBlock.format("commandRentRemove")))
+                                if (sub.equalsIgnoreCase(ChatHelper.format("commandRentRemove")))
                                 {
                                     Field field = plugin.getForceFieldManager().getOneField(block, player, FieldFlag.RENTABLE);
 
@@ -2219,65 +2221,65 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (field.removeRents())
                                         {
-                                            ChatBlock.send(sender, "rentsRemoved");
+                                            ChatHelper.send(sender, "rentsRemoved");
                                         }
                                         else
                                         {
-                                            ChatBlock.send(sender, "rentsRemovedNone");
+                                            ChatHelper.send(sender, "rentsRemovedNone");
                                         }
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "noPstonesFound");
+                                        ChatHelper.send(sender, "noPstonesFound");
                                     }
                                 }
                             }
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandEnableall")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.enableall"))
+                    else if (cmd.equals(ChatHelper.format("commandEnableall")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.enableall"))
                     {
                         if (args.length == 1)
                         {
                             String flagStr = args[0];
 
-                            ChatBlock.send(player, "fieldsDown");
+                            ChatHelper.send(player, "fieldsDown");
 
                             int count = plugin.getStorageManager().enableAllFlags(flagStr);
 
                             if (count == 0)
                             {
-                                ChatBlock.send(player, "noFieldsFoundWithFlag");
+                                ChatHelper.send(player, "noFieldsFoundWithFlag");
                             }
                             else
                             {
-                                ChatBlock.send(player, "flagEnabledOn", count);
+                                ChatHelper.send(player, "flagEnabledOn", count);
                             }
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandDisableall")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.disableall"))
+                    else if (cmd.equals(ChatHelper.format("commandDisableall")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.disableall"))
                     {
                         if (args.length == 1)
                         {
                             String flagStr = args[0];
 
-                            ChatBlock.send(player, "fieldsDown");
+                            ChatHelper.send(player, "fieldsDown");
 
                             int count = plugin.getStorageManager().disableAllFlags(flagStr);
 
                             if (count == 0)
                             {
-                                ChatBlock.send(player, "noFieldsFoundWithFlag");
+                                ChatHelper.send(player, "noFieldsFoundWithFlag");
                             }
                             else
                             {
-                                ChatBlock.send(player, "flagDisabledOn", count);
+                                ChatHelper.send(player, "flagDisabledOn", count);
                             }
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandClean")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.clean"))
+                    else if (cmd.equals(ChatHelper.format("commandClean")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.clean"))
                     {
                         if (args.length == 1)
                         {
@@ -2292,20 +2294,20 @@ public final class CommandManager implements CommandExecutor
 
                                 if (cleanedFF > 0)
                                 {
-                                    ChatBlock.send(sender, "cleanedOrphanedFields", cleanedFF);
+                                    ChatHelper.send(sender, "cleanedOrphanedFields", cleanedFF);
                                 }
                                 if (cleanedU > 0)
                                 {
-                                    ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleanedU);
+                                    ChatHelper.send(sender, "cleanedOrphanedUnbreakables", cleanedU);
                                 }
                                 if (cleanedFF == 0 && cleanedU == 0)
                                 {
-                                    ChatBlock.send(sender, "noOrphansFound");
+                                    ChatHelper.send(sender, "noOrphansFound");
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "worldNotFound");
+                                ChatHelper.send(sender, "worldNotFound");
                             }
                         }
                         else
@@ -2322,20 +2324,20 @@ public final class CommandManager implements CommandExecutor
                             }
                             if (cleanedFF > 0)
                             {
-                                ChatBlock.send(sender, "cleanedOrphanedFields", cleanedFF);
+                                ChatHelper.send(sender, "cleanedOrphanedFields", cleanedFF);
                             }
                             if (cleanedU > 0)
                             {
-                                ChatBlock.send(sender, "cleanedOrphanedUnbreakables", cleanedU);
+                                ChatHelper.send(sender, "cleanedOrphanedUnbreakables", cleanedU);
                             }
                             if (cleanedFF == 0 && cleanedU == 0)
                             {
-                                ChatBlock.send(sender, "noOrphansFound");
+                                ChatHelper.send(sender, "noOrphansFound");
                             }
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandRevert")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.revert"))
+                    else if (cmd.equals(ChatHelper.format("commandRevert")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.revert"))
                     {
                         if (args.length == 1)
                         {
@@ -2350,21 +2352,21 @@ public final class CommandManager implements CommandExecutor
 
                                 if (cleanedFF > 0)
                                 {
-                                    ChatBlock.send(sender, "revertedOrphanFields", cleanedFF);
+                                    ChatHelper.send(sender, "revertedOrphanFields", cleanedFF);
                                 }
                                 if (cleanedU > 0)
                                 {
-                                    ChatBlock.send(sender, "revertedOrphanUnbreakables", cleanedU);
+                                    ChatHelper.send(sender, "revertedOrphanUnbreakables", cleanedU);
                                 }
 
                                 if (cleanedFF == 0 && cleanedU == 0)
                                 {
-                                    ChatBlock.send(sender, "noOrphansFound");
+                                    ChatHelper.send(sender, "noOrphansFound");
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "worldNotFound");
+                                ChatHelper.send(sender, "worldNotFound");
                             }
                         }
                         else
@@ -2382,26 +2384,26 @@ public final class CommandManager implements CommandExecutor
 
                             if (cleanedFF > 0)
                             {
-                                ChatBlock.send(sender, "revertedOrphanFields", cleanedFF);
+                                ChatHelper.send(sender, "revertedOrphanFields", cleanedFF);
                             }
                             if (cleanedU > 0)
                             {
-                                ChatBlock.send(sender, "revertedOrphanUnbreakables", cleanedU);
+                                ChatHelper.send(sender, "revertedOrphanUnbreakables", cleanedU);
                             }
 
                             if (cleanedFF == 0 && cleanedU == 0)
                             {
-                                ChatBlock.send(sender, "noOrphansFound");
+                                ChatHelper.send(sender, "noOrphansFound");
                             }
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandPull")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.pull"))
+                    else if (cmd.equals(ChatHelper.format("commandPull")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.pull"))
                     {
                         plugin.getStorageManager().loadWorldData();
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandMigrate")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.migrate"))
+                    else if (cmd.equals(ChatHelper.format("commandMigrate")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.migrate"))
                     {
                         if (args.length == 2)
                         {
@@ -2410,11 +2412,11 @@ public final class CommandManager implements CommandExecutor
 
                             PreciousStones.getInstance().getStorageManager().migrate(oldUsername, newUsername);
                             plugin.getStorageManager().offerPlayer(newUsername);
-                            ChatBlock.send(sender, "migrateDone");
+                            ChatHelper.send(sender, "migrateDone");
                             return true;
                         }
                     }
-                    else if (cmd.equals(ChatBlock.format("commandBypass")) && plugin.getPermissionsManager().has(player, "preciousstones.bypass.toggle"))
+                    else if (cmd.equals(ChatHelper.format("commandBypass")) && plugin.getPermissionsManager().has(player, "preciousstones.bypass.toggle"))
                     {
                         PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
@@ -2422,15 +2424,15 @@ public final class CommandManager implements CommandExecutor
                         {
                             String mode = args[0];
 
-                            if (mode.equals(ChatBlock.format("commandOn")))
+                            if (mode.equals(ChatHelper.format("commandOn")))
                             {
                                 entry.setBypassDisabled(false);
-                                ChatBlock.send(player, "bypassEnabled");
+                                ChatHelper.send(player, "bypassEnabled");
                             }
-                            else if (mode.equals(ChatBlock.format("commandOff")))
+                            else if (mode.equals(ChatHelper.format("commandOff")))
                             {
                                 entry.setBypassDisabled(true);
-                                ChatBlock.send(player, "bypassDisabled");
+                                ChatHelper.send(player, "bypassDisabled");
                             }
                         }
                         else
@@ -2438,29 +2440,29 @@ public final class CommandManager implements CommandExecutor
                             if (entry.isBypassDisabled())
                             {
                                 entry.setBypassDisabled(false);
-                                ChatBlock.send(player, "bypassEnabled");
+                                ChatHelper.send(player, "bypassEnabled");
                             }
                             else
                             {
                                 entry.setBypassDisabled(true);
-                                ChatBlock.send(player, "bypassDisabled");
+                                ChatHelper.send(player, "bypassDisabled");
                             }
                         }
 
                         plugin.getStorageManager().offerPlayer(player.getName());
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandHide")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide"))
+                    else if (cmd.equals(ChatHelper.format("commandHide")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide"))
                     {
                         if (args.length == 1)
                         {
-                            if (args[0].equals(ChatBlock.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall"))
+                            if (args[0].equals(ChatHelper.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall"))
                             {
                                 int count = plugin.getForceFieldManager().hideBelonging(player.getName());
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.send(sender, "hideHideAll", count);
+                                    ChatHelper.send(sender, "hideHideAll", count);
                                 }
                             }
                         }
@@ -2476,21 +2478,21 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (!field.matchesBlockType())
                                         {
-                                            ChatBlock.send(sender, "cannotHideOrphan");
+                                            ChatHelper.send(sender, "cannotHideOrphan");
                                             return true;
                                         }
 
                                         field.hide();
-                                        ChatBlock.send(sender, "hideHide");
+                                        ChatHelper.send(sender, "hideHide");
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "hideHiddenAlready");
+                                        ChatHelper.send(sender, "hideHiddenAlready");
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "hideCannot");
+                                    ChatHelper.send(sender, "hideCannot");
                                 }
                             }
                             else
@@ -2500,17 +2502,17 @@ public final class CommandManager implements CommandExecutor
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandUnhide")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide"))
+                    else if (cmd.equals(ChatHelper.format("commandUnhide")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.hide"))
                     {
                         if (args.length == 1)
                         {
-                            if (args[0].equals(ChatBlock.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall"))
+                            if (args[0].equals(ChatHelper.format("commandAll")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.hideall"))
                             {
                                 int count = plugin.getForceFieldManager().unhideBelonging(player.getName());
 
                                 if (count > 0)
                                 {
-                                    ChatBlock.send(sender, "hideUnhideAll", count);
+                                    ChatHelper.send(sender, "hideUnhideAll", count);
                                 }
                             }
                         }
@@ -2525,26 +2527,26 @@ public final class CommandManager implements CommandExecutor
                                     if (field.isHidden())
                                     {
                                         field.unHide();
-                                        ChatBlock.send(sender, "hideUnhide");
+                                        ChatHelper.send(sender, "hideUnhide");
                                     }
                                     else
                                     {
-                                        ChatBlock.send(sender, "hideUnHiddenAlready");
+                                        ChatHelper.send(sender, "hideUnHiddenAlready");
                                     }
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "hideCannot");
+                                    ChatHelper.send(sender, "hideCannot");
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "hideNoneFound");
+                                ChatHelper.send(sender, "hideNoneFound");
                             }
                         }
                         return true;
                     }
-                    else if (cmd.equals(ChatBlock.format("commandGive")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.give"))
+                    else if (cmd.equals(ChatHelper.format("commandGive")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.give"))
                     {
                         if (args.length >= 2)
                         {
@@ -2566,24 +2568,24 @@ public final class CommandManager implements CommandExecutor
                                 if (settings != null)
                                 {
                                     plugin.getForceFieldManager().giveField(recipient, settings, count);
-                                    ChatBlock.send(sender, "fieldsGiven", playerName, settings.getTitle(), count);
-                                    ChatBlock.send(recipient, "fieldsGivenPlayer", sender.getName(), settings.getTitle(), count);
+                                    ChatHelper.send(sender, "fieldsGiven", playerName, settings.getTitle(), count);
+                                    ChatHelper.send(recipient, "fieldsGivenPlayer", sender.getName(), settings.getTitle(), count);
                                 }
                                 else
                                 {
-                                    ChatBlock.send(sender, "fieldNotFound", fieldName);
+                                    ChatHelper.send(sender, "fieldNotFound", fieldName);
                                 }
                             }
                             else
                             {
-                                ChatBlock.send(sender, "playerNotFound", playerName);
+                                ChatHelper.send(sender, "playerNotFound", playerName);
                             }
                         }
 
                         return true;
                     }
 
-                    ChatBlock.send(sender, "notValidCommand");
+                    ChatHelper.send(sender, "notValidCommand");
                     return true;
                 }
 

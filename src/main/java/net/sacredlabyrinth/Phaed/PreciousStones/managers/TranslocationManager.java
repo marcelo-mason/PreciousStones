@@ -1,10 +1,11 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -485,16 +486,16 @@ public final class TranslocationManager
         {
             TranslocationImporter importer = new TranslocationImporter(field, tbs, player);
 
-            ChatBlock.send(player, "translocationImportingBlocks", imported);
+            ChatHelper.send(player, "translocationImportingBlocks", imported);
 
             if (notImported > 0)
             {
-                ChatBlock.send(player, "translocationSkippedDueToLimit", notImported);
+                ChatHelper.send(player, "translocationSkippedDueToLimit", notImported);
             }
         }
         else
         {
-            ChatBlock.send(player, "nothingToImport");
+            ChatHelper.send(player, "nothingToImport");
         }
 
         field.setDisabled(true);
@@ -521,16 +522,16 @@ public final class TranslocationManager
         {
             TranslocationRemover remover = new TranslocationRemover(field, tbs, player);
 
-            ChatBlock.send(player, "translocationRemovingBlocks", imported);
+            ChatHelper.send(player, "translocationRemovingBlocks", imported);
 
             if (notImported > 0)
             {
-                ChatBlock.send(player, "translocationSkippedDueToLimit", notImported);
+                ChatHelper.send(player, "translocationSkippedDueToLimit", notImported);
             }
         }
         else
         {
-            ChatBlock.send(player, "nothingToRemove");
+            ChatHelper.send(player, "nothingToRemove");
         }
 
         field.setDisabled(true);

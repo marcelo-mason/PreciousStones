@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
 import org.bukkit.Bukkit;
@@ -120,7 +120,7 @@ public class TranslocationImporter implements Runnable
                     field.setDisabled(true);
                     field.setTranslocating(false);
                     field.dirtyFlags("TranslocationImporter");
-                    ChatBlock.send(player, "importComplete");
+                    ChatHelper.send(player, "importComplete");
                 }
             }
         }
@@ -132,7 +132,7 @@ public class TranslocationImporter implements Runnable
         {
             if (player != null)
             {
-                ChatBlock.send(player, "importedBlocks", count);
+                ChatHelper.send(player, "importedBlocks", count);
             }
         }
     }

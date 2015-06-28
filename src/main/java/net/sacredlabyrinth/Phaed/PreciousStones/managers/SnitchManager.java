@@ -1,8 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
@@ -52,7 +52,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_kill"), entity.getType().getName(), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_kill"), entity.getType().getName(), 1));
                 }
             }
         }
@@ -77,7 +77,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_kill"), victim.getName(), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_kill"), victim.getName(), 1));
                 }
             }
         }
@@ -99,7 +99,7 @@ public class SnitchManager
             if (FieldFlag.SNITCH.applies(field, player))
             {
                 DateFormat dateFormat = new SimpleDateFormat("MMM d, h:mm a z");
-                plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_entry"), dateFormat.format(new Date()), 1));
+                plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_entry"), dateFormat.format(new Date()), 1));
             }
         }
     }
@@ -123,7 +123,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_blockBreak"), toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_blockBreak"), toBlockDetails(block), 1));
                 }
             }
         }
@@ -150,7 +150,7 @@ public class SnitchManager
                 {
                     String details = type + " [" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
 
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_bucketEmpty"), details, 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_bucketEmpty"), details, 1));
                 }
             }
         }
@@ -175,7 +175,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_bucketFilled"), toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_bucketFilled"), toBlockDetails(block), 1));
                 }
             }
         }
@@ -200,7 +200,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_blockPlace"), toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_blockPlace"), toBlockDetails(block), 1));
                 }
             }
         }
@@ -225,7 +225,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_used"), toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_used"), toBlockDetails(block), 1));
                 }
             }
         }
@@ -252,7 +252,7 @@ public class SnitchManager
                 {
                     for (String action : actions)
                     {
-                        plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_LWC") + " " + action, Helper.toLocationString(block.getLocation()), 1));
+                        plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_LWC") + " " + action, Helper.toLocationString(block.getLocation()), 1));
                     }
                 }
             }
@@ -285,7 +285,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_shopped"), toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_shopped"), toBlockDetails(block), 1));
                 }
             }
         }
@@ -310,7 +310,7 @@ public class SnitchManager
             {
                 if (FieldFlag.SNITCH.applies(field, player))
                 {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatBlock.format("_ignited"), toBlockDetails(block), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_ignited"), toBlockDetails(block), 1));
                 }
             }
         }

@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import org.bukkit.Location;
@@ -363,7 +363,7 @@ public class CuboidEntry
 
         if (!envelopsPlusOne(loc))
         {
-            ChatBlock.send(player, "mustBeInCuboidToExpand");
+            ChatHelper.send(player, "mustBeInCuboidToExpand");
             return null;
         }
 

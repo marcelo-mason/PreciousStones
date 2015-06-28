@@ -2,7 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import com.google.common.collect.Maps;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
@@ -96,7 +96,7 @@ public final class ForceFieldManager
 
         if (!plugin.getWorldGuardManager().canBuildField(player, fieldBlock, fs))
         {
-            ChatBlock.send(player, "fieldIntersectsWG");
+            ChatHelper.send(player, "fieldIntersectsWG");
             event.setCancelled(true);
             return;
         }
@@ -133,7 +133,7 @@ public final class ForceFieldManager
             if ((ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup() || fs.getMixingGroup() == 0) && !ce.getField().getSettings().getTypeEntry().equals(fs.getTypeEntry()))
             {
                 plugin.getCuboidManager().cancelOpenCuboid(player);
-                ChatBlock.send(player, "cuboidCannotMix");
+                ChatHelper.send(player, "cuboidCannotMix");
                 event.setCancelled(true);
                 return;
             }
@@ -141,7 +141,7 @@ public final class ForceFieldManager
             if (fs.getPrice() > ce.getField().getSettings().getPrice())
             {
                 plugin.getCuboidManager().cancelOpenCuboid(player);
-                ChatBlock.send(player, "cuboidCannotAddProps");
+                ChatHelper.send(player, "cuboidCannotAddProps");
                 event.setCancelled(true);
                 return;
             }
@@ -160,7 +160,7 @@ public final class ForceFieldManager
             if (!ce.getField().getTypeEntry().equals(fs.getTypeEntry()))
             {
                 ce.getField().importFlags(fs.getDefaultFlags());
-                ChatBlock.send(player, "flagsImported", fs.getTitle());
+                ChatHelper.send(player, "flagsImported", fs.getTitle());
                 isImport = true;
             }
 
@@ -292,7 +292,7 @@ public final class ForceFieldManager
             if (field.getFencePrice() == 0 || purchase(player, field.getFencePrice()))
             {
                 field.generateFence(field.getSettings().getFenceItem());
-                ChatBlock.send(player, "fenceGenerated");
+                ChatHelper.send(player, "fenceGenerated");
             }
         }
 
@@ -1108,7 +1108,7 @@ public final class ForceFieldManager
 
             if (pl != null)
             {
-                ChatBlock.send(pl, "announceToAllowedPlayers", msg);
+                ChatHelper.send(pl, "announceToAllowedPlayers", msg);
             }
         }
     }
@@ -1422,7 +1422,7 @@ public final class ForceFieldManager
 
         if (notAllowed > 0)
         {
-            ChatBlock.send(player, "fieldsSkipped", notAllowed);
+            ChatHelper.send(player, "fieldsSkipped", notAllowed);
         }
 
         return allowedCount;
@@ -1501,7 +1501,7 @@ public final class ForceFieldManager
         {
             if (field.containsPlayer(target))
             {
-                ChatBlock.send(player, "playerInsideNotRemoved");
+                ChatHelper.send(player, "playerInsideNotRemoved");
                 continue;
             }
 
@@ -1521,7 +1521,7 @@ public final class ForceFieldManager
 
             if (conflicted > 0)
             {
-                ChatBlock.send(player, "removedConflictingFields", conflicted, target);
+                ChatHelper.send(player, "removedConflictingFields", conflicted, target);
                 continue;
             }
 
@@ -1535,7 +1535,7 @@ public final class ForceFieldManager
 
         if (notRemoved > 0)
         {
-            ChatBlock.send(player, "fieldsSkipped", notRemoved);
+            ChatHelper.send(player, "fieldsSkipped", notRemoved);
         }
 
         return removedCount;
@@ -2696,7 +2696,7 @@ public final class ForceFieldManager
             }
             else
             {
-                ChatBlock.send(player, "economyNotEnoughMoney");
+                ChatHelper.send(player, "economyNotEnoughMoney");
                 return false;
             }
         }
@@ -2719,7 +2719,7 @@ public final class ForceFieldManager
         if (plugin.getPermissionsManager().hasEconomy())
         {
             plugin.getPermissionsManager().playerCredit(player, amount);
-            ChatBlock.send(player, "economyAccountCredited");
+            ChatHelper.send(player, "economyAccountCredited");
         }
     }
 

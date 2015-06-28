@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 

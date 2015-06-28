@@ -1,8 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
@@ -158,7 +158,7 @@ public class CuboidManager
 
                             if (plugin.getForceFieldManager().existsConflict(clone.getMockField(), player))
                             {
-                                ChatBlock.send(player, "cuboidSelectionConflicts");
+                                ChatHelper.send(player, "cuboidSelectionConflicts");
                                 return false;
                             }
 
@@ -176,11 +176,11 @@ public class CuboidManager
 
                             if (newVolume >= 0)
                             {
-                                ChatBlock.send(player, "cuboidAvailableProtection", newVolume);
+                                ChatHelper.send(player, "cuboidAvailableProtection", newVolume);
                             }
                             else
                             {
-                                ChatBlock.send(player, "cuboidAvailableProtectionBypass", newVolume);
+                                ChatHelper.send(player, "cuboidAvailableProtectionBypass", newVolume);
                             }
                         }
                     }
@@ -188,17 +188,17 @@ public class CuboidManager
                 }
                 else
                 {
-                    ChatBlock.send(player, "cuboidCannotExtendWG");
+                    ChatHelper.send(player, "cuboidCannotExtendWG");
                 }
             }
             else
             {
-                ChatBlock.send(player, "cuboidExceeds");
+                ChatHelper.send(player, "cuboidExceeds");
             }
         }
         else
         {
-            ChatBlock.send(player, "cuboidOutline");
+            ChatHelper.send(player, "cuboidOutline");
         }
 
         return false;
@@ -232,8 +232,8 @@ public class CuboidManager
 
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
 
-                ChatBlock.send(player, "cuboidDrawingMode");
-                ChatBlock.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
+                ChatHelper.send(player, "cuboidDrawingMode");
+                ChatHelper.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
             }
         }, 1L);
     }
@@ -256,7 +256,7 @@ public class CuboidManager
                 {
                     ce.addSelected(field.getBlock());
                     PreciousStones.getInstance().getForceFieldManager().addSourceField(field);
-                    ChatBlock.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
+                    ChatHelper.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
                 }
             }, 1L);
         }
@@ -280,7 +280,7 @@ public class CuboidManager
             {
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid"))
                 {
-                    ChatBlock.send(player, "cuboidExceedsMax");
+                    ChatHelper.send(player, "cuboidExceedsMax");
                     cancelOpenCuboid(player);
                     return false;
                 }
@@ -288,7 +288,7 @@ public class CuboidManager
 
             if (plugin.getForceFieldManager().fieldConflicts(ce, player) != null)
             {
-                ChatBlock.send(player, "cuboidConflicts");
+                ChatHelper.send(player, "cuboidConflicts");
                 cancelOpenCuboid(player);
                 return false;
             }
@@ -302,7 +302,7 @@ public class CuboidManager
 
                 if (!plugin.getWorldGuardManager().canBuild(player, location))
                 {
-                    ChatBlock.send(player, "cuboidConflictsWG");
+                    ChatHelper.send(player, "cuboidConflictsWG");
                     cancelOpenCuboid(player);
                     return false;
                 }
@@ -401,7 +401,7 @@ public class CuboidManager
         if (openCuboids.containsKey(player.getName()))
         {
             openCuboids.remove(player.getName());
-            ChatBlock.send(player, "cuboidCancelled");
+            ChatHelper.send(player, "cuboidCancelled");
         }
     }
 
@@ -423,7 +423,7 @@ public class CuboidManager
                 ce.revertLastSelected();
                 plugin.getVisualizationManager().revertSingle(player, selected.getBlock());
                 plugin.getVisualizationManager().displayFieldOutline(player, ce);
-                ChatBlock.send(player, "cuboidReverted");
+                ChatHelper.send(player, "cuboidReverted");
             }
         }
     }

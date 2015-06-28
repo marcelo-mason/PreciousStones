@@ -1,8 +1,10 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -55,7 +57,7 @@ public class FieldSign
         // extract the tag line, exit if not recognized
 
         tag = ChatColor.stripColor(lines[0]);
-        fieldSign = tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy")) || tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
+        fieldSign = tag.equalsIgnoreCase(ChatHelper.format("fieldSignRent")) || tag.equalsIgnoreCase(ChatHelper.format("fieldSignBuy")) || tag.equalsIgnoreCase(ChatHelper.format("fieldSignShare"));
 
         if (!fieldSign)
         {
@@ -171,17 +173,17 @@ public class FieldSign
 
     public boolean isRentable()
     {
-        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignRent"));
+        return tag.equalsIgnoreCase(ChatHelper.format("fieldSignRent"));
     }
 
     public boolean isBuyable()
     {
-        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignBuy"));
+        return tag.equalsIgnoreCase(ChatHelper.format("fieldSignBuy"));
     }
 
     public boolean isShareable()
     {
-        return tag.equalsIgnoreCase(ChatBlock.format("fieldSignShare"));
+        return tag.equalsIgnoreCase(ChatHelper.format("fieldSignShare"));
     }
 
     public void setRentedColor()

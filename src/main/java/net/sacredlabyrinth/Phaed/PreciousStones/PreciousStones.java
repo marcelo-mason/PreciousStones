@@ -2,7 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.api.Api;
 import net.sacredlabyrinth.Phaed.PreciousStones.api.IApi;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.listeners.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.uuid.UUIDMigration;
@@ -105,7 +105,7 @@ public class PreciousStones extends JavaPlugin
      */
     public static void log(Level level, Object msg, Object... arg)
     {
-        logger.log(level, "[PreciousStones] " + ChatBlock.format(msg.toString(), arg));
+        logger.log(level, "[PreciousStones] " + ChatHelper.format(msg.toString(), arg));
     }
 
     /**

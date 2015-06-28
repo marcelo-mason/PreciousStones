@@ -1,13 +1,16 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -58,7 +61,7 @@ public class PSPlayerListener implements Listener
             {
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.commandblacklist"))
                 {
-                    ChatBlock.send(player, "commandCanceled");
+                    ChatHelper.send(player, "commandCanceled");
                     event.setCancelled(true);
                 }
             }
@@ -74,7 +77,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.commandblacklist"))
                     {
-                        ChatBlock.send(player, "commandCanceled");
+                        ChatHelper.send(player, "commandCanceled");
                         event.setCancelled(true);
                     }
                 }
@@ -174,7 +177,7 @@ public class PSPlayerListener implements Listener
                 if (!plugin.getPermissionsManager().has(event.getPlayer(), "preciousstones.bypass.teleport"))
                 {
                     event.setCancelled(true);
-                    ChatBlock.send(player, "cannotTeleportInsideField");
+                    ChatHelper.send(player, "cannotTeleportInsideField");
                     return;
                 }
             }
@@ -671,7 +674,7 @@ public class PSPlayerListener implements Listener
 
                             if (field.isDisabled())
                             {
-                                ChatBlock.send(player, "fieldSignCannotRentDisabled");
+                                ChatHelper.send(player, "fieldSignCannotRentDisabled");
                                 event.setCancelled(true);
                                 return;
                             }
@@ -682,12 +685,12 @@ public class PSPlayerListener implements Listener
                                 {
                                     if (s.isRentable() || s.isShareable())
                                     {
-                                        ChatBlock.send(player, "rentQuestion");
+                                        ChatHelper.send(player, "rentQuestion");
                                     }
 
                                     if (s.isBuyable())
                                     {
-                                        ChatBlock.send(player, "buyQuestion");
+                                        ChatHelper.send(player, "buyQuestion");
                                     }
 
                                     event.setCancelled(true);
@@ -709,7 +712,7 @@ public class PSPlayerListener implements Listener
                                                 {
                                                     PreciousStones.debug("but player is not the renter");
 
-                                                    ChatBlock.send(player, "fieldSignAlreadyRented");
+                                                    ChatHelper.send(player, "fieldSignAlreadyRented");
                                                     plugin.getCommunicationManager().showRenterInfo(player, field);
                                                     event.setCancelled(true);
                                                     return;
@@ -723,7 +726,7 @@ public class PSPlayerListener implements Listener
                                                         PreciousStones.debug("and sneaking");
 
 
-                                                        ChatBlock.send(player, "fieldSignRentAbandoned");
+                                                        ChatHelper.send(player, "fieldSignRentAbandoned");
                                                         event.setCancelled(true);
                                                         return;
                                                     }
@@ -764,7 +767,7 @@ public class PSPlayerListener implements Listener
                                         if (field.hasPendingPurchase())
                                         {
                                             PreciousStones.debug("field has a pending purchase so it is already bought");
-                                            ChatBlock.send(player, "fieldSignAlreadyBought");
+                                            ChatHelper.send(player, "fieldSignAlreadyBought");
                                         }
                                         else if (field.buy(player, s))
                                         {
@@ -772,7 +775,7 @@ public class PSPlayerListener implements Listener
 
                                             s.setBoughtColor(player);
                                             PreciousStones.getInstance().getForceFieldManager().addAllowed(field, player.getName());
-                                            ChatBlock.send(player, "fieldSignBoughtAndAllowed");
+                                            ChatHelper.send(player, "fieldSignBoughtAndAllowed");
                                         }
 
                                         event.setCancelled(true);
@@ -791,7 +794,7 @@ public class PSPlayerListener implements Listener
                                     {
                                         PreciousStones.debug("but hes not the renter so show him who rents it");
 
-                                        ChatBlock.send(player, "fieldSignAlreadyRented");
+                                        ChatHelper.send(player, "fieldSignAlreadyRented");
                                         plugin.getCommunicationManager().showRenterInfo(player, field);
                                         event.setCancelled(true);
                                         return;
@@ -845,7 +848,7 @@ public class PSPlayerListener implements Listener
                                 {
                                     PreciousStones.debug("field hasn't been rented");
 
-                                    ChatBlock.send(player, "fieldSignNoTennant");
+                                    ChatHelper.send(player, "fieldSignNoTennant");
                                 }
                                 event.setCancelled(true);
                                 return;
@@ -858,7 +861,7 @@ public class PSPlayerListener implements Listener
 
                         if (s.getFailReason() != null)
                         {
-                            ChatBlock.send(player, s.getFailReason());
+                            ChatHelper.send(player, s.getFailReason());
                         }
                     }
                 }
@@ -1012,7 +1015,7 @@ public class PSPlayerListener implements Listener
                                                 {
                                                     if (plugin.getStorageManager().existsTranslocatior(field.getName(), field.getOwner()))
                                                     {
-                                                        ChatBlock.send(player, "cannotReshapeWhileCuboid");
+                                                        ChatHelper.send(player, "cannotReshapeWhileCuboid");
                                                         return;
                                                     }
                                                 }
@@ -1021,7 +1024,7 @@ public class PSPlayerListener implements Listener
 
                                         if (plugin.getForceFieldManager().hasSubFields(field))
                                         {
-                                            ChatBlock.send(player, "cannotRedefineWhileCuboid");
+                                            ChatHelper.send(player, "cannotRedefineWhileCuboid");
                                             return;
                                         }
 
@@ -1031,7 +1034,7 @@ public class PSPlayerListener implements Listener
                                             {
                                                 if (!field.isDisabled())
                                                 {
-                                                    ChatBlock.send(player, "redefineWhileDisabled");
+                                                    ChatHelper.send(player, "redefineWhileDisabled");
                                                     return;
                                                 }
                                             }
@@ -1041,7 +1044,7 @@ public class PSPlayerListener implements Listener
                                         {
                                             if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.destroy"))
                                             {
-                                                ChatBlock.send(player, "fieldSignCannotChange");
+                                                ChatHelper.send(player, "fieldSignCannotChange");
                                                 return;
                                             }
                                         }
@@ -1169,19 +1172,19 @@ public class PSPlayerListener implements Listener
                                     plugin.getStorageManager().offerPlayer(oldOwnerName);
                                     plugin.getStorageManager().offerField(field);
 
-                                    ChatBlock.send(player, "takenFieldOwnership", oldOwnerName);
+                                    ChatHelper.send(player, "takenFieldOwnership", oldOwnerName);
 
                                     Player oldOwner = Bukkit.getServer().getPlayerExact(oldOwnerName);
 
                                     if (oldOwner != null)
                                     {
-                                        ChatBlock.send(oldOwner, "tookOwnership", player.getName());
+                                        ChatHelper.send(oldOwner, "tookOwnership", player.getName());
                                     }
                                     return;
                                 }
                                 else
                                 {
-                                    ChatBlock.send(player, "cannotTakeOwnership", field.getNewOwner());
+                                    ChatHelper.send(player, "cannotTakeOwnership", field.getNewOwner());
                                 }
                             }
 
@@ -1193,13 +1196,13 @@ public class PSPlayerListener implements Listener
                                 {
                                     if (plugin.getCuboidManager().hasOpenCuboid(player))
                                     {
-                                        ChatBlock.send(player, "visualizationNotWhileCuboid");
+                                        ChatHelper.send(player, "visualizationNotWhileCuboid");
                                     }
                                     else
                                     {
                                         if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.visualize"))
                                         {
-                                            ChatBlock.send(player, "visualizing");
+                                            ChatHelper.send(player, "visualizing");
                                             plugin.getVisualizationManager().visualizeSingleField(player, field);
                                         }
                                     }
@@ -1211,19 +1214,19 @@ public class PSPlayerListener implements Listener
                                     {
                                         if (field.isDisabled())
                                         {
-                                            ChatBlock.send(player, "fieldTypeEnabled", field.getSettings().getTitle());
+                                            ChatHelper.send(player, "fieldTypeEnabled", field.getSettings().getTitle());
                                             boolean disabled = field.setDisabled(false, player);
 
                                             if (!disabled)
                                             {
-                                                ChatBlock.send(player, "cannotEnable");
+                                                ChatHelper.send(player, "cannotEnable");
                                                 return;
                                             }
                                             field.dirtyFlags("visualize/enable on sneaking right click1");
                                         }
                                         else
                                         {
-                                            ChatBlock.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
+                                            ChatHelper.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
                                             field.setDisabled(true, player);
                                             field.dirtyFlags("visualize/enable on sneaking right click2");
                                         }
@@ -1241,8 +1244,8 @@ public class PSPlayerListener implements Listener
                                         if (!plugin.getCommunicationManager().showSnitchList(player, plugin.getForceFieldManager().getField(block)))
                                         {
                                             showInfo(field, player);
-                                            ChatBlock.send(player, "noIntruders");
-                                            ChatBlock.sendBlank(player);
+                                            ChatHelper.send(player, "noIntruders");
+                                            ChatHelper.sendBlank(player);
                                         }
                                         return;
                                     }
@@ -1257,8 +1260,8 @@ public class PSPlayerListener implements Listener
                                     if (size == 0)
                                     {
                                         showInfo(field, player);
-                                        ChatBlock.send(player, "noGriefRecorded");
-                                        ChatBlock.sendBlank(player);
+                                        ChatHelper.send(player, "noGriefRecorded");
+                                        ChatHelper.sendBlank(player);
                                     }
                                     return;
                                 }
@@ -1308,7 +1311,7 @@ public class PSPlayerListener implements Listener
 
                                                         if (!disabled)
                                                         {
-                                                            ChatBlock.send(player, "cannotEnable");
+                                                            ChatHelper.send(player, "cannotEnable");
                                                             return;
                                                         }
                                                         field.dirtyFlags("right click translocation2");
@@ -1336,10 +1339,10 @@ public class PSPlayerListener implements Listener
                                         }
                                         else if (!field.isDisabled() && !field.hasFlag(FieldFlag.TOGGLE_ON_DISABLED))
                                         {
-                                            ChatBlock.send(player, "usageToggle");
+                                            ChatHelper.send(player, "usageToggle");
                                         }
 
-                                        ChatBlock.sendBlank(player);
+                                        ChatHelper.sendBlank(player);
                                     }
                                 }
                             }
@@ -1618,13 +1621,13 @@ public class PSPlayerListener implements Listener
                 {
                     if (field.getName().length() == 0)
                     {
-                        ChatBlock.send(player, "translocatorNameToBegin");
+                        ChatHelper.send(player, "translocatorNameToBegin");
                         event.setCancelled(true);
                     }
 
                     if (field.isOverTranslocationMax(1))
                     {
-                        ChatBlock.send(player, "translocationReachedSize");
+                        ChatHelper.send(player, "translocationReachedSize");
                         event.setCancelled(true);
                         return;
                     }
@@ -1662,7 +1665,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (!gameMode.equals(field.getSettings().getForceEntryGameMode()))
                     {
-                        ChatBlock.send(player, "cannotChangeGameMode");
+                        ChatHelper.send(player, "cannotChangeGameMode");
                         event.setCancelled(true);
                     }
                 }
@@ -1820,7 +1823,7 @@ public class PSPlayerListener implements Listener
                     if (field.getSettings().isUnusableItem(item.getTypeId(), item.getData().getData()))
                     {
                         StackHelper.unHoldItem(player, slot);
-                        ChatBlock.send(player, "cannotUseItemMoved");
+                        ChatHelper.send(player, "cannotUseItemMoved");
                     }
                 }
             }
@@ -1849,7 +1852,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (field.getSettings().isUnusableItem(event.getItem().getItemStack().getTypeId(), event.getItem().getItemStack().getData().getData()))
                     {
-                        ChatBlock.send(player, "cannotUseItemHere");
+                        ChatHelper.send(player, "cannotUseItemHere");
                         StackHelper.unHoldItem(player, player.getInventory().getHeldItemSlot());
                     }
                 }
@@ -1872,7 +1875,7 @@ public class PSPlayerListener implements Listener
                 {
                     if (field.getSettings().isUnusableItem(player.getItemInHand().getTypeId(), player.getItemInHand().getData().getData()))
                     {
-                        ChatBlock.send(player, "cannotUseItemHere");
+                        ChatHelper.send(player, "cannotUseItemHere");
                         StackHelper.unHoldItem(player, player.getInventory().getHeldItemSlot());
                     }
                 }

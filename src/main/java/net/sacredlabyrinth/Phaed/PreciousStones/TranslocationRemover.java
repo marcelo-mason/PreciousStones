@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
 import org.bukkit.Bukkit;
@@ -107,12 +107,12 @@ public class TranslocationRemover implements Runnable
                 field.setDisabled(false);
                 field.setTranslocating(false);
                 field.dirtyFlags("TranslocationRemover");
-                ChatBlock.send(player, "removalComplete");
+                ChatHelper.send(player, "removalComplete");
 
                 if(notRemovedCount > 0)
                 {
-                    ChatBlock.send(player, "blocksSkipped", count);
-                    ChatBlock.send(player, "blocksSkipped2");
+                    ChatHelper.send(player, "blocksSkipped", count);
+                    ChatHelper.send(player, "blocksSkipped2");
                 }
             }
         }
@@ -124,7 +124,7 @@ public class TranslocationRemover implements Runnable
         {
             if (player != null)
             {
-                ChatBlock.send(player, "removedBlocks", count);
+                ChatHelper.send(player, "removedBlocks", count);
             }
         }
     }

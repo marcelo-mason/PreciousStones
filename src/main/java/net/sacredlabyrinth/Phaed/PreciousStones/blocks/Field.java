@@ -2,6 +2,10 @@ package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.AbstractVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
@@ -2005,7 +2009,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (player != null)
             {
-                ChatBlock.send(player, "fieldWillDisable", settings.getTitle(), settings.getAutoDisableTime());
+                ChatHelper.send(player, "fieldWillDisable", settings.getTitle(), settings.getAutoDisableTime());
             }
 
             if (disablerId > 0)
@@ -2023,7 +2027,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                         if (player != null)
                         {
-                            ChatBlock.send(player, "fieldHasDisabled", settings.getTitle());
+                            ChatHelper.send(player, "fieldHasDisabled", settings.getTitle());
                         }
 
                         thisField.setDisabled(true);
@@ -2720,7 +2724,7 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (seconds == 0)
             {
-                ChatBlock.send(player, "fieldSignRentError");
+                ChatHelper.send(player, "fieldSignRentError");
                 return;
             }
 
@@ -2730,7 +2734,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             {
                 renter.addSeconds(seconds);
 
-                ChatBlock.send(player, "fieldSignRentRented", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
+                ChatHelper.send(player, "fieldSignRentRented", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
             }
             else
             {
@@ -2741,7 +2745,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 {
                     scheduleNextRentUpdate();
                 }
-                ChatBlock.send(player, "fieldSignRentRented", s.getPeriod());
+                ChatHelper.send(player, "fieldSignRentRented", s.getPeriod());
 
                 PreciousStones.getInstance().getEntryManager().leaveField(player, this);
                 PreciousStones.getInstance().getEntryManager().enterField(player, this);
@@ -2882,7 +2886,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 if (renter.getPeriodSeconds() + seconds > field.getLimitSeconds())
                 {
                     PreciousStones.debug("limit reached");
-                    ChatBlock.send(player, "limitReached");
+                    ChatHelper.send(player, "limitReached");
                     return false;
                 }
             }
@@ -2903,7 +2907,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 return true;
             }
 
-            ChatBlock.send(player, "economyNotEnoughItems");
+            ChatHelper.send(player, "economyNotEnoughItems");
         }
         else
         {
@@ -2920,7 +2924,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                     return true;
                 }
 
-                ChatBlock.send(player, "economyNotEnoughMoney");
+                ChatHelper.send(player, "economyNotEnoughMoney");
             }
         }
 
@@ -2948,7 +2952,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                     return true;
                 }
 
-                ChatBlock.send(player, "economyNotEnoughMoney");
+                ChatHelper.send(player, "economyNotEnoughMoney");
             }
         }
         else
@@ -2963,7 +2967,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                 return true;
             }
 
-            ChatBlock.send(player, "economyNotEnoughItems");
+            ChatHelper.send(player, "economyNotEnoughItems");
         }
         return false;
     }
@@ -2988,11 +2992,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                 if (entry.getFieldName().isEmpty())
                 {
-                    ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", entry.getAmount(), entry.getItem(), entry.getPlayer());
+                    ChatHelper.send(player, "fieldSignItemPaymentReceivedNoName", entry.getAmount(), entry.getItem(), entry.getPlayer());
                 }
                 else
                 {
-                    ChatBlock.send(player, "fieldSignItemPaymentReceived", entry.getAmount(), entry.getItem(), entry.getPlayer(), entry.getFieldName());
+                    ChatHelper.send(player, "fieldSignItemPaymentReceived", entry.getAmount(), entry.getItem(), entry.getPlayer(), entry.getFieldName());
                 }
             }
             else
@@ -3001,11 +3005,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                 if (entry.getFieldName().isEmpty())
                 {
-                    ChatBlock.send(player, "fieldSignPaymentReceivedNoName", entry.getAmount(), entry.getPlayer());
+                    ChatHelper.send(player, "fieldSignPaymentReceivedNoName", entry.getAmount(), entry.getPlayer());
                 }
                 else
                 {
-                    ChatBlock.send(player, "fieldSignPaymentReceived", entry.getAmount(), entry.getPlayer(), entry.getFieldName());
+                    ChatHelper.send(player, "fieldSignPaymentReceived", entry.getAmount(), entry.getPlayer(), entry.getFieldName());
                 }
             }
         }
@@ -3027,11 +3031,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (purchase.getFieldName().isEmpty())
             {
-                ChatBlock.send(player, "fieldSignItemPaymentReceivedNoName", purchase.getAmount(), purchase.getItem(), purchase.getPlayer());
+                ChatHelper.send(player, "fieldSignItemPaymentReceivedNoName", purchase.getAmount(), purchase.getItem(), purchase.getPlayer());
             }
             else
             {
-                ChatBlock.send(player, "fieldSignItemPaymentReceived", purchase.getAmount(), purchase.getItem(), purchase.getPlayer(), purchase.getFieldName());
+                ChatHelper.send(player, "fieldSignItemPaymentReceived", purchase.getAmount(), purchase.getItem(), purchase.getPlayer(), purchase.getFieldName());
             }
         }
         else
@@ -3040,11 +3044,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
             if (purchase.getFieldName().isEmpty())
             {
-                ChatBlock.send(player, "fieldSignPaymentReceivedNoName", purchase.getAmount(), purchase.getPlayer());
+                ChatHelper.send(player, "fieldSignPaymentReceivedNoName", purchase.getAmount(), purchase.getPlayer());
             }
             else
             {
-                ChatBlock.send(player, "fieldSignPaymentReceived", purchase.getAmount(), purchase.getPlayer(), purchase.getFieldName());
+                ChatHelper.send(player, "fieldSignPaymentReceived", purchase.getAmount(), purchase.getPlayer(), purchase.getFieldName());
             }
         }
 
@@ -3117,11 +3121,11 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                     if (getName().isEmpty())
                     {
-                        ChatBlock.send(entry.getPlayerName(), "fieldSignRentExpiredNoName");
+                        ChatHelper.send(entry.getPlayerName(), "fieldSignRentExpiredNoName");
                     }
                     else
                     {
-                        ChatBlock.send(entry.getPlayerName(), "fieldSignRentExpired", getName());
+                        ChatHelper.send(entry.getPlayerName(), "fieldSignRentExpired", getName());
                     }
                 }
             }

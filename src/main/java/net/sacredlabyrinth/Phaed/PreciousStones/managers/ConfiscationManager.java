@@ -4,8 +4,8 @@
  */
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ItemStackEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
@@ -159,7 +159,7 @@ public class ConfiscationManager
             msg = Helper.stripTrailing(msg, ", ");
 
             PreciousStones.log("confiscatedFrom", msg, player.getName(), field.toString());
-            ChatBlock.send(player, "confiscated", msg);
+            ChatHelper.send(player, "confiscated", msg);
         }
     }
 
@@ -251,7 +251,7 @@ public class ConfiscationManager
             msg = Helper.stripTrailing(msg, ", ");
 
             PreciousStones.log("returnedTo", msg, player.getName());
-            ChatBlock.send(player, "returned", msg);
+            ChatHelper.send(player, "returned", msg);
         }
     }
 }

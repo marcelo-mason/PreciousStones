@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
@@ -37,11 +37,11 @@ public class ForesterEntry
         field.recordForesterUse();
         field.setForesting(true);
 
-        ChatBlock.send(player, "foresterActivating");
+        ChatHelper.send(player, "foresterActivating");
 
         if (field.hasForesterUse())
         {
-            ChatBlock.send(player, "foresterUsesLeft", field.foresterUsesLeft());
+            ChatHelper.send(player, "foresterUsesLeft", field.foresterUsesLeft());
         }
     }
 

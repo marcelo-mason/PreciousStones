@@ -1,6 +1,5 @@
-package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
+package net.sacredlabyrinth.Phaed.PreciousStones.helpers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,7 +17,7 @@ import java.util.regex.Pattern;
 /**
  * @author phaed
  */
-public class ChatBlock
+public class ChatHelper
 {
     private final int colspacing = 12;
     private static final int lineLength = 320;
@@ -251,7 +250,7 @@ public class ChatBlock
 
         prefix_used = prefix == null;
 
-        String empty_prefix = ChatBlock.makeEmpty(prefix);
+        String empty_prefix = ChatHelper.makeEmpty(prefix);
 
         // if no column sizes provided them
         // make some up based on the data

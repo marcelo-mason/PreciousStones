@@ -3,7 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import com.griefcraft.scripting.event.LWCProtectionDestroyEvent;
 import com.griefcraft.scripting.event.LWCProtectionInteractEvent;
 import com.griefcraft.scripting.event.LWCProtectionRegisterEvent;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
@@ -49,7 +49,7 @@ public class LWCListener implements Listener
             if (FieldFlag.PROTECT_LWC.applies(field, player))
             {
                 event.setCancelled(true);
-                ChatBlock.send(player, "notAllowedToCreateLWC");
+                ChatHelper.send(player, "notAllowedToCreateLWC");
             }
         }
     }
@@ -72,7 +72,7 @@ public class LWCListener implements Listener
             if (FieldFlag.PROTECT_LWC.applies(field, player))
             {
                 event.setCancelled(true);
-                ChatBlock.send(player, "notAllowedToDestroyLWC");
+                ChatHelper.send(player, "notAllowedToDestroyLWC");
             }
         }
     }

@@ -1,11 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.ChatBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -635,7 +637,7 @@ public class PSBlockListener implements Listener
     {
         if (field.isRented() || field.isBought())
         {
-            ChatBlock.send(player, "fieldSignCannotDestroy");
+            ChatHelper.send(player, "fieldSignCannotDestroy");
             event.setCancelled(true);
             return true;
         }
@@ -691,7 +693,7 @@ public class PSBlockListener implements Listener
 
         if (plugin.getForceFieldManager().hasSubFields(field))
         {
-            ChatBlock.send(player, "cannotRemoveWithSubplots");
+            ChatHelper.send(player, "cannotRemoveWithSubplots");
             event.setCancelled(true);
             return true;
         }
@@ -832,7 +834,7 @@ public class PSBlockListener implements Listener
 
                 if (!allowed)
                 {
-                    ChatBlock.send(player, "cannotPlaceNextToRedstone");
+                    ChatHelper.send(player, "cannotPlaceNextToRedstone");
                     event.setCancelled(true);
                     return;
                 }
@@ -856,7 +858,7 @@ public class PSBlockListener implements Listener
                 if (ce.getField().getSettings().getMixingGroup() != fs.getMixingGroup())
                 {
                     event.setCancelled(true);
-                    ChatBlock.send(player, "fieldsDontMix");
+                    ChatHelper.send(player, "fieldsDontMix");
                     return;
                 }
             }
@@ -1063,7 +1065,7 @@ public class PSBlockListener implements Listener
 
                 if (field != null)
                 {
-                    ChatBlock.send(player, "noUnbreakableInsideTranslocation");
+                    ChatHelper.send(player, "noUnbreakableInsideTranslocation");
                     event.setCancelled(true);
                 }
             }
@@ -1130,7 +1132,7 @@ public class PSBlockListener implements Listener
 
                 if (conflicted)
                 {
-                    ChatBlock.send(player, "noChestNextToField");
+                    ChatHelper.send(player, "noChestNextToField");
                     event.setCancelled(true);
                     return;
                 }
@@ -1208,14 +1210,14 @@ public class PSBlockListener implements Listener
                     {
                         if (field.getName().length() == 0)
                         {
-                            ChatBlock.send(player, "translocatorNameToBegin");
+                            ChatHelper.send(player, "translocatorNameToBegin");
                             event.setCancelled(true);
                             return;
                         }
 
                         if (field.isOverTranslocationMax(1))
                         {
-                            ChatBlock.send(player, "translocationReachedSize");
+                            ChatHelper.send(player, "translocationReachedSize");
                             event.setCancelled(true);
                             return;
                         }
@@ -1272,7 +1274,7 @@ public class PSBlockListener implements Listener
 
         if (!fs.isSurface(block))
         {
-            ChatBlock.send(player, "surfaceWarning", fs.getSurfaceString());
+            ChatHelper.send(player, "surfaceWarning", fs.getSurfaceString());
             event.setCancelled(true);
             return false;
         }
@@ -1355,7 +1357,7 @@ public class PSBlockListener implements Listener
         {
             if (block.getLocation().getBlockY() <= fs.getMustBeAbove())
             {
-                ChatBlock.send(player, "mustBeAbove", fs.getMustBeAbove());
+                ChatHelper.send(player, "mustBeAbove", fs.getMustBeAbove());
                 event.setCancelled(true);
                 return false;
             }
@@ -1365,7 +1367,7 @@ public class PSBlockListener implements Listener
         {
             if (block.getLocation().getBlockY() >= fs.getMustBeBelow())
             {
-                ChatBlock.send(player, "mustBeBelow", fs.getMustBeBelow());
+                ChatHelper.send(player, "mustBeBelow", fs.getMustBeBelow());
                 event.setCancelled(true);
                 return false;
             }
@@ -1379,14 +1381,14 @@ public class PSBlockListener implements Listener
 
             if (plugin.getForceFieldManager().isField(north))
             {
-                ChatBlock.send(player, "noConfiscatingBelowField");
+                ChatHelper.send(player, "noConfiscatingBelowField");
                 event.setCancelled(true);
                 return false;
             }
 
             if (plugin.getUnbreakableManager().isUnbreakable(north))
             {
-                ChatBlock.send(player, "noConfiscatingBelowUnbreakable");
+                ChatHelper.send(player, "noConfiscatingBelowUnbreakable");
                 event.setCancelled(true);
                 return false;
             }
@@ -1400,7 +1402,7 @@ public class PSBlockListener implements Listener
 
             if (hasPlayers)
             {
-                ChatBlock.send(player, "noFieldNearPlayer");
+                ChatHelper.send(player, "noFieldNearPlayer");
                 event.setCancelled(true);
                 return false;
             }
@@ -1412,7 +1414,7 @@ public class PSBlockListener implements Listener
         {
             if (plugin.getWorldGuardManager().isWGRegion(block))
             {
-                ChatBlock.send(player, "noPlaceInWG");
+                ChatHelper.send(player, "noPlaceInWG");
                 event.setCancelled(true);
                 return false;
             }
@@ -1445,7 +1447,7 @@ public class PSBlockListener implements Listener
 
             if (!fs.isFertileType(new BlockTypeEntry(floor)) && floor.getTypeId() != fs.getGroundBlock().getTypeId())
             {
-                ChatBlock.send(player, "foresterNeedsFertile", fs.getTitle());
+                ChatHelper.send(player, "foresterNeedsFertile", fs.getTitle());
                 return false;
             }
         }
@@ -1471,7 +1473,7 @@ public class PSBlockListener implements Listener
 
                 if (!allowed)
                 {
-                    ChatBlock.send(player, "fieldInsideAllowedInside", fs.getTitle(), fs.getAllowedOnlyInsideString());
+                    ChatHelper.send(player, "fieldInsideAllowedInside", fs.getTitle(), fs.getAllowedOnlyInsideString());
                     event.setCancelled(true);
                     return false;
                 }
@@ -1499,7 +1501,7 @@ public class PSBlockListener implements Listener
 
                 if (notAllowed)
                 {
-                    ChatBlock.send(player, "fieldOutsideAllowedOutside", fs.getTitle(), fs.getAllowedOnlyOutsideString());
+                    ChatHelper.send(player, "fieldOutsideAllowedOutside", fs.getTitle(), fs.getAllowedOnlyOutsideString());
                     event.setCancelled(true);
                     return false;
                 }
@@ -1512,7 +1514,7 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            ChatBlock.send(player, "translocationNoFields");
+            ChatHelper.send(player, "translocationNoFields");
             event.setCancelled(true);
             return false;
         }
@@ -1524,7 +1526,7 @@ public class PSBlockListener implements Listener
 
         if (field != null)
         {
-            ChatBlock.send(player, "translocationNoFields");
+            ChatHelper.send(player, "translocationNoFields");
             event.setCancelled(true);
             return false;
         }*/
@@ -1690,7 +1692,7 @@ public class PSBlockListener implements Listener
 
             if (attachedFieldSign != null)
             {
-                ChatBlock.send(player, "fieldSignOnlyOne");
+                ChatHelper.send(player, "fieldSignOnlyOne");
                 event.setCancelled(true);
                 return;
             }
@@ -1699,12 +1701,12 @@ public class PSBlockListener implements Listener
 
             if (s.isRentable())
             {
-                ChatBlock.send(player, "fieldSignRentCreated");
+                ChatHelper.send(player, "fieldSignRentCreated");
             }
 
             if (s.isBuyable())
             {
-                ChatBlock.send(player, "fieldSignBuyCreated");
+                ChatHelper.send(player, "fieldSignBuyCreated");
             }
         }
         else
@@ -1713,7 +1715,7 @@ public class PSBlockListener implements Listener
             {
                 if (s.getFailReason() != null)
                 {
-                    ChatBlock.send(player, s.getFailReason());
+                    ChatHelper.send(player, s.getFailReason());
                 }
             }
         }
@@ -1786,7 +1788,7 @@ public class PSBlockListener implements Listener
                 if (FieldFlag.PROTECT_INVENTORIES.applies(field, player))
                 {
                     event.setCancelled(true);
-                    ChatBlock.send(player, "inventoryDeny");
+                    ChatHelper.send(player, "inventoryDeny");
                 }
             }
         }
