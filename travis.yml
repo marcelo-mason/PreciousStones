@@ -1,0 +1,19 @@
+# Use https://travis-ci.org/ for automatic testing
+
+# This is a java project
+language: java
+
+script: mvn install
+
+jdk: [openjdk7]
+
+# if one build failed, exit testing
+matrix:
+  fast_finish: true
+
+# Disable caching in order to get notified if there are some repo/dependency issues
+## Cache maven dependencies
+#sudo: false
+#cache:
+#  directories:
+#    - '$HOME/.m2/repository'
