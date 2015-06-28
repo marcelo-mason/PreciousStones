@@ -2482,7 +2482,7 @@ public final class ForceFieldManager
      */
     public void releaseWipe(Block block)
     {
-        dropFieldBlock(block);
+        deleteField(getField(block));
         block.setType(Material.AIR);
     }
 
