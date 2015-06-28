@@ -11,6 +11,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
@@ -770,7 +772,17 @@ public final class SettingsManager
     {
         //PreciousStones.debug("isField: " + new BlockTypeEntry(block));
 
-        return isFieldType(new BlockTypeEntry(block));
+        return fieldDefinitions.containsKey(new BlockTypeEntry(block));
+    }
+
+    /**
+     * Check if a block or item meta is one of the forcefeld types
+     *
+     * @return
+     */
+    public boolean isFieldType(Block block, ItemStack handItem)
+    {
+        return isFieldType(new BlockTypeEntry(block), handItem);
     }
 
     /**
@@ -779,9 +791,34 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isFieldType(BlockTypeEntry type)
+    public boolean isFieldType(BlockTypeEntry type, ItemStack handItem)
     {
-        return fieldDefinitions.containsKey(type);
+        if (!handItem.hasItemMeta())
+        {
+            FieldSettings settings = fieldDefinitions.get(type);
+
+            if (settings == null)
+            {
+                return false;
+            }
+
+            if (!settings.getMetaName().isEmpty())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        for (FieldSettings fs : fieldDefinitions.values())
+        {
+            if (fs.matchesMetaName(handItem))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

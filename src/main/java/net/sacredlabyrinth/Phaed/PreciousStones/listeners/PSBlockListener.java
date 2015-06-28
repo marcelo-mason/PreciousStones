@@ -781,17 +781,13 @@ public class PSBlockListener implements Listener
 
         final Block block = event.getBlock();
         final Player player = event.getPlayer();
+        ItemStack handItem = event.getItemInHand();
 
-        if (block == null || player == null)
+        if (block == null)
         {
             return;
         }
 
-        handlePlace(player, block, event);
-    }
-
-    private void handlePlace(final Player player, final Block block, Cancellable event)
-    {
         if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld()))
         {
             return;
@@ -804,24 +800,21 @@ public class PSBlockListener implements Listener
 
         // -------------------------------------------------------------------------------------- placing a block on top of a field
 
-        if (event instanceof BlockPlaceEvent)
+        BlockPlaceEvent e = (BlockPlaceEvent) event;
+
+        BlockState state = e.getBlockReplacedState();
+
+        Field existingField = plugin.getForceFieldManager().getField(state.getLocation());
+
+        if (existingField != null)
         {
-            BlockPlaceEvent e = (BlockPlaceEvent) event;
-
-            BlockState state = e.getBlockReplacedState();
-
-            Field existingField = plugin.getForceFieldManager().getField(state.getLocation());
-
-            if (existingField != null)
+            if (state.getTypeId() > 0)
             {
-                if (state.getTypeId() > 0)
+                if (!breakingFieldChecks(player, block, existingField, event))
                 {
-                    if (!breakingFieldChecks(player, block, existingField, event))
-                    {
-                        event.setCancelled(true);
-                    }
-                    return;
+                    event.setCancelled(true);
                 }
+                return;
             }
         }
 
@@ -850,7 +843,7 @@ public class PSBlockListener implements Listener
 
         if (plugin.getCuboidManager().hasOpenCuboid(player))
         {
-            if (!plugin.getSettingsManager().isFieldType(block))
+            if (!plugin.getSettingsManager().isFieldType(block, handItem))
             {
                 event.setCancelled(true);
                 return;
@@ -875,7 +868,7 @@ public class PSBlockListener implements Listener
         {
             boolean isAllowBlock = false;
 
-            if (plugin.getSettingsManager().isFieldType(block) && plugin.getSettingsManager().getFieldSettings(block) != null)
+            if (plugin.getSettingsManager().isFieldType(block, handItem) && plugin.getSettingsManager().getFieldSettings(block) != null)
             {
                 FieldSettings fs = plugin.getSettingsManager().getFieldSettings(block);
 
@@ -952,11 +945,11 @@ public class PSBlockListener implements Listener
 
         // -------------------------------------------------------------------------------------- placing a field
 
-        if (!isDisabled && plugin.getSettingsManager().isFieldType(block) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
+        if (!isDisabled && plugin.getSettingsManager().isFieldType(block, handItem) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.create.forcefield"))
         {
             if (placingFieldChecks(player, block, event))
             {
-                plugin.getForceFieldManager().add(block, player, (BlockPlaceEvent) event);
+                plugin.getForceFieldManager().add(block, player, event);
             }
 
             if (event.isCancelled())
@@ -1178,14 +1171,8 @@ public class PSBlockListener implements Listener
                     {
                         if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId()))
                         {
-                            if (event instanceof BlockPlaceEvent)
-                            {
-                                BlockPlaceEvent e = (BlockPlaceEvent) event;
-                                BlockState blockState = e.getBlockReplacedState();
-
-                                plugin.getGriefUndoManager().addBlock(field, blockState);
-                            }
-
+                            BlockState blockState = event.getBlockReplacedState();
+                            plugin.getGriefUndoManager().addBlock(field, blockState);
                             plugin.getStorageManager().offerGrief(field);
                         }
                     }

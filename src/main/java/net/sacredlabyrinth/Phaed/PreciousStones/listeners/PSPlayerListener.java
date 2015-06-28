@@ -883,7 +883,7 @@ public class PSPlayerListener implements Listener
 
         // -------------------------------------------------------------------------------- actions during an open cuboid
 
-        boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(new BlockTypeEntry(is.getType())) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()));
+        boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(new BlockTypeEntry(is.getType())) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()), is);
 
         if (hasCuboidHand)
         {
