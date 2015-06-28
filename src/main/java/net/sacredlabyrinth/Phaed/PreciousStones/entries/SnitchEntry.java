@@ -1,6 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import org.bukkit.ChatColor;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;

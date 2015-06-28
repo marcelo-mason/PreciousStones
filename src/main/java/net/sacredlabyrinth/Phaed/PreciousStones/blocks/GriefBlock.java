@@ -1,7 +1,8 @@
-package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
+package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.AbstractVec;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;

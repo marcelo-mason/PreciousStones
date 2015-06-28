@@ -1,4 +1,6 @@
-package net.sacredlabyrinth.Phaed.PreciousStones.vectors;
+package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
+
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 
 public class RelativeBlock implements Comparable
 {

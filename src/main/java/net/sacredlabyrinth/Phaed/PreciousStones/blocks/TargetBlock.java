@@ -1,4 +1,4 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
