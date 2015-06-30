@@ -614,7 +614,7 @@ public class PSBlockListener implements Listener
             {
                 if (!s.isBuyable())
                 {
-                    f.clearRents();
+                    f.getRentingModule().clearRents();
                 }
             }
         }

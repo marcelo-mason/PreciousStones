@@ -250,7 +250,7 @@ public final class ForceFieldManager
 
         if (field.hasFlag(FieldFlag.RENTABLE) || field.hasFlag(FieldFlag.SHAREABLE))
         {
-            field.scheduleNextRentUpdate();
+            field.getRentingModule().scheduleNextRentUpdate();
         }
 
         // add allowed clan

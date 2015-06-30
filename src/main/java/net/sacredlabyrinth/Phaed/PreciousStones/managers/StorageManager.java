@@ -455,7 +455,7 @@ public class StorageManager
 
             if (field.hasFlag(FieldFlag.RENTABLE) || field.hasFlag(FieldFlag.SHAREABLE))
             {
-                field.scheduleNextRentUpdate();
+                field.getRentingModule().scheduleNextRentUpdate();
             }
         }
 
