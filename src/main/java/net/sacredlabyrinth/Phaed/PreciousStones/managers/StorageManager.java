@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.PurchaseEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
@@ -123,6 +124,15 @@ public class StorageManager
 
                     addIndexes();
                 }
+
+                if (!core.existsTable("pstone_purchase_payments"))
+                {
+                    PreciousStones.log("Creating table: pstone_purchase_payments");
+
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_purchase_payments` ( `id` bigint(20), `buyer` varchar(16) default NULL, `owner` varchar(16) NOT NULL, `item` varchar(20) default NULL,  `amount` int(11) default NULL, `fieldName` varchar(255) default NULL, `coords` varchar(255) default NULL);");
+
+                    addIndexes();
+                }
             }
             else
             {
@@ -194,6 +204,15 @@ public class StorageManager
 
                     addIndexes();
                 }
+
+                if (!core.existsTable("pstone_purchase_payments"))
+                {
+                    PreciousStones.log("Creating table: pstone_purchase_payments");
+
+                    core.execute("CREATE TABLE IF NOT EXISTS `pstone_purchase_payments` ( `id` bigint(20), `buyer` varchar(16) default NULL, `owner` varchar(16) NOT NULL, `item` varchar(20) default NULL,  `amount` int(11) default NULL, `fieldName` varchar(255) default NULL, `coords` varchar(255) default NULL);");
+
+                    addIndexes();
+                }
             }
             else
             {
@@ -217,7 +236,7 @@ public class StorageManager
         {
             if (plugin.getSettingsManager().getVersion() < 12)
             {
-                resetLastSeem();
+                resetLastSeen();
                 plugin.getSettingsManager().setVersion(12);
             }
         }
@@ -301,7 +320,7 @@ public class StorageManager
         PreciousStones.log("Added new indexes to database");
     }
 
-    private void resetLastSeem()
+    private void resetLastSeen()
     {
         PreciousStones.log("Updating last seen dates to new time format");
 
@@ -1286,6 +1305,88 @@ public class StorageManager
         {
             core.delete(query);
         }
+    }
+
+    /**
+     * Insert a pending purchase into the database
+     *
+     * @param purchase
+     */
+    public void insertPendingPurchasePayment(PurchaseEntry purchase)
+    {
+        String query = "INSERT INTO `pstone_purchase_payments` (  `id`,  `buyer`, `owner`, `item`, `amount`, `fieldName`, `coords`) ";
+        String values = "VALUES ( " + purchase.getId() + ",'" + purchase.getBuyer() + "','" + purchase.getOwner() + "','" + purchase.getItem().toString() + "'," + purchase.getAmount() + ",'" + purchase.getFieldName() + "','" + purchase.getCoords() + "');";
+
+        synchronized (this)
+        {
+            core.insert(query + values);
+        }
+    }
+
+    /**
+     * Delete an pending purchase from the database
+     *
+     * @param purchase
+     */
+    public void deletePendingPurchasePayment(PurchaseEntry purchase)
+    {
+        String query = "DELETE FROM `pstone_purchase_payments` WHERE id = " + purchase.getId() + ";";
+
+        synchronized (this)
+        {
+            core.delete(query);
+        }
+    }
+
+    /**
+     * Retrieves all snitches belonging to a worlds from the database
+     *
+     * @param owner
+     * @return
+     */
+    public List<PurchaseEntry> getPendingPurchases(String owner)
+    {
+        List<PurchaseEntry> out = new ArrayList<PurchaseEntry>();
+
+        String query = "SELECT * FROM  `pstone_purchase_payments` WHERE owner = '" + owner + "';";
+
+        ResultSet res;
+
+        synchronized (this)
+        {
+            res = core.select(query);
+        }
+
+        if (res != null)
+        {
+            try
+            {
+                while (res.next())
+                {
+                    try
+                    {
+                        int id = res.getInt("id");
+                        String buyer = res.getString("buyer");
+                        String item = res.getString("item");
+                        String fieldName = res.getString("fieldName");
+                        String coords = res.getString("coords");
+                        int amount = res.getInt("amount");
+
+                        out.add(new PurchaseEntry(id, buyer, owner, fieldName, coords, new BlockTypeEntry(item), amount));
+                    }
+                    catch (Exception ex)
+                    {
+                        PreciousStones.getLog().info(ex.getMessage());
+                    }
+                }
+            }
+            catch (SQLException ex)
+            {
+                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return out;
     }
 
     /**

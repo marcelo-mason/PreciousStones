@@ -22,11 +22,10 @@ import java.util.List;
 public class RentingModule
 {
     private Field field;
-    private boolean signIsClean;
     private List<RentEntry> renterEntries = new ArrayList<RentEntry>();
-    private List<String> renters = new ArrayList<String>();
-    private PaymentEntry purchase;
     private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
+    private List<String> renters = new ArrayList<String>();
+    private boolean signIsClean;
     private int limitSeconds;
 
     public RentingModule(Field field)
@@ -64,21 +63,6 @@ public class RentingModule
     public void addPayment(PaymentEntry entry)
     {
         payment.add(entry);
-    }
-
-    public void setPurchase(PaymentEntry entry)
-    {
-        purchase = entry;
-    }
-
-    public boolean hasPurchase()
-    {
-        return purchase != null;
-    }
-
-    public PaymentEntry getPurchaseEntry()
-    {
-        return purchase;
     }
 
     public boolean hasLimitSeconds()
@@ -133,7 +117,7 @@ public class RentingModule
 
     public void addRent(Player player)
     {
-        FieldSign s = getAttachedFieldSign();
+        FieldSign s = field.getAttachedFieldSign();
 
         if (s != null)
         {
@@ -186,7 +170,6 @@ public class RentingModule
         {
             renterEntries.clear();
             renters.clear();
-            purchase = null;
             cleanFieldSign();
 
             field.getFlagsModule().dirtyFlags("clearRents");
@@ -197,7 +180,7 @@ public class RentingModule
 
     public boolean removeRents()
     {
-        FieldSign s = getAttachedFieldSign();
+        FieldSign s = field.getAttachedFieldSign();
 
         if (s != null)
         {
@@ -205,13 +188,6 @@ public class RentingModule
 
             renterEntries.clear();
             renters.clear();
-
-            if (purchase != null)
-            {
-                field.removeAllowed(purchase.getPlayer());
-                purchase = null;
-            }
-
             payment.clear();
 
             field.getFlagsModule().dirtyFlags("removeRents");
@@ -239,16 +215,11 @@ public class RentingModule
         }
     }
 
-    public FieldSign getAttachedFieldSign()
-    {
-        return SignHelper.getAttachedFieldSign(field.getBlock());
-    }
-
     public void cleanFieldSign()
     {
         if (!hasRenters())
         {
-            FieldSign s = getAttachedFieldSign();
+            FieldSign s = field.getAttachedFieldSign();
 
             if (s != null)
             {
@@ -256,13 +227,6 @@ public class RentingModule
                 s.cleanRemainingTime();
             }
         }
-    }
-
-    public void addPurchase(String playerName, String fieldName, BlockTypeEntry item, int amount)
-    {
-        purchase = new PaymentEntry(playerName, fieldName, item, amount);
-
-        field.getFlagsModule().dirtyFlags("addPurchase");
     }
 
     public void addPayment(String playerName, String fieldName, BlockTypeEntry item, int amount)
@@ -364,59 +328,6 @@ public class RentingModule
         return !payment.isEmpty();
     }
 
-    public boolean buy(Player player, FieldSign s)
-    {
-        if (s.getItem() == null)
-        {
-            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
-            {
-                if (PermissionsManager.hasMoney(player, s.getPrice()))
-                {
-                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
-
-                    addPurchase(player.getName(), s.getField().getName(), null, s.getPrice());
-
-                    PreciousStones.getInstance().getCommunicationManager().logPurchase(field.getOwner(), player.getName(), s);
-                }
-                else
-                {
-                    ChatHelper.send(player, "economyNotEnoughMoney");
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
-            {
-                StackHelper.remove(player, s.getItem(), s.getPrice());
-
-                addPurchase(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
-
-                PreciousStones.getInstance().getCommunicationManager().logPurchase(field.getOwner(), player.getName(), s);
-            }
-            else
-            {
-                ChatHelper.send(player, "economyNotEnoughItems");
-                return false;
-            }
-        }
-
-        s.setBoughtColor(player);
-        PreciousStones.getInstance().getForceFieldManager().addAllowed(field, player.getName());
-        return true;
-    }
-
-    public boolean hasPendingPurchase()
-    {
-        return purchase != null;
-    }
-
-    public boolean isBuyer(Player player)
-    {
-        return purchase != null && purchase.getPlayer().equals(player.getName());
-    }
-
     public void takePayment(Player player)
     {
         for (PaymentEntry entry : payment)
@@ -449,48 +360,10 @@ public class RentingModule
             }
         }
 
-        PreciousStones.getInstance().getCommunicationManager().logPaymentCollect(field.getOwner(), player.getName(), getAttachedFieldSign());
+        PreciousStones.getInstance().getCommunicationManager().logPaymentCollect(field.getOwner(), player.getName(), field.getAttachedFieldSign());
 
         payment.clear();
         field.getFlagsModule().dirtyFlags("takePayment");
-    }
-
-    public void completePurchase(Player player)
-    {
-        field.setOwner(purchase.getPlayer());
-        field.clearAllowed();
-
-        if (purchase.isItemPayment())
-        {
-            StackHelper.give(player, purchase.getItem(), purchase.getAmount());
-
-            if (purchase.getFieldName().isEmpty())
-            {
-                ChatHelper.send(player, "fieldSignItemPaymentReceivedNoName", purchase.getAmount(), purchase.getItem(), purchase.getPlayer());
-            }
-            else
-            {
-                ChatHelper.send(player, "fieldSignItemPaymentReceived", purchase.getAmount(), purchase.getItem(), purchase.getPlayer(), purchase.getFieldName());
-            }
-        }
-        else
-        {
-            PreciousStones.getInstance().getPermissionsManager().playerCredit(player, purchase.getAmount());
-
-            if (purchase.getFieldName().isEmpty())
-            {
-                ChatHelper.send(player, "fieldSignPaymentReceivedNoName", purchase.getAmount(), purchase.getPlayer());
-            }
-            else
-            {
-                ChatHelper.send(player, "fieldSignPaymentReceived", purchase.getAmount(), purchase.getPlayer(), purchase.getFieldName());
-            }
-        }
-
-        PreciousStones.getInstance().getCommunicationManager().logPurchaseCollect(field.getOwner(), player.getName(), getAttachedFieldSign());
-
-        purchase = null;
-        field.getFlagsModule().dirtyFlags("completePurchase");
     }
 
     private class Update implements Runnable
@@ -499,7 +372,7 @@ public class RentingModule
         {
             if (hasRenters())
             {
-                FieldSign s = getAttachedFieldSign();
+                FieldSign s = field.getAttachedFieldSign();
 
                 if (s != null)
                 {

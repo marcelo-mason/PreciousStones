@@ -151,11 +151,6 @@ public class FlagsModule
             json.put("hidden", field.getHidingModule().isHidden());
         }
 
-        if (field.getRentingModule().hasPurchase())
-        {
-            json.put("purchase", field.getRentingModule().getPurchaseEntry());
-        }
-
         if (field.getForestingModule().getForesterUsed() > 0)
         {
             json.put("foresterUsed", field.getForestingModule().getForesterUsed());
@@ -317,10 +312,6 @@ public class FlagsModule
                         else if (flag.equals("hidden"))
                         {
                             field.getHidingModule().setHidden((Boolean) flags.get(flag));
-                        }
-                        else if (flag.equals("purchase"))
-                        {
-                            field.getRentingModule().setPurchase(new PaymentEntry(flags.get(flag).toString()));
                         }
                         else if (flag.equals("payments"))
                         {

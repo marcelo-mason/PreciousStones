@@ -7,10 +7,6 @@ public class PaymentEntry
     private int amount;
     private String fieldName;
 
-    public PaymentEntry()
-    {
-    }
-
     public PaymentEntry(String player, String fieldName, BlockTypeEntry item, int amount)
     {
         this.player = player;
@@ -74,17 +70,8 @@ public class PaymentEntry
         this.player = player;
     }
 
-    public void setItem(BlockTypeEntry item)
-    {
-        this.item = item;
-    }
-
     public void setAmount(int amount)
     {
         this.amount = amount;
-    }
-    public void setFieldName(String fieldName)
-    {
-        this.fieldName = fieldName;
     }
 }

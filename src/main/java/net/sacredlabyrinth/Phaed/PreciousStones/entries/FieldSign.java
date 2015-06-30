@@ -192,13 +192,6 @@ public class FieldSign
         sign.update();
     }
 
-    public void setBoughtColor(Player player)
-    {
-        sign.setLine(0, ChatColor.RED + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)));
-        sign.setLine(3, ChatColor.BOLD + player.getName());
-        sign.update();
-    }
-
     public void setSharedColor()
     {
         sign.setLine(0, ChatColor.GOLD + "" + ChatColor.BOLD + ChatColor.stripColor(sign.getLine(0)));

@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.modules.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.AbstractVec;
@@ -55,6 +56,7 @@ public class Field extends AbstractVec implements Comparable<Field>
     private int disablerId;
 
     private FlagsModule flags = new FlagsModule(this);
+    private BuyingModule buying = new BuyingModule();
     private RentingModule renting = new RentingModule(this);
     private MaskingModule masking = new MaskingModule(this);
     private HidingModule hiding = new HidingModule(this);
@@ -900,14 +902,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * @return if it has been bought
-     */
-    public boolean isBought()
-    {
-        return renting.hasPurchase();
-    }
-
-    /**
      * @return the allowed
      */
     public boolean isRenter(String playerName)
@@ -1150,6 +1144,11 @@ public class Field extends AbstractVec implements Comparable<Field>
     public void setOpen(boolean open)
     {
         this.open = open;
+    }
+
+    public FieldSign getAttachedFieldSign()
+    {
+        return SignHelper.getAttachedFieldSign(getBlock());
     }
 
     /**
@@ -1569,5 +1568,10 @@ public class Field extends AbstractVec implements Comparable<Field>
     public FlagsModule getFlagsModule()
     {
         return flags;
+    }
+
+    public BuyingModule getBuyingModule()
+    {
+        return buying;
     }
 }

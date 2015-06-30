@@ -1985,12 +1985,6 @@ public final class CommandManager implements CommandExecutor
                                     {
                                         if (field.hasFlag(FieldFlag.CAN_CHANGE_OWNER))
                                         {
-                                            if (field.isBought())
-                                            {
-                                                ChatHelper.send(player, "fieldSignCannotChange");
-                                                return true;
-                                            }
-
                                             plugin.getForceFieldManager().changeOwner(field, owner);
                                             ChatHelper.send(sender, "fieldCanBeTaken", owner);
                                             return true;
@@ -2061,21 +2055,13 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSign s = field.getRentingModule().getAttachedFieldSign();
+                                    FieldSign s = field.getAttachedFieldSign();
 
                                     if (s.isBuyable())
                                     {
-                                        if (field.getRentingModule().hasPendingPurchase())
+                                        if (field.getBuyingModule().buy(player, s))
                                         {
-                                            ChatHelper.send(player, "fieldSignAlreadyBought");
-                                        }
-                                        else if (field.getRentingModule().buy(player, s))
-                                        {
-                                            s.setBoughtColor(player);
-
-                                            PreciousStones.getInstance().getForceFieldManager().addAllowed(field, player.getName());
-
-                                            ChatHelper.send(player, "fieldSignBoughtAndAllowed");
+                                            ChatHelper.send(player, "fieldSignBought");
                                         }
 
                                         return true;
@@ -2102,7 +2088,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSign s = field.getRentingModule().getAttachedFieldSign();
+                                    FieldSign s = field.getAttachedFieldSign();
 
                                     // only allow one renter if rentable
 

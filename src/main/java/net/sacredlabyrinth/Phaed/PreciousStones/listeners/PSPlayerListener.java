@@ -1,16 +1,14 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TargetBlock;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.ForesterEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.modules.BuyingModule;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -102,6 +100,14 @@ public class PSPlayerListener implements Listener
 
         plugin.getForceFieldManager().enableFieldsOnLogon(playerName);
         plugin.getForceFieldManager().removeFieldsIfNoPermission(playerName);
+
+        List<PurchaseEntry> purchases = plugin.getStorageManager().getPendingPurchases(playerName);
+
+        for (PurchaseEntry purchase : purchases)
+        {
+            new BuyingModule().giveMoney(player, purchase);
+            plugin.getStorageManager().deletePendingPurchasePayment(purchase);
+        }
 
         if (event.getPlayer().isOp())
         {
@@ -748,15 +754,9 @@ public class PSPlayerListener implements Listener
                                     {
                                         PreciousStones.debug("customer right clicked on buyable");
 
-                                        if (field.getRentingModule().hasPendingPurchase())
+                                        if (field.getBuyingModule().buy(player, s))
                                         {
-                                            PreciousStones.debug("field has a pending purchase so it is already bought");
-                                            ChatHelper.send(player, "fieldSignAlreadyBought");
-                                        }
-                                        else if (field.getRentingModule().buy(player, s))
-                                        {
-                                            PreciousStones.debug("no pending purchases so we buy");
-                                            ChatHelper.send(player, "fieldSignBoughtAndAllowed");
+                                            ChatHelper.send(player, "fieldSignBought");
                                         }
 
                                         event.setCancelled(true);
@@ -798,17 +798,6 @@ public class PSPlayerListener implements Listener
                             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
                             {
                                 PreciousStones.debug("owner right clicked on sign");
-
-                                if (field.getRentingModule().hasPendingPurchase())
-                                {
-                                    PreciousStones.debug("field has pending purchases, complete the purchase");
-
-                                    field.getRentingModule().completePurchase(player);
-                                    s.eject();
-
-                                    event.setCancelled(true);
-                                    return;
-                                }
 
                                 if (field.isRented())
                                 {
