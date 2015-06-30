@@ -1867,6 +1867,14 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                 }
 
+                if (hasFlag(FieldFlag.TRANSLOCATION))
+                {
+                    if (isNamed())
+                    {
+                        plugin.getTranslocationManager().applyTranslocation(this);
+                    }
+                }
+
                 plugin.getEntryManager().removeAllPlayers(this);
             }
             else
@@ -1909,6 +1917,14 @@ public class Field extends AbstractVec implements Comparable<Field>
                         {
                             insertedFlags.remove(FieldFlag.BREAKABLE);
                         }
+                    }
+                }
+
+                if (hasFlag(FieldFlag.TRANSLOCATION))
+                {
+                    if (isNamed())
+                    {
+                        plugin.getTranslocationManager().clearTranslocation(this);
                     }
                 }
 
@@ -2008,6 +2024,8 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                         thisField.setDisabled(true);
                         thisField.dirtyFlags("startDisabler");
+
+                        PreciousStones.getInstance().getEntryManager().actOnInhabitantsOnDisableToggle(thisField);
                     }
                 }
             }, 20L * settings.getAutoDisableTime());

@@ -857,14 +857,6 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (!field.isDisabled())
                             {
-                                if (field.hasFlag(FieldFlag.TRANSLOCATION))
-                                {
-                                    if (field.isNamed())
-                                    {
-                                        plugin.getTranslocationManager().clearTranslocation(field);
-                                    }
-                                }
-
                                 if (field.isRented())
                                 {
                                     ChatHelper.send(player, "fieldSignCannotDisable");
@@ -874,6 +866,8 @@ public final class CommandManager implements CommandExecutor
                                 field.setDisabled(true, player);
                                 field.dirtyFlags("commandDisable");
                                 ChatHelper.send(sender, "fieldDisabled");
+
+                                plugin.getEntryManager().actOnInhabitantsOnDisableToggle(field);
                             }
                             else
                             {
@@ -895,16 +889,6 @@ public final class CommandManager implements CommandExecutor
                         {
                             if (field.isDisabled())
                             {
-                                // update translocation
-
-                                if (field.hasFlag(FieldFlag.TRANSLOCATION))
-                                {
-                                    if (field.isNamed())
-                                    {
-                                        plugin.getTranslocationManager().applyTranslocation(field);
-                                    }
-                                }
-
                                 boolean disabled = field.setDisabled(false, player);
 
                                 if (!disabled)
@@ -915,6 +899,8 @@ public final class CommandManager implements CommandExecutor
 
                                 field.dirtyFlags("commandEnable");
                                 ChatHelper.send(sender, "fieldEnabled");
+
+                                plugin.getEntryManager().actOnInhabitantsOnDisableToggle(field);
                             }
                             else
                             {

@@ -1039,4 +1039,56 @@ public final class EntryManager
             }
         }
     }
+
+    public void actOnInhabitantsOnDisableToggle(final Field field)
+    {
+        Set<Player> inhabitants = plugin.getForceFieldManager().getFieldInhabitants(field);
+
+        for (final Player player : inhabitants)
+        {
+            if (player != null)
+            {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
+                {
+                    public void run()
+                    {
+                        if (field.isDisabled())
+                        {
+                            if (FieldFlag.POTIONS.applies(field, player))
+                            {
+                                plugin.getPotionManager().removePotions(player, field);
+                            }
+
+                            if (FieldFlag.CONFISCATE_ITEMS.applies(field, player))
+                            {
+                                plugin.getConfiscationManager().returnItems(player);
+                            }
+                        }
+                        else
+                        {
+                            if (FieldFlag.LAUNCH.applies(field, player))
+                            {
+                                plugin.getVelocityManager().launchPlayer(player, field);
+                            }
+
+                            if (FieldFlag.CANNON.applies(field, player))
+                            {
+                                plugin.getVelocityManager().shootPlayer(player, field);
+                            }
+
+                            if (FieldFlag.POTIONS.applies(field, player))
+                            {
+                                plugin.getPotionManager().applyPotions(player, field);
+                            }
+
+                            if (FieldFlag.CONFISCATE_ITEMS.applies(field, player))
+                            {
+                                plugin.getConfiscationManager().confiscateItems(field, player);
+                            }
+                        }
+                    }
+                }, 0);
+            }
+        }
+    }
 }
