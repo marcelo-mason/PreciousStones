@@ -659,7 +659,6 @@ public class PSPlayerListener implements Listener
                 if (field != null)
                 {
                     PreciousStones.debug("clicked sign on field");
-
                     FieldSign s = new FieldSign(block);
 
                     if (s.isValid())
@@ -687,8 +686,7 @@ public class PSPlayerListener implements Listener
                                     {
                                         ChatHelper.send(player, "rentQuestion");
                                     }
-
-                                    if (s.isBuyable())
+                                    else if (s.isBuyable())
                                     {
                                         ChatHelper.send(player, "buyQuestion");
                                     }
@@ -724,8 +722,6 @@ public class PSPlayerListener implements Listener
                                                     if (player.isSneaking())
                                                     {
                                                         PreciousStones.debug("and sneaking");
-
-
                                                         ChatHelper.send(player, "fieldSignRentAbandoned");
                                                         event.setCancelled(true);
                                                         return;
@@ -736,20 +732,9 @@ public class PSPlayerListener implements Listener
 
                                         PreciousStones.debug("time to rent (shareable or rentable)");
 
-                                        if (field.rent(player, s))
+                                        if (field.getRentingModule().rent(player, s))
                                         {
-                                            if (s.isRentable())
-                                            {
-                                                PreciousStones.debug("change rentable sign color");
-                                                s.setRentedColor();
-                                            }
-                                            else if (s.isShareable())
-                                            {
-                                                PreciousStones.debug("change shareable sign color");
-                                                s.setSharedColor();
-                                            }
-
-                                            PreciousStones.debug("not sharable or rentable");
+                                            PreciousStones.debug("renting was successful");
                                             event.setCancelled(true);
                                             return;
                                         }
@@ -759,22 +744,18 @@ public class PSPlayerListener implements Listener
                                         }
                                         return;
                                     }
-
-                                    if (s.isBuyable())
+                                    else if (s.isBuyable())
                                     {
                                         PreciousStones.debug("customer right clicked on buyable");
 
-                                        if (field.hasPendingPurchase())
+                                        if (field.getRentingModule().hasPendingPurchase())
                                         {
                                             PreciousStones.debug("field has a pending purchase so it is already bought");
                                             ChatHelper.send(player, "fieldSignAlreadyBought");
                                         }
-                                        else if (field.buy(player, s))
+                                        else if (field.getRentingModule().buy(player, s))
                                         {
                                             PreciousStones.debug("no pending purchases so we buy");
-
-                                            s.setBoughtColor(player);
-                                            PreciousStones.getInstance().getForceFieldManager().addAllowed(field, player.getName());
                                             ChatHelper.send(player, "fieldSignBoughtAndAllowed");
                                         }
 
@@ -793,18 +774,16 @@ public class PSPlayerListener implements Listener
                                     if (field.isRented() && !field.isRenter(player.getName()))
                                     {
                                         PreciousStones.debug("but hes not the renter so show him who rents it");
-
                                         ChatHelper.send(player, "fieldSignAlreadyRented");
                                         plugin.getCommunicationManager().showRenterInfo(player, field);
-                                        event.setCancelled(true);
-                                        return;
                                     }
                                 }
-
-                                PreciousStones.debug("show field details");
-
-                                plugin.getCommunicationManager().showFieldDetails(player, field);
-                                plugin.getCommunicationManager().showRenterInfo(player, field);
+                                else
+                                {
+                                    PreciousStones.debug("show field details");
+                                    plugin.getCommunicationManager().showFieldDetails(player, field);
+                                    plugin.getCommunicationManager().showRenterInfo(player, field);
+                                }
                             }
 
                             event.setCancelled(true);
@@ -820,11 +799,11 @@ public class PSPlayerListener implements Listener
                             {
                                 PreciousStones.debug("owner right clicked on sign");
 
-                                if (field.hasPendingPurchase())
+                                if (field.getRentingModule().hasPendingPurchase())
                                 {
                                     PreciousStones.debug("field has pending purchases, complete the purchase");
 
-                                    field.completePurchase(player);
+                                    field.getRentingModule().completePurchase(player);
                                     s.eject();
 
                                     event.setCancelled(true);
@@ -833,10 +812,10 @@ public class PSPlayerListener implements Listener
 
                                 if (field.isRented())
                                 {
-                                    if (field.hasPendingPayments())
+                                    if (field.getRentingModule().hasPendingPayments())
                                     {
                                         PreciousStones.debug("field is has pending payments, take them");
-                                        field.takePayment(player);
+                                        field.getRentingModule().takePayment(player);
                                     }
                                     else
                                     {

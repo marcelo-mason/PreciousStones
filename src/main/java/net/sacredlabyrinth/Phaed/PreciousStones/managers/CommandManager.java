@@ -1923,7 +1923,7 @@ public final class CommandManager implements CommandExecutor
                                     return true;
                                 }
 
-                                field.setLimitSeconds(SignHelper.periodToSeconds(period));
+                                field.getRentingModule().setLimitSeconds(SignHelper.periodToSeconds(period));
                                 ChatHelper.send(sender, "limitSet");
                             }
                             else
@@ -2075,15 +2075,15 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSign s = field.getAttachedFieldSign();
+                                    FieldSign s = field.getRentingModule().getAttachedFieldSign();
 
                                     if (s.isBuyable())
                                     {
-                                        if (field.hasPendingPurchase())
+                                        if (field.getRentingModule().hasPendingPurchase())
                                         {
                                             ChatHelper.send(player, "fieldSignAlreadyBought");
                                         }
-                                        else if (field.buy(player, s))
+                                        else if (field.getRentingModule().buy(player, s))
                                         {
                                             s.setBoughtColor(player);
 
@@ -2116,7 +2116,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
-                                    FieldSign s = field.getAttachedFieldSign();
+                                    FieldSign s = field.getRentingModule().getAttachedFieldSign();
 
                                     // only allow one renter if rentable
 
@@ -2138,7 +2138,7 @@ public final class CommandManager implements CommandExecutor
 
                                                 if (player.isSneaking())
                                                 {
-                                                    field.abandonRent(player);
+                                                    field.getRentingModule().abandonRent(player);
                                                     ChatHelper.send(player, "fieldSignRentAbandoned");
                                                     return true;
                                                 }
@@ -2148,7 +2148,7 @@ public final class CommandManager implements CommandExecutor
 
                                     // initiate rent and set color for sign
 
-                                    if (field.rent(player, s))
+                                    if (field.getRentingModule().rent(player, s))
                                     {
                                         if (s.isRentable())
                                         {
@@ -2189,7 +2189,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (field != null)
                                     {
-                                        if (field.clearRents())
+                                        if (field.getRentingModule().clearRents())
                                         {
                                             ChatHelper.send(sender, "rentsCleared");
                                         }
@@ -2219,7 +2219,7 @@ public final class CommandManager implements CommandExecutor
 
                                     if (field != null)
                                     {
-                                        if (field.removeRents())
+                                        if (field.getRentingModule().removeRents())
                                         {
                                             ChatHelper.send(sender, "rentsRemoved");
                                         }

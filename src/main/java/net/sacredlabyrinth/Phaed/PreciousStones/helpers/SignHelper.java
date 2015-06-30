@@ -107,7 +107,7 @@ public class SignHelper
 
                     if (s.getField().isOwner(player.getName()))
                     {
-                        if (s.getField().hasPendingPurchase())
+                        if (s.getField().getRentingModule().hasPendingPurchase())
                         {
                             return true;
                         }

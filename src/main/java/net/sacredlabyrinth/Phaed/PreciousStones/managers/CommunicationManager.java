@@ -2753,10 +2753,10 @@ public class CommunicationManager
             }
         }
 
-        if (field.getLimitSeconds() > 0)
+        if (field.getRentingModule().getLimitSeconds() > 0)
         {
             cb.addRow("", "", "");
-            cb.addRow("  " + ChatColor.YELLOW + ChatHelper.format("_rentingLimit") + ": ", SignHelper.secondsToPeriods(field.getLimitSeconds()));
+            cb.addRow("  " + ChatColor.YELLOW + ChatHelper.format("_rentingLimit") + ": ", SignHelper.secondsToPeriods(field.getRentingModule().getLimitSeconds()));
         }
 
         if (cb.size() > 0)
@@ -2778,7 +2778,7 @@ public class CommunicationManager
 
     private String getRenters(Field field, int index)
     {
-        List<RentEntry> entries = field.getRenterEntries();
+        List<RentEntry> entries = field.getRentingModule().getRenterEntries();
 
         if (index < entries.size())
         {

@@ -4,9 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.AbstractVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -52,7 +50,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     private Field parent;
     private List<Field> children = new ArrayList<Field>();
     private List<String> allowed = new ArrayList<String>();
-    private List<String> renters = new ArrayList<String>();
     private List<String> blacklistedCommands = new ArrayList<String>();
     private List<BlockTypeEntry> whitelistedBlocks = new ArrayList<BlockTypeEntry>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
@@ -63,7 +60,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     private List<FieldFlag> insertedFlags = new ArrayList<FieldFlag>();
     private List<FieldFlag> clearedFlags = new ArrayList<FieldFlag>();
     private List<BlockEntry> fenceBlocks = new ArrayList<BlockEntry>();
-    private List<RentEntry> renterEntries = new ArrayList<RentEntry>();
     private long lastUsed;
     private boolean progress;
     private boolean open;
@@ -73,12 +69,9 @@ public class Field extends AbstractVec implements Comparable<Field>
     private boolean translocating;
     private int translocationSize;
     private boolean hidden;
-    private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
-    private PaymentEntry purchase;
-    private boolean signIsClean;
-    private int limitSeconds;
     private int foresterUsed;
     private boolean foresting;
+    private RentModule renting = new RentModule(this);
 
     /**
      * @param x
@@ -565,8 +558,13 @@ public class Field extends AbstractVec implements Comparable<Field>
         List<String> all = new ArrayList<String>();
         all.add(owner.toLowerCase());
         all.addAll(allowed);
-        all.addAll(renters);
+        all.addAll(renting.getRenters());
         return all;
+    }
+
+    public void clearAllowed()
+    {
+        allowed.clear();
     }
 
     /**
@@ -603,7 +601,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             return true;
         }
 
-        if (renters.contains(target.toLowerCase()))
+        if (renting.hasRenter(target.toLowerCase()))
         {
             return true;
         }
@@ -908,7 +906,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public List<String> getRenters()
     {
-        return Collections.unmodifiableList(renters);
+        return renting.getRenters();
     }
 
     /**
@@ -916,7 +914,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean isRented()
     {
-        return !renters.isEmpty();
+        return renting.hasRenters();
     }
 
     /**
@@ -924,7 +922,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean isBought()
     {
-        return purchase != null;
+        return renting.hasPurchase();
     }
 
     /**
@@ -932,7 +930,7 @@ public class Field extends AbstractVec implements Comparable<Field>
      */
     public boolean isRenter(String playerName)
     {
-        return renters.contains(playerName.toLowerCase());
+        return renting.hasRenter(playerName.toLowerCase());
     }
 
     /**
@@ -1269,10 +1267,10 @@ public class Field extends AbstractVec implements Comparable<Field>
         insertedFlags.addAll(getInsertedFlagsStringList());
 
         JSONArray renterList = new JSONArray();
-        renterList.addAll(getRentersString());
+        renterList.addAll(renting.getRentersString());
 
         JSONArray paymentList = new JSONArray();
-        paymentList.addAll(getPaymentString());
+        paymentList.addAll(renting.getPaymentString());
 
         JSONArray blacklistedCommandsList = new JSONArray();
         blacklistedCommandsList.addAll(blacklistedCommands);
@@ -1315,9 +1313,9 @@ public class Field extends AbstractVec implements Comparable<Field>
             json.put("revertSecs", revertSecs);
         }
 
-        if (limitSeconds > 0)
+        if (renting.hasLimitSeconds())
         {
-            json.put("limitSeconds", limitSeconds);
+            json.put("limitSeconds", renting.getLimitSeconds());
         }
 
         if (disabled)
@@ -1330,9 +1328,9 @@ public class Field extends AbstractVec implements Comparable<Field>
             json.put("hidden", hidden);
         }
 
-        if (purchase != null)
+        if (renting.hasPurchase())
         {
-            json.put("purchase", purchase);
+            json.put("purchase", renting.getPurchaseEntry());
         }
 
         if (foresterUsed > 0)
@@ -1341,16 +1339,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
 
         return json.toString();
-    }
-
-    public ArrayList<String> getPaymentString()
-    {
-        ArrayList<String> ll = new ArrayList<String>();
-        for (PaymentEntry entry : payment)
-        {
-            ll.add(entry.toString());
-        }
-        return ll;
     }
 
     public ArrayList<String> getDisabledFlagsStringList()
@@ -1379,16 +1367,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         for (FieldFlag flag : clearedFlags)
         {
             ll.add(Helper.toFlagStr(flag));
-        }
-        return ll;
-    }
-
-    public ArrayList<String> getRentersString()
-    {
-        ArrayList<String> ll = new ArrayList<String>();
-        for (RentEntry entry : renterEntries)
-        {
-            ll.add(entry.serialize());
         }
         return ll;
     }
@@ -1472,13 +1450,11 @@ public class Field extends AbstractVec implements Comparable<Field>
                         {
                             JSONArray renterList = (JSONArray) flags.get(flag);
 
-                            renterEntries.clear();
-                            renters.clear();
+                            renting.clearRenters();
                             for (Object flagStr : renterList)
                             {
                                 RentEntry entry = new RentEntry(flagStr.toString());
-                                renters.add(entry.getPlayerName().toLowerCase());
-                                renterEntries.add(entry);
+                                renting.addRenter(entry);
                             }
                         }
                         else if (flag.equals("blacklistedCommands"))
@@ -1509,7 +1485,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                         }
                         else if (flag.equals("limitSeconds"))
                         {
-                            limitSeconds = ((Long) flags.get(flag)).intValue();
+                            renting.setLimitSeconds(((Long) flags.get(flag)).intValue());
                         }
                         else if (flag.equals("disabled"))
                         {
@@ -1521,7 +1497,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                         }
                         else if (flag.equals("purchase"))
                         {
-                            purchase = new PaymentEntry(flags.get(flag).toString());
+                            renting.setPurchase(new PaymentEntry(flags.get(flag).toString()));
                         }
                         else if (flag.equals("payments"))
                         {
@@ -1530,7 +1506,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                             paymentList.clear();
                             for (Object flagStr : paymentList)
                             {
-                                payment.add(new PaymentEntry(flagStr.toString()));
+                                renting.addPayment(new PaymentEntry(flagStr.toString()));
                             }
                         }
                     }
@@ -2697,450 +2673,8 @@ public class Field extends AbstractVec implements Comparable<Field>
         return true;
     }
 
-    /**
-     * ***************************************************************************************************************
-     */
-
-    public RentEntry getRenter(Player player)
+    public RentModule getRentingModule()
     {
-        for (RentEntry entry : renterEntries)
-        {
-            if (entry.getPlayerName().equals(player.getName()))
-            {
-                return entry;
-            }
-        }
-
-        return null;
+        return renting;
     }
-
-    public void addRent(Player player)
-    {
-        FieldSign s = getAttachedFieldSign();
-
-        if (s != null)
-        {
-            int seconds = SignHelper.periodToSeconds(s.getPeriod());
-
-            if (seconds == 0)
-            {
-                ChatHelper.send(player, "fieldSignRentError");
-                return;
-            }
-
-            RentEntry renter = getRenter(player);
-
-            if (renter != null)
-            {
-                renter.addSeconds(seconds);
-
-                ChatHelper.send(player, "fieldSignRentRented", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
-            }
-            else
-            {
-                renterEntries.add(new RentEntry(player.getName(), seconds));
-                renters.add(player.getName().toLowerCase());
-
-                if (renterEntries.size() == 1)
-                {
-                    scheduleNextRentUpdate();
-                }
-                ChatHelper.send(player, "fieldSignRentRented", s.getPeriod());
-
-                PreciousStones.getInstance().getEntryManager().leaveField(player, this);
-                PreciousStones.getInstance().getEntryManager().enterField(player, this);
-            }
-
-            dirtyFlags("addRent");
-        }
-    }
-
-    public void removeRenter(RentEntry entry)
-    {
-        renterEntries.remove(entry);
-        renters.remove(entry.getPlayerName().toLowerCase());
-
-        dirtyFlags("removeRenter");
-    }
-
-    public boolean clearRents()
-    {
-        if (isRented())
-        {
-            renterEntries.clear();
-            renters.clear();
-            purchase = null;
-            cleanFieldSign();
-
-            dirtyFlags("clearRents");
-            return true;
-        }
-        return false;
-    }
-
-    public boolean removeRents()
-    {
-        FieldSign s = getAttachedFieldSign();
-
-        if (s != null)
-        {
-            s.eject();
-
-            renterEntries.clear();
-            renters.clear();
-
-            if (purchase != null)
-            {
-                removeAllowed(purchase.getPlayer());
-                purchase = null;
-            }
-
-            payment.clear();
-
-            dirtyFlags("removeRents");
-            return true;
-        }
-
-        return false;
-    }
-
-    public List<RentEntry> getRenterEntries()
-    {
-        return Collections.unmodifiableList(renterEntries);
-    }
-
-    public void abandonRent(Player player)
-    {
-        for (RentEntry entry : renterEntries)
-        {
-            if (entry.getPlayerName().equals(player.getName()))
-            {
-                removeRenter(entry);
-                cleanFieldSign();
-                return;
-            }
-        }
-    }
-
-    public FieldSign getAttachedFieldSign()
-    {
-        return SignHelper.getAttachedFieldSign(getBlock());
-    }
-
-    public void cleanFieldSign()
-    {
-        if (!isRented())
-        {
-            FieldSign s = getAttachedFieldSign();
-
-            if (s != null)
-            {
-                s.setAvailableColor();
-                s.cleanRemainingTime();
-            }
-        }
-    }
-
-    public void addPurchase(String playerName, String fieldName, BlockTypeEntry item, int amount)
-    {
-        purchase = new PaymentEntry(playerName, fieldName, item, amount);
-
-        dirtyFlags("addPurchase");
-    }
-
-    public void addPayment(String playerName, String fieldName, BlockTypeEntry item, int amount)
-    {
-        boolean added = false;
-
-        for (PaymentEntry entry : payment)
-        {
-            if (entry.getPlayer().equals(playerName) && (item == null || entry.getItem().equals(item)))
-            {
-                entry.setAmount(entry.getAmount() + amount);
-                added = true;
-            }
-        }
-
-        if (!added)
-        {
-            payment.add(new PaymentEntry(playerName, fieldName, item, amount));
-        }
-
-        dirtyFlags("addPayment");
-    }
-
-    public boolean rent(Player player, FieldSign s)
-    {
-        Field field = s.getField();
-
-        if (field.getLimitSeconds() > 0)
-        {
-            PreciousStones.debug("field has rent limits in place: " + field.getLimitSeconds());
-
-            RentEntry renter = getRenter(player);
-
-            if (renter != null)
-            {
-                int seconds = SignHelper.periodToSeconds(s.getPeriod());
-
-                if (renter.getPeriodSeconds() + seconds > field.getLimitSeconds())
-                {
-                    PreciousStones.debug("limit reached");
-                    ChatHelper.send(player, "limitReached");
-                    return false;
-                }
-            }
-        }
-
-        if (s.getItem() != null)
-        {
-            PreciousStones.debug("is item rent");
-
-            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
-            {
-                StackHelper.remove(player, s.getItem(), s.getPrice());
-
-                addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
-                addRent(player);
-
-                PreciousStones.getInstance().getCommunicationManager().logPayment(getOwner(), player.getName(), s);
-                return true;
-            }
-
-            ChatHelper.send(player, "economyNotEnoughItems");
-        }
-        else
-        {
-            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
-            {
-                if (PermissionsManager.hasMoney(player, s.getPrice()))
-                {
-                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
-
-                    addPayment(player.getName(), s.getField().getName(), null, s.getPrice());
-                    addRent(player);
-
-                    PreciousStones.getInstance().getCommunicationManager().logPayment(getOwner(), player.getName(), s);
-                    return true;
-                }
-
-                ChatHelper.send(player, "economyNotEnoughMoney");
-            }
-        }
-
-        return false;
-    }
-
-    public boolean hasPendingPayments()
-    {
-        return !payment.isEmpty();
-    }
-
-    public boolean buy(Player player, FieldSign s)
-    {
-        if (s.getItem() == null)
-        {
-            if (PreciousStones.getInstance().getPermissionsManager().hasEconomy())
-            {
-                if (PermissionsManager.hasMoney(player, s.getPrice()))
-                {
-                    PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
-
-                    addPurchase(player.getName(), s.getField().getName(), null, s.getPrice());
-
-                    PreciousStones.getInstance().getCommunicationManager().logPurchase(getOwner(), player.getName(), s);
-                    return true;
-                }
-
-                ChatHelper.send(player, "economyNotEnoughMoney");
-            }
-        }
-        else
-        {
-            if (StackHelper.hasItems(player, s.getItem(), s.getPrice()))
-            {
-                StackHelper.remove(player, s.getItem(), s.getPrice());
-
-                addPurchase(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
-
-                PreciousStones.getInstance().getCommunicationManager().logPurchase(getOwner(), player.getName(), s);
-                return true;
-            }
-
-            ChatHelper.send(player, "economyNotEnoughItems");
-        }
-        return false;
-    }
-
-    public boolean hasPendingPurchase()
-    {
-        return purchase != null;
-    }
-
-    public boolean isBuyer(Player player)
-    {
-        return purchase != null && purchase.getPlayer().equals(player.getName());
-    }
-
-    public void takePayment(Player player)
-    {
-        for (PaymentEntry entry : payment)
-        {
-            if (entry.isItemPayment())
-            {
-                StackHelper.give(player, entry.getItem(), entry.getAmount());
-
-                if (entry.getFieldName().isEmpty())
-                {
-                    ChatHelper.send(player, "fieldSignItemPaymentReceivedNoName", entry.getAmount(), entry.getItem(), entry.getPlayer());
-                }
-                else
-                {
-                    ChatHelper.send(player, "fieldSignItemPaymentReceived", entry.getAmount(), entry.getItem(), entry.getPlayer(), entry.getFieldName());
-                }
-            }
-            else
-            {
-                PreciousStones.getInstance().getPermissionsManager().playerCredit(player, entry.getAmount());
-
-                if (entry.getFieldName().isEmpty())
-                {
-                    ChatHelper.send(player, "fieldSignPaymentReceivedNoName", entry.getAmount(), entry.getPlayer());
-                }
-                else
-                {
-                    ChatHelper.send(player, "fieldSignPaymentReceived", entry.getAmount(), entry.getPlayer(), entry.getFieldName());
-                }
-            }
-        }
-
-        PreciousStones.getInstance().getCommunicationManager().logPaymentCollect(getOwner(), player.getName(), getAttachedFieldSign());
-
-        payment.clear();
-        dirtyFlags("takePayment");
-    }
-
-    public void completePurchase(Player player)
-    {
-        setOwner(purchase.getPlayer());
-        allowed.clear();
-
-        if (purchase.isItemPayment())
-        {
-            StackHelper.give(player, purchase.getItem(), purchase.getAmount());
-
-            if (purchase.getFieldName().isEmpty())
-            {
-                ChatHelper.send(player, "fieldSignItemPaymentReceivedNoName", purchase.getAmount(), purchase.getItem(), purchase.getPlayer());
-            }
-            else
-            {
-                ChatHelper.send(player, "fieldSignItemPaymentReceived", purchase.getAmount(), purchase.getItem(), purchase.getPlayer(), purchase.getFieldName());
-            }
-        }
-        else
-        {
-            PreciousStones.getInstance().getPermissionsManager().playerCredit(player, purchase.getAmount());
-
-            if (purchase.getFieldName().isEmpty())
-            {
-                ChatHelper.send(player, "fieldSignPaymentReceivedNoName", purchase.getAmount(), purchase.getPlayer());
-            }
-            else
-            {
-                ChatHelper.send(player, "fieldSignPaymentReceived", purchase.getAmount(), purchase.getPlayer(), purchase.getFieldName());
-            }
-        }
-
-        PreciousStones.getInstance().getCommunicationManager().logPurchaseCollect(getOwner(), player.getName(), getAttachedFieldSign());
-
-        purchase = null;
-        dirtyFlags("completePurchase");
-    }
-
-    public int getLimitSeconds()
-    {
-        return limitSeconds;
-    }
-
-    public void setLimitSeconds(int limitSeconds)
-    {
-        this.limitSeconds = limitSeconds;
-
-        dirtyFlags("setLimitSeconds");
-    }
-
-    private class Update implements Runnable
-    {
-        public void run()
-        {
-            if (isRented())
-            {
-                FieldSign s = getAttachedFieldSign();
-
-                if (s != null)
-                {
-                    if (s.isRentable() || s.isShareable())
-                    {
-                        boolean foundSomeone = false;
-
-                        if (PreciousStones.getInstance().getEntryManager().hasInhabitants(self))
-                        {
-                            Player closest = Helper.getClosestPlayer(getLocation(), 64);
-
-                            for (RentEntry entry : renterEntries)
-                            {
-                                if (entry.getPlayerName().equalsIgnoreCase(closest.getName()))
-                                {
-                                    s.updateRemainingTime(entry.remainingRent());
-                                    foundSomeone = true;
-                                    signIsClean = false;
-                                }
-                            }
-                        }
-
-                        if (!foundSomeone && !signIsClean)
-                        {
-                            s.cleanRemainingTime();
-                            signIsClean = true;
-                        }
-                    }
-                }
-            }
-
-            for (Iterator iter = renterEntries.iterator(); iter.hasNext(); )
-            {
-                RentEntry entry = (RentEntry) iter.next();
-
-                if (entry.isDone())
-                {
-                    renters.remove(entry.getPlayerName().toLowerCase());
-                    iter.remove();
-
-                    dirtyFlags("RentUpdateRunnable");
-
-                    if (getName().isEmpty())
-                    {
-                        ChatHelper.send(entry.getPlayerName(), "fieldSignRentExpiredNoName");
-                    }
-                    else
-                    {
-                        ChatHelper.send(entry.getPlayerName(), "fieldSignRentExpired", getName());
-                    }
-                }
-            }
-
-            scheduleNextRentUpdate();
-        }
-    }
-
-    public void scheduleNextRentUpdate()
-    {
-        if (!renterEntries.isEmpty())
-        {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Update(), 20);
-        }
-    }
-
-    /*******************************************************************************************************************/
 }
