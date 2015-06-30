@@ -159,7 +159,7 @@ public final class ForceFieldManager
 
             if (!ce.getField().getTypeEntry().equals(fs.getTypeEntry()))
             {
-                ce.getField().importFlags(fs.getDefaultFlags());
+                ce.getField().getFlagsModule().importFlags(fs.getDefaultFlags());
                 ChatHelper.send(player, "flagsImported", fs.getTitle());
                 isImport = true;
             }
@@ -225,7 +225,7 @@ public final class ForceFieldManager
 
         for (FieldFlag flag : field.getSettings().getDisabledFlags())
         {
-            field.disableFlag(flag.toString(), true);
+            field.getFlagsModule().disableFlag(flag.toString(), true);
         }
 
         // places the field in a disabled state
@@ -241,7 +241,7 @@ public final class ForceFieldManager
         {
             if (field.getSettings().getGriefRevertInterval() > 0)
             {
-                field.setRevertSecs(field.getSettings().getGriefRevertInterval());
+                field.getRevertingModule().setRevertSecs(field.getSettings().getGriefRevertInterval());
                 plugin.getGriefUndoManager().register(field);
             }
         }
@@ -289,9 +289,9 @@ public final class ForceFieldManager
 
         if (field.getSettings().getFenceItem() > 0)
         {
-            if (field.getFencePrice() == 0 || purchase(player, field.getFencePrice()))
+            if (field.getFencingModule().getFencePrice() == 0 || purchase(player, field.getFencingModule().getFencePrice()))
             {
-                field.generateFence(field.getSettings().getFenceItem());
+                field.getFencingModule().generateFence(field.getSettings().getFenceItem());
                 ChatHelper.send(player, "fenceGenerated");
             }
         }
@@ -322,7 +322,7 @@ public final class ForceFieldManager
     {
         List<FieldFlag> flags = new ArrayList<FieldFlag>();
         flags.addAll(field.getSettings().getDefaultFlags());
-        flags.addAll(field.getInsertedFlags());
+        flags.addAll(field.getFlagsModule().getInsertedFlags());
 
         // add to flags collection
 
@@ -396,7 +396,7 @@ public final class ForceFieldManager
             allFlags = Maps.newHashMap();
         }
 
-        for (FieldFlag flag : field.getFlags())
+        for (FieldFlag flag : field.getFlagsModule().getFlags())
         {
             fields = allFlags.get(flag);
 
@@ -436,7 +436,7 @@ public final class ForceFieldManager
 
             List<FieldFlag> flags = new ArrayList<FieldFlag>();
             flags.addAll(field.getSettings().getDefaultFlags());
-            flags.addAll(field.getInsertedFlags());
+            flags.addAll(field.getFlagsModule().getInsertedFlags());
 
             for (FieldFlag flag : flags)
             {
@@ -530,7 +530,7 @@ public final class ForceFieldManager
 
         if (allFlags != null)
         {
-            for (FieldFlag flag : field.getFlags())
+            for (FieldFlag flag : field.getFlagsModule().getFlags())
             {
                 fields = allFlags.get(flag);
 
@@ -551,7 +551,7 @@ public final class ForceFieldManager
         {
             List<FieldFlag> flags = new ArrayList<FieldFlag>();
             flags.addAll(fs.getDefaultFlags());
-            flags.addAll(field.getInsertedFlags());
+            flags.addAll(field.getFlagsModule().getInsertedFlags());
 
             // delete any snitch entries
 
@@ -617,7 +617,7 @@ public final class ForceFieldManager
             {
                 List<FieldFlag> flags = new ArrayList<FieldFlag>();
                 flags.addAll(field.getSettings().getDefaultFlags());
-                flags.addAll(field.getInsertedFlags());
+                flags.addAll(field.getFlagsModule().getInsertedFlags());
 
                 for (FieldFlag flag : flags)
                 {
@@ -843,7 +843,7 @@ public final class ForceFieldManager
         {
             for (Field field : fields)
             {
-                if (!field.isHidden() || field.missingBlock())
+                if (!field.getHidingModule().isHidden() || field.missingBlock())
                 {
                     if (!field.matchesBlockType())
                     {
@@ -905,7 +905,7 @@ public final class ForceFieldManager
                     currentChunk = cv;
                 }
 
-                if (!field.isHidden())
+                if (!field.getHidingModule().isHidden())
                 {
                     if (!field.matchesBlockType())
                     {
@@ -1162,7 +1162,7 @@ public final class ForceFieldManager
 
         if (fs.hasDefaultFlag(FieldFlag.SNITCH))
         {
-            field.clearSnitch();
+            field.getSnitchingModule().clearSnitch();
             plugin.getStorageManager().deleteSnitchEntries(field);
             return true;
         }
@@ -1776,7 +1776,7 @@ public final class ForceFieldManager
         {
             public boolean Filter(Field field)
             {
-                return !field.hasDisabledFlag(flag);
+                return !field.getFlagsModule().hasDisabledFlag(flag);
             }
         };
 
@@ -1836,7 +1836,7 @@ public final class ForceFieldManager
         {
             public boolean Filter(Field field)
             {
-                return !field.hasDisabledFlag(flag);
+                return !field.getFlagsModule().hasDisabledFlag(flag);
             }
         };
 
@@ -2399,7 +2399,7 @@ public final class ForceFieldManager
             {
                 if (field.hasFlag(FieldFlag.HIDABLE))
                 {
-                    if (!field.isHidden())
+                    if (!field.getHidingModule().isHidden())
                     {
                         if (field.hasFlag(FieldFlag.NO_OWNER))
                         {
@@ -2411,7 +2411,7 @@ public final class ForceFieldManager
                             continue;
                         }
 
-                        field.hide();
+                        field.getHidingModule().hide();
                         hiddenFields++;
                     }
                 }
@@ -2439,14 +2439,14 @@ public final class ForceFieldManager
             {
                 if (field.hasFlag(FieldFlag.HIDABLE))
                 {
-                    if (field.isHidden())
+                    if (field.getHidingModule().isHidden())
                     {
                         if (field.hasFlag(FieldFlag.NO_OWNER))
                         {
                             continue;
                         }
 
-                        field.unHide();
+                        field.getHidingModule().unHide();
                         unhiddenFields++;
                     }
                 }
@@ -2551,7 +2551,7 @@ public final class ForceFieldManager
 
         // unhide it
 
-        field.unHide();
+        field.getHidingModule().unHide();
 
         // drop it
 

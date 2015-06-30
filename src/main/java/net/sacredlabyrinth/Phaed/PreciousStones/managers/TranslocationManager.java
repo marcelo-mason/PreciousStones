@@ -6,6 +6,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.translocation.TranslocationApplier;
+import net.sacredlabyrinth.Phaed.PreciousStones.translocation.TranslocationImporter;
+import net.sacredlabyrinth.Phaed.PreciousStones.translocation.TranslocationRemover;
+import net.sacredlabyrinth.Phaed.PreciousStones.translocation.TranslocationUpdater;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -136,7 +140,7 @@ public final class TranslocationManager
         if (!isImport)
         {
             int count = plugin.getStorageManager().totalTranslocationCount(field.getName(), field.getOwner());
-            field.setTranslocationSize(count);
+            field.getTranslocatingModule().setTranslocationSize(count);
         }
         else
         {
@@ -163,7 +167,7 @@ public final class TranslocationManager
 
         plugin.getStorageManager().deleteTranslocation(field, tb);
         int count = plugin.getStorageManager().totalTranslocationCount(field.getName(), field.getOwner());
-        field.setTranslocationSize(count);
+        field.getTranslocatingModule().setTranslocationSize(count);
     }
 
     private String getSignText(Block block)
@@ -499,7 +503,7 @@ public final class TranslocationManager
         }
 
         field.setDisabled(true);
-        field.dirtyFlags("importBlocks");
+        field.getFlagsModule().dirtyFlags("importBlocks");
     }
 
     /**
@@ -535,7 +539,7 @@ public final class TranslocationManager
         }
 
         field.setDisabled(true);
-        field.dirtyFlags("removeBlocks");
+        field.getFlagsModule().dirtyFlags("removeBlocks");
     }
 
     private final class ProcessResult

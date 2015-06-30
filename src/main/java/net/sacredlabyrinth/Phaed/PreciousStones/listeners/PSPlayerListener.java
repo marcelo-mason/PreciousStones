@@ -57,7 +57,7 @@ public class PSPlayerListener implements Listener
 
         if (field != null)
         {
-            if (field.isBlacklistedCommand(event.getMessage()))
+            if (field.getListingModule().isBlacklistedCommand(event.getMessage()))
             {
                 if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.commandblacklist"))
                 {
@@ -1130,7 +1130,7 @@ public class PSPlayerListener implements Listener
                             // -------------------------------------------------------------------------------- handle forester uses
 
 
-                            if (field.hasFlag(FieldFlag.FORESTER) && field.hasForesterUse() && !field.isForesting())
+                            if (field.hasFlag(FieldFlag.FORESTER) && field.getForestingModule().hasForesterUse() && !field.getForestingModule().isForesting())
                             {
                                 ForesterEntry fe = new ForesterEntry(field, player);
                             }
@@ -1201,13 +1201,13 @@ public class PSPlayerListener implements Listener
                                                 ChatHelper.send(player, "cannotEnable");
                                                 return;
                                             }
-                                            field.dirtyFlags("visualize/enable on sneaking right click1");
+                                            field.getFlagsModule().dirtyFlags("visualize/enable on sneaking right click1");
                                         }
                                         else
                                         {
                                             ChatHelper.send(player, "fieldTypeDisabled", field.getSettings().getTitle());
                                             field.setDisabled(true, player);
-                                            field.dirtyFlags("visualize/enable on sneaking right click2");
+                                            field.getFlagsModule().dirtyFlags("visualize/enable on sneaking right click2");
                                         }
                                     }
                                 }
@@ -1253,7 +1253,7 @@ public class PSPlayerListener implements Listener
                                 {
                                     if (field.hasFlag(FieldFlag.TRANSLOCATION) && plugin.getForceFieldManager().isAllowed(block, player.getName()))
                                     {
-                                        if (!field.isTranslocating())
+                                        if (!field.getTranslocatingModule().isTranslocating())
                                         {
                                             if (field.isNamed())
                                             {
@@ -1270,7 +1270,7 @@ public class PSPlayerListener implements Listener
                                                     {
                                                         PreciousStones.debug("disabled");
                                                         field.setDisabled(true, player);
-                                                        field.dirtyFlags("right click translocation1");
+                                                        field.getFlagsModule().dirtyFlags("right click translocation1");
                                                         return;
                                                     }
                                                 }
@@ -1293,7 +1293,7 @@ public class PSPlayerListener implements Listener
                                                             ChatHelper.send(player, "cannotEnable");
                                                             return;
                                                         }
-                                                        field.dirtyFlags("right click translocation2");
+                                                        field.getFlagsModule().dirtyFlags("right click translocation2");
                                                         return;
                                                     }
                                                 }
@@ -1604,7 +1604,7 @@ public class PSPlayerListener implements Listener
                         event.setCancelled(true);
                     }
 
-                    if (field.isOverTranslocationMax(1))
+                    if (field.getTranslocatingModule().isOverTranslocationMax(1))
                     {
                         ChatHelper.send(player, "translocationReachedSize");
                         event.setCancelled(true);

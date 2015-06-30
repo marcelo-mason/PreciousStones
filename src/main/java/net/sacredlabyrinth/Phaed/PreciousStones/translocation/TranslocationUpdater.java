@@ -1,10 +1,10 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones.translocation;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.World;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -12,22 +12,21 @@ import java.util.Queue;
 /**
  * @author phaed
  */
-public class TranslocationImporter implements Runnable
+public class TranslocationUpdater implements Runnable
 {
     private PreciousStones plugin;
     private Queue<TranslocationBlock> translocationQueue = new LinkedList<TranslocationBlock>();
     private Queue<TranslocationBlock> dependentQueue = new LinkedList<TranslocationBlock>();
     private Queue<TranslocationBlock> clearDependentQueue = new LinkedList<TranslocationBlock>();
     private final int timerID;
-    private final Player player;
+    private final World world;
     private final Field field;
-    private int count;
 
     /**
-     * @param field
-     * @param player
+     * @param translocationQueue
+     * @param world
      */
-    public TranslocationImporter(Field field, Queue<TranslocationBlock> translocationQueue, Player player)
+    public TranslocationUpdater(Field field, Queue<TranslocationBlock> translocationQueue, World world)
     {
         this.plugin = PreciousStones.getInstance();
 
@@ -47,10 +46,10 @@ public class TranslocationImporter implements Runnable
         }
 
         this.field = field;
-        this.player = player;
-        field.setTranslocating(true);
+        this.world = world;
+        field.getTranslocatingModule().setTranslocating(true);
 
-        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 2, 1);
+        timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 5, 5);
     }
 
     public void run()
@@ -61,7 +60,7 @@ public class TranslocationImporter implements Runnable
         {
             TranslocationBlock tb = dependentQueue.poll();
 
-            boolean cleared = plugin.getTranslocationManager().wipeTranslocationBlock(field, tb);
+            boolean cleared = plugin.getTranslocationManager().updateTranslationBlock(field, tb, false);
 
             // when it comes time to clear the blocks off the world, if a block
             // doesn't match whats in the database, then cancel the translocation of it
@@ -70,8 +69,6 @@ public class TranslocationImporter implements Runnable
             if (cleared)
             {
                 this.clearDependentQueue.add(tb);
-                count++;
-                announce();
             }
             else
             {
@@ -96,7 +93,7 @@ public class TranslocationImporter implements Runnable
                 {
                     TranslocationBlock tb = translocationQueue.poll();
 
-                    boolean cleared = plugin.getTranslocationManager().wipeTranslocationBlock(field, tb);
+                    boolean cleared = plugin.getTranslocationManager().updateTranslationBlock(field, tb, true);
 
                     // when it comes time to clear the blocks off the world, if a block
                     // doesn't match whats in the database, then cancel the translocation of it
@@ -106,11 +103,7 @@ public class TranslocationImporter implements Runnable
                     {
                         plugin.getStorageManager().deleteTranslocation(field, tb);
                     }
-                    else
-                    {
-                        count++;
-                        announce();
-                    }
+
                     i++;
                 }
 
@@ -118,21 +111,9 @@ public class TranslocationImporter implements Runnable
                 {
                     Bukkit.getServer().getScheduler().cancelTask(timerID);
                     field.setDisabled(true);
-                    field.setTranslocating(false);
-                    field.dirtyFlags("TranslocationImporter");
-                    ChatHelper.send(player, "importComplete");
+                    field.getTranslocatingModule().setTranslocating(false);
+                    field.getFlagsModule().dirtyFlags("TranslocationUpdater");
                 }
-            }
-        }
-    }
-
-    public void announce()
-    {
-        if (count % 25 == 0 && count != 0)
-        {
-            if (player != null)
-            {
-                ChatHelper.send(player, "importedBlocks", count);
             }
         }
     }

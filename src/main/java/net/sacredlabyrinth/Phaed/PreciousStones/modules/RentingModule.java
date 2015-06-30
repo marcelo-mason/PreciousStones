@@ -1,5 +1,6 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones.modules;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
@@ -18,7 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class RentModule
+public class RentingModule
 {
     private Field field;
     private boolean signIsClean;
@@ -28,7 +29,7 @@ public class RentModule
     private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
     private int limitSeconds;
 
-    public RentModule(Field field)
+    public RentingModule(Field field)
     {
         this.field = field;
     }
@@ -94,7 +95,7 @@ public class RentModule
     {
         this.limitSeconds = limitSeconds;
 
-        field.dirtyFlags("setLimitSeconds");
+        field.getFlagsModule().dirtyFlags("setLimitSeconds");
     }
 
     public ArrayList<String> getRentersString()
@@ -167,7 +168,7 @@ public class RentModule
                 PreciousStones.getInstance().getEntryManager().enterField(player, field);
             }
 
-            field.dirtyFlags("addRent");
+            field.getFlagsModule().dirtyFlags("addRent");
         }
     }
 
@@ -176,7 +177,7 @@ public class RentModule
         renterEntries.remove(entry);
         renters.remove(entry.getPlayerName().toLowerCase());
 
-        field.dirtyFlags("removeRenter");
+        field.getFlagsModule().dirtyFlags("removeRenter");
     }
 
     public boolean clearRents()
@@ -188,7 +189,7 @@ public class RentModule
             purchase = null;
             cleanFieldSign();
 
-            field.dirtyFlags("clearRents");
+            field.getFlagsModule().dirtyFlags("clearRents");
             return true;
         }
         return false;
@@ -213,7 +214,7 @@ public class RentModule
 
             payment.clear();
 
-            field.dirtyFlags("removeRents");
+            field.getFlagsModule().dirtyFlags("removeRents");
             return true;
         }
 
@@ -261,7 +262,7 @@ public class RentModule
     {
         purchase = new PaymentEntry(playerName, fieldName, item, amount);
 
-        field.dirtyFlags("addPurchase");
+        field.getFlagsModule().dirtyFlags("addPurchase");
     }
 
     public void addPayment(String playerName, String fieldName, BlockTypeEntry item, int amount)
@@ -282,7 +283,7 @@ public class RentModule
             payment.add(new PaymentEntry(playerName, fieldName, item, amount));
         }
 
-        field.dirtyFlags("addPayment");
+        field.getFlagsModule().dirtyFlags("addPayment");
     }
 
     public boolean rent(Player player, FieldSign s)
@@ -451,7 +452,7 @@ public class RentModule
         PreciousStones.getInstance().getCommunicationManager().logPaymentCollect(field.getOwner(), player.getName(), getAttachedFieldSign());
 
         payment.clear();
-        field.dirtyFlags("takePayment");
+        field.getFlagsModule().dirtyFlags("takePayment");
     }
 
     public void completePurchase(Player player)
@@ -489,7 +490,7 @@ public class RentModule
         PreciousStones.getInstance().getCommunicationManager().logPurchaseCollect(field.getOwner(), player.getName(), getAttachedFieldSign());
 
         purchase = null;
-        field.dirtyFlags("completePurchase");
+        field.getFlagsModule().dirtyFlags("completePurchase");
     }
 
     private class Update implements Runnable
@@ -539,7 +540,7 @@ public class RentModule
                     renters.remove(entry.getPlayerName().toLowerCase());
                     iter.remove();
 
-                    field.dirtyFlags("RentUpdateRunnable");
+                    field.getFlagsModule().dirtyFlags("RentUpdateRunnable");
 
                     if (field.getName().isEmpty())
                     {

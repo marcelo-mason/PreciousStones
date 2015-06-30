@@ -302,7 +302,7 @@ public class PSBlockListener implements Listener
 
         // toggle translocation fields
 
-        if (field.hasFlag(FieldFlag.TRANSLOCATION) && !field.isTranslocating())
+        if (field.hasFlag(FieldFlag.TRANSLOCATION) && !field.getTranslocatingModule().isTranslocating())
         {
             if (field.isNamed())
             {
@@ -310,18 +310,18 @@ public class PSBlockListener implements Listener
                 {
                     // only apply via redstone if were not over the max
 
-                    if (!field.isOverRedstoneMax())
+                    if (!field.getTranslocatingModule().isOverRedstoneMax())
                     {
                         plugin.getTranslocationManager().applyTranslocation(field);
                         field.setDisabled(false);
-                        field.dirtyFlags("onBlockRedstoneChange1");
+                        field.getFlagsModule().dirtyFlags("onBlockRedstoneChange1");
                     }
                 }
                 else
                 {
                     plugin.getTranslocationManager().clearTranslocation(field);
                     field.setDisabled(true);
-                    field.dirtyFlags("onBlockRedstoneChange2");
+                    field.getFlagsModule().dirtyFlags("onBlockRedstoneChange2");
                 }
             }
             return;
@@ -594,7 +594,7 @@ public class PSBlockListener implements Listener
             return true;
         }
 
-        field.unHide();
+        field.getHidingModule().unHide();
 
         // now that it's unhidden it should pass this check, if not then no block for you
 
@@ -1167,7 +1167,7 @@ public class PSBlockListener implements Listener
                             return;
                         }
 
-                        if (field.isOverTranslocationMax(1))
+                        if (field.getTranslocatingModule().isOverTranslocationMax(1))
                         {
                             ChatHelper.send(player, "translocationReachedSize");
                             event.setCancelled(true);

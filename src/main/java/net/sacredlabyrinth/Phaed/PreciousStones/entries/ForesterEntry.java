@@ -34,14 +34,14 @@ public class ForesterEntry
         plugin = PreciousStones.getInstance();
 
         scheduleNextUpdate();
-        field.recordForesterUse();
-        field.setForesting(true);
+        field.getForestingModule().recordForesterUse();
+        field.getForestingModule().setForesting(true);
 
         ChatHelper.send(player, "foresterActivating");
 
-        if (field.hasForesterUse())
+        if (field.getForestingModule().hasForesterUse())
         {
-            ChatHelper.send(player, "foresterUsesLeft", field.foresterUsesLeft());
+            ChatHelper.send(player, "foresterUsesLeft", field.getForestingModule().foresterUsesLeft());
         }
     }
 
@@ -120,7 +120,7 @@ public class ForesterEntry
         {
             plugin.getForesterManager().doCreatureSpawns(field);
 
-            if (!field.hasForesterUse())
+            if (!field.getForestingModule().hasForesterUse())
             {
                 Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
                 block.setTypeId(0, false);
@@ -134,7 +134,7 @@ public class ForesterEntry
                 plugin.getForceFieldManager().releaseNoDrop(field);
             }
 
-            field.setForesting(false);
+            field.getForestingModule().setForesting(false);
             return false;
         }
 

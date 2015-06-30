@@ -1,5 +1,7 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones.translocation;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -33,7 +35,7 @@ public class TranslocationApplier implements Runnable
         this.translocationQueue = translocationQueue;
         this.world = world;
         this.plugin = PreciousStones.getInstance();
-        field.setTranslocating(true);
+        field.getTranslocatingModule().setTranslocating(true);
 
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 5, 5);
     }
@@ -100,8 +102,8 @@ public class TranslocationApplier implements Runnable
             {
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 field.setDisabled(false);
-                field.setTranslocating(false);
-                field.dirtyFlags("TranslocationApplier");
+                field.getTranslocatingModule().setTranslocating(false);
+                field.getFlagsModule().dirtyFlags("TranslocationApplier");
             }
         }
     }

@@ -439,7 +439,7 @@ public final class CommandManager implements CommandExecutor
                                 if (plugin.getStorageManager().existsTranslocationDataWithName(fieldName, field.getOwner()))
                                 {
                                     field.setDisabled(true, player);
-                                    field.dirtyFlags("commandSetname1");
+                                    field.getFlagsModule().dirtyFlags("commandSetname1");
                                 }
                                 else
                                 {
@@ -450,7 +450,7 @@ public final class CommandManager implements CommandExecutor
                                         ChatHelper.send(player, "cannotEnable");
                                         return true;
                                     }
-                                    field.dirtyFlags("commandSetname2");
+                                    field.getFlagsModule().dirtyFlags("commandSetname2");
                                 }
                             }
 
@@ -864,7 +864,7 @@ public final class CommandManager implements CommandExecutor
                                 }
 
                                 field.setDisabled(true, player);
-                                field.dirtyFlags("commandDisable");
+                                field.getFlagsModule().dirtyFlags("commandDisable");
                                 ChatHelper.send(sender, "fieldDisabled");
 
                                 plugin.getEntryManager().actOnInhabitantsOnDisableToggle(field);
@@ -897,7 +897,7 @@ public final class CommandManager implements CommandExecutor
                                     return true;
                                 }
 
-                                field.dirtyFlags("commandEnable");
+                                field.getFlagsModule().dirtyFlags("commandEnable");
                                 ChatHelper.send(sender, "fieldEnabled");
 
                                 plugin.getEntryManager().actOnInhabitantsOnDisableToggle(field);
@@ -961,7 +961,7 @@ public final class CommandManager implements CommandExecutor
                                     return true;
                                 }
 
-                                if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
+                                if (field.hasFlag(flagStr) || field.getFlagsModule().hasDisabledFlag(flagStr))
                                 {
                                     boolean unToggable = false;
 
@@ -997,7 +997,7 @@ public final class CommandManager implements CommandExecutor
                                         return true;
                                     }
 
-                                    boolean enabled = field.toggleFieldFlag(flagStr);
+                                    boolean enabled = field.getFlagsModule().toggleFieldFlag(flagStr);
 
                                     if (enabled)
                                     {
@@ -1176,13 +1176,13 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (!field.hasFlag(flagStr) && !field.hasDisabledFlag(flagStr))
+                                if (!field.hasFlag(flagStr) && !field.getFlagsModule().hasDisabledFlag(flagStr))
                                 {
                                     plugin.getForceFieldManager().removeSourceField(field);
 
-                                    if (field.insertFieldFlag(flagStr))
+                                    if (field.getFlagsModule().insertFieldFlag(flagStr))
                                     {
-                                        field.dirtyFlags("commandInsert");
+                                        field.getFlagsModule().dirtyFlags("commandInsert");
                                         plugin.getStorageManager().offerField(field);
                                         ChatHelper.send(sender, "flagInserted");
                                     }
@@ -1214,13 +1214,13 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.hasFlag(flagStr) || field.hasDisabledFlag(flagStr))
+                                if (field.hasFlag(flagStr) || field.getFlagsModule().hasDisabledFlag(flagStr))
                                 {
                                     plugin.getForceFieldManager().removeSourceField(field);
 
-                                    if (field.clearFieldFlag(flagStr))
+                                    if (field.getFlagsModule().clearFieldFlag(flagStr))
                                     {
-                                        field.dirtyFlags("commandClear");
+                                        field.getFlagsModule().dirtyFlags("commandClear");
                                         plugin.getStorageManager().offerField(field);
                                         ChatHelper.send(sender, "flagCleared");
                                     }
@@ -1248,7 +1248,7 @@ public final class CommandManager implements CommandExecutor
 
                         if (field != null)
                         {
-                            field.RevertFlags();
+                            field.getFlagsModule().RevertFlags();
                             plugin.getStorageManager().offerField(field);
                             ChatHelper.send(sender, "flagsReverted");
                         }
@@ -1279,7 +1279,7 @@ public final class CommandManager implements CommandExecutor
 
                                 if (interval >= plugin.getSettingsManager().getGriefRevertMinInterval() || plugin.getPermissionsManager().has(player, "preciousstones.bypass.interval"))
                                 {
-                                    field.setRevertSecs(interval);
+                                    field.getRevertingModule().setRevertSecs(interval);
                                     plugin.getGriefUndoManager().register(field);
                                     plugin.getStorageManager().offerField(field);
                                     ChatHelper.send(sender, "griefRevertIntervalSet", interval);
@@ -1368,7 +1368,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.isTranslocating())
+                                if (field.getTranslocatingModule().isTranslocating())
                                 {
                                     ChatHelper.send(sender, "translocationTakingPlace");
                                     return true;
@@ -1425,7 +1425,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.isTranslocating())
+                                if (field.getTranslocatingModule().isTranslocating())
                                 {
                                     ChatHelper.send(sender, "translocationTakingPlace");
                                     return true;
@@ -1483,7 +1483,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.isTranslocating())
+                                if (field.getTranslocatingModule().isTranslocating())
                                 {
                                     ChatHelper.send(sender, "translocationTakingPlace");
                                     return true;
@@ -1535,7 +1535,7 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
-                                if (field.isTranslocating())
+                                if (field.getTranslocatingModule().isTranslocating())
                                 {
                                     ChatHelper.send(sender, "translocationTakingPlace");
                                     return true;
@@ -1864,12 +1864,12 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (blacklistedCommand.equalsIgnoreCase("clear"))
                                 {
-                                    field.clearBlacklistedCommands();
+                                    field.getListingModule().clearBlacklistedCommands();
                                     ChatHelper.send(sender, "commandBlacklistCleared");
                                 }
                                 else
                                 {
-                                    field.addBlacklistedCommand(blacklistedCommand);
+                                    field.getListingModule().addBlacklistedCommand(blacklistedCommand);
                                     ChatHelper.send(sender, "commandBlacklistAdded");
                                 }
                             }
@@ -2460,7 +2460,7 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.hasFlag(FieldFlag.HIDABLE))
                                 {
-                                    if (!field.isHidden())
+                                    if (!field.getHidingModule().isHidden())
                                     {
                                         if (!field.matchesBlockType())
                                         {
@@ -2468,7 +2468,7 @@ public final class CommandManager implements CommandExecutor
                                             return true;
                                         }
 
-                                        field.hide();
+                                        field.getHidingModule().hide();
                                         ChatHelper.send(sender, "hideHide");
                                     }
                                     else
@@ -2510,9 +2510,9 @@ public final class CommandManager implements CommandExecutor
                             {
                                 if (field.hasFlag(FieldFlag.HIDABLE))
                                 {
-                                    if (field.isHidden())
+                                    if (field.getHidingModule().isHidden())
                                     {
-                                        field.unHide();
+                                        field.getHidingModule().unHide();
                                         ChatHelper.send(sender, "hideUnhide");
                                     }
                                     else

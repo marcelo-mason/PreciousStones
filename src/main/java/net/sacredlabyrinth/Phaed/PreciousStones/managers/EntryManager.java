@@ -663,17 +663,17 @@ public final class EntryManager
         {
             if (field.isDisabled())
             {
-                field.mask(player);
+                field.getMaskingModule().mask(player);
             }
             else
             {
-                field.unmask(player);
+                field.getMaskingModule().unmask(player);
             }
         }
 
         if (field.hasFlag(FieldFlag.HIDABLE))
         {
-            if (field.isHidden())
+            if (field.getHidingModule().isHidden())
             {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.hiding"))
                 {

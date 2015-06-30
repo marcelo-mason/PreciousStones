@@ -432,7 +432,7 @@ public class StorageManager
 
             // register grief reverts
 
-            if (field.hasFlag(FieldFlag.GRIEF_REVERT) && field.getRevertSecs() > 0)
+            if (field.hasFlag(FieldFlag.GRIEF_REVERT) && field.getRevertingModule().getRevertSecs() > 0)
             {
                 plugin.getGriefUndoManager().register(field);
             }
@@ -447,7 +447,7 @@ public class StorageManager
                     field.setDisabled(!applied, true);
 
                     int count = totalTranslocationCount(field.getName(), field.getOwner());
-                    field.setTranslocationSize(count);
+                    field.getTranslocatingModule().setTranslocationSize(count);
                 }
             }
 
@@ -493,8 +493,8 @@ public class StorageManager
             if (field.hasFlag(flagStr))
             {
                 changed++;
-                field.disableFlag(flagStr, false);
-                field.dirtyFlags("enableAllFlags");
+                field.getFlagsModule().disableFlag(flagStr, false);
+                field.getFlagsModule().dirtyFlags("enableAllFlags");
             }
 
             plugin.getForceFieldManager().addToCollection(field);
@@ -523,11 +523,11 @@ public class StorageManager
 
         for (Field field : fields)
         {
-            if (field.hasDisabledFlag(flagStr))
+            if (field.getFlagsModule().hasDisabledFlag(flagStr))
             {
                 changed++;
-                field.enableFlag(flagStr);
-                field.dirtyFlags("disableAllFlags");
+                field.getFlagsModule().enableFlag(flagStr);
+                field.getFlagsModule().dirtyFlags("disableAllFlags");
             }
 
             plugin.getForceFieldManager().addToCollection(field);
@@ -691,7 +691,7 @@ public class StorageManager
                         if (fs != null)
                         {
                             field.setSettings(fs);
-                            field.setFlags(flags);
+                            field.getFlagsModule().setFlags(flags);
 
                             if (fs.getAutoDisableTime() > 0)
                             {
@@ -786,7 +786,7 @@ public class StorageManager
                         if (fs != null)
                         {
                             field.setSettings(fs);
-                            field.setFlags(flags);
+                            field.getFlagsModule().setFlags(flags);
 
                             if (fs.getAutoDisableTime() > 0)
                             {
@@ -877,7 +877,7 @@ public class StorageManager
                         if (fs != null)
                         {
                             field.setSettings(fs);
-                            field.setFlags(flags);
+                            field.getFlagsModule().setFlags(flags);
                             out.put(id, field);
                         }
                     }
@@ -1086,7 +1086,7 @@ public class StorageManager
     {
         if (field.isDirty(DirtyFieldReason.GRIEF_BLOCKS))
         {
-            Queue<GriefBlock> grief = field.getGrief();
+            Queue<GriefBlock> grief = field.getRevertingModule().getGrief();
 
             for (GriefBlock gb : grief)
             {
@@ -1136,7 +1136,7 @@ public class StorageManager
 
         if (field.isDirty(DirtyFieldReason.FLAGS))
         {
-            subQuery += "flags = '" + Helper.escapeQuotes(field.getFlagsAsString()) + "',";
+            subQuery += "flags = '" + Helper.escapeQuotes(field.getFlagsModule().getFlagsAsString()) + "',";
         }
 
         if (field.isDirty(DirtyFieldReason.DIMENSIONS))
@@ -1174,12 +1174,12 @@ public class StorageManager
         }
 
         String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new DateTime()).getMillis() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new DateTime()).getMillis() + "','" + Helper.escapeQuotes(field.getFlagsModule().getFlagsAsString()) + "');";
 
         if (field.hasFlag(FieldFlag.CUBOID))
         {
             query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new DateTime()).getMillis() + "','" + Helper.escapeQuotes(field.getFlagsAsString()) + "');";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + (new DateTime()).getMillis() + "','" + Helper.escapeQuotes(field.getFlagsModule().getFlagsAsString()) + "');";
         }
 
         synchronized (this)

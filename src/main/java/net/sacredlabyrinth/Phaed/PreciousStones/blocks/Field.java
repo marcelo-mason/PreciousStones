@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.modules.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.AbstractVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -17,9 +18,6 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.util.*;
 
@@ -31,7 +29,6 @@ import java.util.*;
  */
 public class Field extends AbstractVec implements Comparable<Field>
 {
-    final private Field self;
     private FieldSettings settings;
     private long id = 0;
     private int radius;
@@ -50,28 +47,23 @@ public class Field extends AbstractVec implements Comparable<Field>
     private Field parent;
     private List<Field> children = new ArrayList<Field>();
     private List<String> allowed = new ArrayList<String>();
-    private List<String> blacklistedCommands = new ArrayList<String>();
-    private List<BlockTypeEntry> whitelistedBlocks = new ArrayList<BlockTypeEntry>();
     private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
-    private List<GriefBlock> grief = new ArrayList<GriefBlock>();
-    private List<SnitchEntry> snitches = new ArrayList<SnitchEntry>();
-    private List<FieldFlag> flags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> insertedFlags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> clearedFlags = new ArrayList<FieldFlag>();
-    private List<BlockEntry> fenceBlocks = new ArrayList<BlockEntry>();
     private long lastUsed;
     private boolean progress;
     private boolean open;
-    private int revertSecs;
     private boolean disabled;
     private int disablerId;
-    private boolean translocating;
-    private int translocationSize;
-    private boolean hidden;
-    private int foresterUsed;
-    private boolean foresting;
-    private RentModule renting = new RentModule(this);
+
+    private FlagsModule flags = new FlagsModule(this);
+    private RentingModule renting = new RentingModule(this);
+    private MaskingModule masking = new MaskingModule(this);
+    private HidingModule hiding = new HidingModule(this);
+    private ForestingModule foresting = new ForestingModule(this);
+    private TranslocatingModule translocating = new TranslocatingModule(this);
+    private RevertingModule reverting = new RevertingModule(this);
+    private ListingModule listing = new ListingModule(this);
+    private SnitchingModule snitching = new SnitchingModule(this);
+    private FencingModule fencing = new FencingModule(this);
 
     /**
      * @param x
@@ -108,7 +100,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = name;
         this.type = type;
         this.lastUsed = lastUsed;
-        this.self = this;
     }
 
     /**
@@ -136,7 +127,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = name;
         this.type = type;
         this.lastUsed = lastUsed;
-        this.self = this;
 
         calculateDimensions();
 
@@ -157,7 +147,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.owner = owner;
         this.name = "";
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
-        this.self = this;
 
         calculateDimensions();
     }
@@ -176,7 +165,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.name = "";
         this.owner = "";
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
-        this.self = this;
 
         calculateDimensions();
     }
@@ -187,12 +175,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     public Field(Block block)
     {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-        this.self = this;
-    }
-
-    public Field()
-    {
-        this.self = this;
     }
 
     private void calculateDimensions()
@@ -210,7 +192,7 @@ public class Field extends AbstractVec implements Comparable<Field>
             this.maxy = getY() + ((height - 1) / 2);
         }
 
-        if (hasFlag(FieldFlag.CUBOID))
+        if (flags.hasFlag(FieldFlag.CUBOID))
         {
             dirty.add(DirtyFieldReason.DIMENSIONS);
         }
@@ -278,7 +260,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         }
         calculateDimensions();
 
-        if (hasFlag(FieldFlag.CUBOID))
+        if (flags.hasFlag(FieldFlag.CUBOID))
         {
             dirty.add(DirtyFieldReason.DIMENSIONS);
         }
@@ -950,48 +932,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * ADd a grief block to the collection
-     *
-     * @param gb
-     */
-    public void addGriefBlock(GriefBlock gb)
-    {
-        if (!grief.contains(gb))
-        {
-            grief.add(gb);
-        }
-        dirty.add(DirtyFieldReason.GRIEF_BLOCKS);
-    }
-
-
-    /**
-     * @return the grief
-     */
-    public Queue<GriefBlock> getGrief()
-    {
-        Queue<GriefBlock> g = new LinkedList<GriefBlock>();
-        g.addAll(grief);
-        grief.clear();
-        return g;
-    }
-
-    /**
-     * Clear snitch list
-     */
-    public void clearSnitch()
-    {
-        snitches.clear();
-    }
-
-    /**
-     * @return the snitches
-     */
-    public List<SnitchEntry> getSnitches()
-    {
-        return Collections.unmodifiableList(snitches);
-    }
-
-    /**
      *
      */
     public void updateLastUsed()
@@ -1031,7 +971,7 @@ public class Field extends AbstractVec implements Comparable<Field>
         //Add all the default flags
         for (FieldFlag flag : settings.getDefaultFlags())
         {
-            flags.add(flag);
+            flags.addFlag(flag);
         }
         this.settings = settings;
     }
@@ -1213,572 +1153,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     }
 
     /**
-     * Check if the field has certain certain properties
-     *
-     * @param flag
-     * @return
-     */
-    public boolean hasFlag(FieldFlag flag)
-    {
-        boolean ret = flags.contains(flag);
-
-        if (!ret)
-        {
-            ret = insertedFlags.contains(flag);
-        }
-
-        if (disabledFlags.contains(flag))
-        {
-            ret = false;
-        }
-
-        return ret;
-    }
-
-    /**
-     * Check if the field has certain certain properties
-     *
-     * @param flagStr
-     * @return
-     */
-    public boolean hasFlag(String flagStr)
-    {
-        return hasFlag(Helper.toFieldFlag(flagStr));
-    }
-
-    /**
-     * Return the list of flags and their data as a json string
-     *
-     * @return the flags
-     */
-    public String getFlagsAsString()
-    {
-        JSONObject json = new JSONObject();
-
-        // writing the list of flags to json
-
-        JSONArray disabledFlags = new JSONArray();
-        disabledFlags.addAll(getDisabledFlagsStringList());
-
-        JSONArray clearedFlags = new JSONArray();
-        clearedFlags.addAll(getClearedFlagsStringList());
-
-        JSONArray insertedFlags = new JSONArray();
-        insertedFlags.addAll(getInsertedFlagsStringList());
-
-        JSONArray renterList = new JSONArray();
-        renterList.addAll(renting.getRentersString());
-
-        JSONArray paymentList = new JSONArray();
-        paymentList.addAll(renting.getPaymentString());
-
-        JSONArray blacklistedCommandsList = new JSONArray();
-        blacklistedCommandsList.addAll(blacklistedCommands);
-
-        JSONArray whitelistedBlocksList = new JSONArray();
-        whitelistedBlocksList.addAll(whitelistedBlocks);
-
-        if (!paymentList.isEmpty())
-        {
-            json.put("payments", paymentList);
-        }
-
-        if (!disabledFlags.isEmpty())
-        {
-            json.put("disabledFlags", disabledFlags);
-        }
-
-        if (!insertedFlags.isEmpty())
-        {
-            json.put("insertedFlags", insertedFlags);
-        }
-
-        if (!clearedFlags.isEmpty())
-        {
-            json.put("clearedFlags", clearedFlags);
-        }
-
-        if (!blacklistedCommandsList.isEmpty())
-        {
-            json.put("blacklistedCommands", blacklistedCommandsList);
-        }
-
-        if (!renterList.isEmpty())
-        {
-            json.put("renters", renterList);
-        }
-
-        if (revertSecs > 0)
-        {
-            json.put("revertSecs", revertSecs);
-        }
-
-        if (renting.hasLimitSeconds())
-        {
-            json.put("limitSeconds", renting.getLimitSeconds());
-        }
-
-        if (disabled)
-        {
-            json.put("disabled", disabled);
-        }
-
-        if (hidden)
-        {
-            json.put("hidden", hidden);
-        }
-
-        if (renting.hasPurchase())
-        {
-            json.put("purchase", renting.getPurchaseEntry());
-        }
-
-        if (foresterUsed > 0)
-        {
-            json.put("foresterUsed", foresterUsed);
-        }
-
-        return json.toString();
-    }
-
-    public ArrayList<String> getDisabledFlagsStringList()
-    {
-        ArrayList<String> ll = new ArrayList<String>();
-        for (FieldFlag flag : disabledFlags)
-        {
-            ll.add(Helper.toFlagStr(flag));
-        }
-        return ll;
-    }
-
-    public ArrayList<String> getInsertedFlagsStringList()
-    {
-        ArrayList<String> ll = new ArrayList<String>();
-        for (FieldFlag flag : insertedFlags)
-        {
-            ll.add(Helper.toFlagStr(flag));
-        }
-        return ll;
-    }
-
-    public ArrayList<String> getClearedFlagsStringList()
-    {
-        ArrayList<String> ll = new ArrayList<String>();
-        for (FieldFlag flag : clearedFlags)
-        {
-            ll.add(Helper.toFlagStr(flag));
-        }
-        return ll;
-    }
-
-    /**
-     * Returns inserted flags
-     *
-     * @return
-     */
-    public List<FieldFlag> getInsertedFlags()
-    {
-        return insertedFlags;
-    }
-
-    /**
-     * Returns inserted flags
-     *
-     * @return
-     */
-    public List<FieldFlag> getClearedFlags()
-    {
-        return clearedFlags;
-    }
-
-    /**
-     * Read the list of flags in from a json string
-     *
-     * @param flagString the flags to set
-     */
-    public void setFlags(String flagString)
-    {
-        if (flagString != null && !flagString.isEmpty())
-        {
-            JSONObject flags = (JSONObject) JSONValue.parse(flagString);
-
-            if (flags != null)
-            {
-                for (Object flag : flags.keySet())
-                {
-                    try
-                    {
-                        // reading the list of flags from json
-                        if (flag.equals("disabledFlags"))
-                        {
-                            JSONArray disabledFlags = (JSONArray) flags.get(flag);
-
-                            for (Object flagStr : disabledFlags)
-                            {
-                                // do no toggle of no-toggle flags
-
-                                if (flagStr.toString().equalsIgnoreCase("dynmap-area") || flagStr.toString().equalsIgnoreCase("dynmap-marker"))
-                                {
-                                    if (hasFlag(FieldFlag.DYNMAP_NO_TOGGLE))
-                                    {
-                                        continue;
-                                    }
-                                }
-
-                                disableFlag(flagStr.toString(), true);
-                            }
-                        }
-                        else if (flag.equals("insertedFlags"))
-                        {
-                            JSONArray localFlags = (JSONArray) flags.get(flag);
-
-                            for (Object flagStr : localFlags)
-                            {
-                                insertFieldFlag(flagStr.toString());
-                            }
-                        }
-                        else if (flag.equals("clearedFlags"))
-                        {
-                            JSONArray localFlags = (JSONArray) flags.get(flag);
-
-                            for (Object flagStr : localFlags)
-                            {
-                                clearFieldFlag(flagStr.toString());
-                            }
-                        }
-                        else if (flag.equals("renters"))
-                        {
-                            JSONArray renterList = (JSONArray) flags.get(flag);
-
-                            renting.clearRenters();
-                            for (Object flagStr : renterList)
-                            {
-                                RentEntry entry = new RentEntry(flagStr.toString());
-                                renting.addRenter(entry);
-                            }
-                        }
-                        else if (flag.equals("blacklistedCommands"))
-                        {
-                            JSONArray blacklistedCommandsList = (JSONArray) flags.get(flag);
-
-                            for (Object flagStr : blacklistedCommandsList)
-                            {
-                                blacklistedCommands.add(flagStr.toString());
-                            }
-                        }
-                        else if (flag.equals("whitelistedBlocks"))
-                        {
-                            JSONArray whitelistedBlocksList = (JSONArray) flags.get(flag);
-
-                            for (Object flagStr : whitelistedBlocksList)
-                            {
-                                whitelistedBlocks.add(new BlockTypeEntry(flagStr.toString()));
-                            }
-                        }
-                        else if (flag.equals("foresterUsed"))
-                        {
-                            foresterUsed = ((Long) flags.get(flag)).intValue();
-                        }
-                        else if (flag.equals("revertSecs"))
-                        {
-                            revertSecs = ((Long) flags.get(flag)).intValue();
-                        }
-                        else if (flag.equals("limitSeconds"))
-                        {
-                            renting.setLimitSeconds(((Long) flags.get(flag)).intValue());
-                        }
-                        else if (flag.equals("disabled"))
-                        {
-                            setDisabledNoMask(((Boolean) flags.get(flag)));
-                        }
-                        else if (flag.equals("hidden"))
-                        {
-                            hidden = (Boolean) flags.get(flag);
-                        }
-                        else if (flag.equals("purchase"))
-                        {
-                            renting.setPurchase(new PaymentEntry(flags.get(flag).toString()));
-                        }
-                        else if (flag.equals("payments"))
-                        {
-                            JSONArray paymentList = (JSONArray) flags.get(flag);
-
-                            paymentList.clear();
-                            for (Object flagStr : paymentList)
-                            {
-                                renting.addPayment(new PaymentEntry(flagStr.toString()));
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        System.out.print("Failed reading field flag: " + flag);
-                        System.out.print("Value: " + flags.get(flag));
-
-                        for (StackTraceElement el : ex.getStackTrace())
-                        {
-                            System.out.print(el.toString());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Enable a flag
-     *
-     * @param flagStr
-     */
-    public void enableFlag(String flagStr)
-    {
-        boolean canEnable = false;
-
-        for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
-        {
-            FieldFlag flag = (FieldFlag) iter.next();
-
-            if (Helper.toFlagStr(flag).equals(flagStr))
-            {
-                //remove from the disableFlags list
-                iter.remove();
-                canEnable = true;
-            }
-        }
-
-        if (canEnable && !flags.contains(Helper.toFieldFlag(flagStr)))
-        {
-            flags.add(Helper.toFieldFlag(flagStr));
-            dirty.add(DirtyFieldReason.FLAGS);
-            PreciousStones.debug("DirtyFlags: enableFlag");
-        }
-    }
-
-    /**
-     * Disabled a flag.
-     *
-     * @param flagStr
-     */
-    public void disableFlag(String flagStr, boolean skipSave)
-    {
-        boolean hasFlag = false;
-
-        for (Iterator iter = flags.iterator(); iter.hasNext(); )
-        {
-            FieldFlag flag = (FieldFlag) iter.next();
-            if (Helper.toFlagStr(flag).equals(flagStr))
-            {
-                iter.remove();
-                hasFlag = true;
-            }
-        }
-
-        if (hasFlag && !disabledFlags.contains(Helper.toFieldFlag(flagStr)))
-        {
-            disabledFlags.add(Helper.toFieldFlag(flagStr));
-
-            if (!skipSave)
-            {
-                dirty.add(DirtyFieldReason.FLAGS);
-                PreciousStones.debug("DirtyFlags: disableFlag");
-            }
-        }
-    }
-
-    /**
-     * Whether it has the disabled flag string
-     *
-     * @param flagStr
-     * @return
-     */
-    public boolean hasDisabledFlag(String flagStr)
-    {
-        for (FieldFlag flag : disabledFlags)
-        {
-            if (Helper.toFlagStr(flag).equals(flagStr))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Whether it has the disabled flag
-     *
-     * @param flag
-     * @return
-     */
-    public boolean hasDisabledFlag(FieldFlag flag)
-    {
-        return disabledFlags.contains(flag);
-    }
-
-    /**
-     * Returns the disabled flags
-     *
-     * @return
-     */
-    public List<FieldFlag> getDisabledFlags()
-    {
-        return Collections.unmodifiableList(disabledFlags);
-    }
-
-    /**
-     * Toggles a field flag.  returns its state.
-     *
-     * @param flagStr
-     */
-    public boolean toggleFieldFlag(String flagStr)
-    {
-        boolean hasFlag = hasFlag(flagStr);
-
-        if (hasFlag)
-        {
-            disableFlag(flagStr, false);
-            return false;
-        }
-        else
-        {
-            enableFlag(flagStr);
-            return true;
-        }
-    }
-
-    /**
-     * Revert all the flags back to default
-     */
-    public void RevertFlags()
-    {
-        //Revert all the flags back to the default
-        insertedFlags.clear();
-        disabledFlags.clear();
-        flags.clear();
-        for (FieldFlag flag : settings.getDefaultFlags())
-        {
-            flags.add(flag);
-        }
-        dirty.add(DirtyFieldReason.FLAGS);
-        PreciousStones.debug("DirtyFlags: RevertFlags");
-    }
-
-    /**
-     * Returns all the flags
-     *
-     * @return
-     */
-    public List<FieldFlag> getFlags()
-    {
-        return Collections.unmodifiableList(flags);
-    }
-
-    /**
-     * Clear a field flag from the field
-     *
-     * @param flagStr
-     */
-    public boolean clearFieldFlag(String flagStr)
-    {
-        boolean cleared = false;
-
-        if (insertedFlags.contains(Helper.toFieldFlag(flagStr)))
-        {
-            insertedFlags.remove(Helper.toFieldFlag(flagStr));
-            cleared = true;
-        }
-
-        if (disabledFlags.contains(Helper.toFieldFlag(flagStr)))
-        {
-            disabledFlags.remove(Helper.toFieldFlag(flagStr));
-            cleared = true;
-        }
-
-        if (flags.contains(Helper.toFieldFlag(flagStr)))
-        {
-            flags.remove(Helper.toFieldFlag(flagStr));
-            cleared = true;
-        }
-
-        clearedFlags.add(Helper.toFieldFlag(flagStr));
-
-        return cleared;
-    }
-
-    /**
-     * Insert a field flag into the field
-     *
-     * @param flagStr
-     */
-    public boolean insertFieldFlag(String flagStr)
-    {
-        if (!insertedFlags.contains(Helper.toFieldFlag(flagStr)))
-        {
-            insertedFlags.add(Helper.toFieldFlag(flagStr));
-
-            if (clearedFlags.contains(Helper.toFieldFlag(flagStr)))
-            {
-                clearedFlags.remove(Helper.toFieldFlag(flagStr));
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Force insert a flag if it doesn't exist.
-     * This can suck
-     *
-     * @param flagStr
-     */
-    public boolean insertFlag(String flagStr)
-    {
-        if (!flags.contains(Helper.toFieldFlag(flagStr)))
-        {
-            flags.add(Helper.toFieldFlag(flagStr));
-            dirtyFlags("insertFlag");
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Imports a collection of field flags to this field
-     *
-     * @param flags
-     */
-    public void importFlags(List<FieldFlag> flags)
-    {
-        for (FieldFlag flag : flags)
-        {
-            insertFieldFlag(Helper.toFlagStr(flag));
-        }
-    }
-
-    /**
-     * Gets the amount of seconds between each automatic grief revert
-     *
-     * @return
-     */
-    public int getRevertSecs()
-    {
-        return revertSecs;
-    }
-
-    /**
-     * Sets the amount of seconds between each automatic grief revert
-     *
-     * @param revertSecs
-     */
-    public void setRevertSecs(int revertSecs)
-    {
-        this.revertSecs = revertSecs;
-        dirty.add(DirtyFieldReason.FLAGS);
-        PreciousStones.debug("DirtyFlags: setRevertSecs");
-    }
-
-    /**
      * Whether the field is disabled
      *
      * @return
@@ -1845,29 +1219,23 @@ public class Field extends AbstractVec implements Comparable<Field>
             {
                 if (!skipMask)
                 {
-                    if (hasFlag(FieldFlag.MASK_ON_DISABLED))
+                    if (flags.hasFlag(FieldFlag.MASK_ON_DISABLED))
                     {
-                        mask();
+                        masking.mask();
                     }
 
-                    if (hasFlag(FieldFlag.MASK_ON_ENABLED))
+                    if (flags.hasFlag(FieldFlag.MASK_ON_ENABLED))
                     {
-                        unmask();
+                        masking.unmask();
                     }
                 }
 
-                if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
+                if (flags.hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
                 {
-                    if (!flags.contains(FieldFlag.BREAKABLE))
-                    {
-                        if (!insertedFlags.contains(FieldFlag.BREAKABLE))
-                        {
-                            insertedFlags.add(FieldFlag.BREAKABLE);
-                        }
-                    }
+                    flags.setBreakable();
                 }
 
-                if (hasFlag(FieldFlag.TRANSLOCATION))
+                if (flags.hasFlag(FieldFlag.TRANSLOCATION))
                 {
                     if (isNamed())
                     {
@@ -1896,31 +1264,25 @@ public class Field extends AbstractVec implements Comparable<Field>
 
                 if (!skipMask)
                 {
-                    if (hasFlag(FieldFlag.MASK_ON_DISABLED))
+                    if (flags.hasFlag(FieldFlag.MASK_ON_DISABLED))
                     {
-                        unmask();
+                        masking.unmask();
                     }
 
-                    if (hasFlag(FieldFlag.MASK_ON_ENABLED))
+                    if (flags.hasFlag(FieldFlag.MASK_ON_ENABLED))
                     {
-                        mask();
+                        masking.mask();
                     }
                 }
 
                 startDisabler();
 
-                if (hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
+                if (flags.hasFlag(FieldFlag.BREAKABLE_ON_DISABLED))
                 {
-                    if (!flags.contains(FieldFlag.BREAKABLE))
-                    {
-                        if (insertedFlags.contains(FieldFlag.BREAKABLE))
-                        {
-                            insertedFlags.remove(FieldFlag.BREAKABLE);
-                        }
-                    }
+                    flags.unsetBreakable();
                 }
 
-                if (hasFlag(FieldFlag.TRANSLOCATION))
+                if (flags.hasFlag(FieldFlag.TRANSLOCATION))
                 {
                     if (isNamed())
                     {
@@ -1928,7 +1290,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                 }
 
-                if (hasFlag(FieldFlag.FORESTER) && hasForesterUse() && !isForesting())
+                if (flags.hasFlag(FieldFlag.FORESTER) && foresting.hasForesterUse() && !foresting.isForesting())
                 {
                     if (player != null)
                     {
@@ -1936,11 +1298,11 @@ public class Field extends AbstractVec implements Comparable<Field>
                     }
                 }
 
-                if (hasFlag(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE) ||
-                        hasFlag(FieldFlag.TELEPORT_MOBS_ON_ENABLE) ||
-                        hasFlag(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE) ||
-                        hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE) ||
-                        hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE))
+                if (flags.hasFlag(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE) ||
+                        flags.hasFlag(FieldFlag.TELEPORT_MOBS_ON_ENABLE) ||
+                        flags.hasFlag(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE) ||
+                        flags.hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE) ||
+                        flags.hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE))
                 {
                     List<Entity> entities = Bukkit.getServer().getWorld(this.getWorld()).getEntities();
 
@@ -1948,7 +1310,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                     {
                         if (envelops(entity.getLocation()))
                         {
-                            if (hasFlag(FieldFlag.TELEPORT_MOBS_ON_ENABLE))
+                            if (flags.hasFlag(FieldFlag.TELEPORT_MOBS_ON_ENABLE))
                             {
                                 if (entity instanceof Monster || entity instanceof Golem || entity instanceof WaterMob)
                                 {
@@ -1956,7 +1318,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                                 }
                             }
 
-                            if (hasFlag(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE))
+                            if (flags.hasFlag(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE))
                             {
                                 if (entity instanceof Villager)
                                 {
@@ -1964,7 +1326,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                                 }
                             }
 
-                            if (hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE))
+                            if (flags.hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE))
                             {
                                 if (entity instanceof Ageable)
                                 {
@@ -1972,7 +1334,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                                 }
                             }
 
-                            if (hasFlag(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE))
+                            if (flags.hasFlag(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE))
                             {
                                 if (entity instanceof Player)
                                 {
@@ -2023,7 +1385,7 @@ public class Field extends AbstractVec implements Comparable<Field>
                         }
 
                         thisField.setDisabled(true);
-                        thisField.dirtyFlags("startDisabler");
+                        thisField.getFlagsModule().dirtyFlags("startDisabler");
 
                         PreciousStones.getInstance().getEntryManager().actOnInhabitantsOnDisableToggle(thisField);
                     }
@@ -2033,209 +1395,6 @@ public class Field extends AbstractVec implements Comparable<Field>
             return true;
         }
         return false;
-    }
-
-
-    /**
-     * Generate fence around the field
-     */
-    public void generateFence(int item)
-    {
-        PreciousStones plugin = PreciousStones.getInstance();
-
-        World world = Bukkit.getServer().getWorld(this.getWorld());
-
-        if (world == null)
-        {
-            return;
-        }
-
-        int minx = getX() - getRadius() - 1;
-        int maxx = getX() + getRadius() + 1;
-        int minz = getZ() - getRadius() - 1;
-        int maxz = getZ() + getRadius() + 1;
-        int miny = getY() - (Math.max(getHeight() - 1, 0) / 2) - 1;
-        int maxy = getY() + (Math.max(getHeight() - 1, 0) / 2) + 1;
-
-        int mid = getY();
-
-        if (hasFlag(FieldFlag.CUBOID))
-        {
-            minx = getMinx() - 1;
-            maxx = getMaxx() + 1;
-            minz = getMinz() - 1;
-            maxz = getMaxz() + 1;
-            miny = getMiny() - 1;
-            maxy = getMaxy() + 1;
-        }
-
-        int limity = Math.min(plugin.getSettingsManager().getFenceMaxDepth(), miny);
-
-        // traveling the z length
-
-        for (int z = minz; z <= maxz; z++)
-        {
-            int sideOneMidId = world.getBlockTypeIdAt(minx, mid, z);
-
-            if (plugin.getSettingsManager().isNaturalThroughType(sideOneMidId))
-            {
-                // if the midId is through type then travel downwards
-
-                boolean hasFloor = false;
-
-                for (int y = mid; y >= limity; y--)
-                {
-                    int sideOne = world.getBlockTypeIdAt(minx, y, z);
-
-                    if (!plugin.getSettingsManager().isNaturalThroughType(sideOne))
-                    {
-                        hasFloor = true;
-                        break;
-                    }
-                }
-
-                if (hasFloor)
-                {
-                    for (int y = mid; y >= limity; y--)
-                    {
-                        int sideOne = world.getBlockTypeIdAt(minx, y, z);
-
-                        if (!plugin.getSettingsManager().isNaturalThroughType(sideOne))
-                        {
-                            continue;
-                        }
-
-                        Block block = world.getBlockAt(minx, y, z);
-                        fenceBlocks.add(new BlockEntry(block));
-                        block.setTypeId(item);
-                    }
-                }
-            }
-
-            int sideTwoMidId = world.getBlockTypeIdAt(maxx, mid, z);
-
-            if (plugin.getSettingsManager().isNaturalThroughType(sideTwoMidId))
-            {
-                // if the midId is through type then travel downwards
-
-                boolean hasFloor = false;
-
-                for (int y = mid; y >= limity; y--)
-                {
-                    int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
-
-                    if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo))
-                    {
-                        hasFloor = true;
-                        break;
-                    }
-                }
-
-                if (hasFloor)
-                {
-                    for (int y = mid; y >= limity; y--)
-                    {
-                        int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
-
-                        if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo))
-                        {
-                            continue;
-                        }
-
-                        Block block = world.getBlockAt(maxx, y, z);
-                        fenceBlocks.add(new BlockEntry(block));
-                        block.setTypeId(item);
-                    }
-                }
-            }
-        }
-
-        // traveling the x length
-
-        for (int x = minx; x <= maxx; x++)
-        {
-            int sideOneMidId = world.getBlockTypeIdAt(x, mid, minz);
-
-            if (plugin.getSettingsManager().isNaturalThroughType(sideOneMidId))
-            {
-                // if the midId is through type then travel downwards
-
-                boolean hasFloor = false;
-
-                for (int y = mid; y >= limity; y--)
-                {
-                    int sideOne = world.getBlockTypeIdAt(x, y, minz);
-
-                    if (!plugin.getSettingsManager().isNaturalThroughType(sideOne))
-                    {
-                        hasFloor = true;
-                        break;
-                    }
-                }
-
-                if (hasFloor)
-                {
-                    for (int y = mid; y >= limity; y--)
-                    {
-                        int sideOne = world.getBlockTypeIdAt(x, y, minz);
-
-                        if (!plugin.getSettingsManager().isNaturalThroughType(sideOne))
-                        {
-                            continue;
-                        }
-
-                        Block block = world.getBlockAt(x, y, minz);
-                        fenceBlocks.add(new BlockEntry(block));
-                        block.setTypeId(item);
-                    }
-                }
-            }
-
-            int sideTwoMidId = world.getBlockTypeIdAt(x, mid, maxz);
-
-            if (plugin.getSettingsManager().isNaturalThroughType(sideTwoMidId))
-            {
-                // if the midId is through type then travel downwards
-
-                boolean hasFloor = false;
-
-                for (int y = mid; y >= limity; y--)
-                {
-                    int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
-
-                    if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo))
-                    {
-                        hasFloor = true;
-                        break;
-                    }
-                }
-
-                if (hasFloor)
-                {
-                    for (int y = mid; y >= limity; y--)
-                    {
-                        int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
-
-                        if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo))
-                        {
-                            continue;
-                        }
-
-                        Block block = world.getBlockAt(x, y, maxz);
-                        fenceBlocks.add(new BlockEntry(block));
-                        block.setTypeId(item);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Remove fence from around the field
-     */
-    public void clearFence()
-    {
-
     }
 
     public void changeOwner()
@@ -2254,11 +1413,9 @@ public class Field extends AbstractVec implements Comparable<Field>
         this.newOwner = newOwner;
     }
 
-    public void dirtyFlags(String reason)
+    public void addDirty(DirtyFieldReason reason)
     {
-        dirty.add(DirtyFieldReason.FLAGS);
-        PreciousStones.debug("DirtyFlags: " + reason);
-        PreciousStones.getInstance().getStorageManager().offerField(this);
+        dirty.add(reason);
     }
 
     /**
@@ -2281,91 +1438,6 @@ public class Field extends AbstractVec implements Comparable<Field>
         return false;
     }
 
-    public boolean isTranslocating()
-    {
-        return translocating;
-    }
-
-    public void setTranslocating(boolean translocating)
-    {
-        this.translocating = translocating;
-    }
-
-    public void mask()
-    {
-        mask(null);
-    }
-
-    public void unmask()
-    {
-        unmask(null);
-    }
-
-    public void mask(Player actor)
-    {
-        Set<Player> fieldInhabitants = new HashSet<Player>();
-
-        if (actor != null)
-        {
-            fieldInhabitants.add(actor);
-        }
-        else
-        {
-            fieldInhabitants = PreciousStones.getInstance().getForceFieldManager().getFieldInhabitants(this);
-        }
-
-        Entity[] entities = getBlock().getChunk().getEntities();
-
-        for (Entity entity : entities)
-        {
-            if (entity instanceof Player)
-            {
-                fieldInhabitants.add((Player) entity);
-            }
-        }
-
-        for (Player player : fieldInhabitants)
-        {
-            if (hasFlag(FieldFlag.MASK_ON_ENABLED))
-            {
-                player.sendBlockChange(getLocation(), settings.getMaskOnEnabledBlock(), (byte) 0);
-            }
-            else
-            {
-                player.sendBlockChange(getLocation(), settings.getMaskOnDisabledBlock(), (byte) 0);
-            }
-        }
-    }
-
-    public void unmask(Player actor)
-    {
-        Set<Player> fieldInhabitants = new HashSet<Player>();
-
-        if (actor != null)
-        {
-            fieldInhabitants.add(actor);
-        }
-        else
-        {
-            fieldInhabitants = PreciousStones.getInstance().getForceFieldManager().getFieldInhabitants(this);
-        }
-
-        Entity[] entities = getBlock().getChunk().getEntities();
-
-        for (Entity entity : entities)
-        {
-            if (entity instanceof Player)
-            {
-                fieldInhabitants.add((Player) entity);
-            }
-        }
-
-        for (Player player : fieldInhabitants)
-        {
-            player.sendBlockChange(getLocation(), getTypeId(), (byte) getData());
-        }
-    }
-
     /**
      * If the block matches the field type stored on the db
      *
@@ -2386,130 +1458,6 @@ public class Field extends AbstractVec implements Comparable<Field>
     {
         Block block = getBlock();
         return block.getTypeId() == 0;
-    }
-
-    public void hide()
-    {
-        if (!isHidden())
-        {
-            hidden = true;
-            dirtyFlags("hide");
-
-            BlockTypeEntry maskType = findMaskType();
-            Block block = getBlock();
-            block.setTypeId(maskType.getTypeId());
-            block.setData(maskType.getData());
-        }
-
-        if (isParent())
-        {
-            for (Field child : children)
-            {
-                if (!child.isHidden())
-                {
-                    child.hide();
-                }
-            }
-        }
-
-        if (isChild())
-        {
-            if (!getParent().isHidden())
-            {
-                getParent().hide();
-            }
-        }
-    }
-
-    /**
-     * Unhides the field block turning it back to its normal block type
-     */
-    public void unHide()
-    {
-        if (isHidden())
-        {
-            hidden = false;
-            dirtyFlags("unHide");
-
-            Block block = getBlock();
-            block.setTypeId(getTypeId());
-            block.setData((byte) getData());
-        }
-
-        if (isParent())
-        {
-            for (Field child : children)
-            {
-                if (child.isHidden())
-                {
-                    child.unHide();
-                }
-            }
-        }
-
-        if (isChild())
-        {
-            if (getParent().isHidden())
-            {
-                getParent().unHide();
-            }
-        }
-    }
-
-    public boolean isHidden()
-    {
-        /*
-        // fix any discrepencies
-
-        if (hidden)
-        {
-            if (matchesBlockType())
-            {
-                hidden = false;
-                dirtyFlags("");
-            }
-        }
-        else
-        {
-            if (!matchesBlockType())
-            {
-                hidden = true;
-                dirtyFlags("");
-            }
-        }*/
-
-        return hidden;
-    }
-
-    private BlockTypeEntry findMaskType()
-    {
-        List<Vec> vecs = new ArrayList<Vec>();
-
-        Vec center = new Vec(getBlock());
-        vecs.add(center.add(1, 0, 0));
-        vecs.add(center.add(-1, 0, 0));
-        vecs.add(center.add(0, 0, 1));
-        vecs.add(center.add(0, 0, -1));
-        vecs.add(center.add(-1, -1, 0));
-        vecs.add(center.add(0, -1, 1));
-        vecs.add(center.add(0, 1, 0));
-
-        for (Vec vec : vecs)
-        {
-            Block relative = vec.getBlock();
-
-            if (relative.getTypeId() != 0)
-            {
-                BlockTypeEntry entry = new BlockTypeEntry(relative);
-
-                if (PreciousStones.getInstance().getSettingsManager().isHidingMaskType(entry))
-                {
-                    return entry;
-                }
-            }
-        }
-
-        return PreciousStones.getInstance().getSettingsManager().getFirstHidingMask();
     }
 
     /**
@@ -2543,137 +1491,9 @@ public class Field extends AbstractVec implements Comparable<Field>
         return getName().length() > 0;
     }
 
-    public void setTranslocationSize(int translocationSize)
-    {
-        this.translocationSize = translocationSize;
-    }
-
-    public boolean isOverRedstoneMax()
-    {
-        return translocationSize > PreciousStones.getInstance().getSettingsManager().getMaxSizeTranslocationForRedstone();
-    }
-
-    public boolean isOverTranslocationMax()
-    {
-        return isOverTranslocationMax(0);
-    }
-
-    public boolean isOverTranslocationMax(int extra)
-    {
-        return translocationSize + extra > PreciousStones.getInstance().getSettingsManager().getMaxSizeTranslocation();
-    }
-
-    public int getTranslocationSize()
-    {
-        return translocationSize;
-    }
-
     public String getDetails()
     {
         return "[" + getType() + "|" + getX() + " " + getY() + " " + getZ() + "]";
-    }
-
-    public int getFencePrice()
-    {
-        return fenceBlocks.size() * settings.getFenceItemPrice();
-    }
-
-    public void addBlacklistedCommand(String command)
-    {
-        if (!blacklistedCommands.contains(command))
-        {
-            blacklistedCommands.add(command);
-        }
-        dirtyFlags("addBlacklistedCommand");
-    }
-
-    public void clearBlacklistedCommands()
-    {
-        blacklistedCommands.clear();
-        dirtyFlags("clearBlacklistedCommands");
-    }
-
-    public boolean isBlacklistedCommand(String command)
-    {
-        if (hasFlag(FieldFlag.COMMAND_BLACKLISTING))
-        {
-            command = command.replace("/", "");
-
-            int i = command.indexOf(' ');
-
-            if (i > -1)
-            {
-                command = command.substring(0, i);
-            }
-
-            PreciousStones.debug(command);
-
-            return blacklistedCommands.contains(command);
-        }
-        return false;
-    }
-
-    public boolean hasBlacklistedComands()
-    {
-        return blacklistedCommands.size() > 0;
-    }
-
-    public String getBlacklistedCommandsList()
-    {
-        String out = "";
-
-        for (String cmd : blacklistedCommands)
-        {
-            out += cmd + ", ";
-        }
-
-        return Helper.stripTrailing(out, ", ");
-    }
-
-    public void addWhitelistedBlock(BlockTypeEntry type)
-    {
-        if (!whitelistedBlocks.contains(type))
-        {
-            whitelistedBlocks.add(type);
-        }
-        dirtyFlags("addWhitelistedBlock");
-    }
-
-    public void deleteWhitelistedBlock(BlockTypeEntry type)
-    {
-        whitelistedBlocks.remove(type);
-        dirtyFlags("deleteWhitelistedBlock");
-    }
-
-    public boolean hasForesterUse()
-    {
-        return settings.getForesterUses() - foresterUsed > 0;
-    }
-
-    public int foresterUsesLeft()
-    {
-        return settings.getForesterUses() - foresterUsed;
-    }
-
-    public void recordForesterUse()
-    {
-        foresterUsed++;
-        dirtyFlags("recordForesterUse");
-    }
-
-    public int getForesterUsed()
-    {
-        return foresterUsed;
-    }
-
-    public boolean isForesting()
-    {
-        return foresting;
-    }
-
-    public void setForesting(boolean foresting)
-    {
-        this.foresting = foresting;
     }
 
     public boolean take(Player player)
@@ -2691,8 +1511,63 @@ public class Field extends AbstractVec implements Comparable<Field>
         return true;
     }
 
-    public RentModule getRentingModule()
+    public boolean hasFlag(FieldFlag flag)
+    {
+        return flags.hasFlag(flag);
+    }
+
+    public boolean hasFlag(String flagStr)
+    {
+        return flags.hasFlag(flagStr);
+    }
+
+    public RentingModule getRentingModule()
     {
         return renting;
+    }
+
+    public MaskingModule getMaskingModule()
+    {
+        return masking;
+    }
+
+    public HidingModule getHidingModule()
+    {
+        return hiding;
+    }
+
+    public ForestingModule getForestingModule()
+    {
+        return foresting;
+    }
+
+    public TranslocatingModule getTranslocatingModule()
+    {
+        return translocating;
+    }
+
+    public RevertingModule getRevertingModule()
+    {
+        return reverting;
+    }
+
+    public ListingModule getListingModule()
+    {
+        return listing;
+    }
+
+    public SnitchingModule getSnitchingModule()
+    {
+        return snitching;
+    }
+
+    public FencingModule getFencingModule()
+    {
+        return fencing;
+    }
+
+    public FlagsModule getFlagsModule()
+    {
+        return flags;
     }
 }

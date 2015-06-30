@@ -2608,21 +2608,21 @@ public class CommunicationManager
             cb.addRow("  " + color + ChatHelper.format("_velocity") + ": ", ChatColor.AQUA + "" + field.getVelocity(), "");
         }
 
-        if (field.getRevertSecs() > 0)
+        if (field.getRevertingModule().getRevertSecs() > 0)
         {
-            cb.addRow("  " + color + ChatHelper.format("_interval") + ": ", ChatColor.AQUA + "" + field.getRevertSecs(), "");
+            cb.addRow("  " + color + ChatHelper.format("_interval") + ": ", ChatColor.AQUA + "" + field.getRevertingModule().getRevertSecs(), "");
         }
 
-        if (field.hasBlacklistedComands())
+        if (field.getListingModule().hasBlacklistedComands())
         {
-            cb.addRow("  " + color + ChatHelper.format("_blacklistedCommands") + ": ", ChatColor.AQUA + "" + field.getBlacklistedCommandsList(), "");
+            cb.addRow("  " + color + ChatHelper.format("_blacklistedCommands") + ": ", ChatColor.AQUA + "" + field.getListingModule().getBlacklistedCommandsList(), "");
         }
 
         cb.addRow("  " + color + ChatHelper.format("_location") + ": ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 
-        List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlags());
-        List<FieldFlag> insertedFlags = field.getInsertedFlags();
-        List<FieldFlag> disabledFlags = field.getDisabledFlags();
+        List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlagsModule().getFlags());
+        List<FieldFlag> insertedFlags = field.getFlagsModule().getInsertedFlags();
+        List<FieldFlag> disabledFlags = field.getFlagsModule().getDisabledFlags();
 
         flags.addAll(insertedFlags);
         flags.addAll(disabledFlags);
@@ -3154,7 +3154,7 @@ public class CommunicationManager
     {
         if (field != null)
         {
-            List<SnitchEntry> snitches = field.getSnitches();
+            List<SnitchEntry> snitches = field.getSnitchingModule().getSnitches();
 
             if (snitches.isEmpty() || snitches.get(0).getAgeInSeconds() > 10)
             {

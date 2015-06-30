@@ -38,7 +38,7 @@ public final class GriefUndoManager
      */
     public void register(Field field)
     {
-        if (field.getRevertSecs() == 0)
+        if (field.getRevertingModule().getRevertSecs() == 0)
         {
             return;
         }
@@ -72,7 +72,7 @@ public final class GriefUndoManager
     public void addBlock(Field field, BlockState state)
     {
         GriefBlock gb = new GriefBlock(state);
-        field.addGriefBlock(gb);
+        field.getRevertingModule().addGriefBlock(gb);
     }
 
     /**
@@ -107,14 +107,14 @@ public final class GriefUndoManager
 
         if (block.getTypeId() == 64 || block.getTypeId() == 71 || block.getTypeId() == 330) // doors
         {
-            field.addGriefBlock(new GriefBlock(block));
+            field.getRevertingModule().addGriefBlock(new GriefBlock(block));
 
             Block bottom = block.getRelative(BlockFace.DOWN);
             Block top = block.getRelative(BlockFace.UP);
 
             if (bottom.getTypeId() == 64 || bottom.getTypeId() == 71 || bottom.getTypeId() == 330) // doors
             {
-                field.addGriefBlock(new GriefBlock(bottom));
+                field.getRevertingModule().addGriefBlock(new GriefBlock(bottom));
                 if (clear)
                 {
                     bottom.setTypeId(0);
@@ -124,7 +124,7 @@ public final class GriefUndoManager
 
             if (top.getTypeId() == 64 || top.getTypeId() == 71 || top.getTypeId() == 330) // doors
             {
-                field.addGriefBlock(new GriefBlock(top));
+                field.getRevertingModule().addGriefBlock(new GriefBlock(top));
                 if (clear)
                 {
                     top.setTypeId(0);
@@ -139,12 +139,12 @@ public final class GriefUndoManager
 
         if (block.getState() instanceof Sign)
         {
-            field.addGriefBlock(handleSign(block));
+            field.getRevertingModule().addGriefBlock(handleSign(block));
         }
         else
         {
             PreciousStones.debug("added grief to field");
-            field.addGriefBlock(new GriefBlock(block));
+            field.getRevertingModule().addGriefBlock(new GriefBlock(block));
         }
         if (clear)
         {
@@ -214,7 +214,7 @@ public final class GriefUndoManager
         {
             PreciousStones.debug("Retrieving dirty grief");
 
-            Queue<GriefBlock> gbs = field.getGrief();
+            Queue<GriefBlock> gbs = field.getRevertingModule().getGrief();
 
             if (!gbs.isEmpty())
             {
@@ -310,6 +310,6 @@ public final class GriefUndoManager
             {
                 undoGrief(field);
             }
-        }, field.getRevertSecs() * 20L, field.getRevertSecs() * 20L);
+        }, field.getRevertingModule().getRevertSecs() * 20L, field.getRevertingModule().getRevertSecs() * 20L);
     }
 }
