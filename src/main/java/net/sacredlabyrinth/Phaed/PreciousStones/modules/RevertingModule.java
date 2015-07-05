@@ -2,7 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.modules;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.DirtyFieldReason;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.GriefBlock;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
+package net.sacredlabyrinth.Phaed.PreciousStones.field;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;

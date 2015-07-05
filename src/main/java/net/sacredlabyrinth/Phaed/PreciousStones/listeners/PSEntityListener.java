@@ -1,12 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;

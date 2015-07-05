@@ -2,10 +2,10 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.*;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.PurchaseEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.SnitchEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.DBCore;
@@ -15,6 +15,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.uuid.UUIDMigration;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -396,14 +397,7 @@ public class StorageManager
         plugin.getForceFieldManager().clearChunkLists();
         plugin.getUnbreakableManager().clearChunkLists();
 
-        List<World> worlds = plugin.getServer().getWorlds();
-
-        final List<String> filtered = new ArrayList<String>();
-
-        for (World world : worlds)
-        {
-            filtered.add(world.getName());
-        }
+        final List<World> worlds = plugin.getServer().getWorlds();
 
         plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable()
         {
@@ -413,10 +407,10 @@ public class StorageManager
 
                 PreciousStones.debug("loading fields by world");
 
-                for (String worldName : filtered)
+                for (World world : worlds)
                 {
-                    loadWorldFields(worldName);
-                    loadWorldUnbreakables(worldName);
+                    loadWorldFields(world);
+                    loadWorldUnbreakables(world);
                 }
             }
         }, 0);
@@ -427,7 +421,7 @@ public class StorageManager
      *
      * @param world the world to load
      */
-    public void loadWorldFields(String world)
+    public void loadWorldFields(World world)
     {
         int fieldCount;
         int cuboidCount;
@@ -436,9 +430,9 @@ public class StorageManager
 
         synchronized (this)
         {
-            fields = getFields(world);
+            fields = getFields(world.getName());
             fieldCount = fields.size();
-            Collection<Field> cuboids = getCuboidFields(world);
+            Collection<Field> cuboids = getCuboidFields(world.getName());
             cuboidCount = cuboids.size();
             fields.addAll(cuboids);
         }
@@ -560,13 +554,13 @@ public class StorageManager
      *
      * @param world
      */
-    public void loadWorldUnbreakables(String world)
+    public void loadWorldUnbreakables(World world)
     {
         List<Unbreakable> unbreakables;
 
         synchronized (this)
         {
-            unbreakables = getUnbreakables(world);
+            unbreakables = getUnbreakables(world.getName());
         }
 
         for (Unbreakable ub : unbreakables)

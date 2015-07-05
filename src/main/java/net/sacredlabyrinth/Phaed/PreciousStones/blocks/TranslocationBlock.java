@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ItemStackEntry;

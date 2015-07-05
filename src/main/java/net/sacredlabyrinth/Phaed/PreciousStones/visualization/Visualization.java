@@ -1,7 +1,7 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones.visualization;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 

@@ -1,586 +1,586 @@
 unbreakable-blocks: []
 force-field-blocks:
--   title: City Protection
-    block: diamond_block
-    radius: 20
-    custom-height: 15
-    meta-name: '&bCity Protection'
-    meta-autoset: true
-    meta-lore:
-    - '&eThis will protect a city'
-    - '&eIt covers an area of 20 radius'
-    - '&eWith a max height of 15'
-    prevent-fire: true
-    prevent-place: true
-    prevent-destroy: true
-    prevent-vehicle-destroy: true
-    prevent-enderman-destroy: true
-    prevent-explosions: true
-    prevent-unprotectable: true
-    prevent-item-frame-take: true
-    protect-armor-stands: true
-    prevent-flow: true
-    protect-crops: true
-    protect-inventories: true
-    prevent-place-blacklist: [153]
-    ?welcome-message: true
-    ?farewell-message: true
-    ?prevent-portal-enter: true
-    ?prevent-portal-destination: true
-    ?prevent-portal-create: true
-    ?prevent-vehicle-enter: true
-    ?prevent-vehicle-exit: true
-    ?prevent-teleport: true
-    command-blacklisting: true
-    can-change-owner: true
-    enable-on-src: true
-    mixing-group: 1
-    rentable: true
-    buyable: true
-    cuboid: true
-    mask-on-disabled: 80
--   title: City Plot
-    block: quartz_ore
-    radius: 20
-    custom-height: 15
-    meta-name: '&bCity Plot'
-    meta-autoset: true
-    meta-lore:
-    - '&eCity Protection plots'
-    - '&eIt covers an area of 20 radius'
-    - '&eWith a max height of 15'
-    allowed-only-inside: ["City Protection"]
-    plot: true
-    no-conflict: true
-    prevent-use:
-    - wooden_door
-    - iron_door
-    - spruce_door
-    - birch_door
-    - jungle_door
-    - acacia_door
-    - dark_oak_door
-    prevent-fire: true
-    prevent-place: true
-    prevent-destroy: true
-    prevent-vehicle-destroy: true
-    prevent-enderman-destroy: true
-    prevent-explosions: true
-    prevent-unprotectable: true
-    protect-inventories: true
-    prevent-flow: true
-    ?prevent-teleport: true
-    protect-crops: true
-    ?welcome-message: true
-    ?farewell-message: true
-    can-change-owner: true
-    enable-on-src: true
-    mixing-group: 1
-    rentable: true
-    buyable: true
-    cuboid: true
-    mask-on-disabled: 80
--   title: Entry Bouncer
-    block: lapis_block
-    radius: 5
-    meta-name: '&bEntry Bouncer'
-    meta-autoset: true
-    meta-lore:
-    - '&ePrevents entry into an area'
-    - '&eIt covers an area of 5 radius'
-    prevent-entry: true
-    prevent-unprotectable: true
-    prevent-flow: true
-    enable-on-src: true
-    can-change-owner: true
-    cuboid: true
-    mask-on-disabled: 80
--   title: Grief Revert
-    block: gold_block
-    radius: 20
-    custom-height: 15
-    meta-name: '&bGrief Revert'
-    meta-autoset: true
-    meta-lore:
-    - '&eReverts grief in an area'
-    - '&eIt covers an area of 20 radius'
-    - '&eWith a max height of 15'
-    allow-grief: [37, 38, 39, 40]
-    grief-revert: true
-    grief-revert-safety: true
-    ?welcome-message: true
-    ?farewell-message: true
-    enable-on-src: true
-    can-change-owner: true
-    mixing-group: 1
-    cuboid: true
-    mask-on-disabled: 80
--   title: Peace Keeper
-    block: sponge
-    radius: 10
-    meta-name: '&bPeace Keeper'
-    meta-autoset: true
-    meta-lore:
-    - '&eMakes peaceful areas'
-    - '&eIt covers an area of 10 radius'
-    prevent-pvp: true
-    no-player-place: true
-    prevent-mob-damage: true
-    protect-animals: true
-    protect-mobs: true
-    protect-villagers: true
-    cuboid: true
-    mask-on-disabled: 80
--   title: Creature Repeller
-    block: web
-    radius: 20
-    meta-name: '&bCreature Repeller'
-    meta-autoset: true
-    meta-lore:
-    - '&ePrevents creature spawning'
-    - '&eAnd removes all mobs in an area'
-    - '&eIt covers an area of 20 radius'
-    single-use: true
-    prevent-mob-damage: true
-    prevent-mob-spawn: true
-    prevent-animal-spawn: true
-    remove-mob: true
-    no-conflict: true
-    mixing-group: 1
-    cuboid: true
-    mask-on-disabled: 80
--   title: Air of Atlantis
-    block: lapis_ore
-    radius: 10
-    custom-height: 256
-    meta-name: '&9Air of Atlantis'
-    meta-autoset: true
-    meta-lore:
-    - '&fAllows you to breathe underwater'
-    - '&fIt covers an area of 10 radius'
-    - '&fbut unlimmited height'
-    air: true
-    no-conflict: true
-    mixing-group: 1
-    cuboid: true
-    mask-on-disabled: 80
--   title: Proximity Snitch
-    block: noteblock
-    radius: 5
-    meta-name: '&1Proximity Snitch'
-    meta-autoset: true
-    meta-lore:
-    - '&9Will report to you when someone'
-    - '&9enters your base.'
-    - '&9It covers an area of 5 radius'
-    snitch: true
-    entry-alert: true
-    no-conflict: true
-    mixing-group: 2
-    cuboid: true
-    mask-on-disabled: 80
--   title: Jack-o-Death
-    block: lit_pumpkin
-    radius: 5
-    damage: 4
-    meta-name: '&4Jack-o-Death'
-    meta-autoset: true
-    meta-lore:
-    - '&6Does damage to anyone near it'
-    - '&6Sneak to bypass'
-    - '&6It covers an area of 5 radius'
-    - '&6You can allow people to be immune'
-    no-conflict: true
-    sneaking-bypass: true
-    no-player-place: true
-    mixing-group: 2
-    mask-on-disabled: 80
--   title: The Shocker
-    block: monster_egg
-    radius: 0
-    custom-height: 3
-    meta-name: '&4The Shocker'
-    meta-autoset: true
-    meta-lore:
-    - '&6Drops a lightning bolt to anyone'
-    - '&6who steps on it.'
-    - '&6It can be bypassed by sneaking'
-    - '&6You can allow people to be immune'
-    lightning: true
-    lightning-replace-block: 0
-    sneaking-bypass: true
-    breakable: true
-    no-conflict: true
-    mixing-group: 2
-    mask-on-disabled: 80
--   title: Proximity Mine
-    block: redstone_ore
-    radius: 1
-    custom-height: 5
-    meta-name: '&4Proximity Mine'
-    meta-autoset: true
-    meta-lore:
-    - '&6Blows up when someone gets near it'
-    - '&6It can be bypassed by sneaking'
-    - '&6You can allow people to be immune'
-    mine: 5
-    mine-has-fire: true
-    mine-delay-seconds: 0
-    breakable: true
-    sneaking-bypass: true
-    mixing-group: 2
-    no-conflict: true
-    mask-on-disabled: 80
--   title: Launch Pad
-    block: iron_ore
-    radius: 1
-    custom-height: 3
-    custom-volume: 20
-    meta-name: '&9Launch Pad'
-    meta-autoset: true
-    meta-lore:
-    - '&fLaunches players in the air'
-    - '&fin the direction they are walking'
-    - '&fwhen they step over it.'
-    - '&fWhile looking up = fast'
-    - '&fWhile looking down = slow'
-    - '&fWorks for only players allowed'
-    launch: true
-    no-conflict: true
-    sneaking-bypass: true
-    custom-volume: 20
-    mixing-group: 2
-    cuboid: true
-    mask-on-disabled: 80
--   title: Sky Cannon
-    block: coal_ore
-    radius: 0
-    custom-height: 3
-    custom-volume: 20
-    meta-name: '&9Sky Cannon'
-    meta-autoset: true
-    meta-lore:
-    - '&fLaunches players in the air'
-    - '&fstraight up'
-    - '&fwhen they step over it.'
-    - '&fWhile looking up = fast'
-    - '&fWhile looking down = slow'
-    - '&fWorks for only players allowed'
-    sneaking-bypass: true
-    cannon: true
-    no-conflict: true
-    mixing-group: 2
-    cuboid: true
-    enable-with-redstone: true
-    mask-on-disabled: 80
--   title: Translocator
-    block: 'red_mushroom_block:14'
-    radius: 8
-    custom-volume: 5000
-    meta-name: '&9Translocator'
-    meta-autoset: true
-    meta-lore:
-    - '&fAllows you to move your builds'
-    - '&fIt covers an area of 8 radiuss'
-    - '&fbut can be expanded'
-    enable-with-redstone: true
-    translocation: true
-    dynmap-area: true
-    dynmap-disabled: true
-    translocation-blacklist:
-    - diamond_block
-    - gold_block
-    cuboid: true
-    mask-on-disabled: 17
--   title: GodStone
-    block: brown_mushroom_block
-    radius: 5
-    meta-name: '&eGodStone'
-    meta-autoset: true
-    meta-lore:
-    - '&fHeal, feed, repair, neutralize portions'
-    - '&6It covers an area of 5 radius'
-    - '&fWorks for only players allowed'
-    heal: 4
-    feed: 2
-    repair: 25
-    neutralize-potions: [HARM, CONFUSION, BLINDNESS, HUNGER, WEAKNESS, POISON, SLOW]
-    no-conflict: true
-    mixing-group: 2
-    cuboid: true
-    mask-on-disabled: 80
--   title: Miner's Haste
-    block: ice
-    radius: 10
-    meta-name: "&eMiner's Haste"
-    meta-autoset: true
-    meta-lore:
-    - '&fDig fast, Run fast, Jump, high'
-    - '&fIt covers an area of 10 radius'
-    - '&fWorks for only players allowed'
-    custom-height: 128
-    cuboid: true
-    dynmap-area: true
-    ^potions:
-    - FAST_DIGGING
-    - SPEED
-    - JUMP
-    potion-intensity:
-    - 5
-    - 3
-    - 5
-    enable-with-redstone: true
-    no-fall-damage: true
-    mask-on-disabled: 17
--   title: Mild Forester
-    block: 'leaves:4'
-    radius: 20
-    custom-height: 15
-    meta-name: '&2Mild Forester'
-    meta-autoset: true
-    meta-lore:
-    - '&aGrow a forest around an area'
-    - '&aRegular small and large trees'
-    - '&aAnd a little bit of birch'
-    - '&aIt covers an area of 20 radius'
-    forester: true
-    ground-block: dirt
-    fertile-blocks:
-    - dirt
-    - grass
-    - gravel
-    - netherrack
-    - snow
-    - soul_sand
-    tree-types:
-    - 0
-    - 0
-    - 0
-    - 1
-    - 1
-    - 4
-    shrub-types:
-    - 1
-    - 1
-    - 1
-    - 2
-    - 2
-    - 3
-    - 4
-    shrub-density: 64
-    tree-count: 32
-    grow-time: 10
-    no-owner: true
-    no-conflict: false
--   title: Redwood Forester
-    block: 'leaves:5'
-    radius: 20
-    custom-height: 15
-    meta-name: '&2Redwood Forester'
-    meta-autoset: true
-    meta-lore:
-    - '&aGrow a forest around an area'
-    - '&aRedwood and tall redwood only'
-    - '&aIt covers an area of 20 radius'
-    forester: true
-    ground-block: dirt
-    fertile-blocks:
-    - dirt
-    - grass
-    - gravel
-    - netherrack
-    - snow
-    - soul_sand
-    tree-types:
-    - 2
-    - 2
-    - 2
-    - 3
-    shrub-types:
-    - 1
-    shrub-density: 64
-    tree-count: 32
-    grow-time: 10
-    no-owner: true
-    no-conflict: false
--   title: Jungle Forester
-    block: 'leaves:6'
-    radius: 20
-    custom-height: 15
-    meta-name: '&2Jungle Forester'
-    meta-autoset: true
-    meta-lore:
-    - '&aGrow a jungle around an area'
-    - '&aRegular, jungle trees and bushes'
-    - '&aAnd a little bit of birch'
-    forester: true
-    ground-block: dirt
-    fertile-blocks:
-    - dirt
-    - grass
-    - gravel
-    - netherrack
-    - snow
-    - soul_sand
-    tree-types:
-    - 0
-    - 0
-    - 7
-    - 7
-    - 7
-    - 8
-    - 8
-    - 8
-    - 8
-    shrub-types:
-    - 2
-    shrub-density: 30
-    tree-count: 64
-    grow-time: 10
-    no-owner: true
-    no-conflict: false
--   title: Birch Forester
-    block: 'leaves:7'
-    radius: 20
-    custom-height: 15
-    meta-name: '&2Birch Forester'
-    meta-autoset: true
-    meta-lore:
-    - '&aGrow a birch forest around an area'
-    - '&aMostly birch with a bit of tall trees'
-    - '&aand jungle trees'
-    forester: true
-    ground-block: dirt
-    fertile-blocks:
-    - dirt
-    - grass
-    - gravel
-    - netherrack
-    - snow
-    - soul_sand
-    tree-types:
-    - 4
-    - 4
-    - 4
-    - 4
-    - 1
-    - 7
-    shrub-types:
-    - 2
-    shrub-density: 85
-    tree-count: 64
-    grow-time: 10
-    no-owner: true
-    no-conflict: false
+- title: City Protection
+  block: diamond_block
+  radius: 20
+  custom-height: 15
+  meta-name: '&bCity Protection'
+  meta-autoset: true
+  meta-lore:
+  - '&eThis will protect a city'
+  - '&eIt covers an area of 20 radius'
+  - '&eWith a max height of 15'
+  prevent-fire: true
+  prevent-place: true
+  prevent-destroy: true
+  prevent-vehicle-destroy: true
+  prevent-enderman-destroy: true
+  prevent-explosions: true
+  prevent-unprotectable: true
+  prevent-item-frame-take: true
+  protect-armor-stands: true
+  prevent-flow: true
+  protect-crops: true
+  protect-inventories: true
+  prevent-place-blacklist: [153]
+  ?welcome-message: true
+  ?farewell-message: true
+  ?prevent-portal-enter: true
+  ?prevent-portal-destination: true
+  ?prevent-portal-create: true
+  ?prevent-vehicle-enter: true
+  ?prevent-vehicle-exit: true
+  ?prevent-teleport: true
+  command-blacklisting: true
+  can-change-owner: true
+  enable-on-src: true
+  mixing-group: 1
+  rentable: true
+  buyable: true
+  cuboid: true
+  mask-on-disabled: 80
+- title: City Plot
+  block: quartz_ore
+  radius: 20
+  custom-height: 15
+  meta-name: '&bCity Plot'
+  meta-autoset: true
+  meta-lore:
+  - '&eCity Protection plots'
+  - '&eIt covers an area of 20 radius'
+  - '&eWith a max height of 15'
+  allowed-only-inside: ["City Protection"]
+  plot: true
+  no-conflict: true
+  prevent-use:
+  - wooden_door
+  - iron_door
+  - spruce_door
+  - birch_door
+  - jungle_door
+  - acacia_door
+  - dark_oak_door
+  prevent-fire: true
+  prevent-place: true
+  prevent-destroy: true
+  prevent-vehicle-destroy: true
+  prevent-enderman-destroy: true
+  prevent-explosions: true
+  prevent-unprotectable: true
+  protect-inventories: true
+  prevent-flow: true
+  ?prevent-teleport: true
+  protect-crops: true
+  ?welcome-message: true
+  ?farewell-message: true
+  can-change-owner: true
+  enable-on-src: true
+  mixing-group: 1
+  rentable: true
+  buyable: true
+  cuboid: true
+  mask-on-disabled: 80
+- title: Entry Bouncer
+  block: lapis_block
+  radius: 5
+  meta-name: '&bEntry Bouncer'
+  meta-autoset: true
+  meta-lore:
+  - '&ePrevents entry into an area'
+  - '&eIt covers an area of 5 radius'
+  prevent-entry: true
+  prevent-unprotectable: true
+  prevent-flow: true
+  enable-on-src: true
+  can-change-owner: true
+  cuboid: true
+  mask-on-disabled: 80
+- title: Grief Revert
+  block: gold_block
+  radius: 20
+  custom-height: 15
+  meta-name: '&bGrief Revert'
+  meta-autoset: true
+  meta-lore:
+  - '&eReverts grief in an area'
+  - '&eIt covers an area of 20 radius'
+  - '&eWith a max height of 15'
+  allow-grief: [37, 38, 39, 40]
+  grief-revert: true
+  grief-revert-safety: true
+  ?welcome-message: true
+  ?farewell-message: true
+  enable-on-src: true
+  can-change-owner: true
+  mixing-group: 1
+  cuboid: true
+  mask-on-disabled: 80
+- title: Peace Keeper
+  block: sponge
+  radius: 10
+  meta-name: '&bPeace Keeper'
+  meta-autoset: true
+  meta-lore:
+  - '&eMakes peaceful areas'
+  - '&eIt covers an area of 10 radius'
+  prevent-pvp: true
+  no-player-place: true
+  prevent-mob-damage: true
+  protect-animals: true
+  protect-mobs: true
+  protect-villagers: true
+  cuboid: true
+  mask-on-disabled: 80
+- title: Creature Repeller
+  block: web
+  radius: 20
+  meta-name: '&bCreature Repeller'
+  meta-autoset: true
+  meta-lore:
+  - '&ePrevents creature spawning'
+  - '&eAnd removes all mobs in an area'
+  - '&eIt covers an area of 20 radius'
+  single-use: true
+  prevent-mob-damage: true
+  prevent-mob-spawn: true
+  prevent-animal-spawn: true
+  remove-mob: true
+  no-conflict: true
+  mixing-group: 1
+  cuboid: true
+  mask-on-disabled: 80
+- title: Air of Atlantis
+  block: lapis_ore
+  radius: 10
+  custom-height: 256
+  meta-name: '&9Air of Atlantis'
+  meta-autoset: true
+  meta-lore:
+  - '&fAllows you to breathe underwater'
+  - '&fIt covers an area of 10 radius'
+  - '&fbut unlimmited height'
+  air: true
+  no-conflict: true
+  mixing-group: 1
+  cuboid: true
+  mask-on-disabled: 80
+- title: Proximity Snitch
+  block: noteblock
+  radius: 5
+  meta-name: '&1Proximity Snitch'
+  meta-autoset: true
+  meta-lore:
+  - '&9Will report to you when someone'
+  - '&9enters your base.'
+  - '&9It covers an area of 5 radius'
+  snitch: true
+  entry-alert: true
+  no-conflict: true
+  mixing-group: 2
+  cuboid: true
+  mask-on-disabled: 80
+- title: Jack-o-Death
+  block: lit_pumpkin
+  radius: 5
+  damage: 4
+  meta-name: '&4Jack-o-Death'
+  meta-autoset: true
+  meta-lore:
+  - '&6Does damage to anyone near it'
+  - '&6Sneak to bypass'
+  - '&6It covers an area of 5 radius'
+  - '&6You can allow people to be immune'
+  no-conflict: true
+  sneaking-bypass: true
+  no-player-place: true
+  mixing-group: 2
+  mask-on-disabled: 80
+- title: The Shocker
+  block: monster_egg
+  radius: 0
+  custom-height: 3
+  meta-name: '&4The Shocker'
+  meta-autoset: true
+  meta-lore:
+  - '&6Drops a lightning bolt to anyone'
+  - '&6who steps on it.'
+  - '&6It can be bypassed by sneaking'
+  - '&6You can allow people to be immune'
+  lightning: true
+  lightning-replace-block: 0
+  sneaking-bypass: true
+  breakable: true
+  no-conflict: true
+  mixing-group: 2
+  mask-on-disabled: 80
+- title: Proximity Mine
+  block: redstone_ore
+  radius: 1
+  custom-height: 5
+  meta-name: '&4Proximity Mine'
+  meta-autoset: true
+  meta-lore:
+  - '&6Blows up when someone gets near it'
+  - '&6It can be bypassed by sneaking'
+  - '&6You can allow people to be immune'
+  mine: 5
+  mine-has-fire: true
+  mine-delay-seconds: 0
+  breakable: true
+  sneaking-bypass: true
+  mixing-group: 2
+  no-conflict: true
+  mask-on-disabled: 80
+- title: Launch Pad
+  block: iron_ore
+  radius: 1
+  custom-height: 3
+  custom-volume: 20
+  meta-name: '&9Launch Pad'
+  meta-autoset: true
+  meta-lore:
+  - '&fLaunches players in the air'
+  - '&fin the direction they are walking'
+  - '&fwhen they step over it.'
+  - '&fWhile looking up = fast'
+  - '&fWhile looking down = slow'
+  - '&fWorks for only players allowed'
+  launch: true
+  no-conflict: true
+  sneaking-bypass: true
+  custom-volume: 20
+  mixing-group: 2
+  cuboid: true
+  mask-on-disabled: 80
+- title: Sky Cannon
+  block: coal_ore
+  radius: 0
+  custom-height: 3
+  custom-volume: 20
+  meta-name: '&9Sky Cannon'
+  meta-autoset: true
+  meta-lore:
+  - '&fLaunches players in the air'
+  - '&fstraight up'
+  - '&fwhen they step over it.'
+  - '&fWhile looking up = fast'
+  - '&fWhile looking down = slow'
+  - '&fWorks for only players allowed'
+  sneaking-bypass: true
+  cannon: true
+  no-conflict: true
+  mixing-group: 2
+  cuboid: true
+  enable-with-redstone: true
+  mask-on-disabled: 80
+- title: Translocator
+  block: 'red_mushroom_block:14'
+  radius: 8
+  custom-volume: 5000
+  meta-name: '&9Translocator'
+  meta-autoset: true
+  meta-lore:
+  - '&fAllows you to move your builds'
+  - '&fIt covers an area of 8 radiuss'
+  - '&fbut can be expanded'
+  enable-with-redstone: true
+  translocation: true
+  dynmap-area: true
+  dynmap-disabled: true
+  translocation-blacklist:
+  - diamond_block
+  - gold_block
+  cuboid: true
+  mask-on-disabled: 17
+- title: GodStone
+  block: brown_mushroom_block
+  radius: 5
+  meta-name: '&eGodStone'
+  meta-autoset: true
+  meta-lore:
+  - '&fHeal, feed, repair, neutralize portions'
+  - '&6It covers an area of 5 radius'
+  - '&fWorks for only players allowed'
+  heal: 4
+  feed: 2
+  repair: 25
+  neutralize-potions: [HARM, CONFUSION, BLINDNESS, HUNGER, WEAKNESS, POISON, SLOW]
+  no-conflict: true
+  mixing-group: 2
+  cuboid: true
+  mask-on-disabled: 80
+- title: Miner's Haste
+  block: ice
+  radius: 10
+  meta-name: "&eMiner's Haste"
+  meta-autoset: true
+  meta-lore:
+  - '&fDig fast, Run fast, Jump, high'
+  - '&fIt covers an area of 10 radius'
+  - '&fWorks for only players allowed'
+  custom-height: 128
+  cuboid: true
+  dynmap-area: true
+  ^potions:
+  - FAST_DIGGING
+  - SPEED
+  - JUMP
+  potion-intensity:
+  - 5
+  - 3
+  - 5
+  enable-with-redstone: true
+  no-fall-damage: true
+  mask-on-disabled: 17
+- title: Mild Forester
+  block: 'leaves:4'
+  radius: 20
+  custom-height: 15
+  meta-name: '&2Mild Forester'
+  meta-autoset: true
+  meta-lore:
+  - '&aGrow a forest around an area'
+  - '&aRegular small and large trees'
+  - '&aAnd a little bit of birch'
+  - '&aIt covers an area of 20 radius'
+  forester: true
+  ground-block: dirt
+  fertile-blocks:
+  - dirt
+  - grass
+  - gravel
+  - netherrack
+  - snow
+  - soul_sand
+  tree-types:
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 4
+  shrub-types:
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 3
+  - 4
+  shrub-density: 64
+  tree-count: 32
+  grow-time: 10
+  no-owner: true
+  no-conflict: false
+- title: Redwood Forester
+  block: 'leaves:5'
+  radius: 20
+  custom-height: 15
+  meta-name: '&2Redwood Forester'
+  meta-autoset: true
+  meta-lore:
+  - '&aGrow a forest around an area'
+  - '&aRedwood and tall redwood only'
+  - '&aIt covers an area of 20 radius'
+  forester: true
+  ground-block: dirt
+  fertile-blocks:
+  - dirt
+  - grass
+  - gravel
+  - netherrack
+  - snow
+  - soul_sand
+  tree-types:
+  - 2
+  - 2
+  - 2
+  - 3
+  shrub-types:
+  - 1
+  shrub-density: 64
+  tree-count: 32
+  grow-time: 10
+  no-owner: true
+  no-conflict: false
+- title: Jungle Forester
+  block: 'leaves:6'
+  radius: 20
+  custom-height: 15
+  meta-name: '&2Jungle Forester'
+  meta-autoset: true
+  meta-lore:
+  - '&aGrow a jungle around an area'
+  - '&aRegular, jungle trees and bushes'
+  - '&aAnd a little bit of birch'
+  forester: true
+  ground-block: dirt
+  fertile-blocks:
+  - dirt
+  - grass
+  - gravel
+  - netherrack
+  - snow
+  - soul_sand
+  tree-types:
+  - 0
+  - 0
+  - 7
+  - 7
+  - 7
+  - 8
+  - 8
+  - 8
+  - 8
+  shrub-types:
+  - 2
+  shrub-density: 30
+  tree-count: 64
+  grow-time: 10
+  no-owner: true
+  no-conflict: false
+- title: Birch Forester
+  block: 'leaves:7'
+  radius: 20
+  custom-height: 15
+  meta-name: '&2Birch Forester'
+  meta-autoset: true
+  meta-lore:
+  - '&aGrow a birch forest around an area'
+  - '&aMostly birch with a bit of tall trees'
+  - '&aand jungle trees'
+  forester: true
+  ground-block: dirt
+  fertile-blocks:
+  - dirt
+  - grass
+  - gravel
+  - netherrack
+  - snow
+  - soul_sand
+  tree-types:
+  - 4
+  - 4
+  - 4
+  - 4
+  - 1
+  - 7
+  shrub-types:
+  - 2
+  shrub-density: 85
+  tree-count: 64
+  grow-time: 10
+  no-owner: true
+  no-conflict: false
 bypass-blocks: []
 unprotectable-blocks: []
 hiding-mask-blocks: [1,2,3,4,5,7,12,13,17,18,20,24,35,43,45,47,48,49,53,60,67,80,81,82,87,88,89,99,100,108,109,110,123,124,125,128,134,135,136]
 repairable-items: [256,257,258,259,261,267,268,269,270,271,272,273,274,275,276,277,278,279,283,284,285,286,290,291,292,293,294,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,359]
 tool-items: [256,257,258,269,270,271,273,274,275,277,278,279,284,285,286,290,291,292,293,294]
 warn:
-    slow-damage: true
-    pvp: true
-    instant-heal: true
-    launch: true
-    fast-damage: true
-    use: true
-    air: true
-    slow-feeding: true
-    fire: true
-    cannon: true
-    destroy-area: true
-    destroy: true
-    slow-heal: true
-    entry: true
-    unprotectable: true
-    mine: true
-    slow-repair: true
-    place: true
+  slow-damage: true
+  pvp: true
+  instant-heal: true
+  launch: true
+  fast-damage: true
+  use: true
+  air: true
+  slow-feeding: true
+  fire: true
+  cannon: true
+  destroy-area: true
+  destroy: true
+  slow-heal: true
+  entry: true
+  unprotectable: true
+  mine: true
+  slow-repair: true
+  place: true
 settings:
-    disable-messages: false
-    prevent-removal-if-player-in-field: true
-    max-size-translocation: 100000
-    max-size-translocation-for-redstone: 1000
-    prevent-place-everywhere: [creative_world]
-    prevent-destroy-everywhere: [creative_world]
-    sneak-to-place-normal-block: true
-    sneak-to-place-field: false
-    show-debug-info: false
-    show-default-welcome-farewell-messages: true
-    disable-ground-info: false
-    disable-simpleclans-hook: false
-    global-field-limit: 1000000
-    no-refund-for-fields: false
-    off-by-default: false
-    lines-per-page: 100
-    disable-bypass-alerts-for-admins: false
-    disable-alerts-for-admins: true
-    public-block-details: false
-    blacklisted-worlds: [creative_world]
-    drop-on-delete: true
-    auto-allow-clan-on-fields: true
-    auto-allow-team-on-fields: false
-    check-once-per-block-on-move: false
-    use-blockids-in-snitches: false
-    fence-max-depth: 50
-    use-commands-to-rent: false
-    max-target-distance: 100
-    version: 14
-    default-item-currency: '266'
+  disable-messages: false
+  prevent-removal-if-player-in-field: true
+  max-size-translocation: 100000
+  max-size-translocation-for-redstone: 1000
+  prevent-place-everywhere: [creative_world]
+  prevent-destroy-everywhere: [creative_world]
+  sneak-to-place-normal-block: true
+  sneak-to-place-field: false
+  show-debug-info: false
+  show-default-welcome-farewell-messages: true
+  disable-ground-info: false
+  disable-simpleclans-hook: false
+  global-field-limit: 1000000
+  no-refund-for-fields: false
+  off-by-default: false
+  lines-per-page: 100
+  disable-bypass-alerts-for-admins: false
+  disable-alerts-for-admins: true
+  public-block-details: false
+  blacklisted-worlds: [creative_world]
+  drop-on-delete: true
+  auto-allow-clan-on-fields: true
+  auto-allow-team-on-fields: false
+  check-once-per-block-on-move: false
+  use-blockids-in-snitches: false
+  fence-max-depth: 50
+  use-commands-to-rent: false
+  max-target-distance: 100
+  version: 14
+  default-item-currency: '266'
 log:
-    bypass-pvp: true
-    pvp: true
-    bypass-destroy: true
-    use: true
-    fire: true
-    destroy: true
-    destroy-area: false
-    place-area: false
-    entry: true
-    unprotectable: true
-    bypass-place: true
-    place: true
-    translocation: true
-    rollback: true
-    bypass-delete: true
-    conflict-place: true
-    rents-and-purchases: true
+  bypass-pvp: true
+  pvp: true
+  bypass-destroy: true
+  use: true
+  fire: true
+  destroy: true
+  destroy-area: false
+  place-area: false
+  entry: true
+  unprotectable: true
+  bypass-place: true
+  place: true
+  translocation: true
+  rollback: true
+  bypass-delete: true
+  conflict-place: true
+  rents-and-purchases: true
 cuboid:
-    visualization-blocktype: glass
-    defining-blocktype: obsidian
+  visualization-blocktype: glass
+  defining-blocktype: obsidian
 visualization:
-    new-dotted-style: true
-    block-type: glass
-    seconds: 30
-    mark-block-type: obsidian
-    end-on-player-move: false
-    frame-block-type: glass
-    blocks-to-send: 100
-    ticks-between-sends: 10
-    default-density: 8
-    max-fields-to-visualize-at-once: 5
-    visualize-on-expand: true
+  new-dotted-style: true
+  block-type: glass
+  seconds: 30
+  mark-block-type: obsidian
+  end-on-player-move: false
+  frame-block-type: glass
+  blocks-to-send: 100
+  ticks-between-sends: 10
+  default-density: 8
+  max-fields-to-visualize-at-once: 5
+  visualize-on-expand: true
 notify:
-    destroy: true
-    bypass-pvp: true
-    bypass-destroy: true
-    bypass-unprotectable: true
-    bypass-place: true
-    place: true
-    rollback: true
-    translocation: true
-    fly-zones: true
+  destroy: true
+  bypass-pvp: true
+  bypass-destroy: true
+  bypass-unprotectable: true
+  bypass-place: true
+  place: true
+  rollback: true
+  translocation: true
+  fly-zones: true
 grief-revert:
-    min-interval-secs: 30
-    black-list:
-    - 92
+  min-interval-secs: 30
+  black-list:
+  - 92
 saving:
-    frequency-seconds: 1
-    max-records-per-snitch: 50
+  frequency-seconds: 1
+  max-records-per-snitch: 50
 mysql:
-    username: ''
-    host: localhost
-    enable: false
-    password: ''
-    database: minecraft
-    port: 3306
+  username: ''
+  host: localhost
+  enable: false
+  password: ''
+  database: minecraft
+  port: 3306

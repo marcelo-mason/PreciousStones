@@ -2,11 +2,11 @@ package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.TeleportEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.RelativeBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;

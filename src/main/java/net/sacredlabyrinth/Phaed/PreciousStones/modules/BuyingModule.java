@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.modules;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PurchaseEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;

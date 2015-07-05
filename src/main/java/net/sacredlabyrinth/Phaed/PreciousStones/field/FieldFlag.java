@@ -1,7 +1,7 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones.field;
 
 import com.google.common.collect.Maps;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import org.bukkit.entity.Player;
 
 import java.util.Map;

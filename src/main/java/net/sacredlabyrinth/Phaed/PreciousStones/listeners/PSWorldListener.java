@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -67,8 +67,8 @@ public class PSWorldListener implements Listener
             return;
         }
 
-        plugin.getStorageManager().loadWorldFields(world.getName());
-        plugin.getStorageManager().loadWorldUnbreakables(world.getName());
+        plugin.getStorageManager().loadWorldFields(world);
+        plugin.getStorageManager().loadWorldUnbreakables(world);
     }
 
     /**

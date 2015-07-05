@@ -1,7 +1,7 @@
-package net.sacredlabyrinth.Phaed.PreciousStones;
+package net.sacredlabyrinth.Phaed.PreciousStones.field;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
@@ -20,90 +20,90 @@ import java.util.logging.Level;
  */
 public class FieldSettings
 {
-    private String metaName = "";
-    private boolean metaAutoSet = false;
-    private List<String> metaLore = new ArrayList<String>();
-    private int foresterUses = 1;
-    private BlockTypeEntry groundBlock;
-    private int treeCount = 64;
-    private int creatureCount = 6;
-    private int growTime = 20;
-    private int shrubDensity = 64;
-    private boolean validField = true;
-    private BlockTypeEntry type;
-    private int radius = 0;
-    private int fenceItem = 0;
-    private int fenceItemPrice = 0;
-    private int heal = 0;
-    private int damage = 0;
-    private int maskOnDisabled = 49;
-    private int maskOnEnabled = 49;
-    private int feed = 0;
-    private int repair = 0;
-    private int launchHeight = 0;
-    private int cannonHeight = 0;
-    private int customHeight = 0;
-    private int customVolume = 0;
-    private int mineDelaySeconds = 0;
-    private int lightningDelaySeconds = 0;
-    private int lightningReplaceBlock = 0;
-    private int mixingGroup = 0;
-    private int autoDisableTime = 0;
-    private int mustBeAbove = 0;
-    private int mustBeBelow = 0;
-    private boolean mineHasFire = false;
-    private int mine = 6;
-    private String groupOnEntry = "";
-    private String requiredPermissionAllow = "";
-    private String requiredPermissionUse = "";
-    private String requiredPermission = "";
-    private String deleteIfNoPermission = "";
-    private GameMode forceEntryGameMode = null;
-    private GameMode forceLeavingGameMode = null;
-    private String title;
-    private int price = 0;
-    private int refund = -1;
-    private int teleportCost = 0;
-    private int teleportBackAfterSeconds = 0;
-    private int teleportMaxDistance = 0;
-    private int griefRevertInterval = 0;
-    private int payToEnable = 0;
-    private List<String> commandOnEnter = new ArrayList<String>();
-    private List<String> commandOnExit = new ArrayList<String>();
-    private List<String> playerCommandOnEnter = new ArrayList<String>();
-    private List<String> playerCommandOnExit = new ArrayList<String>();
-    private List<BlockTypeEntry> teleportIfHoldingItems = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> teleportIfNotHoldingItems = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> teleportIfHasItems = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> teleportIfNotHasItems = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> unusableItems = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> teleportIfWalkingOn = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> teleportIfNotWalkingOn = new ArrayList<BlockTypeEntry>();
-    private List<Integer> treeTypes = new ArrayList<Integer>();
-    private List<Integer> shrubTypes = new ArrayList<Integer>();
-    private List<String> creatureTypes = new ArrayList<String>();
-    private List<BlockTypeEntry> fertileBlocks = new ArrayList<BlockTypeEntry>();
-    private List<Integer> limits = new ArrayList<Integer>();
-    private List<BlockTypeEntry> surfaces = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> translocationBlacklist = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> preventPlaceBlacklist = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> preventDestroyBlacklist = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> preventUse = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
-    private List<String> allowedWorlds = new ArrayList<String>();
-    private List<String> allowedOnlyInside = new ArrayList<String>();
-    private List<String> allowedOnlyOutside = new ArrayList<String>();
-    private List<String> commandBlackList = new ArrayList<String>();
-    private List<FieldFlag> defaultFlags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> reversedFlags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> alledflags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
-    private List<BlockTypeEntry> allowGrief = new ArrayList<BlockTypeEntry>();
-    private HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
-    private List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();
-    private List<String> allowedPlayers = new ArrayList<String>();
-    private List<String> deniedPlayers = new ArrayList<String>();
-    private LinkedHashMap<String, Object> map;
+    protected String metaName = "";
+    protected boolean metaAutoSet = false;
+    protected List<String> metaLore = new ArrayList<String>();
+    protected int foresterUses = 1;
+    protected BlockTypeEntry groundBlock;
+    protected int treeCount = 64;
+    protected int creatureCount = 6;
+    protected int growTime = 20;
+    protected int shrubDensity = 64;
+    protected boolean validField = true;
+    protected BlockTypeEntry type;
+    protected int radius = 0;
+    protected int fenceItem = 0;
+    protected int fenceItemPrice = 0;
+    protected int heal = 0;
+    protected int damage = 0;
+    protected int maskOnDisabled = 49;
+    protected int maskOnEnabled = 49;
+    protected int feed = 0;
+    protected int repair = 0;
+    protected int launchHeight = 0;
+    protected int cannonHeight = 0;
+    protected int customHeight = 0;
+    protected int customVolume = 0;
+    protected int mineDelaySeconds = 0;
+    protected int lightningDelaySeconds = 0;
+    protected int lightningReplaceBlock = 0;
+    protected int mixingGroup = 0;
+    protected int autoDisableTime = 0;
+    protected int mustBeAbove = 0;
+    protected int mustBeBelow = 0;
+    protected boolean mineHasFire = false;
+    protected int mine = 6;
+    protected String groupOnEntry = "";
+    protected String requiredPermissionAllow = "";
+    protected String requiredPermissionUse = "";
+    protected String requiredPermission = "";
+    protected String deleteIfNoPermission = "";
+    protected GameMode forceEntryGameMode = null;
+    protected GameMode forceLeavingGameMode = null;
+    protected String title;
+    protected int price = 0;
+    protected int refund = -1;
+    protected int teleportCost = 0;
+    protected int teleportBackAfterSeconds = 0;
+    protected int teleportMaxDistance = 0;
+    protected int griefRevertInterval = 0;
+    protected int payToEnable = 0;
+    protected List<String> commandOnEnter = new ArrayList<String>();
+    protected List<String> commandOnExit = new ArrayList<String>();
+    protected List<String> playerCommandOnEnter = new ArrayList<String>();
+    protected List<String> playerCommandOnExit = new ArrayList<String>();
+    protected List<BlockTypeEntry> teleportIfHoldingItems = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> teleportIfNotHoldingItems = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> teleportIfHasItems = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> teleportIfNotHasItems = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> unusableItems = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> teleportIfWalkingOn = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> teleportIfNotWalkingOn = new ArrayList<BlockTypeEntry>();
+    protected List<Integer> treeTypes = new ArrayList<Integer>();
+    protected List<Integer> shrubTypes = new ArrayList<Integer>();
+    protected List<String> creatureTypes = new ArrayList<String>();
+    protected List<BlockTypeEntry> fertileBlocks = new ArrayList<BlockTypeEntry>();
+    protected List<Integer> limits = new ArrayList<Integer>();
+    protected List<BlockTypeEntry> surfaces = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> translocationBlacklist = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> preventPlaceBlacklist = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> preventDestroyBlacklist = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> preventUse = new ArrayList<BlockTypeEntry>();
+    protected List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
+    protected List<String> allowedWorlds = new ArrayList<String>();
+    protected List<String> allowedOnlyInside = new ArrayList<String>();
+    protected List<String> allowedOnlyOutside = new ArrayList<String>();
+    protected List<String> commandBlackList = new ArrayList<String>();
+    protected List<FieldFlag> defaultFlags = new ArrayList<FieldFlag>();
+    protected List<FieldFlag> reversedFlags = new ArrayList<FieldFlag>();
+    protected List<FieldFlag> alledflags = new ArrayList<FieldFlag>();
+    protected List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
+    protected List<BlockTypeEntry> allowGrief = new ArrayList<BlockTypeEntry>();
+    protected HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
+    protected List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();
+    protected List<String> allowedPlayers = new ArrayList<String>();
+    protected List<String> deniedPlayers = new ArrayList<String>();
+    protected LinkedHashMap<String, Object> map;
 
     /**
      * @param map
@@ -119,21 +119,22 @@ public class FieldSettings
 
         defaultFlags.add(FieldFlag.ALL);
 
+        if (!validation())
+        {
+            return;
+        }
+
         parseSettings();
     }
 
-    private void parseSettings()
+    protected boolean validation()
     {
-        //************************** required
-
-        PreciousStones.debug("**********************");
-
         title = loadString("title");
 
         if (title == null)
         {
             validField = false;
-            return;
+            return false;
         }
 
         type = loadTypeEntry("block");
@@ -141,8 +142,15 @@ public class FieldSettings
         if (type == null)
         {
             validField = false;
-            return;
+            return false;
         }
+
+        return true;
+    }
+
+    protected void parseSettings()
+    {
+        PreciousStones.debug("**********************");
 
         //************************** custom height
 
@@ -403,7 +411,7 @@ public class FieldSettings
         fenceItemPrice = loadInt("price-per-fence");
     }
 
-    private boolean loadBoolean(String flagStr)
+    protected boolean loadBoolean(String flagStr)
     {
         if (containsKey(flagStr))
         {
@@ -420,12 +428,12 @@ public class FieldSettings
         return false;
     }
 
-    private int loadInt(String flagStr)
+    protected int loadInt(String flagStr)
     {
         return loadInt(flagStr, 0);
     }
 
-    private int loadInt(String flagStr, int defaultValue)
+    protected int loadInt(String flagStr, int defaultValue)
     {
         if (containsKey(flagStr))
         {
@@ -443,7 +451,7 @@ public class FieldSettings
         return defaultValue;
     }
 
-    private String loadString(String flagStr)
+    protected String loadString(String flagStr)
     {
         if (containsKey(flagStr))
         {
@@ -472,7 +480,7 @@ public class FieldSettings
         return "";
     }
 
-    private int loadPeriodSeconds(String flagStr)
+    protected int loadPeriodSeconds(String flagStr)
     {
         if (containsKey(flagStr))
         {
@@ -502,7 +510,7 @@ public class FieldSettings
         return 0;
     }
 
-    private BlockTypeEntry loadTypeEntry(String flagStr)
+    protected BlockTypeEntry loadTypeEntry(String flagStr)
     {
         if (containsKey(flagStr))
         {
@@ -520,7 +528,7 @@ public class FieldSettings
         return null;
     }
 
-    private List<String> loadStringList(String flagStr)
+    protected List<String> loadStringList(String flagStr)
     {
         if (containsKey(flagStr))
         {
@@ -562,7 +570,7 @@ public class FieldSettings
         return new ArrayList<String>();
     }
 
-    private List<BlockTypeEntry> loadTypeEntries(String flagStr)
+    protected List<BlockTypeEntry> loadTypeEntries(String flagStr)
     {
         if (containsKey(flagStr))
         {
@@ -590,7 +598,7 @@ public class FieldSettings
         return new ArrayList<BlockTypeEntry>();
     }
 
-    private List<Integer> loadIntList(String flagStr)
+    protected List<Integer> loadIntList(String flagStr)
     {
         if (containsKey(flagStr))
         {
@@ -618,7 +626,7 @@ public class FieldSettings
         return new ArrayList<Integer>();
     }
 
-    private boolean containsKey(String flagStr)
+    protected boolean containsKey(String flagStr)
     {
         if (map.containsKey(flagStr))
         {
@@ -643,7 +651,7 @@ public class FieldSettings
         return false;
     }
 
-    private String getKey(String flagStr)
+    protected String getKey(String flagStr)
     {
         if (map.containsKey(flagStr))
         {
@@ -668,7 +676,7 @@ public class FieldSettings
         return null;
     }
 
-    private Object getValue(String flagStr)
+    protected Object getValue(String flagStr)
     {
         if (map.get(flagStr) != null)
         {
@@ -693,7 +701,7 @@ public class FieldSettings
         return null;
     }
 
-    private void loadFlags(String flagStr)
+    protected void loadFlags(String flagStr)
     {
         if (flagStr == null || flagStr.isEmpty())
         {

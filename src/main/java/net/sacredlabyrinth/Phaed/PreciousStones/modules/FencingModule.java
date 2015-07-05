@@ -1,8 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.modules;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

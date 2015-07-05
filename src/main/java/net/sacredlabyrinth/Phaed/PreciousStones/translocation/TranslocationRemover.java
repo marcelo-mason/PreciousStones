@@ -2,7 +2,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.translocation;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
