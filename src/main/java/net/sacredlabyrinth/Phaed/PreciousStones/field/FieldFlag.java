@@ -156,7 +156,8 @@ public enum FieldFlag
     DELETE_IF_NO_PERMISSION,
     COMMAND_BLACKLISTING,
     COMMAND_BLACKLIST,
-    ANTI_PLOT
+    ANTI_PLOT,
+    GLOBAL
     ;
 
     /**
