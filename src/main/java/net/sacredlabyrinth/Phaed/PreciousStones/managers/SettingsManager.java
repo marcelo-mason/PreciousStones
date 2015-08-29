@@ -61,6 +61,8 @@ public final class SettingsManager
     private int visualizeMaxFields;
     private boolean visualizeOnExpand;
     private boolean visualizeEndOnMove;
+    private int purgeAfterDays;
+    private boolean purgeBannedPlayers;
     private boolean debug;
     private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
     private List<BlockTypeEntry> unbreakableBlocks = new ArrayList<BlockTypeEntry>();
@@ -297,6 +299,10 @@ public final class SettingsManager
         cuboidDefiningType = loadTypeEntry("cuboid.defining-blocktype");
         cuboidVisualizationType = loadTypeEntry("cuboid.visualization-blocktype");
 
+        // ********************************** Cleanup
+
+        purgeAfterDays = loadInt("cleanup.player-inactivity-purge-days");
+        purgeBannedPlayers = loadBoolean("cleanup.purge-banned-players");
 
         // ********************************** Saving
 
@@ -1670,4 +1676,18 @@ public final class SettingsManager
     {
         return autoAddTeam;
     }
+
+    /**
+     * @return the purgeAfterDays
+     */
+    public int getPurgeAfterDays()
+    {
+        return purgeAfterDays;
+    }
+
+    public boolean isPurgeBannedPlayers()
+    {
+        return purgeBannedPlayers;
+    }
+
 }

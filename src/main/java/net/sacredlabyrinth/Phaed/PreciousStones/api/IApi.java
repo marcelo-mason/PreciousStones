@@ -29,7 +29,7 @@ public interface IApi
     boolean canBreak(Player player, Location location);
 
     /**
-     * Whether the block is a field block or an unprotectable block. these blocks are stored on the database,
+     * Whether the block is a field block or an unbreakable block. these blocks are stored on the database,
      * thus cannot be removed or have their types changed without causing inconsistencies in the plugin.
      *
      * @param location the location of the block in question

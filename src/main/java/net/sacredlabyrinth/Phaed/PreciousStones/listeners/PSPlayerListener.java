@@ -119,7 +119,6 @@ public class PSPlayerListener implements Listener
         }
     }
 
-
     /**
      * @param event
      */
@@ -131,6 +130,21 @@ public class PSPlayerListener implements Listener
         plugin.getEntryManager().leaveAllFields(event.getPlayer());
         plugin.getForceFieldManager().disableFieldsOnLogoff(event.getPlayer().getName());
 
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerKick(final PlayerKickEvent event)
+    {
+        if (plugin.getSettingsManager().isPurgeBannedPlayers())
+        {
+            if (event.getPlayer().isBanned())
+            {
+                plugin.getStorageManager().deletePlayerAndData(event.getPlayer().getName());
+            }
+        }
     }
 
     /**
