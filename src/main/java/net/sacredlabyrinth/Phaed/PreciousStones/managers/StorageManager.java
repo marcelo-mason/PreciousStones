@@ -13,10 +13,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.storage.MySQLCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.storage.SQLiteCore;
 import net.sacredlabyrinth.Phaed.PreciousStones.uuid.UUIDMigration;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -56,6 +53,7 @@ public class StorageManager
         initiateDB();
         loadWorldData();
         saverScheduler();
+        purgePlayers();
     }
 
     private void initiateDB()
@@ -474,12 +472,12 @@ public class StorageManager
 
         if (fieldCount > 0)
         {
-            PreciousStones.log("countsFields", world, fieldCount);
+            PreciousStones.log("countsFields", world.getName(), fieldCount);
         }
 
         if (cuboidCount > 0)
         {
-            PreciousStones.log("countsCuboids", world, cuboidCount);
+            PreciousStones.log("countsCuboids", world.getName(), cuboidCount);
         }
     }
 
@@ -978,6 +976,25 @@ public class StorageManager
         }
     }
 
+    public void deletePlayerAndData(String playerName)
+    {
+        int purged = plugin.getForceFieldManager().deleteBelonging(playerName);
+
+        if (purged > 0)
+        {
+            PreciousStones.log("countsPurgedFields", playerName, purged);
+        }
+
+        purged = plugin.getUnbreakableManager().deleteBelonging(playerName);
+
+        if (purged > 0)
+        {
+            PreciousStones.log("countsPurgedUnbreakables", playerName, purged);
+        }
+
+        offerDeletePlayer(playerName);
+    }
+
     /**
      * Retrieves a player from the database
      */
@@ -1041,6 +1058,43 @@ public class StorageManager
         }
 
         return data;
+    }
+
+    /**
+     * Purge players from the database
+     */
+    public void purgePlayers()
+    {
+        int purgeDays = plugin.getSettingsManager().getPurgeAfterDays();
+        long lastSeen = (new DateTime().minusDays(purgeDays)).getMillis();
+
+        String query = "SELECT player_name FROM pstone_players WHERE last_seen < " + lastSeen + ";";
+        ResultSet res = core.select(query);
+
+        if (res != null)
+        {
+            try
+            {
+                while (res.next())
+                {
+                    try
+                    {
+                        String name = res.getString("player_name");
+
+                        deletePlayerAndData(name);
+                    }
+                    catch (Exception ex)
+                    {
+                        //PreciousStones.getLog().info(ex.getMessage());
+                    }
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.out.print(ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**

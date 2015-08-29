@@ -577,6 +577,9 @@ grief-revert:
 saving:
   frequency-seconds: 1
   max-records-per-snitch: 50
+cleanup:
+  player-inactivity-purge-days: 180
+  purge-banned-players: true
 mysql:
   username: ''
   host: localhost
