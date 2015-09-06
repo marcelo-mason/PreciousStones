@@ -627,19 +627,22 @@ public class PSPlayerListener implements Listener
         // -------------------------------------------------------------------------------- trying to place an armor stand entity
 
 
-        if (is.getType().equals(Material.ARMOR_STAND))
+        if (block != null)
         {
-            if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
+            if (is.getType().equals(Material.ARMOR_STAND))
             {
-                Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PROTECT_ARMOR_STANDS);
-
-                if (field != null)
+                if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.armor-stand-take"))
                 {
-                    if (FieldFlag.PROTECT_ARMOR_STANDS.applies(field, player))
+                    Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PROTECT_ARMOR_STANDS);
+
+                    if (field != null)
                     {
-                        event.setCancelled(true);
-                        plugin.getCommunicationManager().warnPlaceItem(player, is, block.getLocation(), field);
-                        return;
+                        if (FieldFlag.PROTECT_ARMOR_STANDS.applies(field, player))
+                        {
+                            event.setCancelled(true);
+                            plugin.getCommunicationManager().warnPlaceItem(player, is, block.getLocation(), field);
+                            return;
+                        }
                     }
                 }
             }
