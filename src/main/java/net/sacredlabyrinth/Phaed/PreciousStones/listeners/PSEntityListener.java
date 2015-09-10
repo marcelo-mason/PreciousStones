@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
@@ -22,8 +23,12 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
@@ -352,7 +357,8 @@ public class PSEntityListener implements Listener
                 if (block.getTypeId() != 46)
                 {
                     plugin.getGriefUndoManager().addBlock(rollbackField, block, true);
-                } else
+                }
+                else
                 {
                     tnts.add(new BlockEntry(block));
                 }
@@ -371,7 +377,8 @@ public class PSEntityListener implements Listener
 
                     tnts.add(new BlockEntry(block));
                     block.setType(Material.AIR);
-                } else
+                }
+                else
                 {
                     // record the griefed block
 
@@ -386,7 +393,8 @@ public class PSEntityListener implements Listener
                 {
                     plugin.getStorageManager().offerGrief(field);
                 }
-            } else
+            }
+            else
             {
                 // record the unprotected block
 
@@ -622,7 +630,8 @@ public class PSEntityListener implements Listener
                     if (sub.getDamager() instanceof Player)
                     {
                         player = (Player) sub.getDamager();
-                    } else if (sub.getDamager() instanceof Arrow)
+                    }
+                    else if (sub.getDamager() instanceof Arrow)
                     {
                         Arrow arrow = (Arrow) sub.getDamager();
 
@@ -639,7 +648,8 @@ public class PSEntityListener implements Listener
                             event.setCancelled(true);
                             return;
                         }
-                    } else
+                    }
+                    else
                     {
                         if (field.hasFlag(FieldFlag.PROTECT_ANIMALS))
                         {
@@ -666,7 +676,8 @@ public class PSEntityListener implements Listener
                     if (sub.getDamager() instanceof Player)
                     {
                         player = (Player) sub.getDamager();
-                    } else if (sub.getDamager() instanceof Arrow)
+                    }
+                    else if (sub.getDamager() instanceof Arrow)
                     {
                         Arrow arrow = (Arrow) sub.getDamager();
 
@@ -683,7 +694,8 @@ public class PSEntityListener implements Listener
                             event.setCancelled(true);
                             return;
                         }
-                    } else
+                    }
+                    else
                     {
                         if (field.hasFlag(FieldFlag.PROTECT_VILLAGERS))
                         {
@@ -710,7 +722,8 @@ public class PSEntityListener implements Listener
                     if (sub.getDamager() instanceof Player)
                     {
                         player = (Player) sub.getDamager();
-                    } else if (sub.getDamager() instanceof Arrow)
+                    }
+                    else if (sub.getDamager() instanceof Arrow)
                     {
                         Arrow arrow = (Arrow) sub.getDamager();
 
@@ -727,7 +740,8 @@ public class PSEntityListener implements Listener
                             event.setCancelled(true);
                             return;
                         }
-                    } else
+                    }
+                    else
                     {
                         if (field.hasFlag(FieldFlag.PROTECT_MOBS))
                         {
@@ -782,7 +796,8 @@ public class PSEntityListener implements Listener
                 if (sub.getDamager() instanceof Player)
                 {
                     attacker = (Player) sub.getDamager();
-                } else if (sub.getDamager() instanceof Arrow)
+                }
+                else if (sub.getDamager() instanceof Arrow)
                 {
                     Arrow arrow = (Arrow) sub.getDamager();
 
@@ -801,7 +816,8 @@ public class PSEntityListener implements Listener
                         if (plugin.getPermissionsManager().has(attacker, "preciousstones.bypass.pvp"))
                         {
                             plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
-                        } else
+                        }
+                        else
                         {
                             //If both the attacker and the victim are in combat, don't cancel it
                             if (((plugin.getCombatTagManager().isInCombat(attacker)) && (plugin.getCombatTagManager().isInCombat(victim))))
@@ -809,14 +825,16 @@ public class PSEntityListener implements Listener
                                 //warn both players
                                 plugin.getCommunicationManager().warnBypassPvPDueToCombat(attacker, victim);
                                 return;
-                            } else
+                            }
+                            else
                             {
                                 sub.setCancelled(true);
                                 plugin.getCommunicationManager().warnPvP(attacker, victim, field);
                                 return;
                             }
                         }
-                    } else
+                    }
+                    else
                     {
                         field = plugin.getForceFieldManager().getEnabledSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
 
@@ -825,7 +843,8 @@ public class PSEntityListener implements Listener
                             if (plugin.getPermissionsManager().has(attacker, "preciousstones.bypass.pvp"))
                             {
                                 plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
-                            } else
+                            }
+                            else
                             {
                                 sub.setCancelled(true);
                                 plugin.getCommunicationManager().warnPvP(attacker, victim, field);
@@ -932,7 +951,8 @@ public class PSEntityListener implements Listener
                 plugin.getSnitchManager().recordSnitchPlayerKill(killer, player);
             }
             plugin.getCuboidManager().cancelOpenCuboid(player);
-        } else
+        }
+        else
         {
             Player killer = event.getEntity().getKiller();
 
@@ -975,7 +995,8 @@ public class PSEntityListener implements Listener
             {
                 event.setCancelled(true);
             }
-        } else if (entity instanceof EnderDragon || entity instanceof Monster || entity instanceof Ghast)
+        }
+        else if (entity instanceof EnderDragon || entity instanceof Monster || entity instanceof Ghast)
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
 
@@ -1001,7 +1022,8 @@ public class PSEntityListener implements Listener
                     }
                 }
             }
-        } else
+        }
+        else
         {
             if (plugin.getSettingsManager().isCrop(block))
             {
@@ -1048,7 +1070,8 @@ public class PSEntityListener implements Listener
                     }
                 }
             }
-        } else
+        }
+        else
         {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(entity.getLocation(), FieldFlag.PREVENT_DESTROY);
 
@@ -1181,6 +1204,27 @@ public class PSEntityListener implements Listener
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPrepareItemCraftEvent(PrepareItemCraftEvent event)
+    {
+        ItemStack is = event.getInventory().getResult();
+
+        BlockTypeEntry type = new BlockTypeEntry(is.getTypeId(), is.getData().getData());
+        FieldSettings settings = plugin.getSettingsManager().getFieldSettings(type);
+
+        if (settings.hasMetaName() && settings.isMetaAutoSet())
+        {
+            ItemMeta meta = is.getItemMeta();
+            meta.setDisplayName(settings.getMetaName());
+            meta.setLore(settings.getMetaLore());
+            is.setItemMeta(meta);
+            event.getInventory().setResult(is);
         }
     }
 
