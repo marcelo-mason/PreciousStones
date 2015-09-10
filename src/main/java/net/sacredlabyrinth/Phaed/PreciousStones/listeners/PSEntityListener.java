@@ -1218,7 +1218,7 @@ public class PSEntityListener implements Listener
         BlockTypeEntry type = new BlockTypeEntry(is.getTypeId(), is.getData().getData());
         FieldSettings settings = plugin.getSettingsManager().getFieldSettings(type);
 
-        if (settings.hasMetaName() && settings.isMetaAutoSet())
+        if (settings != null && settings.hasMetaName() && settings.isMetaAutoSet())
         {
             ItemMeta meta = is.getItemMeta();
             meta.setDisplayName(settings.getMetaName());
