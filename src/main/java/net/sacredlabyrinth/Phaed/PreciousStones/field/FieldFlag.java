@@ -157,7 +157,8 @@ public enum FieldFlag
     COMMAND_BLACKLISTING,
     COMMAND_BLACKLIST,
     ANTI_PLOT,
-    GLOBAL
+    GLOBAL,
+    NO_RESIZE
     ;
 
     /**
@@ -213,7 +214,8 @@ public enum FieldFlag
         FieldFlag.NO_PLAYER_SPRINT,
         FieldFlag.PREVENT_VEHICLE_ENTER,
         FieldFlag.PREVENT_VEHICLE_EXIT,
-        FieldFlag.COMMAND_BLACKLIST
+            FieldFlag.COMMAND_BLACKLIST,
+            FieldFlag.NO_RESIZE
     };
 
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();

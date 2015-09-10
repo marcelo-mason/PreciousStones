@@ -328,6 +328,12 @@ public final class CommandManager implements CommandExecutor
 
                                 if (field != null)
                                 {
+                                    if (field.hasFlag(FieldFlag.NO_RESIZE) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-resize"))
+                                    {
+                                        ChatHelper.send(player, "noResize");
+                                        return true;
+                                    }
+
                                     if (field.isRented())
                                     {
                                         ChatHelper.send(player, "fieldSignCannotChange");
@@ -539,6 +545,12 @@ public final class CommandManager implements CommandExecutor
                                     }
                                 }
 
+                                if (field.hasFlag(FieldFlag.NO_RESIZE) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-resize"))
+                                {
+                                    ChatHelper.send(player, "noResize");
+                                    return true;
+                                }
+
                                 if (field.isRented())
                                 {
                                     ChatHelper.send(player, "fieldSignCannotChange");
@@ -648,6 +660,18 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.NO_RESIZE) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-resize"))
+                                {
+                                    ChatHelper.send(player, "noResize");
+                                    return true;
+                                }
+
+                                if (field.isRented())
+                                {
+                                    ChatHelper.send(player, "fieldSignCannotChange");
+                                    return true;
+                                }
+
                                 boolean bypass = plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid");
                                 int overflow = field.expand(num, dir, bypass);
 
@@ -695,6 +719,18 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.NO_RESIZE) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-resize"))
+                                {
+                                    ChatHelper.send(player, "noResize");
+                                    return true;
+                                }
+
+                                if (field.isRented())
+                                {
+                                    ChatHelper.send(player, "fieldSignCannotChange");
+                                    return true;
+                                }
+
                                 boolean bypass = plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid");
                                 int overflow = field.expand(u, d, n, s, e, w, bypass);
 
@@ -756,6 +792,18 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.NO_RESIZE) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-resize"))
+                                {
+                                    ChatHelper.send(player, "noResize");
+                                    return true;
+                                }
+
+                                if (field.isRented())
+                                {
+                                    ChatHelper.send(player, "fieldSignCannotChange");
+                                    return true;
+                                }
+
                                 field.contract(num, dir);
                                 ChatHelper.send(sender, "cuboidContracted");
                                 return true;
@@ -786,6 +834,18 @@ public final class CommandManager implements CommandExecutor
 
                             if (field != null)
                             {
+                                if (field.hasFlag(FieldFlag.NO_RESIZE) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-resize"))
+                                {
+                                    ChatHelper.send(player, "noResize");
+                                    return true;
+                                }
+
+                                if (field.isRented())
+                                {
+                                    ChatHelper.send(player, "fieldSignCannotChange");
+                                    return true;
+                                }
+
                                 field.contract(u, d, n, s, e, w);
                                 ChatHelper.send(sender, "cuboidContracted");
 

@@ -223,6 +223,7 @@ public class FieldSettings
 
         //**************************
 
+        loadBoolean("no-resize");
         loadBoolean("prevent-fire");
         loadBoolean("prevent-fire-spread");
         loadBoolean("enable-with-redstone");

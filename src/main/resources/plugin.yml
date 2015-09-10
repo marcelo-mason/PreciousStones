@@ -154,6 +154,8 @@ permissions:
     description: Can bypass interaction with entity protections
   preciousstones.bypass.required-permission:
     description: Can bypass required-permission flag
+  preciousstones.bypass.no-resize:
+    description: Can bypass no-resize flag
   preciousstones.alert.notify.place:
     description: Gets alert for block placement notifys
   preciousstones.alert.notify.destroy:
@@ -371,6 +373,7 @@ permissions:
       preciousstones.bypass.commandblacklist: true
       preciousstones.bypass.entity-interact: true
       preciousstones.bypass.required-permission: true
+      preciousstones.bypass.no-resize: true
   preciousstones.alert.*:
     description: Receives in-game alert on notifys and warnings (mods)
     default: false

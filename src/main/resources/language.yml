@@ -598,3 +598,4 @@ migrateDone: "{yellow} All fields belonging to {1.old} have been migrated to {2.
 fieldsGiven: "{yellow} {3.count} {2.field-name} fields given to {1.player-name}"
 fieldsGivenPlayer: "{yellow} You were given {3.count} {2.field-name} fields by {1.player-name}"
 removedConflictingFields: "{yellow} {1.count} sub-fields owned by {2.player} removed"
+noResize: "{red}This type of field cannot be resized by players"

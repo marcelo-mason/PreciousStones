@@ -1035,6 +1035,12 @@ public class PSPlayerListener implements Listener
                                             }
                                         }
 
+                                        if (field.hasFlag(FieldFlag.NO_RESIZE) && !plugin.getPermissionsManager().has(player, "preciousstones.bypass.no-resize"))
+                                        {
+                                            ChatHelper.send(player, "noResize");
+                                            return;
+                                        }
+
                                         event.setCancelled(true);
                                         plugin.getCuboidManager().openCuboid(player, field);
                                     }
