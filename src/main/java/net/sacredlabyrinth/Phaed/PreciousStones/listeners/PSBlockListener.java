@@ -1,6 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
@@ -581,8 +582,12 @@ public class PSBlockListener implements Listener
         {
             if (settings.isMetaAutoSet())
             {
-                block.getDrops().clear();
-                plugin.getForceFieldManager().dropBlock(block, new BlockTypeEntry(block), settings);
+                PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                if (!playerEntry.isDisabled())
+                {
+                    block.getDrops().clear();
+                    plugin.getForceFieldManager().dropBlock(block, new BlockTypeEntry(block), settings);
+                }
             }
         }
     }

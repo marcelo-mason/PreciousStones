@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
@@ -1214,12 +1215,23 @@ public class PSEntityListener implements Listener
     public void onPrepareItemCraftEvent(PrepareItemCraftEvent event)
     {
         ItemStack is = event.getInventory().getResult();
-
         BlockTypeEntry type = new BlockTypeEntry(is.getTypeId(), is.getData().getData());
         FieldSettings settings = plugin.getSettingsManager().getFieldSettings(type);
 
         if (settings != null && settings.hasMetaName() && settings.isMetaAutoSet())
         {
+            HumanEntity entity = event.getView().getPlayer();
+
+            if (entity instanceof Player)
+            {
+                Player player = (Player) entity;
+                PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                if (playerEntry.isDisabled())
+                {
+                    return;
+                }
+            }
+
             ItemMeta meta = is.getItemMeta();
             meta.setDisplayName(settings.getMetaName());
             meta.setLore(settings.getMetaLore());
