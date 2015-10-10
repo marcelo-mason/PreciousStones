@@ -985,39 +985,39 @@ public class ChatHelper
 
         if (args.length > 0)
         {
-            msg = msg.replaceAll("\\{1.*?\\}", args[0].toString());
+            msg = msg.replaceAll("\\{1.*?\\}", Matcher.quoteReplacement(args[0].toString()));
         }
         if (args.length > 1)
         {
-            msg = msg.replaceAll("\\{2.*?\\}", args[1].toString());
+            msg = msg.replaceAll("\\{2.*?\\}", Matcher.quoteReplacement(args[1].toString()));
         }
         if (args.length > 2)
         {
-            msg = msg.replaceAll("\\{3.*?\\}", args[2].toString());
+            msg = msg.replaceAll("\\{3.*?\\}", Matcher.quoteReplacement(args[2].toString()));
         }
         if (args.length > 3)
         {
-            msg = msg.replaceAll("\\{4.*?\\}", args[3].toString());
+            msg = msg.replaceAll("\\{4.*?\\}", Matcher.quoteReplacement(args[3].toString()));
         }
         if (args.length > 4)
         {
-            msg = msg.replaceAll("\\{5.*?\\}", args[4].toString());
+            msg = msg.replaceAll("\\{5.*?\\}", Matcher.quoteReplacement(args[4].toString()));
         }
         if (args.length > 5)
         {
-            msg = msg.replaceAll("\\{6.*?\\}", args[5].toString());
+            msg = msg.replaceAll("\\{6.*?\\}", Matcher.quoteReplacement(args[5].toString()));
         }
         if (args.length > 6)
         {
-            msg = msg.replaceAll("\\{7.*?\\}", args[6].toString());
+            msg = msg.replaceAll("\\{7.*?\\}", Matcher.quoteReplacement(args[6].toString()));
         }
         if (args.length > 7)
         {
-            msg = msg.replaceAll("\\{8.*?\\}", args[7].toString());
+            msg = msg.replaceAll("\\{8.*?\\}", Matcher.quoteReplacement(args[7].toString()));
         }
         if (args.length > 8)
         {
-            msg = msg.replaceAll("\\{9.*?\\}", args[8].toString());
+            msg = msg.replaceAll("\\{9.*?\\}", Matcher.quoteReplacement(args[8].toString()));
         }
 
         return Helper.capitalize(msg);
