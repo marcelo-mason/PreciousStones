@@ -670,7 +670,7 @@ public final class EntryManager
             }
             else
             {
-                field.getMaskingModule().unmask(player);
+                //field.getMaskingModule().unmask(player);
             }
         }
 
