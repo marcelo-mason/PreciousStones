@@ -1603,7 +1603,7 @@ public class FieldSettings
     {
         if (!hasMetaName())
         {
-            return true;
+            return false;
         }
 
         ItemMeta meta = item.getItemMeta();

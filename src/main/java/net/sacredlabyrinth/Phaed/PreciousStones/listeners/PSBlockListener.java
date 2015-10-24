@@ -1224,9 +1224,12 @@ public class PSBlockListener implements Listener
 
         // if the field has a meta name, only items with that name can be placed
 
-        if (!fs.matchesMetaName(player.getItemInHand()))
+        if (fs.hasMetaName())
         {
-            return false;
+            if (!fs.matchesMetaName(player.getItemInHand()))
+            {
+                return false;
+            }
         }
 
         // cannot place on bad surfaces
