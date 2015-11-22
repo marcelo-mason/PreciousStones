@@ -1584,8 +1584,6 @@ public class PSBlockListener implements Listener
     @EventHandler(priority = EventPriority.HIGH)
     public void onBlockPistonRetract(BlockPistonRetractEvent event)
     {
-        boolean unprotected = false;
-
         Block piston = event.getBlock();
 
         if (plugin.getSettingsManager().isBlacklistedWorld(piston.getWorld()))
@@ -1593,47 +1591,57 @@ public class PSBlockListener implements Listener
             return;
         }
 
-        Field field = plugin.getForceFieldManager().getEnabledSourceField(piston.getLocation(), FieldFlag.PREVENT_DESTROY);
-
-        if (field == null)
-        {
-            unprotected = true;
-        }
+        Field pistonField = plugin.getForceFieldManager().getEnabledSourceField(piston.getLocation(), FieldFlag.PREVENT_DESTROY);
 
         // prevent piston from moving a field or unbreakable block
 
-        Block block = piston.getRelative(event.getDirection()).getRelative(event.getDirection());
+        List<Block> blocks = event.getBlocks();
 
-        if (SignHelper.cannotBreakFieldSign(block, null))
+        for (Block block : blocks)
         {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (plugin.getForceFieldManager().isField(block))
-        {
-            event.setCancelled(true);
-            return;
-        }
-        if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
-        {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (unprotected)
-        {
-            field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
-
-            if (field != null)
+            if (SignHelper.cannotBreakFieldSign(block, null))
             {
-                if (!field.getSettings().inDestroyBlacklist(block))
+                event.setCancelled(true);
+                PreciousStones.debug("Cancelling field sign move");
+                return;
+            }
+
+            if (plugin.getForceFieldManager().isField(block))
+            {
+                PreciousStones.debug("Cancelling field move");
+                event.setCancelled(true);
+                return;
+            }
+
+            if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block))
+            {
+                event.setCancelled(true);
+                PreciousStones.debug("Cancelling unbreakable move");
+                return;
+            }
+
+            Field blockField = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_DESTROY);
+
+            if (pistonField != null && blockField != null)
+            {
+                if (blockField.isAllowed(pistonField.getOwner()))
+                {
+                    continue;
+                }
+            }
+
+            if (blockField != null)
+            {
+                if (!blockField.getSettings().inDestroyBlacklist(block))
                 {
                     event.setCancelled(true);
+                    PreciousStones.debug("Cancelling field conflict move");
+                    return;
                 }
             }
         }
     }
+
 
     /**
      * @param event
