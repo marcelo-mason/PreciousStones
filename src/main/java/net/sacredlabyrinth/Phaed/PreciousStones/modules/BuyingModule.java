@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PurchaseEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.PermissionsManager;
@@ -14,6 +15,13 @@ public class BuyingModule
     public boolean buy(Player buyer, FieldSign s)
     {
         Field field = s.getField();
+        PreciousStones plugin = PreciousStones.getInstance();
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+        if (plugin.getLimitManager().reachedLimit(buyer, fs))
+        {
+            PreciousStones.debug("field limit reached");
+            return false;
+        }
         PurchaseEntry purchase = new PurchaseEntry(buyer.getName(), field.getOwner(), field.getName(), field.getCoords(), s.getItem(), s.getPrice());
 
         if (s.getItem() == null)
