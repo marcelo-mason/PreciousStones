@@ -227,6 +227,14 @@ public class FieldSign
     }
 
     /**
+     * Removes the sign completely
+     */
+    public void remove()
+    {
+        sign.getBlock().setType(Material.AIR);
+    }
+
+    /**
      * Returns the block the fieldSign is attacked to
      *
      * @return
