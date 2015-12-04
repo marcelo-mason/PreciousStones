@@ -6,6 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PaymentEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.RentEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
@@ -269,6 +270,14 @@ public class RentingModule
                     return false;
                 }
             }
+        }
+
+        PreciousStones plugin = PreciousStones.getInstance();
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(s.getField());
+        if (plugin.getLimitManager().reachedLimit(player, fs))
+        {
+            PreciousStones.debug("field limit reached");
+            return false;
         }
 
         if (s.getItem() != null)

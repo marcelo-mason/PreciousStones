@@ -36,6 +36,7 @@ public final class ForceFieldManager
     private final Map<FieldFlag, List<Field>> fieldsByFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByWorld = Maps.newHashMap();
     private final Map<String, Map<BlockTypeEntry, List<Field>>> fieldsByOwnerAndType = Maps.newHashMap();
+    private final Map<String, Map<BlockTypeEntry, List<Field>>> fieldsByRenterAndType = Maps.newHashMap();
     private final Map<String, Map<FieldFlag, List<Field>>> fieldsByOwnerAndFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByOwner = Maps.newHashMap();
     private final Map<Vec, Field> fieldsByVec = Maps.newHashMap();
@@ -388,6 +389,26 @@ public final class ForceFieldManager
         fields.add(field);
         types.put(field.getTypeEntry(), fields);
         fieldsByOwnerAndType.put(field.getOwner().toLowerCase(), types);
+
+        // add to renter and type collection
+
+        Map<BlockTypeEntry, List<Field>> renterTypes = fieldsByRenterAndType.get(field.getOwner().toLowerCase());
+
+        if (renterTypes == null)
+        {
+            renterTypes = Maps.newHashMap();
+        }
+
+        fields = renterTypes.get(field.getTypeEntry());
+
+        if (fields == null)
+        {
+            fields = new ArrayList<Field>();
+        }
+
+        fields.add(field);
+        types.put(field.getTypeEntry(), fields);
+        fieldsByRenterAndType.put(field.getOwner().toLowerCase(), types);
 
         // add to owner and flag collection
 
@@ -2940,6 +2961,23 @@ public final class ForceFieldManager
     public int getFieldCount(String playerName, BlockTypeEntry type)
     {
         Map<BlockTypeEntry, List<Field>> types = fieldsByOwnerAndType.get(playerName.toLowerCase());
+
+        if (types != null)
+        {
+            List<Field> fields = types.get(type);
+
+            if (fields != null)
+            {
+                return fields.size();
+            }
+        }
+
+        return 0;
+    }
+
+    public int getRentedFieldCount(String playerName, BlockTypeEntry type)
+    {
+        Map<BlockTypeEntry, List<Field>> types = fieldsByRenterAndType.get(playerName.toLowerCase());
 
         if (types != null)
         {
