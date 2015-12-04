@@ -2263,7 +2263,7 @@ public class CommunicationManager
             List<String> renters = field.getRenters();
             if (renters != null && !renters.isEmpty())
             {
-                ChatHelper.send(player, "enteringRentedNamedField", field.getName(), renters.get(0));
+                ChatHelper.send(player, "enteringRentedNamedField", field.getName(), Helper.toMessage(renters, ", "));
             }
             else
             {
@@ -2303,7 +2303,7 @@ public class CommunicationManager
             List<String> renters = field.getRenters();
             if (renters != null && !renters.isEmpty())
             {
-                ChatHelper.send(player, "leavingRentedNamedField", field.getName(), renters.get(0));
+                ChatHelper.send(player, "leavingRentedNamedField", field.getName(), Helper.toMessage(renters, ", "));
             }
             else
             {
