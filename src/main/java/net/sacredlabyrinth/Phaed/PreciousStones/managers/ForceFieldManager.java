@@ -36,6 +36,7 @@ public final class ForceFieldManager
     private final Map<FieldFlag, List<Field>> fieldsByFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByWorld = Maps.newHashMap();
     private final Map<String, Map<BlockTypeEntry, List<Field>>> fieldsByOwnerAndType = Maps.newHashMap();
+    private final Map<String, Map<BlockTypeEntry, List<Field>>> fieldsByRenterAndType = Maps.newHashMap();
     private final Map<String, Map<FieldFlag, List<Field>>> fieldsByOwnerAndFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByOwner = Maps.newHashMap();
     private final Map<Vec, Field> fieldsByVec = Maps.newHashMap();
@@ -315,6 +316,32 @@ public final class ForceFieldManager
         plugin.getStorageManager().offerField(field);
     }
 
+    public void addToRenterCollection(Field field)
+    {
+        List<String> renters = field.getRenters();
+        if (renters == null || renters.isEmpty()) return;
+
+        for (String renter : renters)
+        {
+            Map<BlockTypeEntry, List<Field>> renterTypes = fieldsByRenterAndType.get(renter.toLowerCase());
+
+            if (renterTypes == null)
+            {
+                renterTypes = Maps.newHashMap();
+            }
+
+            List<Field> fields = renterTypes.get(field.getTypeEntry());
+            if (fields == null)
+            {
+                fields = new ArrayList<Field>();
+            }
+
+            fields.add(field);
+            renterTypes.put(field.getTypeEntry(), fields);
+            fieldsByRenterAndType.put(renter, renterTypes);
+        }
+    }
+
     /**
      * Add the field to the collection, used by add()
      *
@@ -388,6 +415,9 @@ public final class ForceFieldManager
         fields.add(field);
         types.put(field.getTypeEntry(), fields);
         fieldsByOwnerAndType.put(field.getOwner().toLowerCase(), types);
+
+        // add to renter and type collection
+        addToRenterCollection(field);
 
         // add to owner and flag collection
 
@@ -526,6 +556,9 @@ public final class ForceFieldManager
             }
         }
 
+        // Remove all renters
+        removeAllRenters(field);
+
         // remove from owner and flags collection
 
         Map<FieldFlag, List<Field>> allFlags = fieldsByOwnerAndFlag.get(field.getOwner().toLowerCase());
@@ -600,6 +633,63 @@ public final class ForceFieldManager
 
         field.markForDeletion();
         plugin.getStorageManager().offerField(field);
+    }
+
+    /**
+     * Remove all tracked renters from a field
+     *
+     * @param field
+     */
+    public void removeAllRenters(Field field)
+    {
+        List<String> renters = field.getRenters();
+        if (renters != null)
+        {
+            for (String renter : renters)
+            {
+                removeRenter(field, renter);
+            }
+        }
+    }
+
+    /**
+     * Update tracking when a renter has been removed from a field.
+     *
+     * @param field
+     * @param renter
+     */
+    public void removeRenter(Field field, String renter)
+    {
+        Map<BlockTypeEntry, List<Field>> renterTypes = fieldsByRenterAndType.get(renter.toLowerCase());
+
+        if (renterTypes == null)
+        {
+            return;
+        }
+
+        List<Field> fields = renterTypes.get(field.getTypeEntry());
+        if (fields == null)
+        {
+            return;
+        }
+
+        fields.remove(field);
+        if (fields.isEmpty())
+        {
+            renterTypes.put(field.getTypeEntry(), fields);
+        }
+        else
+        {
+            renterTypes.remove(field.getTypeEntry());
+        }
+        if (renterTypes.isEmpty())
+        {
+            fieldsByRenterAndType.remove(renter);
+        }
+        else
+        {
+            fieldsByRenterAndType.put(renter, renterTypes);
+        }
     }
 
     /**
@@ -2940,6 +3030,23 @@ public final class ForceFieldManager
     public int getFieldCount(String playerName, BlockTypeEntry type)
     {
         Map<BlockTypeEntry, List<Field>> types = fieldsByOwnerAndType.get(playerName.toLowerCase());
+
+        if (types != null)
+        {
+            List<Field> fields = types.get(type);
+
+            if (fields != null)
+            {
+                return fields.size();
+            }
+        }
+
+        return 0;
+    }
+
+    public int getRentedFieldCount(String playerName, BlockTypeEntry type)
+    {
+        Map<BlockTypeEntry, List<Field>> types = fieldsByRenterAndType.get(playerName.toLowerCase());
 
         if (types != null)
         {

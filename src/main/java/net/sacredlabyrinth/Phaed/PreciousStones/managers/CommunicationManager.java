@@ -2260,13 +2260,29 @@ public class CommunicationManager
 
         if (field.isNamed())
         {
-            ChatHelper.send(player, "enteringNamedField", field.getName());
+            List<String> renters = field.getRenters();
+            if (renters != null && !renters.isEmpty())
+            {
+                ChatHelper.send(player, "enteringRentedNamedField", field.getName(), renters.get(0));
+            }
+            else
+            {
+                ChatHelper.send(player, "enteringNamedField", field.getName());
+            }
         }
         else
         {
             if (plugin.getSettingsManager().isShowDefaultWelcomeFarewellMessages())
             {
-                ChatHelper.send(player, "enteringField", field.getOwner(), field.getSettings().getTitle());
+                List<String> renters = field.getRenters();
+                if (renters != null && !renters.isEmpty())
+                {
+                    ChatHelper.send(player, "enteringField", renters.get(0), field.getSettings().getTitle());
+                }
+                else
+                {
+                    ChatHelper.send(player, "enteringField", field.getOwner(), field.getSettings().getTitle());
+                }
             }
         }
     }
@@ -2284,13 +2300,29 @@ public class CommunicationManager
 
         if (field.isNamed())
         {
-            ChatHelper.send(player, "leavingNamedField", field.getName());
+            List<String> renters = field.getRenters();
+            if (renters != null && !renters.isEmpty())
+            {
+                ChatHelper.send(player, "leavingRentedNamedField", field.getName(), renters.get(0));
+            }
+            else
+            {
+                ChatHelper.send(player, "leavingNamedField", field.getName());
+            }
         }
         else
         {
             if (plugin.getSettingsManager().isShowDefaultWelcomeFarewellMessages())
             {
-                ChatHelper.send(player, "leavingField", field.getOwner(), field.getSettings().getTitle());
+                List<String> renters = field.getRenters();
+                if (renters != null && !renters.isEmpty())
+                {
+                    ChatHelper.send(player, "leavingField", renters.get(0), field.getSettings().getTitle());
+                }
+                else
+                {
+                    ChatHelper.send(player, "leavingField", field.getOwner(), field.getSettings().getTitle());
+                }
             }
         }
     }

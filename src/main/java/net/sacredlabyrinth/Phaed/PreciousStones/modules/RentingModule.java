@@ -6,6 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PaymentEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.RentEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
@@ -42,6 +43,7 @@ public class RentingModule
     {
         renterEntries.add(entry);
         renters.add(entry.getPlayerName().toLowerCase());
+        PreciousStones.getInstance().getForceFieldManager().addToRenterCollection(field);
     }
 
     public boolean hasRenter(String playerName)
@@ -56,6 +58,7 @@ public class RentingModule
 
     public void clearRenters()
     {
+        PreciousStones.getInstance().getForceFieldManager().removeAllRenters(field);
         renterEntries.clear();
         renters.clear();
     }
@@ -117,8 +120,8 @@ public class RentingModule
 
     public void addRent(Player player)
     {
+        PreciousStones.getInstance().getForceFieldManager().addToRenterCollection(field);
         FieldSign s = field.getAttachedFieldSign();
-
         if (s != null)
         {
             int seconds = SignHelper.periodToSeconds(s.getPeriod());
@@ -158,8 +161,10 @@ public class RentingModule
 
     public void removeRenter(RentEntry entry)
     {
+        String renterName = entry.getPlayerName().toLowerCase();
+        PreciousStones.getInstance().getForceFieldManager().removeRenter(field, renterName);
         renterEntries.remove(entry);
-        renters.remove(entry.getPlayerName().toLowerCase());
+        renters.remove(renterName);
 
         field.getFlagsModule().dirtyFlags("removeRenter");
     }
@@ -271,6 +276,14 @@ public class RentingModule
             }
         }
 
+        PreciousStones plugin = PreciousStones.getInstance();
+        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(s.getField());
+        if (plugin.getLimitManager().reachedLimit(player, fs))
+        {
+            PreciousStones.debug("field limit reached");
+            return false;
+        }
+
         if (s.getItem() != null)
         {
             PreciousStones.debug("is item rent");
@@ -368,7 +381,7 @@ public class RentingModule
 
     private class Update implements Runnable
     {
-        public void run()
+        protected void updateRent()
         {
             if (hasRenters())
             {
@@ -383,14 +396,16 @@ public class RentingModule
                         if (PreciousStones.getInstance().getEntryManager().hasInhabitants(field))
                         {
                             Player closest = Helper.getClosestPlayer(field.getLocation(), 64);
-
-                            for (RentEntry entry : renterEntries)
+                            if (closest != null)
                             {
-                                if (entry.getPlayerName().equalsIgnoreCase(closest.getName()))
+                                for (RentEntry entry : renterEntries)
                                 {
-                                    s.updateRemainingTime(entry.remainingRent());
-                                    foundSomeone = true;
-                                    signIsClean = false;
+                                    if (entry.getPlayerName().equalsIgnoreCase(closest.getName()))
+                                    {
+                                        s.updateRemainingTime(entry.remainingRent());
+                                        foundSomeone = true;
+                                        signIsClean = false;
+                                    }
                                 }
                             }
                         }
@@ -425,7 +440,15 @@ public class RentingModule
                     }
                 }
             }
+        }
 
+        public void run()
+        {
+            try {
+                updateRent();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             scheduleNextRentUpdate();
         }
     }
