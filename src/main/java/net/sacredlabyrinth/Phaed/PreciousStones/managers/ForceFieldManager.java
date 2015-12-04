@@ -316,6 +316,32 @@ public final class ForceFieldManager
         plugin.getStorageManager().offerField(field);
     }
 
+    public void addToRenterCollection(Field field)
+    {
+        List<String> renters = field.getRenters();
+        if (renters == null || renters.isEmpty()) return;
+
+        for (String renter : renters)
+        {
+            Map<BlockTypeEntry, List<Field>> renterTypes = fieldsByRenterAndType.get(renter.toLowerCase());
+
+            if (renterTypes == null)
+            {
+                renterTypes = Maps.newHashMap();
+            }
+
+            List<Field> fields = renterTypes.get(field.getTypeEntry());
+            if (fields == null)
+            {
+                fields = new ArrayList<Field>();
+            }
+
+            fields.add(field);
+            renterTypes.put(field.getTypeEntry(), fields);
+            fieldsByRenterAndType.put(renter, renterTypes);
+        }
+    }
+
     /**
      * Add the field to the collection, used by add()
      *
@@ -391,24 +417,7 @@ public final class ForceFieldManager
         fieldsByOwnerAndType.put(field.getOwner().toLowerCase(), types);
 
         // add to renter and type collection
-
-        Map<BlockTypeEntry, List<Field>> renterTypes = fieldsByRenterAndType.get(field.getOwner().toLowerCase());
-
-        if (renterTypes == null)
-        {
-            renterTypes = Maps.newHashMap();
-        }
-
-        fields = renterTypes.get(field.getTypeEntry());
-
-        if (fields == null)
-        {
-            fields = new ArrayList<Field>();
-        }
-
-        fields.add(field);
-        types.put(field.getTypeEntry(), fields);
-        fieldsByRenterAndType.put(field.getOwner().toLowerCase(), types);
+        addToRenterCollection(field);
 
         // add to owner and flag collection
 

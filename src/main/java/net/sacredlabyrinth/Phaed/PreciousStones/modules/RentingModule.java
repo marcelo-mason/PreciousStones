@@ -43,6 +43,7 @@ public class RentingModule
     {
         renterEntries.add(entry);
         renters.add(entry.getPlayerName().toLowerCase());
+        PreciousStones.getInstance().getForceFieldManager().addToRenterCollection(field);
     }
 
     public boolean hasRenter(String playerName)
@@ -118,8 +119,8 @@ public class RentingModule
 
     public void addRent(Player player)
     {
+        PreciousStones.getInstance().getForceFieldManager().addToRenterCollection(field);
         FieldSign s = field.getAttachedFieldSign();
-
         if (s != null)
         {
             int seconds = SignHelper.periodToSeconds(s.getPeriod());
