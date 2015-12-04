@@ -23,8 +23,7 @@ import java.util.logging.Logger;
  *
  * @author Phaed
  */
-public class PreciousStones extends JavaPlugin
-{
+public class PreciousStones extends JavaPlugin {
     private static PreciousStones instance;
     private ArrayList<String> messages = new ArrayList<String>();
     private static Logger logger = Logger.getLogger("Minecraft");
@@ -64,34 +63,30 @@ public class PreciousStones extends JavaPlugin
     private McMMOListener mcmmoListener;
     private LWCListener lwcListener;
     private static IApi api;
+
     /**
      * @return the instance
      */
-    public static PreciousStones getInstance()
-    {
+    public static PreciousStones getInstance() {
         return instance;
     }
 
-    public static IApi API()
-    {
+    public static IApi API() {
         return api;
     }
 
     /**
      * @return the logger
      */
-    public static Logger getLog()
-    {
+    public static Logger getLog() {
         return logger;
     }
 
     /**
      * @return the logger
      */
-    public static void debug(Object msg, Object... arg)
-    {
-        if (getInstance().getSettingsManager() != null && getInstance().getSettingsManager().isDebug())
-        {
+    public static void debug(Object msg, Object... arg) {
+        if (getInstance().getSettingsManager() != null && getInstance().getSettingsManager().isDebug()) {
             logger.info(String.format(msg.toString(), arg));
         }
     }
@@ -103,8 +98,7 @@ public class PreciousStones extends JavaPlugin
      * @param msg   the message
      * @param arg   the arguments
      */
-    public static void log(Level level, Object msg, Object... arg)
-    {
+    public static void log(Level level, Object msg, Object... arg) {
         logger.log(level, "[PreciousStones] " + ChatHelper.format(msg.toString(), arg));
     }
 
@@ -114,18 +108,15 @@ public class PreciousStones extends JavaPlugin
      * @param msg
      * @param arg
      */
-    public static void log(Object msg, Object... arg)
-    {
+    public static void log(Object msg, Object... arg) {
         log(Level.INFO, msg, arg);
     }
 
     /**
      * Runs on plugin enable
      */
-    public void onEnable()
-    {
-        if (!UUIDMigration.canReturnUUID())
-        {
+    public void onEnable() {
+        if (!UUIDMigration.canReturnUUID()) {
             log("This version of PreciousStones only works with Bukkit 1.7.5+");
             return;
         }
@@ -169,13 +160,11 @@ public class PreciousStones extends JavaPlugin
         worldListener = new PSWorldListener();
         serverListener = new PSServerListener();
 
-        if (permissionsManager.hasMcMMO())
-        {
+        if (permissionsManager.hasMcMMO()) {
             mcmmoListener = new McMMOListener();
         }
 
-        if (permissionsManager.hasLWC())
-        {
+        if (permissionsManager.hasLWC()) {
             lwcListener = new LWCListener();
         }
 
@@ -187,51 +176,41 @@ public class PreciousStones extends JavaPlugin
         pullMessages();
     }
 
-    private void displayStatusInfo()
-    {
+    private void displayStatusInfo() {
         log("psLoaded", getDescription().getVersion());
     }
 
-    private void metrics()
-    {
-        try
-        {
+    private void metrics() {
+        try {
             Metrics metrics = new Metrics(this);
 
             Metrics.Graph protections = metrics.createGraph("Protections in Place");
 
-            protections.addPlotter(new Metrics.Plotter("Total Fields")
-            {
+            protections.addPlotter(new Metrics.Plotter("Total Fields") {
 
                 @Override
-                public int getValue()
-                {
+                public int getValue() {
                     return getForceFieldManager().getCount();
                 }
 
             });
 
-            protections.addPlotter(new Metrics.Plotter("Total Unbreakables")
-            {
+            protections.addPlotter(new Metrics.Plotter("Total Unbreakables") {
 
                 @Override
-                public int getValue()
-                {
+                public int getValue() {
                     return getUnbreakableManager().getCount();
                 }
 
             });
 
             metrics.start();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             log("Metrics did not load");
         }
     }
 
-    private void registerEvents()
-    {
+    private void registerEvents() {
         getServer().getPluginManager().registerEvents(entityListener, this);
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(serverListener, this);
@@ -239,14 +218,12 @@ public class PreciousStones extends JavaPlugin
         getServer().getPluginManager().registerEvents(vehicleListener, this);
         getServer().getPluginManager().registerEvents(worldListener, this);
 
-        if (permissionsManager.hasMcMMO())
-        {
+        if (permissionsManager.hasMcMMO()) {
             getServer().getPluginManager().registerEvents(mcmmoListener, this);
         }
     }
 
-    private void registerCommands()
-    {
+    private void registerCommands() {
         getCommand("ps").setExecutor(getCommandManager());
     }
 
@@ -254,8 +231,7 @@ public class PreciousStones extends JavaPlugin
      * Runs on plugin disable
      */
 
-    public void onDisable()
-    {
+    public void onDisable() {
         PreciousStones.log("Shutting Down: Cancelling all tasks...");
         getServer().getScheduler().cancelTasks(this);
 
@@ -272,28 +248,22 @@ public class PreciousStones extends JavaPlugin
         getStorageManager().closeConnection();
     }
 
-    public void pullMessages()
-    {
-        if (getSettingsManager().isDisableMessages())
-        {
+    public void pullMessages() {
+        if (getSettingsManager().isDisableMessages()) {
             return;
         }
 
-        try
-        {
+        try {
             BufferedReader in = new BufferedReader(new InputStreamReader(new URL("https://minecraftcubed.net/pluginmessage/").openStream()));
 
             String message;
-            while ((message = in.readLine()) != null)
-            {
+            while ((message = in.readLine()) != null) {
                 messages.add(message);
                 getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + message);
             }
             in.close();
 
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // do nothing
         }
     }
@@ -301,227 +271,193 @@ public class PreciousStones extends JavaPlugin
     /**
      * @return the settingsManager
      */
-    public SettingsManager getSettingsManager()
-    {
+    public SettingsManager getSettingsManager() {
         return settingsManager;
     }
 
     /**
      * @return the commandManager
      */
-    public CommandManager getCommandManager()
-    {
+    public CommandManager getCommandManager() {
         return commandManager;
     }
 
     /**
      * @return the forceFieldManager
      */
-    public ForceFieldManager getForceFieldManager()
-    {
+    public ForceFieldManager getForceFieldManager() {
         return forceFieldManager;
     }
 
     /**
      * @return the unbreakableManager
      */
-    public UnbreakableManager getUnbreakableManager()
-    {
+    public UnbreakableManager getUnbreakableManager() {
         return unbreakableManager;
     }
 
     /**
      * @return the unprotectableManager
      */
-    public UnprotectableManager getUnprotectableManager()
-    {
+    public UnprotectableManager getUnprotectableManager() {
         return unprotectableManager;
     }
 
     /**
      * @return the griefUndoManager
      */
-    public GriefUndoManager getGriefUndoManager()
-    {
+    public GriefUndoManager getGriefUndoManager() {
         return griefUndoManager;
     }
 
     /**
      * @return the storageManager
      */
-    public StorageManager getStorageManager()
-    {
+    public StorageManager getStorageManager() {
         return storageManager;
     }
 
     /**
      * @return the communicationManager
      */
-    public CommunicationManager getCommunicationManager()
-    {
+    public CommunicationManager getCommunicationManager() {
         return communicationManager;
     }
 
     /**
      * @return the entryManager
      */
-    public EntryManager getEntryManager()
-    {
+    public EntryManager getEntryManager() {
         return entryManager;
     }
 
     /**
      * @return the playerManager
      */
-    public PlayerManager getPlayerManager()
-    {
+    public PlayerManager getPlayerManager() {
         return playerManager;
     }
 
     /**
      * @return the snitchManager
      */
-    public SnitchManager getSnitchManager()
-    {
+    public SnitchManager getSnitchManager() {
         return snitchManager;
     }
 
     /**
      * @return the mineManager
      */
-    public MineManager getMineManager()
-    {
+    public MineManager getMineManager() {
         return mineManager;
     }
 
     /**
      * @return the lightningManager
      */
-    public LightningManager getLightningManager()
-    {
+    public LightningManager getLightningManager() {
         return lightningManager;
     }
 
     /**
      * @return the velocityManager
      */
-    public VelocityManager getVelocityManager()
-    {
+    public VelocityManager getVelocityManager() {
         return velocityManager;
     }
 
     /**
      * @return the permissionsManager
      */
-    public PermissionsManager getPermissionsManager()
-    {
+    public PermissionsManager getPermissionsManager() {
         return permissionsManager;
     }
 
     /**
      * @return the simpleClansManager
      */
-    public SimpleClansManager getSimpleClansManager()
-    {
+    public SimpleClansManager getSimpleClansManager() {
         return simpleClansManager;
     }
 
     /**
      * @return the visualizationManager
      */
-    public VisualizationManager getVisualizationManager()
-    {
+    public VisualizationManager getVisualizationManager() {
         return visualizationManager;
     }
 
     /**
      * @return the foresterManager
      */
-    public ForesterManager getForesterManager()
-    {
+    public ForesterManager getForesterManager() {
         return foresterManager;
     }
 
     /**
      * @return the limitManager
      */
-    public LimitManager getLimitManager()
-    {
+    public LimitManager getLimitManager() {
         return limitManager;
     }
 
-    public CuboidManager getCuboidManager()
-    {
+    public CuboidManager getCuboidManager() {
         return cuboidManager;
     }
 
-    public WorldGuardManager getWorldGuardManager()
-    {
+    public WorldGuardManager getWorldGuardManager() {
         return worldGuardManager;
     }
 
-    public CombatTagManager getCombatTagManager()
-    {
+    public CombatTagManager getCombatTagManager() {
         return combatTagManager;
     }
 
-    public PSPlayerListener getPlayerListener()
-    {
+    public PSPlayerListener getPlayerListener() {
         return playerListener;
     }
 
-    public PSBlockListener getBlockListener()
-    {
+    public PSBlockListener getBlockListener() {
         return blockListener;
     }
 
-    public PSEntityListener getEntityListener()
-    {
+    public PSEntityListener getEntityListener() {
         return entityListener;
     }
 
-    public PSWorldListener getWorldListener()
-    {
+    public PSWorldListener getWorldListener() {
         return worldListener;
     }
 
-    public PSVehicleListener getVehicleListener()
-    {
+    public PSVehicleListener getVehicleListener() {
         return vehicleListener;
     }
 
-    public PSServerListener getServerListener()
-    {
+    public PSServerListener getServerListener() {
         return serverListener;
     }
 
-    public ConfiscationManager getConfiscationManager()
-    {
+    public ConfiscationManager getConfiscationManager() {
         return confiscationManager;
     }
 
-    public PotionManager getPotionManager()
-    {
+    public PotionManager getPotionManager() {
         return potionManager;
     }
 
-    public TranslocationManager getTranslocationManager()
-    {
+    public TranslocationManager getTranslocationManager() {
         return translocationManager;
     }
 
-    public LanguageManager getLanguageManager()
-    {
+    public LanguageManager getLanguageManager() {
         return languageManager;
     }
 
-    public TeleportationManager getTeleportationManager()
-    {
+    public TeleportationManager getTeleportationManager() {
         return teleportationManager;
     }
 
-    public ArrayList<String> getMessages()
-    {
+    public ArrayList<String> getMessages() {
         return messages;
     }
 }

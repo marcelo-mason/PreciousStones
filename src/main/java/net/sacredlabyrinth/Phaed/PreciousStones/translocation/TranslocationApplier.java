@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.translocation;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -15,8 +15,7 @@ import java.util.Queue;
 /**
  * @author phaed
  */
-public class TranslocationApplier implements Runnable
-{
+public class TranslocationApplier implements Runnable {
     private PreciousStones plugin;
     private Queue<TranslocationBlock> translocationQueue;
     private Queue<TranslocationBlock> dependentQueue = new LinkedList<TranslocationBlock>();
@@ -29,8 +28,7 @@ public class TranslocationApplier implements Runnable
      * @param translocationQueue
      * @param world
      */
-    public TranslocationApplier(Field field, Queue<TranslocationBlock> translocationQueue, World world)
-    {
+    public TranslocationApplier(Field field, Queue<TranslocationBlock> translocationQueue, World world) {
         this.field = field;
         this.translocationQueue = translocationQueue;
         this.world = world;
@@ -40,24 +38,19 @@ public class TranslocationApplier implements Runnable
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 5, 5);
     }
 
-    public void run()
-    {
+    public void run() {
         int i = 0;
 
-        while (i < 100 && !translocationQueue.isEmpty())
-        {
+        while (i < 100 && !translocationQueue.isEmpty()) {
             TranslocationBlock tb = translocationQueue.poll();
 
-            if (tb != null)
-            {
-                if (plugin.getSettingsManager().isDependentBlock(tb.getTypeId()))
-                {
+            if (tb != null) {
+                if (plugin.getSettingsManager().isDependentBlock(tb.getTypeId())) {
                     dependentQueue.add(tb);
                     continue;
                 }
 
-                if (field.hasFlag(FieldFlag.TRANSLOCATION_SAFETY))
-                {
+                if (field.hasFlag(FieldFlag.TRANSLOCATION_SAFETY)) {
                     movePlayers(tb);
                 }
 
@@ -66,22 +59,18 @@ public class TranslocationApplier implements Runnable
                 // if the block could not be applied, due to another block being in the way
                 // then don't apply it nad set it on the database as not-applied
 
-                if (!applied)
-                {
+                if (!applied) {
                     plugin.getStorageManager().updateTranslocationBlockApplied(field, tb, false);
                 }
             }
             i++;
         }
 
-        if (translocationQueue.isEmpty())
-        {
-            while (i < 200 && !dependentQueue.isEmpty())
-            {
+        if (translocationQueue.isEmpty()) {
+            while (i < 200 && !dependentQueue.isEmpty()) {
                 TranslocationBlock tb = dependentQueue.poll();
 
-                if (field.hasFlag(FieldFlag.TRANSLOCATION_SAFETY))
-                {
+                if (field.hasFlag(FieldFlag.TRANSLOCATION_SAFETY)) {
                     movePlayers(tb);
                 }
 
@@ -90,16 +79,14 @@ public class TranslocationApplier implements Runnable
                 // if the block could not be applied, due to another block being in the way
                 // then don't apply it nad set it on the database as not-applied
 
-                if (!applied)
-                {
+                if (!applied) {
                     plugin.getStorageManager().updateTranslocationBlockApplied(field, tb, false);
                 }
 
                 i++;
             }
 
-            if (!dependentQueue.iterator().hasNext())
-            {
+            if (!dependentQueue.iterator().hasNext()) {
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 field.setDisabled(false);
                 field.getTranslocatingModule().setTranslocating(false);
@@ -109,15 +96,12 @@ public class TranslocationApplier implements Runnable
     }
 
 
-    private void movePlayers(TranslocationBlock tb)
-    {
-        for (Player player : world.getPlayers())
-        {
+    private void movePlayers(TranslocationBlock tb) {
+        for (Player player : world.getPlayers()) {
             Vec blockLocation = tb.toVec();
             Vec location = new Vec(player.getLocation());
 
-            if (blockLocation.equals(location) || blockLocation.equals(location.add(0, 1, 0)))
-            {
+            if (blockLocation.equals(location) || blockLocation.equals(location.add(0, 1, 0))) {
                 plugin.getTeleportationManager().teleportAway(player);
             }
         }

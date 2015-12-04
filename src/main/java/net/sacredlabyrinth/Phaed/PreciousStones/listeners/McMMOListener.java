@@ -6,15 +6,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-public class McMMOListener implements Listener
-{
+public class McMMOListener implements Listener {
     private PreciousStones plugin;
 
     /**
      *
      */
-    public McMMOListener()
-    {
+    public McMMOListener() {
         plugin = PreciousStones.getInstance();
     }
 
@@ -25,10 +23,8 @@ public class McMMOListener implements Listener
      */
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onMcMMBlockBreak(FakeBlockBreakEvent event)
-    {
-        if (plugin.getForceFieldManager().isField(event.getBlock()))
-        {
+    public void onMcMMBlockBreak(FakeBlockBreakEvent event) {
+        if (plugin.getForceFieldManager().isField(event.getBlock())) {
             event.setCancelled(true);
         }
     }

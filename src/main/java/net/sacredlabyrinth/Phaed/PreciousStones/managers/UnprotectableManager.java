@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -12,15 +12,13 @@ import org.bukkit.block.Block;
  *
  * @author Phaed
  */
-public class UnprotectableManager
-{
+public class UnprotectableManager {
     private PreciousStones plugin;
 
     /**
      *
      */
-    public UnprotectableManager()
-    {
+    public UnprotectableManager() {
         plugin = PreciousStones.getInstance();
     }
 
@@ -30,8 +28,7 @@ public class UnprotectableManager
      * @param block the block that has been placed
      * @return true if an unprotectable is found touching it
      */
-    public boolean touchingUnprotectableBlock(Block block)
-    {
+    public boolean touchingUnprotectableBlock(Block block) {
         return getTouchingUnprotectableBlock(block) != null;
     }
 
@@ -41,23 +38,17 @@ public class UnprotectableManager
      * @param block the block that has been placed
      * @return the offending unprotectable block
      */
-    public Block getTouchingUnprotectableBlock(Block block)
-    {
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int z = -1; z <= 1; z++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    if (x == 0 && y == 0 && z == 0)
-                    {
+    public Block getTouchingUnprotectableBlock(Block block) {
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                for (int y = -1; y <= 1; y++) {
+                    if (x == 0 && y == 0 && z == 0) {
                         continue;
                     }
 
                     Block touching = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.getSettingsManager().isUnprotectableType(touching))
-                    {
+                    if (plugin.getSettingsManager().isUnprotectableType(touching)) {
                         return block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
                     }
                 }
@@ -73,12 +64,10 @@ public class UnprotectableManager
      * @param fieldblock the block that contains the field
      * @return the offending block
      */
-    public Block existsUnprotectableBlock(Block fieldblock)
-    {
+    public Block existsUnprotectableBlock(Block fieldblock) {
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(fieldblock);
 
-        if (fs == null)
-        {
+        if (fs == null) {
             return null;
         }
 
@@ -90,21 +79,17 @@ public class UnprotectableManager
         int miny;
         int maxy;
 
-        if (fs.getCustomHeight() > 0)
-        {
+        if (fs.getCustomHeight() > 0) {
             miny = fieldblock.getY() - (Math.max(fs.getCustomHeight() - 1, 0) / 2);
             maxy = fieldblock.getY() + (Math.max(fs.getCustomHeight() - 1, 0) / 2);
-        }
-        else
-        {
+        } else {
             miny = fieldblock.getY() - (Math.max(fs.getRadius() - 1, 0) / 2);
             maxy = fieldblock.getY() + (Math.max(fs.getRadius() - 1, 0) / 2);
         }
 
         Field field = plugin.getForceFieldManager().getField(fieldblock);
 
-        if (field != null)
-        {
+        if (field != null) {
             minx = field.getMinx();
             maxx = field.getMaxx();
             minz = field.getMinz();
@@ -115,21 +100,16 @@ public class UnprotectableManager
 
         World world = fieldblock.getWorld();
 
-        for (int x = minx; x <= maxx; x++)
-        {
-            for (int z = minz; z <= maxz; z++)
-            {
-                for (int y = miny; y <= maxy; y++)
-                {
-                    if (x == 0 && y == 0 && z == 0)
-                    {
+        for (int x = minx; x <= maxx; x++) {
+            for (int z = minz; z <= maxz; z++) {
+                for (int y = miny; y <= maxy; y++) {
+                    if (x == 0 && y == 0 && z == 0) {
                         continue;
                     }
 
                     int type = world.getBlockTypeIdAt(x, y, z);
 
-                    if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type)))
-                    {
+                    if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type))) {
                         return fieldblock.getWorld().getBlockAt(x, y, z);
                     }
                 }
@@ -145,12 +125,10 @@ public class UnprotectableManager
      * @param field the block that contains the field
      * @return the offending block
      */
-    public Block existsUnprotectableBlock(Field field)
-    {
+    public Block existsUnprotectableBlock(Field field) {
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field.getSettings().getTypeEntry());
 
-        if (fs == null)
-        {
+        if (fs == null) {
             return null;
         }
 
@@ -163,23 +141,17 @@ public class UnprotectableManager
 
         World world = plugin.getServer().getWorld(field.getWorld());
 
-        if (world != null)
-        {
-            for (int x = minx; x <= maxx; x++)
-            {
-                for (int z = minz; z <= maxz; z++)
-                {
-                    for (int y = miny; y <= maxy; y++)
-                    {
-                        if (x == 0 && y == 0 && z == 0)
-                        {
+        if (world != null) {
+            for (int x = minx; x <= maxx; x++) {
+                for (int z = minz; z <= maxz; z++) {
+                    for (int y = miny; y <= maxy; y++) {
+                        if (x == 0 && y == 0 && z == 0) {
                             continue;
                         }
 
                         int type = world.getBlockTypeIdAt(x, y, z);
 
-                        if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type)))
-                        {
+                        if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type))) {
                             return field.getBlock().getWorld().getBlockAt(x, y, z);
                         }
                     }

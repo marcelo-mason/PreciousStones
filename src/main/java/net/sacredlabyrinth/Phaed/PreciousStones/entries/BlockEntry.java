@@ -7,8 +7,7 @@ import org.bukkit.block.Block;
 /**
  * @author phaed
  */
-public class BlockEntry
-{
+public class BlockEntry {
     private final int typeId;
     private final byte data;
     private final Location location;
@@ -16,8 +15,7 @@ public class BlockEntry
     /**
      * @param block
      */
-    public BlockEntry(Block block)
-    {
+    public BlockEntry(Block block) {
         this.typeId = block.getTypeId();
         this.data = block.getData();
         this.location = block.getLocation();
@@ -28,8 +26,7 @@ public class BlockEntry
      * @param typeId
      * @param data
      */
-    public BlockEntry(Location loc, int typeId, byte data)
-    {
+    public BlockEntry(Location loc, int typeId, byte data) {
         this.typeId = typeId;
         this.data = data;
         this.location = loc;
@@ -38,40 +35,34 @@ public class BlockEntry
     /**
      * @return the typeId
      */
-    public int getTypeId()
-    {
+    public int getTypeId() {
         return typeId;
     }
 
     /**
      * @return the data
      */
-    public byte getData()
-    {
+    public byte getData() {
         return data;
     }
 
     /**
      * @return the location
      */
-    public Location getLocation()
-    {
+    public Location getLocation() {
         return location;
     }
 
     /**
      * @return the block
      */
-    public Block getBlock()
-    {
+    public Block getBlock() {
         return location.getWorld().getBlockAt(location);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof BlockEntry))
-        {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BlockEntry)) {
             return false;
         }
 
@@ -80,8 +71,7 @@ public class BlockEntry
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 7;
         hash = 47 * hash + this.getTypeId();
         hash = 47 * hash + this.getData();
@@ -90,8 +80,7 @@ public class BlockEntry
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "[" + getTypeId() + ":" + getData() + " " + Helper.toLocationString(location) + "]";
     }
 }

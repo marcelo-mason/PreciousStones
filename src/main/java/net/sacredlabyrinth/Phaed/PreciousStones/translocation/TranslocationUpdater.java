@@ -1,8 +1,8 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.translocation;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -12,8 +12,7 @@ import java.util.Queue;
 /**
  * @author phaed
  */
-public class TranslocationUpdater implements Runnable
-{
+public class TranslocationUpdater implements Runnable {
     private PreciousStones plugin;
     private Queue<TranslocationBlock> translocationQueue = new LinkedList<TranslocationBlock>();
     private Queue<TranslocationBlock> dependentQueue = new LinkedList<TranslocationBlock>();
@@ -26,20 +25,14 @@ public class TranslocationUpdater implements Runnable
      * @param translocationQueue
      * @param world
      */
-    public TranslocationUpdater(Field field, Queue<TranslocationBlock> translocationQueue, World world)
-    {
+    public TranslocationUpdater(Field field, Queue<TranslocationBlock> translocationQueue, World world) {
         this.plugin = PreciousStones.getInstance();
 
-        for (TranslocationBlock tb : translocationQueue)
-        {
-            if (tb != null)
-            {
-                if (plugin.getSettingsManager().isDependentBlock(tb.getTypeId()))
-                {
+        for (TranslocationBlock tb : translocationQueue) {
+            if (tb != null) {
+                if (plugin.getSettingsManager().isDependentBlock(tb.getTypeId())) {
                     this.dependentQueue.add(tb);
-                }
-                else
-                {
+                } else {
                     this.translocationQueue.add(tb);
                 }
             }
@@ -52,12 +45,10 @@ public class TranslocationUpdater implements Runnable
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 5, 5);
     }
 
-    public void run()
-    {
+    public void run() {
         int i = 0;
 
-        while (i < 500 && !dependentQueue.isEmpty())
-        {
+        while (i < 500 && !dependentQueue.isEmpty()) {
             TranslocationBlock tb = dependentQueue.poll();
 
             boolean cleared = plugin.getTranslocationManager().updateTranslationBlock(field, tb, false);
@@ -66,31 +57,24 @@ public class TranslocationUpdater implements Runnable
             // doesn't match whats in the database, then cancel the translocation of it
             // by deleting it from the database
 
-            if (cleared)
-            {
+            if (cleared) {
                 this.clearDependentQueue.add(tb);
-            }
-            else
-            {
+            } else {
                 plugin.getStorageManager().deleteTranslocation(field, tb);
             }
             i++;
         }
 
-        if (dependentQueue.isEmpty())
-        {
-            while (i < 500 && !clearDependentQueue.isEmpty())
-            {
+        if (dependentQueue.isEmpty()) {
+            while (i < 500 && !clearDependentQueue.isEmpty()) {
                 TranslocationBlock tb = clearDependentQueue.poll();
 
                 plugin.getTranslocationManager().zeroOutBlock(tb);
                 i++;
             }
 
-            if (clearDependentQueue.isEmpty())
-            {
-                while (i < 500 && !translocationQueue.isEmpty())
-                {
+            if (clearDependentQueue.isEmpty()) {
+                while (i < 500 && !translocationQueue.isEmpty()) {
                     TranslocationBlock tb = translocationQueue.poll();
 
                     boolean cleared = plugin.getTranslocationManager().updateTranslationBlock(field, tb, true);
@@ -99,16 +83,14 @@ public class TranslocationUpdater implements Runnable
                     // doesn't match whats in the database, then cancel the translocation of it
                     // by deleting it from the database
 
-                    if (!cleared)
-                    {
+                    if (!cleared) {
                         plugin.getStorageManager().deleteTranslocation(field, tb);
                     }
 
                     i++;
                 }
 
-                if (!translocationQueue.iterator().hasNext())
-                {
+                if (!translocationQueue.iterator().hasNext()) {
                     Bukkit.getServer().getScheduler().cancelTask(timerID);
                     field.setDisabled(true);
                     field.getTranslocatingModule().setTranslocating(false);

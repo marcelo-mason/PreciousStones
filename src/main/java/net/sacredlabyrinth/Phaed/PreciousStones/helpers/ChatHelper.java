@@ -17,8 +17,7 @@ import java.util.regex.Pattern;
 /**
  * @author phaed
  */
-public class ChatHelper
-{
+public class ChatHelper {
     private final int colspacing = 12;
     private static final int lineLength = 320;
     private List<Double> columnSizes = new ArrayList<Double>();
@@ -35,18 +34,15 @@ public class ChatHelper
     /**
      * @param columnAlignment
      */
-    public void setAlignment(String... columnAlignment)
-    {
+    public void setAlignment(String... columnAlignment) {
         columnAlignments.addAll(Arrays.asList(columnAlignment));
     }
 
     /**
      * @param columnSpacings
      */
-    public void setSpacing(int... columnSpacings)
-    {
-        for (int spacing : columnSpacings)
-        {
+    public void setSpacing(int... columnSpacings) {
+        for (int spacing : columnSpacings) {
             columnSpaces.add(spacing);
         }
     }
@@ -55,17 +51,14 @@ public class ChatHelper
      * @param columnPercentages
      * @param prefix
      */
-    public void setColumnSizes(String prefix, double... columnPercentages)
-    {
+    public void setColumnSizes(String prefix, double... columnPercentages) {
         int ll = lineLength;
 
-        if (prefix != null)
-        {
+        if (prefix != null) {
             ll = lineLength - (int) msgLength(prefix);
         }
 
-        for (double percentage : columnPercentages)
-        {
+        for (double percentage : columnPercentages) {
             columnSizes.add(Math.floor((percentage / 100) * ll));
         }
     }
@@ -73,20 +66,17 @@ public class ChatHelper
     /**
      * @return
      */
-    public boolean hasContent()
-    {
+    public boolean hasContent() {
         return rows.size() > 0;
     }
 
     /**
      * @param contents
      */
-    public void addRow(String... contents)
-    {
+    public void addRow(String... contents) {
         List<String> out = new ArrayList<String>();
 
-        for (String content : contents)
-        {
+        for (String content : contents) {
             out.add(format(content));
         }
 
@@ -96,16 +86,14 @@ public class ChatHelper
     /**
      * @return
      */
-    public int size()
-    {
+    public int size() {
         return rows.size();
     }
 
     /**
      *
      */
-    public void clear()
-    {
+    public void clear() {
         rows.clear();
     }
 
@@ -114,40 +102,33 @@ public class ChatHelper
      * @param amount
      * @return
      */
-    public boolean sendBlock(CommandSender sender, int amount)
-    {
-        if (sender == null)
-        {
+    public boolean sendBlock(CommandSender sender, int amount) {
+        if (sender == null) {
             return false;
         }
 
-        if (rows.size() == 0)
-        {
+        if (rows.size() == 0) {
             return false;
         }
 
-        if (!(sender instanceof Player))
-        {
+        if (!(sender instanceof Player)) {
             amount = 999;
         }
 
         // if no column sizes provided them
         // make some up based on the data
 
-        if (columnSizes.isEmpty())
-        {
+        if (columnSizes.isEmpty()) {
             // generate columns sizes
 
             int col_count = rows.get(0).length;
 
-            for (int i = 0; i < col_count; i++)
-            {
+            for (int i = 0; i < col_count; i++) {
                 // add custom column spacing if specified
 
                 int spacing = colspacing;
 
-                if (columnSpaces.size() >= (i + 1))
-                {
+                if (columnSpaces.size() >= (i + 1)) {
                     spacing = columnSpaces.get(i);
                 }
 
@@ -157,63 +138,41 @@ public class ChatHelper
 
         // size up all sections
 
-        for (int i = 0; i < amount; i++)
-        {
-            if (rows.size() == 0)
-            {
+        for (int i = 0; i < amount; i++) {
+            if (rows.size() == 0) {
                 continue;
             }
 
             String rowstring = "";
             String row[] = rows.pollFirst();
 
-            for (int sid = 0; sid < row.length; sid++)
-            {
+            for (int sid = 0; sid < row.length; sid++) {
                 String section = row[sid];
                 double colsize = (columnSizes.size() >= (sid + 1)) ? columnSizes.get(sid) : 0;
                 String align = (columnAlignments.size() >= (sid + 1)) ? columnAlignments.get(sid) : "l";
 
-                if (align.equalsIgnoreCase("r"))
-                {
-                    if (msgLength(section) > colsize)
-                    {
+                if (align.equalsIgnoreCase("r")) {
+                    if (msgLength(section) > colsize) {
                         rowstring += cropLeftToFit(section, colsize);
-                    }
-                    else if (msgLength(section) < colsize)
-                    {
+                    } else if (msgLength(section) < colsize) {
                         rowstring += padLeftToFit(section, colsize);
                     }
-                }
-                else if (align.equalsIgnoreCase("l"))
-                {
-                    if (msgLength(section) > colsize)
-                    {
+                } else if (align.equalsIgnoreCase("l")) {
+                    if (msgLength(section) > colsize) {
                         rowstring += cropRightToFit(section, colsize);
-                    }
-                    else if (msgLength(section) < colsize)
-                    {
+                    } else if (msgLength(section) < colsize) {
                         rowstring += padRightToFit(section, colsize);
                     }
-                }
-                else if (align.equalsIgnoreCase("c"))
-                {
-                    if (msgLength(section) > colsize)
-                    {
+                } else if (align.equalsIgnoreCase("c")) {
+                    if (msgLength(section) > colsize) {
                         rowstring += cropRightToFit(section, colsize);
-                    }
-                    else if (msgLength(section) < colsize)
-                    {
+                    } else if (msgLength(section) < colsize) {
                         rowstring += centerInLineOf(section, colsize);
                     }
-                }
-                else if (align.equalsIgnoreCase("w"))
-                {
-                    if (msgLength(section) > colsize)
-                    {
+                } else if (align.equalsIgnoreCase("w")) {
+                    if (msgLength(section) > colsize) {
                         rowstring += section;
-                    }
-                    else if (msgLength(section) < colsize)
-                    {
+                    } else if (msgLength(section) < colsize) {
                         rowstring += padRightToFit(section, colsize);
                     }
                 }
@@ -221,8 +180,7 @@ public class ChatHelper
 
             String msg = cropRightToFit(rowstring, lineLength);
 
-            if (color.length() > 0)
-            {
+            if (color.length() > 0) {
                 msg = color + msg;
             }
 
@@ -236,15 +194,12 @@ public class ChatHelper
      * @param sender
      * @param prefix
      */
-    public void sendBlock(CommandSender sender, String prefix)
-    {
-        if (sender == null)
-        {
+    public void sendBlock(CommandSender sender, String prefix) {
+        if (sender == null) {
             return;
         }
 
-        if (rows.size() == 0)
-        {
+        if (rows.size() == 0) {
             return;
         }
 
@@ -255,20 +210,17 @@ public class ChatHelper
         // if no column sizes provided them
         // make some up based on the data
 
-        if (columnSizes.isEmpty())
-        {
+        if (columnSizes.isEmpty()) {
             // generate columns sizes
 
             int col_count = rows.get(0).length;
 
-            for (int i = 0; i < col_count; i++)
-            {
+            for (int i = 0; i < col_count; i++) {
                 // add custom column spacing if specified
 
                 int spacing = colspacing;
 
-                if (columnSpaces.size() >= (i + 1))
-                {
+                if (columnSpaces.size() >= (i + 1)) {
                     spacing = columnSpaces.get(i);
                 }
 
@@ -278,46 +230,30 @@ public class ChatHelper
 
         // size up all sections
 
-        for (String[] row : rows)
-        {
+        for (String[] row : rows) {
             String rowstring = "";
 
-            for (int sid = 0; sid < row.length; sid++)
-            {
+            for (int sid = 0; sid < row.length; sid++) {
                 String section = row[sid];
                 double colsize = (columnSizes.size() >= (sid + 1)) ? columnSizes.get(sid) : 0;
                 String align = (columnAlignments.size() >= (sid + 1)) ? columnAlignments.get(sid) : "l";
 
-                if (align.equalsIgnoreCase("r"))
-                {
-                    if (msgLength(section) > colsize)
-                    {
+                if (align.equalsIgnoreCase("r")) {
+                    if (msgLength(section) > colsize) {
                         rowstring += cropLeftToFit(section, colsize);
-                    }
-                    else if (msgLength(section) < colsize)
-                    {
+                    } else if (msgLength(section) < colsize) {
                         rowstring += padLeftToFit(section, colsize);
                     }
-                }
-                else if (align.equalsIgnoreCase("l"))
-                {
-                    if (msgLength(section) > colsize)
-                    {
+                } else if (align.equalsIgnoreCase("l")) {
+                    if (msgLength(section) > colsize) {
                         rowstring += cropRightToFit(section, colsize);
-                    }
-                    else if (msgLength(section) < colsize)
-                    {
+                    } else if (msgLength(section) < colsize) {
                         rowstring += padRightToFit(section, colsize);
                     }
-                }
-                else if (align.equalsIgnoreCase("c"))
-                {
-                    if (msgLength(section) > colsize)
-                    {
+                } else if (align.equalsIgnoreCase("c")) {
+                    if (msgLength(section) > colsize) {
                         rowstring += cropRightToFit(section, colsize);
-                    }
-                    else if (msgLength(section) < colsize)
-                    {
+                    } else if (msgLength(section) < colsize) {
                         rowstring += centerInLineOf(section, colsize);
                     }
                 }
@@ -325,8 +261,7 @@ public class ChatHelper
 
             String msg = cropRightToFit((prefix_used ? empty_prefix : prefix) + " " + rowstring, lineLength);
 
-            if (color.length() > 0)
-            {
+            if (color.length() > 0) {
                 msg = color + msg;
             }
 
@@ -339,8 +274,7 @@ public class ChatHelper
     /**
      * @param sender
      */
-    public void sendBlock(CommandSender sender)
-    {
+    public void sendBlock(CommandSender sender) {
         sendBlock(sender, null);
     }
 
@@ -350,8 +284,7 @@ public class ChatHelper
      * @param sender
      * @param msg
      */
-    public static void sendMessageAll(CommandSender sender, String msg)
-    {
+    public static void sendMessageAll(CommandSender sender, String msg) {
         sendMessageAll(sender, msg);
     }
 
@@ -359,14 +292,11 @@ public class ChatHelper
      * @param col
      * @return
      */
-    public double getMaxWidth(double col)
-    {
+    public double getMaxWidth(double col) {
         double maxWidth = 0;
 
-        for (String[] row : rows)
-        {
-            if (col < row.length)
-            {
+        for (String[] row : rows) {
+            if (col < row.length) {
                 maxWidth = Math.max(maxWidth, msgLength(row[(int) col]));
             }
         }
@@ -378,8 +308,7 @@ public class ChatHelper
      * @param msg
      * @return
      */
-    public static String centerInLine(String msg)
-    {
+    public static String centerInLine(String msg) {
         return centerInLineOf(msg, lineLength);
     }
 
@@ -388,15 +317,13 @@ public class ChatHelper
      * @param lineLength
      * @return
      */
-    public static String centerInLineOf(String msg, double lineLength)
-    {
+    public static String centerInLineOf(String msg, double lineLength) {
         double length = msgLength(msg);
         double diff = lineLength - length;
 
         // if too big for line return it as is
 
-        if (diff < 0)
-        {
+        if (diff < 0) {
             return msg;
         }
 
@@ -417,10 +344,8 @@ public class ChatHelper
      * @param str
      * @return
      */
-    public static String makeEmpty(String str)
-    {
-        if (str == null)
-        {
+    public static String makeEmpty(String str) {
+        if (str == null) {
             return "";
         }
 
@@ -432,15 +357,12 @@ public class ChatHelper
      * @param length
      * @return
      */
-    public static String cropRightToFit(String msg, double length)
-    {
-        if (msg == null || msg.length() == 0 || length == 0)
-        {
+    public static String cropRightToFit(String msg, double length) {
+        if (msg == null || msg.length() == 0 || length == 0) {
             return "";
         }
 
-        while (msgLength(msg) >= length)
-        {
+        while (msgLength(msg) >= length) {
             msg = msg.substring(0, msg.length() - 2);
         }
 
@@ -452,15 +374,12 @@ public class ChatHelper
      * @param length
      * @return
      */
-    public static String cropLeftToFit(String msg, double length)
-    {
-        if (msg == null || msg.length() == 0 || length == 0)
-        {
+    public static String cropLeftToFit(String msg, double length) {
+        if (msg == null || msg.length() == 0 || length == 0) {
             return "";
         }
 
-        while (msgLength(msg) >= length)
-        {
+        while (msgLength(msg) >= length) {
             msg = msg.substring(1);
         }
 
@@ -474,15 +393,12 @@ public class ChatHelper
      * @param length
      * @return
      */
-    public static String padLeftToFit(String msg, double length)
-    {
-        if (msgLength(msg) > length)
-        {
+    public static String padLeftToFit(String msg, double length) {
+        if (msgLength(msg) > length) {
             return msg;
         }
 
-        while (msgLength(msg) < length)
-        {
+        while (msgLength(msg) < length) {
             msg = " " + msg;
         }
 
@@ -496,15 +412,12 @@ public class ChatHelper
      * @param length
      * @return
      */
-    public static String padRightToFit(String msg, double length)
-    {
-        if (msgLength(msg) > length)
-        {
+    public static String padRightToFit(String msg, double length) {
+        if (msgLength(msg) > length) {
             return msg;
         }
 
-        while (msgLength(msg) < length)
-        {
+        while (msgLength(msg) < length) {
             msg += " ";
         }
 
@@ -517,22 +430,17 @@ public class ChatHelper
      * @param str
      * @return
      */
-    public static double msgLength(String str)
-    {
+    public static double msgLength(String str) {
         double length = 0;
         str = cleanColors(str);
 
         // Loop through all the characters, skipping any color characters and their following color codes
 
-        for (int x = 0; x < str.length(); x++)
-        {
+        for (int x = 0; x < str.length(); x++) {
             int len = charLength(str.charAt(x));
-            if (len > 0)
-            {
+            if (len > 0) {
                 length += len;
-            }
-            else
-            {
+            } else {
                 x++;
             }
         }
@@ -543,8 +451,7 @@ public class ChatHelper
      * @param str
      * @return
      */
-    public static String cleanColors(String str)
-    {
+    public static String cleanColors(String str) {
         String patternStr = "ï¿½.";
         String replacementStr = "";
 
@@ -561,38 +468,22 @@ public class ChatHelper
      * @param x
      * @return
      */
-    public static int charLength(char x)
-    {
-        if ("i.:,;|!".indexOf(x) != -1)
-        {
+    public static int charLength(char x) {
+        if ("i.:,;|!".indexOf(x) != -1) {
             return 2;
-        }
-        else if ("l'".indexOf(x) != -1)
-        {
+        } else if ("l'".indexOf(x) != -1) {
             return 3;
-        }
-        else if ("tI[]".indexOf(x) != -1)
-        {
+        } else if ("tI[]".indexOf(x) != -1) {
             return 4;
-        }
-        else if ("fk{}<>\"*()".indexOf(x) != -1)
-        {
+        } else if ("fk{}<>\"*()".indexOf(x) != -1) {
             return 5;
-        }
-        else if ("abcdeghjmnopqrsuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ1234567890\\/#?$%-=_+&^".indexOf(x) != -1)
-        {
+        } else if ("abcdeghjmnopqrsuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ1234567890\\/#?$%-=_+&^".indexOf(x) != -1) {
             return 6;
-        }
-        else if ("@~".indexOf(x) != -1)
-        {
+        } else if ("@~".indexOf(x) != -1) {
             return 7;
-        }
-        else if (x == ' ')
-        {
+        } else if (x == ' ') {
             return 4;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -601,8 +492,7 @@ public class ChatHelper
      * @param msg
      * @return
      */
-    public static String[] wordWrap(String msg)
-    {
+    public static String[] wordWrap(String msg) {
         return wordWrap(msg, 0);
     }
 
@@ -613,8 +503,7 @@ public class ChatHelper
      * @param prefixLn
      * @return
      */
-    public static String[] wordWrap(String msg, int prefixLn)
-    {
+    public static String[] wordWrap(String msg, int prefixLn) {
         // Split each word apart
 
         ArrayList<String> split = new ArrayList<String>();
@@ -626,8 +515,7 @@ public class ChatHelper
 
         // While i is less than the length of the array of words
 
-        while (!split.isEmpty())
-        {
+        while (!split.isEmpty()) {
             int len = 0;
 
             // Create an array list to hold individual words
@@ -637,14 +525,12 @@ public class ChatHelper
             // Loop through the words finding their length and increasing
             // j, the end point for the sub string
 
-            while (!split.isEmpty() && split.get(0) != null && len <= (lineLength - prefixLn))
-            {
+            while (!split.isEmpty() && split.get(0) != null && len <= (lineLength - prefixLn)) {
                 double wordLength = msgLength(split.get(0)) + 4;
 
                 // If a word is too long for a line
 
-                if (wordLength > (lineLength - prefixLn))
-                {
+                if (wordLength > (lineLength - prefixLn)) {
                     String[] tempArray = wordCut(len, split.remove(0));
                     words.add(tempArray[0]);
                     split.add(tempArray[1]);
@@ -653,8 +539,7 @@ public class ChatHelper
                 // If the word is not too long to fit
 
                 len += wordLength;
-                if (len < (lineLength - prefixLn) + 4)
-                {
+                if (len < (lineLength - prefixLn) + 4) {
                     words.add(split.remove(0));
                 }
             }
@@ -673,11 +558,9 @@ public class ChatHelper
      * @param seperator
      * @return
      */
-    public static String combineSplit(int startIndex, String[] string, String seperator)
-    {
+    public static String combineSplit(int startIndex, String[] string, String seperator) {
         StringBuilder builder = new StringBuilder();
-        for (int i = startIndex; i < string.length; i++)
-        {
+        for (int i = startIndex; i < string.length; i++) {
             builder.append(string[i]);
             builder.append(seperator);
         }
@@ -693,29 +576,23 @@ public class ChatHelper
      * @param str
      * @return
      */
-    public static String[] wordCut(int lengthBefore, String str)
-    {
+    public static String[] wordCut(int lengthBefore, String str) {
         int length = lengthBefore;
 
         // Loop through all the characters, skipping any color characters and their following color codes
 
         String[] output = new String[2];
         int x = 0;
-        while (length < lineLength && x < str.length())
-        {
+        while (length < lineLength && x < str.length()) {
             int len = charLength(str.charAt(x));
-            if (len > 0)
-            {
+            if (len > 0) {
                 length += len;
-            }
-            else
-            {
+            } else {
                 x++;
             }
             x++;
         }
-        if (x > str.length())
-        {
+        if (x > str.length()) {
             x = str.length();
         }
 
@@ -735,18 +612,15 @@ public class ChatHelper
      * @param playerName
      * @param msg
      */
-    public static void send(String playerName, String msg, Object... args)
-    {
+    public static void send(String playerName, String msg, Object... args) {
         Player player = Bukkit.getPlayerExact(playerName);
 
-        if (player != null)
-        {
+        if (player != null) {
             msg = format(msg, args);
 
             String[] message = colorize(wordWrap(msg, 0));
 
-            for (String out : message)
-            {
+            for (String out : message) {
                 player.sendMessage(out);
             }
         }
@@ -758,10 +632,8 @@ public class ChatHelper
      * @param receiver
      * @param msg
      */
-    public static void send(CommandSender receiver, String msg, Object... args)
-    {
-        if (receiver == null)
-        {
+    public static void send(CommandSender receiver, String msg, Object... args) {
+        if (receiver == null) {
             return;
         }
 
@@ -769,8 +641,7 @@ public class ChatHelper
 
         String[] message = colorize(wordWrap(msg, 0));
 
-        for (String out : message)
-        {
+        for (String out : message) {
             receiver.sendMessage(out);
         }
     }
@@ -781,10 +652,8 @@ public class ChatHelper
      * @param receiver
      * @param msg
      */
-    public static void sendPrefixed(CommandSender receiver, String prefix, String msg, Object... args)
-    {
-        if (receiver == null)
-        {
+    public static void sendPrefixed(CommandSender receiver, String prefix, String msg, Object... args) {
+        if (receiver == null) {
             return;
         }
 
@@ -792,8 +661,7 @@ public class ChatHelper
 
         String[] message = colorize(wordWrap(msg, 0));
 
-        for (String out : message)
-        {
+        for (String out : message) {
             receiver.sendMessage(out);
         }
     }
@@ -804,10 +672,8 @@ public class ChatHelper
      * @param receiver
      * @param msg
      */
-    public static void sendPs(CommandSender receiver, String msg, Object... args)
-    {
-        if (receiver == null)
-        {
+    public static void sendPs(CommandSender receiver, String msg, Object... args) {
+        if (receiver == null) {
             return;
         }
 
@@ -815,8 +681,7 @@ public class ChatHelper
 
         String[] message = colorize(wordWrap(msg, 0));
 
-        for (String out : message)
-        {
+        for (String out : message) {
             receiver.sendMessage(out);
         }
     }
@@ -827,10 +692,8 @@ public class ChatHelper
      * @param receiver
      * @param msg
      */
-    public static void saySingle(CommandSender receiver, String msg, Object... args)
-    {
-        if (receiver == null)
-        {
+    public static void saySingle(CommandSender receiver, String msg, Object... args) {
+        if (receiver == null) {
             return;
         }
 
@@ -844,8 +707,7 @@ public class ChatHelper
      *
      * @param color
      */
-    public void startColor(String color)
-    {
+    public void startColor(String color) {
         this.color = color;
     }
 
@@ -854,10 +716,8 @@ public class ChatHelper
      *
      * @param receiver
      */
-    public static void sendBlank(CommandSender receiver)
-    {
-        if (receiver == null)
-        {
+    public static void sendBlank(CommandSender receiver) {
+        if (receiver == null) {
             return;
         }
 
@@ -870,8 +730,7 @@ public class ChatHelper
      * @param message
      * @return
      */
-    public static String[] say(String message)
-    {
+    public static String[] say(String message) {
         return colorize(wordWrap(message));
     }
 
@@ -879,8 +738,7 @@ public class ChatHelper
      * @param message
      * @return
      */
-    public static String[] colorize(String[] message)
-    {
+    public static String[] colorize(String[] message) {
         return colorizeBase(message, 167);
     }
 
@@ -888,8 +746,7 @@ public class ChatHelper
      * @param message
      * @return
      */
-    public static String colorize(String message)
-    {
+    public static String colorize(String message) {
         return colorizeBase((new String[]{message}), 167)[0];
     }
 
@@ -898,25 +755,20 @@ public class ChatHelper
      * @param charcode
      * @return
      */
-    public static String[] colorizeBase(String[] message, int charcode)
-    {
-        if (message != null && message[0] != null && !message[0].isEmpty())
-        {
+    public static String[] colorizeBase(String[] message, int charcode) {
+        if (message != null && message[0] != null && !message[0].isEmpty()) {
             // Go through each line
 
             String prevColor = "";
             String lastColor = "";
 
             int counter = 0;
-            for (String msg : message)
-            {
+            for (String msg : message) {
                 // Loop through looking for a color code
 
-                for (int x = 0; x < msg.length(); x++)
-                {
+                for (int x = 0; x < msg.length(); x++) {
                     // If the char is color code
-                    if (msg.codePointAt(x) == charcode)
-                    {
+                    if (msg.codePointAt(x) == charcode) {
                         // advance x to the next character
                         x += 1;
 
@@ -934,32 +786,27 @@ public class ChatHelper
         return message;
     }
 
-    public static String format(String msg, Object... args)
-    {
+    public static String format(String msg, Object... args) {
         String lang = PreciousStones.getInstance().getLanguageManager().get(msg);
 
-        if (lang != null)
-        {
+        if (lang != null) {
             msg = lang;
         }
 
         return replaceFormatting(msg, args);
     }
 
-    public static String formatPrefixed(String prefix, String msg, Object... args)
-    {
+    public static String formatPrefixed(String prefix, String msg, Object... args) {
         String lang = PreciousStones.getInstance().getLanguageManager().get(msg);
 
-        if (lang != null)
-        {
+        if (lang != null) {
             msg = prefix + lang;
         }
 
         return replaceFormatting(msg, args);
     }
 
-    private static String replaceFormatting(String msg, Object[] args)
-    {
+    private static String replaceFormatting(String msg, Object[] args) {
         msg = msg.replace("{aqua}", ChatColor.AQUA.toString());
         msg = msg.replace("{black}", ChatColor.BLACK.toString());
         msg = msg.replace("{blue}", ChatColor.BLUE.toString());
@@ -983,40 +830,31 @@ public class ChatHelper
         msg = msg.replace("{strikethrough}", ChatColor.STRIKETHROUGH.toString());
         msg = msg.replace("{underline}", ChatColor.UNDERLINE.toString());
 
-        if (args.length > 0)
-        {
+        if (args.length > 0) {
             msg = msg.replaceAll("\\{1.*?\\}", Matcher.quoteReplacement(args[0].toString()));
         }
-        if (args.length > 1)
-        {
+        if (args.length > 1) {
             msg = msg.replaceAll("\\{2.*?\\}", Matcher.quoteReplacement(args[1].toString()));
         }
-        if (args.length > 2)
-        {
+        if (args.length > 2) {
             msg = msg.replaceAll("\\{3.*?\\}", Matcher.quoteReplacement(args[2].toString()));
         }
-        if (args.length > 3)
-        {
+        if (args.length > 3) {
             msg = msg.replaceAll("\\{4.*?\\}", Matcher.quoteReplacement(args[3].toString()));
         }
-        if (args.length > 4)
-        {
+        if (args.length > 4) {
             msg = msg.replaceAll("\\{5.*?\\}", Matcher.quoteReplacement(args[4].toString()));
         }
-        if (args.length > 5)
-        {
+        if (args.length > 5) {
             msg = msg.replaceAll("\\{6.*?\\}", Matcher.quoteReplacement(args[5].toString()));
         }
-        if (args.length > 6)
-        {
+        if (args.length > 6) {
             msg = msg.replaceAll("\\{7.*?\\}", Matcher.quoteReplacement(args[6].toString()));
         }
-        if (args.length > 7)
-        {
+        if (args.length > 7) {
             msg = msg.replaceAll("\\{8.*?\\}", Matcher.quoteReplacement(args[7].toString()));
         }
-        if (args.length > 8)
-        {
+        if (args.length > 8) {
             msg = msg.replaceAll("\\{9.*?\\}", Matcher.quoteReplacement(args[8].toString()));
         }
 

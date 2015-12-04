@@ -1,13 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.visualization.Visualization;
-import net.sacredlabyrinth.Phaed.PreciousStones.visualization.Visualize;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.CuboidEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.visualization.Visualization;
+import net.sacredlabyrinth.Phaed.PreciousStones.visualization.Visualize;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,8 +23,7 @@ import java.util.List;
 /**
  * @author phad
  */
-public class VisualizationManager
-{
+public class VisualizationManager {
     private PreciousStones plugin;
     private HashMap<String, Integer> counts = new HashMap<String, Integer>();
     private HashMap<String, Visualization> visualizations = new HashMap<String, Visualization>();
@@ -32,8 +31,7 @@ public class VisualizationManager
     /**
      *
      */
-    public VisualizationManager()
-    {
+    public VisualizationManager() {
         plugin = PreciousStones.getInstance();
     }
 
@@ -43,8 +41,7 @@ public class VisualizationManager
      * @param player
      * @param field
      */
-    public void visualizeSingleField(Player player, Field field)
-    {
+    public void visualizeSingleField(Player player, Field field) {
         addVisualizationField(player, field);
         displayVisualization(player, false);
     }
@@ -55,8 +52,7 @@ public class VisualizationManager
      * @param player
      * @param field
      */
-    public void visualizeSingleFieldFast(Player player, Field field)
-    {
+    public void visualizeSingleFieldFast(Player player, Field field) {
         addVisualizationField(player, field);
         displayVisualization(player, false, 2);
     }
@@ -67,23 +63,19 @@ public class VisualizationManager
      * @param player
      * @return
      */
-    public boolean pendingVisualization(Player player)
-    {
+    public boolean pendingVisualization(Player player) {
         return visualizations.containsKey(player.getName());
     }
 
     /**
      * Reverts all current visualizations
      */
-    public void revertAll()
-    {
-        for (String playerName : visualizations.keySet())
-        {
+    public void revertAll() {
+        for (String playerName : visualizations.keySet()) {
             Visualization vis = visualizations.get(playerName);
             Player player = Bukkit.getServer().getPlayerExact(playerName);
 
-            if (player != null)
-            {
+            if (player != null) {
                 Visualize visualize = new Visualize(vis.getBlocks(), player, true, false, 0);
             }
         }
@@ -97,24 +89,20 @@ public class VisualizationManager
      * @param player
      * @param field
      */
-    public void addVisualizationField(Player player, Field field)
-    {
+    public void addVisualizationField(Player player, Field field) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis == null)
-        {
+        if (vis == null) {
             vis = new Visualization();
         }
 
-        if (plugin.getCuboidManager().hasOpenCuboid(player))
-        {
+        if (plugin.getCuboidManager().hasOpenCuboid(player)) {
             return;
         }
 
         PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
-        if (data.getDensity() == 0)
-        {
+        if (data.getDensity() == 0) {
             return;
         }
 
@@ -130,8 +118,7 @@ public class VisualizationManager
         int miny = field.getY() - (Math.max(field.getHeight() - 1, 0) / 2) - 1;
         int maxy = field.getY() + (Math.max(field.getHeight() - 1, 0) / 2) + 1;
 
-        if (field.hasFlag(FieldFlag.CUBOID))
-        {
+        if (field.hasFlag(FieldFlag.CUBOID)) {
             minx = field.getMinx() - 1;
             maxx = field.getMaxx() + 1;
             minz = field.getMinz() - 1;
@@ -140,8 +127,7 @@ public class VisualizationManager
             maxy = field.getMaxy() + 1;
         }
 
-        for (int x = minx; x <= maxx; x++)
-        {
+        for (int x = minx; x <= maxx; x++) {
             Location loc = new Location(player.getWorld(), x, miny, maxz);
             vis.addBlock(loc, frameType, (byte) 0);
 
@@ -155,8 +141,7 @@ public class VisualizationManager
             vis.addBlock(loc, frameType, (byte) 0);
         }
 
-        for (int y = miny; y <= maxy; y++)
-        {
+        for (int y = miny; y <= maxy; y++) {
             Location loc = new Location(player.getWorld(), minx, y, maxz);
             vis.addBlock(loc, frameType, (byte) 0);
 
@@ -170,8 +155,7 @@ public class VisualizationManager
             vis.addBlock(loc, frameType, (byte) 0);
         }
 
-        for (int z = minz; z <= maxz; z++)
-        {
+        for (int z = minz; z <= maxz; z++) {
             Location loc = new Location(player.getWorld(), minx, maxy, z);
             vis.addBlock(loc, frameType, (byte) 0);
 
@@ -187,27 +171,21 @@ public class VisualizationManager
 
         int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
 
-        for (int y = miny; y <= maxy; y++)
-        {
+        for (int y = miny; y <= maxy; y++) {
             boolean yTurn = turnCounter(player.getName() + 1, spacing);
 
-            if (maxy - y < spacing)
-            {
+            if (maxy - y < spacing) {
                 yTurn = false;
             }
 
             int count = 0;
-            for (int z = minz; z <= maxz; z++)
-            {
-                if (yTurn || turnCounter(player.getName() + 2, spacing))
-                {
-                    if (maxz - z < spacing && !yTurn)
-                    {
+            for (int z = minz; z <= maxz; z++) {
+                if (yTurn || turnCounter(player.getName() + 2, spacing)) {
+                    if (maxz - z < spacing && !yTurn) {
                         break;
                     }
 
-                    if (!yTurn && count >= data.getDensity() - 1)
-                    {
+                    if (!yTurn && count >= data.getDensity() - 1) {
                         break;
                     }
 
@@ -224,27 +202,21 @@ public class VisualizationManager
         counts.put(player.getName() + 1, 0);
 
 
-        for (int x = minx; x <= maxx; x++)
-        {
+        for (int x = minx; x <= maxx; x++) {
             boolean xTurn = turnCounter(player.getName() + 1, spacing);
 
-            if (maxx - x < spacing)
-            {
+            if (maxx - x < spacing) {
                 xTurn = false;
             }
 
             int count = 0;
-            for (int z = minz; z <= maxz; z++)
-            {
-                if (xTurn || turnCounter(player.getName() + 2, spacing))
-                {
-                    if (maxz - z < spacing && !xTurn)
-                    {
+            for (int z = minz; z <= maxz; z++) {
+                if (xTurn || turnCounter(player.getName() + 2, spacing)) {
+                    if (maxz - z < spacing && !xTurn) {
                         break;
                     }
 
-                    if (!xTurn && count >= data.getDensity() - 1)
-                    {
+                    if (!xTurn && count >= data.getDensity() - 1) {
                         break;
                     }
 
@@ -261,30 +233,24 @@ public class VisualizationManager
         counts.put(player.getName() + 1, 0);
 
 
-        for (int y = miny; y <= maxy; y++)
-        {
+        for (int y = miny; y <= maxy; y++) {
             boolean yTurn = turnCounter(player.getName() + 1, spacing);
 
-            if (maxy - y < spacing)
-            {
+            if (maxy - y < spacing) {
                 yTurn = false;
             }
 
             int count = 0;
-            for (int x = minx; x <= maxx; x++)
-            {
-                if (maxx - x < spacing && !yTurn)
-                {
+            for (int x = minx; x <= maxx; x++) {
+                if (maxx - x < spacing && !yTurn) {
                     break;
                 }
 
-                if (!yTurn && count >= data.getDensity() - 1)
-                {
+                if (!yTurn && count >= data.getDensity() - 1) {
                     break;
                 }
 
-                if (yTurn || turnCounter(player.getName() + 2, spacing))
-                {
+                if (yTurn || turnCounter(player.getName() + 2, spacing)) {
                     Location loc = new Location(player.getWorld(), x, y, minz);
                     vis.addBlock(loc, visualizationType, (byte) 0);
 
@@ -300,23 +266,18 @@ public class VisualizationManager
         visualizations.put(player.getName(), vis);
     }
 
-    private boolean turnCounter(String name, int size)
-    {
-        if (counts.containsKey(name))
-        {
+    private boolean turnCounter(String name, int size) {
+        if (counts.containsKey(name)) {
             int count = counts.get(name);
             count += 1;
 
-            if (count >= size)
-            {
+            if (count >= size) {
                 counts.put(name, 0);
                 return true;
             }
 
             counts.put(name, count);
-        }
-        else
-        {
+        } else {
             counts.put(name, 1);
         }
 
@@ -329,8 +290,7 @@ public class VisualizationManager
      * @param player
      * @param field
      */
-    public void visualizeSingleOutline(Player player, Field field)
-    {
+    public void visualizeSingleOutline(Player player, Field field) {
         visualizeSingleOutline(player, field);
     }
 
@@ -340,12 +300,10 @@ public class VisualizationManager
      * @param player
      * @param field
      */
-    public void visualizeSingleOutline(Player player, Field field, boolean revert)
-    {
+    public void visualizeSingleOutline(Player player, Field field, boolean revert) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis == null)
-        {
+        if (vis == null) {
             vis = new Visualization();
         }
 
@@ -362,8 +320,7 @@ public class VisualizationManager
         int miny = field.getY() - (Math.max(field.getHeight() - 1, 0) / 2) - 1;
         int maxy = field.getY() + (Math.max(field.getHeight() - 1, 0) / 2) + 1;
 
-        if (field.hasFlag(FieldFlag.CUBOID))
-        {
+        if (field.hasFlag(FieldFlag.CUBOID)) {
             minx = field.getMinx() - 1;
             maxx = field.getMaxx() + 1;
             minz = field.getMinz() - 1;
@@ -374,8 +331,7 @@ public class VisualizationManager
 
         // add  the blocks for the new outline
 
-        for (int x = minx; x <= maxx; x++)
-        {
+        for (int x = minx; x <= maxx; x++) {
             int frame = (x == minx || x == maxx) ? 89 : frameType;
 
             Location loc = new Location(player.getWorld(), x, miny, maxz);
@@ -391,8 +347,7 @@ public class VisualizationManager
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
-        for (int y = miny; y <= maxy; y++)
-        {
+        for (int y = miny; y <= maxy; y++) {
             int frame = (y == miny || y == maxy) ? 89 : frameType;
 
             Location loc = new Location(player.getWorld(), minx, y, maxz);
@@ -408,8 +363,7 @@ public class VisualizationManager
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
-        for (int z = minz; z <= maxz; z++)
-        {
+        for (int z = minz; z <= maxz; z++) {
             int frame = (z == minz || z == maxz) ? 89 : frameType;
 
             Location loc = new Location(player.getWorld(), minx, maxy, z);
@@ -437,12 +391,10 @@ public class VisualizationManager
      * @param player
      * @param ce
      */
-    public void displayFieldOutline(Player player, CuboidEntry ce)
-    {
+    public void displayFieldOutline(Player player, CuboidEntry ce) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis == null)
-        {
+        if (vis == null) {
             vis = new Visualization();
         }
 
@@ -464,8 +416,7 @@ public class VisualizationManager
 
         // add  the blocks for the new outline
 
-        for (int x = minx; x <= maxx; x++)
-        {
+        for (int x = minx; x <= maxx; x++) {
             int frame = (x == minx || x == maxx) ? 89 : frameType;
 
             Location loc = new Location(player.getWorld(), x, miny, maxz);
@@ -481,8 +432,7 @@ public class VisualizationManager
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
-        for (int y = miny; y <= maxy; y++)
-        {
+        for (int y = miny; y <= maxy; y++) {
             int frame = (y == miny || y == maxy) ? 89 : frameType;
 
             Location loc = new Location(player.getWorld(), minx, y, maxz);
@@ -498,8 +448,7 @@ public class VisualizationManager
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
         }
 
-        for (int z = minz; z <= maxz; z++)
-        {
+        for (int z = minz; z <= maxz; z++) {
             int frame = (z == minz || z == maxz) ? 89 : frameType;
 
             Location loc = new Location(player.getWorld(), minx, maxy, z);
@@ -540,12 +489,10 @@ public class VisualizationManager
      * @param block
      * @return
      */
-    public boolean isOutlineBlock(Player player, Block block)
-    {
+    public boolean isOutlineBlock(Player player, Block block) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis == null)
-        {
+        if (vis == null) {
             vis = new Visualization();
         }
 
@@ -556,12 +503,10 @@ public class VisualizationManager
      * @param player
      * @param field
      */
-    public void addFieldMark(Player player, Field field)
-    {
+    public void addFieldMark(Player player, Field field) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis == null)
-        {
+        if (vis == null) {
             vis = new Visualization();
         }
 
@@ -569,14 +514,11 @@ public class VisualizationManager
 
         World world = plugin.getServer().getWorld(field.getWorld());
 
-        if (world != null)
-        {
-            for (int y = 0; y < 256; y++)
-            {
+        if (world != null) {
+            for (int y = 0; y < 256; y++) {
                 int typeId = world.getBlockTypeIdAt(field.getX(), y, field.getZ());
 
-                if (plugin.getSettingsManager().isThroughType(typeId))
-                {
+                if (plugin.getSettingsManager().isThroughType(typeId)) {
                     vis.addBlock(new Location(world, field.getX(), y, field.getZ()), plugin.getSettingsManager().getVisualizeMarkBlock().getTypeId(), (byte) 0);
                 }
             }
@@ -592,12 +534,10 @@ public class VisualizationManager
      * @param material
      * @param block
      */
-    public void displaySingle(Player player, Material material, Block block)
-    {
+    public void displaySingle(Player player, Material material, Block block) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis == null)
-        {
+        if (vis == null) {
             vis = new Visualization();
         }
 
@@ -613,12 +553,10 @@ public class VisualizationManager
      * @param player
      * @param block
      */
-    public void revertSingle(Player player, Block block)
-    {
+    public void revertSingle(Player player, Block block) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis == null)
-        {
+        if (vis == null) {
             vis = new Visualization();
         }
 
@@ -634,8 +572,7 @@ public class VisualizationManager
      * @param player
      * @param minusOverlap
      */
-    public void displayVisualization(final Player player, boolean minusOverlap)
-    {
+    public void displayVisualization(final Player player, boolean minusOverlap) {
         displayVisualization(player, minusOverlap, plugin.getSettingsManager().getVisualizeSeconds());
     }
 
@@ -645,23 +582,17 @@ public class VisualizationManager
      * @param player
      * @param minusOverlap
      */
-    public void displayVisualization(final Player player, boolean minusOverlap, int seconds)
-    {
+    public void displayVisualization(final Player player, boolean minusOverlap, int seconds) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis != null)
-        {
-            if (minusOverlap)
-            {
-                for (Iterator<BlockEntry> iter = vis.getBlocks().iterator(); iter.hasNext(); )
-                {
+        if (vis != null) {
+            if (minusOverlap) {
+                for (Iterator<BlockEntry> iter = vis.getBlocks().iterator(); iter.hasNext(); ) {
                     BlockEntry bd = iter.next();
                     Location loc = bd.getLocation();
 
-                    for (Field field : vis.getFields())
-                    {
-                        if (field.envelops(loc))
-                        {
+                    for (Field field : vis.getFields()) {
+                        if (field.envelops(loc)) {
                             iter.remove();
                             break;
                         }
@@ -669,9 +600,7 @@ public class VisualizationManager
                 }
 
                 Visualize visualize = new Visualize(vis.getBlocks(), player, false, false, seconds);
-            }
-            else
-            {
+            } else {
                 Visualize visualize = new Visualize(vis.getBlocks(), player, false, false, seconds);
             }
         }
@@ -682,12 +611,10 @@ public class VisualizationManager
      *
      * @param player
      */
-    public void revert(Player player)
-    {
+    public void revert(Player player) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis != null)
-        {
+        if (vis != null) {
             visualizations.remove(player.getName());
             Visualize visualize = new Visualize(vis.getBlocks(), player, true, false, 0);
         }
@@ -698,12 +625,10 @@ public class VisualizationManager
      *
      * @param player
      */
-    public void revertOutline(Player player)
-    {
+    public void revertOutline(Player player) {
         Visualization vis = visualizations.get(player.getName());
 
-        if (vis != null)
-        {
+        if (vis != null) {
             visualizations.remove(player.getName());
             Visualize visualize = new Visualize(vis.getOutlineBlocks(), player, true, false, 0);
         }

@@ -3,21 +3,18 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 
-public class RentEntry
-{
+public class RentEntry {
     private String playerName;
     private DateTime endDate;
     private int periodSeconds;
 
-    public RentEntry(String playerName, int periodSeconds)
-    {
+    public RentEntry(String playerName, int periodSeconds) {
         this.playerName = playerName;
         this.periodSeconds = periodSeconds;
         this.endDate = (new DateTime()).plusSeconds(periodSeconds);
     }
 
-    public RentEntry(String packed)
-    {
+    public RentEntry(String packed) {
         String[] unpacked = packed.split("[|]");
 
         this.playerName = unpacked[0];
@@ -25,37 +22,30 @@ public class RentEntry
         this.endDate = new DateTime(Long.parseLong(unpacked[2]));
     }
 
-    public void addSeconds(int seconds)
-    {
+    public void addSeconds(int seconds) {
         this.periodSeconds += seconds;
         this.endDate = endDate.plusSeconds(seconds);
     }
 
-    public int getPeriodSeconds()
-    {
+    public int getPeriodSeconds() {
         return periodSeconds;
     }
 
-    public String getPlayerName()
-    {
+    public String getPlayerName() {
         return playerName;
     }
 
-    public boolean isDone()
-    {
+    public boolean isDone() {
         return Seconds.secondsBetween(new DateTime(), endDate).getSeconds() <= 0;
     }
 
-    public int remainingRent()
-    {
+    public int remainingRent() {
         return Seconds.secondsBetween(new DateTime(), endDate).getSeconds();
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof RentEntry))
-        {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof RentEntry)) {
             return false;
         }
 
@@ -64,13 +54,11 @@ public class RentEntry
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return this.getPlayerName().hashCode();
     }
 
-    public String serialize()
-    {
+    public String serialize() {
         return playerName + "|" + periodSeconds + "|" + endDate.getMillis();
     }
 }

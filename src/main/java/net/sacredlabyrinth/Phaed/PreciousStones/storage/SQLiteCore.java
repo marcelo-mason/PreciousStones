@@ -9,8 +9,7 @@ import java.util.logging.Logger;
 /**
  * @author cc_madelg
  */
-public class SQLiteCore implements DBCore
-{
+public class SQLiteCore implements DBCore {
     private Logger log;
     private Connection connection;
     private String dbLocation;
@@ -21,44 +20,34 @@ public class SQLiteCore implements DBCore
      * @param dbName
      * @param dbLocation
      */
-    public SQLiteCore(String dbName, String dbLocation)
-    {
+    public SQLiteCore(String dbName, String dbLocation) {
         this.dbName = dbName;
         this.dbLocation = dbLocation;
         this.log = PreciousStones.getLog();
     }
 
-    private void initialize()
-    {
-        if (file == null)
-        {
+    private void initialize() {
+        if (file == null) {
             File dbFolder = new File(dbLocation);
 
-            if (dbName.contains("/") || dbName.contains("\\") || dbName.endsWith(".db"))
-            {
+            if (dbName.contains("/") || dbName.contains("\\") || dbName.endsWith(".db")) {
                 log.severe("The database name can not contain: /, \\, or .db");
                 return;
             }
-            if (!dbFolder.exists())
-            {
+            if (!dbFolder.exists()) {
                 dbFolder.mkdir();
             }
 
             file = new File(dbFolder.getAbsolutePath() + File.separator + dbName + ".db");
         }
 
-        try
-        {
+        try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
             return;
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             log.severe("SQLite exception on initialize " + ex);
-        }
-        catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException ex) {
             log.severe("You need the SQLite library " + ex);
         }
     }
@@ -66,17 +55,12 @@ public class SQLiteCore implements DBCore
     /**
      * @return connection
      */
-    public Connection getConnection()
-    {
-        try
-        {
-            if (connection == null || connection.isClosed())
-            {
+    public Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
                 initialize();
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             initialize();
         }
 
@@ -86,25 +70,19 @@ public class SQLiteCore implements DBCore
     /**
      * @return whether connection can be established
      */
-    public Boolean checkConnection()
-    {
+    public Boolean checkConnection() {
         return getConnection() != null;
     }
 
     /**
      * Close connection
      */
-    public void close()
-    {
-        try
-        {
-            if (connection != null)
-            {
+    public void close() {
+        try {
+            if (connection != null) {
                 connection.close();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.severe("Failed to close database connection! " + e.getMessage());
         }
     }
@@ -115,15 +93,11 @@ public class SQLiteCore implements DBCore
      * @param query
      * @return
      */
-    public ResultSet select(String query)
-    {
-        try
-        {
+    public ResultSet select(String query) {
+        try {
             Statement statement = getConnection().createStatement();
             return statement.executeQuery(query);
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             log.severe("Error at SQL Query: " + ex.getMessage());
             log.severe("Query: " + query);
         }
@@ -135,33 +109,23 @@ public class SQLiteCore implements DBCore
      *
      * @param query
      */
-    public long insert(String query)
-    {
+    public long insert(String query) {
         PreciousStones.debug(query);
 
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
             ResultSet keys = null;
 
-            try
-            {
+            try {
                 statement.executeUpdate(query);
                 keys = statement.executeQuery("SELECT last_insert_rowid()");
-            }
-            catch (SQLException ex)
-            {
-                if (!ex.toString().contains("not return ResultSet"))
-                {
+            } catch (SQLException ex) {
+                if (!ex.toString().contains("not return ResultSet")) {
                     log.severe("Error at SQL INSERT Query: " + ex);
                 }
-            }
-            finally
-            {
-                if (keys != null)
-                {
-                    if (keys.next())
-                    {
+            } finally {
+                if (keys != null) {
+                    if (keys.next()) {
                         long key = keys.getLong(1);
                         statement.close();
                         return key;
@@ -170,11 +134,8 @@ public class SQLiteCore implements DBCore
                 statement.close();
                 return 0;
             }
-        }
-        catch (SQLException ex)
-        {
-            if (!ex.toString().contains("not return ResultSet"))
-            {
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("not return ResultSet")) {
                 log.severe("Error at SQL INSERT Query: " + ex);
             }
         }
@@ -187,27 +148,19 @@ public class SQLiteCore implements DBCore
      *
      * @param query
      */
-    public void update(String query)
-    {
+    public void update(String query) {
         PreciousStones.debug(query);
 
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
 
-            try
-            {
+            try {
                 statement.executeQuery(query);
-            }
-            finally
-            {
+            } finally {
                 statement.close();
             }
-        }
-        catch (SQLException ex)
-        {
-            if (!ex.toString().contains("not return ResultSet"))
-            {
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("not return ResultSet")) {
                 log.severe("Error at SQL UPDATE Query: " + ex);
             }
         }
@@ -218,27 +171,19 @@ public class SQLiteCore implements DBCore
      *
      * @param query
      */
-    public void delete(String query)
-    {
+    public void delete(String query) {
         PreciousStones.debug(query);
 
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
 
-            try
-            {
+            try {
                 statement.executeQuery(query);
-            }
-            finally
-            {
+            } finally {
                 statement.close();
             }
-        }
-        catch (SQLException ex)
-        {
-            if (!ex.toString().contains("not return ResultSet"))
-            {
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("not return ResultSet")) {
                 log.severe("Error at SQL DELETE Query: " + ex);
             }
         }
@@ -250,24 +195,17 @@ public class SQLiteCore implements DBCore
      * @param query
      * @return
      */
-    public Boolean execute(String query)
-    {
+    public Boolean execute(String query) {
         PreciousStones.debug(query);
 
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
-            try
-            {
+            try {
                 statement.execute(query);
-            }
-            finally
-            {
+            } finally {
                 statement.close();
             }
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             log.severe("Error at SQL Query: " + ex.getMessage());
             return false;
         }
@@ -280,15 +218,11 @@ public class SQLiteCore implements DBCore
      * @param table
      * @return
      */
-    public Boolean existsTable(String table)
-    {
-        try
-        {
+    public Boolean existsTable(String table) {
+        try {
             ResultSet tables = getConnection().getMetaData().getTables(null, null, table, null);
             return tables.next();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             log.severe("Failed to check if table " + table + " exists: " + e.getMessage());
             return false;
         }
@@ -301,15 +235,11 @@ public class SQLiteCore implements DBCore
      * @param column
      * @return
      */
-    public Boolean existsColumn(String table, String column)
-    {
-        try
-        {
+    public Boolean existsColumn(String table, String column) {
+        try {
             ResultSet col = getConnection().getMetaData().getColumns(null, null, table, column);
             return col.next();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.severe("Failed to check if column " + column + " exists in table " + table + " : " + e.getMessage());
             return false;
         }
@@ -317,12 +247,12 @@ public class SQLiteCore implements DBCore
 
     /**
      * CGEt the datatype of a column
+     *
      * @param table
      * @param column
      * @return
      */
-    public String getDataType(String table, String column)
-    {
+    public String getDataType(String table, String column) {
         // not supported
         return "";
     }

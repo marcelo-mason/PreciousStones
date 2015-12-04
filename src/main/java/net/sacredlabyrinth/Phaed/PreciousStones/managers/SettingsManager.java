@@ -1,11 +1,11 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -21,8 +21,7 @@ import java.util.*;
 /**
  * @author phaed
  */
-public final class SettingsManager
-{
+public final class SettingsManager {
     private int version;
     private BlockTypeEntry defaulItemCurrency;
     private int maxTargetDistance;
@@ -145,8 +144,7 @@ public final class SettingsManager
     /**
      *
      */
-    public SettingsManager()
-    {
+    public SettingsManager() {
         plugin = PreciousStones.getInstance();
         config = plugin.getConfig();
         cleanConfig = new YamlConfiguration();
@@ -158,39 +156,29 @@ public final class SettingsManager
      * Load the configuration
      */
     @SuppressWarnings("unchecked")
-    public void load()
-    {
-        for (int item : throughFields)
-        {
+    public void load() {
+        for (int item : throughFields) {
             throughFieldsSet.add(item);
         }
 
-        for (int item : throughFields)
-        {
+        for (int item : throughFields) {
             throughFieldsByteSet.add((byte) item);
         }
 
-        for (int item : naturalThroughFields)
-        {
+        for (int item : naturalThroughFields) {
             naturalThroughFieldSet.add(item);
         }
 
         boolean exists = (main).exists();
 
-        if (exists)
-        {
-            try
-            {
+        if (exists) {
+            try {
                 config.options().copyDefaults(true);
                 config.load(main);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else
-        {
+        } else {
             config.options().copyDefaults(true);
         }
 
@@ -342,10 +330,8 @@ public final class SettingsManager
         save();
     }
 
-    private Boolean loadBoolean(String path)
-    {
-        if (config.isBoolean(path))
-        {
+    private Boolean loadBoolean(String path) {
+        if (config.isBoolean(path)) {
             boolean value = config.getBoolean(path);
             cleanConfig.set(path, value);
             return value;
@@ -353,10 +339,8 @@ public final class SettingsManager
         return false;
     }
 
-    private String loadString(String path)
-    {
-        if (config.isString(path))
-        {
+    private String loadString(String path) {
+        if (config.isString(path)) {
             String value = config.getString(path);
             cleanConfig.set(path, value);
             return value;
@@ -365,10 +349,8 @@ public final class SettingsManager
         return "";
     }
 
-    private int loadInt(String path)
-    {
-        if (config.isInt(path))
-        {
+    private int loadInt(String path) {
+        if (config.isInt(path)) {
             int value = config.getInt(path);
             cleanConfig.set(path, value);
             return value;
@@ -377,10 +359,8 @@ public final class SettingsManager
         return 0;
     }
 
-    private double loadDouble(String path)
-    {
-        if (config.isDouble(path))
-        {
+    private double loadDouble(String path) {
+        if (config.isDouble(path)) {
             double value = config.getDouble(path);
             cleanConfig.set(path, value);
             return value;
@@ -389,17 +369,14 @@ public final class SettingsManager
         return 0;
     }
 
-    private BlockTypeEntry loadTypeEntry(String path)
-    {
+    private BlockTypeEntry loadTypeEntry(String path) {
         String value = config.getString(path);
         cleanConfig.set(path, value);
         return new BlockTypeEntry(value);
     }
 
-    private List<Integer> loadIntList(String path)
-    {
-        if (config.isList(path))
-        {
+    private List<Integer> loadIntList(String path) {
+        if (config.isList(path)) {
             List<Integer> value = config.getIntegerList(path);
             cleanConfig.set(path, value);
             return value;
@@ -408,10 +385,8 @@ public final class SettingsManager
         return new ArrayList<Integer>();
     }
 
-    private List<String> loadStringList(String path)
-    {
-        if (config.isList(path))
-        {
+    private List<String> loadStringList(String path) {
+        if (config.isList(path)) {
             List<String> value = config.getStringList(path);
             cleanConfig.set(path, value);
             return value;
@@ -420,8 +395,7 @@ public final class SettingsManager
         return new ArrayList<String>();
     }
 
-    private Object loadObject(String path)
-    {
+    private Object loadObject(String path) {
         Object value = config.get(path);
         cleanConfig.set(path, value);
         return value;
@@ -430,14 +404,10 @@ public final class SettingsManager
     /**
      *
      */
-    public void save()
-    {
-        try
-        {
+    public void save() {
+        try {
             cleanConfig.save(main);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -446,25 +416,20 @@ public final class SettingsManager
      * @param maps
      */
     @SuppressWarnings("unchecked")
-    public void addForceFieldStones(List<LinkedHashMap<String, Object>> maps)
-    {
-        if (maps == null)
-        {
+    public void addForceFieldStones(List<LinkedHashMap<String, Object>> maps) {
+        if (maps == null) {
             return;
         }
 
-        for (LinkedHashMap<String, Object> map : maps)
-        {
+        for (LinkedHashMap<String, Object> map : maps) {
             FieldSettings fs = new FieldSettings(map);
 
-            if (fs.isValidField())
-            {
+            if (fs.isValidField()) {
                 // add field definition to our collection
 
                 fieldDefinitions.put(fs.getTypeEntry(), fs);
 
-                if (!fs.getGroupOnEntry().isEmpty())
-                {
+                if (!fs.getGroupOnEntry().isEmpty()) {
                     allEntryGroups.add(fs.getGroupOnEntry());
                 }
             }
@@ -476,12 +441,9 @@ public final class SettingsManager
      *
      * @return
      */
-    public boolean haveNameable()
-    {
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.hasNameableFlag())
-            {
+    public boolean haveNameable() {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.hasNameableFlag()) {
                 return true;
             }
         }
@@ -494,12 +456,9 @@ public final class SettingsManager
      *
      * @return
      */
-    public boolean haveVelocity()
-    {
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.hasVeocityFlag())
-            {
+    public boolean haveVelocity() {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.hasVeocityFlag()) {
                 return true;
             }
         }
@@ -512,12 +471,9 @@ public final class SettingsManager
      *
      * @return
      */
-    public boolean haveGriefRevert()
-    {
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.hasDefaultFlag(FieldFlag.GRIEF_REVERT))
-            {
+    public boolean haveGriefRevert() {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.hasDefaultFlag(FieldFlag.GRIEF_REVERT)) {
                 return true;
             }
         }
@@ -530,12 +486,9 @@ public final class SettingsManager
      *
      * @return
      */
-    public boolean haveSnitch()
-    {
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.hasDefaultFlag(FieldFlag.SNITCH))
-            {
+    public boolean haveSnitch() {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.hasDefaultFlag(FieldFlag.SNITCH)) {
                 return true;
             }
         }
@@ -548,12 +501,9 @@ public final class SettingsManager
      *
      * @return
      */
-    public boolean haveLimits()
-    {
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.hasLimit())
-            {
+    public boolean haveLimits() {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.hasLimit()) {
                 return true;
             }
         }
@@ -561,8 +511,7 @@ public final class SettingsManager
         return false;
     }
 
-    public boolean isHarmfulPotion(PotionEffectType pot)
-    {
+    public boolean isHarmfulPotion(PotionEffectType pot) {
         if (pot.equals(PotionEffectType.SLOW) ||
                 pot.equals(PotionEffectType.SLOW_DIGGING) ||
                 pot.equals(PotionEffectType.WEAKNESS) ||
@@ -571,16 +520,14 @@ public final class SettingsManager
                 pot.equals(PotionEffectType.HARM) ||
                 pot.equals(PotionEffectType.POISON) ||
                 pot.equals(PotionEffectType.HUNGER) ||
-                pot.equals(PotionEffectType.INCREASE_DAMAGE))
-        {
+                pot.equals(PotionEffectType.INCREASE_DAMAGE)) {
             return true;
         }
 
         return false;
     }
 
-    public boolean isCrop(Block block)
-    {
+    public boolean isCrop(Block block) {
         return block.getType().equals(Material.SOIL) ||
                 block.getType().equals(Material.WHEAT) ||
                 block.getType().equals(Material.SUGAR_CANE) ||
@@ -597,10 +544,8 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isDependentBlock(int type)
-    {
-        if (type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119 || type == 127 || type == 131 || type == 132)
-        {
+    public boolean isDependentBlock(int type) {
+        if (type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119 || type == 127 || type == 131 || type == 132) {
             return true;
         }
 
@@ -613,8 +558,7 @@ public final class SettingsManager
      * @param world
      * @return
      */
-    public boolean isBlacklistedWorld(World world)
-    {
+    public boolean isBlacklistedWorld(World world) {
         return getBlacklistedWorlds().contains(world.getName());
     }
 
@@ -624,8 +568,7 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isUnprotectableType(BlockTypeEntry type)
-    {
+    public boolean isUnprotectableType(BlockTypeEntry type) {
         return getUnprotectableBlocks().contains(type);
     }
 
@@ -635,8 +578,7 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isHidingMaskType(BlockTypeEntry type)
-    {
+    public boolean isHidingMaskType(BlockTypeEntry type) {
         return hidingMaskBlocs.contains(type);
     }
 
@@ -645,8 +587,7 @@ public final class SettingsManager
      *
      * @return
      */
-    public BlockTypeEntry getFirstHidingMask()
-    {
+    public BlockTypeEntry getFirstHidingMask() {
         return hidingMaskBlocs.get(0);
     }
 
@@ -656,8 +597,7 @@ public final class SettingsManager
      * @param block
      * @return
      */
-    public boolean isUnprotectableType(Block block)
-    {
+    public boolean isUnprotectableType(Block block) {
         return getUnprotectableBlocks().contains(new BlockTypeEntry(block));
     }
 
@@ -667,8 +607,7 @@ public final class SettingsManager
      * @param id
      * @return
      */
-    public boolean isGriefUndoBlackListType(int id)
-    {
+    public boolean isGriefUndoBlackListType(int id) {
         return getGriefUndoBlackList().contains(id);
     }
 
@@ -678,8 +617,7 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isThroughType(int type)
-    {
+    public boolean isThroughType(int type) {
         return throughFieldsSet.contains(type);
     }
 
@@ -689,8 +627,7 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isNaturalThroughType(int type)
-    {
+    public boolean isNaturalThroughType(int type) {
         return naturalThroughFieldSet.contains(type);
     }
 
@@ -700,10 +637,8 @@ public final class SettingsManager
      * @param entry
      * @return
      */
-    public boolean isToolItemType(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean isToolItemType(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return false;
         }
 
@@ -716,10 +651,8 @@ public final class SettingsManager
      * @param entry
      * @return
      */
-    public boolean isRepairableItemType(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean isRepairableItemType(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return false;
         }
 
@@ -732,12 +665,9 @@ public final class SettingsManager
      * @param block
      * @return
      */
-    public boolean isSnitchType(Block block)
-    {
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.hasDefaultFlag(FieldFlag.SNITCH) && fs.getTypeEntry().equals(new BlockTypeEntry(block)))
-            {
+    public boolean isSnitchType(Block block) {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.hasDefaultFlag(FieldFlag.SNITCH) && fs.getTypeEntry().equals(new BlockTypeEntry(block))) {
                 return true;
             }
         }
@@ -751,8 +681,7 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isUnbreakableType(BlockTypeEntry type)
-    {
+    public boolean isUnbreakableType(BlockTypeEntry type) {
         return getUnbreakableBlocks().contains(type);
     }
 
@@ -762,8 +691,7 @@ public final class SettingsManager
      * @param block
      * @return
      */
-    public boolean isUnbreakableType(Block block)
-    {
+    public boolean isUnbreakableType(Block block) {
         return isUnbreakableType(new BlockTypeEntry(block));
     }
 
@@ -773,8 +701,7 @@ public final class SettingsManager
      * @param block
      * @return
      */
-    public boolean isFieldType(Block block)
-    {
+    public boolean isFieldType(Block block) {
         //PreciousStones.debug("isField: " + new BlockTypeEntry(block));
 
         return fieldDefinitions.containsKey(new BlockTypeEntry(block));
@@ -785,8 +712,7 @@ public final class SettingsManager
      *
      * @return
      */
-    public boolean isFieldType(Block block, ItemStack handItem)
-    {
+    public boolean isFieldType(Block block, ItemStack handItem) {
         return isFieldType(new BlockTypeEntry(block), handItem);
     }
 
@@ -796,29 +722,23 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public boolean isFieldType(BlockTypeEntry type, ItemStack handItem)
-    {
-        if (!handItem.hasItemMeta())
-        {
+    public boolean isFieldType(BlockTypeEntry type, ItemStack handItem) {
+        if (!handItem.hasItemMeta()) {
             FieldSettings settings = fieldDefinitions.get(type);
 
-            if (settings == null)
-            {
+            if (settings == null) {
                 return false;
             }
 
-            if (!settings.getMetaName().isEmpty())
-            {
+            if (!settings.getMetaName().isEmpty()) {
                 return false;
             }
 
             return true;
         }
 
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.matchesMetaName(handItem))
-            {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.matchesMetaName(handItem)) {
                 return true;
             }
         }
@@ -832,8 +752,7 @@ public final class SettingsManager
      * @param block
      * @return
      */
-    public boolean isBypassBlock(Block block)
-    {
+    public boolean isBypassBlock(Block block) {
         return getBypassBlocks().contains(new BlockTypeEntry(block));
     }
 
@@ -843,8 +762,7 @@ public final class SettingsManager
      * @param block
      * @return
      */
-    public FieldSettings getFieldSettings(Block block)
-    {
+    public FieldSettings getFieldSettings(Block block) {
         return getFieldSettings(new BlockTypeEntry(block));
     }
 
@@ -854,8 +772,7 @@ public final class SettingsManager
      * @param field
      * @return
      */
-    public FieldSettings getFieldSettings(Field field)
-    {
+    public FieldSettings getFieldSettings(Field field) {
         return getFieldSettings(field.getTypeEntry());
     }
 
@@ -865,8 +782,7 @@ public final class SettingsManager
      * @param type
      * @return
      */
-    public FieldSettings getFieldSettings(BlockTypeEntry type)
-    {
+    public FieldSettings getFieldSettings(BlockTypeEntry type) {
         return fieldDefinitions.get(type);
     }
 
@@ -875,8 +791,7 @@ public final class SettingsManager
      *
      * @return
      */
-    public HashMap<BlockTypeEntry, FieldSettings> getFieldSettings()
-    {
+    public HashMap<BlockTypeEntry, FieldSettings> getFieldSettings() {
         HashMap<BlockTypeEntry, FieldSettings> fs = new HashMap<BlockTypeEntry, FieldSettings>();
         fs.putAll(fieldDefinitions);
         return fs;
@@ -887,28 +802,21 @@ public final class SettingsManager
      *
      * @return
      */
-    public FieldSettings getFieldSettings(String name)
-    {
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.getTitle().equals(name))
-            {
+    public FieldSettings getFieldSettings(String name) {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.getTitle().equals(name)) {
                 return fs;
             }
         }
 
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.getTitle().startsWith(name))
-            {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.getTitle().startsWith(name)) {
                 return fs;
             }
         }
 
-        for (FieldSettings fs : fieldDefinitions.values())
-        {
-            if (fs.getTitle().contains(name))
-            {
+        for (FieldSettings fs : fieldDefinitions.values()) {
+            if (fs.getTitle().contains(name)) {
                 return fs;
             }
         }
@@ -919,280 +827,245 @@ public final class SettingsManager
     /**
      * @return the blacklistedWorlds
      */
-    public List<String> getBlacklistedWorlds()
-    {
+    public List<String> getBlacklistedWorlds() {
         return Collections.unmodifiableList(blacklistedWorlds);
     }
 
     /**
      * @return the maxSnitchRecords
      */
-    public int getMaxSnitchRecords()
-    {
+    public int getMaxSnitchRecords() {
         return maxSnitchRecords;
     }
 
     /**
      * @return the saveFrequency
      */
-    public int getSaveFrequency()
-    {
+    public int getSaveFrequency() {
         return saveFrequency;
     }
 
     /**
      * @return the griefUndoBlackList
      */
-    public List<String> getGriefUndoBlackList()
-    {
+    public List<String> getGriefUndoBlackList() {
         return Collections.unmodifiableList(griefUndoBlackList);
     }
 
     /**
      * @return the visualizeMarkBlock
      */
-    public BlockTypeEntry getVisualizeMarkBlock()
-    {
+    public BlockTypeEntry getVisualizeMarkBlock() {
         return visualizeMarkBlock;
     }
 
     /**
      * @return the visualizeBlock
      */
-    public BlockTypeEntry getVisualizeBlock()
-    {
+    public BlockTypeEntry getVisualizeBlock() {
         return visualizeBlock;
     }
 
     /**
      * @return the visualizeSeconds
      */
-    public int getVisualizeSeconds()
-    {
+    public int getVisualizeSeconds() {
         return visualizeSeconds;
     }
 
     /**
      * @return the visualizeEndOnMove
      */
-    public boolean isVisualizeEndOnMove()
-    {
+    public boolean isVisualizeEndOnMove() {
         return visualizeEndOnMove;
     }
 
     /**
      * @return the debug
      */
-    public boolean isDebug()
-    {
+    public boolean isDebug() {
         return debug;
     }
 
     /**
      * @return the forceFieldBlocks
      */
-    public List<LinkedHashMap<String, Object>> getForceFieldBlocks()
-    {
+    public List<LinkedHashMap<String, Object>> getForceFieldBlocks() {
         return Collections.unmodifiableList(forceFieldBlocks);
     }
 
     /**
      * @return the unbreakableBlocks
      */
-    public List<BlockTypeEntry> getUnbreakableBlocks()
-    {
+    public List<BlockTypeEntry> getUnbreakableBlocks() {
         return Collections.unmodifiableList(unbreakableBlocks);
     }
 
     /**
      * @return the bypassBlocks
      */
-    public List<BlockTypeEntry> getBypassBlocks()
-    {
+    public List<BlockTypeEntry> getBypassBlocks() {
         return Collections.unmodifiableList(bypassBlocks);
     }
 
     /**
      * @return the unprotectableBlocks
      */
-    public List<BlockTypeEntry> getUnprotectableBlocks()
-    {
+    public List<BlockTypeEntry> getUnprotectableBlocks() {
         return Collections.unmodifiableList(unprotectableBlocks);
     }
 
     /**
      * @return the logFire
      */
-    public boolean isLogFire()
-    {
+    public boolean isLogFire() {
         return logFire;
     }
 
     /**
      * @return the logEntry
      */
-    public boolean isLogEntry()
-    {
+    public boolean isLogEntry() {
         return logEntry;
     }
 
     /**
      * @return the logPlace
      */
-    public boolean isLogPlace()
-    {
+    public boolean isLogPlace() {
         return logPlace;
     }
 
     /**
      * @return the logUse
      */
-    public boolean isLogUse()
-    {
+    public boolean isLogUse() {
         return logUse;
     }
 
     /**
      * @return the logDestroy
      */
-    public boolean isLogDestroy()
-    {
+    public boolean isLogDestroy() {
         return logDestroy;
     }
 
     /**
      * @return the logDestroyArea
      */
-    public boolean isLogDestroyArea()
-    {
+    public boolean isLogDestroyArea() {
         return logDestroyArea;
     }
 
     /**
      * @return the logUnprotectable
      */
-    public boolean isLogUnprotectable()
-    {
+    public boolean isLogUnprotectable() {
         return logUnprotectable;
     }
 
     /**
      * @return the logPvp
      */
-    public boolean isLogPvp()
-    {
+    public boolean isLogPvp() {
         return logPvp;
     }
 
     /**
      * @return the logBypassPvp
      */
-    public boolean isLogBypassPvp()
-    {
+    public boolean isLogBypassPvp() {
         return logBypassPvp;
     }
 
     /**
      * @return the logBypassDelete
      */
-    public boolean isLogBypassDelete()
-    {
+    public boolean isLogBypassDelete() {
         return logBypassDelete;
     }
 
     /**
      * @return the logBypassPlace
      */
-    public boolean isLogBypassPlace()
-    {
+    public boolean isLogBypassPlace() {
         return logBypassPlace;
     }
 
     /**
      * @return the logBypassDestroy
      */
-    public boolean isLogBypassDestroy()
-    {
+    public boolean isLogBypassDestroy() {
         return logBypassDestroy;
     }
 
     /**
      * @return the logConflictPlace
      */
-    public boolean isLogConflictPlace()
-    {
+    public boolean isLogConflictPlace() {
         return logConflictPlace;
     }
 
     /**
      * @return the notifyPlace
      */
-    public boolean isNotifyPlace()
-    {
+    public boolean isNotifyPlace() {
         return notifyPlace;
     }
 
     /**
      * @return the notifyDestroy
      */
-    public boolean isNotifyDestroy()
-    {
+    public boolean isNotifyDestroy() {
         return notifyDestroy;
     }
 
     /**
      * @return the notifyBypassPvp
      */
-    public boolean isNotifyBypassPvp()
-    {
+    public boolean isNotifyBypassPvp() {
         return notifyBypassPvp;
     }
 
     /**
      * @return the notifyBypassPlace
      */
-    public boolean isNotifyBypassPlace()
-    {
+    public boolean isNotifyBypassPlace() {
         return notifyBypassPlace;
     }
 
     /**
      * @return the notifyBypassDestroy
      */
-    public boolean isNotifyBypassDestroy()
-    {
+    public boolean isNotifyBypassDestroy() {
         return notifyBypassDestroy;
     }
 
     /**
      * @return the notifyBypassUnprotectable
      */
-    public boolean isNotifyBypassUnprotectable()
-    {
+    public boolean isNotifyBypassUnprotectable() {
         return notifyBypassUnprotectable;
     }
 
     /**
      * @return the warnInstantHeal
      */
-    public boolean isWarnInstantHeal()
-    {
+    public boolean isWarnInstantHeal() {
         return warnInstantHeal;
     }
 
     /**
      * @return the warnSlowFeeding
      */
-    public boolean isWarnSlowFeeding()
-    {
+    public boolean isWarnSlowFeeding() {
         return warnSlowFeeding;
     }
 
     /**
      * @return the warnSlowRepair
      */
-    public boolean isWarnSlowRepair()
-    {
+    public boolean isWarnSlowRepair() {
         return warnSlowRepair;
     }
 
@@ -1200,493 +1073,413 @@ public final class SettingsManager
     /**
      * @return the warnSlowHeal
      */
-    public boolean isWarnSlowHeal()
-    {
+    public boolean isWarnSlowHeal() {
         return warnSlowHeal;
     }
 
     /**
      * @return the warnSlowDamage
      */
-    public boolean isWarnSlowDamage()
-    {
+    public boolean isWarnSlowDamage() {
         return warnSlowDamage;
     }
 
     /**
      * @return the warnFastDamage
      */
-    public boolean isWarnFastDamage()
-    {
+    public boolean isWarnFastDamage() {
         return warnFastDamage;
     }
 
     /**
      * @return the warnGiveAir
      */
-    public boolean isWarnGiveAir()
-    {
+    public boolean isWarnGiveAir() {
         return warnGiveAir;
     }
 
     /**
      * @return the warnPlace
      */
-    public boolean isWarnPlace()
-    {
+    public boolean isWarnPlace() {
         return warnPlace;
     }
 
     /**
      * @return the warnUse
      */
-    public boolean isWarnUse()
-    {
+    public boolean isWarnUse() {
         return warnUse;
     }
 
     /**
      * @return the warnDestroy
      */
-    public boolean isWarnDestroy()
-    {
+    public boolean isWarnDestroy() {
         return warnDestroy;
     }
 
     /**
      * @return the warnDestroyArea
      */
-    public boolean isWarnDestroyArea()
-    {
+    public boolean isWarnDestroyArea() {
         return warnDestroyArea;
     }
 
     /**
      * @return the warnUnprotectable
      */
-    public boolean isWarnUnprotectable()
-    {
+    public boolean isWarnUnprotectable() {
         return warnUnprotectable;
     }
 
     /**
      * @return the warnEntry
      */
-    public boolean isWarnEntry()
-    {
+    public boolean isWarnEntry() {
         return warnEntry;
     }
 
     /**
      * @return the warnPvp
      */
-    public boolean isWarnPvp()
-    {
+    public boolean isWarnPvp() {
         return warnPvp;
     }
 
     /**
      * @return the warnFire
      */
-    public boolean isWarnFire()
-    {
+    public boolean isWarnFire() {
         return warnFire;
     }
 
     /**
      * @return the warnLaunch
      */
-    public boolean isWarnLaunch()
-    {
+    public boolean isWarnLaunch() {
         return warnLaunch;
     }
 
     /**
      * @return the warnCannon
      */
-    public boolean isWarnCannon()
-    {
+    public boolean isWarnCannon() {
         return warnCannon;
     }
 
     /**
      * @return the warnMine
      */
-    public boolean isWarnMine()
-    {
+    public boolean isWarnMine() {
         return warnMine;
     }
 
     /**
      * @return the publicBlockDetails
      */
-    public boolean isPublicBlockDetails()
-    {
+    public boolean isPublicBlockDetails() {
         return publicBlockDetails;
     }
 
     /**
      * @return the dropOnDelete
      */
-    public boolean isDropOnDelete()
-    {
+    public boolean isDropOnDelete() {
         return dropOnDelete;
     }
 
     /**
      * @return the disableAlertsForAdmins
      */
-    public boolean isDisableAlertsForAdmins()
-    {
+    public boolean isDisableAlertsForAdmins() {
         return disableAlertsForAdmins;
     }
 
     /**
      * @return the disableBypassAlertsForAdmins
      */
-    public boolean isDisableBypassAlertsForAdmins()
-    {
+    public boolean isDisableBypassAlertsForAdmins() {
         return disableBypassAlertsForAdmins;
     }
 
     /**
      * @return the offByDefault
      */
-    public boolean isOffByDefault()
-    {
+    public boolean isOffByDefault() {
         return offByDefault;
     }
 
     /**
      * @return the linesPerPage
      */
-    public int getLinesPerPage()
-    {
+    public int getLinesPerPage() {
         return linesPerPage;
     }
 
     /**
      * @return the useMysql
      */
-    public boolean isUseMysql()
-    {
+    public boolean isUseMysql() {
         return useMysql;
     }
 
     /**
      * @return the host
      */
-    public String getHost()
-    {
+    public String getHost() {
         return host;
     }
 
     /**
      * @return the database
      */
-    public String getDatabase()
-    {
+    public String getDatabase() {
         return database;
     }
 
     /**
      * @return the username
      */
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
     /**
      * @return the password
      */
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
     /**
      * @param debug the debug to set
      */
-    public void setDebug(boolean debug)
-    {
+    public void setDebug(boolean debug) {
         this.debug = debug;
     }
 
     /**
      * @return the throughFieldsSet
      */
-    public List<Integer> getThroughFieldsSet()
-    {
+    public List<Integer> getThroughFieldsSet() {
         return new ArrayList<Integer>(throughFieldsSet);
     }
 
     /**
      * @return the throughFieldsSet
      */
-    public HashSet<Byte> getThroughFieldsByteSet()
-    {
+    public HashSet<Byte> getThroughFieldsByteSet() {
         return throughFieldsByteSet;
     }
 
-    public BlockTypeEntry getCuboidDefiningType()
-    {
+    public BlockTypeEntry getCuboidDefiningType() {
         return cuboidDefiningType;
     }
 
-    public BlockTypeEntry getCuboidVisualizationType()
-    {
+    public BlockTypeEntry getCuboidVisualizationType() {
         return cuboidVisualizationType;
     }
 
-    public BlockTypeEntry getVisualizeFrameBlock()
-    {
+    public BlockTypeEntry getVisualizeFrameBlock() {
         return visualizeFrameBlock;
     }
 
-    public int getVisualizeTicksBetweenSends()
-    {
+    public int getVisualizeTicksBetweenSends() {
         return visualizeTicksBetweenSends;
     }
 
-    public int getVisualizeSendSize()
-    {
+    public int getVisualizeSendSize() {
         return visualizeSendSize;
     }
 
-    public int getPort()
-    {
+    public int getPort() {
         return port;
     }
 
-    public int getVisualizeDensity()
-    {
+    public int getVisualizeDensity() {
         return visualizeDensity;
     }
 
-    public int getGriefRevertMinInterval()
-    {
+    public int getGriefRevertMinInterval() {
         return griefRevertMinInterval;
     }
 
-    public boolean isLogRollback()
-    {
+    public boolean isLogRollback() {
         return logRollback;
     }
 
-    public boolean isNotifyRollback()
-    {
+    public boolean isNotifyRollback() {
         return notifyRollback;
     }
 
-    public boolean isLogPlaceArea()
-    {
+    public boolean isLogPlaceArea() {
         return logPlaceArea;
     }
 
-    public void setVisualizeSendSize(int visualizeSendSize)
-    {
+    public void setVisualizeSendSize(int visualizeSendSize) {
         this.visualizeSendSize = visualizeSendSize;
     }
 
-    public int getVisualizeMaxFields()
-    {
+    public int getVisualizeMaxFields() {
         return visualizeMaxFields;
     }
 
-    public void setVisualizeMaxFields(int visualizeMaxFields)
-    {
+    public void setVisualizeMaxFields(int visualizeMaxFields) {
         this.visualizeMaxFields = visualizeMaxFields;
     }
 
-    public List<String> getAllEntryGroups()
-    {
+    public List<String> getAllEntryGroups() {
         return Collections.unmodifiableList(allEntryGroups);
     }
 
-    public boolean isNotifyFlyZones()
-    {
+    public boolean isNotifyFlyZones() {
         return notifyFlyZones;
     }
 
-    public boolean isNoRefunds()
-    {
+    public boolean isNoRefunds() {
         return noRefunds;
     }
 
-    public int getGlobalFieldLimit()
-    {
+    public int getGlobalFieldLimit() {
         return globalFieldLimit;
     }
 
-    public boolean isDisableGroundInfo()
-    {
+    public boolean isDisableGroundInfo() {
         return disableGroundInfo;
     }
 
-    public boolean isSneakNormalBlock()
-    {
+    public boolean isSneakNormalBlock() {
         return sneakNormalBlock;
     }
 
-    public boolean isShowDefaultWelcomeFarewellMessages()
-    {
+    public boolean isShowDefaultWelcomeFarewellMessages() {
         return showDefaultWelcomeFarewellMessages;
     }
 
-    public boolean isSneakPlaceFields()
-    {
+    public boolean isSneakPlaceFields() {
         return sneakPlaceFields;
     }
 
-    public boolean isPreventDestroyEverywhere(String world)
-    {
+    public boolean isPreventDestroyEverywhere(String world) {
         return preventDestroyEverywhere.contains(world);
     }
 
-    public boolean isPreventPlaceEverywhere(String world)
-    {
+    public boolean isPreventPlaceEverywhere(String world) {
         return preventPlaceEverywhere.contains(world);
     }
 
-    public double getVersion()
-    {
+    public double getVersion() {
         return version;
     }
 
-    public void setVersion(int version)
-    {
+    public void setVersion(int version) {
         config.set("settings.version", version);
         cleanConfig.set("settings.version", version);
         save();
         this.version = version;
     }
 
-    public boolean isLogTranslocation()
-    {
+    public boolean isLogTranslocation() {
         return logTranslocation;
     }
 
-    public boolean isNotifyTranslocation()
-    {
+    public boolean isNotifyTranslocation() {
         return notifyTranslocation;
     }
 
-    public int getMaxSizeTranslocation()
-    {
+    public int getMaxSizeTranslocation() {
         return maxSizeTranslocation;
     }
 
-    public void setMaxSizeTranslocation(int maxSizeTranslocation)
-    {
+    public void setMaxSizeTranslocation(int maxSizeTranslocation) {
         this.maxSizeTranslocation = maxSizeTranslocation;
     }
 
-    public int getMaxSizeTranslocationForRedstone()
-    {
+    public int getMaxSizeTranslocationForRedstone() {
         return maxSizeTranslocationForRedstone;
     }
 
-    public void setMaxSizeTranslocationForRedstone(int maxSizeTranslocationForRedstone)
-    {
+    public void setMaxSizeTranslocationForRedstone(int maxSizeTranslocationForRedstone) {
         this.maxSizeTranslocationForRedstone = maxSizeTranslocationForRedstone;
     }
 
-    public boolean isDisableSimpleClanHook()
-    {
+    public boolean isDisableSimpleClanHook() {
         return disableSimpleClanHook;
     }
 
-    public boolean isLogRentsAndPurchases()
-    {
+    public boolean isLogRentsAndPurchases() {
         return logRentsAndPurchases;
     }
 
-    public boolean isAutoAddClan()
-    {
+    public boolean isAutoAddClan() {
         return autoAddClan;
     }
 
-    public boolean isNaturalFloorType(int type)
-    {
+    public boolean isNaturalFloorType(int type) {
         return type == 1 || type == 2 || type == 3 || type == 4 || type == 7 || type == 12 || type == 13 || type == 14 || type == 15 || type == 16 || type == 17 || type == 21 || type == 60 || type == 73 || type == 74 || type == 80 || type == 82 || type == 87 || type == 88 || type == 110 || type == 97 || type == 82 || type == 129;
     }
 
-    public boolean isOncePerBlockOnMove()
-    {
+    public boolean isOncePerBlockOnMove() {
         return oncePerBlockOnMove;
     }
 
-    public boolean isUseIdInSnitches()
-    {
+    public boolean isUseIdInSnitches() {
         return useIdInSnitches;
     }
 
-    public int getFenceMaxDepth()
-    {
+    public int getFenceMaxDepth() {
         return fenceMaxDepth;
     }
 
-    public boolean isCommandsToRentBuy()
-    {
+    public boolean isCommandsToRentBuy() {
         return commandsToRentBuy;
     }
 
-    public boolean isVisualizationNewStyle()
-    {
+    public boolean isVisualizationNewStyle() {
         return visualizationNewStyle;
     }
 
-    public boolean isPreventRemovalIfPlayerInField()
-    {
+    public boolean isPreventRemovalIfPlayerInField() {
         return preventRemovalIfPlayerInField;
     }
 
-    public boolean isWarAllow()
-    {
+    public boolean isWarAllow() {
         return warAllow;
     }
 
-    public void setWarAllow(boolean warAllow)
-    {
+    public void setWarAllow(boolean warAllow) {
         this.warAllow = warAllow;
     }
 
-    public boolean isDisableMessages()
-    {
+    public boolean isDisableMessages() {
         return disableMessages;
     }
 
-    public int getMaxTargetDistance()
-    {
+    public int getMaxTargetDistance() {
         return maxTargetDistance;
     }
 
-    public BlockTypeEntry getDefaulItemCurrency()
-    {
+    public BlockTypeEntry getDefaulItemCurrency() {
         return defaulItemCurrency;
     }
 
-    public boolean isVisualizeOnExpand()
-    {
+    public boolean isVisualizeOnExpand() {
         return visualizeOnExpand;
     }
 
-    public boolean isAutoAddTeam()
-    {
+    public boolean isAutoAddTeam() {
         return autoAddTeam;
     }
 
     /**
      * @return the purgeAfterDays
      */
-    public int getPurgeAfterDays()
-    {
+    public int getPurgeAfterDays() {
         return purgeAfterDays;
     }
 
-    public boolean isPurgeBannedPlayers()
-    {
+    public boolean isPurgeBannedPlayers() {
         return purgeBannedPlayers;
     }
 

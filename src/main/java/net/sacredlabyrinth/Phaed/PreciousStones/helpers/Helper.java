@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.helpers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.MaterialName;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -22,15 +22,12 @@ import java.util.regex.Pattern;
 /**
  * @author phaed
  */
-public class Helper
-{
+public class Helper {
     /**
      * Dumps stacktrace to log
      */
-    public void dumpStackTrace()
-    {
-        for (StackTraceElement el : Thread.currentThread().getStackTrace())
-        {
+    public void dumpStackTrace() {
+        for (StackTraceElement el : Thread.currentThread().getStackTrace()) {
             PreciousStones.debug(el.toString());
         }
     }
@@ -41,8 +38,7 @@ public class Helper
      * @param o
      * @return
      */
-    public static boolean isInteger(Object o)
-    {
+    public static boolean isInteger(Object o) {
         return o instanceof java.lang.Integer;
     }
 
@@ -52,15 +48,11 @@ public class Helper
      * @param input
      * @return
      */
-    public static boolean isByte(String input)
-    {
-        try
-        {
+    public static boolean isByte(String input) {
+        try {
             Byte.parseByte(input);
             return true;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -71,15 +63,11 @@ public class Helper
      * @param input
      * @return
      */
-    public static boolean isShort(String input)
-    {
-        try
-        {
+    public static boolean isShort(String input) {
+        try {
             Short.parseShort(input);
             return true;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -90,15 +78,11 @@ public class Helper
      * @param input
      * @return
      */
-    public static boolean isInteger(String input)
-    {
-        try
-        {
+    public static boolean isInteger(String input) {
+        try {
             Integer.parseInt(input);
             return true;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -109,15 +93,11 @@ public class Helper
      * @param obj
      * @return
      */
-    public static boolean isIntList(Object obj)
-    {
-        try
-        {
+    public static boolean isIntList(Object obj) {
+        try {
             @SuppressWarnings("unchecked") List<Integer> list = (List<Integer>) obj;
             return true;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -128,15 +108,11 @@ public class Helper
      * @param obj
      * @return
      */
-    public static boolean isStringList(Object obj)
-    {
-        try
-        {
+    public static boolean isStringList(Object obj) {
+        try {
             @SuppressWarnings("unchecked") List<String> list = (List<String>) obj;
             return true;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -147,15 +123,11 @@ public class Helper
      * @param input
      * @return
      */
-    public static boolean isFloat(String input)
-    {
-        try
-        {
+    public static boolean isFloat(String input) {
+        try {
             Float.parseFloat(input);
             return true;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -166,8 +138,7 @@ public class Helper
      * @param o
      * @return
      */
-    public static boolean isString(Object o)
-    {
+    public static boolean isString(Object o) {
         return o instanceof java.lang.String;
     }
 
@@ -177,8 +148,7 @@ public class Helper
      * @param o
      * @return
      */
-    public static boolean isBoolean(Object o)
-    {
+    public static boolean isBoolean(Object o) {
         return o instanceof java.lang.Boolean;
     }
 
@@ -189,14 +159,11 @@ public class Helper
      * @param c
      * @return
      */
-    public static String removeChar(String s, char c)
-    {
+    public static String removeChar(String s, char c) {
         String r = "";
 
-        for (int i = 0; i < s.length(); i++)
-        {
-            if (s.charAt(i) != c)
-            {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) != c) {
                 r += s.charAt(i);
             }
         }
@@ -211,14 +178,11 @@ public class Helper
      * @param c
      * @return
      */
-    public static String removeFirstChar(String s, char c)
-    {
+    public static String removeFirstChar(String s, char c) {
         String r = "";
 
-        for (int i = 0; i < s.length(); i++)
-        {
-            if (s.charAt(i) != c)
-            {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) != c) {
                 r += s.charAt(i);
                 break;
             }
@@ -233,10 +197,8 @@ public class Helper
      * @param content
      * @return
      */
-    public static String capitalize(String content)
-    {
-        if (content.length() < 2)
-        {
+    public static String capitalize(String content) {
+        if (content.length() < 2) {
             return content;
         }
 
@@ -262,8 +224,7 @@ public class Helper
      * @param s
      * @return
      */
-    public static int indexOf(Pattern pattern, String s)
-    {
+    public static int indexOf(Pattern pattern, String s) {
         Matcher matcher = pattern.matcher(s);
         return matcher.find() ? matcher.start() : -1;
     }
@@ -274,10 +235,8 @@ public class Helper
      * @param typeId
      * @return
      */
-    public static String friendlyBlockType(int typeId)
-    {
-        if (Material.getMaterial(typeId) == null)
-        {
+    public static String friendlyBlockType(int typeId) {
+        if (Material.getMaterial(typeId) == null) {
             return typeId + "";
         }
 
@@ -290,16 +249,14 @@ public class Helper
      * @param type
      * @return
      */
-    public static String friendlyName(String type)
-    {
+    public static String friendlyName(String type) {
         String out = "";
 
         type = type.toLowerCase().replace('_', ' ');
 
         String[] words = type.split("\\s+");
 
-        for (String word : words)
-        {
+        for (String word : words) {
             out += capitalize(word) + " ";
         }
 
@@ -312,8 +269,7 @@ public class Helper
      * @param msg
      * @return
      */
-    public static String stripColors(String msg)
-    {
+    public static String stripColors(String msg) {
         String out = msg.replaceAll("[&][0-9a-f]", "");
         out = out.replaceAll(String.valueOf((char) 194), "");
         return out.replaceAll("[\u00a7][0-9a-f]", "");
@@ -326,10 +282,8 @@ public class Helper
      * @param sep
      * @return
      */
-    public static String stripTrailing(String msg, String sep)
-    {
-        if (msg.length() < sep.length() * 2)
-        {
+    public static String stripTrailing(String msg, String sep) {
+        if (msg.length() < sep.length() * 2) {
             return msg;
         }
 
@@ -337,13 +291,11 @@ public class Helper
         String first = msg.substring(0, sep.length());
         String last = msg.substring(msg.length() - sep.length(), msg.length());
 
-        if (first.equals(sep))
-        {
+        if (first.equals(sep)) {
             out = msg.substring(sep.length());
         }
 
-        if (last.equals(sep))
-        {
+        if (last.equals(sep)) {
             out = msg.substring(0, msg.length() - sep.length());
         }
 
@@ -356,8 +308,7 @@ public class Helper
      * @param hexValue
      * @return
      */
-    public static String toColor(String hexValue)
-    {
+    public static String toColor(String hexValue) {
         return ChatColor.getByChar(hexValue).toString();
     }
 
@@ -367,8 +318,7 @@ public class Helper
      * @param values
      * @return
      */
-    public static List<String> fromArray(String... values)
-    {
+    public static List<String> fromArray(String... values) {
         List<String> results = new ArrayList<String>();
         Collections.addAll(results, values);
         results.remove("");
@@ -382,8 +332,7 @@ public class Helper
      * @param values
      * @return
      */
-    public static HashSet<String> fromArray2(String... values)
-    {
+    public static HashSet<String> fromArray2(String... values) {
         HashSet<String> results = new HashSet<String>();
         Collections.addAll(results, values);
         results.remove("");
@@ -396,8 +345,7 @@ public class Helper
      * @param values
      * @return
      */
-    public static List<Player> fromPlayerArray(Player... values)
-    {
+    public static List<Player> fromPlayerArray(Player... values) {
         List<Player> results = new ArrayList<Player>();
         Collections.addAll(results, values);
         return results;
@@ -410,8 +358,7 @@ public class Helper
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static String[] toArray(List<String> list)
-    {
+    public static String[] toArray(List<String> list) {
         return list.toArray(new String[0]);
     }
 
@@ -421,12 +368,10 @@ public class Helper
      * @param args
      * @return
      */
-    public static String[] removeFirst(String[] args)
-    {
+    public static String[] removeFirst(String[] args) {
         List<String> out = fromArray(args);
 
-        if (!out.isEmpty())
-        {
+        if (!out.isEmpty()) {
             out.remove(0);
         }
         return toArray(out);
@@ -438,12 +383,10 @@ public class Helper
      * @param args
      * @return
      */
-    public static String toMessage(String[] args)
-    {
+    public static String toMessage(String[] args) {
         String out = "";
 
-        for (String arg : args)
-        {
+        for (String arg : args) {
             out += arg + " ";
         }
 
@@ -457,12 +400,10 @@ public class Helper
      * @param sep
      * @return
      */
-    public static String toMessage(String[] args, String sep)
-    {
+    public static String toMessage(String[] args, String sep) {
         String out = "";
 
-        for (String arg : args)
-        {
+        for (String arg : args) {
             out += arg + sep;
         }
 
@@ -476,12 +417,10 @@ public class Helper
      * @param sep
      * @return
      */
-    public static String toMessage(List<String> args, String sep)
-    {
+    public static String toMessage(List<String> args, String sep) {
         String out = "";
 
-        for (String arg : args)
-        {
+        for (String arg : args) {
             out += arg + sep;
         }
 
@@ -494,8 +433,7 @@ public class Helper
      * @param loc
      * @return
      */
-    public static String toLocationString(Location loc)
-    {
+    public static String toLocationString(Location loc) {
         return loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ();
     }
 
@@ -505,10 +443,8 @@ public class Helper
      * @param str
      * @return
      */
-    public static String escapeQuotes(String str)
-    {
-        if (str == null)
-        {
+    public static String escapeQuotes(String str) {
+        if (str == null) {
             return "";
         }
         return str.replace("'", "''");
@@ -521,20 +457,16 @@ public class Helper
      * @param loc2
      * @return
      */
-    public static boolean isSameBlock(Location loc, Location loc2)
-    {
-        if (loc == null && loc2 == null)
-        {
+    public static boolean isSameBlock(Location loc, Location loc2) {
+        if (loc == null && loc2 == null) {
             return true;
         }
 
-        if (loc == null || loc2 == null)
-        {
+        if (loc == null || loc2 == null) {
             return false;
         }
 
-        if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ())
-        {
+        if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ()) {
             return true;
         }
         return false;
@@ -547,20 +479,16 @@ public class Helper
      * @param loc2
      * @return
      */
-    public static boolean isSameLocation(Location loc, Location loc2)
-    {
-        if (loc == null && loc2 == null)
-        {
+    public static boolean isSameLocation(Location loc, Location loc2) {
+        if (loc == null && loc2 == null) {
             return true;
         }
 
-        if (loc == null || loc2 == null)
-        {
+        if (loc == null || loc2 == null) {
             return false;
         }
 
-        if (loc.getX() == loc2.getX() && loc.getY() == loc2.getY() && loc.getZ() == loc2.getZ())
-        {
+        if (loc.getX() == loc2.getX() && loc.getY() == loc2.getY() && loc.getZ() == loc2.getZ()) {
             return true;
         }
         return false;
@@ -572,10 +500,8 @@ public class Helper
      * @param flag
      * @return
      */
-    public static String toFlagStr(FieldFlag flag)
-    {
-        if (flag == null)
-        {
+    public static String toFlagStr(FieldFlag flag) {
+        if (flag == null) {
             return "";
         }
 
@@ -588,14 +514,10 @@ public class Helper
      * @param flagStr
      * @return
      */
-    public static FieldFlag toFieldFlag(String flagStr)
-    {
-        try
-        {
+    public static FieldFlag toFieldFlag(String flagStr) {
+        try {
             return FieldFlag.valueOf(flagStr.toUpperCase().replace("-", "_"));
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return null;
         }
     }
@@ -606,8 +528,7 @@ public class Helper
      * @param rawItem
      * @return
      */
-    public static boolean hasData(String rawItem)
-    {
+    public static boolean hasData(String rawItem) {
         return rawItem.contains(":");
     }
 
@@ -617,17 +538,13 @@ public class Helper
      * @param input
      * @return
      */
-    public static boolean isTypeEntry(String input)
-    {
-        try
-        {
+    public static boolean isTypeEntry(String input) {
+        try {
             String out = input.replace(":", "");
 
             Integer.parseInt(out);
             return true;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -638,16 +555,13 @@ public class Helper
      * @param rawList
      * @return
      */
-    public static List<BlockTypeEntry> toTypeEntriesBlind(List<Object> rawList)
-    {
+    public static List<BlockTypeEntry> toTypeEntriesBlind(List<Object> rawList) {
         List<BlockTypeEntry> types = new ArrayList<BlockTypeEntry>();
 
-        for (Object rawItem : rawList)
-        {
+        for (Object rawItem : rawList) {
             BlockTypeEntry entry = new BlockTypeEntry(rawItem.toString());
 
-            if (entry.isValid())
-            {
+            if (entry.isValid()) {
                 types.add(entry);
             }
         }
@@ -661,16 +575,13 @@ public class Helper
      * @param rawList
      * @return
      */
-    public static List<BlockTypeEntry> toTypeEntries(List<String> rawList)
-    {
+    public static List<BlockTypeEntry> toTypeEntries(List<String> rawList) {
         List<BlockTypeEntry> types = new ArrayList<BlockTypeEntry>();
 
-        for (String rawItem : rawList)
-        {
+        for (String rawItem : rawList) {
             BlockTypeEntry entry = new BlockTypeEntry(rawItem);
 
-            if (entry.isValid())
-            {
+            if (entry.isValid()) {
                 types.add(entry);
             }
         }
@@ -684,8 +595,7 @@ public class Helper
      * @param packed
      * @return
      */
-    public static Location locationFromPacked(String packed)
-    {
+    public static Location locationFromPacked(String packed) {
         String[] unpacked = packed.split("[|]");
 
         int x = Integer.parseInt(unpacked[2]);
@@ -698,18 +608,15 @@ public class Helper
         return new Location(w, x, y, z);
     }
 
-    public static boolean isDoor(Block block)
-    {
+    public static boolean isDoor(Block block) {
         return block.getTypeId() == 64 || block.getTypeId() == 71 || block.getTypeId() == 330; // doors
     }
 
-    public static String getDetails(Block block)
-    {
+    public static String getDetails(Block block) {
         return "[" + block.getType() + "|" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
     }
 
-    public static boolean isOnline(String playerName)
-    {
+    public static boolean isOnline(String playerName) {
         return Bukkit.getServer().getPlayer(playerName) != null;
     }
 
@@ -718,19 +625,14 @@ public class Helper
      *
      * @param block
      */
-    public static boolean dropBlock(Block block)
-    {
-        if (block.getTypeId() != 0)
-        {
-            try
-            {
+    public static boolean dropBlock(Block block) {
+        if (block.getTypeId() != 0) {
+            try {
                 World world = block.getWorld();
                 ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
                 world.dropItemNaturally(block.getLocation(), is);
                 return true;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 // fail silently
             }
         }
@@ -742,10 +644,8 @@ public class Helper
      *
      * @param block
      */
-    public static void dropBlockWipe(Block block)
-    {
-        if (dropBlock(block))
-        {
+    public static void dropBlockWipe(Block block) {
+        if (dropBlock(block)) {
             block.setTypeId(0);
         }
     }
@@ -756,52 +656,39 @@ public class Helper
      * @param intString
      * @return
      */
-    public static int forceParseInteger(String intString)
-    {
+    public static int forceParseInteger(String intString) {
         intString = intString.replaceAll("[^0-9]", "");
 
-        if (!Helper.isInteger(intString))
-        {
+        if (!Helper.isInteger(intString)) {
             return 0;
         }
 
         return Integer.parseInt(intString);
     }
 
-    public static int getWidthFromCoords(int a, int b)
-    {
-        if (a < 0 && b < 0)
-        {
-            if (a < b)
-            {
+    public static int getWidthFromCoords(int a, int b) {
+        if (a < 0 && b < 0) {
+            if (a < b) {
                 return Math.abs(a - b) + 1;
-            }
-            else
-            {
+            } else {
                 return Math.abs(b - a) + 1;
             }
 
         }
 
-        if (a >= 0 && b >= 0)
-        {
-            if (a > b)
-            {
+        if (a >= 0 && b >= 0) {
+            if (a > b) {
                 return Math.abs(a - b) + 1;
-            }
-            else
-            {
+            } else {
                 return Math.abs(b - a) + 1;
             }
         }
 
-        if (a < 0 && b >= 0)
-        {
+        if (a < 0 && b >= 0) {
             return Math.abs(a - b) + 1;
         }
 
-        if (a >= 0 && b < 0)
-        {
+        if (a >= 0 && b < 0) {
             return Math.abs(b - a) + 1;
         }
 
@@ -814,18 +701,15 @@ public class Helper
      * @param typeId
      * @return
      */
-    public static String getMaterialString(int typeId)
-    {
-        if (Material.getMaterial(typeId) == null)
-        {
+    public static String getMaterialString(int typeId) {
+        if (Material.getMaterial(typeId) == null) {
             return typeId + "";
         }
 
         return Material.getMaterial(typeId).toString();
     }
 
-    public static boolean isAirOrWater(Location loc)
-    {
+    public static boolean isAirOrWater(Location loc) {
         int id = loc.getWorld().getBlockTypeIdAt(loc);
         return id == 0 || id == 8 || id == 9;
     }
@@ -844,23 +728,18 @@ public class Helper
      * @param event The damage event.
      * @return The player, or <code>null</code> if not found.
      */
-    public static Player getDamagingPlayer(EntityDamageEvent event)
-    {
-        if (!(event instanceof EntityDamageByEntityEvent))
-        {
+    public static Player getDamagingPlayer(EntityDamageEvent event) {
+        if (!(event instanceof EntityDamageByEntityEvent)) {
             return null;
         }
 
         Entity damager = ((EntityDamageByEntityEvent) event).getDamager();
-        if (damager instanceof Player)
-        {
+        if (damager instanceof Player) {
             return (Player) damager;
         }
-        if (damager instanceof Projectile)
-        {
+        if (damager instanceof Projectile) {
             ProjectileSource shooter = ((Projectile) damager).getShooter();
-            if (shooter instanceof Player)
-            {
+            if (shooter instanceof Player) {
                 return (Player) shooter;
             }
         }
@@ -874,26 +753,22 @@ public class Helper
      * @param target
      * @return closest player
      */
-    public static Player getClosestPlayer(Location target, int radius)
-    {
+    public static Player getClosestPlayer(Location target, int radius) {
         Collection<Player> players = getOnlinePlayers();
 
         double closestDistance = radius;
         Player closestPlayer = null;
 
-        for (Player player : players)
-        {
+        for (Player player : players) {
             Location loc = player.getLocation();
 
-            if (!loc.getWorld().getName().equals(target.getWorld().getName()))
-            {
+            if (!loc.getWorld().getName().equals(target.getWorld().getName())) {
                 continue;
             }
 
             double distance = loc.distance(target);
 
-            if (distance < closestDistance)
-            {
+            if (distance < closestDistance) {
                 closestDistance = distance;
                 closestPlayer = player;
             }
@@ -903,24 +778,17 @@ public class Helper
     }
 
 
-    public static Collection<Player> getOnlinePlayers()
-    {
-        try
-        {
+    public static Collection<Player> getOnlinePlayers() {
+        try {
             Method method = Bukkit.class.getDeclaredMethod("getOnlinePlayers");
             Object players = method.invoke(null);
 
-            if (players instanceof Player[])
-            {
+            if (players instanceof Player[]) {
                 return new ArrayList<>(Arrays.asList((Player[]) players));
-            }
-            else
-            {
+            } else {
                 return ((Collection<Player>) players);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -934,8 +802,7 @@ public class Helper
      * @param depth depth in the call stack (0 means current method, 1 means call method, ...)
      * @return method name
      */
-    public static String getMethodName(final int depth)
-    {
+    public static String getMethodName(final int depth) {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
 
         //System. out.println(ste[ste.length-depth].getClassName()+"#"+ste[ste.length-depth].getMethodName());

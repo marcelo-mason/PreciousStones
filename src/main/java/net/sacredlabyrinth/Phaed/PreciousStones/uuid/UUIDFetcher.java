@@ -15,13 +15,12 @@ import java.util.concurrent.Callable;
 
 /**
  * @author evilmidget38
- *
- * http://forums.bukkit.org/threads/250926/
- *
- * https://gist.github.com/evilmidget38/26d70114b834f71fb3b4
+ *         <p/>
+ *         http://forums.bukkit.org/threads/250926/
+ *         <p/>
+ *         https://gist.github.com/evilmidget38/26d70114b834f71fb3b4
  */
-public class UUIDFetcher implements Callable<Map<String, UUID>>
-{
+public class UUIDFetcher implements Callable<Map<String, UUID>> {
     private static final double PROFILES_PER_REQUEST = 100;
     private static final String PROFILE_URL = "https://api.mojang.com/profiles/minecraft";
     private final JSONParser jsonParser = new JSONParser();

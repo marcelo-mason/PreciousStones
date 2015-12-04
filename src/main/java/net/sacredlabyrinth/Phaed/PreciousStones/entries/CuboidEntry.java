@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -11,8 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CuboidEntry
-{
+public class CuboidEntry {
     private Field field;
     private List<BlockEntry> selected = new ArrayList<BlockEntry>();
     private int minx;
@@ -23,8 +22,7 @@ public class CuboidEntry
     private int maxz;
     private Location expanded;
 
-    public CuboidEntry(Field field)
-    {
+    public CuboidEntry(Field field) {
         this.field = field;
         minx = field.getX();
         miny = field.getY();
@@ -34,21 +32,17 @@ public class CuboidEntry
         maxz = field.getZ();
     }
 
-    public CuboidEntry(Field field, boolean existing)
-    {
+    public CuboidEntry(Field field, boolean existing) {
         this.field = field;
 
-        if (existing)
-        {
+        if (existing) {
             minx = field.getMinx();
             miny = field.getMiny();
             minz = field.getMinz();
             maxx = field.getMaxx();
             maxy = field.getMaxy();
             maxz = field.getMaxz();
-        }
-        else
-        {
+        } else {
             minx = field.getX();
             miny = field.getY();
             minz = field.getZ();
@@ -58,8 +52,7 @@ public class CuboidEntry
         }
     }
 
-    public CuboidEntry(Field field, int minx, int maxx, int miny, int maxy, int minz, int maxz, List<BlockEntry> selected, Location expanded)
-    {
+    public CuboidEntry(Field field, int minx, int maxx, int miny, int maxy, int minz, int maxz, List<BlockEntry> selected, Location expanded) {
         this.field = field;
         this.maxx = maxx;
         this.minx = minx;
@@ -76,10 +69,8 @@ public class CuboidEntry
      *
      * @param block
      */
-    public void addSelected(Block block)
-    {
-        if (!selected.contains(block))
-        {
+    public void addSelected(Block block) {
+        if (!selected.contains(block)) {
             selected.add(new BlockEntry(block));
             calculate();
         }
@@ -90,8 +81,7 @@ public class CuboidEntry
      *
      * @param block
      */
-    public void removeSelected(Block block)
-    {
+    public void removeSelected(Block block) {
         selected.remove(new BlockEntry(block));
         calculate();
     }
@@ -99,10 +89,8 @@ public class CuboidEntry
     /**
      * Reverts the last selected block
      */
-    public void revertLastSelected()
-    {
-        if (selected.size() > 1)
-        {
+    public void revertLastSelected() {
+        if (selected.size() > 1) {
             selected.remove(selected.size() - 1);
         }
         calculate();
@@ -111,10 +99,8 @@ public class CuboidEntry
     /**
      * Gets the latest reverted block
      */
-    public BlockEntry getLastSelected()
-    {
-        if (selected.size() > 1)
-        {
+    public BlockEntry getLastSelected() {
+        if (selected.size() > 1) {
             return selected.get(selected.size() - 1);
         }
 
@@ -127,8 +113,7 @@ public class CuboidEntry
      * @param block
      * @return
      */
-    public boolean isSelected(Block block)
-    {
+    public boolean isSelected(Block block) {
         return selected.contains(new BlockEntry(block));
     }
 
@@ -137,13 +122,11 @@ public class CuboidEntry
      *
      * @return
      */
-    public int selectedCount()
-    {
+    public int selectedCount() {
         return selected.size();
     }
 
-    private void calculate()
-    {
+    private void calculate() {
         minx = field.getX();
         miny = field.getY();
         minz = field.getZ();
@@ -151,37 +134,30 @@ public class CuboidEntry
         maxy = field.getY();
         maxz = field.getZ();
 
-        for (BlockEntry bd : selected)
-        {
+        for (BlockEntry bd : selected) {
             Location loc = bd.getLocation();
 
-            if (loc.getBlockX() < minx)
-            {
+            if (loc.getBlockX() < minx) {
                 minx = loc.getBlockX();
             }
 
-            if (loc.getBlockY() < miny)
-            {
+            if (loc.getBlockY() < miny) {
                 miny = loc.getBlockY();
             }
 
-            if (loc.getBlockZ() < minz)
-            {
+            if (loc.getBlockZ() < minz) {
                 minz = loc.getBlockZ();
             }
 
-            if (loc.getBlockX() > maxx)
-            {
+            if (loc.getBlockX() > maxx) {
                 maxx = loc.getBlockX();
             }
 
-            if (loc.getBlockY() > maxy)
-            {
+            if (loc.getBlockY() > maxy) {
                 maxy = loc.getBlockY();
             }
 
-            if (loc.getBlockZ() > maxz)
-            {
+            if (loc.getBlockZ() > maxz) {
                 maxz = loc.getBlockZ();
             }
         }
@@ -193,34 +169,20 @@ public class CuboidEntry
      * @param num
      * @param dir
      */
-    public void expand(int num, String dir)
-    {
-        if (dir.toLowerCase().startsWith("u"))
-        {
+    public void expand(int num, String dir) {
+        if (dir.toLowerCase().startsWith("u")) {
             this.maxy = this.maxy + num;
-        }
-        else if (dir.toLowerCase().startsWith("d"))
-        {
+        } else if (dir.toLowerCase().startsWith("d")) {
             this.miny = this.miny - num;
-        }
-        else if (dir.toLowerCase().startsWith("n"))
-        {
+        } else if (dir.toLowerCase().startsWith("n")) {
             this.minz = this.minz - num;
-        }
-        else if (dir.toLowerCase().startsWith("s"))
-        {
+        } else if (dir.toLowerCase().startsWith("s")) {
             this.maxz = this.maxz + num;
-        }
-        else if (dir.toLowerCase().startsWith("e"))
-        {
+        } else if (dir.toLowerCase().startsWith("e")) {
             this.maxx = this.maxx + num;
-        }
-        else if (dir.toLowerCase().startsWith("w"))
-        {
+        } else if (dir.toLowerCase().startsWith("w")) {
             this.minx = this.minx - num;
-        }
-        else if (dir.toLowerCase().startsWith("a"))
-        {
+        } else if (dir.toLowerCase().startsWith("a")) {
             this.minx = this.minx - num;
             this.miny = this.miny - num;
             this.minz = this.minz - num;
@@ -240,8 +202,7 @@ public class CuboidEntry
      * @param e
      * @param w
      */
-    public void expand(int u, int d, int n, int s, int e, int w)
-    {
+    public void expand(int u, int d, int n, int s, int e, int w) {
         this.maxy = this.maxy + u;
         this.miny = this.miny - d;
         this.minz = this.minz - n;
@@ -256,34 +217,20 @@ public class CuboidEntry
      * @param num
      * @param dir
      */
-    public void contract(int num, String dir)
-    {
-        if (dir.toLowerCase().startsWith("u"))
-        {
+    public void contract(int num, String dir) {
+        if (dir.toLowerCase().startsWith("u")) {
             this.maxy = this.maxy - num;
-        }
-        else if (dir.toLowerCase().startsWith("d"))
-        {
+        } else if (dir.toLowerCase().startsWith("d")) {
             this.miny = this.miny + num;
-        }
-        else if (dir.toLowerCase().startsWith("n"))
-        {
+        } else if (dir.toLowerCase().startsWith("n")) {
             this.minz = this.minz + num;
-        }
-        else if (dir.toLowerCase().startsWith("s"))
-        {
+        } else if (dir.toLowerCase().startsWith("s")) {
             this.maxz = this.maxz - num;
-        }
-        else if (dir.toLowerCase().startsWith("e"))
-        {
+        } else if (dir.toLowerCase().startsWith("e")) {
             this.maxx = this.maxx - num;
-        }
-        else if (dir.toLowerCase().startsWith("w"))
-        {
+        } else if (dir.toLowerCase().startsWith("w")) {
             this.minx = this.minx + num;
-        }
-        else if (dir.toLowerCase().startsWith("a"))
-        {
+        } else if (dir.toLowerCase().startsWith("a")) {
             this.maxy = this.maxy - num;
             this.miny = this.miny + num;
             this.minz = this.minz + num;
@@ -305,8 +252,7 @@ public class CuboidEntry
      * @param e
      * @param w
      */
-    public void contract(int u, int d, int n, int s, int e, int w)
-    {
+    public void contract(int u, int d, int n, int s, int e, int w) {
         this.maxy = this.maxy - u;
         this.miny = this.miny + d;
         this.minz = this.minz + n;
@@ -317,35 +263,28 @@ public class CuboidEntry
         fixOverContract();
     }
 
-    public void fixOverContract()
-    {
-        if (maxy < field.getY())
-        {
+    public void fixOverContract() {
+        if (maxy < field.getY()) {
             maxy = field.getY();
         }
 
-        if (miny > field.getY())
-        {
+        if (miny > field.getY()) {
             miny = field.getY();
         }
 
-        if (minz > field.getZ())
-        {
+        if (minz > field.getZ()) {
             minz = field.getZ();
         }
 
-        if (maxz < field.getZ())
-        {
+        if (maxz < field.getZ()) {
             maxz = field.getZ();
         }
 
-        if (maxx < field.getX())
-        {
+        if (maxx < field.getX()) {
             maxx = field.getX();
         }
 
-        if (minx > field.getX())
-        {
+        if (minx > field.getX()) {
             minx = field.getX();
         }
     }
@@ -355,26 +294,21 @@ public class CuboidEntry
      *
      * @return
      */
-    public Block getExpandedBlock(Player player)
-    {
+    public Block getExpandedBlock(Player player) {
         calculate();
 
         Location loc = player.getLocation();
 
-        if (!envelopsPlusOne(loc))
-        {
+        if (!envelopsPlusOne(loc)) {
             ChatHelper.send(player, "mustBeInCuboidToExpand");
             return null;
         }
 
         List<Block> lineOfSight = player.getLineOfSight(PreciousStones.getInstance().getSettingsManager().getThroughFieldsByteSet(), Math.max(Math.max(Math.max(Helper.getWidthFromCoords(maxx, miny), Helper.getWidthFromCoords(maxz, minz)), Helper.getWidthFromCoords(maxy, miny)), 256));
 
-        for (Block block : lineOfSight)
-        {
-            if (!envelopsPlusOne(block.getLocation()))
-            {
-                if (expanded != null)
-                {
+        for (Block block : lineOfSight) {
+            if (!envelopsPlusOne(block.getLocation())) {
+                if (expanded != null) {
                     player.sendBlockChange(expanded, 0, (byte) 0);
                 }
 
@@ -387,10 +321,8 @@ public class CuboidEntry
         return null;
     }
 
-    private boolean envelopsPlusOne(Location loc)
-    {
-        if (loc.getX() < maxx + 1 && loc.getX() > minx - 1 && loc.getY() > miny - 1 && loc.getY() < maxy + 1 && loc.getZ() > minz - 1 && loc.getZ() < maxz + 1)
-        {
+    private boolean envelopsPlusOne(Location loc) {
+        if (loc.getX() < maxx + 1 && loc.getX() > minx - 1 && loc.getY() > miny - 1 && loc.getY() < maxy + 1 && loc.getZ() > minz - 1 && loc.getZ() < maxz + 1) {
             return true;
         }
 
@@ -400,8 +332,7 @@ public class CuboidEntry
     /**
      * Write the final cuboid dimensions to the field
      */
-    public void finalizeField()
-    {
+    public void finalizeField() {
         field.setCuboidDimensions(minx, miny, minz, maxx, maxy, maxz);
     }
 
@@ -411,8 +342,7 @@ public class CuboidEntry
      * @param newLoc
      * @return
      */
-    public boolean testOverflow(Location newLoc)
-    {
+    public boolean testOverflow(Location newLoc) {
         int minxt = minx;
         int minyt = miny;
         int minzt = minz;
@@ -420,33 +350,27 @@ public class CuboidEntry
         int maxyt = maxy;
         int maxzt = maxz;
 
-        if (newLoc.getBlockX() < minxt)
-        {
+        if (newLoc.getBlockX() < minxt) {
             minxt = newLoc.getBlockX();
         }
 
-        if (newLoc.getBlockY() < minyt)
-        {
+        if (newLoc.getBlockY() < minyt) {
             minyt = newLoc.getBlockY();
         }
 
-        if (newLoc.getBlockZ() < minzt)
-        {
+        if (newLoc.getBlockZ() < minzt) {
             minzt = newLoc.getBlockZ();
         }
 
-        if (newLoc.getBlockX() > maxxt)
-        {
+        if (newLoc.getBlockX() > maxxt) {
             maxxt = newLoc.getBlockX();
         }
 
-        if (newLoc.getBlockY() > maxyt)
-        {
+        if (newLoc.getBlockY() > maxyt) {
             maxyt = newLoc.getBlockY();
         }
 
-        if (newLoc.getBlockZ() > maxzt)
-        {
+        if (newLoc.getBlockZ() > maxzt) {
             maxzt = newLoc.getBlockZ();
         }
 
@@ -455,8 +379,7 @@ public class CuboidEntry
         return testVolume <= getMaxVolume();
     }
 
-    public int getOverflow()
-    {
+    public int getOverflow() {
         return getVolume() - getMaxVolume();
     }
 
@@ -465,8 +388,7 @@ public class CuboidEntry
      *
      * @return
      */
-    public int getVolume()
-    {
+    public int getVolume() {
         return Helper.getWidthFromCoords(maxy, miny) * Helper.getWidthFromCoords(maxx, minx) * Helper.getWidthFromCoords(maxz, minz);
     }
 
@@ -475,12 +397,10 @@ public class CuboidEntry
      *
      * @return
      */
-    public int getMaxVolume()
-    {
+    public int getMaxVolume() {
         int volume = field.getMaxVolume();
 
-        for (Field child : field.getChildren())
-        {
+        for (Field child : field.getChildren()) {
             volume += child.getMaxVolume();
         }
 
@@ -492,8 +412,7 @@ public class CuboidEntry
      *
      * @return
      */
-    public int getAvailableVolume()
-    {
+    public int getAvailableVolume() {
         PreciousStones.debug("x: %s %s", minx, maxx);
         PreciousStones.debug("y: %s %s", miny, maxy);
         PreciousStones.debug("z: %s %s", minz, maxz);
@@ -509,8 +428,7 @@ public class CuboidEntry
      *
      * @return
      */
-    public Field getField()
-    {
+    public Field getField() {
         return field;
     }
 
@@ -519,78 +437,63 @@ public class CuboidEntry
      *
      * @return
      */
-    public boolean isExceeded()
-    {
+    public boolean isExceeded() {
         return getVolume() > getMaxVolume();
     }
 
-    public int getMinx()
-    {
-        if (selected.isEmpty())
-        {
+    public int getMinx() {
+        if (selected.isEmpty()) {
             return 0;
         }
 
         return minx;
     }
 
-    public int getMiny()
-    {
-        if (selected.isEmpty())
-        {
+    public int getMiny() {
+        if (selected.isEmpty()) {
             return 0;
         }
 
         return miny;
     }
 
-    public int getMinz()
-    {
-        if (selected.isEmpty())
-        {
+    public int getMinz() {
+        if (selected.isEmpty()) {
             return 0;
         }
 
         return minz;
     }
 
-    public int getMaxx()
-    {
-        if (selected.isEmpty())
-        {
+    public int getMaxx() {
+        if (selected.isEmpty()) {
             return 0;
         }
 
         return maxx;
     }
 
-    public int getMaxy()
-    {
-        if (selected.isEmpty())
-        {
+    public int getMaxy() {
+        if (selected.isEmpty()) {
             return 0;
         }
 
         return maxy;
     }
 
-    public int getMaxz()
-    {
-        if (selected.isEmpty())
-        {
+    public int getMaxz() {
+        if (selected.isEmpty()) {
             return 0;
         }
 
         return maxz;
     }
 
-    public Field getMockField()
-    {
+    public Field getMockField() {
         return new Field(field.getX(), field.getY(), field.getZ(), minx, miny, minz, maxx, maxy, maxz, 0, field.getWorld(), field.getTypeEntry(), field.getOwner(), field.getName(), 0);
     }
 
-    public CuboidEntry Clone()
-    {
+    public CuboidEntry Clone() {
         return new CuboidEntry(field, minx, maxx, miny, maxy, minz, maxz, selected, expanded);
     }
 }

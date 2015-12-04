@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -14,16 +14,14 @@ import java.util.TreeMap;
 /**
  * @author phaed
  */
-public class PlayerManager
-{
+public class PlayerManager {
     private PreciousStones plugin;
     private TreeMap<String, PlayerEntry> players = new TreeMap<String, PlayerEntry>();
 
     /**
      *
      */
-    public PlayerManager()
-    {
+    public PlayerManager() {
         plugin = PreciousStones.getInstance();
     }
 
@@ -33,16 +31,14 @@ public class PlayerManager
      * @param playerName
      * @return
      */
-    public PlayerEntry getPlayerEntry(String playerName)
-    {
+    public PlayerEntry getPlayerEntry(String playerName) {
         // look for player in memory
 
         PlayerEntry data = players.get(playerName.toLowerCase());
 
         // otherwise look in database
 
-        if (data == null)
-        {
+        if (data == null) {
             data = plugin.getStorageManager().extractPlayer(playerName);
             players.put(playerName.toLowerCase(), data);
         }
@@ -55,8 +51,7 @@ public class PlayerManager
      *
      * @param playerName
      */
-    public void playerLogin(String playerName)
-    {
+    public void playerLogin(String playerName) {
         //set online
 
         PlayerEntry data = getPlayerEntry(playerName);
@@ -68,8 +63,7 @@ public class PlayerManager
      *
      * @param player
      */
-    public void playerLogoff(Player player)
-    {
+    public void playerLogoff(Player player) {
         PlayerEntry data = getPlayerEntry(player.getName());
         data.setOnline(false);
         data.setOutsideLocation(null);
@@ -80,8 +74,7 @@ public class PlayerManager
      *
      * @param player
      */
-    public void updateOutsideLocation(Player player)
-    {
+    public void updateOutsideLocation(Player player) {
         PlayerEntry data = getPlayerEntry(player.getName());
         data.setOutsideLocation(player.getLocation());
     }
@@ -92,13 +85,11 @@ public class PlayerManager
      * @param player
      * @return
      */
-    public Location getOutsideLocation(Player player)
-    {
+    public Location getOutsideLocation(Player player) {
         PlayerEntry data = getPlayerEntry(player.getName());
         Location loc = data.getOutsideLocation();
 
-        if (loc != null)
-        {
+        if (loc != null) {
             loc = new Location(loc.getWorld(), ((double) loc.getBlockX()) + .5, ((double) loc.getBlockY()), ((double) loc.getBlockZ()) + .5, loc.getYaw(), loc.getPitch());
         }
 
@@ -110,8 +101,7 @@ public class PlayerManager
      * @param player
      * @return
      */
-    public Location getOutsideFieldLocation(Field field, Player player)
-    {
+    public Location getOutsideFieldLocation(Field field, Player player) {
         World world = player.getWorld();
 
         int x = player.getLocation().getBlockX();
@@ -125,45 +115,34 @@ public class PlayerManager
 
         Location loc = world.getSpawnLocation();
 
-        if (isEmptySpace(world, edgeX1, y, z))
-        {
+        if (isEmptySpace(world, edgeX1, y, z)) {
             loc = new Location(world, ((double) edgeX1) + .5, y, ((double) z) + .5, player.getLocation().getYaw(), player.getLocation().getPitch());
-        }
-        else if (isEmptySpace(world, edgeX2, y, z))
-        {
+        } else if (isEmptySpace(world, edgeX2, y, z)) {
             loc = new Location(world, ((double) edgeX2) + .5, y, ((double) z) + .5, player.getLocation().getYaw(), player.getLocation().getPitch());
-        }
-        else if (isEmptySpace(world, x, y, edgeZ1))
-        {
+        } else if (isEmptySpace(world, x, y, edgeZ1)) {
             loc = new Location(world, ((double) x) + .5, y, ((double) edgeZ1) + .5, player.getLocation().getYaw(), player.getLocation().getPitch());
-        }
-        else if (isEmptySpace(world, x, y, edgeZ2))
-        {
+        } else if (isEmptySpace(world, x, y, edgeZ2)) {
             loc = new Location(world, ((double) x) + .5, y, ((double) edgeZ2) + .5, player.getLocation().getYaw(), player.getLocation().getPitch());
         }
 
         return loc;
     }
 
-    private boolean isEmptySpace(World world, int x, int y, int z)
-    {
+    private boolean isEmptySpace(World world, int x, int y, int z) {
         int type1 = world.getBlockTypeIdAt(x, y, z);
         int type2 = world.getBlockTypeIdAt(x, y, z);
 
-        if (plugin.getSettingsManager().isThroughType(type1) && plugin.getSettingsManager().isThroughType(type2))
-        {
+        if (plugin.getSettingsManager().isThroughType(type1) && plugin.getSettingsManager().isThroughType(type2)) {
             return true;
         }
 
         return false;
     }
 
-    public void offerOnlinePlayerEntries()
-    {
+    public void offerOnlinePlayerEntries() {
         Collection<Player> onlinePlayers = Helper.getOnlinePlayers();
 
-        for (Player player : onlinePlayers)
-        {
+        for (Player player : onlinePlayers) {
             plugin.getStorageManager().offerPlayer(player.getName());
         }
     }
@@ -174,8 +153,7 @@ public class PlayerManager
      * @param oldName
      * @param newName
      */
-    public void migrateUsername(String oldName, String newName)
-    {
+    public void migrateUsername(String oldName, String newName) {
         PlayerEntry data = getPlayerEntry(oldName.toLowerCase());
         data.setName(newName);
 

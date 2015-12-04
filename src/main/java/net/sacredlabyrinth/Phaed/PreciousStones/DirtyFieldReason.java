@@ -1,11 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones;
 
 /**
- *
  * @author phaed
  */
-public enum DirtyFieldReason
-{
+public enum DirtyFieldReason {
     OWNER,
     NAME,
     RADIUS,

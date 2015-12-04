@@ -9,8 +9,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 @SuppressWarnings("unchecked")
-public class LanguageManager
-{
+public class LanguageManager {
     private File file;
     private TreeMap<String, Object> language = new TreeMap<String, Object>();
     private String[] comments = new String[]{
@@ -27,92 +26,74 @@ public class LanguageManager
             "\n#         {magic}, {bold}, {italic}, {reset}, {strikethrough}, {underline}\n\n",
     };
 
-    public LanguageManager()
-    {
+    public LanguageManager() {
         load();
     }
 
-    public void load()
-    {
+    public void load() {
         file = new File(PreciousStones.getInstance().getDataFolder() + File.separator + "language.yml");
         check();
     }
 
-    private void check()
-    {
+    private void check() {
         boolean exists = (file).exists();
 
         loadDefaults();
 
-        if (exists)
-        {
+        if (exists) {
             loadFile();
         }
 
         saveFile();
     }
 
-    private void loadDefaults()
-    {
+    private void loadDefaults() {
         InputStream defaultLanguage = getClass().getResourceAsStream("/language.yml");
         HashMap<String, Object> objects = (HashMap<String, Object>) new Yaml().load(defaultLanguage);
-        if (objects != null)
-        {
+        if (objects != null) {
             language.putAll(objects);
         }
     }
 
-    private void loadFile()
-    {
-        try
-        {
+    private void loadFile() {
+        try {
             InputStream fileLanguage = new FileInputStream(file);
             HashMap<String, Object> objects = (HashMap<String, Object>) new Yaml().load(fileLanguage);
-            if (objects != null)
-            {
+            if (objects != null) {
                 language.putAll(objects);
             }
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             // file not found
         }
     }
 
-    private void saveFile()
-    {
+    private void saveFile() {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setWidth(99999999);
         options.setAllowUnicode(true);
 
-        try
-        {
+        try {
             FileWriter fw = new FileWriter(file);
             StringWriter writer = new StringWriter();
             new Yaml(options).dump(language, writer);
 
-            for(String comment: comments)
-            {
+            for (String comment : comments) {
                 fw.write(comment);
             }
 
             fw.write(writer.toString());
             fw.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // could not save
             e.printStackTrace();
         }
     }
 
-    public String get(String key)
-    {
+    public String get(String key) {
         Object o = language.get(key);
 
-        if (o != null)
-        {
+        if (o != null) {
             return o.toString();
         }
 

@@ -2,49 +2,38 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
-public class Timing
-{
+public class Timing {
     private String title;
     private Map<String, Long> times = new HashMap<>();
 
-    public Timing(String title)
-    {
+    public Timing(String title) {
         this.title = title;
         poll("start");
     }
 
-    public void poll(String name)
-    {
+    public void poll(String name) {
         times.put(name, System.currentTimeMillis());
     }
 
-    public void last(String name)
-    {
+    public void last(String name) {
         poll(name);
         printResults();
     }
 
-    public void printResults()
-    {
+    public void printResults() {
         Long previousTime = -9999L;
 
         PreciousStones.debug("----------------------------------------------------------------------");
         PreciousStones.debug(title + " Timings");
         PreciousStones.debug("----------------------------------------------------------------------");
 
-        for (String name : times.keySet())
-        {
+        for (String name : times.keySet()) {
             Long time = times.get(name);
 
-            if (previousTime == -9999L)
-            {
+            if (previousTime == -9999L) {
                 previousTime = time;
                 continue;
             }
@@ -61,10 +50,8 @@ public class Timing
     }
 
     @Override
-    public void finalize() throws Throwable
-    {
-        if (!times.isEmpty())
-        {
+    public void finalize() throws Throwable {
+        if (!times.isEmpty()) {
             printResults();
         }
 

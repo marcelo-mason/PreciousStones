@@ -2,14 +2,12 @@ package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 
-public class RelativeBlock implements Comparable
-{
+public class RelativeBlock implements Comparable {
     private int rx;
     private int ry;
     private int rz;
 
-    public RelativeBlock(Vec centerVec, Vec vec)
-    {
+    public RelativeBlock(Vec centerVec, Vec vec) {
         Vec v = vec.subtract(centerVec);
 
         this.rx = v.getX();
@@ -17,8 +15,7 @@ public class RelativeBlock implements Comparable
         this.rz = v.getZ();
     }
 
-    public RelativeBlock(int rx, int ry, int rz)
-    {
+    public RelativeBlock(int rx, int ry, int rz) {
         this.rx = rx;
         this.ry = ry;
         this.rz = rz;
@@ -30,8 +27,7 @@ public class RelativeBlock implements Comparable
      * @param vec
      * @return
      */
-    public Vec getAbsoluteVec(Vec vec)
-    {
+    public Vec getAbsoluteVec(Vec vec) {
         return getRelativeVec(vec.getWorld()).add(vec);
     }
 
@@ -40,8 +36,7 @@ public class RelativeBlock implements Comparable
      *
      * @return
      */
-    public Vec getRelativeVec(String world)
-    {
+    public Vec getRelativeVec(String world) {
         return new Vec(rx, ry, rz, world);
     }
 
@@ -51,31 +46,25 @@ public class RelativeBlock implements Comparable
      * @param centerVec
      * @return
      */
-    public Vec toVec(Vec centerVec)
-    {
+    public Vec toVec(Vec centerVec) {
         return new Vec(getAbsoluteVec(centerVec));
     }
 
-    public int getRx()
-    {
+    public int getRx() {
         return rx;
     }
 
-    public int getRy()
-    {
+    public int getRy() {
         return ry;
     }
 
-    public int getRz()
-    {
+    public int getRz() {
         return rz;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof RelativeBlock))
-        {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof RelativeBlock)) {
             return false;
         }
 
@@ -84,8 +73,7 @@ public class RelativeBlock implements Comparable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 7;
         hash = 47 * hash + this.getRx();
         hash = 47 * hash + this.getRy();
@@ -94,31 +82,22 @@ public class RelativeBlock implements Comparable
     }
 
     @Override
-    public int compareTo(Object obj)
-    {
-        if (obj instanceof RelativeBlock)
-        {
+    public int compareTo(Object obj) {
+        if (obj instanceof RelativeBlock) {
             RelativeBlock other = (RelativeBlock) obj;
 
             if (this.getRx() < other.getRx() ||
                     this.getRx() == other.getRx() && this.getRy() < other.getRy() ||
-                    this.getRx() == other.getRx() && this.getRy() == other.getRy() && this.getRz() < other.getRz())
-            {
+                    this.getRx() == other.getRx() && this.getRy() == other.getRy() && this.getRz() < other.getRz()) {
                 return -1;
-            }
-            else if (this.getRx() > other.getRx() ||
+            } else if (this.getRx() > other.getRx() ||
                     this.getRx() == other.getRx() && this.getRy() > other.getRy() ||
-                    this.getRx() == other.getRx() && this.getRy() == other.getRy() && this.getRz() > other.getRz())
-            {
+                    this.getRx() == other.getRx() && this.getRy() == other.getRy() && this.getRz() > other.getRz()) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("obj must be an instance of a RelativeBlock object.");
         }
     }

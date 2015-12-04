@@ -4,11 +4,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 
 /**
- *
  * @author phaed
  */
-public interface DBCore
-{
+public interface DBCore {
     /**
      * @return connection
      */
@@ -26,6 +24,7 @@ public interface DBCore
 
     /**
      * Execute a select statement
+     *
      * @param query
      * @return
      */
@@ -33,24 +32,28 @@ public interface DBCore
 
     /**
      * Execute an insert statement
+     *
      * @param query
      */
     public long insert(String query);
 
     /**
      * Execute an update statement
+     *
      * @param query
      */
     public void update(String query);
 
     /**
      * Execute a delete statement
+     *
      * @param query
      */
     public void delete(String query);
 
     /**
      * Execute a statement
+     *
      * @param query
      * @return
      */
@@ -58,6 +61,7 @@ public interface DBCore
 
     /**
      * Check whether a table exists
+     *
      * @param table
      * @return
      */
@@ -65,6 +69,7 @@ public interface DBCore
 
     /**
      * Check whether a column exists
+     *
      * @param table
      * @param column
      * @return
@@ -73,6 +78,7 @@ public interface DBCore
 
     /**
      * CGEt the datatype of a column
+     *
      * @param table
      * @param column
      * @return

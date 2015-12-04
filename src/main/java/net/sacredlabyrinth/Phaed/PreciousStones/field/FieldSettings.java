@@ -5,7 +5,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,8 +21,7 @@ import java.util.logging.Level;
 /**
  * @author phaed
  */
-public class FieldSettings
-{
+public class FieldSettings {
     protected String metaName = "";
     protected boolean metaAutoSet = false;
     protected List<String> metaLore = new ArrayList<String>();
@@ -108,39 +110,33 @@ public class FieldSettings
     /**
      * @param map
      */
-    public FieldSettings(LinkedHashMap<String, Object> map)
-    {
+    public FieldSettings(LinkedHashMap<String, Object> map) {
         this.map = map;
 
-        if (map == null)
-        {
+        if (map == null) {
             return;
         }
 
         defaultFlags.add(FieldFlag.ALL);
 
-        if (!validation())
-        {
+        if (!validation()) {
             return;
         }
 
         parseSettings();
     }
 
-    protected boolean validation()
-    {
+    protected boolean validation() {
         title = loadString("title");
 
-        if (title == null)
-        {
+        if (title == null) {
             validField = false;
             return false;
         }
 
         type = loadTypeEntry("block");
 
-        if (type == null)
-        {
+        if (type == null) {
             validField = false;
             return false;
         }
@@ -148,18 +144,15 @@ public class FieldSettings
         return true;
     }
 
-    protected void parseSettings()
-    {
+    protected void parseSettings() {
         PreciousStones.debug("**********************");
 
         //************************** custom height
 
         customHeight = loadInt("custom-height");
 
-        if (customHeight > 0)
-        {
-            if (customHeight % 2 == 0)
-            {
+        if (customHeight > 0) {
+            if (customHeight % 2 == 0) {
                 customHeight++;
             }
         }
@@ -168,23 +161,19 @@ public class FieldSettings
 
         String entryGameMode = loadString("entry-game-mode");
 
-        if (entryGameMode.equalsIgnoreCase("creative"))
-        {
+        if (entryGameMode.equalsIgnoreCase("creative")) {
             forceEntryGameMode = GameMode.CREATIVE;
         }
-        if (entryGameMode.equalsIgnoreCase("survival"))
-        {
+        if (entryGameMode.equalsIgnoreCase("survival")) {
             forceEntryGameMode = GameMode.SURVIVAL;
         }
 
         String leavingGameMode = loadString("leaving-game-mode");
 
-        if (leavingGameMode.equalsIgnoreCase("creative"))
-        {
+        if (leavingGameMode.equalsIgnoreCase("creative")) {
             forceLeavingGameMode = GameMode.CREATIVE;
         }
-        if (leavingGameMode.equalsIgnoreCase("survival"))
-        {
+        if (leavingGameMode.equalsIgnoreCase("survival")) {
             forceLeavingGameMode = GameMode.SURVIVAL;
         }
 
@@ -195,17 +184,14 @@ public class FieldSettings
 
         int pos = 0;
 
-        for (String name : pts)
-        {
+        for (String name : pts) {
             int i = 1;
 
-            if (intensities != null)
-            {
+            if (intensities != null) {
                 i = intensities.get(pos);
             }
 
-            if (PotionEffectType.getByName(name) != null)
-            {
+            if (PotionEffectType.getByName(name) != null) {
                 potions.put(PotionEffectType.getByName(name), i);
             }
             pos++;
@@ -213,10 +199,8 @@ public class FieldSettings
 
         List<String> npts = loadStringList("neutralize-potions");
 
-        for (String name : npts)
-        {
-            if (PotionEffectType.getByName(name) != null)
-            {
+        for (String name : npts) {
+            if (PotionEffectType.getByName(name) != null) {
                 neutralizePotions.add(PotionEffectType.getByName(name));
             }
         }
@@ -412,14 +396,11 @@ public class FieldSettings
         fenceItemPrice = loadInt("price-per-fence");
     }
 
-    protected boolean loadBoolean(String flagStr)
-    {
-        if (containsKey(flagStr))
-        {
+    protected boolean loadBoolean(String flagStr) {
+        if (containsKey(flagStr)) {
             boolean value = Boolean.parseBoolean(getValue(flagStr).toString());
 
-            if (value)
-            {
+            if (value) {
                 loadFlags(getKey(flagStr));
             }
 
@@ -429,17 +410,13 @@ public class FieldSettings
         return false;
     }
 
-    protected int loadInt(String flagStr)
-    {
+    protected int loadInt(String flagStr) {
         return loadInt(flagStr, 0);
     }
 
-    protected int loadInt(String flagStr, int defaultValue)
-    {
-        if (containsKey(flagStr))
-        {
-            if (Helper.isInteger(getValue(flagStr)))
-            {
+    protected int loadInt(String flagStr, int defaultValue) {
+        if (containsKey(flagStr)) {
+            if (Helper.isInteger(getValue(flagStr))) {
                 int value = (Integer) getValue(flagStr);
 
                 loadFlags(getKey(flagStr));
@@ -452,26 +429,19 @@ public class FieldSettings
         return defaultValue;
     }
 
-    protected String loadString(String flagStr)
-    {
-        if (containsKey(flagStr))
-        {
-            if (Helper.isString(getValue(flagStr)))
-            {
+    protected String loadString(String flagStr) {
+        if (containsKey(flagStr)) {
+            if (Helper.isString(getValue(flagStr))) {
                 String value = (String) getValue(flagStr);
 
-                if (value != null)
-                {
-                    if (!value.isEmpty())
-                    {
+                if (value != null) {
+                    if (!value.isEmpty()) {
                         loadFlags(getKey(flagStr));
                     }
 
                     PreciousStones.debug("   %s: %s", flagStr, value);
                     return ChatColor.translateAlternateColorCodes('&', value);
-                }
-                else
-                {
+                } else {
                     PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                     return null;
                 }
@@ -481,12 +451,9 @@ public class FieldSettings
         return "";
     }
 
-    protected int loadPeriodSeconds(String flagStr)
-    {
-        if (containsKey(flagStr))
-        {
-            if (Helper.isInteger(getValue(flagStr)))
-            {
+    protected int loadPeriodSeconds(String flagStr) {
+        if (containsKey(flagStr)) {
+            if (Helper.isInteger(getValue(flagStr))) {
                 int value = (Integer) getValue(flagStr);
 
                 loadFlags(getKey(flagStr));
@@ -495,8 +462,7 @@ public class FieldSettings
                 return value;
             }
 
-            if (Helper.isString(getValue(flagStr)))
-            {
+            if (Helper.isString(getValue(flagStr))) {
                 String str = (String) getValue(flagStr);
 
                 int value = SignHelper.periodToSeconds(str);
@@ -511,15 +477,12 @@ public class FieldSettings
         return 0;
     }
 
-    protected BlockTypeEntry loadTypeEntry(String flagStr)
-    {
-        if (containsKey(flagStr))
-        {
+    protected BlockTypeEntry loadTypeEntry(String flagStr) {
+        if (containsKey(flagStr)) {
             Object typeStr = getValue(flagStr);
             BlockTypeEntry value = new BlockTypeEntry(typeStr.toString());
 
-            if (value.isValid())
-            {
+            if (value.isValid()) {
                 loadFlags(getKey(flagStr));
                 PreciousStones.debug("   %s: %s", flagStr, value);
                 return value;
@@ -529,18 +492,13 @@ public class FieldSettings
         return null;
     }
 
-    protected List<String> loadStringList(String flagStr)
-    {
-        if (containsKey(flagStr))
-        {
-            if (Helper.isStringList(getValue(flagStr)))
-            {
+    protected List<String> loadStringList(String flagStr) {
+        if (containsKey(flagStr)) {
+            if (Helper.isStringList(getValue(flagStr))) {
                 List<String> value = (List<String>) getValue(flagStr);
 
-                if (value != null)
-                {
-                    if (!value.isEmpty())
-                    {
+                if (value != null) {
+                    if (!value.isEmpty()) {
                         loadFlags(getKey(flagStr));
                     }
 
@@ -548,21 +506,15 @@ public class FieldSettings
 
                     List<String> colored = new ArrayList<String>();
 
-                    for (String s : value)
-                    {
-                        if (s == null || s.isEmpty())
-                        {
+                    for (String s : value) {
+                        if (s == null || s.isEmpty()) {
                             colored.add("");
-                        }
-                        else
-                        {
+                        } else {
                             colored.add(ChatColor.translateAlternateColorCodes('&', s));
                         }
                     }
                     return colored;
-                }
-                else
-                {
+                } else {
                     PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
             }
@@ -571,26 +523,19 @@ public class FieldSettings
         return new ArrayList<String>();
     }
 
-    protected List<BlockTypeEntry> loadTypeEntries(String flagStr)
-    {
-        if (containsKey(flagStr))
-        {
-            if (Helper.isStringList(getValue(flagStr)))
-            {
+    protected List<BlockTypeEntry> loadTypeEntries(String flagStr) {
+        if (containsKey(flagStr)) {
+            if (Helper.isStringList(getValue(flagStr))) {
                 List<BlockTypeEntry> value = Helper.toTypeEntriesBlind((List<Object>) getValue(flagStr));
 
-                if (value != null)
-                {
-                    if (!value.isEmpty())
-                    {
+                if (value != null) {
+                    if (!value.isEmpty()) {
                         loadFlags(getKey(flagStr));
                     }
 
                     PreciousStones.debug("   %s: %s", flagStr, value);
                     return value;
-                }
-                else
-                {
+                } else {
                     PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
             }
@@ -599,26 +544,19 @@ public class FieldSettings
         return new ArrayList<BlockTypeEntry>();
     }
 
-    protected List<Integer> loadIntList(String flagStr)
-    {
-        if (containsKey(flagStr))
-        {
-            if (Helper.isIntList(getValue(flagStr)))
-            {
+    protected List<Integer> loadIntList(String flagStr) {
+        if (containsKey(flagStr)) {
+            if (Helper.isIntList(getValue(flagStr))) {
                 List<Integer> value = (List<Integer>) getValue(flagStr);
 
-                if (value != null)
-                {
-                    if (!value.isEmpty())
-                    {
+                if (value != null) {
+                    if (!value.isEmpty()) {
                         loadFlags(getKey(flagStr));
                     }
 
                     PreciousStones.debug("   %s: %s", flagStr, value);
                     return value;
-                }
-                else
-                {
+                } else {
                     PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
                 }
             }
@@ -627,96 +565,76 @@ public class FieldSettings
         return new ArrayList<Integer>();
     }
 
-    protected boolean containsKey(String flagStr)
-    {
-        if (map.containsKey(flagStr))
-        {
+    protected boolean containsKey(String flagStr) {
+        if (map.containsKey(flagStr)) {
             return true;
         }
 
-        if (map.containsKey("~" + flagStr))
-        {
+        if (map.containsKey("~" + flagStr)) {
             return true;
         }
 
-        if (map.containsKey("^" + flagStr))
-        {
+        if (map.containsKey("^" + flagStr)) {
             return true;
         }
 
-        if (map.containsKey("?" + flagStr))
-        {
+        if (map.containsKey("?" + flagStr)) {
             return true;
         }
 
         return false;
     }
 
-    protected String getKey(String flagStr)
-    {
-        if (map.containsKey(flagStr))
-        {
+    protected String getKey(String flagStr) {
+        if (map.containsKey(flagStr)) {
             return flagStr;
         }
 
-        if (map.containsKey("~" + flagStr))
-        {
+        if (map.containsKey("~" + flagStr)) {
             return "~" + flagStr;
         }
 
-        if (map.containsKey("^" + flagStr))
-        {
+        if (map.containsKey("^" + flagStr)) {
             return "^" + flagStr;
         }
 
-        if (map.containsKey("?" + flagStr))
-        {
+        if (map.containsKey("?" + flagStr)) {
             return "?" + flagStr;
         }
 
         return null;
     }
 
-    protected Object getValue(String flagStr)
-    {
-        if (map.get(flagStr) != null)
-        {
+    protected Object getValue(String flagStr) {
+        if (map.get(flagStr) != null) {
             return map.get(flagStr);
         }
 
-        if (map.get("~" + flagStr) != null)
-        {
+        if (map.get("~" + flagStr) != null) {
             return map.get("~" + flagStr);
         }
 
-        if (map.get("^" + flagStr) != null)
-        {
+        if (map.get("^" + flagStr) != null) {
             return map.get("^" + flagStr);
         }
 
-        if (map.get("?" + flagStr) != null)
-        {
+        if (map.get("?" + flagStr) != null) {
             return map.get("?" + flagStr);
         }
 
         return null;
     }
 
-    protected void loadFlags(String flagStr)
-    {
-        if (flagStr == null || flagStr.isEmpty())
-        {
+    protected void loadFlags(String flagStr) {
+        if (flagStr == null || flagStr.isEmpty()) {
             return;
         }
 
-        if (flagStr.startsWith("^"))
-        {
+        if (flagStr.startsWith("^")) {
             FieldFlag flag = FieldFlag.getByString(flagStr);
 
-            if (flag != null)
-            {
-                if (!reversedFlags.contains(flag))
-                {
+            if (flag != null) {
+                if (!reversedFlags.contains(flag)) {
                     alledflags.add(flag);
                 }
                 loadFlags(flagStr.substring(1));
@@ -724,14 +642,11 @@ public class FieldSettings
             return;
         }
 
-        if (flagStr.startsWith("~"))
-        {
+        if (flagStr.startsWith("~")) {
             FieldFlag flag = FieldFlag.getByString(flagStr);
 
-            if (flag != null)
-            {
-                if (!alledflags.contains(flag))
-                {
+            if (flag != null) {
+                if (!alledflags.contains(flag)) {
                     reversedFlags.add(flag);
                 }
                 loadFlags(flagStr.substring(1));
@@ -739,12 +654,10 @@ public class FieldSettings
             return;
         }
 
-        if (flagStr.startsWith("?"))
-        {
+        if (flagStr.startsWith("?")) {
             FieldFlag flag = FieldFlag.getByString(flagStr);
 
-            if (flag != null)
-            {
+            if (flag != null) {
                 disabledFlags.add(flag);
                 loadFlags(flagStr.substring(1));
             }
@@ -753,8 +666,7 @@ public class FieldSettings
 
         FieldFlag flag = FieldFlag.getByString(flagStr);
 
-        if (flag != null)
-        {
+        if (flag != null) {
             defaultFlags.add(flag);
         }
     }
@@ -765,20 +677,16 @@ public class FieldSettings
      * @param flag
      * @return
      */
-    public boolean hasDefaultFlag(FieldFlag flag)
-    {
+    public boolean hasDefaultFlag(FieldFlag flag) {
         return defaultFlags.contains(flag);
     }
 
     /**
      * @return
      */
-    public boolean hasNameableFlag()
-    {
-        for (FieldFlag flag : defaultFlags)
-        {
-            if (flag.isNameable())
-            {
+    public boolean hasNameableFlag() {
+        for (FieldFlag flag : defaultFlags) {
+            if (flag.isNameable()) {
                 return true;
             }
         }
@@ -789,32 +697,28 @@ public class FieldSettings
     /**
      * @return
      */
-    public boolean hasVeocityFlag()
-    {
+    public boolean hasVeocityFlag() {
         return defaultFlags.contains(FieldFlag.CANNON) || defaultFlags.contains(FieldFlag.LAUNCH);
     }
 
     /**
      * @return
      */
-    public boolean hasLimit()
-    {
+    public boolean hasLimit() {
         return !limits.isEmpty();
     }
 
     /**
      * @return
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
     /**
      * @return
      */
-    public int getCustomHeight()
-    {
+    public int getCustomHeight() {
         return this.customHeight;
     }
 
@@ -824,8 +728,7 @@ public class FieldSettings
      * @param type
      * @return
      */
-    public boolean canTranslocate(BlockTypeEntry type)
-    {
+    public boolean canTranslocate(BlockTypeEntry type) {
         return !translocationBlacklist.contains(type);
     }
 
@@ -834,24 +737,20 @@ public class FieldSettings
      *
      * @return
      */
-    public boolean teleportDueToWalking(Location loc, Field field, Player player)
-    {
+    public boolean teleportDueToWalking(Location loc, Field field, Player player) {
         Block standingOn = new Vec(loc).subtract(0, 1, 0).getBlock();
 
-        if (standingOn.getTypeId() == 0)
-        {
+        if (standingOn.getTypeId() == 0) {
             return false;
         }
 
         boolean teleport = false;
 
-        if (FieldFlag.TELEPORT_IF_WALKING_ON.applies(field, player))
-        {
+        if (FieldFlag.TELEPORT_IF_WALKING_ON.applies(field, player)) {
             teleport = teleportIfWalkingOn.contains(new BlockTypeEntry(standingOn));
         }
 
-        if (FieldFlag.TELEPORT_IF_NOT_WALKING_ON.applies(field, player))
-        {
+        if (FieldFlag.TELEPORT_IF_NOT_WALKING_ON.applies(field, player)) {
             teleport = !teleportIfNotWalkingOn.contains(new BlockTypeEntry(standingOn));
         }
 
@@ -864,8 +763,7 @@ public class FieldSettings
      * @param block
      * @return
      */
-    public boolean inDestroyBlacklist(Block block)
-    {
+    public boolean inDestroyBlacklist(Block block) {
         BlockTypeEntry type = new BlockTypeEntry(block);
 
         return preventDestroyBlacklist.contains(type);
@@ -877,8 +775,7 @@ public class FieldSettings
      * @param block
      * @return
      */
-    public boolean inPlaceBlacklist(Block block)
-    {
+    public boolean inPlaceBlacklist(Block block) {
         BlockTypeEntry type = new BlockTypeEntry(block);
 
         return preventPlaceBlacklist.contains(type);
@@ -890,14 +787,12 @@ public class FieldSettings
      * @param command
      * @return
      */
-    public boolean isCanceledCommand(String command)
-    {
+    public boolean isCanceledCommand(String command) {
         command = command.replace("/", "");
 
         int i = command.indexOf(' ');
 
-        if (i > -1)
-        {
+        if (i > -1) {
             command = command.substring(0, i);
         }
 
@@ -910,15 +805,12 @@ public class FieldSettings
      * @param entry
      * @return
      */
-    public boolean isTeleportHoldingItem(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean isTeleportHoldingItem(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return true;
         }
 
-        if (teleportIfHasItems.contains(new BlockTypeEntry(0)) && entry.getTypeId() != 0)
-        {
+        if (teleportIfHasItems.contains(new BlockTypeEntry(0)) && entry.getTypeId() != 0) {
             return true;
         }
 
@@ -931,10 +823,8 @@ public class FieldSettings
      * @param entry
      * @return
      */
-    public boolean isTeleportNotHoldingItem(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean isTeleportNotHoldingItem(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return true;
         }
 
@@ -947,15 +837,12 @@ public class FieldSettings
      * @param entry
      * @return
      */
-    public boolean isTeleportHasItem(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean isTeleportHasItem(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return false;
         }
 
-        if (teleportIfHasItems.contains(new BlockTypeEntry(0)) && entry.getTypeId() != 0)
-        {
+        if (teleportIfHasItems.contains(new BlockTypeEntry(0)) && entry.getTypeId() != 0) {
             return true;
         }
 
@@ -968,10 +855,8 @@ public class FieldSettings
      * @param entry
      * @return
      */
-    public boolean isTeleportHasNotItem(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean isTeleportHasNotItem(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return false;
         }
 
@@ -984,8 +869,7 @@ public class FieldSettings
      * @param flag
      * @return
      */
-    public boolean isReversedFlag(FieldFlag flag)
-    {
+    public boolean isReversedFlag(FieldFlag flag) {
         return reversedFlags.contains(flag);
     }
 
@@ -995,8 +879,7 @@ public class FieldSettings
      * @param flag
      * @return
      */
-    public boolean isAlledFlag(FieldFlag flag)
-    {
+    public boolean isAlledFlag(FieldFlag flag) {
         return alledflags.contains(flag);
     }
 
@@ -1006,10 +889,8 @@ public class FieldSettings
      * @param entry
      * @return
      */
-    public boolean canUse(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean canUse(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return true;
         }
 
@@ -1022,26 +903,19 @@ public class FieldSettings
      * @param type
      * @return
      */
-    public boolean isUnusableItem(int type, byte data)
-    {
-        for (BlockTypeEntry entry : unusableItems)
-        {
+    public boolean isUnusableItem(int type, byte data) {
+        for (BlockTypeEntry entry : unusableItems) {
             // if the banned item has no data, then that means
             // they want to ban all ids for that block
 
             // otherwise match the type and data exactly
 
-            if (entry.getData() == 0)
-            {
-                if (entry.getTypeId() == type)
-                {
+            if (entry.getData() == 0) {
+                if (entry.getTypeId() == type) {
                     return true;
                 }
-            }
-            else
-            {
-                if (entry.getTypeId() == type && entry.getData() == data)
-                {
+            } else {
+                if (entry.getTypeId() == type && entry.getData() == data) {
                     return true;
                 }
             }
@@ -1056,31 +930,23 @@ public class FieldSettings
      * @param type
      * @return
      */
-    public boolean canCarry(int type, byte data)
-    {
-        if (confiscatedItems.isEmpty())
-        {
+    public boolean canCarry(int type, byte data) {
+        if (confiscatedItems.isEmpty()) {
             return true;
         }
 
-        for (BlockTypeEntry entry : confiscatedItems)
-        {
+        for (BlockTypeEntry entry : confiscatedItems) {
             // if the banned item has no data, then that means
             // they want to ban all ids for that block
 
             // otherwise match the type and data exactly
 
-            if (entry.getData() == 0)
-            {
-                if (entry.getTypeId() == type)
-                {
+            if (entry.getData() == 0) {
+                if (entry.getTypeId() == type) {
                     return false;
                 }
-            }
-            else
-            {
-                if (entry.getTypeId() == type && entry.getData() == data)
-                {
+            } else {
+                if (entry.getTypeId() == type && entry.getData() == data) {
                     return false;
                 }
             }
@@ -1094,12 +960,10 @@ public class FieldSettings
      *
      * @return
      */
-    public String getPotionString()
-    {
+    public String getPotionString() {
         String out = "";
 
-        for (PotionEffectType potion : potions.keySet())
-        {
+        for (PotionEffectType potion : potions.keySet()) {
             out += Helper.friendlyName(potion.getName()) + ", ";
         }
 
@@ -1111,12 +975,10 @@ public class FieldSettings
      *
      * @return
      */
-    public String getNeutralizePotionString()
-    {
+    public String getNeutralizePotionString() {
         String out = "";
 
-        for (PotionEffectType potion : neutralizePotions)
-        {
+        for (PotionEffectType potion : neutralizePotions) {
             out += Helper.friendlyName(potion.getName()) + ", ";
         }
 
@@ -1129,8 +991,7 @@ public class FieldSettings
      * @param playerName
      * @return
      */
-    public boolean inAllowedList(String playerName)
-    {
+    public boolean inAllowedList(String playerName) {
         return allowedPlayers.contains(playerName);
     }
 
@@ -1140,8 +1001,7 @@ public class FieldSettings
      * @param playerName
      * @return
      */
-    public boolean inDeniedList(String playerName)
-    {
+    public boolean inDeniedList(String playerName) {
         return deniedPlayers.contains(playerName);
     }
 
@@ -1151,10 +1011,8 @@ public class FieldSettings
      * @param entry
      * @return
      */
-    public boolean canGrief(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean canGrief(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return false;
         }
 
@@ -1167,8 +1025,7 @@ public class FieldSettings
      * @param world
      * @return
      */
-    public boolean allowedWorld(World world)
-    {
+    public boolean allowedWorld(World world) {
         return allowedWorlds.isEmpty() || allowedWorlds.contains(world.getName());
     }
 
@@ -1177,8 +1034,7 @@ public class FieldSettings
      *
      * @return
      */
-    public boolean hasAllowedOnlyInside()
-    {
+    public boolean hasAllowedOnlyInside() {
         return !allowedOnlyInside.isEmpty();
     }
 
@@ -1187,8 +1043,7 @@ public class FieldSettings
      *
      * @return
      */
-    public boolean isAllowedOnlyInside(Field field)
-    {
+    public boolean isAllowedOnlyInside(Field field) {
         return allowedOnlyInside.contains(field.getSettings().getTitle());
     }
 
@@ -1197,8 +1052,7 @@ public class FieldSettings
      *
      * @return
      */
-    public String getAllowedOnlyInsideString()
-    {
+    public String getAllowedOnlyInsideString() {
         return Helper.toMessage(allowedOnlyInside, " or ");
     }
 
@@ -1207,8 +1061,7 @@ public class FieldSettings
      *
      * @return
      */
-    public boolean hasAllowedOnlyOutside()
-    {
+    public boolean hasAllowedOnlyOutside() {
         return !allowedOnlyOutside.isEmpty();
     }
 
@@ -1217,8 +1070,7 @@ public class FieldSettings
      *
      * @return
      */
-    public boolean isAllowedOnlyOutside(Field field)
-    {
+    public boolean isAllowedOnlyOutside(Field field) {
         return allowedOnlyOutside.contains(field.getSettings().getTitle());
     }
 
@@ -1227,269 +1079,221 @@ public class FieldSettings
      *
      * @return
      */
-    public String getAllowedOnlyOutsideString()
-    {
+    public String getAllowedOnlyOutsideString() {
         return Helper.toMessage(allowedOnlyOutside, " or ");
     }
 
     /**
      * @return the block type id
      */
-    public int getTypeId()
-    {
+    public int getTypeId() {
         return type.getTypeId();
     }
 
     /**
      * @return the block data
      */
-    public byte getData()
-    {
+    public byte getData() {
         return type.getData();
     }
 
     /**
      * @return the type entry
      */
-    public BlockTypeEntry getTypeEntry()
-    {
+    public BlockTypeEntry getTypeEntry() {
         return type;
     }
 
     /**
      * @return the radius
      */
-    public int getRadius()
-    {
+    public int getRadius() {
         return radius;
     }
 
     /**
      * @return the launchHeight
      */
-    public int getLaunchHeight()
-    {
+    public int getLaunchHeight() {
         return launchHeight;
     }
 
     /**
      * @return the cannonHeight
      */
-    public int getCannonHeight()
-    {
+    public int getCannonHeight() {
         return cannonHeight;
     }
 
     /**
      * @return the mineDelaySeconds
      */
-    public int getMineDelaySeconds()
-    {
+    public int getMineDelaySeconds() {
         return mineDelaySeconds;
     }
 
     /**
      * @return the lightningDelaySeconds
      */
-    public int getLightningDelaySeconds()
-    {
+    public int getLightningDelaySeconds() {
         return lightningDelaySeconds;
     }
 
     /**
      * @return the lightningReplaceBlock
      */
-    public int getLightningReplaceBlock()
-    {
+    public int getLightningReplaceBlock() {
         return lightningReplaceBlock;
     }
 
     /**
      * @return the price
      */
-    public int getPrice()
-    {
+    public int getPrice() {
         return price;
     }
 
     /**
      * @return the validField
      */
-    public boolean isValidField()
-    {
+    public boolean isValidField() {
         return validField;
     }
 
     /**
      * @return the limits
      */
-    public List<Integer> getLimits()
-    {
+    public List<Integer> getLimits() {
         return Collections.unmodifiableList(limits);
     }
 
-    public List<FieldFlag> getDefaultFlags()
-    {
+    public List<FieldFlag> getDefaultFlags() {
         return Collections.unmodifiableList(defaultFlags);
     }
 
-    public int getCustomVolume()
-    {
+    public int getCustomVolume() {
         return customVolume;
     }
 
-    public int getMixingGroup()
-    {
+    public int getMixingGroup() {
         return mixingGroup;
     }
 
-    public String getRequiredPermission()
-    {
+    public String getRequiredPermission() {
         return requiredPermission;
     }
 
-    public int getAutoDisableTime()
-    {
+    public int getAutoDisableTime() {
         return autoDisableTime;
     }
 
-    public String getGroupOnEntry()
-    {
+    public String getGroupOnEntry() {
         return groupOnEntry;
     }
 
-    public GameMode getForceEntryGameMode()
-    {
+    public GameMode getForceEntryGameMode() {
         return forceEntryGameMode;
     }
 
-    public GameMode getForceLeavingGameMode()
-    {
+    public GameMode getForceLeavingGameMode() {
         return forceLeavingGameMode;
     }
 
-    public int getHeal()
-    {
+    public int getHeal() {
         return heal;
     }
 
-    public int getDamage()
-    {
+    public int getDamage() {
         return damage;
     }
 
-    public int getFeed()
-    {
+    public int getFeed() {
         return feed;
     }
 
-    public int getRepair()
-    {
+    public int getRepair() {
         return repair;
     }
 
-    public List<Integer> getTreeTypes()
-    {
+    public List<Integer> getTreeTypes() {
         return new ArrayList<Integer>(treeTypes);
     }
 
-    public List<Integer> getShrubTypes()
-    {
+    public List<Integer> getShrubTypes() {
         return new ArrayList<Integer>(shrubTypes);
     }
 
-    public int getShrubDensity()
-    {
+    public int getShrubDensity() {
         return shrubDensity;
     }
 
-    public int getTreeCount()
-    {
+    public int getTreeCount() {
         return treeCount;
     }
 
-    public int getGrowTime()
-    {
+    public int getGrowTime() {
         return growTime;
     }
 
-    public boolean isFertileType(BlockTypeEntry entry)
-    {
-        if (!entry.isValid())
-        {
+    public boolean isFertileType(BlockTypeEntry entry) {
+        if (!entry.isValid()) {
             return false;
         }
 
         return fertileBlocks.contains(entry);
     }
 
-    public BlockTypeEntry getGroundBlock()
-    {
+    public BlockTypeEntry getGroundBlock() {
         return groundBlock;
     }
 
-    public List<String> getCreatureTypes()
-    {
+    public List<String> getCreatureTypes() {
         return creatureTypes;
     }
 
-    public int getCreatureCount()
-    {
+    public int getCreatureCount() {
         return creatureCount;
     }
 
-    public boolean isMineHasFire()
-    {
+    public boolean isMineHasFire() {
         return mineHasFire;
     }
 
-    public int getMineStrength()
-    {
+    public int getMineStrength() {
         return mine;
     }
 
-    public HashMap<PotionEffectType, Integer> getPotions()
-    {
+    public HashMap<PotionEffectType, Integer> getPotions() {
         return potions;
     }
 
-    public List<PotionEffectType> getNeutralizePotions()
-    {
+    public List<PotionEffectType> getNeutralizePotions() {
         return neutralizePotions;
     }
 
-    public int getMaskOnDisabledBlock()
-    {
+    public int getMaskOnDisabledBlock() {
         return maskOnDisabled;
     }
 
-    public int getMaskOnEnabledBlock()
-    {
+    public int getMaskOnEnabledBlock() {
         return maskOnEnabled;
     }
 
-    public String getRequiredPermissionAllow()
-    {
+    public String getRequiredPermissionAllow() {
         return requiredPermissionAllow;
     }
 
-    public String getRequiredPermissionUse()
-    {
+    public String getRequiredPermissionUse() {
         return requiredPermissionUse;
     }
 
-    public int getRefund()
-    {
+    public int getRefund() {
         int refunded = -1;
 
-        if (refund > -1)
-        {
+        if (refund > -1) {
             refunded = refund;
-        }
-        else
-        {
-            if (price > 0)
-            {
+        } else {
+            if (price > 0) {
                 refunded = price;
             }
         }
@@ -1497,142 +1301,115 @@ public class FieldSettings
         return refunded;
     }
 
-    public int getTeleportCost()
-    {
+    public int getTeleportCost() {
         return teleportCost;
     }
 
-    public int getTeleportBackAfterSeconds()
-    {
+    public int getTeleportBackAfterSeconds() {
         return teleportBackAfterSeconds;
     }
 
-    public int getTeleportMaxDistance()
-    {
+    public int getTeleportMaxDistance() {
         return teleportMaxDistance;
     }
 
-    public int getGriefRevertInterval()
-    {
+    public int getGriefRevertInterval() {
         return griefRevertInterval;
     }
 
-    public List<String> getCommandsOnEnter()
-    {
+    public List<String> getCommandsOnEnter() {
         return commandOnEnter;
     }
 
-    public List<String> getCommandsOnExit()
-    {
+    public List<String> getCommandsOnExit() {
         return commandOnExit;
     }
 
-    public List<String> getPlayerCommandsOnEnter()
-    {
+    public List<String> getPlayerCommandsOnEnter() {
         return playerCommandOnEnter;
     }
 
-    public List<String> getPlayerCommandsOnExit()
-    {
+    public List<String> getPlayerCommandsOnExit() {
         return playerCommandOnExit;
     }
 
-    public List<FieldFlag> getDisabledFlags()
-    {
+    public List<FieldFlag> getDisabledFlags() {
         return disabledFlags;
     }
 
-    public int getMustBeAbove()
-    {
+    public int getMustBeAbove() {
         return mustBeAbove;
     }
 
-    public int getMustBeBelow()
-    {
+    public int getMustBeBelow() {
         return mustBeBelow;
     }
 
-    public int getPayToEnable()
-    {
+    public int getPayToEnable() {
         return payToEnable;
     }
 
-    public String getDeleteIfNoPermission()
-    {
+    public String getDeleteIfNoPermission() {
         return deleteIfNoPermission;
     }
 
-    public int getFenceItem()
-    {
+    public int getFenceItem() {
         return fenceItem;
     }
 
-    public int getFenceItemPrice()
-    {
+    public int getFenceItemPrice() {
         return fenceItemPrice;
     }
 
-    public boolean isSurface(Block fieldBlock)
-    {
-        if (surfaces.isEmpty())
-        {
+    public boolean isSurface(Block fieldBlock) {
+        if (surfaces.isEmpty()) {
             return true;
         }
 
         return surfaces.contains(new BlockTypeEntry(fieldBlock.getLocation().add(0, -1, 0).getBlock()));
     }
 
-    public String getSurfaceString()
-    {
+    public String getSurfaceString() {
         String out = "";
 
-        for (BlockTypeEntry entry : surfaces)
-        {
+        for (BlockTypeEntry entry : surfaces) {
             out += entry + ", ";
         }
 
         return Helper.stripTrailing(out, ", ");
     }
 
-    public int getForesterUses()
-    {
+    public int getForesterUses() {
         return foresterUses;
     }
 
-    public boolean matchesMetaName(ItemStack item)
-    {
-        if (!hasMetaName())
-        {
+    public boolean matchesMetaName(ItemStack item) {
+        if (!hasMetaName()) {
             return false;
         }
 
         ItemMeta meta = item.getItemMeta();
 
-        if (meta != null && meta.getDisplayName() != null)
-        {
+        if (meta != null && meta.getDisplayName() != null) {
             return meta.getDisplayName().equals(metaName);
         }
 
         return false;
     }
 
-    public boolean hasMetaName()
-    {
+    public boolean hasMetaName() {
         return metaName != null && !metaName.isEmpty();
     }
 
-    public String getMetaName()
-    {
+    public String getMetaName() {
         return metaName;
     }
 
-    public List<String> getMetaLore()
-    {
+    public List<String> getMetaLore() {
         return metaLore;
     }
 
-    public boolean isMetaAutoSet()
-    {
+    public boolean isMetaAutoSet() {
         return metaAutoSet;
     }
 }

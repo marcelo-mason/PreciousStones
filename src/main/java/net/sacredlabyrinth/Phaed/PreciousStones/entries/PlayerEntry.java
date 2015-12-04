@@ -16,8 +16,7 @@ import java.util.UUID;
 /**
  * @author phaed
  */
-public class PlayerEntry
-{
+public class PlayerEntry {
     private UUID onlineUUID;
     private String name;
     private boolean disabled;
@@ -38,8 +37,7 @@ public class PlayerEntry
 
     /**
      */
-    public PlayerEntry()
-    {
+    public PlayerEntry() {
         disabled = PreciousStones.getInstance().getSettingsManager().isOffByDefault();
         density = PreciousStones.getInstance().getSettingsManager().getVisualizeDensity();
     }
@@ -53,30 +51,24 @@ public class PlayerEntry
      * @param leggings
      * @param boots
      */
-    public void confiscate(List<ItemStackEntry> items, ItemStackEntry helmet, ItemStackEntry chestplate, ItemStackEntry leggings, ItemStackEntry boots)
-    {
-        for (ItemStackEntry entry : items)
-        {
+    public void confiscate(List<ItemStackEntry> items, ItemStackEntry helmet, ItemStackEntry chestplate, ItemStackEntry leggings, ItemStackEntry boots) {
+        for (ItemStackEntry entry : items) {
             confiscatedInventory.add(entry.serialize());
         }
 
-        if (helmet != null)
-        {
+        if (helmet != null) {
             confiscatedHelmet = helmet;
         }
 
-        if (chestplate != null)
-        {
+        if (chestplate != null) {
             confiscatedChestplate = chestplate;
         }
 
-        if (leggings != null)
-        {
+        if (leggings != null) {
             confiscatedLeggings = leggings;
         }
 
-        if (boots != null)
-        {
+        if (boots != null) {
             confiscatedBoots = boots;
         }
     }
@@ -86,12 +78,10 @@ public class PlayerEntry
      *
      * @return
      */
-    public List<ItemStackEntry> returnInventory()
-    {
+    public List<ItemStackEntry> returnInventory() {
         List<ItemStackEntry> out = new ArrayList<ItemStackEntry>();
 
-        for (Object stackEntry : confiscatedInventory)
-        {
+        for (Object stackEntry : confiscatedInventory) {
             out.add(new ItemStackEntry((JSONObject) stackEntry));
         }
 
@@ -104,8 +94,7 @@ public class PlayerEntry
      *
      * @return
      */
-    public ItemStackEntry returnHelmet()
-    {
+    public ItemStackEntry returnHelmet() {
         ItemStackEntry out = confiscatedHelmet;
         confiscatedHelmet = null;
         return out;
@@ -116,8 +105,7 @@ public class PlayerEntry
      *
      * @return
      */
-    public ItemStackEntry returnChestplate()
-    {
+    public ItemStackEntry returnChestplate() {
         ItemStackEntry out = confiscatedChestplate;
         confiscatedChestplate = null;
         return out;
@@ -128,8 +116,7 @@ public class PlayerEntry
      *
      * @return
      */
-    public ItemStackEntry returnLeggings()
-    {
+    public ItemStackEntry returnLeggings() {
         ItemStackEntry out = confiscatedLeggings;
         confiscatedLeggings = null;
         return out;
@@ -140,8 +127,7 @@ public class PlayerEntry
      *
      * @return
      */
-    public ItemStackEntry returnBoots()
-    {
+    public ItemStackEntry returnBoots() {
         ItemStackEntry out = confiscatedBoots;
         confiscatedBoots = null;
         return out;
@@ -150,64 +136,56 @@ public class PlayerEntry
     /**
      * @return
      */
-    public boolean isDisabled()
-    {
+    public boolean isDisabled() {
         return this.disabled;
     }
 
     /**
      * @param disabled
      */
-    public void setDisabled(boolean disabled)
-    {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
 
     /**
      * @return the online
      */
-    public boolean isOnline()
-    {
+    public boolean isOnline() {
         return online;
     }
 
     /**
      * @param online the online to set
      */
-    public void setOnline(boolean online)
-    {
+    public void setOnline(boolean online) {
         this.online = online;
     }
 
     /**
      * @return the outsideLocation
      */
-    public Location getOutsideLocation()
-    {
+    public Location getOutsideLocation() {
         return outsideLocation;
     }
 
     /**
      * @param outsideLocation the outsideLocation to set
      */
-    public void setOutsideLocation(Location outsideLocation)
-    {
+    public void setOutsideLocation(Location outsideLocation) {
         this.outsideLocation = outsideLocation;
     }
 
     /**
      * @return the name
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
      * @param name the name to set
      */
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -216,59 +194,48 @@ public class PlayerEntry
      *
      * @return the flags
      */
-    public String getFlags()
-    {
+    public String getFlags() {
         JSONObject json = new JSONObject();
 
         // writing the list of flags to json
 
-        if (disabled)
-        {
+        if (disabled) {
             json.put("disabled", disabled);
         }
 
-        if (!confiscatedInventory.isEmpty())
-        {
+        if (!confiscatedInventory.isEmpty()) {
             json.put("confiscated", confiscatedInventory);
         }
 
-        if (confiscatedHelmet != null)
-        {
+        if (confiscatedHelmet != null) {
             json.put("helmet", confiscatedHelmet.serialize());
         }
 
-        if (confiscatedChestplate != null)
-        {
+        if (confiscatedChestplate != null) {
             json.put("chestplate", confiscatedChestplate.serialize());
         }
 
-        if (confiscatedLeggings != null)
-        {
+        if (confiscatedLeggings != null) {
             json.put("leggings", confiscatedLeggings.serialize());
         }
 
-        if (confiscatedBoots != null)
-        {
+        if (confiscatedBoots != null) {
             json.put("boots", confiscatedBoots.serialize());
         }
 
-        if (teleportSecondsRemaining > 0)
-        {
+        if (teleportSecondsRemaining > 0) {
             json.put("teleportSecondsRemaining", teleportSecondsRemaining);
         }
 
-        if (teleportVec != null)
-        {
+        if (teleportVec != null) {
             json.put("teleportVec", teleportVec.serialize());
         }
 
-        if (teleportPending)
-        {
+        if (teleportPending) {
             json.put("teleportPending", teleportPending);
         }
 
-        if (bypassDisabled)
-        {
+        if (bypassDisabled) {
             json.put("bypassDisabled", bypassDisabled);
         }
 
@@ -283,101 +250,77 @@ public class PlayerEntry
      *
      * @param flagString the flags to set
      */
-    public void setFlags(String flagString)
-    {
-        if (flagString != null && !flagString.isEmpty())
-        {
+    public void setFlags(String flagString) {
+        if (flagString != null && !flagString.isEmpty()) {
             Object obj = JSONValue.parse(flagString);
             JSONObject flags = (JSONObject) obj;
 
-            if (flags != null)
-            {
-                for (Object flag : flags.keySet())
-                {
-                    try
-                    {
+            if (flags != null) {
+                for (Object flag : flags.keySet()) {
+                    try {
                         // reading the list of flags from json
 
-                        if (flag.equals("disabled"))
-                        {
+                        if (flag.equals("disabled")) {
                             disabled = (Boolean) flags.get(flag);
                         }
 
-                        if (flag.equals("density"))
-                        {
+                        if (flag.equals("density")) {
                             density = ((Long) flags.get(flag)).intValue();
                         }
 
-                        if (flag.equals("confiscated"))
-                        {
+                        if (flag.equals("confiscated")) {
                             confiscatedInventory = ((JSONArray) flags.get(flag));
                         }
 
-                        if (flag.equals("helmet"))
-                        {
+                        if (flag.equals("helmet")) {
                             confiscatedHelmet = new ItemStackEntry((JSONObject) flags.get(flag));
                         }
 
-                        if (flag.equals("chestplate"))
-                        {
+                        if (flag.equals("chestplate")) {
                             confiscatedChestplate = new ItemStackEntry((JSONObject) flags.get(flag));
                         }
 
-                        if (flag.equals("leggings"))
-                        {
+                        if (flag.equals("leggings")) {
                             confiscatedLeggings = new ItemStackEntry((JSONObject) flags.get(flag));
                         }
 
-                        if (flag.equals("boots"))
-                        {
+                        if (flag.equals("boots")) {
                             confiscatedBoots = new ItemStackEntry((JSONObject) flags.get(flag));
                         }
 
-                        if (flag.equals("teleportSecondsRemaining"))
-                        {
+                        if (flag.equals("teleportSecondsRemaining")) {
                             teleportSecondsRemaining = ((Long) flags.get(flag)).intValue();
                         }
 
-                        if (flag.equals("teleportVec"))
-                        {
+                        if (flag.equals("teleportVec")) {
                             teleportVec = new Vec(flags.get(flag).toString());
                         }
 
-                        if (flag.equals("teleportPending"))
-                        {
+                        if (flag.equals("teleportPending")) {
                             teleportPending = (Boolean) flags.get(flag);
                         }
 
-                        if (flag.equals("bypassDisabled"))
-                        {
+                        if (flag.equals("bypassDisabled")) {
                             bypassDisabled = (Boolean) flags.get(flag);
                         }
 
                         // player still needs teleport
 
-                        if (teleportSecondsRemaining > 0)
-                        {
-                            if (teleportVec != null)
-                            {
+                        if (teleportSecondsRemaining > 0) {
+                            if (teleportVec != null) {
                                 startTeleportCountDown();
                             }
-                        }
-                        else
-                        {
-                            if (teleportPending)
-                            {
+                        } else {
+                            if (teleportPending) {
                                 tryTeleport();
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         System.out.print("Failed reading player flag: " + flag);
                         System.out.print("Value: " + flags.get(flag));
                         System.out.print("Error: " + ex.getMessage());
 
-                        for (StackTraceElement el : ex.getStackTrace())
-                        {
+                        for (StackTraceElement el : ex.getStackTrace()) {
                             System.out.print(el.toString());
                         }
                     }
@@ -386,17 +329,13 @@ public class PlayerEntry
         }
     }
 
-    public void startTeleportCountDown()
-    {
-        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(PreciousStones.getInstance(), new Runnable()
-        {
+    public void startTeleportCountDown() {
+        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(PreciousStones.getInstance(), new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 teleportSecondsRemaining -= 1;
 
-                if (teleportSecondsRemaining <= 0)
-                {
+                if (teleportSecondsRemaining <= 0) {
                     tryTeleport();
 
                     Bukkit.getServer().getScheduler().cancelTask(task);
@@ -405,10 +344,8 @@ public class PlayerEntry
         }, 20, 20);
     }
 
-    private void tryTeleport()
-    {
-        if (teleportVec == null)
-        {
+    private void tryTeleport() {
+        if (teleportVec == null) {
             teleportSecondsRemaining = 0;
             teleportPending = false;
             return;
@@ -416,76 +353,62 @@ public class PlayerEntry
 
         Player player = Bukkit.getServer().getPlayerExact(name);
 
-        if (player != null)
-        {
+        if (player != null) {
             player.teleport(teleportVec.getLocation());
             teleportSecondsRemaining = 0;
             teleportVec = null;
             teleportPending = false;
-        }
-        else
-        {
+        } else {
             teleportPending = true;
         }
     }
 
-    public int getDensity()
-    {
+    public int getDensity() {
         return Math.max(density, 1);
     }
 
-    public void setDensity(int density)
-    {
+    public void setDensity(int density) {
         this.density = density;
     }
 
-    public boolean isTeleporting()
-    {
+    public boolean isTeleporting() {
         return teleporting;
     }
 
-    public void setTeleporting(boolean teleporting)
-    {
+    public void setTeleporting(boolean teleporting) {
         this.teleporting = teleporting;
     }
 
-    public int getTeleportSecondsRemaining()
-    {
+    public int getTeleportSecondsRemaining() {
         return teleportSecondsRemaining;
     }
 
-    public void setTeleportSecondsRemaining(int teleportSecondsRemaining)
-    {
+    public void setTeleportSecondsRemaining(int teleportSecondsRemaining) {
         this.teleportSecondsRemaining = teleportSecondsRemaining;
     }
 
-    public Vec getTeleportVec()
-    {
+    public Vec getTeleportVec() {
         return teleportVec;
     }
 
-    public void setTeleportVec(Vec teleportVec)
-    {
+    public void setTeleportVec(Vec teleportVec) {
         this.teleportVec = teleportVec;
     }
 
-    public boolean isBypassDisabled()
-    {
+    public boolean isBypassDisabled() {
         return bypassDisabled;
     }
 
-    public void setBypassDisabled(boolean bypassDisabled)
-    {
+    public void setBypassDisabled(boolean bypassDisabled) {
         this.bypassDisabled = bypassDisabled;
     }
 
-    public void setOnlineUUID(UUID uuid)
-    {
+    public void setOnlineUUID(UUID uuid) {
 
         this.onlineUUID = uuid;
     }
-    public UUID getOnlineUUID()
-    {
+
+    public UUID getOnlineUUID() {
         return onlineUUID;
     }
 }

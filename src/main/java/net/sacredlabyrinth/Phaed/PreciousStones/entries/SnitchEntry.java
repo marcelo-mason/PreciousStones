@@ -6,11 +6,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 
 /**
- *
  * @author phaed
  */
-public class SnitchEntry
-{
+public class SnitchEntry {
     private String name;
     private String reason;
     private String details;
@@ -21,18 +19,15 @@ public class SnitchEntry
     /**
      *
      */
-    public SnitchEntry()
-    {
+    public SnitchEntry() {
     }
 
     /**
-     *
      * @param name
      * @param reason
      * @param details
      */
-    public SnitchEntry(String name, String reason, String details)
-    {
+    public SnitchEntry(String name, String reason, String details) {
         this.name = name;
         this.reason = reason;
         this.details = details;
@@ -41,15 +36,13 @@ public class SnitchEntry
     }
 
     /**
-     *
      * @param field
      * @param name
      * @param reason
      * @param details
      * @param eventCount
      */
-    public SnitchEntry(Field field, String name, String reason, String details, int eventCount)
-    {
+    public SnitchEntry(Field field, String name, String reason, String details, int eventCount) {
         this.field = field;
         this.name = name;
         this.reason = reason;
@@ -61,72 +54,57 @@ public class SnitchEntry
     /**
      * @param name the name to set
      */
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
     /**
-     *
      * @return
      */
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
     /**
      * @param reason the reason to set
      */
-    public void setReason(String reason)
-    {
+    public void setReason(String reason) {
         this.reason = reason;
     }
 
     /**
-     *
      * @return
      */
-    public String getReason()
-    {
+    public String getReason() {
         return this.reason;
     }
 
     /**
-     *
      * @return
      */
-    public String getReasonDisplay()
-    {
+    public String getReasonDisplay() {
         String out = reason;
 
-        if (reason.equals("Block Break"))
-        {
+        if (reason.equals("Block Break")) {
             out = ChatColor.DARK_RED + reason;
         }
-        if (reason.equals("Block Place"))
-        {
+        if (reason.equals("Block Place")) {
             out = ChatColor.DARK_RED + reason;
         }
-        if (reason.equals("Entry"))
-        {
+        if (reason.equals("Entry")) {
             out = ChatColor.BLUE + reason;
         }
-        if (reason.equals("Used"))
-        {
+        if (reason.equals("Used")) {
             out = ChatColor.GREEN + reason;
         }
-        if (reason.equals("Shopped"))
-        {
+        if (reason.equals("Shopped")) {
             out = ChatColor.GREEN + reason;
         }
-        if (reason.equals("Ignite"))
-        {
+        if (reason.equals("Ignite")) {
             out = ChatColor.DARK_RED + reason;
         }
 
-        if (getEventCount() > 1)
-        {
+        if (getEventCount() > 1) {
             return out + " (" + getEventCount() + ")";
         }
 
@@ -136,66 +114,58 @@ public class SnitchEntry
     /**
      * @param details the details to set
      */
-    public void setDetails(String details)
-    {
+    public void setDetails(String details) {
         this.details = details;
     }
 
     /**
-     *
      * @return
      */
-    public String getDetails()
-    {
+    public String getDetails() {
         return details;
     }
 
     /**
      *
      */
-    public void addCount()
-    {
+    public void addCount() {
         setEventCount(getEventCount() + 1);
     }
 
     /**
      * @return the eventCount
      */
-    public int getEventCount()
-    {
+    public int getEventCount() {
         return eventCount;
     }
 
     /**
      * @param eventCount the eventCount to set
      */
-    public void setEventCount(int eventCount)
-    {
+    public void setEventCount(int eventCount) {
         this.eventCount = eventCount;
     }
 
     /**
      * @return the field
      */
-    public Field getField()
-    {
+    public Field getField() {
         return field;
     }
 
     /**
      * @param field the field to set
      */
-    public void setField(Field field)
-    {
+    public void setField(Field field) {
         this.field = field;
     }
 
     /**
      * Returns the number of minutes of age
+     *
      * @return
      */
-    public int getAgeInSeconds()
-    {
+    public int getAgeInSeconds() {
         return Seconds.secondsBetween(new DateTime(), new DateTime(age)).getSeconds();
     }
 }

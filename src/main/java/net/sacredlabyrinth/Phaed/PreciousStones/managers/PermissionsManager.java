@@ -31,8 +31,7 @@ import java.util.List;
 /**
  * @author phaed
  */
-public final class PermissionsManager
-{
+public final class PermissionsManager {
     public static Permission permission = null;
     private static Economy economy = null;
     private PermissionHandler handler = null;
@@ -46,8 +45,7 @@ public final class PermissionsManager
     /**
      *
      */
-    public PermissionsManager()
-    {
+    public PermissionsManager() {
         plugin = PreciousStones.getInstance();
         detectPermissionsBukkit();
         detectPermissionsEx();
@@ -56,105 +54,83 @@ public final class PermissionsManager
         detectLockette();
         detectMcMMO();
 
-        try
-        {
+        try {
             Class.forName("net.milkbowl.vault.permission.Permission");
 
             setupEconomy();
             setupPermissions();
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             //SimpleClans.log("[PreciousStones] Vault.jar not found. No economy support.");
             //no need to spam everyone who doesnt use vault
         }
     }
 
-    private void detectMcMMO()
-    {
+    private void detectMcMMO() {
         Plugin plug = plugin.getServer().getPluginManager().getPlugin("mcMMO");
 
-        if (plug != null)
-        {
+        if (plug != null) {
             mcmmo = ((mcMMO) plug);
         }
     }
 
-    private void detectLWC()
-    {
+    private void detectLWC() {
         Plugin plug = plugin.getServer().getPluginManager().getPlugin("LWC");
 
-        if (plug != null)
-        {
+        if (plug != null) {
             lwc = ((LWCPlugin) plug).getLWC();
         }
     }
 
-    private void detectLockette()
-    {
+    private void detectLockette() {
         Plugin plug = plugin.getServer().getPluginManager().getPlugin("Lockette");
 
-        if (plug != null)
-        {
+        if (plug != null) {
             lockette = ((Lockette) plug);
         }
     }
 
-    private void detectPermissions()
-    {
-        if (handler == null)
-        {
+    private void detectPermissions() {
+        if (handler == null) {
             Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
 
-            if (test != null)
-            {
+            if (test != null) {
                 handler = ((Permissions) test).getHandler();
             }
         }
     }
 
-    private void detectPermissionsEx()
-    {
-        if (pex == null)
-        {
+    private void detectPermissionsEx() {
+        if (pex == null) {
             Plugin test = plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
 
-            if (test != null)
-            {
+            if (test != null) {
                 pex = (PermissionsEx) test;
             }
         }
     }
 
-    private void detectPermissionsBukkit()
-    {
-        if (pbukkit == null)
-        {
+    private void detectPermissionsBukkit() {
+        if (pbukkit == null) {
             Plugin test = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit");
 
-            if (test != null)
-            {
+            if (test != null) {
                 pbukkit = ((PermissionsPlugin) test);
             }
         }
     }
 
-    private Boolean setupPermissions()
-    {
+    private Boolean setupPermissions() {
         RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null)
-        {
+        if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
         return (permission != null);
     }
 
-    private Boolean setupEconomy()
-    {
+    private Boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 
-        if (economyProvider != null)
-        {
+        if (economyProvider != null) {
             economy = economyProvider.getProvider();
         }
 
@@ -168,46 +144,34 @@ public final class PermissionsManager
      * @param perm
      * @return
      */
-    public boolean has(Player player, String perm)
-    {
-        if (player == null)
-        {
+    public boolean has(Player player, String perm) {
+        if (player == null) {
             return true;
         }
 
-        if (!perm.contains("preciousstones.bypass.toggle"))
-        {
-            if (perm.contains("preciousstones.bypass.") || perm.contains("preciousstones.admin.allowed"))
-            {
+        if (!perm.contains("preciousstones.bypass.toggle")) {
+            if (perm.contains("preciousstones.bypass.") || perm.contains("preciousstones.admin.allowed")) {
                 PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
 
-                if (entry.isBypassDisabled())
-                {
+                if (entry.isBypassDisabled()) {
                     return false;
                 }
             }
         }
 
-        if (permission != null)
-        {
-            if (permission.has(player, "preciousstones.blacklist") && !permission.has(player, "preciousstones.admin.isadmin"))
-            {
+        if (permission != null) {
+            if (permission.has(player, "preciousstones.blacklist") && !permission.has(player, "preciousstones.admin.isadmin")) {
                 return false;
             }
 
             return permission.has(player, perm);
-        }
-        else if (handler != null)
-        {
-            if (handler.has(player, "preciousstones.blacklist") && !handler.has(player, "preciousstones.admin.isadmin"))
-            {
+        } else if (handler != null) {
+            if (handler.has(player, "preciousstones.blacklist") && !handler.has(player, "preciousstones.admin.isadmin")) {
                 return false;
             }
 
             return handler.has(player, perm);
-        }
-        else
-        {
+        } else {
             return player.hasPermission(perm);
         }
     }
@@ -220,49 +184,34 @@ public final class PermissionsManager
      * @param world
      * @return
      */
-    public boolean inGroup(String playerName, World world, String group)
-    {
-        try
-        {
-            if (pex != null)
-            {
+    public boolean inGroup(String playerName, World world, String group) {
+        try {
+            if (pex != null) {
                 PermissionUser user = PermissionsEx.getUser(playerName);
 
-                if (user != null)
-                {
+                if (user != null) {
                     return user.inGroup(group);
                 }
 
                 return false;
-            }
-            else if (pbukkit != null)
-            {
+            } else if (pbukkit != null) {
                 List<Group> groups = pbukkit.getGroups(playerName);
 
-                for (Group g : groups)
-                {
-                    if (g.getName().equalsIgnoreCase(group))
-                    {
+                for (Group g : groups) {
+                    if (g.getName().equalsIgnoreCase(group)) {
                         return true;
                     }
                 }
                 return false;
-            }
-            else if (permission != null)
-            {
+            } else if (permission != null) {
                 return permission.playerInGroup(world, playerName, group);
-            }
-            else if (handler != null)
-            {
-                if (handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group))
-                {
+            } else if (handler != null) {
+                if (handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group)) {
                     return true;
                 }
                 return false;
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             // no group support
         }
         return false;
@@ -275,62 +224,45 @@ public final class PermissionsManager
      * @param playerName
      * @return
      */
-    public List<String> getGroups(String worldName, String playerName)
-    {
+    public List<String> getGroups(String worldName, String playerName) {
         List<String> groups = new ArrayList<String>();
 
-        try
-        {
-            if (pex != null)
-            {
+        try {
+            if (pex != null) {
                 PermissionUser user = PermissionsEx.getUser(playerName);
 
-                if (user != null)
-                {
+                if (user != null) {
                     String[] pexGroups = user.getGroupsNames();
 
-                    for (String g : pexGroups)
-                    {
+                    for (String g : pexGroups) {
                         groups.add(g);
                     }
                 }
-            }
-            else if (pbukkit != null)
-            {
+            } else if (pbukkit != null) {
                 List<Group> gs = pbukkit.getGroups(playerName);
 
-                for (Group group : gs)
-                {
+                for (Group group : gs) {
                     groups.add(group.getName().toLowerCase());
                 }
                 return groups;
-            }
-            else if (permission != null)
-            {
+            } else if (permission != null) {
                 World world = plugin.getServer().getWorld(worldName);
 
-                if (world != null)
-                {
+                if (world != null) {
                     String[] groupList = permission.getPlayerGroups(world, playerName);
 
-                    for (String g : groupList)
-                    {
+                    for (String g : groupList) {
                         groups.add(g);
                     }
                 }
-            }
-            else if (handler != null)
-            {
+            } else if (handler != null) {
                 @SuppressWarnings("deprecation") String group = handler.getGroup(worldName, playerName);
 
-                if (group != null)
-                {
+                if (group != null) {
                     groups.add(group.toLowerCase());
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             // no group support
         }
 
@@ -344,8 +276,7 @@ public final class PermissionsManager
      * @param player
      * @param group
      */
-    public void addGroup(Player player, String group)
-    {
+    public void addGroup(Player player, String group) {
         /*if (pex != null)
         {
             PermissionUser user = PermissionsEx.getUser(player.getName());
@@ -357,10 +288,8 @@ public final class PermissionsManager
         }
         else*/
 
-        if (permission != null)
-        {
-            if (player != null)
-            {
+        if (permission != null) {
+            if (player != null) {
                 permission.playerAddGroup(player, group);
             }
         }
@@ -372,12 +301,9 @@ public final class PermissionsManager
      * @param player
      * @param group
      */
-    public void removeGroup(Player player, String group)
-    {
-        if (permission != null)
-        {
-            if (player != null)
-            {
+    public void removeGroup(Player player, String group) {
+        if (permission != null) {
+            if (player != null) {
                 permission.playerRemoveGroup(player, group);
             }
         }
@@ -388,10 +314,8 @@ public final class PermissionsManager
      *
      * @return
      */
-    public boolean hasEconomy()
-    {
-        if (economy != null && economy.isEnabled())
-        {
+    public boolean hasEconomy() {
+        if (economy != null && economy.isEnabled()) {
             return true;
         }
         return false;
@@ -404,8 +328,7 @@ public final class PermissionsManager
      * @param amount
      * @return
      */
-    public boolean playerCharge(Player player, double amount)
-    {
+    public boolean playerCharge(Player player, double amount) {
         return economy.withdrawPlayer(player.getName(), amount).transactionSuccess();
     }
 
@@ -416,8 +339,7 @@ public final class PermissionsManager
      * @param amount
      * @return
      */
-    public boolean playerCharge(String playerName, double amount)
-    {
+    public boolean playerCharge(String playerName, double amount) {
         return economy.withdrawPlayer(playerName, amount).transactionSuccess();
     }
 
@@ -428,8 +350,7 @@ public final class PermissionsManager
      * @param amount
      * @return
      */
-    public boolean playerCredit(Player player, double amount)
-    {
+    public boolean playerCredit(Player player, double amount) {
         return economy.depositPlayer(player.getName(), amount).transactionSuccess();
     }
 
@@ -440,8 +361,7 @@ public final class PermissionsManager
      * @param amount
      * @return
      */
-    public static boolean hasMoney(Player player, double amount)
-    {
+    public static boolean hasMoney(Player player, double amount) {
         return economy.has(player.getName(), amount);
     }
 
@@ -452,37 +372,30 @@ public final class PermissionsManager
      * @param amount
      * @return
      */
-    public static boolean hasMoney(String playerName, double amount)
-    {
+    public static boolean hasMoney(String playerName, double amount) {
         return economy.has(playerName, amount);
     }
 
-    public boolean lwcProtected(Player player, Block block)
-    {
-        if (lwc == null)
-        {
+    public boolean lwcProtected(Player player, Block block) {
+        if (lwc == null) {
             return false;
         }
 
         Protection protection = lwc.findProtection(block);
 
-        if (protection != null)
-        {
+        if (protection != null) {
             return !lwc.canAccessProtection(player, block);
         }
 
         return false;
     }
 
-    public boolean locketteProtected(Player player, Block block)
-    {
-        if (lockette == null)
-        {
+    public boolean locketteProtected(Player player, Block block) {
+        if (lockette == null) {
             return false;
         }
 
-        if (Lockette.isProtected(block))
-        {
+        if (Lockette.isProtected(block)) {
             String owner = Lockette.getProtectedOwner(block);
             return !owner.equalsIgnoreCase(player.getName());
         }
@@ -490,24 +403,19 @@ public final class PermissionsManager
         return false;
     }
 
-    public boolean hasMcMMO()
-    {
+    public boolean hasMcMMO() {
         return mcmmo != null;
     }
 
-    public boolean hasLWC()
-    {
+    public boolean hasLWC() {
         return lwc != null;
     }
 
-    public boolean isVanished(Player player)
-    {
+    public boolean isVanished(Player player) {
         List<MetadataValue> values = player.getMetadata("vanished");
 
-        for (MetadataValue value : values)
-        {
-            if (value.asBoolean())
-            {
+        for (MetadataValue value : values) {
+            if (value.asBoolean()) {
                 return true;
             }
         }
@@ -515,35 +423,27 @@ public final class PermissionsManager
         return false;
     }
 
-    public void allowFly(Player player)
-    {
-        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
-        {
+    public void allowFly(Player player) {
+        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null) {
             AntiCheatAPI.exemptPlayer(player, CheckType.FLY);
         }
     }
 
-    public void resetFly(Player player)
-    {
-        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
-        {
+    public void resetFly(Player player) {
+        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null) {
             AntiCheatAPI.unexemptPlayer(player, CheckType.FLY);
         }
     }
 
-    public void allowFast(Player player)
-    {
-        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
-        {
+    public void allowFast(Player player) {
+        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null) {
             AntiCheatAPI.exemptPlayer(player, CheckType.FAST_BREAK);
             AntiCheatAPI.exemptPlayer(player, CheckType.FAST_PLACE);
         }
     }
 
-    public void resetFast(Player player)
-    {
-        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null)
-        {
+    public void resetFast(Player player) {
+        if (Bukkit.getServer().getPluginManager().getPlugin("AntiCheat") != null) {
             AntiCheatAPI.unexemptPlayer(player, CheckType.FAST_BREAK);
             AntiCheatAPI.unexemptPlayer(player, CheckType.FAST_PLACE);
         }

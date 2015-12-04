@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.blocks;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ItemStackEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.AbstractVec;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,8 +22,7 @@ import java.util.List;
 /**
  * @author phaed
  */
-public class TranslocationBlock extends AbstractVec
-{
+public class TranslocationBlock extends AbstractVec {
     private BlockTypeEntry type;
     private String signText = "";
     private boolean empty = false;
@@ -40,8 +39,7 @@ public class TranslocationBlock extends AbstractVec
      * @param world
      * @param type
      */
-    public TranslocationBlock(int x, int y, int z, String world, BlockTypeEntry type)
-    {
+    public TranslocationBlock(int x, int y, int z, String world, BlockTypeEntry type) {
         super(x, y, z, world);
         this.type = type;
     }
@@ -50,8 +48,7 @@ public class TranslocationBlock extends AbstractVec
      * @param loc
      * @param type
      */
-    public TranslocationBlock(Location loc, BlockTypeEntry type)
-    {
+    public TranslocationBlock(Location loc, BlockTypeEntry type) {
         super(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getWorld().getName());
         this.type = type;
     }
@@ -59,8 +56,7 @@ public class TranslocationBlock extends AbstractVec
     /**
      * @param block
      */
-    public TranslocationBlock(Block block)
-    {
+    public TranslocationBlock(Block block) {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
     }
@@ -68,8 +64,7 @@ public class TranslocationBlock extends AbstractVec
     /**
      * @param block
      */
-    public TranslocationBlock(Field field, Block block)
-    {
+    public TranslocationBlock(Field field, Block block) {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
         this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
         setRelativeCoords(field);
@@ -78,8 +73,7 @@ public class TranslocationBlock extends AbstractVec
     /**
      * @param state
      */
-    public TranslocationBlock(BlockState state)
-    {
+    public TranslocationBlock(BlockState state) {
         super(state.getX(), state.getY(), state.getZ(), state.getWorld().getName());
         this.type = new BlockTypeEntry(state.getTypeId(), state.getRawData());
         this.empty = true;
@@ -88,55 +82,47 @@ public class TranslocationBlock extends AbstractVec
     /**
      * @return the typeId
      */
-    public int getTypeId()
-    {
+    public int getTypeId() {
         return type.getTypeId();
     }
 
     /**
      * @return the data
      */
-    public byte getData()
-    {
+    public byte getData() {
         return type.getData();
     }
 
     /**
      * @return the data
      */
-    public void setData(byte data)
-    {
+    public void setData(byte data) {
         type = new BlockTypeEntry(type.getTypeId(), data);
     }
 
     /**
      * @return the signText
      */
-    public String getSignText()
-    {
+    public String getSignText() {
         return signText;
     }
 
     /**
      * @param signText the signText to set
      */
-    public void setSignText(String signText)
-    {
+    public void setSignText(String signText) {
         this.signText = signText;
     }
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(boolean empty)
-    {
+    public void setEmpty(boolean empty) {
         this.empty = empty;
     }
 
-    public TranslocationBlock(String packed)
-    {
+    public TranslocationBlock(String packed) {
         super(Helper.locationFromPacked(packed).getBlockX(), Helper.locationFromPacked(packed).getBlockY(), Helper.locationFromPacked(packed).getBlockZ(), Helper.locationFromPacked(packed).getWorld().getName());
 
         String[] unpacked = packed.split("[|]");
@@ -144,20 +130,17 @@ public class TranslocationBlock extends AbstractVec
         this.type = new BlockTypeEntry(Integer.parseInt(unpacked[0]), Byte.parseByte(unpacked[1]));
     }
 
-    public String serialize()
-    {
+    public String serialize() {
         return getTypeId() + "|" + getData() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
     }
 
-    public void setRelativeCoords(int x, int y, int z)
-    {
+    public void setRelativeCoords(int x, int y, int z) {
         this.rx = x;
         this.ry = y;
         this.rz = z;
     }
 
-    public void setRelativeCoords(Field field)
-    {
+    public void setRelativeCoords(Field field) {
         Location location = getLocation();
         location = location.subtract(field.getLocation());
 
@@ -166,15 +149,13 @@ public class TranslocationBlock extends AbstractVec
         this.rz = location.getBlockZ();
     }
 
-    public Location getRelativeLocation()
-    {
+    public Location getRelativeLocation() {
         World world = Bukkit.getServer().getWorld(getWorld());
         Location location = new Location(world, rx, ry, rz);
         return location;
     }
 
-    public Location getRelativeLocation(Field currentField)
-    {
+    public Location getRelativeLocation(Field currentField) {
         World world = Bukkit.getServer().getWorld(getWorld());
 
         Location location = new Location(world, rx, ry, rz);
@@ -183,50 +164,40 @@ public class TranslocationBlock extends AbstractVec
         return location;
     }
 
-    public int getRx()
-    {
+    public int getRx() {
         return rx;
     }
 
-    public int getRy()
-    {
+    public int getRy() {
         return ry;
     }
 
-    public int getRz()
-    {
+    public int getRz() {
         return rz;
     }
 
-    private void extractContents()
-    {
+    private void extractContents() {
 
     }
 
-    public ItemStack[] getItemStacks()
-    {
+    public ItemStack[] getItemStacks() {
         List<ItemStack> out = new ArrayList<ItemStack>();
 
-        for (ItemStackEntry entry : contents)
-        {
+        for (ItemStackEntry entry : contents) {
             out.add(entry.toItemStack());
         }
 
         return out.toArray(new ItemStack[]{});
     }
 
-    public boolean hasItemStacks()
-    {
+    public boolean hasItemStacks() {
         return !contents.isEmpty();
     }
 
-    public void setContents(ItemStack[] stacks)
-    {
+    public void setContents(ItemStack[] stacks) {
         contents.clear();
-        for (ItemStack stack : stacks)
-        {
-            if(stack == null)
-            {
+        for (ItemStack stack : stacks) {
+            if (stack == null) {
                 contents.add(new ItemStackEntry(new ItemStack(Material.AIR)));
                 continue;
             }
@@ -234,30 +205,25 @@ public class TranslocationBlock extends AbstractVec
         }
     }
 
-    public String getContents()
-    {
+    public String getContents() {
         JSONArray out = new JSONArray();
 
-        for (ItemStackEntry entry : contents)
-        {
+        for (ItemStackEntry entry : contents) {
             out.add(entry.serialize());
         }
 
         return out.toString();
     }
 
-    public void setContents(String contents)
-    {
-        if (contents.length() == 0)
-        {
+    public void setContents(String contents) {
+        if (contents.length() == 0) {
             return;
         }
 
         JSONArray in = (JSONArray) JSONValue.parse(contents);
 
         this.contents.clear();
-        for (Object item : in)
-        {
+        for (Object item : in) {
             this.contents.add(new ItemStackEntry((JSONObject) item));
         }
     }

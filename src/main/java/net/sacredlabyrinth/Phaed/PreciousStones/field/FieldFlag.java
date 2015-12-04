@@ -9,8 +9,7 @@ import java.util.Map;
 /**
  * @author phaed
  */
-public enum FieldFlag
-{
+public enum FieldFlag {
     ALL,
     ALLOW_PLACE,
     ALLOW_DESTROY,
@@ -158,65 +157,64 @@ public enum FieldFlag
     COMMAND_BLACKLIST,
     ANTI_PLOT,
     GLOBAL,
-    NO_RESIZE
-    ;
+    NO_RESIZE;
 
     /**
      * These flags apply to non-allowed
      */
     private final static FieldFlag[] applyToNonAllowed = new FieldFlag[]
-    {
-        FieldFlag.PREVENT_FIRE,
-        FieldFlag.PREVENT_FLOW,
-        FieldFlag.PREVENT_ENTRY,
-        FieldFlag.PREVENT_PLACE,
-        FieldFlag.PREVENT_DESTROY,
-        FieldFlag.PREVENT_VEHICLE_DESTROY,
-        FieldFlag.PREVENT_MOB_DAMAGE,
-        FieldFlag.PREVENT_USE,
-        FieldFlag.PREVENT_TELEPORT, FieldFlag.PREVENT_FLIGHT, FieldFlag.PREVENT_ITEM_FRAME_TAKE, FieldFlag.PROTECT_ARMOR_STANDS,
-        FieldFlag.PREVENT_ENTITY_INTERACT,
-        FieldFlag.PROTECT_ANIMALS,
-        FieldFlag.PROTECT_CROPS,
-        FieldFlag.PROTECT_MOBS,
-        FieldFlag.PROTECT_INVENTORIES,
-        FieldFlag.PROTECT_VILLAGERS,
-        FieldFlag.PROTECT_LWC,
-        FieldFlag.DAMAGE,
-        FieldFlag.SNITCH,
-        FieldFlag.MINE,
-        FieldFlag.LIGHTNING,
-        FieldFlag.GRIEF_REVERT,
-        FieldFlag.PLACE_GRIEF,
-        FieldFlag.ENTRY_ALERT,
-        FieldFlag.ENTRY_GAME_MODE,
-        FieldFlag.LEAVING_GAME_MODE,
-        FieldFlag.CONFISCATE_ITEMS,
-        FieldFlag.UNUSABLE_ITEMS,
-        FieldFlag.TELEPORT_ON_ENTRY,
-        FieldFlag.TELEPORT_ON_EXIT,
-        FieldFlag.TELEPORT_ON_DAMAGE,
-        FieldFlag.TELEPORT_ON_FEEDING,
-        FieldFlag.TELEPORT_ON_FIRE,
-        FieldFlag.TELEPORT_ON_PVP,
-        FieldFlag.TELEPORT_IF_WALKING_ON,
-        FieldFlag.TELEPORT_IF_NOT_WALKING_ON,
-        FieldFlag.TELEPORT_IF_HOLDING_ITEMS,
-        FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS,
-        FieldFlag.TELEPORT_IF_HAS_ITEMS,
-        FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS,
-        FieldFlag.TELEPORT_ON_BLOCK_BREAK,
-        FieldFlag.TELEPORT_ON_BLOCK_PLACE,
-        FieldFlag.TELEPORT_BEFORE_DEATH,
-        FieldFlag.PREVENT_POTION_SPLASH,
-        FieldFlag.NO_PROJECTILE_THROW,
-        FieldFlag.NO_DROPPING_ITEMS,
-        FieldFlag.NO_PLAYER_SPRINT,
-        FieldFlag.PREVENT_VEHICLE_ENTER,
-        FieldFlag.PREVENT_VEHICLE_EXIT,
-            FieldFlag.COMMAND_BLACKLIST,
-            FieldFlag.NO_RESIZE
-    };
+            {
+                    FieldFlag.PREVENT_FIRE,
+                    FieldFlag.PREVENT_FLOW,
+                    FieldFlag.PREVENT_ENTRY,
+                    FieldFlag.PREVENT_PLACE,
+                    FieldFlag.PREVENT_DESTROY,
+                    FieldFlag.PREVENT_VEHICLE_DESTROY,
+                    FieldFlag.PREVENT_MOB_DAMAGE,
+                    FieldFlag.PREVENT_USE,
+                    FieldFlag.PREVENT_TELEPORT, FieldFlag.PREVENT_FLIGHT, FieldFlag.PREVENT_ITEM_FRAME_TAKE, FieldFlag.PROTECT_ARMOR_STANDS,
+                    FieldFlag.PREVENT_ENTITY_INTERACT,
+                    FieldFlag.PROTECT_ANIMALS,
+                    FieldFlag.PROTECT_CROPS,
+                    FieldFlag.PROTECT_MOBS,
+                    FieldFlag.PROTECT_INVENTORIES,
+                    FieldFlag.PROTECT_VILLAGERS,
+                    FieldFlag.PROTECT_LWC,
+                    FieldFlag.DAMAGE,
+                    FieldFlag.SNITCH,
+                    FieldFlag.MINE,
+                    FieldFlag.LIGHTNING,
+                    FieldFlag.GRIEF_REVERT,
+                    FieldFlag.PLACE_GRIEF,
+                    FieldFlag.ENTRY_ALERT,
+                    FieldFlag.ENTRY_GAME_MODE,
+                    FieldFlag.LEAVING_GAME_MODE,
+                    FieldFlag.CONFISCATE_ITEMS,
+                    FieldFlag.UNUSABLE_ITEMS,
+                    FieldFlag.TELEPORT_ON_ENTRY,
+                    FieldFlag.TELEPORT_ON_EXIT,
+                    FieldFlag.TELEPORT_ON_DAMAGE,
+                    FieldFlag.TELEPORT_ON_FEEDING,
+                    FieldFlag.TELEPORT_ON_FIRE,
+                    FieldFlag.TELEPORT_ON_PVP,
+                    FieldFlag.TELEPORT_IF_WALKING_ON,
+                    FieldFlag.TELEPORT_IF_NOT_WALKING_ON,
+                    FieldFlag.TELEPORT_IF_HOLDING_ITEMS,
+                    FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS,
+                    FieldFlag.TELEPORT_IF_HAS_ITEMS,
+                    FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS,
+                    FieldFlag.TELEPORT_ON_BLOCK_BREAK,
+                    FieldFlag.TELEPORT_ON_BLOCK_PLACE,
+                    FieldFlag.TELEPORT_BEFORE_DEATH,
+                    FieldFlag.PREVENT_POTION_SPLASH,
+                    FieldFlag.NO_PROJECTILE_THROW,
+                    FieldFlag.NO_DROPPING_ITEMS,
+                    FieldFlag.NO_PLAYER_SPRINT,
+                    FieldFlag.PREVENT_VEHICLE_ENTER,
+                    FieldFlag.PREVENT_VEHICLE_EXIT,
+                    FieldFlag.COMMAND_BLACKLIST,
+                    FieldFlag.NO_RESIZE
+            };
 
     private final static Map<String, FieldFlag> flags = Maps.newHashMap();
 
@@ -225,87 +223,86 @@ public enum FieldFlag
      * These flags will be hidden completely from the flag lists
      */
     private final static FieldFlag[] hidden = new FieldFlag[]
-    {
-        FieldFlag.ALL,
-        FieldFlag.DYNMAP_NO_TOGGLE
-    };
+            {
+                    FieldFlag.ALL,
+                    FieldFlag.DYNMAP_NO_TOGGLE
+            };
 
     /**
      * These flags are nameable
      */
     private final static FieldFlag[] nameable = new FieldFlag[]
-    {
-        FieldFlag.WELCOME_MESSAGE,
-        FieldFlag.FAREWELL_MESSAGE,
-        FieldFlag.ENTRY_ALERT,
-        FieldFlag.TRANSLOCATION,
-        FieldFlag.TELEPORT_IF_WALKING_ON,
-        FieldFlag.TELEPORT_IF_NOT_WALKING_ON,
-        FieldFlag.TELEPORT_IF_HOLDING_ITEMS,
-        FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS,
-        FieldFlag.TELEPORT_IF_HAS_ITEMS,
-        FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS,
-        FieldFlag.TELEPORT_BEFORE_DEATH,
-        FieldFlag.TELEPORT_ON_DAMAGE,
-        FieldFlag.TELEPORT_ON_FEEDING,
-        FieldFlag.TELEPORT_MOBS_ON_ENABLE,
-        FieldFlag.TELEPORT_ANIMALS_ON_ENABLE,
-        FieldFlag.TELEPORT_PLAYERS_ON_ENABLE,
-        FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE,
-        FieldFlag.TELEPORT_ON_FIRE,
-        FieldFlag.TELEPORT_ON_PVP,
-        FieldFlag.TELEPORT_ON_BLOCK_PLACE,
-        FieldFlag.TELEPORT_ON_BLOCK_BREAK,
-        FieldFlag.TELEPORT_ON_SNEAK,
-        FieldFlag.TELEPORT_ON_ENTRY,
-        FieldFlag.TELEPORT_ON_EXIT,
-        FieldFlag.TELEPORT_DESTINATION,
-        FieldFlag.SINGLE_USE
-    };
+            {
+                    FieldFlag.WELCOME_MESSAGE,
+                    FieldFlag.FAREWELL_MESSAGE,
+                    FieldFlag.ENTRY_ALERT,
+                    FieldFlag.TRANSLOCATION,
+                    FieldFlag.TELEPORT_IF_WALKING_ON,
+                    FieldFlag.TELEPORT_IF_NOT_WALKING_ON,
+                    FieldFlag.TELEPORT_IF_HOLDING_ITEMS,
+                    FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS,
+                    FieldFlag.TELEPORT_IF_HAS_ITEMS,
+                    FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS,
+                    FieldFlag.TELEPORT_BEFORE_DEATH,
+                    FieldFlag.TELEPORT_ON_DAMAGE,
+                    FieldFlag.TELEPORT_ON_FEEDING,
+                    FieldFlag.TELEPORT_MOBS_ON_ENABLE,
+                    FieldFlag.TELEPORT_ANIMALS_ON_ENABLE,
+                    FieldFlag.TELEPORT_PLAYERS_ON_ENABLE,
+                    FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE,
+                    FieldFlag.TELEPORT_ON_FIRE,
+                    FieldFlag.TELEPORT_ON_PVP,
+                    FieldFlag.TELEPORT_ON_BLOCK_PLACE,
+                    FieldFlag.TELEPORT_ON_BLOCK_BREAK,
+                    FieldFlag.TELEPORT_ON_SNEAK,
+                    FieldFlag.TELEPORT_ON_ENTRY,
+                    FieldFlag.TELEPORT_ON_EXIT,
+                    FieldFlag.TELEPORT_DESTINATION,
+                    FieldFlag.SINGLE_USE
+            };
 
     /**
      * These flags will not be able to be toggled
      */
     private final static FieldFlag[] unToggable = new FieldFlag[]
-    {
-        FieldFlag.WORLDGUARD_REPELLENT,
-        FieldFlag.PLACE_DISABLED,
-        FieldFlag.SNEAKING_BYPASS,
-        FieldFlag.BREAKABLE_ON_DISABLED,
-        FieldFlag.MODIFY_ON_DISABLED,
-        FieldFlag.REDEFINE_ON_DISABLED,
-        FieldFlag.PREVENT_UNPROTECTABLE,
-        FieldFlag.TOGGLE_ON_DISABLED,
-        FieldFlag.NO_CONFLICT,
-        FieldFlag.NO_PLAYER_PLACE,
-        FieldFlag.NO_ALLOWING,
-        FieldFlag.CUBOID,
-        FieldFlag.DYNMAP_DISABLED,
-        FieldFlag.HIDABLE,
-        FieldFlag.TRANSLOCATION,
-        FieldFlag.SNEAK_TO_PLACE,
-        FieldFlag.COMMAND_ON_ENTER,
-        FieldFlag.COMMAND_ON_EXIT,
-        FieldFlag.PLAYER_COMMAND_ON_ENTER,
-        FieldFlag.PLAYER_COMMAND_ON_EXIT,
-        FieldFlag.DISABLE_WHEN_ONLINE,
-        FieldFlag.MUST_BE_ABOVE,
-        FieldFlag.MUST_BE_BELOW,
-        FieldFlag.DISABLE_ON_LOGOFF,
-        FieldFlag.ENABLE_ON_LOGON,
-        FieldFlag.RENTABLE,
-        FieldFlag.BUYABLE,
-        FieldFlag.SHAREABLE,
-        FieldFlag.COMMAND_BLACKLIST
-    };
+            {
+                    FieldFlag.WORLDGUARD_REPELLENT,
+                    FieldFlag.PLACE_DISABLED,
+                    FieldFlag.SNEAKING_BYPASS,
+                    FieldFlag.BREAKABLE_ON_DISABLED,
+                    FieldFlag.MODIFY_ON_DISABLED,
+                    FieldFlag.REDEFINE_ON_DISABLED,
+                    FieldFlag.PREVENT_UNPROTECTABLE,
+                    FieldFlag.TOGGLE_ON_DISABLED,
+                    FieldFlag.NO_CONFLICT,
+                    FieldFlag.NO_PLAYER_PLACE,
+                    FieldFlag.NO_ALLOWING,
+                    FieldFlag.CUBOID,
+                    FieldFlag.DYNMAP_DISABLED,
+                    FieldFlag.HIDABLE,
+                    FieldFlag.TRANSLOCATION,
+                    FieldFlag.SNEAK_TO_PLACE,
+                    FieldFlag.COMMAND_ON_ENTER,
+                    FieldFlag.COMMAND_ON_EXIT,
+                    FieldFlag.PLAYER_COMMAND_ON_ENTER,
+                    FieldFlag.PLAYER_COMMAND_ON_EXIT,
+                    FieldFlag.DISABLE_WHEN_ONLINE,
+                    FieldFlag.MUST_BE_ABOVE,
+                    FieldFlag.MUST_BE_BELOW,
+                    FieldFlag.DISABLE_ON_LOGOFF,
+                    FieldFlag.ENABLE_ON_LOGON,
+                    FieldFlag.RENTABLE,
+                    FieldFlag.BUYABLE,
+                    FieldFlag.SHAREABLE,
+                    FieldFlag.COMMAND_BLACKLIST
+            };
 
     /**
      * Whether the flag applies to allowed
      *
      * @return
      */
-    public boolean applies(Field field, Player player)
-    {
+    public boolean applies(Field field, Player player) {
         return applies(field, player.getName());
     }
 
@@ -314,12 +311,10 @@ public enum FieldFlag
      *
      * @return
      */
-    public boolean applies(Field field, String playerName)
-    {
+    public boolean applies(Field field, String playerName) {
         // if the field doesn't have the flag then it doesn't apply
 
-        if (!field.hasFlag(this))
-        {
+        if (!field.hasFlag(this)) {
             return false;
         }
 
@@ -329,23 +324,20 @@ public enum FieldFlag
 
         // reverse the flag if its in the reversible list
 
-        if (field.getSettings().isReversedFlag(this))
-        {
+        if (field.getSettings().isReversedFlag(this)) {
             allowed = !allowed;
         }
 
         // if its a flag that applies to non-allowed players,
         // then return true when the player is not allowed
 
-        if (appliesToNonAllowed(this))
-        {
+        if (appliesToNonAllowed(this)) {
             allowed = !allowed;
         }
 
         // allow the if flag is in the allable list
 
-        if (field.getSettings().isAlledFlag(this))
-        {
+        if (field.getSettings().isAlledFlag(this)) {
             allowed = true;
         }
 
@@ -361,12 +353,9 @@ public enum FieldFlag
      * @param flag
      * @return
      */
-    private static boolean appliesToNonAllowed(FieldFlag flag)
-    {
-        for (FieldFlag aa : applyToNonAllowed)
-        {
-            if (aa.equals(flag))
-            {
+    private static boolean appliesToNonAllowed(FieldFlag flag) {
+        for (FieldFlag aa : applyToNonAllowed) {
+            if (aa.equals(flag)) {
                 return true;
             }
         }
@@ -379,14 +368,11 @@ public enum FieldFlag
      *
      * @return
      */
-    public boolean isNameable()
-    {
+    public boolean isNameable() {
         String flagStr = this.toString();
 
-        for (FieldFlag flag : nameable)
-        {
-            if (flag.toString().equalsIgnoreCase(flagStr))
-            {
+        for (FieldFlag flag : nameable) {
+            if (flag.toString().equalsIgnoreCase(flagStr)) {
                 return true;
             }
         }
@@ -399,21 +385,16 @@ public enum FieldFlag
      *
      * @return
      */
-    public boolean isUnToggable()
-    {
+    public boolean isUnToggable() {
         String flagStr = this.toString();
 
-        for (FieldFlag flag : unToggable)
-        {
-            if (flag.toString().equalsIgnoreCase(flagStr))
-            {
+        for (FieldFlag flag : unToggable) {
+            if (flag.toString().equalsIgnoreCase(flagStr)) {
                 return true;
             }
         }
-        for (FieldFlag flag : hidden)
-        {
-            if (flag.toString().equalsIgnoreCase(flagStr))
-            {
+        for (FieldFlag flag : hidden) {
+            if (flag.toString().equalsIgnoreCase(flagStr)) {
                 return true;
             }
         }
@@ -426,8 +407,7 @@ public enum FieldFlag
      *
      * @return
      */
-    public static FieldFlag[] getHidden()
-    {
+    public static FieldFlag[] getHidden() {
         return hidden;
     }
 
@@ -437,8 +417,7 @@ public enum FieldFlag
      * @param flagStr
      * @return
      */
-    public static FieldFlag getByString(String flagStr)
-    {
+    public static FieldFlag getByString(String flagStr) {
         return flags.get(stripModifiers(flagStr));
     }
 
@@ -448,8 +427,7 @@ public enum FieldFlag
      * @param flagStr
      * @return
      */
-    public static boolean isFlag(String flagStr)
-    {
+    public static boolean isFlag(String flagStr) {
         return flags.get(flagStr) != null;
     }
 
@@ -459,17 +437,14 @@ public enum FieldFlag
      * @param flagStr
      * @return
      */
-    public static String stripModifiers(String flagStr)
-    {
-        if (flagStr == null || flagStr.isEmpty())
-        {
+    public static String stripModifiers(String flagStr) {
+        if (flagStr == null || flagStr.isEmpty()) {
             return flagStr;
         }
 
         boolean hasModifier = flagStr.startsWith("^") || flagStr.startsWith("~") || flagStr.startsWith("?");
 
-        while (hasModifier && flagStr.length() > 0)
-        {
+        while (hasModifier && flagStr.length() > 0) {
             flagStr = flagStr.substring(1);
             hasModifier = flagStr.startsWith("^") || flagStr.startsWith("~") || flagStr.startsWith("?");
         }
@@ -483,15 +458,12 @@ public enum FieldFlag
      * @return
      */
 
-    public String toString()
-    {
+    public String toString() {
         return this.name().replace('_', '-').toLowerCase();
     }
 
-    static
-    {
-        for (FieldFlag flag : values())
-        {
+    static {
+        for (FieldFlag flag : values()) {
             flags.put(flag.toString(), flag);
         }
     }

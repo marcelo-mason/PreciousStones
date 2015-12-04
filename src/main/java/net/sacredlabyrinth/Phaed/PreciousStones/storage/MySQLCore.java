@@ -8,8 +8,7 @@ import java.util.logging.Logger;
 /**
  * @author cc_madelg
  */
-public class MySQLCore implements DBCore
-{
+public class MySQLCore implements DBCore {
     private Logger log;
     private Connection connection;
     private String host;
@@ -24,8 +23,7 @@ public class MySQLCore implements DBCore
      * @param username
      * @param password
      */
-    public MySQLCore(String host, int port, String database, String username, String password)
-    {
+    public MySQLCore(String host, int port, String database, String username, String password) {
         this.database = database;
         this.host = host;
         this.port = port;
@@ -34,19 +32,13 @@ public class MySQLCore implements DBCore
         this.log = PreciousStones.getLog();
     }
 
-    private void initialize()
-    {
-        try
-        {
+    private void initialize() {
+        try {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password);
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             log.severe("ClassNotFoundException! " + e.getMessage());
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             log.severe("SQLException! " + e.getMessage());
         }
     }
@@ -54,19 +46,13 @@ public class MySQLCore implements DBCore
     /**
      * @return connection
      */
-    public Connection getConnection()
-    {
-        try
-        {
-            if (connection == null || connection.isClosed())
-            {
+    public Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
                 initialize();
             }
-        }
-        catch (SQLException e)
-        {
-            if (connection == null)
-            {
+        } catch (SQLException e) {
+            if (connection == null) {
                 initialize();
             }
         }
@@ -77,25 +63,19 @@ public class MySQLCore implements DBCore
     /**
      * @return whether connection can be established
      */
-    public Boolean checkConnection()
-    {
+    public Boolean checkConnection() {
         return getConnection() != null;
     }
 
     /**
      * Close connection
      */
-    public void close()
-    {
-        try
-        {
-            if (connection != null)
-            {
+    public void close() {
+        try {
+            if (connection != null) {
                 connection.close();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.severe("Failed to close database connection! " + e.getMessage());
         }
     }
@@ -106,15 +86,11 @@ public class MySQLCore implements DBCore
      * @param query
      * @return
      */
-    public ResultSet select(String query)
-    {
-        try
-        {
+    public ResultSet select(String query) {
+        try {
             Statement statement = getConnection().createStatement();
             return statement.executeQuery(query);
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             log.severe("Error at SQL Query: " + ex.getMessage());
             log.severe("Query: " + query);
         }
@@ -127,34 +103,24 @@ public class MySQLCore implements DBCore
      *
      * @param query
      */
-    public long insert(String query)
-    {
+    public long insert(String query) {
         PreciousStones.debug(query);
         long key = 0;
 
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
             ResultSet keys = null;
 
-            try
-            {
+            try {
                 statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
                 keys = statement.getGeneratedKeys();
-            }
-            catch (SQLException ex)
-            {
-                if (!ex.toString().contains("not return ResultSet"))
-                {
+            } catch (SQLException ex) {
+                if (!ex.toString().contains("not return ResultSet")) {
                     log.severe("Error at SQL INSERT Query: " + ex);
                 }
-            }
-            finally
-            {
-                if (keys != null)
-                {
-                    if (keys.next())
-                    {
+            } finally {
+                if (keys != null) {
+                    if (keys.next()) {
                         key = keys.getLong(1);
                     }
                 }
@@ -162,11 +128,8 @@ public class MySQLCore implements DBCore
             }
 
             return key;
-        }
-        catch (SQLException ex)
-        {
-            if (!ex.toString().contains("not return ResultSet"))
-            {
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("not return ResultSet")) {
                 log.severe("Error at SQL INSERT Query: " + ex);
             }
         }
@@ -179,27 +142,19 @@ public class MySQLCore implements DBCore
      *
      * @param query
      */
-    public void update(String query)
-    {
+    public void update(String query) {
         PreciousStones.debug(query);
 
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
 
-            try
-            {
+            try {
                 statement.executeUpdate(query);
-            }
-            finally
-            {
+            } finally {
                 statement.close();
             }
-        }
-        catch (SQLException ex)
-        {
-            if (!ex.toString().contains("not return ResultSet"))
-            {
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("not return ResultSet")) {
                 log.severe("Error at SQL UPDATE Query: " + ex);
             }
         }
@@ -210,27 +165,19 @@ public class MySQLCore implements DBCore
      *
      * @param query
      */
-    public void delete(String query)
-    {
+    public void delete(String query) {
         PreciousStones.debug(query);
 
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
 
-            try
-            {
+            try {
                 statement.executeUpdate(query);
-            }
-            finally
-            {
+            } finally {
                 statement.close();
             }
-        }
-        catch (SQLException ex)
-        {
-            if (!ex.toString().contains("not return ResultSet"))
-            {
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("not return ResultSet")) {
                 log.severe("Error at SQL DELETE Query: " + ex);
             }
         }
@@ -242,25 +189,18 @@ public class MySQLCore implements DBCore
      * @param query
      * @return
      */
-    public Boolean execute(String query)
-    {
+    public Boolean execute(String query) {
         PreciousStones.debug(query);
 
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
 
-            try
-            {
+            try {
                 statement.execute(query);
-            }
-            finally
-            {
+            } finally {
                 statement.close();
             }
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             log.severe("Error at SQL Query: " + ex.getMessage());
             return false;
         }
@@ -273,15 +213,11 @@ public class MySQLCore implements DBCore
      * @param table
      * @return
      */
-    public Boolean existsTable(String table)
-    {
-        try
-        {
+    public Boolean existsTable(String table) {
+        try {
             ResultSet tables = getConnection().getMetaData().getTables(null, null, table, null);
             return tables.next();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             log.severe("Failed to check if table " + table + " exists: " + e.getMessage());
             return false;
         }
@@ -294,15 +230,11 @@ public class MySQLCore implements DBCore
      * @param column
      * @return
      */
-    public Boolean existsColumn(String table, String column)
-    {
-        try
-        {
+    public Boolean existsColumn(String table, String column) {
+        try {
             ResultSet col = getConnection().getMetaData().getColumns(null, null, table, column);
             return col.next();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.severe("Failed to check if column " + column + " exists in table " + table + " : " + e.getMessage());
             return false;
         }
@@ -315,35 +247,28 @@ public class MySQLCore implements DBCore
      * @param column
      * @return
      */
-    public String getDataType(String table, String column)
-    {
+    public String getDataType(String table, String column) {
         String query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table + "' AND COLUMN_NAME = '" + column + "';";
 
         String dataType = "";
-        try
-        {
+        try {
             Statement statement = getConnection().createStatement();
 
             ResultSet res = statement.executeQuery(query);
 
-            if (res != null)
-            {
-                while (res.next())
-                {
+            if (res != null) {
+                while (res.next()) {
                     dataType = res.getString("DATA_TYPE");
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             //log.severe("Error at SQL Query: " + ex.getMessage());
             //log.severe("Query: " + query);
         }
 
         PreciousStones.debug("Column %s in table %s has datatype: %s", column, table, dataType);
 
-        if (dataType == null)
-        {
+        if (dataType == null) {
             return "";
         }
 

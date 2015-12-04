@@ -14,8 +14,7 @@ import java.util.Queue;
 /**
  * @author phaed
  */
-public class Visualize implements Runnable
-{
+public class Visualize implements Runnable {
     private PreciousStones plugin;
     private Queue<BlockEntry> visualizationQueue = new LinkedList<BlockEntry>();
     private final int timerID;
@@ -24,8 +23,7 @@ public class Visualize implements Runnable
     private final boolean skipRevert;
     private final int seconds;
 
-    public Visualize(List<BlockEntry> blocks, Player player, boolean reverting, boolean skipRevert, int seconds)
-    {
+    public Visualize(List<BlockEntry> blocks, Player player, boolean reverting, boolean skipRevert, int seconds) {
         this.visualizationQueue.addAll(blocks);
         this.plugin = PreciousStones.getInstance();
         this.reverting = reverting;
@@ -35,42 +33,31 @@ public class Visualize implements Runnable
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, PreciousStones.getInstance().getSettingsManager().getVisualizeTicksBetweenSends());
     }
 
-    public void run()
-    {
+    public void run() {
         int i = 0;
 
-        while (i < PreciousStones.getInstance().getSettingsManager().getVisualizeSendSize() && !visualizationQueue.isEmpty())
-        {
+        while (i < PreciousStones.getInstance().getSettingsManager().getVisualizeSendSize() && !visualizationQueue.isEmpty()) {
             BlockEntry bd = visualizationQueue.poll();
             Location loc = bd.getLocation();
 
-            if (!loc.equals(player.getLocation()) && !loc.equals(player.getLocation().add(0, 1, 0)))
-            {
-                if (reverting)
-                {
+            if (!loc.equals(player.getLocation()) && !loc.equals(player.getLocation().add(0, 1, 0))) {
+                if (reverting) {
                     Block block = bd.getBlock();
                     player.sendBlockChange(loc, block.getType(), block.getData());
-                }
-                else
-                {
+                } else {
                     player.sendBlockChange(loc, bd.getTypeId(), bd.getData());
                 }
             }
             i++;
         }
 
-        if (visualizationQueue.isEmpty())
-        {
+        if (visualizationQueue.isEmpty()) {
             Bukkit.getServer().getScheduler().cancelTask(timerID);
 
-            if (!reverting)
-            {
-                if (!skipRevert)
-                {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-                    {
-                        public void run()
-                        {
+            if (!reverting) {
+                if (!skipRevert) {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                        public void run() {
                             plugin.getVisualizationManager().revert(player);
                         }
                     }, 20L * seconds);

@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -21,15 +21,13 @@ import java.util.List;
  *
  * @author Phaed
  */
-public class PSWorldListener implements Listener
-{
+public class PSWorldListener implements Listener {
     private final PreciousStones plugin;
 
     /**
      *
      */
-    public PSWorldListener()
-    {
+    public PSWorldListener() {
         plugin = PreciousStones.getInstance();
     }
 
@@ -37,19 +35,16 @@ public class PSWorldListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onChunkUnload(ChunkUnloadEvent event)
-    {
+    public void onChunkUnload(ChunkUnloadEvent event) {
         World world = event.getWorld();
 
-        if (plugin.getSettingsManager().isBlacklistedWorld(world))
-        {
+        if (plugin.getSettingsManager().isBlacklistedWorld(world)) {
             return;
         }
 
         List<Field> fields = plugin.getForceFieldManager().getSourceFieldsInChunk(new ChunkVec(event.getChunk()), FieldFlag.KEEP_CHUNKS_LOADED);
 
-        if (!fields.isEmpty())
-        {
+        if (!fields.isEmpty()) {
             event.setCancelled(true);
         }
     }
@@ -58,12 +53,10 @@ public class PSWorldListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onWorldLoad(WorldLoadEvent event)
-    {
+    public void onWorldLoad(WorldLoadEvent event) {
         World world = event.getWorld();
 
-        if (plugin.getSettingsManager().isBlacklistedWorld(world))
-        {
+        if (plugin.getSettingsManager().isBlacklistedWorld(world)) {
             return;
         }
 
@@ -75,26 +68,21 @@ public class PSWorldListener implements Listener
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPortalCreate(PortalCreateEvent event)
-    {
+    public void onPortalCreate(PortalCreateEvent event) {
         ArrayList<Block> blocks = event.getBlocks();
 
-        if (event.getReason().equals(PortalCreateEvent.CreateReason.FIRE))
-        {
+        if (event.getReason().equals(PortalCreateEvent.CreateReason.FIRE)) {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(blocks.get(0).getLocation(), FieldFlag.PREVENT_PORTAL_CREATION);
 
-            if (field != null)
-            {
+            if (field != null) {
                 event.setCancelled(true);
             }
         }
 
-        if (event.getReason().equals(PortalCreateEvent.CreateReason.OBC_DESTINATION))
-        {
+        if (event.getReason().equals(PortalCreateEvent.CreateReason.OBC_DESTINATION)) {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(blocks.get(0).getLocation(), FieldFlag.PREVENT_PORTAL_DESTINATION);
 
-            if (field != null)
-            {
+            if (field != null) {
                 event.setCancelled(true);
             }
         }

@@ -10,33 +10,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class StackHelper
-{
-    public static void unHoldItem(Player player, int slot)
-    {
+public class StackHelper {
+    public static void unHoldItem(Player player, int slot) {
         PlayerInventory inv = player.getInventory();
         ItemStack item = inv.getItem(slot);
         int empty = -1;
 
-        if (item != null)
-        {
-            for (int i = 9; i <= 35; i++)
-            {
+        if (item != null) {
+            for (int i = 9; i <= 35; i++) {
                 ItemStack test = inv.getItem(i);
 
-                if (test == null)
-                {
+                if (test == null) {
                     empty = i;
                     break;
                 }
             }
 
-            if (empty == -1)
-            {
+            if (empty == -1) {
                 player.getWorld().dropItemNaturally(player.getLocation(), item);
-            }
-            else
-            {
+            } else {
                 inv.setItem(empty, item);
             }
 
@@ -45,27 +37,21 @@ public class StackHelper
         }
     }
 
-    public static void remove(Player player, BlockTypeEntry item, int amount)
-    {
-        for (ItemStack stack : makeStacks(item, amount))
-        {
+    public static void remove(Player player, BlockTypeEntry item, int amount) {
+        for (ItemStack stack : makeStacks(item, amount)) {
             player.getInventory().removeItem(stack);
         }
         player.updateInventory();
     }
 
-    public static void give(Player player, BlockTypeEntry item, int amount)
-    {
-        for (ItemStack stack : makeStacks(item, amount))
-        {
+    public static void give(Player player, BlockTypeEntry item, int amount) {
+        for (ItemStack stack : makeStacks(item, amount)) {
             HashMap<Integer, ItemStack> rem = player.getInventory().addItem(stack);
 
-            if (rem != null && !rem.isEmpty())
-            {
+            if (rem != null && !rem.isEmpty()) {
                 player.getWorld().dropItemNaturally(player.getLocation(), new ItemStack(Material.CHEST));
 
-                for (ItemStack is : rem.values())
-                {
+                for (ItemStack is : rem.values()) {
                     player.getWorld().dropItemNaturally(player.getLocation(), is);
                 }
             }
@@ -74,16 +60,14 @@ public class StackHelper
         player.updateInventory();
     }
 
-    public static List<ItemStack> makeStacks(BlockTypeEntry item, int amount)
-    {
+    public static List<ItemStack> makeStacks(BlockTypeEntry item, int amount) {
         List<ItemStack> out = new ArrayList<ItemStack>();
 
         Material material = Material.getMaterial(item.getTypeId());
 
         int blocks = amount / 64;
 
-        for (int i = 0; i < blocks; i++)
-        {
+        for (int i = 0; i < blocks; i++) {
             ItemStack is = new ItemStack(material, 64);
             is.setDurability(item.getData());
             out.add(is);
@@ -91,8 +75,7 @@ public class StackHelper
 
         int remainder = amount % 64;
 
-        if (remainder > 0)
-        {
+        if (remainder > 0) {
             ItemStack is = new ItemStack(material, remainder);
             is.setDurability(item.getData());
             out.add(is);
@@ -101,26 +84,20 @@ public class StackHelper
         return out;
     }
 
-    public static boolean hasItems(Player player, BlockTypeEntry item, int amount)
-    {
-        for (ItemStack i : player.getInventory())
-        {
-            if (i == null)
-            {
+    public static boolean hasItems(Player player, BlockTypeEntry item, int amount) {
+        for (ItemStack i : player.getInventory()) {
+            if (i == null) {
                 continue;
             }
 
-            if (i.getTypeId() == item.getTypeId())
-            {
-                if (item.getData() == 0 || i.getData().getData() == item.getData())
-                {
+            if (i.getTypeId() == item.getTypeId()) {
+                if (item.getData() == 0 || i.getData().getData() == item.getData()) {
                     amount -= i.getAmount();
                 }
             }
         }
 
-        if (amount <= 0)
-        {
+        if (amount <= 0) {
             return true;
         }
 

@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
-import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Unbreakable;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,8 +17,7 @@ import java.util.*;
  *
  * @author Phaed
  */
-public final class UnbreakableManager
-{
+public final class UnbreakableManager {
     private final HashMap<String, HashMap<ChunkVec, HashMap<Vec, Unbreakable>>> chunkLists = new HashMap<String, HashMap<ChunkVec, HashMap<Vec, Unbreakable>>>();
     private Queue<Unbreakable> deletionQueue = new LinkedList<Unbreakable>();
     private PreciousStones plugin;
@@ -26,16 +25,14 @@ public final class UnbreakableManager
     /**
      *
      */
-    public UnbreakableManager()
-    {
+    public UnbreakableManager() {
         plugin = PreciousStones.getInstance();
     }
 
     /**
      * Clear out the unbreakables in memory
      */
-    public void clearChunkLists()
-    {
+    public void clearChunkLists() {
         chunkLists.clear();
     }
 
@@ -46,17 +43,14 @@ public final class UnbreakableManager
      * @param owner
      * @return
      */
-    public boolean add(Block unbreakableblock, Player owner)
-    {
-        if (plugin.getPlayerManager().getPlayerEntry(owner.getName()).isDisabled())
-        {
+    public boolean add(Block unbreakableblock, Player owner) {
+        if (plugin.getPlayerManager().getPlayerEntry(owner.getName()).isDisabled()) {
             return false;
         }
 
         // deny if world is blacklisted
 
-        if (plugin.getSettingsManager().isBlacklistedWorld(unbreakableblock.getWorld()))
-        {
+        if (plugin.getSettingsManager().isBlacklistedWorld(unbreakableblock.getWorld())) {
             return false;
         }
 
@@ -77,30 +71,23 @@ public final class UnbreakableManager
      *
      * @param ub the unbreakable
      */
-    public void addToCollection(Unbreakable ub)
-    {
+    public void addToCollection(Unbreakable ub) {
         String world = ub.getWorld();
         ChunkVec chunkvec = ub.toChunkVec();
 
         HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(world);
 
-        if (w != null)
-        {
+        if (w != null) {
             HashMap<Vec, Unbreakable> c = w.get(chunkvec);
 
-            if (c != null)
-            {
+            if (c != null) {
                 c.put(ub.toVec(), ub);
-            }
-            else
-            {
+            } else {
                 HashMap<Vec, Unbreakable> newc = new HashMap<Vec, Unbreakable>();
                 newc.put(ub.toVec(), ub);
                 w.put(chunkvec, newc);
             }
-        }
-        else
-        {
+        } else {
             HashMap<ChunkVec, HashMap<Vec, Unbreakable>> _w = new HashMap<ChunkVec, HashMap<Vec, Unbreakable>>();
             HashMap<Vec, Unbreakable> _c = new HashMap<Vec, Unbreakable>();
 
@@ -116,16 +103,13 @@ public final class UnbreakableManager
      * @param cv
      * @return
      */
-    public boolean hasUnbreakables(ChunkVec cv)
-    {
+    public boolean hasUnbreakables(ChunkVec cv) {
         HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(cv.getWorld());
 
-        if (w != null)
-        {
+        if (w != null) {
             HashMap<Vec, Unbreakable> c = w.get(cv);
 
-            if (c != null)
-            {
+            if (c != null) {
                 return !c.isEmpty();
             }
 
@@ -141,15 +125,12 @@ public final class UnbreakableManager
      * @param cv the chunk vec
      * @return all unbreakables from database that match the chunkvec
      */
-    public Collection<Unbreakable> retrieveUnbreakables(ChunkVec cv)
-    {
-        if (chunkLists.get(cv.getWorld()) == null)
-        {
+    public Collection<Unbreakable> retrieveUnbreakables(ChunkVec cv) {
+        if (chunkLists.get(cv.getWorld()) == null) {
             return null;
         }
 
-        if (chunkLists.get(cv.getWorld()).get(cv) == null)
-        {
+        if (chunkLists.get(cv.getWorld()).get(cv) == null) {
             return null;
         }
 
@@ -162,8 +143,7 @@ public final class UnbreakableManager
      * @param world the world you want the unbreakables from
      * @return all the chunks that match the world
      */
-    public HashMap<ChunkVec, HashMap<Vec, Unbreakable>> retrieveUnbreakables(String world)
-    {
+    public HashMap<ChunkVec, HashMap<Vec, Unbreakable>> retrieveUnbreakables(String world) {
         return chunkLists.get(world);
     }
 
@@ -173,16 +153,13 @@ public final class UnbreakableManager
      * @param location
      * @return the unbreakable
      */
-    public Unbreakable getUnbreakable(Location location)
-    {
+    public Unbreakable getUnbreakable(Location location) {
         HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(location.getWorld().getName());
 
-        if (w != null)
-        {
+        if (w != null) {
             HashMap<Vec, Unbreakable> c = w.get(new ChunkVec(location));
 
-            if (c != null)
-            {
+            if (c != null) {
                 return c.get(new Vec(location));
             }
         }
@@ -195,22 +172,17 @@ public final class UnbreakableManager
      * @param block
      * @return the unbreakable
      */
-    public Unbreakable getUnbreakable(Block block)
-    {
+    public Unbreakable getUnbreakable(Block block) {
         HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(block.getLocation().getWorld().getName());
 
-        if (w != null)
-        {
+        if (w != null) {
             HashMap<Vec, Unbreakable> c = w.get(new ChunkVec(block));
 
-            if (c != null)
-            {
+            if (c != null) {
                 Unbreakable ub = c.get(new Vec(block));
 
-                if (ub != null)
-                {
-                    if (ub.getTypeId() != block.getTypeId())
-                    {
+                if (ub != null) {
+                    if (ub.getTypeId() != block.getTypeId()) {
                         deleteUnbreakable(ub);
                         return null;
                     }
@@ -228,8 +200,7 @@ public final class UnbreakableManager
      * @param unbreakableblock
      * @return confirmation
      */
-    public boolean isUnbreakable(Block unbreakableblock)
-    {
+    public boolean isUnbreakable(Block unbreakableblock) {
         return getUnbreakable(unbreakableblock) != null;
     }
 
@@ -238,16 +209,12 @@ public final class UnbreakableManager
      *
      * @return the count
      */
-    public int getCount()
-    {
+    public int getCount() {
         int size = 0;
 
-        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values())
-        {
-            if (w != null)
-            {
-                for (HashMap<Vec, Unbreakable> c : w.values())
-                {
+        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values()) {
+            if (w != null) {
+                for (HashMap<Vec, Unbreakable> c : w.values()) {
                     size += c.size();
                 }
             }
@@ -261,22 +228,17 @@ public final class UnbreakableManager
      * @param world
      * @return
      */
-    public int cleanOrphans(World world)
-    {
+    public int cleanOrphans(World world) {
         int cleanedCount = 0;
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
         HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = retrieveUnbreakables(world.getName());
 
-        if (w != null)
-        {
-            for (HashMap<Vec, Unbreakable> ubs : w.values())
-            {
-                if (ubs != null)
-                {
-                    for (Unbreakable unbreakable : ubs.values())
-                    {
+        if (w != null) {
+            for (HashMap<Vec, Unbreakable> ubs : w.values()) {
+                if (ubs != null) {
+                    for (Unbreakable unbreakable : ubs.values()) {
                         // ensure chunk is loaded prior to polling
 /*
                         ChunkVec cv = unbreakable.toChunkVec();
@@ -302,8 +264,7 @@ public final class UnbreakableManager
 */
                         int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 
-                        if (type != unbreakable.getTypeId())
-                        {
+                        if (type != unbreakable.getTypeId()) {
                             cleanedCount++;
                             queueRelease(unbreakable);
                         }
@@ -313,8 +274,7 @@ public final class UnbreakableManager
         }
         flush();
 
-        if (cleanedCount != 0)
-        {
+        if (cleanedCount != 0) {
             PreciousStones.log("countsOrphanedUnbreakables", world.getName(), cleanedCount);
         }
         return cleanedCount;
@@ -326,38 +286,30 @@ public final class UnbreakableManager
      * @param world
      * @return
      */
-    public int revertOrphans(World world)
-    {
+    public int revertOrphans(World world) {
         int revertedCount = 0;
         boolean currentChunkLoaded = false;
         ChunkVec currentChunk = null;
 
         HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = retrieveUnbreakables(world.getName());
 
-        if (w != null)
-        {
-            for (HashMap<Vec, Unbreakable> ubs : w.values())
-            {
-                for (Unbreakable unbreakable : ubs.values())
-                {
+        if (w != null) {
+            for (HashMap<Vec, Unbreakable> ubs : w.values()) {
+                for (Unbreakable unbreakable : ubs.values()) {
                     // ensure chunk is loaded prior to polling
 
                     ChunkVec cv = unbreakable.toChunkVec();
 
-                    if (!cv.equals(currentChunk))
-                    {
-                        if (!currentChunkLoaded)
-                        {
-                            if (currentChunk != null)
-                            {
+                    if (!cv.equals(currentChunk)) {
+                        if (!currentChunkLoaded) {
+                            if (currentChunk != null) {
                                 world.unloadChunk(currentChunk.getX(), currentChunk.getZ());
                             }
                         }
 
                         currentChunkLoaded = world.isChunkLoaded(cv.getX(), cv.getZ());
 
-                        if (!currentChunkLoaded)
-                        {
+                        if (!currentChunkLoaded) {
                             world.loadChunk(cv.getX(), cv.getZ());
                         }
 
@@ -366,11 +318,10 @@ public final class UnbreakableManager
 
                     Block block = world.getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
 
-                    if (!plugin.getSettingsManager().isUnbreakableType(block))
-                    {
+                    if (!plugin.getSettingsManager().isUnbreakableType(block)) {
                         revertedCount++;
                         block.setTypeId(unbreakable.getTypeId());
-                        block.setData((byte)unbreakable.getData());
+                        block.setData((byte) unbreakable.getData());
                     }
                 }
             }
@@ -386,12 +337,10 @@ public final class UnbreakableManager
      * @param playerName
      * @return confirmation
      */
-    public boolean isOwner(Block unbreakableblock, String playerName)
-    {
+    public boolean isOwner(Block unbreakableblock, String playerName) {
         Unbreakable unbreakable = getUnbreakable(unbreakableblock);
 
-        if (unbreakable != null)
-        {
+        if (unbreakable != null) {
             return unbreakable.isOwner(playerName);
         }
         return false;
@@ -403,12 +352,10 @@ public final class UnbreakableManager
      * @param unbreakableblock
      * @return the owner's name
      */
-    public String getOwner(Block unbreakableblock)
-    {
+    public String getOwner(Block unbreakableblock) {
         Unbreakable unbreakable = getUnbreakable(unbreakableblock);
 
-        if (unbreakable != null)
-        {
+        if (unbreakable != null) {
             return unbreakable.getOwner();
         }
         return "";
@@ -421,8 +368,7 @@ public final class UnbreakableManager
      * @param chunkradius
      * @return the unbreakables
      */
-    public ArrayList<Unbreakable> getUnbreakablesInArea(Vec vec, int chunkradius)
-    {
+    public ArrayList<Unbreakable> getUnbreakablesInArea(Vec vec, int chunkradius) {
         ArrayList<Unbreakable> out = new ArrayList<Unbreakable>();
 
         int xlow = (vec.getX() >> 4) - chunkradius;
@@ -430,14 +376,11 @@ public final class UnbreakableManager
         int zlow = (vec.getZ() >> 4) - chunkradius;
         int zhigh = (vec.getZ() >> 4) + chunkradius;
 
-        for (int x = xlow; x <= xhigh; x++)
-        {
-            for (int z = zlow; z <= zhigh; z++)
-            {
+        for (int x = xlow; x <= xhigh; x++) {
+            for (int z = zlow; z <= zhigh; z++) {
                 Collection<Unbreakable> ubs = retrieveUnbreakables(new ChunkVec(x, z, vec.getWorld()));
 
-                if (ubs != null)
-                {
+                if (ubs != null) {
                     out.addAll(ubs);
                 }
             }
@@ -453,8 +396,7 @@ public final class UnbreakableManager
      * @param chunkradius
      * @return the unbreakables
      */
-    public ArrayList<Unbreakable> getUnbreakablesInArea(Player player, int chunkradius)
-    {
+    public ArrayList<Unbreakable> getUnbreakablesInArea(Player player, int chunkradius) {
         return getUnbreakablesInArea(new Vec(player.getLocation()), chunkradius);
     }
 
@@ -464,30 +406,22 @@ public final class UnbreakableManager
      * @param block
      * @return the block
      */
-    public Block touchingUnbrakableBlock(Block block)
-    {
-        if (block == null)
-        {
+    public Block touchingUnbrakableBlock(Block block) {
+        if (block == null) {
             return null;
         }
 
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int z = -1; z <= 1; z++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    if (x == 0 && y == 0 && z == 0)
-                    {
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                for (int y = -1; y <= 1; y++) {
+                    if (x == 0 && y == 0 && z == 0) {
                         continue;
                     }
 
                     Block surroundingblock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.getSettingsManager().isUnbreakableType(surroundingblock))
-                    {
-                        if (plugin.getUnbreakableManager().isUnbreakable(surroundingblock))
-                        {
+                    if (plugin.getSettingsManager().isUnbreakableType(surroundingblock)) {
+                        if (plugin.getUnbreakableManager().isUnbreakable(surroundingblock)) {
                             return surroundingblock;
                         }
                     }
@@ -504,18 +438,13 @@ public final class UnbreakableManager
      * @param playerName the players
      * @return the count of deleted unbreakables
      */
-    public int deleteBelonging(String playerName)
-    {
+    public int deleteBelonging(String playerName) {
         int deletedUbs = 0;
 
-        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values())
-        {
-            for (HashMap<Vec, Unbreakable> ubs : w.values())
-            {
-                for (Unbreakable ub : ubs.values())
-                {
-                    if (ub.getOwner().equalsIgnoreCase(playerName))
-                    {
+        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values()) {
+            for (HashMap<Vec, Unbreakable> ubs : w.values()) {
+                for (Unbreakable ub : ubs.values()) {
+                    if (ub.getOwner().equalsIgnoreCase(playerName)) {
                         queueRelease(ub);
                         deletedUbs++;
                     }
@@ -534,22 +463,15 @@ public final class UnbreakableManager
      * @param type
      * @return the count of deleted unbreakables
      */
-    public int deleteUnbreakablesOfType(BlockTypeEntry type)
-    {
+    public int deleteUnbreakablesOfType(BlockTypeEntry type) {
         int deletedCount = 0;
 
-        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values())
-        {
-            if (w != null)
-            {
-                for (HashMap<Vec, Unbreakable> c : w.values())
-                {
-                    if (c != null)
-                    {
-                        for (Unbreakable ub : c.values())
-                        {
-                            if (ub.getTypeEntry().equals(type))
-                            {
+        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values()) {
+            if (w != null) {
+                for (HashMap<Vec, Unbreakable> c : w.values()) {
+                    if (c != null) {
+                        for (Unbreakable ub : c.values()) {
+                            if (ub.getTypeEntry().equals(type)) {
                                 queueRelease(ub);
                                 deletedCount++;
                             }
@@ -559,8 +481,7 @@ public final class UnbreakableManager
             }
         }
 
-        if (deletedCount > 0)
-        {
+        if (deletedCount > 0) {
             flush();
         }
 
@@ -572,8 +493,7 @@ public final class UnbreakableManager
      *
      * @param unbreakableblock
      */
-    public void release(Block unbreakableblock)
-    {
+    public void release(Block unbreakableblock) {
         Unbreakable ub = getUnbreakable(unbreakableblock);
         deleteUnbreakable(ub);
     }
@@ -583,8 +503,7 @@ public final class UnbreakableManager
      *
      * @param unbreakableblock
      */
-    public void queueRelease(Block unbreakableblock)
-    {
+    public void queueRelease(Block unbreakableblock) {
         deletionQueue.add(getUnbreakable(unbreakableblock));
     }
 
@@ -593,18 +512,15 @@ public final class UnbreakableManager
      *
      * @param unbreakable
      */
-    public void queueRelease(Unbreakable unbreakable)
-    {
+    public void queueRelease(Unbreakable unbreakable) {
         deletionQueue.add(unbreakable);
     }
 
     /**
      * Delete unbreakables in deletion queue
      */
-    public void flush()
-    {
-        while (deletionQueue.size() > 0)
-        {
+    public void flush() {
+        while (deletionQueue.size() > 0) {
             Unbreakable pending = deletionQueue.poll();
             deleteUnbreakable(pending);
         }
@@ -615,16 +531,13 @@ public final class UnbreakableManager
      *
      * @param ub
      */
-    public void deleteUnbreakable(Unbreakable ub)
-    {
+    public void deleteUnbreakable(Unbreakable ub) {
         HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w = chunkLists.get(ub.getWorld());
 
-        if (w != null)
-        {
+        if (w != null) {
             HashMap<Vec, Unbreakable> c = w.get(ub.toChunkVec());
 
-            if (c != null)
-            {
+            if (c != null) {
                 c.remove(ub);
             }
         }
@@ -641,16 +554,11 @@ public final class UnbreakableManager
      * @param oldName
      * @param newName
      */
-    public void migrateUsername(String oldName, String newName)
-    {
-        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values())
-        {
-            for (HashMap<Vec, Unbreakable> ubs : w.values())
-            {
-                for (Unbreakable ub : ubs.values())
-                {
-                    if (ub.getOwner().equalsIgnoreCase(oldName))
-                    {
+    public void migrateUsername(String oldName, String newName) {
+        for (HashMap<ChunkVec, HashMap<Vec, Unbreakable>> w : chunkLists.values()) {
+            for (HashMap<Vec, Unbreakable> ubs : w.values()) {
+                for (Unbreakable ub : ubs.values()) {
+                    if (ub.getOwner().equalsIgnoreCase(oldName)) {
                         ub.setOwner(newName);
                         plugin.getStorageManager().offerUnbreakable(ub, false);
                     }

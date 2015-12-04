@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -12,8 +12,7 @@ import org.bukkit.entity.Player;
 /**
  * @author phaed
  */
-public class ForesterEntry
-{
+public class ForesterEntry {
     private Field field;
     private int count;
     private String playerName;
@@ -25,8 +24,7 @@ public class ForesterEntry
      * @param field
      * @param player
      */
-    public ForesterEntry(Field field, Player player)
-    {
+    public ForesterEntry(Field field, Player player) {
         this.field = field;
         this.playerName = player.getName();
         this.count = 0;
@@ -39,8 +37,7 @@ public class ForesterEntry
 
         ChatHelper.send(player, "foresterActivating");
 
-        if (field.getForestingModule().hasForesterUse())
-        {
+        if (field.getForestingModule().hasForesterUse()) {
             ChatHelper.send(player, "foresterUsesLeft", field.getForestingModule().foresterUsesLeft());
         }
     }
@@ -48,16 +45,13 @@ public class ForesterEntry
     /**
      * @return the field
      */
-    public Field getField()
-    {
+    public Field getField() {
         return field;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof ForesterEntry))
-        {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ForesterEntry)) {
             return false;
         }
 
@@ -66,68 +60,56 @@ public class ForesterEntry
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 3;
         hash = 23 * hash + (this.field != null ? this.field.hashCode() : 0);
         return hash;
     }
 
-    private void scheduleNextUpdate()
-    {
+    private void scheduleNextUpdate() {
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Update(), growTime);
     }
 
-    private class Update implements Runnable
-    {
-        public void run()
-        {
-            if (doPlantingAttempt())
-            {
+    private class Update implements Runnable {
+        public void run() {
+            if (doPlantingAttempt()) {
                 scheduleNextUpdate();
             }
         }
     }
 
-    private boolean doPlantingAttempt()
-    {
+    private boolean doPlantingAttempt() {
         PreciousStones.debug("planting attempt");
         World world = plugin.getServer().getWorld(field.getWorld());
         Player player = plugin.getServer().getPlayer(playerName);
 
-        if (world == null || player == null)
-        {
+        if (world == null || player == null) {
             return false;
         }
 
-        if (!landPrepared)
-        {
+        if (!landPrepared) {
             PreciousStones.debug("prepare land");
             plugin.getForesterManager().prepareLand(field, world);
             PreciousStones.debug("land prepared");
             landPrepared = true;
         }
 
-        if (!field.getSettings().getTreeTypes().isEmpty())
-        {
+        if (!field.getSettings().getTreeTypes().isEmpty()) {
             PreciousStones.debug("generate tree");
             plugin.getForesterManager().generateTree(field, player, world);
         }
 
         count++;
 
-        if (count >= field.getSettings().getTreeCount())
-        {
+        if (count >= field.getSettings().getTreeCount()) {
             plugin.getForesterManager().doCreatureSpawns(field);
 
-            if (!field.getForestingModule().hasForesterUse())
-            {
+            if (!field.getForestingModule().hasForesterUse()) {
                 Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
                 block.setTypeId(0, false);
                 block.getLocation().add(0, -1, 0).getBlock().setTypeId(field.getSettings().getGroundBlock().getTypeId(), false);
 
-                if (!field.getSettings().getTreeTypes().isEmpty())
-                {
+                if (!field.getSettings().getTreeTypes().isEmpty()) {
                     world.generateTree(block.getLocation(), ForesterManager.getTree(field.getSettings()));
                 }
 

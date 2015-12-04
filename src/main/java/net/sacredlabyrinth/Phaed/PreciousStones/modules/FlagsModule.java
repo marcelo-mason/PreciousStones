@@ -1,12 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.modules;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.DirtyFieldReason;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PaymentEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.RentEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,21 +17,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class FlagsModule
-{
+public class FlagsModule {
     private Field field;
     private List<FieldFlag> flags = new ArrayList<FieldFlag>();
     private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
     private List<FieldFlag> insertedFlags = new ArrayList<FieldFlag>();
     private List<FieldFlag> clearedFlags = new ArrayList<FieldFlag>();
 
-    public FlagsModule(Field field)
-    {
+    public FlagsModule(Field field) {
         this.field = field;
     }
 
-    public void addFlag(FieldFlag flag)
-    {
+    public void addFlag(FieldFlag flag) {
         flags.add(flag);
     }
 
@@ -41,17 +38,14 @@ public class FlagsModule
      * @param flag
      * @return
      */
-    public boolean hasFlag(FieldFlag flag)
-    {
+    public boolean hasFlag(FieldFlag flag) {
         boolean ret = flags.contains(flag);
 
-        if (!ret)
-        {
+        if (!ret) {
             ret = insertedFlags.contains(flag);
         }
 
-        if (disabledFlags.contains(flag))
-        {
+        if (disabledFlags.contains(flag)) {
             ret = false;
         }
 
@@ -64,8 +58,7 @@ public class FlagsModule
      * @param flagStr
      * @return
      */
-    public boolean hasFlag(String flagStr)
-    {
+    public boolean hasFlag(String flagStr) {
         return hasFlag(Helper.toFieldFlag(flagStr));
     }
 
@@ -74,8 +67,7 @@ public class FlagsModule
      *
      * @return the flags
      */
-    public String getFlagsAsString()
-    {
+    public String getFlagsAsString() {
         JSONObject json = new JSONObject();
 
         // writing the list of flags to json
@@ -101,89 +93,72 @@ public class FlagsModule
         JSONArray whitelistedBlocksList = new JSONArray();
         whitelistedBlocksList.addAll(field.getListingModule().getWhitelistedBlocks());
 
-        if (!paymentList.isEmpty())
-        {
+        if (!paymentList.isEmpty()) {
             json.put("payments", paymentList);
         }
 
-        if (!disabledFlags.isEmpty())
-        {
+        if (!disabledFlags.isEmpty()) {
             json.put("disabledFlags", disabledFlags);
         }
 
-        if (!insertedFlags.isEmpty())
-        {
+        if (!insertedFlags.isEmpty()) {
             json.put("insertedFlags", insertedFlags);
         }
 
-        if (!clearedFlags.isEmpty())
-        {
+        if (!clearedFlags.isEmpty()) {
             json.put("clearedFlags", clearedFlags);
         }
 
-        if (!blacklistedCommandsList.isEmpty())
-        {
+        if (!blacklistedCommandsList.isEmpty()) {
             json.put("blacklistedCommands", blacklistedCommandsList);
         }
 
-        if (!renterList.isEmpty())
-        {
+        if (!renterList.isEmpty()) {
             json.put("renters", renterList);
         }
 
-        if (field.getRevertingModule().getRevertSecs() > 0)
-        {
+        if (field.getRevertingModule().getRevertSecs() > 0) {
             json.put("revertSecs", field.getRevertingModule().getRevertSecs());
         }
 
-        if (field.getRentingModule().hasLimitSeconds())
-        {
+        if (field.getRentingModule().hasLimitSeconds()) {
             json.put("limitSeconds", field.getRentingModule().getLimitSeconds());
         }
 
-        if (field.isDisabled())
-        {
+        if (field.isDisabled()) {
             json.put("disabled", field.isDisabled());
         }
 
-        if (field.getHidingModule().isHidden())
-        {
+        if (field.getHidingModule().isHidden()) {
             json.put("hidden", field.getHidingModule().isHidden());
         }
 
-        if (field.getForestingModule().getForesterUsed() > 0)
-        {
+        if (field.getForestingModule().getForesterUsed() > 0) {
             json.put("foresterUsed", field.getForestingModule().getForesterUsed());
         }
 
         return json.toString();
     }
 
-    public ArrayList<String> getDisabledFlagsStringList()
-    {
+    public ArrayList<String> getDisabledFlagsStringList() {
         ArrayList<String> ll = new ArrayList<String>();
-        for (FieldFlag flag : disabledFlags)
-        {
+        for (FieldFlag flag : disabledFlags) {
             ll.add(Helper.toFlagStr(flag));
         }
         return ll;
     }
 
-    public ArrayList<String> getInsertedFlagsStringList()
-    {
+    public ArrayList<String> getInsertedFlagsStringList() {
         ArrayList<String> ll = new ArrayList<String>();
-        for (FieldFlag flag : insertedFlags)
-        {
+        for (FieldFlag flag : insertedFlags) {
             ll.add(Helper.toFlagStr(flag));
         }
         return ll;
     }
 
-    public ArrayList<String> getClearedFlagsStringList()
-    {
+    public ArrayList<String> getClearedFlagsStringList() {
         ArrayList<String> ll = new ArrayList<String>();
-        for (FieldFlag flag : clearedFlags)
-        {
+        for (FieldFlag flag : clearedFlags) {
             ll.add(Helper.toFlagStr(flag));
         }
         return ll;
@@ -194,8 +169,7 @@ public class FlagsModule
      *
      * @return
      */
-    public List<FieldFlag> getInsertedFlags()
-    {
+    public List<FieldFlag> getInsertedFlags() {
         return insertedFlags;
     }
 
@@ -204,8 +178,7 @@ public class FlagsModule
      *
      * @return
      */
-    public List<FieldFlag> getClearedFlags()
-    {
+    public List<FieldFlag> getClearedFlags() {
         return clearedFlags;
     }
 
@@ -214,123 +187,83 @@ public class FlagsModule
      *
      * @param flagString the flags to set
      */
-    public void setFlags(String flagString)
-    {
-        if (flagString != null && !flagString.isEmpty())
-        {
+    public void setFlags(String flagString) {
+        if (flagString != null && !flagString.isEmpty()) {
             JSONObject flags = (JSONObject) JSONValue.parse(flagString);
 
-            if (flags != null)
-            {
-                for (Object flag : flags.keySet())
-                {
-                    try
-                    {
+            if (flags != null) {
+                for (Object flag : flags.keySet()) {
+                    try {
                         // reading the list of flags from json
-                        if (flag.equals("disabledFlags"))
-                        {
+                        if (flag.equals("disabledFlags")) {
                             JSONArray disabledFlags = (JSONArray) flags.get(flag);
 
-                            for (Object flagStr : disabledFlags)
-                            {
+                            for (Object flagStr : disabledFlags) {
                                 // do no toggle of no-toggle flags
 
-                                if (flagStr.toString().equalsIgnoreCase("dynmap-area") || flagStr.toString().equalsIgnoreCase("dynmap-marker"))
-                                {
-                                    if (hasFlag(FieldFlag.DYNMAP_NO_TOGGLE))
-                                    {
+                                if (flagStr.toString().equalsIgnoreCase("dynmap-area") || flagStr.toString().equalsIgnoreCase("dynmap-marker")) {
+                                    if (hasFlag(FieldFlag.DYNMAP_NO_TOGGLE)) {
                                         continue;
                                     }
                                 }
 
                                 disableFlag(flagStr.toString(), true);
                             }
-                        }
-                        else if (flag.equals("insertedFlags"))
-                        {
+                        } else if (flag.equals("insertedFlags")) {
                             JSONArray localFlags = (JSONArray) flags.get(flag);
 
-                            for (Object flagStr : localFlags)
-                            {
+                            for (Object flagStr : localFlags) {
                                 insertFieldFlag(flagStr.toString());
                             }
-                        }
-                        else if (flag.equals("clearedFlags"))
-                        {
+                        } else if (flag.equals("clearedFlags")) {
                             JSONArray localFlags = (JSONArray) flags.get(flag);
 
-                            for (Object flagStr : localFlags)
-                            {
+                            for (Object flagStr : localFlags) {
                                 clearFieldFlag(flagStr.toString());
                             }
-                        }
-                        else if (flag.equals("renters"))
-                        {
+                        } else if (flag.equals("renters")) {
                             JSONArray renterList = (JSONArray) flags.get(flag);
 
                             field.getRentingModule().clearRenters();
-                            for (Object flagStr : renterList)
-                            {
+                            for (Object flagStr : renterList) {
                                 RentEntry entry = new RentEntry(flagStr.toString());
                                 field.getRentingModule().addRenter(entry);
                             }
-                        }
-                        else if (flag.equals("blacklistedCommands"))
-                        {
+                        } else if (flag.equals("blacklistedCommands")) {
                             JSONArray blacklistedCommandsList = (JSONArray) flags.get(flag);
 
-                            for (Object flagStr : blacklistedCommandsList)
-                            {
+                            for (Object flagStr : blacklistedCommandsList) {
                                 field.getListingModule().getBlacklistedCommands().add(flagStr.toString());
                             }
-                        }
-                        else if (flag.equals("whitelistedBlocks"))
-                        {
+                        } else if (flag.equals("whitelistedBlocks")) {
                             JSONArray whitelistedBlocksList = (JSONArray) flags.get(flag);
 
-                            for (Object flagStr : whitelistedBlocksList)
-                            {
+                            for (Object flagStr : whitelistedBlocksList) {
                                 field.getListingModule().getWhitelistedBlocks().add(new BlockTypeEntry(flagStr.toString()));
                             }
-                        }
-                        else if (flag.equals("foresterUsed"))
-                        {
+                        } else if (flag.equals("foresterUsed")) {
                             field.getForestingModule().setForesterUsed(((Long) flags.get(flag)).intValue());
-                        }
-                        else if (flag.equals("revertSecs"))
-                        {
+                        } else if (flag.equals("revertSecs")) {
                             field.getRevertingModule().setRevertSecs(((Long) flags.get(flag)).intValue());
-                        }
-                        else if (flag.equals("limitSeconds"))
-                        {
+                        } else if (flag.equals("limitSeconds")) {
                             field.getRentingModule().setLimitSeconds(((Long) flags.get(flag)).intValue());
-                        }
-                        else if (flag.equals("disabled"))
-                        {
+                        } else if (flag.equals("disabled")) {
                             field.setDisabledNoMask(((Boolean) flags.get(flag)));
-                        }
-                        else if (flag.equals("hidden"))
-                        {
+                        } else if (flag.equals("hidden")) {
                             field.getHidingModule().setHidden((Boolean) flags.get(flag));
-                        }
-                        else if (flag.equals("payments"))
-                        {
+                        } else if (flag.equals("payments")) {
                             JSONArray paymentList = (JSONArray) flags.get(flag);
 
                             paymentList.clear();
-                            for (Object flagStr : paymentList)
-                            {
+                            for (Object flagStr : paymentList) {
                                 field.getRentingModule().addPayment(new PaymentEntry(flagStr.toString()));
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         System.out.print("Failed reading field flag: " + flag);
                         System.out.print("Value: " + flags.get(flag));
 
-                        for (StackTraceElement el : ex.getStackTrace())
-                        {
+                        for (StackTraceElement el : ex.getStackTrace()) {
                             System.out.print(el.toString());
                         }
                     }
@@ -344,24 +277,20 @@ public class FlagsModule
      *
      * @param flagStr
      */
-    public void enableFlag(String flagStr)
-    {
+    public void enableFlag(String flagStr) {
         boolean canEnable = false;
 
-        for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); )
-        {
+        for (Iterator iter = disabledFlags.iterator(); iter.hasNext(); ) {
             FieldFlag flag = (FieldFlag) iter.next();
 
-            if (Helper.toFlagStr(flag).equals(flagStr))
-            {
+            if (Helper.toFlagStr(flag).equals(flagStr)) {
                 //remove from the disableFlags list
                 iter.remove();
                 canEnable = true;
             }
         }
 
-        if (canEnable && !flags.contains(Helper.toFieldFlag(flagStr)))
-        {
+        if (canEnable && !flags.contains(Helper.toFieldFlag(flagStr))) {
             flags.add(Helper.toFieldFlag(flagStr));
             field.addDirty(DirtyFieldReason.FLAGS);
             PreciousStones.debug("DirtyFlags: enableFlag");
@@ -373,26 +302,21 @@ public class FlagsModule
      *
      * @param flagStr
      */
-    public void disableFlag(String flagStr, boolean skipSave)
-    {
+    public void disableFlag(String flagStr, boolean skipSave) {
         boolean hasFlag = false;
 
-        for (Iterator iter = flags.iterator(); iter.hasNext(); )
-        {
+        for (Iterator iter = flags.iterator(); iter.hasNext(); ) {
             FieldFlag flag = (FieldFlag) iter.next();
-            if (Helper.toFlagStr(flag).equals(flagStr))
-            {
+            if (Helper.toFlagStr(flag).equals(flagStr)) {
                 iter.remove();
                 hasFlag = true;
             }
         }
 
-        if (hasFlag && !disabledFlags.contains(Helper.toFieldFlag(flagStr)))
-        {
+        if (hasFlag && !disabledFlags.contains(Helper.toFieldFlag(flagStr))) {
             disabledFlags.add(Helper.toFieldFlag(flagStr));
 
-            if (!skipSave)
-            {
+            if (!skipSave) {
                 field.addDirty(DirtyFieldReason.FLAGS);
                 PreciousStones.debug("DirtyFlags: disableFlag");
             }
@@ -405,12 +329,9 @@ public class FlagsModule
      * @param flagStr
      * @return
      */
-    public boolean hasDisabledFlag(String flagStr)
-    {
-        for (FieldFlag flag : disabledFlags)
-        {
-            if (Helper.toFlagStr(flag).equals(flagStr))
-            {
+    public boolean hasDisabledFlag(String flagStr) {
+        for (FieldFlag flag : disabledFlags) {
+            if (Helper.toFlagStr(flag).equals(flagStr)) {
                 return true;
             }
         }
@@ -423,8 +344,7 @@ public class FlagsModule
      * @param flag
      * @return
      */
-    public boolean hasDisabledFlag(FieldFlag flag)
-    {
+    public boolean hasDisabledFlag(FieldFlag flag) {
         return disabledFlags.contains(flag);
     }
 
@@ -433,8 +353,7 @@ public class FlagsModule
      *
      * @return
      */
-    public List<FieldFlag> getDisabledFlags()
-    {
+    public List<FieldFlag> getDisabledFlags() {
         return Collections.unmodifiableList(disabledFlags);
     }
 
@@ -443,17 +362,13 @@ public class FlagsModule
      *
      * @param flagStr
      */
-    public boolean toggleFieldFlag(String flagStr)
-    {
+    public boolean toggleFieldFlag(String flagStr) {
         boolean hasFlag = hasFlag(flagStr);
 
-        if (hasFlag)
-        {
+        if (hasFlag) {
             disableFlag(flagStr, false);
             return false;
-        }
-        else
-        {
+        } else {
             enableFlag(flagStr);
             return true;
         }
@@ -462,14 +377,12 @@ public class FlagsModule
     /**
      * Revert all the flags back to default
      */
-    public void RevertFlags()
-    {
+    public void RevertFlags() {
         //Revert all the flags back to the default
         insertedFlags.clear();
         disabledFlags.clear();
         flags.clear();
-        for (FieldFlag flag : field.getSettings().getDefaultFlags())
-        {
+        for (FieldFlag flag : field.getSettings().getDefaultFlags()) {
             flags.add(flag);
         }
         field.addDirty(DirtyFieldReason.FLAGS);
@@ -481,8 +394,7 @@ public class FlagsModule
      *
      * @return
      */
-    public List<FieldFlag> getFlags()
-    {
+    public List<FieldFlag> getFlags() {
         return Collections.unmodifiableList(flags);
     }
 
@@ -491,24 +403,20 @@ public class FlagsModule
      *
      * @param flagStr
      */
-    public boolean clearFieldFlag(String flagStr)
-    {
+    public boolean clearFieldFlag(String flagStr) {
         boolean cleared = false;
 
-        if (insertedFlags.contains(Helper.toFieldFlag(flagStr)))
-        {
+        if (insertedFlags.contains(Helper.toFieldFlag(flagStr))) {
             insertedFlags.remove(Helper.toFieldFlag(flagStr));
             cleared = true;
         }
 
-        if (disabledFlags.contains(Helper.toFieldFlag(flagStr)))
-        {
+        if (disabledFlags.contains(Helper.toFieldFlag(flagStr))) {
             disabledFlags.remove(Helper.toFieldFlag(flagStr));
             cleared = true;
         }
 
-        if (flags.contains(Helper.toFieldFlag(flagStr)))
-        {
+        if (flags.contains(Helper.toFieldFlag(flagStr))) {
             flags.remove(Helper.toFieldFlag(flagStr));
             cleared = true;
         }
@@ -523,14 +431,11 @@ public class FlagsModule
      *
      * @param flagStr
      */
-    public boolean insertFieldFlag(String flagStr)
-    {
-        if (!insertedFlags.contains(Helper.toFieldFlag(flagStr)))
-        {
+    public boolean insertFieldFlag(String flagStr) {
+        if (!insertedFlags.contains(Helper.toFieldFlag(flagStr))) {
             insertedFlags.add(Helper.toFieldFlag(flagStr));
 
-            if (clearedFlags.contains(Helper.toFieldFlag(flagStr)))
-            {
+            if (clearedFlags.contains(Helper.toFieldFlag(flagStr))) {
                 clearedFlags.remove(Helper.toFieldFlag(flagStr));
             }
 
@@ -546,10 +451,8 @@ public class FlagsModule
      *
      * @param flagStr
      */
-    public boolean insertFlag(String flagStr)
-    {
-        if (!flags.contains(Helper.toFieldFlag(flagStr)))
-        {
+    public boolean insertFlag(String flagStr) {
+        if (!flags.contains(Helper.toFieldFlag(flagStr))) {
             flags.add(Helper.toFieldFlag(flagStr));
             dirtyFlags("insertFlag");
             return true;
@@ -562,38 +465,29 @@ public class FlagsModule
      *
      * @param flags
      */
-    public void importFlags(List<FieldFlag> flags)
-    {
-        for (FieldFlag flag : flags)
-        {
+    public void importFlags(List<FieldFlag> flags) {
+        for (FieldFlag flag : flags) {
             insertFieldFlag(Helper.toFlagStr(flag));
         }
     }
 
-    public void setBreakable()
-    {
-        if (!flags.contains(FieldFlag.BREAKABLE))
-        {
-            if (!insertedFlags.contains(FieldFlag.BREAKABLE))
-            {
+    public void setBreakable() {
+        if (!flags.contains(FieldFlag.BREAKABLE)) {
+            if (!insertedFlags.contains(FieldFlag.BREAKABLE)) {
                 insertedFlags.add(FieldFlag.BREAKABLE);
             }
         }
     }
 
-    public void unsetBreakable()
-    {
-        if (!flags.contains(FieldFlag.BREAKABLE))
-        {
-            if (insertedFlags.contains(FieldFlag.BREAKABLE))
-            {
+    public void unsetBreakable() {
+        if (!flags.contains(FieldFlag.BREAKABLE)) {
+            if (insertedFlags.contains(FieldFlag.BREAKABLE)) {
                 insertedFlags.remove(FieldFlag.BREAKABLE);
             }
         }
     }
 
-    public void dirtyFlags(String reason)
-    {
+    public void dirtyFlags(String reason) {
         field.addDirty(DirtyFieldReason.FLAGS);
         PreciousStones.debug("DirtyFlags: " + reason);
         PreciousStones.getInstance().getStorageManager().offerField(field);

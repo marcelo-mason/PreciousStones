@@ -8,8 +8,7 @@ import org.bukkit.block.Block;
 /**
  * @author phaed
  */
-public abstract class AbstractVec
-{
+public abstract class AbstractVec {
     /**
      * The world name the vector belongs to
      */
@@ -21,8 +20,7 @@ public abstract class AbstractVec
     /**
      *
      */
-    public AbstractVec()
-    {
+    public AbstractVec() {
         this.x = 0;
         this.y = 0;
         this.z = 0;
@@ -35,8 +33,7 @@ public abstract class AbstractVec
      * @param z
      * @param world
      */
-    public AbstractVec(int x, int y, int z, String world)
-    {
+    public AbstractVec(int x, int y, int z, String world) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -46,72 +43,62 @@ public abstract class AbstractVec
     /**
      * @param x the x to set
      */
-    public void setX(int x)
-    {
+    public void setX(int x) {
         this.x = x;
     }
 
     /**
      * @return
      */
-    public int getX()
-    {
+    public int getX() {
         return this.x;
     }
 
     /**
      * @param y the y to set
      */
-    public void setY(int y)
-    {
+    public void setY(int y) {
         this.y = y;
     }
 
     /**
      * @return
      */
-    public int getY()
-    {
+    public int getY() {
         return this.y;
     }
 
     /**
      * @param z the z to set
      */
-    public void setZ(int z)
-    {
+    public void setZ(int z) {
         this.z = z;
     }
 
     /**
      * @return
      */
-    public int getZ()
-    {
+    public int getZ() {
         return this.z;
     }
 
     /**
      * @param world the world to set
      */
-    public void setWorld(String world)
-    {
+    public void setWorld(String world) {
         this.world = world;
     }
 
     /**
      * @return
      */
-    public String getWorld()
-    {
+    public String getWorld() {
         return this.world;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof AbstractVec))
-        {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof AbstractVec)) {
             return false;
         }
 
@@ -120,8 +107,7 @@ public abstract class AbstractVec
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 7;
         hash = 47 * hash + this.getX();
         hash = 47 * hash + this.getY();
@@ -131,44 +117,38 @@ public abstract class AbstractVec
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "[" + getX() + " " + getY() + " " + getZ() + " " + getWorld() + "]";
     }
 
     /**
      * @return the chunkvec
      */
-    public ChunkVec toChunkVec()
-    {
+    public ChunkVec toChunkVec() {
         return new ChunkVec(getX() >> 4, getZ() >> 4, getWorld());
     }
 
     /**
      * @return the vec
      */
-    public Vec toVec()
-    {
+    public Vec toVec() {
         return new Vec(this);
     }
 
     /**
      * @return
      */
-    public Location getLocation()
-    {
+    public Location getLocation() {
         return new Location(Bukkit.getServer().getWorld(getWorld()), getX(), getY(), getZ());
     }
 
     /**
      * @return the block
      */
-    public Block getBlock()
-    {
+    public Block getBlock() {
         World world = Bukkit.getServer().getWorld(getWorld());
 
-        if (world != null)
-        {
+        if (world != null) {
             return world.getBlockAt(getX(), getY(), getZ());
         }
         return null;

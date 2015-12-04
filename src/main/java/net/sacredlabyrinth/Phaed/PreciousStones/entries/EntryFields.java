@@ -8,31 +8,27 @@ import java.util.List;
 /**
  * @author phaed
  */
-public class EntryFields
-{
+public class EntryFields {
     private ArrayList<Field> fields = new ArrayList<Field>();
 
     /**
      * @param field
      */
-    public EntryFields(Field field)
-    {
+    public EntryFields(Field field) {
         this.fields.add(field);
     }
 
     /**
      * @param field
      */
-    public void addField(Field field)
-    {
+    public void addField(Field field) {
         this.fields.add(field);
     }
 
     /**
      * @param field
      */
-    public void removeField(Field field)
-    {
+    public void removeField(Field field) {
         fields.remove(field);
     }
 
@@ -40,24 +36,21 @@ public class EntryFields
      * @param field
      * @return
      */
-    public boolean containsField(Field field)
-    {
+    public boolean containsField(Field field) {
         return fields.contains(field);
     }
 
     /**
      * @return
      */
-    public int size()
-    {
+    public int size() {
         return fields.size();
     }
 
     /**
      * @return
      */
-    public List<Field> getFields()
-    {
+    public List<Field> getFields() {
         return fields;
     }
 }

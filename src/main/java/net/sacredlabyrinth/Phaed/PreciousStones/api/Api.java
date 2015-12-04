@@ -1,20 +1,18 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.api;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Api implements IApi
-{
+public class Api implements IApi {
     private PreciousStones plugin;
 
-    public Api()
-    {
+    public Api() {
         plugin = PreciousStones.getInstance();
     }
 
@@ -25,14 +23,11 @@ public class Api implements IApi
      * @param location the location where the block is being placed
      * @return whether it can be placed in the location or not
      */
-    public boolean canPlace(Player player, Location location)
-    {
+    public boolean canPlace(Player player, Location location) {
         Field field = plugin.getForceFieldManager().getEnabledSourceField(location, FieldFlag.PREVENT_PLACE);
 
-        if (field != null)
-        {
-            if (FieldFlag.PREVENT_PLACE.applies(field, player))
-            {
+        if (field != null) {
+            if (FieldFlag.PREVENT_PLACE.applies(field, player)) {
                 return false;
             }
         }
@@ -47,14 +42,11 @@ public class Api implements IApi
      * @param location the location of the block in question
      * @return whether it can be broken or not
      */
-    public boolean canBreak(Player player, Location location)
-    {
+    public boolean canBreak(Player player, Location location) {
         Field field = plugin.getForceFieldManager().getEnabledSourceField(location, FieldFlag.PREVENT_DESTROY);
 
-        if (field != null)
-        {
-            if (FieldFlag.PREVENT_DESTROY.applies(field, player))
-            {
+        if (field != null) {
+            if (FieldFlag.PREVENT_DESTROY.applies(field, player)) {
                 return false;
             }
         }
@@ -69,8 +61,7 @@ public class Api implements IApi
      * @param location
      * @return
      */
-    public boolean isPStone(Location location)
-    {
+    public boolean isPStone(Location location) {
         return plugin.getForceFieldManager().getField(location) != null || plugin.getUnbreakableManager().getUnbreakable(location) != null;
     }
 
@@ -82,8 +73,7 @@ public class Api implements IApi
      * @param location the location that is being protected
      * @return whether a field with the specified flag is protecting the area
      */
-    public boolean isFieldProtectingArea(FieldFlag flag, Location location)
-    {
+    public boolean isFieldProtectingArea(FieldFlag flag, Location location) {
         return plugin.getForceFieldManager().getEnabledSourceField(location, flag) != null;
     }
 
@@ -94,8 +84,7 @@ public class Api implements IApi
      * @param location the location that is being protected
      * @return the fields with the specified flag that are protecting the area
      */
-    public List<Field> getFieldsProtectingArea(FieldFlag flag, Location location)
-    {
+    public List<Field> getFieldsProtectingArea(FieldFlag flag, Location location) {
         return plugin.getForceFieldManager().getEnabledSourceFields(location, flag);
     }
 
@@ -115,14 +104,11 @@ public class Api implements IApi
      * @param location the location you want to test against
      * @return
      */
-    public boolean flagAppliesToPlayer(Player player, FieldFlag flag, Location location)
-    {
+    public boolean flagAppliesToPlayer(Player player, FieldFlag flag, Location location) {
         Field field = plugin.getForceFieldManager().getEnabledSourceField(location, flag);
 
-        if (field != null)
-        {
-            if (flag.applies(field, player))
-            {
+        if (field != null) {
+            if (flag.applies(field, player)) {
                 return true;
             }
         }
@@ -137,12 +123,10 @@ public class Api implements IApi
      * @param flag   the flag that will identify the field.  Use FieldFlag.ALL to count all of his fields
      * @return the number of fields this player has placed
      */
-    public int getPlayerFieldCount(Player player, FieldFlag flag)
-    {
+    public int getPlayerFieldCount(Player player, FieldFlag flag) {
         List<Field> fields = plugin.getForceFieldManager().getPlayerFields(player.getName().toLowerCase(), flag);
 
-        if (fields == null)
-        {
+        if (fields == null) {
             return 0;
         }
 
@@ -156,12 +140,10 @@ public class Api implements IApi
      * @param flag   the flag that will identify the field.  Use FieldFlag.ALL to count all of his fields
      * @return a list of fields the player placed, it is never null.  If the player has not placed any fields it will be empty
      */
-    public List<Field> getPlayerFields(Player player, FieldFlag flag)
-    {
+    public List<Field> getPlayerFields(Player player, FieldFlag flag) {
         List<Field> fields = plugin.getForceFieldManager().getPlayerFields(player.getName().toLowerCase(), flag);
 
-        if (fields == null)
-        {
+        if (fields == null) {
             return new ArrayList<Field>();
         }
 

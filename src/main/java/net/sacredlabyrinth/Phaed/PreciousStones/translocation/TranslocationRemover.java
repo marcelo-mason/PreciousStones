@@ -1,9 +1,9 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.translocation;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TranslocationBlock;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -13,8 +13,7 @@ import java.util.Queue;
 /**
  * @author phaed
  */
-public class TranslocationRemover implements Runnable
-{
+public class TranslocationRemover implements Runnable {
     private PreciousStones plugin;
     private Queue<TranslocationBlock> translocationQueue;
     private Queue<TranslocationBlock> dependentQueue = new LinkedList<TranslocationBlock>();
@@ -28,8 +27,7 @@ public class TranslocationRemover implements Runnable
      * @param translocationQueue
      * @param player
      */
-    public TranslocationRemover(Field field, Queue<TranslocationBlock> translocationQueue, Player player)
-    {
+    public TranslocationRemover(Field field, Queue<TranslocationBlock> translocationQueue, Player player) {
         this.field = field;
         this.translocationQueue = translocationQueue;
         this.player = player;
@@ -39,18 +37,14 @@ public class TranslocationRemover implements Runnable
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 5, 5);
     }
 
-    public void run()
-    {
+    public void run() {
         int i = 0;
 
-        while (i < 100 && !translocationQueue.isEmpty())
-        {
+        while (i < 100 && !translocationQueue.isEmpty()) {
             TranslocationBlock tb = translocationQueue.poll();
 
-            if (tb != null)
-            {
-                if (plugin.getSettingsManager().isDependentBlock(tb.getTypeId()))
-                {
+            if (tb != null) {
+                if (plugin.getSettingsManager().isDependentBlock(tb.getTypeId())) {
                     dependentQueue.add(tb);
                     continue;
                 }
@@ -60,13 +54,10 @@ public class TranslocationRemover implements Runnable
                 // if the block could not be applied, due to another block being in the way
                 // then don't apply it nad set it on the database as not-applied
 
-                if (!applied)
-                {
+                if (!applied) {
                     plugin.getStorageManager().updateTranslocationBlockApplied(field, tb, false);
                     notRemovedCount++;
-                }
-                else
-                {
+                } else {
                     plugin.getStorageManager().deleteTranslocation(field, tb);
                     count++;
                     announce();
@@ -76,10 +67,8 @@ public class TranslocationRemover implements Runnable
             i++;
         }
 
-        if (translocationQueue.isEmpty())
-        {
-            while (i < 200 && !dependentQueue.isEmpty())
-            {
+        if (translocationQueue.isEmpty()) {
+            while (i < 200 && !dependentQueue.isEmpty()) {
                 TranslocationBlock tb = dependentQueue.poll();
 
                 boolean applied = PreciousStones.getInstance().getTranslocationManager().applyTranslocationBlock(tb, player.getWorld());
@@ -87,13 +76,10 @@ public class TranslocationRemover implements Runnable
                 // if the block could not be applied, due to another block being in the way
                 // then don't apply it nad set it on the database as not-applied
 
-                if (!applied)
-                {
+                if (!applied) {
                     plugin.getStorageManager().updateTranslocationBlockApplied(field, tb, false);
                     notRemovedCount++;
-                }
-                else
-                {
+                } else {
                     plugin.getStorageManager().deleteTranslocation(field, tb);
                     count++;
                     announce();
@@ -102,16 +88,14 @@ public class TranslocationRemover implements Runnable
                 i++;
             }
 
-            if (!dependentQueue.iterator().hasNext())
-            {
+            if (!dependentQueue.iterator().hasNext()) {
                 Bukkit.getServer().getScheduler().cancelTask(timerID);
                 field.setDisabled(false);
                 field.getTranslocatingModule().setTranslocating(false);
                 field.getFlagsModule().dirtyFlags("TranslocationRemover");
                 ChatHelper.send(player, "removalComplete");
 
-                if(notRemovedCount > 0)
-                {
+                if (notRemovedCount > 0) {
                     ChatHelper.send(player, "blocksSkipped", count);
                     ChatHelper.send(player, "blocksSkipped2");
                 }
@@ -119,12 +103,9 @@ public class TranslocationRemover implements Runnable
         }
     }
 
-    public void announce()
-    {
-        if (count % 25 == 0 && count != 0)
-        {
-            if (player != null)
-            {
+    public void announce() {
+        if (count % 25 == 0 && count != 0) {
+            if (player != null) {
                 ChatHelper.send(player, "removedBlocks", count);
             }
         }

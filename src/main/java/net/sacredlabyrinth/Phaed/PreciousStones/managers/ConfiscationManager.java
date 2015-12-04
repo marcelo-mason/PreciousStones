@@ -4,12 +4,12 @@
  */
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.ItemStackEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -20,15 +20,13 @@ import java.util.List;
 /**
  * @author telaeris
  */
-public class ConfiscationManager
-{
+public class ConfiscationManager {
     private PreciousStones plugin;
 
     /**
      *
      */
-    public ConfiscationManager()
-    {
+    public ConfiscationManager() {
         plugin = PreciousStones.getInstance();
     }
 
@@ -37,8 +35,7 @@ public class ConfiscationManager
      *
      * @param player
      */
-    public void confiscateItems(Field field, Player player)
-    {
+    public void confiscateItems(Field field, Player player) {
         PlayerInventory inventory = player.getInventory();
         ItemStack[] contents = inventory.getContents();
 
@@ -49,12 +46,9 @@ public class ConfiscationManager
 
         List<ItemStackEntry> confiscated = new ArrayList<ItemStackEntry>();
 
-        for (ItemStack stack : contents)
-        {
-            if (stack != null && stack.getTypeId() > 0)
-            {
-                if (!field.getSettings().canCarry(stack.getTypeId(), stack.getData().getData()))
-                {
+        for (ItemStack stack : contents) {
+            if (stack != null && stack.getTypeId() > 0) {
+                if (!field.getSettings().canCarry(stack.getTypeId(), stack.getData().getData())) {
                     // remove item from inventory
 
                     inventory.removeItem(stack);
@@ -68,10 +62,8 @@ public class ConfiscationManager
 
         ItemStack item = inventory.getHelmet();
 
-        if (item != null)
-        {
-            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData()))
-            {
+        if (item != null) {
+            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData())) {
                 // add item to confiscated list
                 helmet = new ItemStackEntry(item);
 
@@ -82,10 +74,8 @@ public class ConfiscationManager
 
         item = inventory.getChestplate();
 
-        if (item != null)
-        {
-            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData()))
-            {
+        if (item != null) {
+            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData())) {
                 // add item to confiscated list
                 chestplate = new ItemStackEntry(item);
 
@@ -96,10 +86,8 @@ public class ConfiscationManager
 
         item = inventory.getLeggings();
 
-        if (item != null)
-        {
-            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData()))
-            {
+        if (item != null) {
+            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData())) {
                 // add item to confiscated list
                 leggings = new ItemStackEntry(item);
 
@@ -110,10 +98,8 @@ public class ConfiscationManager
 
         item = inventory.getBoots();
 
-        if (item != null)
-        {
-            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData()))
-            {
+        if (item != null) {
+            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData())) {
                 // add item to confiscated list
                 boots = new ItemStackEntry(item);
 
@@ -122,8 +108,7 @@ public class ConfiscationManager
             }
         }
 
-        if (!confiscated.isEmpty() || helmet != null || chestplate != null || leggings != null || boots != null)
-        {
+        if (!confiscated.isEmpty() || helmet != null || chestplate != null || leggings != null || boots != null) {
             PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
             entry.confiscate(confiscated, helmet, chestplate, leggings, boots);
             plugin.getStorageManager().updatePlayer(player.getName());
@@ -131,28 +116,23 @@ public class ConfiscationManager
 
             String msg = "";
 
-            for (ItemStackEntry e : confiscated)
-            {
+            for (ItemStackEntry e : confiscated) {
                 msg += e.getAmount() + " " + Helper.friendlyBlockType(e.getTypeId()) + ", ";
             }
 
-            if (helmet != null)
-            {
+            if (helmet != null) {
                 msg += "1 " + Helper.friendlyBlockType(helmet.getTypeId()) + ", ";
             }
 
-            if (chestplate != null)
-            {
+            if (chestplate != null) {
                 msg += "1 " + Helper.friendlyBlockType(chestplate.getTypeId()) + ", ";
             }
 
-            if (leggings != null)
-            {
+            if (leggings != null) {
                 msg += "1 " + Helper.friendlyBlockType(leggings.getTypeId()) + ", ";
             }
 
-            if (boots != null)
-            {
+            if (boots != null) {
                 msg += "1 " + Helper.friendlyBlockType(boots.getTypeId()) + ", ";
             }
 
@@ -168,12 +148,10 @@ public class ConfiscationManager
      *
      * @param player
      */
-    public void returnItems(Player player)
-    {
+    public void returnItems(Player player) {
         PlayerInventory inventory = player.getInventory();
 
-        if (inventory == null)
-        {
+        if (inventory == null) {
             return;
         }
 
@@ -188,30 +166,24 @@ public class ConfiscationManager
         plugin.getStorageManager().updatePlayer(player.getName());
         player.updateInventory();
 
-        if (helmet != null)
-        {
+        if (helmet != null) {
             inventory.setHelmet(helmet.toItemStack());
         }
 
-        if (chestplate != null)
-        {
+        if (chestplate != null) {
             inventory.setChestplate(chestplate.toItemStack());
         }
 
-        if (leggings != null)
-        {
+        if (leggings != null) {
             inventory.setLeggings(leggings.toItemStack());
         }
 
-        if (boots != null)
-        {
+        if (boots != null) {
             inventory.setBoots(boots.toItemStack());
         }
 
-        for (ItemStackEntry item : confiscated)
-        {
-            if (inventory.firstEmpty() == -1)
-            {
+        for (ItemStackEntry item : confiscated) {
+            if (inventory.firstEmpty() == -1) {
                 player.getWorld().dropItemNaturally(player.getLocation(), item.toItemStack());
                 continue;
             }
@@ -219,32 +191,26 @@ public class ConfiscationManager
             inventory.addItem(item.toItemStack());
         }
 
-        if (!confiscated.isEmpty() || helmet != null || chestplate != null || leggings != null || boots != null)
-        {
+        if (!confiscated.isEmpty() || helmet != null || chestplate != null || leggings != null || boots != null) {
             String msg = "";
 
-            for (ItemStackEntry e : confiscated)
-            {
+            for (ItemStackEntry e : confiscated) {
                 msg += e.getAmount() + " " + Helper.friendlyBlockType(e.getTypeId()) + ", ";
             }
 
-            if (helmet != null)
-            {
+            if (helmet != null) {
                 msg += "1 " + Helper.friendlyBlockType(helmet.getTypeId()) + ", ";
             }
 
-            if (chestplate != null)
-            {
+            if (chestplate != null) {
                 msg += "1 " + Helper.friendlyBlockType(chestplate.getTypeId()) + ", ";
             }
 
-            if (leggings != null)
-            {
+            if (leggings != null) {
                 msg += "1 " + Helper.friendlyBlockType(leggings.getTypeId()) + ", ";
             }
 
-            if (boots != null)
-            {
+            if (boots != null) {
                 msg += "1 " + Helper.friendlyBlockType(boots.getTypeId()) + ", ";
             }
 

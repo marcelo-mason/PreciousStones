@@ -1,12 +1,15 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.TreeType;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
@@ -18,12 +21,10 @@ import java.util.Random;
 /**
  * @author phaed
  */
-public final class ForesterManager
-{
+public final class ForesterManager {
     private PreciousStones plugin;
 
-    public ForesterManager()
-    {
+    public ForesterManager() {
         plugin = PreciousStones.getInstance();
     }
 
@@ -33,8 +34,7 @@ public final class ForesterManager
      * @param field
      * @param world
      */
-    public void prepareLand(Field field, World world)
-    {
+    public void prepareLand(Field field, World world) {
         int minx = field.getX() - field.getRadius();
         int maxx = field.getX() + field.getRadius();
         int minz = field.getZ() - field.getRadius();
@@ -42,16 +42,12 @@ public final class ForesterManager
         int miny = field.getY() - (Math.max(field.getHeight() - 1, 0) / 2);
         int maxy = field.getY() + (Math.max(field.getHeight() - 1, 0) / 2);
 
-        for (int x = minx; x < maxx; x += 4)
-        {
-            for (int z = minz; z <= maxz; z += 4)
-            {
-                for (int y = maxy; y > miny; y--)
-                {
+        for (int x = minx; x < maxx; x += 4) {
+            for (int z = minz; z <= maxz; z += 4) {
+                for (int y = maxy; y > miny; y--) {
                     int type = world.getBlockTypeIdAt(x, y, z);
 
-                    if (!isSeeThrough(type))
-                    {
+                    if (!isSeeThrough(type)) {
                         prepareSpot(field, world, x, y, z, 4);
                     }
                 }
@@ -71,48 +67,38 @@ public final class ForesterManager
      * @param radius
      * @return
      */
-    public int prepareSpot(Field field, World world, int xx, int yy, int zz, int radius)
-    {
+    public int prepareSpot(Field field, World world, int xx, int yy, int zz, int radius) {
         PreciousStones.debug("prepare spot");
         Vec pos = new Vec(xx, yy, zz, world.getName());
 
         int affected = 0;
 
-        for (int x = 0; x <= radius; x++)
-        {
-            for (int y = 0; y <= radius; y++)
-            {
-                for (int z = 0; z <= radius; z++)
-                {
+        for (int x = 0; x <= radius; x++) {
+            for (int y = 0; y <= radius; y++) {
+                for (int z = 0; z <= radius; z++) {
                     Vec vec = pos.add(x, y, z);
                     double d = vec.distance(pos);
 
-                    if (vec.getX() == field.getX() && vec.getY() == field.getY() && vec.getZ() == field.getZ())
-                    {
+                    if (vec.getX() == field.getX() && vec.getY() == field.getY() && vec.getZ() == field.getZ()) {
                         continue;
                     }
 
-                    if (d <= radius + 0.5D)
-                    {
+                    if (d <= radius + 0.5D) {
                         int type = world.getBlockTypeIdAt(vec.getX(), vec.getY(), vec.getZ());
 
-                        if (field.getSettings().isFertileType(new BlockTypeEntry(type)))
-                        {
+                        if (field.getSettings().isFertileType(new BlockTypeEntry(type))) {
                             Block fertile = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
                             fertile.setTypeId(field.getSettings().getGroundBlock().getTypeId());
 
-                            if (!field.getSettings().getShrubTypes().isEmpty())
-                            {
+                            if (!field.getSettings().getShrubTypes().isEmpty()) {
                                 int typeabove = world.getBlockTypeIdAt(vec.getX(), vec.getY() + 1, vec.getZ());
 
-                                if (typeabove == 0)
-                                {
+                                if (typeabove == 0) {
                                     Random r = new Random();
 
                                     int density = 100 - field.getSettings().getShrubDensity();
 
-                                    if (density == 0 || r.nextInt(density) == 0)
-                                    {
+                                    if (density == 0 || r.nextInt(density) == 0) {
                                         Block blockAbove = world.getBlockAt(vec.getX(), vec.getY() + 1, vec.getZ());
                                         setShrub(field.getSettings(), blockAbove);
                                     }
@@ -134,8 +120,7 @@ public final class ForesterManager
      * @param player
      * @param world
      */
-    public void generateTree(Field field, Player player, World world)
-    {
+    public void generateTree(Field field, Player player, World world) {
         int minx = field.getX() - field.getRadius();
         int maxx = field.getX() + field.getRadius();
         int minz = field.getZ() - field.getRadius();
@@ -148,43 +133,34 @@ public final class ForesterManager
         int xr = r.nextInt(maxx - minx) + minx;
         int zr = r.nextInt(maxz - minz) + minz;
 
-        for (int y = maxy; y > miny; y--)
-        {
+        for (int y = maxy; y > miny; y--) {
             Block floor = world.getBlockAt(xr, y, zr);
             int type = floor.getTypeId();
 
-            if (!isSeeThrough(type))
-            {
-                if (type == field.getSettings().getGroundBlock().getTypeId())
-                {
+            if (!isSeeThrough(type)) {
+                if (type == field.getSettings().getGroundBlock().getTypeId()) {
                     Block block = world.getBlockAt(xr, y + 1, zr);
 
                     // do not place next to an existing tree
 
                     BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
 
-                    for (BlockFace face : faces)
-                    {
+                    for (BlockFace face : faces) {
                         Block rel = block.getRelative(face);
 
-                        if (rel.getType().equals(Material.LOG))
-                        {
+                        if (rel.getType().equals(Material.LOG)) {
                             return;
                         }
                     }
 
                     // do not place in protected area
 
-                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place"))
-                    {
+                    if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.place")) {
                         Field f = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_PLACE);
 
-                        if (f != null)
-                        {
-                            if (!field.getSettings().inPlaceBlacklist(block))
-                            {
-                                if (FieldFlag.PREVENT_PLACE.applies(field, player))
-                                {
+                        if (f != null) {
+                            if (!field.getSettings().inPlaceBlacklist(block)) {
+                                if (FieldFlag.PREVENT_PLACE.applies(field, player)) {
                                     return;
                                 }
                             }
@@ -209,14 +185,12 @@ public final class ForesterManager
      * @return
      */
 
-    public static TreeType getTree(FieldSettings fs)
-    {
+    public static TreeType getTree(FieldSettings fs) {
         Random r = new Random();
 
         List<Integer> treeTypes = fs.getTreeTypes();
 
-        if (treeTypes.isEmpty())
-        {
+        if (treeTypes.isEmpty()) {
             return TreeType.TREE;
         }
 
@@ -225,8 +199,7 @@ public final class ForesterManager
 
         PreciousStones.debug("tree: " + tree);
 
-        switch (tree)
-        {
+        switch (tree) {
             case 0:
                 return TreeType.TREE;
             case 1:
@@ -257,16 +230,14 @@ public final class ForesterManager
      * @param block
      */
 
-    public void setShrub(FieldSettings fs, Block block)
-    {
+    public void setShrub(FieldSettings fs, Block block) {
         Random r = new Random();
 
         List<Integer> treeTypes = fs.getShrubTypes();
 
         int rand = r.nextInt(treeTypes.size());
 
-        switch (treeTypes.get(rand))
-        {
+        switch (treeTypes.get(rand)) {
             case 0:
                 block.setTypeIdAndData(31, (byte) 0, false);
                 return;
@@ -291,10 +262,8 @@ public final class ForesterManager
         }
     }
 
-    private boolean isSeeThrough(int type)
-    {
-        if (type == 0 || type == 31 || type == 32 || type == 37 || type == 38 || type == 18 || type == 6)
-        {
+    private boolean isSeeThrough(int type) {
+        if (type == 0 || type == 31 || type == 32 || type == 37 || type == 38 || type == 18 || type == 6) {
             return true;
         }
 
@@ -304,8 +273,7 @@ public final class ForesterManager
     /**
      * Spawn all the creatures
      */
-    public void doCreatureSpawns(Field field)
-    {
+    public void doCreatureSpawns(Field field) {
         int minx = field.getX() - field.getRadius();
         int maxx = field.getX() + field.getRadius();
         int minz = field.getZ() - field.getRadius();
@@ -316,8 +284,7 @@ public final class ForesterManager
         Random r = new Random();
         FieldSettings fs = field.getSettings();
 
-        for (int i = 0; i < fs.getCreatureCount(); i++)
-        {
+        for (int i = 0; i < fs.getCreatureCount(); i++) {
             int x = r.nextInt(maxx - minx) + minx;
             int z = r.nextInt(maxz - minz) + minz;
             int y = field.getY();
@@ -325,15 +292,13 @@ public final class ForesterManager
 
             int floorType = world.getBlockTypeIdAt(x, y, z);
 
-            while (!plugin.getSettingsManager().isThroughType(floorType) && y < 256)
-            {
+            while (!plugin.getSettingsManager().isThroughType(floorType) && y < 256) {
                 floorType = world.getBlockTypeIdAt(x, ++y, z);
             }
 
             EntityType entity = getEntity(fs);
 
-            if (entity == null || !entity.isAlive() || !entity.isSpawnable())
-            {
+            if (entity == null || !entity.isAlive() || !entity.isSpawnable()) {
                 continue;
             }
 
@@ -347,14 +312,12 @@ public final class ForesterManager
      * @param fs
      * @return
      */
-    public static EntityType getEntity(FieldSettings fs)
-    {
+    public static EntityType getEntity(FieldSettings fs) {
         Random r = new Random();
 
         List<String> creatureTypes = fs.getCreatureTypes();
 
-        if (creatureTypes.isEmpty())
-        {
+        if (creatureTypes.isEmpty()) {
             return null;
         }
 
@@ -363,8 +326,7 @@ public final class ForesterManager
 
         PreciousStones.debug("entity: " + entity);
 
-        if (entity.equalsIgnoreCase("None"))
-        {
+        if (entity.equalsIgnoreCase("None")) {
             return null;
         }
 
