@@ -556,6 +556,9 @@ public final class ForceFieldManager
             }
         }
 
+        // Remove all renters
+        removeAllRenters(field);
+
         // remove from owner and flags collection
 
         Map<FieldFlag, List<Field>> allFlags = fieldsByOwnerAndFlag.get(field.getOwner().toLowerCase());
@@ -630,6 +633,63 @@ public final class ForceFieldManager
 
         field.markForDeletion();
         plugin.getStorageManager().offerField(field);
+    }
+
+    /**
+     * Remove all tracked renters from a field
+     *
+     * @param field
+     */
+    public void removeAllRenters(Field field)
+    {
+        List<String> renters = field.getRenters();
+        if (renters != null)
+        {
+            for (String renter : renters)
+            {
+                removeRenter(field, renter);
+            }
+        }
+    }
+
+    /**
+     * Update tracking when a renter has been removed from a field.
+     *
+     * @param field
+     * @param renter
+     */
+    public void removeRenter(Field field, String renter)
+    {
+        Map<BlockTypeEntry, List<Field>> renterTypes = fieldsByRenterAndType.get(renter.toLowerCase());
+
+        if (renterTypes == null)
+        {
+            return;
+        }
+
+        List<Field> fields = renterTypes.get(field.getTypeEntry());
+        if (fields == null)
+        {
+            return;
+        }
+
+        fields.remove(field);
+        if (fields.isEmpty())
+        {
+            renterTypes.put(field.getTypeEntry(), fields);
+        }
+        else
+        {
+            renterTypes.remove(field.getTypeEntry());
+        }
+        if (renterTypes.isEmpty())
+        {
+            fieldsByRenterAndType.remove(renter);
+        }
+        else
+        {
+            fieldsByRenterAndType.put(renter, renterTypes);
+        }
     }
 
     /**

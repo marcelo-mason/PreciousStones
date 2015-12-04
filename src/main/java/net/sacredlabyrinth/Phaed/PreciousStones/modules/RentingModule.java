@@ -58,6 +58,7 @@ public class RentingModule
 
     public void clearRenters()
     {
+        PreciousStones.getInstance().getForceFieldManager().removeAllRenters(field);
         renterEntries.clear();
         renters.clear();
     }
@@ -160,8 +161,10 @@ public class RentingModule
 
     public void removeRenter(RentEntry entry)
     {
+        String renterName = entry.getPlayerName().toLowerCase();
+        PreciousStones.getInstance().getForceFieldManager().removeRenter(field, renterName);
         renterEntries.remove(entry);
-        renters.remove(entry.getPlayerName().toLowerCase());
+        renters.remove(renterName);
 
         field.getFlagsModule().dirtyFlags("removeRenter");
     }
