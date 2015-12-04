@@ -75,7 +75,7 @@ public class BuyingModule
         }
 
         PreciousStones.getInstance().getCommunicationManager().logPurchase(s.getField().getOwner(), purchase.getBuyer(), purchase, s);
-        s.eject();
+        s.remove();
     }
 
     public void giveMoney(Player owner, PurchaseEntry purchase)

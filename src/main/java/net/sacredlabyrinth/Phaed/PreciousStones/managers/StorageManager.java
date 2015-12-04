@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.sk89q.worldedit.blocks.BlockType;
 import net.sacredlabyrinth.Phaed.PreciousStones.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.*;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.*;
@@ -1362,8 +1363,11 @@ public class StorageManager
      */
     public void insertPendingPurchasePayment(PurchaseEntry purchase)
     {
+        BlockTypeEntry item = purchase.getItem();
+        String itemName = item == null ? null : item.toString();
+
         String query = "INSERT INTO `pstone_purchase_payments` (  `id`,  `buyer`, `owner`, `item`, `amount`, `fieldName`, `coords`) ";
-        String values = "VALUES ( " + purchase.getId() + ",'" + purchase.getBuyer() + "','" + purchase.getOwner() + "','" + purchase.getItem().toString() + "'," + purchase.getAmount() + ",'" + purchase.getFieldName() + "','" + purchase.getCoords() + "');";
+        String values = "VALUES ( " + purchase.getId() + ",'" + purchase.getBuyer() + "','" + purchase.getOwner() + "','" + itemName + "'," + purchase.getAmount() + ",'" + purchase.getFieldName() + "','" + purchase.getCoords() + "');";
 
         synchronized (this)
         {
