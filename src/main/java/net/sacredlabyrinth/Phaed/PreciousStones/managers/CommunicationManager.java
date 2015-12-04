@@ -2260,7 +2260,15 @@ public class CommunicationManager
 
         if (field.isNamed())
         {
-            ChatHelper.send(player, "enteringNamedField", field.getName());
+            List<String> renters = field.getRenters();
+            if (renters != null && !renters.isEmpty())
+            {
+                ChatHelper.send(player, "enteringRentedNamedField", field.getName(), renters.get(0));
+            }
+            else
+            {
+                ChatHelper.send(player, "enteringNamedField", field.getName());
+            }
         }
         else
         {
@@ -2292,7 +2300,15 @@ public class CommunicationManager
 
         if (field.isNamed())
         {
-            ChatHelper.send(player, "leavingNamedField", field.getName());
+            List<String> renters = field.getRenters();
+            if (renters != null && !renters.isEmpty())
+            {
+                ChatHelper.send(player, "leavingRentedNamedField", field.getName(), renters.get(0));
+            }
+            else
+            {
+                ChatHelper.send(player, "leavingNamedField", field.getName());
+            }
         }
         else
         {
