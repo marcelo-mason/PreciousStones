@@ -377,7 +377,7 @@ public class RentingModule
 
     private class Update implements Runnable
     {
-        public void run()
+        protected void updateRent()
         {
             if (hasRenters())
             {
@@ -392,14 +392,16 @@ public class RentingModule
                         if (PreciousStones.getInstance().getEntryManager().hasInhabitants(field))
                         {
                             Player closest = Helper.getClosestPlayer(field.getLocation(), 64);
-
-                            for (RentEntry entry : renterEntries)
+                            if (closest != null)
                             {
-                                if (entry.getPlayerName().equalsIgnoreCase(closest.getName()))
+                                for (RentEntry entry : renterEntries)
                                 {
-                                    s.updateRemainingTime(entry.remainingRent());
-                                    foundSomeone = true;
-                                    signIsClean = false;
+                                    if (entry.getPlayerName().equalsIgnoreCase(closest.getName()))
+                                    {
+                                        s.updateRemainingTime(entry.remainingRent());
+                                        foundSomeone = true;
+                                        signIsClean = false;
+                                    }
                                 }
                             }
                         }
@@ -434,7 +436,15 @@ public class RentingModule
                     }
                 }
             }
+        }
 
+        public void run()
+        {
+            try {
+                updateRent();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             scheduleNextRentUpdate();
         }
     }
