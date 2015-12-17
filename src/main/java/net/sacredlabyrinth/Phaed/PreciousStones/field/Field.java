@@ -17,6 +17,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
@@ -1315,7 +1317,17 @@ public class Field extends AbstractVec implements Comparable<Field> {
 
         PreciousStones.getInstance().getForceFieldManager().deleteField(this);
         block.setType(Material.AIR);
-        StackHelper.give(player, type, 1);
+
+        ItemStack is = new ItemStack(type.getTypeId(), 1, (short) 0, type.getData());
+
+        if (settings.hasMetaName()) {
+            ItemMeta meta = is.getItemMeta();
+            meta.setDisplayName(settings.getMetaName());
+            meta.setLore(settings.getMetaLore());
+            is.setItemMeta(meta);
+        }
+
+        StackHelper.give(player, is);
         return true;
     }
 
