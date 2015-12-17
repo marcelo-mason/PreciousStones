@@ -110,13 +110,13 @@ public class CommunicationManager {
 
     public void logPurchase(String owner, String renter, PurchaseEntry purchase, FieldSign s) {
         if (plugin.getSettingsManager().isLogRentsAndPurchases()) {
-            PreciousStones.log("logPurchase", renter, owner, s.getField().getSettings().getTitle(), purchase.getAmount(), (purchase.getItem() != null) ? purchase.getItem() : "", purchase.getCoords());
+            PreciousStones.log("logPurchase", renter, owner, s.getField().getSettings().getTitle(), purchase.getAmount(), purchase.isItemPayment() ? purchase.getItem() : "", purchase.getCoords());
         }
     }
 
     public void logPurchaseCollect(String owner, String renter, PurchaseEntry purchase) {
         if (plugin.getSettingsManager().isLogRentsAndPurchases()) {
-            PreciousStones.log("logPurchaseCollect", owner, purchase.getAmount(), (purchase.getItem() != null) ? purchase.getItem() : "", renter, purchase.getCoords());
+            PreciousStones.log("logPurchaseCollect", owner, purchase.getAmount(), purchase.isItemPayment() ? purchase.getItem() : "", renter, purchase.getCoords());
         }
     }
 
