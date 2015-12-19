@@ -60,6 +60,18 @@ public class StackHelper {
         player.updateInventory();
     }
 
+    public static void give(Player player, ItemStack stack) {
+        HashMap<Integer, ItemStack> rem = player.getInventory().addItem(stack);
+
+        if (rem != null && !rem.isEmpty()) {
+            for (ItemStack is : rem.values()) {
+                player.getWorld().dropItemNaturally(player.getLocation(), is);
+            }
+        }
+
+        player.updateInventory();
+    }
+
     public static List<ItemStack> makeStacks(BlockTypeEntry item, int amount) {
         List<ItemStack> out = new ArrayList<ItemStack>();
 
