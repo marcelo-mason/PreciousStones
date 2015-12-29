@@ -36,7 +36,7 @@ public class PurchaseEntry {
     }
 
     public boolean isItemPayment() {
-        return item != null;
+        return item != null && item.getMaterial() != null;
     }
 
     public int getAmount() {
