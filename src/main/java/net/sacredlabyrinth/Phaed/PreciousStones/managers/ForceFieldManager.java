@@ -639,6 +639,31 @@ public final class ForceFieldManager {
         }
     }
 
+
+    /**
+     * Get all rented or owned fields for a player in all worlds
+     *
+     * @param owner
+     * @return
+     */
+    public List<Field> getAllPlayerFields(String owner) {
+        List<Field> out = new ArrayList<Field>();
+        owner = owner.toLowerCase();
+        Map<BlockTypeEntry, List<Field>> owned = fieldsByOwnerAndType.get(owner);
+        if (owned != null) {
+            for (List<Field> fields : owned.values()) {
+                out.addAll(fields);
+            }
+        }
+        Map<BlockTypeEntry, List<Field>> rented = fieldsByRenterAndType.get(owner);
+        if (rented != null) {
+            for (List<Field> fields : rented.values()) {
+                out.addAll(fields);
+            }
+        }
+        return out;
+    }
+
     /**
      * Get all fields a player/g:group/c:clan/* is allowed in for a world
      *
