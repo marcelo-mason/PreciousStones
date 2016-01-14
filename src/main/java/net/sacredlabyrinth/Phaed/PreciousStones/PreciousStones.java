@@ -60,6 +60,7 @@ public class PreciousStones extends JavaPlugin {
     private PSWorldListener worldListener;
     private PSVehicleListener vehicleListener;
     private PSServerListener serverListener;
+    private PSInventoryListener inventoryListener;
     private McMMOListener mcmmoListener;
     private LWCListener lwcListener;
     private static IApi api;
@@ -159,6 +160,7 @@ public class PreciousStones extends JavaPlugin {
         vehicleListener = new PSVehicleListener();
         worldListener = new PSWorldListener();
         serverListener = new PSServerListener();
+        inventoryListener = new PSInventoryListener();
 
         if (permissionsManager.hasMcMMO()) {
             mcmmoListener = new McMMOListener();
@@ -217,6 +219,7 @@ public class PreciousStones extends JavaPlugin {
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(vehicleListener, this);
         getServer().getPluginManager().registerEvents(worldListener, this);
+        getServer().getPluginManager().registerEvents(inventoryListener, this);
 
         if (permissionsManager.hasMcMMO()) {
             getServer().getPluginManager().registerEvents(mcmmoListener, this);
