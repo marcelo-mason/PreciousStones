@@ -1,8 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
-import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
-import org.bukkit.Material;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,10 +16,6 @@ public class PSInventoryListener implements Listener {
         plugin = PreciousStones.getInstance();
     }
 
-    protected boolean isMetaField(ItemStack item) {
-        return item != null && item.getType() != Material.AIR && item.hasItemMeta() && plugin.getSettingsManager().isFieldType(new BlockTypeEntry(item), item);
-    }
-
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.isCancelled()) return;
@@ -30,14 +25,15 @@ public class PSInventoryListener implements Listener {
         InventoryType.SlotType slotType = event.getSlotType();
         ItemStack cursor = event.getCursor();
         ItemStack current = event.getCurrentItem();
+        SettingsManager manager = plugin.getSettingsManager();
 
         if (inventoryType == InventoryType.ANVIL) {
             // Have to check "current" here as well to avoid shift+clicks
-            if (isMetaField(cursor) || isMetaField(current)) {
+            if (manager.isMetaFieldType(cursor) || manager.isMetaFieldType(current)) {
                 event.setCancelled(true);
             }
         } else if (slotType == InventoryType.SlotType.CRAFTING && (inventoryType == InventoryType.CRAFTING || inventoryType == InventoryType.WORKBENCH)) {
-            if (isMetaField(cursor)) {
+            if (manager.isMetaFieldType(cursor)) {
                 event.setCancelled(true);
             }
         }
