@@ -17,21 +17,29 @@ public class PSInventoryListener implements Listener {
         plugin = PreciousStones.getInstance();
     }
 
-    @EventHandler
+    protected boolean isMetaField(ItemStack item) {
+        return item != null && item.getType() != Material.AIR && item.hasItemMeta() && plugin.getSettingsManager().isFieldType(new BlockTypeEntry(item), item);
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.isCancelled()) return;
         if (!(event.getWhoClicked() instanceof Player)) return;
-        if (event.getInventory().getType() != InventoryType.ANVIL) return;
 
+        InventoryType inventoryType = event.getInventory().getType();
+        InventoryType.SlotType slotType = event.getSlotType();
         ItemStack cursor = event.getCursor();
         ItemStack current = event.getCurrentItem();
 
-        if (cursor != null && cursor.getType() != Material.AIR &&
-            plugin.getSettingsManager().isFieldType(new BlockTypeEntry(cursor), cursor)) {
-            event.setCancelled(true);
-        } else if (current != null && current.getType() != Material.AIR &&
-                plugin.getSettingsManager().isFieldType(new BlockTypeEntry(current), current)) {
-            event.setCancelled(true);
+        if (inventoryType == InventoryType.ANVIL) {
+            // Have to check "current" here as well to avoid shift+clicks
+            if (isMetaField(cursor) || isMetaField(current)) {
+                event.setCancelled(true);
+            }
+        } else if (slotType == InventoryType.SlotType.CRAFTING && (inventoryType == InventoryType.CRAFTING || inventoryType == InventoryType.WORKBENCH)) {
+            if (isMetaField(cursor)) {
+                event.setCancelled(true);
+            }
         }
     }
 }
