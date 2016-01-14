@@ -747,6 +747,16 @@ public final class SettingsManager {
     }
 
     /**
+     * Check if an item is a field type with meta attached to it.
+     *
+     * @param item The item to check
+     * @return true if the item is a meta field stone
+     */
+    public boolean isMetaFieldType(ItemStack item) {
+        return item != null && item.getType() != Material.AIR && item.hasItemMeta() && isFieldType(new BlockTypeEntry(item), item);
+    }
+
+    /**
      * Whetehr the block is a bypass type
      *
      * @param block

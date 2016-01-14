@@ -614,6 +614,10 @@ public class PSBlockListener implements Listener {
         }
 
         if (plugin.getSettingsManager().isBlacklistedWorld(block.getWorld())) {
+            // Prevent destorying pstones with meta by trying to place them in a disabled world
+            if (plugin.getSettingsManager().isMetaFieldType(handItem)) {
+                event.setCancelled(true);
+            }
             return;
         }
 

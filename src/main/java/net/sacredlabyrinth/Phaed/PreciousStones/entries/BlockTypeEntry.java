@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.MaterialName;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +22,11 @@ public class BlockTypeEntry {
     public BlockTypeEntry(Block block) {
         this.material = block.getType();
         this.data = block.getData();
+    }
+
+    public BlockTypeEntry(ItemStack item) {
+        this.material = item.getType();
+        this.data = (byte)item.getDurability();
     }
 
     /**
