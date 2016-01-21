@@ -512,20 +512,8 @@ public class PSEntityListener implements Listener {
 
             if (field != null) {
                 if (event instanceof EntityDamageByEntityEvent) {
-                    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
 
-                    Player player = null;
-
-                    if (sub.getDamager() instanceof Player) {
-                        player = (Player) sub.getDamager();
-                    } else if (sub.getDamager() instanceof Arrow) {
-                        Arrow arrow = (Arrow) sub.getDamager();
-
-                        if (arrow.getShooter() instanceof Player) {
-                            player = (Player) arrow.getShooter();
-                        }
-                    }
-
+                    Player player = Helper.getDamagingPlayer(event);
                     if (player != null) {
                         if (FieldFlag.PROTECT_ANIMALS.applies(field, player)) {
                             event.setCancelled(true);
@@ -546,19 +534,7 @@ public class PSEntityListener implements Listener {
 
             if (field != null) {
                 if (event instanceof EntityDamageByEntityEvent) {
-                    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
-
-                    Player player = null;
-
-                    if (sub.getDamager() instanceof Player) {
-                        player = (Player) sub.getDamager();
-                    } else if (sub.getDamager() instanceof Arrow) {
-                        Arrow arrow = (Arrow) sub.getDamager();
-
-                        if (arrow.getShooter() instanceof Player) {
-                            player = (Player) arrow.getShooter();
-                        }
-                    }
+                    Player player = Helper.getDamagingPlayer(event);
 
                     if (player != null) {
                         if (FieldFlag.PROTECT_VILLAGERS.applies(field, player)) {
@@ -580,19 +556,7 @@ public class PSEntityListener implements Listener {
 
             if (field != null) {
                 if (event instanceof EntityDamageByEntityEvent) {
-                    EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
-
-                    Player player = null;
-
-                    if (sub.getDamager() instanceof Player) {
-                        player = (Player) sub.getDamager();
-                    } else if (sub.getDamager() instanceof Arrow) {
-                        Arrow arrow = (Arrow) sub.getDamager();
-
-                        if (arrow.getShooter() instanceof Player) {
-                            player = (Player) arrow.getShooter();
-                        }
-                    }
+                    Player player = Helper.getDamagingPlayer(event);
 
                     if (player != null) {
                         if (FieldFlag.PROTECT_MOBS.applies(field, player)) {
