@@ -2711,11 +2711,51 @@ public final class ForceFieldManager {
      * @param newName
      */
     public void migrateUsername(String oldName, String newName) {
-        List<Field> fields = getFieldsByOwner().get(oldName.toLowerCase());
+        String oldNameLowercase = oldName.toLowerCase();
+        String newNameLowercase = newName.toLowerCase();
 
-        for (Field field : fields) {
-            field.setOwner(newName);
-            PreciousStones.getInstance().getStorageManager().offerField(field);
+        List<Field> fields = fieldsByOwner.get(oldNameLowercase);
+
+        if (fields != null) {
+            for (Field field : fields) {
+                field.setOwner(newName);
+                PreciousStones.getInstance().getStorageManager().offerField(field);
+            }
+            fieldsByOwner.remove(oldNameLowercase);
+            fieldsByOwner.put(newNameLowercase, fields);
+        }
+
+        Map<BlockTypeEntry, List<Field>> typeMap = fieldsByOwnerAndType.get(oldNameLowercase);
+        if (typeMap != null) {
+            fieldsByOwnerAndType.put(newNameLowercase, typeMap);
+            fieldsByOwnerAndType.remove(oldNameLowercase);
+        }
+
+        Map<FieldFlag, List<Field>> flagMap = fieldsByOwnerAndFlag.get(oldNameLowercase);
+        if (flagMap != null) {
+            fieldsByOwnerAndFlag.put(newNameLowercase, flagMap);
+            fieldsByOwnerAndFlag.remove(oldNameLowercase);
+        }
+
+        Map<BlockTypeEntry, List<Field>> rentalFields = fieldsByRenterAndType.get(oldNameLowercase);
+        if (rentalFields != null) {
+            for (List<Field> fieldList : rentalFields.values()) {
+                for (Field field : fieldList) {
+                    field.getRentingModule().migrateRenters(oldName, newName);
+                    PreciousStones.getInstance().getStorageManager().offerField(field);
+                }
+            }
+            fieldsByRenterAndType.remove(oldNameLowercase);
+            fieldsByRenterAndType.put(newNameLowercase, rentalFields);
+        }
+
+        // TODO: Need to track allowed to make this more efficient?
+        for (List<Field> fieldList : fieldsByWorld.values()) {
+            for (Field field : fieldList) {
+                if (field.migrateAllowed(oldName, newName)) {
+                    PreciousStones.getInstance().getStorageManager().offerField(field);
+                }
+            }
         }
     }
 
