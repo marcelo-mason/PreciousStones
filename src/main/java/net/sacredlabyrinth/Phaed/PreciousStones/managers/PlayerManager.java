@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.TreeMap;
+import java.util.UUID;
 
 /**
  * @author phaed
@@ -33,13 +34,45 @@ public class PlayerManager {
      */
     public PlayerEntry getPlayerEntry(String playerName) {
         // look for player in memory
-
         PlayerEntry data = players.get(playerName.toLowerCase());
 
         // otherwise look in database
-
         if (data == null) {
             data = plugin.getStorageManager().extractPlayer(playerName);
+            if (data == null) {
+                data = plugin.getStorageManager().createPlayer(playerName, null);
+            }
+            players.put(playerName.toLowerCase(), data);
+        }
+
+        return data;
+    }
+
+    /**
+     * Get a player's data file, will look up by UUID first, then name.
+     *
+     * @param player
+     * @return
+     */
+    public PlayerEntry getPlayerEntry(Player player) {
+        // look for player in memory
+        String playerName = player.getName();
+        PlayerEntry data = players.get(playerName.toLowerCase());
+
+        // otherwise look in database
+        if (data == null) {
+            UUID uuid = player.getUniqueId();
+
+            data = plugin.getStorageManager().extractPlayer(uuid);
+            if (data == null) {
+                data = plugin.getStorageManager().extractPlayer(player.getName());
+            } else if (!playerName.equalsIgnoreCase(data.getName())) {
+                plugin.getStorageManager().migrate(data.getName(), playerName);
+                data.setName(playerName);
+            }
+            if (data == null) {
+                data = plugin.getStorageManager().createPlayer(playerName, uuid);
+            }
             players.put(playerName.toLowerCase(), data);
         }
 
@@ -49,12 +82,12 @@ public class PlayerManager {
     /**
      * Player entry operations to do when player logs in
      *
-     * @param playerName
+     * @param player
      */
-    public void playerLogin(String playerName) {
+    public void playerLogin(Player player) {
         //set online
 
-        PlayerEntry data = getPlayerEntry(playerName);
+        PlayerEntry data = getPlayerEntry(player);
         data.setOnline(true);
     }
 
@@ -64,7 +97,7 @@ public class PlayerManager {
      * @param player
      */
     public void playerLogoff(Player player) {
-        PlayerEntry data = getPlayerEntry(player.getName());
+        PlayerEntry data = getPlayerEntry(player);
         data.setOnline(false);
         data.setOutsideLocation(null);
     }
@@ -75,7 +108,7 @@ public class PlayerManager {
      * @param player
      */
     public void updateOutsideLocation(Player player) {
-        PlayerEntry data = getPlayerEntry(player.getName());
+        PlayerEntry data = getPlayerEntry(player);
         data.setOutsideLocation(player.getLocation());
     }
 
@@ -86,7 +119,7 @@ public class PlayerManager {
      * @return
      */
     public Location getOutsideLocation(Player player) {
-        PlayerEntry data = getPlayerEntry(player.getName());
+        PlayerEntry data = getPlayerEntry(player);
         Location loc = data.getOutsideLocation();
 
         if (loc != null) {
@@ -145,19 +178,5 @@ public class PlayerManager {
         for (Player player : onlinePlayers) {
             plugin.getStorageManager().offerPlayer(player.getName());
         }
-    }
-
-    /**
-     * Changes username of player
-     *
-     * @param oldName
-     * @param newName
-     */
-    public void migrateUsername(String oldName, String newName) {
-        PlayerEntry data = getPlayerEntry(oldName.toLowerCase());
-        data.setName(newName);
-
-        players.remove(oldName.toLowerCase());
-        players.put(newName.toLowerCase(), data);
     }
 }

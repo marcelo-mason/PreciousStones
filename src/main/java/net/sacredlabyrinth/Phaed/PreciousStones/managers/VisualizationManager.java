@@ -100,7 +100,7 @@ public class VisualizationManager {
             return;
         }
 
-        PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
+        PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player);
 
         if (data.getDensity() == 0) {
             return;
