@@ -2142,8 +2142,8 @@ public class CommunicationManager {
 
         cb.addRow("  " + color + ChatHelper.format("_owner") + ": ", ChatColor.AQUA + field.getOwner(), "");
 
-        if (field.getAllowed().size() > 0) {
-            List<String> allowed = field.getAllowed();
+        List<String> allowed = field.getAllowed();
+        if (allowed.size() > 0) {
 
             int rows = (int) Math.max(Math.ceil(allowed.size() / 2.0), 1);
 
