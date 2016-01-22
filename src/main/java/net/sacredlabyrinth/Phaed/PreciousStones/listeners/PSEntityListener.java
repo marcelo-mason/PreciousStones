@@ -27,6 +27,7 @@ import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
@@ -927,6 +928,26 @@ public class PSEntityListener implements Listener {
                     if (FieldFlag.NO_PROJECTILE_THROW.applies(field, player)) {
                         event.setCancelled(true);
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onShearEntity(PlayerShearEntityEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        if (player != null) {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PROTECT_ANIMALS);
+            if (field != null) {
+                if (FieldFlag.PROTECT_ANIMALS.applies(field, player)) {
+                    event.setCancelled(true);
                 }
             }
         }
