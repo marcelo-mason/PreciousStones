@@ -80,18 +80,18 @@ public final class CommandManager implements CommandExecutor {
                         plugin.getCommunicationManager().showConfiguredFields(sender);
                         return true;
                     } else if (cmd.equals(ChatHelper.format("commandOn")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer) {
-                        boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
+                        boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player).isDisabled();
                         if (isDisabled) {
-                            plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(false);
+                            plugin.getPlayerManager().getPlayerEntry(player).setDisabled(false);
                             ChatHelper.send(sender, "placingEnabled");
                         } else {
                             ChatHelper.send(sender, "placingAlreadyEnabled");
                         }
                         return true;
                     } else if (cmd.equals(ChatHelper.format("commandOff")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.onoff") && hasplayer) {
-                        boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled();
+                        boolean isDisabled = hasplayer && plugin.getPlayerManager().getPlayerEntry(player).isDisabled();
                         if (!isDisabled) {
-                            plugin.getPlayerManager().getPlayerEntry(player.getName()).setDisabled(true);
+                            plugin.getPlayerManager().getPlayerEntry(player).setDisabled(true);
                             ChatHelper.send(sender, "placingDisabled");
                         } else {
                             ChatHelper.send(sender, "placingAlreadyDisabled");
@@ -738,14 +738,14 @@ public final class CommandManager implements CommandExecutor {
                         if (args.length == 1 && Helper.isInteger(args[0])) {
                             int density = Integer.parseInt(args[0]);
 
-                            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player);
                             data.setDensity(density);
                             plugin.getStorageManager().offerPlayer(player.getName());
 
                             ChatHelper.send(sender, "visualizationChanged", density);
                             return true;
                         } else if (args.length == 0) {
-                            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                            PlayerEntry data = plugin.getPlayerManager().getPlayerEntry(player);
                             ChatHelper.send(sender, "visualizationSet", data.getDensity());
                         }
                     } else if (cmd.equals(ChatHelper.format("commandToggle")) && plugin.getPermissionsManager().has(player, "preciousstones.benefit.toggle") && hasplayer) {
@@ -1815,7 +1815,7 @@ public final class CommandManager implements CommandExecutor {
                             return true;
                         }
                     } else if (cmd.equals(ChatHelper.format("commandBypass")) && plugin.getPermissionsManager().has(player, "preciousstones.bypass.toggle")) {
-                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player);
 
                         if (args.length == 1) {
                             String mode = args[0];

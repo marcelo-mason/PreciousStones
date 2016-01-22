@@ -58,6 +58,10 @@ public class RentEntry {
         return this.getPlayerName().hashCode();
     }
 
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
     public String serialize() {
         return playerName + "|" + periodSeconds + "|" + endDate.getMillis();
     }

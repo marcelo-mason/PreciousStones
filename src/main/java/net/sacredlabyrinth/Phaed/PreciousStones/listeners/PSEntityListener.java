@@ -946,7 +946,7 @@ public class PSEntityListener implements Listener {
 
             if (entity instanceof Player) {
                 Player player = (Player) entity;
-                PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player);
                 if (playerEntry.isDisabled()) {
                     return;
                 }

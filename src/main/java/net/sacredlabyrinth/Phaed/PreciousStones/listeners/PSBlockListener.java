@@ -482,7 +482,7 @@ public class PSBlockListener implements Listener {
 
         if (settings != null) {
             if (settings.isMetaAutoSet()) {
-                PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player);
                 if (!playerEntry.isDisabled()) {
                     block.getDrops().clear();
                     plugin.getForceFieldManager().dropBlock(block, new BlockTypeEntry(block), settings);
@@ -740,7 +740,7 @@ public class PSBlockListener implements Listener {
 
         // if the user has it manually off then disable placing
 
-        if (plugin.getPlayerManager().getPlayerEntry(player.getName()).isDisabled()) {
+        if (plugin.getPlayerManager().getPlayerEntry(player).isDisabled()) {
             isDisabled = true;
         }
 

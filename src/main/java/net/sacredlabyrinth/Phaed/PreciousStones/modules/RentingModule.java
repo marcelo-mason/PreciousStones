@@ -50,6 +50,24 @@ public class RentingModule {
         return !renters.isEmpty();
     }
 
+    public void migrateRenters(String oldName, String newName) {
+        for (RentEntry entry : renterEntries) {
+            if (entry.getPlayerName().equals(oldName)) {
+                entry.setPlayerName(newName);
+                cleanFieldSign();
+                break;
+            }
+        }
+        oldName = oldName.toLowerCase();
+        for (int i = 0; i < renters.size(); i++) {
+            if (renters.get(i).equalsIgnoreCase(oldName)) {
+                renters.set(i, oldName.toLowerCase());
+                break;
+            }
+        }
+        field.getFlagsModule().dirtyFlags("addRent");
+    }
+
     public void clearRenters() {
         PreciousStones.getInstance().getForceFieldManager().removeAllRenters(field);
         renterEntries.clear();

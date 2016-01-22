@@ -793,36 +793,7 @@ public class StorageManager {
         return out.values();
     }
 
-    public void findUUIDMismatch(Player player) {
-        if (!plugin.getServer().getOnlineMode()) {
-            return;
-        }
-
-        String query = "SELECT player_name FROM `pstone_players` WHERE uuid = '" + player.getUniqueId().toString() + "';";
-        ResultSet res = core.select(query);
-
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    try {
-                        String oldUsername = res.getString("player_name");
-
-                        if (!oldUsername.equals(player.getName())) {
-                            migrate(oldUsername, player.getName());
-                        }
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
-                    }
-                }
-            } catch (SQLException ex) {
-                System.out.print(ex.getMessage());
-                ex.printStackTrace();
-            }
-        }
-    }
-
     public void migrate(String oldUsername, String newUsername) {
-        plugin.getPlayerManager().migrateUsername(oldUsername, newUsername);
         plugin.getForceFieldManager().migrateUsername(oldUsername, newUsername);
         plugin.getUnbreakableManager().migrateUsername(oldUsername, newUsername);
 
@@ -833,7 +804,10 @@ public class StorageManager {
         updateQuery = "UPDATE `pstone_translocations` SET player_name = '" + newUsername + "' WHERE player_name = '" + oldUsername + "';";
         core.execute(updateQuery);
 
-        PreciousStones.log("[Username Changed] From: " + oldUsername + " To: " + oldUsername);
+        updateQuery = "UPDATE `pstone_players` SET player_name = '" + newUsername + "' WHERE player_name = '" + oldUsername + "';";
+        core.execute(updateQuery);
+
+        PreciousStones.log("[Username Changed] From: " + oldUsername + " To: " + newUsername);
 
         Player player = plugin.getServer().getPlayerExact(newUsername);
 
@@ -858,21 +832,19 @@ public class StorageManager {
         offerDeletePlayer(playerName);
     }
 
-    /**
-     * Retrieves a player from the database
-     */
-    public PlayerEntry extractPlayer(String playerName) {
-        String query = "SELECT * FROM pstone_players WHERE player_name = '" + Helper.escapeQuotes(playerName) + "';";
-        ResultSet res = core.select(query);
-
-        PlayerEntry data = new PlayerEntry();
-        data.setName(playerName);
-
+    protected PlayerEntry extractPlayer(ResultSet res) {
         if (res != null) {
             try {
                 while (res.next()) {
                     try {
+                        PlayerEntry data = new PlayerEntry();
                         String uuid = res.getString("uuid");
+
+                        // I am not sure how, but I managed to get "null" as a string in my player data
+                        if (uuid != null && uuid.equalsIgnoreCase("null")) {
+                            uuid = null;
+                        }
+
                         String name = res.getString("player_name");
                         long last_seen = res.getLong("last_seen");
                         String flags = res.getString("flags");
@@ -882,6 +854,7 @@ public class StorageManager {
                             PreciousStones.debug("Player last seen: %s [%s]", lastSeenDays, name);
                         }
 
+                        data.setName(name);
                         data.setFlags(flags);
 
                         if (uuid != null) {
@@ -897,15 +870,40 @@ public class StorageManager {
 
                         return data;
                     } catch (Exception ex) {
-                        //PreciousStones.getLog().info(ex.getMessage());
+                        PreciousStones.getLog().log(Level.WARNING, "Error extracting player data", ex);
                     }
                 }
             } catch (SQLException ex) {
-                System.out.print(ex.getMessage());
-                ex.printStackTrace();
+                PreciousStones.getLog().log(Level.WARNING, "Error querying for player data", ex);
             }
         }
 
+        return null;
+    }
+
+    /**
+     * Retrieves a player from the database
+     */
+    public PlayerEntry extractPlayer(String playerName) {
+        String query = "SELECT * FROM pstone_players WHERE player_name = '" + Helper.escapeQuotes(playerName) + "';";
+        ResultSet res = core.select(query);
+        return extractPlayer(res);
+    }
+
+    /**
+     * Retrieves a player from the database by UUID, may migrate data if needed
+     */
+    public PlayerEntry extractPlayer(UUID uuid) {
+        String query = "SELECT * FROM pstone_players WHERE uuid = '" + uuid + "';";
+        ResultSet res = core.select(query);
+        return extractPlayer(res);
+    }
+
+    public PlayerEntry createPlayer(String playerName, UUID uuid) {
+        PlayerEntry data = new PlayerEntry();
+        data.setName(playerName);
+        data.setOnlineUUID(uuid);
+        PreciousStones.log("[New Player]: " + playerName + " UUID: " + uuid);
         return data;
     }
 

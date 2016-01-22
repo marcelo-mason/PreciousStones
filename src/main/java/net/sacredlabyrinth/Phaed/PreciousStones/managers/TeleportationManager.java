@@ -85,7 +85,7 @@ public class TeleportationManager {
             if (entity instanceof Player) {
                 Player player = (Player) entity;
 
-                plugin.getPlayerManager().getPlayerEntry(player.getName()).setTeleporting(false);
+                plugin.getPlayerManager().getPlayerEntry(player).setTeleporting(false);
 
                 // done teleport players with bypass permission
 
@@ -151,7 +151,7 @@ public class TeleportationManager {
                         ChatHelper.send(player, "teleportAnnounceBack", sourceField.getSettings().getTeleportBackAfterSeconds());
                     }
 
-                    PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                    PlayerEntry playerEntry = plugin.getPlayerManager().getPlayerEntry(player);
 
                     playerEntry.setTeleportSecondsRemaining(sourceField.getSettings().getTeleportBackAfterSeconds());
                     playerEntry.setTeleportVec(currentPosition);

@@ -604,6 +604,19 @@ public class Field extends AbstractVec implements Comparable<Field> {
         dirty.add(DirtyFieldReason.ALLOWED);
     }
 
+    public boolean migrateAllowed(String oldPlayerName, String newPlayerName) {
+        oldPlayerName = oldPlayerName.toLowerCase();
+        for (int i = 0; i < allowed.size(); i++) {
+            if (allowed.get(i).equals(oldPlayerName)) {
+                dirty.add(DirtyFieldReason.ALLOWED);
+                allowed.set(i, newPlayerName.toLowerCase());
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @return coordinates string format [x y z world]
      */

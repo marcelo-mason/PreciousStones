@@ -82,8 +82,7 @@ public class PSPlayerListener implements Listener {
         final Player player = event.getPlayer();
         final String playerName = event.getPlayer().getName();
 
-        plugin.getPlayerManager().playerLogin(playerName);
-        plugin.getStorageManager().findUUIDMismatch(player);
+        plugin.getPlayerManager().playerLogin(player);
         plugin.getStorageManager().offerPlayer(playerName);
 
         plugin.getEntryManager().reevaluateEnteredFields(player);
@@ -367,7 +366,7 @@ public class PSPlayerListener implements Listener {
 
                     if (futureField.getSettings().isTeleportHasItem(new BlockTypeEntry(stack.getType()))) {
                         if (FieldFlag.TELEPORT_IF_HAS_ITEMS.applies(futureField, player)) {
-                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                            PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player);
 
                             if (!entry.isTeleporting()) {
                                 entry.setTeleporting(true);
@@ -391,7 +390,7 @@ public class PSPlayerListener implements Listener {
 
                 if (!hasItem) {
                     if (FieldFlag.TELEPORT_IF_NOT_HAS_ITEMS.applies(futureField, player)) {
-                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player);
 
                         if (!entry.isTeleporting()) {
                             entry.setTeleporting(true);
@@ -412,7 +411,7 @@ public class PSPlayerListener implements Listener {
             if (itemInHand != null && itemInHand.getTypeId() != 0) {
                 if (futureField.getSettings().isTeleportHoldingItem(new BlockTypeEntry(itemInHand.getType()))) {
                     if (FieldFlag.TELEPORT_IF_HOLDING_ITEMS.applies(futureField, player)) {
-                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player);
 
                         if (!entry.isTeleporting()) {
                             entry.setTeleporting(true);
@@ -433,7 +432,7 @@ public class PSPlayerListener implements Listener {
             if (itemInHand != null && itemInHand.getTypeId() != 0) {
                 if (!futureField.getSettings().isTeleportNotHoldingItem(new BlockTypeEntry(itemInHand.getType()))) {
                     if (FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS.applies(futureField, player)) {
-                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player.getName());
+                        PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player);
 
                         if (!entry.isTeleporting()) {
                             entry.setTeleporting(true);
