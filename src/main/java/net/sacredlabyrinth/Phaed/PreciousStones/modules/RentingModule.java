@@ -16,15 +16,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class RentingModule {
     private Field field;
-    private List<RentEntry> renterEntries = new ArrayList<RentEntry>();
+    private Map<String, RentEntry> renterEntries = new HashMap<String, RentEntry>();
     private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
-    private List<String> renters = new ArrayList<String>();
     private boolean signIsClean;
     private int limitSeconds;
 
@@ -33,45 +33,38 @@ public class RentingModule {
     }
 
     public List<String> getRenters() {
-        return Collections.unmodifiableList(renters);
+        return new ArrayList<String>(renterEntries.keySet());
     }
 
     public void addRenter(RentEntry entry) {
-        renterEntries.add(entry);
-        renters.add(entry.getPlayerName().toLowerCase());
+        renterEntries.put(entry.getPlayerName().toLowerCase(), entry);
         PreciousStones.getInstance().getForceFieldManager().addToRenterCollection(field);
     }
 
     public boolean hasRenter(String playerName) {
-        return renters.contains(playerName.toLowerCase());
+        return renterEntries.containsKey(playerName.toLowerCase());
     }
 
     public boolean hasRenters() {
-        return !renters.isEmpty();
+        return !renterEntries.isEmpty();
     }
 
-    public void migrateRenters(String oldName, String newName) {
-        for (RentEntry entry : renterEntries) {
-            if (entry.getPlayerName().equals(oldName)) {
-                entry.setPlayerName(newName);
-                cleanFieldSign();
-                break;
-            }
+    public boolean migrateRenters(String oldName, String newName) {
+        RentEntry entry = renterEntries.remove(oldName.toLowerCase());
+        if (entry == null) {
+            return false;
         }
-        oldName = oldName.toLowerCase();
-        for (int i = 0; i < renters.size(); i++) {
-            if (renters.get(i).equalsIgnoreCase(oldName)) {
-                renters.set(i, oldName.toLowerCase());
-                break;
-            }
-        }
+
+        entry.setPlayerName(newName);
+        renterEntries.put(newName.toLowerCase(), entry);
         field.getFlagsModule().dirtyFlags("addRent");
+
+        return true;
     }
 
     public void clearRenters() {
         PreciousStones.getInstance().getForceFieldManager().removeAllRenters(field);
         renterEntries.clear();
-        renters.clear();
     }
 
     public void addPayment(PaymentEntry entry) {
@@ -94,7 +87,7 @@ public class RentingModule {
 
     public ArrayList<String> getRentersString() {
         ArrayList<String> ll = new ArrayList<String>();
-        for (RentEntry entry : renterEntries) {
+        for (RentEntry entry : renterEntries.values()) {
             ll.add(entry.serialize());
         }
         return ll;
@@ -109,13 +102,7 @@ public class RentingModule {
     }
 
     public RentEntry getRenter(Player player) {
-        for (RentEntry entry : renterEntries) {
-            if (entry.getPlayerName().equals(player.getName())) {
-                return entry;
-            }
-        }
-
-        return null;
+        return renterEntries.get(player.getName().toLowerCase());
     }
 
     public void addRent(Player player) {
@@ -136,8 +123,7 @@ public class RentingModule {
 
                 ChatHelper.send(player, "fieldSignRentRented", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
             } else {
-                renterEntries.add(new RentEntry(player.getName(), seconds));
-                renters.add(player.getName().toLowerCase());
+                renterEntries.put(player.getName().toLowerCase(), new RentEntry(player.getName(), seconds));
 
                 if (renterEntries.size() == 1) {
                     scheduleNextRentUpdate();
@@ -155,16 +141,14 @@ public class RentingModule {
     public void removeRenter(RentEntry entry) {
         String renterName = entry.getPlayerName().toLowerCase();
         PreciousStones.getInstance().getForceFieldManager().removeRenter(field, renterName);
-        renterEntries.remove(entry);
-        renters.remove(renterName);
+        renterEntries.remove(renterName);
 
         field.getFlagsModule().dirtyFlags("removeRenter");
     }
 
     public boolean clearRents() {
         if (hasRenters()) {
-            renterEntries.clear();
-            renters.clear();
+            clearRenters();
             cleanFieldSign();
 
             field.getFlagsModule().dirtyFlags("clearRents");
@@ -180,7 +164,6 @@ public class RentingModule {
             s.eject();
 
             renterEntries.clear();
-            renters.clear();
             payment.clear();
 
             field.getFlagsModule().dirtyFlags("removeRents");
@@ -191,16 +174,14 @@ public class RentingModule {
     }
 
     public List<RentEntry> getRenterEntries() {
-        return Collections.unmodifiableList(renterEntries);
+        return new ArrayList<RentEntry>(renterEntries.values());
     }
 
     public void abandonRent(Player player) {
-        for (RentEntry entry : renterEntries) {
-            if (entry.getPlayerName().equals(player.getName())) {
-                removeRenter(entry);
-                cleanFieldSign();
-                return;
-            }
+        RentEntry entry = renterEntries.get(player.getName().toLowerCase());
+        if (entry != null) {
+            removeRenter(entry);
+            cleanFieldSign();
         }
     }
 
@@ -338,12 +319,11 @@ public class RentingModule {
                         if (PreciousStones.getInstance().getEntryManager().hasInhabitants(field)) {
                             Player closest = Helper.getClosestPlayer(field.getLocation(), 64);
                             if (closest != null) {
-                                for (RentEntry entry : renterEntries) {
-                                    if (entry.getPlayerName().equalsIgnoreCase(closest.getName())) {
-                                        s.updateRemainingTime(entry.remainingRent());
-                                        foundSomeone = true;
-                                        signIsClean = false;
-                                    }
+                                RentEntry entry = renterEntries.get(closest.getName().toLowerCase());
+                                if (entry != null) {
+                                    s.updateRemainingTime(entry.remainingRent());
+                                    foundSomeone = true;
+                                    signIsClean = false;
                                 }
                             }
                         }
@@ -356,11 +336,10 @@ public class RentingModule {
                 }
             }
 
-            for (Iterator iter = renterEntries.iterator(); iter.hasNext(); ) {
-                RentEntry entry = (RentEntry) iter.next();
-
+            for (Iterator<Map.Entry<String, RentEntry>> iter = renterEntries.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry<String, RentEntry> mapEntry = iter.next();
+                RentEntry entry = mapEntry.getValue();
                 if (entry.isDone()) {
-                    renters.remove(entry.getPlayerName().toLowerCase());
                     iter.remove();
 
                     field.getFlagsModule().dirtyFlags("RentUpdateRunnable");
