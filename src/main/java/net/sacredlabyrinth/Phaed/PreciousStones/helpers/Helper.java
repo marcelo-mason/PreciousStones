@@ -417,7 +417,7 @@ public class Helper {
      * @param sep
      * @return
      */
-    public static String toMessage(List<String> args, String sep) {
+    public static String toMessage(Collection<String> args, String sep) {
         String out = "";
 
         for (String arg : args) {
