@@ -1491,10 +1491,10 @@ public final class ForceFieldManager {
         if (flagList != null) {
             List<Field> fields = flagList.get(flag);
 
-            if (fields != null && fields.size() > 0) {
+            if (fields != null && !fields.isEmpty()) {
                 fields = new ArrayList<Field>(fields);
 
-                if (fields.size() > 0) {
+                if (!fields.isEmpty()) {
                     for (Iterator it = fields.iterator(); it.hasNext(); ) {
                         Field field = (Field) it.next();
 
@@ -1530,7 +1530,7 @@ public final class ForceFieldManager {
 
         List<Field> allFields = getSourceFieldsInChunk(cv, FieldFlag.ALL, filters);
 
-        if (allFields.size() == 0) {
+        if (allFields.isEmpty()) {
             return null;
         }
 
@@ -2258,7 +2258,7 @@ public final class ForceFieldManager {
      * Delete fields in deletion queue
      */
     public void flush() {
-        while (deletionQueue.size() > 0) {
+        while (!deletionQueue.isEmpty()) {
             Field pending = deletionQueue.poll();
 
             dropField(pending);

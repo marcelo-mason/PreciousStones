@@ -166,13 +166,13 @@ public class PSEntityListener implements Listener {
         }
 
         if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
-            if (plugin.getForceFieldManager().getEnabledSourceFields(loc, FieldFlag.PREVENT_MOB_SPAWN).size() > 0) {
+            if (!plugin.getForceFieldManager().getEnabledSourceFields(loc, FieldFlag.PREVENT_MOB_SPAWN).isEmpty()) {
                 event.setCancelled(true);
             }
         }
 
         if (entity instanceof Animals) {
-            if (plugin.getForceFieldManager().getEnabledSourceFields(loc, FieldFlag.PREVENT_ANIMAL_SPAWN).size() > 0) {
+            if (!plugin.getForceFieldManager().getEnabledSourceFields(loc, FieldFlag.PREVENT_ANIMAL_SPAWN).isEmpty()) {
                 event.setCancelled(true);
             }
         }
@@ -326,7 +326,7 @@ public class PSEntityListener implements Listener {
                     }
                 }
 
-                if (saved.size() > 0) {
+                if (!saved.isEmpty()) {
                     plugin.getStorageManager().offerGrief(field);
                 }
             } else {

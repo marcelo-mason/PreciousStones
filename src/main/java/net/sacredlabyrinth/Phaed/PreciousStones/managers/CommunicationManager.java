@@ -2143,7 +2143,7 @@ public class CommunicationManager {
         cb.addRow("  " + color + ChatHelper.format("_owner") + ": ", ChatColor.AQUA + field.getOwner(), "");
 
         List<String> allowed = field.getAllowed();
-        if (allowed.size() > 0) {
+        if (!allowed.isEmpty()) {
 
             int rows = (int) Math.max(Math.ceil(allowed.size() / 2.0), 1);
 
@@ -2267,7 +2267,7 @@ public class CommunicationManager {
 
         ChatHelper cb = getNewChatBlock(player);
 
-        if (field.getRenters().size() > 0) {
+        if (!field.getRenters().isEmpty()) {
             List<String> renters = field.getRenters();
 
             int rows = (int) Math.max(Math.ceil(renters.size() / 2.0), 1);
