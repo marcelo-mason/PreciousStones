@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class StackHelper {
+    
+    private StackHelper() {
+        
+    }
+    
     public static void unHoldItem(Player player, int slot) {
         PlayerInventory inv = player.getInventory();
         ItemStack item = inv.getItem(slot);

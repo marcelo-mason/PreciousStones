@@ -14,6 +14,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SignHelper {
+    
+    private SignHelper() {
+        
+    }
+    
     /**
      * check if a block is a sign
      *

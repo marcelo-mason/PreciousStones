@@ -3,6 +3,10 @@ package net.sacredlabyrinth.Phaed.PreciousStones;
 import org.bukkit.Material;
 
 public class MaterialName {
+    
+    private MaterialName() {
+        
+    }
 
     public static String getIDName(Material mate) {
         switch (mate) {
