@@ -845,7 +845,7 @@ public class PSBlockListener implements Listener {
                     Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
 
                     if (field1 != null) {
-                        if (field == null || field != field1) {
+                        if (field == null || field.equals(field1)) {
                             conflicted = true;
                         }
                     }
@@ -855,7 +855,7 @@ public class PSBlockListener implements Listener {
                     Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
 
                     if (field2 != null) {
-                        if (field == null || field != field2) {
+                        if (field == null || field.equals(field2)) {
                             conflicted = true;
                         }
                     }
@@ -865,7 +865,7 @@ public class PSBlockListener implements Listener {
                     Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
 
                     if (field3 != null) {
-                        if (field == null || field != field3) {
+                        if (field == null || field.equals(field3)) {
                             conflicted = true;
                         }
                     }
@@ -875,7 +875,7 @@ public class PSBlockListener implements Listener {
                     Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
 
                     if (field4 != null) {
-                        if (field == null || field != field4) {
+                        if (field == null || field.equals(field4)) {
                             conflicted = true;
                         }
                     }
