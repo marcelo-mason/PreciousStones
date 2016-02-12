@@ -520,7 +520,7 @@ public final class UnbreakableManager {
      * Delete unbreakables in deletion queue
      */
     public void flush() {
-        while (deletionQueue.size() > 0) {
+        while (!deletionQueue.isEmpty()) {
             Unbreakable pending = deletionQueue.poll();
             deleteUnbreakable(pending);
         }

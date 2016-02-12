@@ -48,7 +48,7 @@ public class ListingModule {
     }
 
     public boolean hasBlacklistedComands() {
-        return getBlacklistedCommands().size() > 0;
+        return !getBlacklistedCommands().isEmpty();
     }
 
     public String getBlacklistedCommandsList() {

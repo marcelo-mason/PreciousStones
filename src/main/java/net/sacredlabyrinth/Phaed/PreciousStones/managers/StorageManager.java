@@ -496,7 +496,7 @@ public class StorageManager {
             plugin.getUnbreakableManager().addToCollection(ub);
         }
 
-        if (unbreakables.size() > 0) {
+        if (!unbreakables.isEmpty()) {
             PreciousStones.log("countsUnbreakables", world, unbreakables.size());
         }
     }
