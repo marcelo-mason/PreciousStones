@@ -11,6 +11,10 @@ import java.util.UUID;
  * @author NeT32
  */
 public class UUIDMigration {
+    
+    private UUIDMigration() {
+        
+    }
 
     public static boolean canReturnUUID() {
         try {
