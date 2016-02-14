@@ -52,9 +52,7 @@ public class MySQLCore implements DBCore {
                 initialize();
             }
         } catch (SQLException e) {
-            if (connection == null) {
-                initialize();
-            }
+            initialize();
         }
 
         return connection;

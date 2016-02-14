@@ -528,16 +528,12 @@ public class FieldSettings {
             if (Helper.isStringList(getValue(flagStr))) {
                 List<BlockTypeEntry> value = Helper.toTypeEntriesBlind((List<Object>) getValue(flagStr));
 
-                if (value != null) {
-                    if (!value.isEmpty()) {
-                        loadFlags(getKey(flagStr));
-                    }
-
-                    PreciousStones.debug("   %s: %s", flagStr, value);
-                    return value;
-                } else {
-                    PreciousStones.log(Level.WARNING, "** Malformed Flag %s", flagStr);
+                if (!value.isEmpty()) {
+                    loadFlags(getKey(flagStr));
                 }
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
