@@ -17,6 +17,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Handles what happens inside fields
@@ -70,14 +71,14 @@ public final class EntryManager {
 
     private void doEffects() {
         try {
-            for (String playerName : dynamicEntries.keySet()) {
-                Player player = Bukkit.getServer().getPlayerExact(playerName);
+            for (Entry<String, EntryFields> playerEntry : dynamicEntries.entrySet()) {
+                Player player = Bukkit.getServer().getPlayerExact(playerEntry.getKey());
 
                 if (player == null) {
                     continue;
                 }
 
-                EntryFields ef = dynamicEntries.get(playerName);
+                EntryFields ef = playerEntry.getValue();
                 List<Field> fields = ef.getFields();
 
                 boolean hasDamage = false;
@@ -641,14 +642,14 @@ public final class EntryManager {
      */
     public void removeAllPlayers(Field field) {
         synchronized (entriesByPlayer) {
-            for (String playerName : entriesByPlayer.keySet()) {
-                Player player = Bukkit.getServer().getPlayerExact(playerName);
+            for (Entry<String, EntryFields> playerEntry : entriesByPlayer.entrySet()) {
+                Player player = Bukkit.getServer().getPlayerExact(playerEntry.getKey());
 
                 if (player == null) {
                     continue;
                 }
 
-                EntryFields ef = entriesByPlayer.get(playerName);
+                EntryFields ef = playerEntry.getValue();
                 List<Field> fields = ef.getFields();
 
                 for (Iterator iter = fields.iterator(); iter.hasNext(); ) {
@@ -664,14 +665,14 @@ public final class EntryManager {
         }
 
         synchronized (dynamicEntries) {
-            for (String playerName : dynamicEntries.keySet()) {
-                Player player = Bukkit.getServer().getPlayerExact(playerName);
+            for (Entry<String, EntryFields> playerEntry : dynamicEntries.entrySet()) {
+                Player player = Bukkit.getServer().getPlayerExact(playerEntry.getKey());
 
                 if (player == null) {
                     continue;
                 }
 
-                EntryFields ef = dynamicEntries.get(playerName);
+                EntryFields ef = playerEntry.getValue();
                 List<Field> fields = ef.getFields();
 
                 for (Iterator iter = fields.iterator(); iter.hasNext(); ) {
@@ -764,13 +765,13 @@ public final class EntryManager {
         HashSet<String> inhabitants = new HashSet<String>();
 
         synchronized (entriesByPlayer) {
-            for (String playerName : entriesByPlayer.keySet()) {
-                EntryFields ef = entriesByPlayer.get(playerName);
+            for (Entry<String, EntryFields> playerEntry : entriesByPlayer.entrySet()) {
+                EntryFields ef = playerEntry.getValue();
                 List<Field> fields = ef.getFields();
 
                 for (Field testfield : fields) {
                     if (field.equals(testfield)) {
-                        inhabitants.add(playerName);
+                        inhabitants.add(playerEntry.getKey());
                     }
                 }
             }

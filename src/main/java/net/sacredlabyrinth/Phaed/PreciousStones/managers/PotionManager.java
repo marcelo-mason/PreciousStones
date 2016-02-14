@@ -12,6 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * @author telaeris
@@ -30,8 +31,9 @@ public class PotionManager {
         HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
         String names = "";
 
-        for (PotionEffectType pot : potions.keySet()) {
-            int intensity = potions.get(pot);
+        for (Entry<PotionEffectType, Integer> potion : potions.entrySet()) {
+            int intensity = potion.getValue();
+            PotionEffectType pot = potion.getKey();
 
             if (!player.hasPotionEffect(pot)) {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.manual.bypass.potions")) {

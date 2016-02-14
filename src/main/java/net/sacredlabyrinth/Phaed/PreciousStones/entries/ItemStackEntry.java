@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author phaed
@@ -131,8 +132,8 @@ public class ItemStackEntry {
     public ItemStack toItemStack() {
         ItemStack is = new ItemStack(getTypeId(), getAmount(), getDurability(), getData());
 
-        for (Enchantment ench : enchantments.keySet()) {
-            is.addUnsafeEnchantment(ench, Math.min(enchantments.get(ench), ench.getMaxLevel()));
+        for (Entry<Enchantment, Integer> ench : enchantments.entrySet()) {
+            is.addUnsafeEnchantment(ench.getKey(), Math.min(ench.getValue(), ench.getKey().getMaxLevel()));
         }
 
         return is;

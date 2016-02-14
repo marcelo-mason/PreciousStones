@@ -23,6 +23,7 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author phaed
@@ -192,10 +193,10 @@ public class CommunicationManager {
 
         Map<String, Integer> details = plugin.getStorageManager().getTranslocationDetails(player.getName());
 
-        for (String name : details.keySet()) {
-            int count = details.get(name);
+        for (Entry<String, Integer> detail : details.entrySet()) {
+            int count = detail.getValue();
 
-            cb.addRow("  " + ChatColor.WHITE + name, ChatColor.WHITE + " " + count);
+            cb.addRow("  " + ChatColor.WHITE + detail.getKey(), ChatColor.WHITE + " " + count);
         }
 
         if (cb.size() > 1) {
@@ -2380,11 +2381,11 @@ public class CommunicationManager {
 
         cb.addRow("  " + ChatColor.GRAY + ChatHelper.format("_name"), ChatHelper.format("_count"));
 
-        for (String playerName : fieldsByOwner.keySet()) {
-            int count = fieldsByOwner.get(playerName).size();
+        for (Entry<String, List<Field>> playerFields : fieldsByOwner.entrySet()) {
+            int count = playerFields.getValue().size();
 
             if (count > 0) {
-                cb.addRow("  " + ChatColor.AQUA + playerName, ChatColor.WHITE + " " + count);
+                cb.addRow("  " + ChatColor.AQUA + playerFields.getKey(), ChatColor.WHITE + " " + count);
             }
         }
 
@@ -2440,14 +2441,14 @@ public class CommunicationManager {
 
         fieldCounts = plugin.getForceFieldManager().getFieldCounts(target);
 
-        for (BlockTypeEntry type : fieldCounts.keySet()) {
-            int count = fieldCounts.get(type);
+        for (Entry<BlockTypeEntry, Integer> fieldCount : fieldCounts.entrySet()) {
+            int count = fieldCount.getValue();
 
             if (count == 0) {
                 continue;
             }
 
-            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(type);
+            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(fieldCount.getKey());
 
             if (fs == null) {
                 continue;

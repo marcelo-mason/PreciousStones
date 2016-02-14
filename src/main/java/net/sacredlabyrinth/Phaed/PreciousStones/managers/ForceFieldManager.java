@@ -26,6 +26,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Handles fields
@@ -446,10 +447,9 @@ public final class ForceFieldManager {
         // remove from flags collection
 
         if (field.getSettings() != null) {
-            Set<FieldFlag> flags = fieldsByFlag.keySet();
 
-            for (FieldFlag flag : flags) {
-                List<Field> fields = fieldsByFlag.get(flag);
+            for (Entry<FieldFlag, List<Field>> fieldSetting : fieldsByFlag.entrySet()) {
+                List<Field> fields = fieldSetting.getValue();
 
                 if (fields != null) {
                     fields.remove(field);
