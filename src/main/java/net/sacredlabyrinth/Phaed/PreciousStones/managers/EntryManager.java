@@ -192,14 +192,10 @@ public final class EntryManager {
                                         player.setHealth((int) Math.max(health, 0));
 
                                         if (health <= 1) {
-                                            if (player != null) {
-                                                player.playEffect(EntityEffect.DEATH);
-                                            }
+                                            player.playEffect(EntityEffect.DEATH);
                                         }
 
-                                        if (player != null) {
-                                            plugin.getCommunicationManager().showDamage(player);
-                                        }
+                                        plugin.getCommunicationManager().showDamage(player);
                                         hasDamage = true;
                                     }
                                 }
