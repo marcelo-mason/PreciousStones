@@ -94,12 +94,19 @@ public class SQLiteCore implements DBCore {
      * @return
      */
     public ResultSet select(String query) {
+        Statement statement = null;
         try {
-            Statement statement = getConnection().createStatement();
+            statement = getConnection().createStatement();
             return statement.executeQuery(query);
         } catch (SQLException ex) {
             log.severe("Error at SQL Query: " + ex.getMessage());
             log.severe("Query: " + query);
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
