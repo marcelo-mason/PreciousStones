@@ -126,20 +126,17 @@ public class SQLiteCore implements DBCore {
             try {
                 statement.executeUpdate(query);
                 keys = statement.executeQuery("SELECT last_insert_rowid()");
+                if (keys != null) {
+                    if (keys.next()) {
+                        return keys.getLong(1);
+                    }
+                }
             } catch (SQLException ex) {
                 if (!ex.toString().contains("not return ResultSet")) {
                     log.severe("Error at SQL INSERT Query: " + ex);
                 }
             } finally {
-                if (keys != null) {
-                    if (keys.next()) {
-                        long key = keys.getLong(1);
-                        statement.close();
-                        return key;
-                    }
-                }
                 statement.close();
-                return 0;
             }
         } catch (SQLException ex) {
             if (!ex.toString().contains("not return ResultSet")) {
