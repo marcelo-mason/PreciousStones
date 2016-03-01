@@ -302,7 +302,7 @@ public final class ForesterManager {
                 continue;
             }
 
-            world.spawnCreature(new Location(world, x, y, z), entity);
+            world.spawnEntity(new Location(world, x, y, z), entity);
         }
     }
 
