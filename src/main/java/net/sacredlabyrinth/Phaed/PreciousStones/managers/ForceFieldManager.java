@@ -40,6 +40,7 @@ public final class ForceFieldManager {
     private final Map<String, Map<BlockTypeEntry, List<Field>>> fieldsByRenterAndType = Maps.newHashMap();
     private final Map<String, Map<FieldFlag, List<Field>>> fieldsByOwnerAndFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByOwner = Maps.newHashMap();
+    private final Map<String, List<Field>> fieldsByAllowed = Maps.newHashMap();
     private final Map<Vec, Field> fieldsByVec = Maps.newHashMap();
 
     private final HashMap<ChunkVec, HashMap<FieldFlag, List<Field>>> sourceFields = new HashMap<ChunkVec, HashMap<FieldFlag, List<Field>>>();
@@ -64,6 +65,8 @@ public final class ForceFieldManager {
         fieldsByOwnerAndType.clear();
         fieldsByOwnerAndFlag.clear();
         fieldsByVec.clear();
+        fieldsByAllowed.clear();
+        fieldsByRenterAndType.clear();
 
         sourceFields.clear();
     }
@@ -350,6 +353,19 @@ public final class ForceFieldManager {
         fields.add(field);
         getFieldsByOwner().put(field.getOwner().toLowerCase(), fields);
 
+        // add to allowed collection
+        List<String> allowed = field.getAllowed();
+        for (String allowedPlayer : allowed) {
+            fields = fieldsByAllowed.get(allowedPlayer.toLowerCase());
+
+            if (fields == null) {
+                fields = new ArrayList<Field>();
+            }
+
+            fields.add(field);
+            fieldsByAllowed.put(allowedPlayer.toLowerCase(), fields);
+        }
+
         // add to owner and type collection
 
         Map<BlockTypeEntry, List<Field>> types = fieldsByOwnerAndType.get(field.getOwner().toLowerCase());
@@ -467,6 +483,18 @@ public final class ForceFieldManager {
 
         if (owned != null) {
             owned.remove(field);
+        }
+
+        // remove from allowed collection
+        List<String> allowed = field.getAllowed();
+        for (String allowedPlayer : allowed) {
+            List<Field> allowedFields = fieldsByAllowed.get(allowedPlayer.toLowerCase());
+            if (allowedFields != null) {
+                allowedFields.remove(field);
+                if (allowedFields.isEmpty()) {
+                    fieldsByAllowed.remove(allowedPlayer.toLowerCase());
+                }
+            }
         }
 
         // remove from worlds collection
@@ -660,6 +688,10 @@ public final class ForceFieldManager {
             for (List<Field> fields : rented.values()) {
                 out.addAll(fields);
             }
+        }
+        List<Field> allowed = fieldsByAllowed.get(owner);
+        if (allowed != null) {
+            out.addAll(allowed);
         }
         return out;
     }
@@ -1270,6 +1302,12 @@ public final class ForceFieldManager {
         if (!field.isInAllowedList(target)) {
             field.addAllowed(target);
             plugin.getStorageManager().offerField(field);
+            List<Field> allowed = fieldsByAllowed.get(target);
+            if (allowed == null) {
+                allowed = new ArrayList<Field>();
+            }
+            allowed.add(field);
+            fieldsByAllowed.put(target, allowed);
             return true;
         }
 
@@ -1287,6 +1325,14 @@ public final class ForceFieldManager {
         if (field.isInAllowedList(target)) {
             field.removeAllowed(target);
             plugin.getStorageManager().offerField(field);
+
+            List<Field> allowed = fieldsByAllowed.get(target);
+            if (allowed != null) {
+                allowed.remove(field);
+                if (allowed.isEmpty()) {
+                    fieldsByAllowed.remove(target);
+                }
+            }
             return true;
         }
         return false;
@@ -1322,8 +1368,9 @@ public final class ForceFieldManager {
             }
 
             if (!isAllowed(field, allowedName)) {
-                field.addAllowed(allowedName);
-                allowedCount++;
+                if (addAllowed(field, allowedName)) {
+                    allowedCount++;
+                }
             }
             plugin.getStorageManager().offerField(field);
         }
@@ -1418,8 +1465,9 @@ public final class ForceFieldManager {
             }
 
             if (isAllowed(field, target)) {
-                field.removeAllowed(target);
-                removedCount++;
+                if (removeAllowed(field, target)) {
+                    removedCount++;
+                }
             }
             plugin.getStorageManager().offerField(field);
         }
@@ -2749,14 +2797,16 @@ public final class ForceFieldManager {
             fieldsByRenterAndType.put(newNameLowercase, rentalFields);
         }
 
-        // TODO: Need to track allowed to make this more efficient?
-        for (List<Field> fieldList : fieldsByWorld.values()) {
-            for (Field field : fieldList) {
+        List<Field> allowedList = fieldsByAllowed.get(oldNameLowercase);
+        if (allowedList != null) {
+            for (Field field : allowedList) {
                 if (field.migrateAllowed(oldName, newName)) {
                     PreciousStones.getInstance().getStorageManager().offerField(field);
                 }
             }
         }
+        fieldsByAllowed.remove(oldNameLowercase);
+        fieldsByAllowed.put(newNameLowercase, allowedList);
     }
 
     public Map<String, List<Field>> getFieldsByOwner() {
