@@ -73,8 +73,9 @@ public class LanguageManager {
         options.setWidth(99999999);
         options.setAllowUnicode(true);
 
+        FileWriter fw = null;
         try {
-            FileWriter fw = new FileWriter(file);
+            fw = new FileWriter(file);
             StringWriter writer = new StringWriter();
             new Yaml(options).dump(language, writer);
 
@@ -82,11 +83,16 @@ public class LanguageManager {
                 fw.write(comment);
             }
 
-            fw.write(writer.toString());
-            fw.close();
+            fw.write(writer.toString());            
         } catch (IOException e) {
             // could not save
             e.printStackTrace();
+        } finally{
+            try {
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

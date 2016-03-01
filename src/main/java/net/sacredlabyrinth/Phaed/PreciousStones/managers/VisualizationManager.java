@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * @author phad
@@ -71,9 +72,9 @@ public class VisualizationManager {
      * Reverts all current visualizations
      */
     public void revertAll() {
-        for (String playerName : visualizations.keySet()) {
-            Visualization vis = visualizations.get(playerName);
-            Player player = Bukkit.getServer().getPlayerExact(playerName);
+        for (Entry<String, Visualization> visualization : visualizations.entrySet()) {
+            Visualization vis = visualization.getValue();
+            Player player = Bukkit.getServer().getPlayerExact(visualization.getKey());
 
             if (player != null) {
                 Visualize visualize = new Visualize(vis.getBlocks(), player, true, false, 0);

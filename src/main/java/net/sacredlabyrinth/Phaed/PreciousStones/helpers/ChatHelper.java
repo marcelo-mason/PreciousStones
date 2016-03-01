@@ -67,7 +67,7 @@ public class ChatHelper {
      * @return
      */
     public boolean hasContent() {
-        return rows.size() > 0;
+        return !rows.isEmpty();
     }
 
     /**
@@ -107,7 +107,7 @@ public class ChatHelper {
             return false;
         }
 
-        if (rows.size() == 0) {
+        if (rows.isEmpty()) {
             return false;
         }
 
@@ -139,7 +139,7 @@ public class ChatHelper {
         // size up all sections
 
         for (int i = 0; i < amount; i++) {
-            if (rows.size() == 0) {
+            if (rows.isEmpty()) {
                 continue;
             }
 
@@ -187,7 +187,7 @@ public class ChatHelper {
             sender.sendMessage(msg);
         }
 
-        return rows.size() > 0;
+        return !rows.isEmpty();
     }
 
     /**
@@ -199,7 +199,7 @@ public class ChatHelper {
             return;
         }
 
-        if (rows.size() == 0) {
+        if (rows.isEmpty()) {
             return;
         }
 

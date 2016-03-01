@@ -4,6 +4,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class Timing {
     private String title;
@@ -30,8 +31,8 @@ public class Timing {
         PreciousStones.debug(title + " Timings");
         PreciousStones.debug("----------------------------------------------------------------------");
 
-        for (String name : times.keySet()) {
-            Long time = times.get(name);
+        for ( Entry<String, Long> timeObj : times.entrySet()) {
+            Long time = timeObj.getValue();
 
             if (previousTime == -9999L) {
                 previousTime = time;
@@ -41,7 +42,7 @@ public class Timing {
             long duration = Math.max(time - previousTime, 0);
             String friendlyDuration = DurationFormatUtils.formatDuration(duration, "ss.SSS");
 
-            PreciousStones.debug(friendlyDuration + "  " + name);
+            PreciousStones.debug(friendlyDuration + "  " + timeObj.getKey());
             previousTime = time;
         }
 

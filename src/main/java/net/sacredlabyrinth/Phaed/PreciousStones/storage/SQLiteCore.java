@@ -94,12 +94,19 @@ public class SQLiteCore implements DBCore {
      * @return
      */
     public ResultSet select(String query) {
+        Statement statement = null;
         try {
-            Statement statement = getConnection().createStatement();
+            statement = getConnection().createStatement();
             return statement.executeQuery(query);
         } catch (SQLException ex) {
             log.severe("Error at SQL Query: " + ex.getMessage());
             log.severe("Query: " + query);
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -119,20 +126,17 @@ public class SQLiteCore implements DBCore {
             try {
                 statement.executeUpdate(query);
                 keys = statement.executeQuery("SELECT last_insert_rowid()");
+                if (keys != null) {
+                    if (keys.next()) {
+                        return keys.getLong(1);
+                    }
+                }
             } catch (SQLException ex) {
                 if (!ex.toString().contains("not return ResultSet")) {
                     log.severe("Error at SQL INSERT Query: " + ex);
                 }
             } finally {
-                if (keys != null) {
-                    if (keys.next()) {
-                        long key = keys.getLong(1);
-                        statement.close();
-                        return key;
-                    }
-                }
                 statement.close();
-                return 0;
             }
         } catch (SQLException ex) {
             if (!ex.toString().contains("not return ResultSet")) {

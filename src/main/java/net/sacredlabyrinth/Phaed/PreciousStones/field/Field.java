@@ -1166,7 +1166,6 @@ public class Field extends AbstractVec implements Comparable<Field> {
                 if (flags.hasFlag(FieldFlag.TELEPORT_PLAYERS_ON_ENABLE) ||
                         flags.hasFlag(FieldFlag.TELEPORT_MOBS_ON_ENABLE) ||
                         flags.hasFlag(FieldFlag.TELEPORT_VILLAGERS_ON_ENABLE) ||
-                        flags.hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE) ||
                         flags.hasFlag(FieldFlag.TELEPORT_ANIMALS_ON_ENABLE)) {
                     List<Entity> entities = Bukkit.getServer().getWorld(this.getWorld()).getEntities();
 

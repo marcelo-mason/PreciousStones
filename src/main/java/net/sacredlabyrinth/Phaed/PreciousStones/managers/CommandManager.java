@@ -228,7 +228,7 @@ public final class CommandManager implements CommandExecutor {
                         if (field != null) {
                             List<String> allowed = field.getAllAllowed();
 
-                            if (allowed.size() > 0) {
+                            if (!allowed.isEmpty()) {
                                 ChatHelper.send(sender, "allowedList", Helper.toMessage(new ArrayList<String>(allowed), ", "));
                             } else {
                                 ChatHelper.send(sender, "noPlayersAllowedOnField");
@@ -270,7 +270,7 @@ public final class CommandManager implements CommandExecutor {
                         if (field != null) {
                             HashSet<String> inhabitants = plugin.getForceFieldManager().getWho(player, field);
 
-                            if (inhabitants.size() > 0) {
+                            if (!inhabitants.isEmpty()) {
                                 ChatHelper.send(sender, "inhabitantsList", Helper.toMessage(new ArrayList<String>(inhabitants), ", "));
                             } else {
                                 ChatHelper.send(sender, "noPlayersFoundOnField");
@@ -828,7 +828,7 @@ public final class CommandManager implements CommandExecutor {
                                             fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), radius / 16, FieldFlag.ALL, player);
                                         }
 
-                                        if (fieldsInArea != null && fieldsInArea.size() > 0) {
+                                        if (fieldsInArea != null && !fieldsInArea.isEmpty()) {
                                             ChatHelper.send(sender, "visualizing");
 
                                             int count = 0;
@@ -871,7 +871,7 @@ public final class CommandManager implements CommandExecutor {
                                 if (plugin.getPermissionsManager().has(player, "preciousstones.admin.mark")) {
                                     Set<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getServer().getViewDistance(), FieldFlag.ALL);
 
-                                    if (fieldsInArea.size() > 0) {
+                                    if (!fieldsInArea.isEmpty()) {
                                         ChatHelper.send(sender, "markingFields", fieldsInArea.size());
 
                                         for (Field f : fieldsInArea) {
@@ -885,7 +885,7 @@ public final class CommandManager implements CommandExecutor {
                                 } else {
                                     Set<Field> fieldsInArea = plugin.getForceFieldManager().getFieldsInCustomArea(player.getLocation(), plugin.getServer().getViewDistance(), FieldFlag.ALL);
 
-                                    if (fieldsInArea.size() > 0) {
+                                    if (!fieldsInArea.isEmpty()) {
                                         int count = 0;
                                         for (Field f : fieldsInArea) {
                                             if (plugin.getForceFieldManager().isAllowed(f, player.getName())) {
@@ -1334,7 +1334,7 @@ public final class CommandManager implements CommandExecutor {
                         if (args.length == 0 && hasplayer) {
                             List<Field> sourceFields = plugin.getForceFieldManager().getSourceFields(block.getLocation(), FieldFlag.ALL);
 
-                            if (sourceFields.size() > 0) {
+                            if (!sourceFields.isEmpty()) {
                                 int count = plugin.getForceFieldManager().deleteFields(sourceFields);
 
                                 if (count > 0) {

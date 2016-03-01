@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Callable;
 
@@ -38,7 +39,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 
     private static void writeBody(HttpURLConnection connection, String body) throws Exception {
         OutputStream stream = connection.getOutputStream();
-        stream.write(body.getBytes());
+        stream.write(body.getBytes(StandardCharsets.UTF_8));
         stream.flush();
         stream.close();
     }
@@ -87,7 +88,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
             HttpURLConnection connection = createConnection();
             String body = JSONArray.toJSONString(names.subList(i * 100, Math.min((i + 1) * 100, names.size())));
             writeBody(connection, body);
-            JSONArray array = (JSONArray) jsonParser.parse(new InputStreamReader(connection.getInputStream()));
+            JSONArray array = (JSONArray) jsonParser.parse(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             for (Object profile : array) {
                 JSONObject jsonProfile = (JSONObject) profile;
                 String id = (String) jsonProfile.get("id");

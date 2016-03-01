@@ -52,9 +52,7 @@ public class MySQLCore implements DBCore {
                 initialize();
             }
         } catch (SQLException e) {
-            if (connection == null) {
-                initialize();
-            }
+            initialize();
         }
 
         return connection;
@@ -87,12 +85,19 @@ public class MySQLCore implements DBCore {
      * @return
      */
     public ResultSet select(String query) {
+        Statement statement = null;
         try {
-            Statement statement = getConnection().createStatement();
+            statement = getConnection().createStatement();
             return statement.executeQuery(query);
         } catch (SQLException ex) {
             log.severe("Error at SQL Query: " + ex.getMessage());
             log.severe("Query: " + query);
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return null;
@@ -105,7 +110,6 @@ public class MySQLCore implements DBCore {
      */
     public long insert(String query) {
         PreciousStones.debug(query);
-        long key = 0;
 
         try {
             Statement statement = getConnection().createStatement();
@@ -114,20 +118,18 @@ public class MySQLCore implements DBCore {
             try {
                 statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
                 keys = statement.getGeneratedKeys();
+                if (keys != null) {
+                    if (keys.next()) {
+                        return keys.getLong(1);
+                    }
+                }
             } catch (SQLException ex) {
                 if (!ex.toString().contains("not return ResultSet")) {
                     log.severe("Error at SQL INSERT Query: " + ex);
                 }
             } finally {
-                if (keys != null) {
-                    if (keys.next()) {
-                        key = keys.getLong(1);
-                    }
-                }
                 statement.close();
-            }
-
-            return key;
+            }            
         } catch (SQLException ex) {
             if (!ex.toString().contains("not return ResultSet")) {
                 log.severe("Error at SQL INSERT Query: " + ex);

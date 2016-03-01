@@ -31,6 +31,7 @@ import org.joda.time.Days;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -496,7 +497,7 @@ public class StorageManager {
             plugin.getUnbreakableManager().addToCollection(ub);
         }
 
-        if (unbreakables.size() > 0) {
+        if (!unbreakables.isEmpty()) {
             PreciousStones.log("countsUnbreakables", world, unbreakables.size());
         }
     }
@@ -2281,11 +2282,11 @@ public class StorageManager {
             PreciousStones.getLog().info("[Queue] processing " + workingUb.size() + " unbreakable queries...");
         }
 
-        for (Unbreakable ub : workingUb.keySet()) {
-            if (workingUb.get(ub)) {
-                insertUnbreakable(ub);
+        for (Entry<Unbreakable, Boolean> ub : workingUb.entrySet()) {
+            if (workingUb.get(ub.getValue())) {
+                insertUnbreakable(ub.getKey());
             } else {
-                deleteUnbreakable(ub);
+                deleteUnbreakable(ub.getKey());
             }
         }
     }
