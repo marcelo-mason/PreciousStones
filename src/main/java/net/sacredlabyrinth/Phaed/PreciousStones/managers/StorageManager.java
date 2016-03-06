@@ -44,11 +44,11 @@ public class StorageManager {
      */
     private DBCore core;
     private PreciousStones plugin;
-    private final Map<Vec, Field> pending = new HashMap<Vec, Field>();
-    private final Set<Field> pendingGrief = new HashSet<Field>();
-    private final Map<Unbreakable, Boolean> pendingUb = new HashMap<Unbreakable, Boolean>();
-    private final Map<String, Boolean> pendingPlayers = new HashMap<String, Boolean>();
-    private final List<SnitchEntry> pendingSnitchEntries = new ArrayList<SnitchEntry>();
+    private final Map<Vec, Field> pending = new HashMap<>();
+    private final Set<Field> pendingGrief = new HashSet<>();
+    private final Map<Unbreakable, Boolean> pendingUb = new HashMap<>();
+    private final Map<String, Boolean> pendingPlayers = new HashMap<>();
+    private final List<SnitchEntry> pendingSnitchEntries = new ArrayList<>();
     private boolean haltUpdates;
 
     /**
@@ -427,7 +427,7 @@ public class StorageManager {
 
     public int enableAllFlags(String flagStr) {
         int changed = 0;
-        List<Field> fields = new ArrayList<Field>();
+        List<Field> fields = new ArrayList<>();
 
         synchronized (this) {
             List<World> worlds = plugin.getServer().getWorlds();
@@ -455,7 +455,7 @@ public class StorageManager {
 
     public int disableAllFlags(String flagStr) {
         int changed = 0;
-        List<Field> fields = new ArrayList<Field>();
+        List<Field> fields = new ArrayList<>();
 
         synchronized (this) {
             List<World> worlds = plugin.getServer().getWorlds();
@@ -577,68 +577,70 @@ public class StorageManager {
      * @return
      */
     public List<Field> getFields(String worldName) {
-        List<Field> out = new ArrayList<Field>();
+        List<Field> out = new ArrayList<>();
         boolean foundInWrongTable = false;
 
         String query = "SELECT pstone_fields.id as id, x, y, z, radius, height, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM pstone_fields WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
-        ResultSet res = core.select(query);
+        try (ResultSet res = core.select(query)) {
+            if (res != null) {
+                try {
+                    while (res.next()) {
+                        try {
+                            long id = res.getLong("id");
+                            int x = res.getInt("x");
+                            int y = res.getInt("y");
+                            int z = res.getInt("z");
+                            int radius = res.getInt("radius");
+                            int height = res.getInt("height");
+                            int type_id = res.getInt("type_id");
+                            byte data = res.getByte("data");
+                            float velocity = res.getFloat("velocity");
+                            String world = res.getString("world");
+                            String owner = res.getString("owner");
+                            String name = res.getString("name");
+                            String flags = res.getString("flags");
+                            String packed_allowed = res.getString("packed_allowed");
+                            long last_used = res.getLong("last_used");
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    try {
-                        long id = res.getLong("id");
-                        int x = res.getInt("x");
-                        int y = res.getInt("y");
-                        int z = res.getInt("z");
-                        int radius = res.getInt("radius");
-                        int height = res.getInt("height");
-                        int type_id = res.getInt("type_id");
-                        byte data = res.getByte("data");
-                        float velocity = res.getFloat("velocity");
-                        String world = res.getString("world");
-                        String owner = res.getString("owner");
-                        String name = res.getString("name");
-                        String flags = res.getString("flags");
-                        String packed_allowed = res.getString("packed_allowed");
-                        long last_used = res.getLong("last_used");
+                            BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                            Field field = new Field(x, y, z, radius, height, velocity, world, type, owner, name, last_used);
+                            field.setPackedAllowed(packed_allowed);
+                            field.setId(id);
 
-                        Field field = new Field(x, y, z, radius, height, velocity, world, type, owner, name, last_used);
-                        field.setPackedAllowed(packed_allowed);
-                        field.setId(id);
+                            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
-                        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+                            if (fs != null) {
+                                field.setSettings(fs);
+                                field.getFlagsModule().setFlags(flags);
 
-                        if (fs != null) {
-                            field.setSettings(fs);
-                            field.getFlagsModule().setFlags(flags);
+                                if (fs.getAutoDisableTime() > 0) {
+                                    field.setDisabled(true, true);
+                                }
 
-                            if (fs.getAutoDisableTime() > 0) {
-                                field.setDisabled(true, true);
+                                out.add(field);
+
+                                // check for fields in the wrong table
+
+                                if (fs.hasDefaultFlag(FieldFlag.CUBOID)) {
+                                    deleteFieldFromBothTables(field);
+                                    insertField(field);
+                                    foundInWrongTable = true;
+                                }
                             }
-
-                            out.add(field);
-
-                            // check for fields in the wrong table
-
-                            if (fs.hasDefaultFlag(FieldFlag.CUBOID)) {
-                                deleteFieldFromBothTables(field);
-                                insertField(field);
-                                foundInWrongTable = true;
-                            }
+                        } catch (Exception ex) {
+                            System.out.print(ex.getMessage());
+                            ex.printStackTrace();
                         }
-                    } catch (Exception ex) {
-                        System.out.print(ex.getMessage());
-                        ex.printStackTrace();
                     }
+                } catch (SQLException ex) {
+                    System.out.print(ex.getMessage());
+                    ex.printStackTrace();
                 }
-            } catch (SQLException ex) {
-                System.out.print(ex.getMessage());
-                ex.printStackTrace();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         if (foundInWrongTable) {
@@ -655,136 +657,141 @@ public class StorageManager {
      * @return
      */
     public Collection<Field> getCuboidFields(String worldName) {
-        HashMap<Long, Field> out = new HashMap<Long, Field>();
+        HashMap<Long, Field> out = new HashMap<>();
         boolean foundInWrongTable = false;
 
         String query = "SELECT pstone_cuboids.id as id, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags  FROM  pstone_cuboids WHERE pstone_cuboids.parent = 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
 
-        ResultSet res = core.select(query);
+        try (ResultSet res = core.select(query)) {
+            if (res != null) {
+                try {
+                    while (res.next()) {
+                        try {
+                            long id = res.getLong("id");
+                            int x = res.getInt("x");
+                            int y = res.getInt("y");
+                            int z = res.getInt("z");
+                            int minx = res.getInt("minx");
+                            int miny = res.getInt("miny");
+                            int minz = res.getInt("minz");
+                            int maxx = res.getInt("maxx");
+                            int maxy = res.getInt("maxy");
+                            int maxz = res.getInt("maxz");
+                            int type_id = res.getInt("type_id");
+                            byte data = res.getByte("data");
+                            float velocity = res.getFloat("velocity");
+                            String world = res.getString("world");
+                            String owner = res.getString("owner");
+                            String name = res.getString("name");
+                            String flags = res.getString("flags");
+                            String packed_allowed = res.getString("packed_allowed");
+                            long last_used = res.getLong("last_used");
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    try {
-                        long id = res.getLong("id");
-                        int x = res.getInt("x");
-                        int y = res.getInt("y");
-                        int z = res.getInt("z");
-                        int minx = res.getInt("minx");
-                        int miny = res.getInt("miny");
-                        int minz = res.getInt("minz");
-                        int maxx = res.getInt("maxx");
-                        int maxy = res.getInt("maxy");
-                        int maxz = res.getInt("maxz");
-                        int type_id = res.getInt("type_id");
-                        byte data = res.getByte("data");
-                        float velocity = res.getFloat("velocity");
-                        String world = res.getString("world");
-                        String owner = res.getString("owner");
-                        String name = res.getString("name");
-                        String flags = res.getString("flags");
-                        String packed_allowed = res.getString("packed_allowed");
-                        long last_used = res.getLong("last_used");
+                            BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                            Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
+                            field.setPackedAllowed(packed_allowed);
+                            field.setId(id);
 
-                        Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
-                        field.setPackedAllowed(packed_allowed);
-                        field.setId(id);
+                            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
 
-                        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+                            if (fs != null) {
+                                field.setSettings(fs);
+                                field.getFlagsModule().setFlags(flags);
 
-                        if (fs != null) {
-                            field.setSettings(fs);
-                            field.getFlagsModule().setFlags(flags);
+                                if (fs.getAutoDisableTime() > 0) {
+                                    field.setDisabled(true, true);
+                                }
 
-                            if (fs.getAutoDisableTime() > 0) {
-                                field.setDisabled(true, true);
+                                out.put(id, field);
+
+                                // check for fields in the wrong table
+
+                                if (!fs.hasDefaultFlag(FieldFlag.CUBOID)) {
+                                    deleteFieldFromBothTables(field);
+                                    insertField(field);
+                                    foundInWrongTable = true;
+                                }
                             }
-
-                            out.put(id, field);
-
-                            // check for fields in the wrong table
-
-                            if (!fs.hasDefaultFlag(FieldFlag.CUBOID)) {
-                                deleteFieldFromBothTables(field);
-                                insertField(field);
-                                foundInWrongTable = true;
-                            }
+                        } catch (Exception ex) {
+                            System.out.print(ex.getMessage());
+                            ex.printStackTrace();
                         }
-                    } catch (Exception ex) {
-                        System.out.print(ex.getMessage());
-                        ex.printStackTrace();
                     }
+                } catch (SQLException ex) {
+                    System.out.print(ex.getMessage());
+                    ex.printStackTrace();
                 }
-            } catch (SQLException ex) {
-                System.out.print(ex.getMessage());
-                ex.printStackTrace();
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         query = "SELECT pstone_cuboids.id as id, parent, x, y, z, minx, miny, minz, maxx, maxy, maxz, type_id, data, velocity, world, owner, name, packed_allowed, last_used, flags FROM  pstone_cuboids WHERE pstone_cuboids.parent > 0 AND world = '" + Helper.escapeQuotes(worldName) + "';";
 
-        res = core.select(query);
+        try (ResultSet res = core.select(query)) {
+            if (res != null) {
+                try {
+                    while (res.next()) {
+                        try {
+                            long id = res.getLong("id");
+                            long parent = res.getLong("parent");
+                            int x = res.getInt("x");
+                            int y = res.getInt("y");
+                            int z = res.getInt("z");
+                            int minx = res.getInt("minx");
+                            int miny = res.getInt("miny");
+                            int minz = res.getInt("minz");
+                            int maxx = res.getInt("maxx");
+                            int maxy = res.getInt("maxy");
+                            int maxz = res.getInt("maxz");
+                            int type_id = res.getInt("type_id");
+                            byte data = res.getByte("data");
+                            float velocity = res.getFloat("velocity");
+                            String world = res.getString("world");
+                            String owner = res.getString("owner");
+                            String name = res.getString("name");
+                            String flags = res.getString("flags");
+                            String packed_allowed = res.getString("packed_allowed");
+                            long last_used = res.getLong("last_used");
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    try {
-                        long id = res.getLong("id");
-                        long parent = res.getLong("parent");
-                        int x = res.getInt("x");
-                        int y = res.getInt("y");
-                        int z = res.getInt("z");
-                        int minx = res.getInt("minx");
-                        int miny = res.getInt("miny");
-                        int minz = res.getInt("minz");
-                        int maxx = res.getInt("maxx");
-                        int maxy = res.getInt("maxy");
-                        int maxz = res.getInt("maxz");
-                        int type_id = res.getInt("type_id");
-                        byte data = res.getByte("data");
-                        float velocity = res.getFloat("velocity");
-                        String world = res.getString("world");
-                        String owner = res.getString("owner");
-                        String name = res.getString("name");
-                        String flags = res.getString("flags");
-                        String packed_allowed = res.getString("packed_allowed");
-                        long last_used = res.getLong("last_used");
+                            BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                            Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
+                            field.setPackedAllowed(packed_allowed);
 
-                        Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
-                        field.setPackedAllowed(packed_allowed);
+                            Field parentField = out.get(parent);
 
-                        Field parentField = out.get(parent);
+                            if (parentField != null) {
+                                field.setParent(parentField);
+                                parentField.addChild(field);
+                            } else {
+                                field.markForDeletion();
+                                offerField(field);
+                            }
 
-                        if (parentField != null) {
-                            field.setParent(parentField);
-                            parentField.addChild(field);
-                        } else {
-                            field.markForDeletion();
-                            offerField(field);
+                            field.setId(id);
+
+                            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
+
+                            if (fs != null) {
+                                field.setSettings(fs);
+                                field.getFlagsModule().setFlags(flags);
+                                out.put(id, field);
+                            }
+                        } catch (Exception ex) {
+                            System.out.print(ex.getMessage());
+                            ex.printStackTrace();
                         }
-
-                        field.setId(id);
-
-                        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field);
-
-                        if (fs != null) {
-                            field.setSettings(fs);
-                            field.getFlagsModule().setFlags(flags);
-                            out.put(id, field);
-                        }
-                    } catch (Exception ex) {
-                        System.out.print(ex.getMessage());
-                        ex.printStackTrace();
                     }
+                } catch (SQLException ex) {
+                    System.out.print(ex.getMessage());
+                    ex.printStackTrace();
                 }
-            } catch (SQLException ex) {
-                System.out.print(ex.getMessage());
-                ex.printStackTrace();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         if (foundInWrongTable) {
@@ -887,8 +894,12 @@ public class StorageManager {
      */
     public PlayerEntry extractPlayer(String playerName) {
         String query = "SELECT * FROM pstone_players WHERE player_name = '" + Helper.escapeQuotes(playerName) + "';";
-        ResultSet res = core.select(query);
-        return extractPlayer(res);
+        try (ResultSet res = core.select(query)) {
+            return extractPlayer(res);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -896,8 +907,12 @@ public class StorageManager {
      */
     public PlayerEntry extractPlayer(UUID uuid) {
         String query = "SELECT * FROM pstone_players WHERE uuid = '" + uuid + "';";
-        ResultSet res = core.select(query);
-        return extractPlayer(res);
+        try (ResultSet res = core.select(query)) {
+            return extractPlayer(res);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public PlayerEntry createPlayer(String playerName, UUID uuid) {
@@ -916,23 +931,26 @@ public class StorageManager {
         long lastSeen = (new DateTime().minusDays(purgeDays)).getMillis();
 
         String query = "SELECT player_name FROM pstone_players WHERE last_seen < " + lastSeen + ";";
-        ResultSet res = core.select(query);
+        try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    try {
-                        String name = res.getString("player_name");
+            if (res != null) {
+                try {
+                    while (res.next()) {
+                        try {
+                            String name = res.getString("player_name");
 
-                        deletePlayerAndData(name);
-                    } catch (Exception ex) {
-                        //PreciousStones.getLog().info(ex.getMessage());
+                            deletePlayerAndData(name);
+                        } catch (Exception ex) {
+                            //PreciousStones.getLog().info(ex.getMessage());
+                        }
                     }
+                } catch (SQLException ex) {
+                    System.out.print(ex.getMessage());
+                    ex.printStackTrace();
                 }
-            } catch (SQLException ex) {
-                System.out.print(ex.getMessage());
-                ex.printStackTrace();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -943,37 +961,39 @@ public class StorageManager {
      * @return
      */
     public List<Unbreakable> getUnbreakables(String worldName) {
-        List<Unbreakable> out = new ArrayList<Unbreakable>();
+        List<Unbreakable> out = new ArrayList<>();
 
         String query = "SELECT * FROM  `pstone_unbreakables` WHERE world = '" + Helper.escapeQuotes(worldName) + "';";
 
-        ResultSet res = core.select(query);
+        try (ResultSet res = core.select(query)) {
+            if (res != null) {
+                try {
+                    while (res.next()) {
+                        try {
+                            int x = res.getInt("x");
+                            int y = res.getInt("y");
+                            int z = res.getInt("z");
+                            int type_id = res.getInt("type_id");
+                            byte data = res.getByte("data");
+                            String world = res.getString("world");
+                            String owner = res.getString("owner");
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    try {
-                        int x = res.getInt("x");
-                        int y = res.getInt("y");
-                        int z = res.getInt("z");
-                        int type_id = res.getInt("type_id");
-                        byte data = res.getByte("data");
-                        String world = res.getString("world");
-                        String owner = res.getString("owner");
+                            BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                            Unbreakable ub = new Unbreakable(x, y, z, world, type, owner);
 
-                        Unbreakable ub = new Unbreakable(x, y, z, world, type, owner);
-
-                        out.add(ub);
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                            out.add(ub);
+                        } catch (Exception ex) {
+                            PreciousStones.getLog().info(ex.getMessage());
+                        }
                     }
+                } catch (SQLException ex) {
+                    System.out.print(ex.getMessage());
+                    ex.printStackTrace();
                 }
-            } catch (SQLException ex) {
-                System.out.print(ex.getMessage());
-                ex.printStackTrace();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return out;
@@ -1190,34 +1210,36 @@ public class StorageManager {
      * @return
      */
     public List<PurchaseEntry> getPendingPurchases(String owner) {
-        List<PurchaseEntry> out = new ArrayList<PurchaseEntry>();
+        List<PurchaseEntry> out = new ArrayList<>();
 
         String query = "SELECT * FROM  `pstone_purchase_payments` WHERE owner = '" + owner + "';";
 
-        ResultSet res;
 
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
+                if (res != null) {
                     try {
-                        int id = res.getInt("id");
-                        String buyer = res.getString("buyer");
-                        String item = res.getString("item");
-                        String fieldName = res.getString("fieldName");
-                        String coords = res.getString("coords");
-                        int amount = res.getInt("amount");
+                        while (res.next()) {
+                            try {
+                                int id = res.getInt("id");
+                                String buyer = res.getString("buyer");
+                                String item = res.getString("item");
+                                String fieldName = res.getString("fieldName");
+                                String coords = res.getString("coords");
+                                int amount = res.getInt("amount");
 
-                        out.add(new PurchaseEntry(id, buyer, owner, fieldName, coords, new BlockTypeEntry(item), amount));
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                                out.add(new PurchaseEntry(id, buyer, owner, fieldName, coords, new BlockTypeEntry(item), amount));
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1270,7 +1292,7 @@ public class StorageManager {
      * @return
      */
     public List<SnitchEntry> getSnitchEntries(Field snitch) {
-        List<SnitchEntry> workingSnitchEntries = new ArrayList<SnitchEntry>();
+        List<SnitchEntry> workingSnitchEntries = new ArrayList<>();
 
         synchronized (pendingSnitchEntries) {
             workingSnitchEntries.addAll(pendingSnitchEntries);
@@ -1279,34 +1301,35 @@ public class StorageManager {
 
         processSnitches(workingSnitchEntries);
 
-        List<SnitchEntry> out = new ArrayList<SnitchEntry>();
+        List<SnitchEntry> out = new ArrayList<>();
 
         String query = "SELECT * FROM  `pstone_snitches` WHERE x = " + snitch.getX() + " AND y = " + snitch.getY() + " AND z = " + snitch.getZ() + " AND world = '" + Helper.escapeQuotes(snitch.getWorld()) + "' ORDER BY `date` DESC;";
 
-        ResultSet res;
-
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
+                if (res != null) {
                     try {
-                        String name = res.getString("name");
-                        String reason = res.getString("reason");
-                        String details = res.getString("details");
-                        int count = res.getInt("count");
+                        while (res.next()) {
+                            try {
+                                String name = res.getString("name");
+                                String reason = res.getString("reason");
+                                String details = res.getString("details");
+                                int count = res.getInt("count");
 
-                        SnitchEntry ub = new SnitchEntry(null, name, reason, details, count);
+                                SnitchEntry ub = new SnitchEntry(null, name, reason, details, count);
 
-                        out.add(ub);
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                                out.add(ub);
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1394,7 +1417,7 @@ public class StorageManager {
             haltUpdates = true;
         }
 
-        Set<Field> workingGrief = new HashSet<Field>();
+        Set<Field> workingGrief = new HashSet<>();
 
         synchronized (pendingGrief) {
             workingGrief.addAll(pendingGrief);
@@ -1407,52 +1430,52 @@ public class StorageManager {
 
         String query = "SELECT * FROM  `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "' ORDER BY y ASC;";
 
-        ResultSet res;
-
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
+                if (res != null) {
                     try {
-                        int x = res.getInt("x");
-                        int y = res.getInt("y");
-                        int z = res.getInt("z");
-                        int type_id = res.getInt("type_id");
-                        byte data = res.getByte("data");
-                        String signText = res.getString("sign_text");
+                        while (res.next()) {
+                            try {
+                                int x = res.getInt("x");
+                                int y = res.getInt("y");
+                                int z = res.getInt("z");
+                                int type_id = res.getInt("type_id");
+                                byte data = res.getByte("data");
+                                String signText = res.getString("sign_text");
 
-                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                                BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type);
+                                GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type);
 
-                        if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11) {
-                            gb.setEmpty(true);
+                                if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11) {
+                                    gb.setEmpty(true);
+                                }
+
+                                gb.setSignText(signText);
+                                out.add(gb);
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
                         }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-                        gb.setSignText(signText);
-                        out.add(gb);
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                    PreciousStones.debug("Extracted %s griefed blocks from the db", out.size());
+
+                    if (!out.isEmpty()) {
+                        PreciousStones.debug("Deleting grief from the db");
+                        deleteBlockGrief(field);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
 
-            PreciousStones.debug("Extracted %s griefed blocks from the db", out.size());
-
-            if (!out.isEmpty()) {
-                PreciousStones.debug("Deleting grief from the db");
-                deleteBlockGrief(field);
-            }
-        }
-
-        synchronized (this) {
             haltUpdates = false;
         }
+
 
         return out;
     }
@@ -1496,20 +1519,22 @@ public class StorageManager {
      */
     public boolean existsTranslocatior(String name, String playerName) {
         String query = "SELECT COUNT(*) FROM `pstone_translocations` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "'";
-        ResultSet res;
         boolean exists = false;
 
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    exists = res.getInt(1) > 0;
+                if (res != null) {
+                    try {
+                        while (res.next()) {
+                            exists = res.getInt(1) > 0;
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1525,24 +1550,26 @@ public class StorageManager {
      */
     public boolean changeSizeTranslocatiorField(Field field, String fieldName) {
         String query = "SELECT * FROM `pstone_translocations` WHERE `name` ='" + Helper.escapeQuotes(fieldName) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' LIMIT 1";
-        ResultSet res;
         boolean exists = false;
 
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
+                if (res != null) {
                     try {
-                        field.setRelativeCuboidDimensions(res.getInt("minx"), res.getInt("miny"), res.getInt("minz"), res.getInt("maxx"), res.getInt("maxy"), res.getInt("maxz"));
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                        while (res.next()) {
+                            try {
+                                field.setRelativeCuboidDimensions(res.getInt("minx"), res.getInt("miny"), res.getInt("minz"), res.getInt("maxx"), res.getInt("maxy"), res.getInt("maxz"));
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1615,20 +1642,22 @@ public class StorageManager {
      */
     public int appliedTranslocationCount(String name, String playerName) {
         String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `applied` = 1";
-        ResultSet res;
         int count = 0;
 
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    count = res.getInt(1);
+                if (res != null) {
+                    try {
+                        while (res.next()) {
+                            count = res.getInt(1);
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1644,20 +1673,22 @@ public class StorageManager {
      */
     public int totalTranslocationCount(String name, String playerName) {
         String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "'";
-        ResultSet res;
         int count = 0;
 
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    count = res.getInt(1);
+                if (res != null) {
+                    try {
+                        while (res.next()) {
+                            count = res.getInt(1);
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1683,20 +1714,22 @@ public class StorageManager {
      */
     public int unappliedTranslocationCount(String name, String playerName) {
         String query = "SELECT COUNT(*) FROM `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(name) + "' AND `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `applied` = 0";
-        ResultSet res;
         int count = 0;
 
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
-                    count = res.getInt(1);
+                if (res != null) {
+                    try {
+                        while (res.next()) {
+                            count = res.getInt(1);
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1710,52 +1743,53 @@ public class StorageManager {
      * @return
      */
     public Queue<TranslocationBlock> retrieveClearTranslocation(Field field) {
-        Queue<TranslocationBlock> out = new LinkedList<TranslocationBlock>();
+        Queue<TranslocationBlock> out = new LinkedList<>();
 
         String query = "SELECT * FROM  `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 1 ORDER BY y ASC;";
 
-        ResultSet res;
-
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
+                if (res != null) {
                     try {
-                        int x = res.getInt("x");
-                        int y = res.getInt("y");
-                        int z = res.getInt("z");
+                        while (res.next()) {
+                            try {
+                                int x = res.getInt("x");
+                                int y = res.getInt("y");
+                                int z = res.getInt("z");
 
-                        World world = plugin.getServer().getWorld(field.getWorld());
+                                World world = plugin.getServer().getWorld(field.getWorld());
 
-                        Location location = new Location(world, x, y, z);
-                        location = location.add(field.getLocation());
+                                Location location = new Location(world, x, y, z);
+                                location = location.add(field.getLocation());
 
-                        int type_id = res.getInt("type_id");
-                        byte data = res.getByte("data");
-                        String signText = res.getString("sign_text");
-                        String contents = res.getString("contents");
+                                int type_id = res.getInt("type_id");
+                                byte data = res.getByte("data");
+                                String signText = res.getString("sign_text");
+                                String contents = res.getString("contents");
 
-                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                                BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        TranslocationBlock tb = new TranslocationBlock(location, type);
+                                TranslocationBlock tb = new TranslocationBlock(location, type);
 
-                        if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11) {
-                            tb.setEmpty(true);
+                                if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11) {
+                                    tb.setEmpty(true);
+                                }
+
+                                tb.setContents(contents);
+                                tb.setRelativeCoords(x, y, z);
+                                tb.setSignText(signText);
+                                out.add(tb);
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
                         }
-
-                        tb.setContents(contents);
-                        tb.setRelativeCoords(x, y, z);
-                        tb.setSignText(signText);
-                        out.add(tb);
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1770,52 +1804,53 @@ public class StorageManager {
      * @return
      */
     public Queue<TranslocationBlock> retrieveTranslocation(Field field) {
-        Queue<TranslocationBlock> out = new LinkedList<TranslocationBlock>();
+        Queue<TranslocationBlock> out = new LinkedList<>();
 
         String query = "SELECT * FROM  `pstone_storedblocks` WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `applied` = 0 ORDER BY y ASC;";
 
-        ResultSet res;
-
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
+                if (res != null) {
                     try {
-                        int x = res.getInt("x");
-                        int y = res.getInt("y");
-                        int z = res.getInt("z");
+                        while (res.next()) {
+                            try {
+                                int x = res.getInt("x");
+                                int y = res.getInt("y");
+                                int z = res.getInt("z");
 
-                        World world = plugin.getServer().getWorld(field.getWorld());
+                                World world = plugin.getServer().getWorld(field.getWorld());
 
-                        Location location = new Location(world, x, y, z);
-                        location = location.add(field.getLocation());
+                                Location location = new Location(world, x, y, z);
+                                location = location.add(field.getLocation());
 
-                        int type_id = res.getInt("type_id");
-                        byte data = res.getByte("data");
-                        String signText = res.getString("sign_text");
-                        String contents = res.getString("contents");
+                                int type_id = res.getInt("type_id");
+                                byte data = res.getByte("data");
+                                String signText = res.getString("sign_text");
+                                String contents = res.getString("contents");
 
-                        BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                                BlockTypeEntry type = new BlockTypeEntry(type_id, data);
 
-                        TranslocationBlock tb = new TranslocationBlock(location, type);
+                                TranslocationBlock tb = new TranslocationBlock(location, type);
 
-                        if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11) {
-                            tb.setEmpty(true);
+                                if (type_id == 0 || type_id == 8 || type_id == 9 || type_id == 10 || type_id == 11) {
+                                    tb.setEmpty(true);
+                                }
+
+                                tb.setContents(contents);
+                                tb.setRelativeCoords(x, y, z);
+                                tb.setSignText(signText);
+                                out.add(tb);
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
                         }
-
-                        tb.setContents(contents);
-                        tb.setRelativeCoords(x, y, z);
-                        tb.setSignText(signText);
-                        out.add(tb);
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1830,32 +1865,33 @@ public class StorageManager {
      * @return
      */
     public Map<String, Integer> getTranslocationDetails(String playerName) {
-        Map<String, Integer> out = new HashMap<String, Integer>();
+        Map<String, Integer> out = new HashMap<>();
 
         String query = "SELECT name, COUNT(name) FROM  `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' GROUP BY `name`;";
 
-        ResultSet res;
-
         synchronized (this) {
-            res = core.select(query);
-        }
-
-        if (res != null) {
-            try {
-                while (res.next()) {
+            try (ResultSet res = core.select(query)) {
+                if (res != null) {
                     try {
-                        String name = res.getString(1);
-                        int count = res.getInt(2);
+                        while (res.next()) {
+                            try {
+                                String name = res.getString(1);
+                                int count = res.getInt(2);
 
-                        out.put(name, count);
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                                out.put(name, count);
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
+
 
         return out;
     }
@@ -1869,46 +1905,54 @@ public class StorageManager {
      */
     public boolean existsFieldWithName(String name, String playerName) {
         String query = "SELECT COUNT(*) FROM  `pstone_fields` WHERE `owner` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(name) + "'";
-        ResultSet res;
         boolean exists = false;
 
         synchronized (this) {
-            res = core.select(query);
-        }
-
-        if (res != null) {
             try {
-                while (res.next()) {
-                    try {
-                        int count = res.getInt(1);
-                        exists = count > 0;
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                try (ResultSet res = core.select(query)) {
+
+                    if (res != null) {
+                        try {
+                            while (res.next()) {
+                                try {
+                                    int count = res.getInt(1);
+                                    exists = count > 0;
+                                } catch (Exception ex) {
+                                    PreciousStones.getLog().info(ex.getMessage());
+                                }
+                            }
+                        } catch (SQLException ex) {
+                            Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
+
 
         query = "SELECT COUNT(*) FROM  `pstone_cuboids` WHERE `owner` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(name) + "'";
 
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
+                if (res != null) {
                     try {
-                        int count = res.getInt(1);
-                        exists = exists || count > 0;
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                        while (res.next()) {
+                            try {
+                                int count = res.getInt(1);
+                                exists = exists || count > 0;
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -1924,25 +1968,27 @@ public class StorageManager {
      */
     public boolean existsTranslocationDataWithName(String name, String playerName) {
         String query = "SELECT COUNT(*) FROM  `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` ='" + Helper.escapeQuotes(name) + "'";
-        ResultSet res;
         boolean exists = false;
 
         synchronized (this) {
-            res = core.select(query);
-        }
+            try (ResultSet res = core.select(query)) {
 
-        if (res != null) {
-            try {
-                while (res.next()) {
+                if (res != null) {
                     try {
-                        int count = res.getInt(1);
-                        exists = count > 0;
-                    } catch (Exception ex) {
-                        PreciousStones.getLog().info(ex.getMessage());
+                        while (res.next()) {
+                            try {
+                                int count = res.getInt(1);
+                                exists = count > 0;
+                            } catch (Exception ex) {
+                                PreciousStones.getLog().info(ex.getMessage());
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StorageManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -2184,11 +2230,11 @@ public class StorageManager {
             }
         }
 
-        Map<Vec, Field> working = new HashMap<Vec, Field>();
-        Map<Unbreakable, Boolean> workingUb = new HashMap<Unbreakable, Boolean>();
-        Map<String, Boolean> workingPlayers = new HashMap<String, Boolean>();
+        Map<Vec, Field> working = new HashMap<>();
+        Map<Unbreakable, Boolean> workingUb = new HashMap<>();
+        Map<String, Boolean> workingPlayers = new HashMap<>();
         Set<Field> workingGrief = new HashSet<Field>();
-        List<SnitchEntry> workingSnitchEntries = new ArrayList<SnitchEntry>();
+        List<SnitchEntry> workingSnitchEntries = new ArrayList<>();
 
         synchronized (pending) {
             working.putAll(pending);
