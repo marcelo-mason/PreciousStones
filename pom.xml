@@ -163,7 +163,7 @@
         <dependency>
             <groupId>org.mcstats</groupId>
             <artifactId>metrics</artifactId>
-            <version>1.1</version>
+            <version>R8-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -189,6 +189,10 @@
     <!-- Repository -->
 
     <repositories>
+        <repository>
+            <id>elMakers</id>
+            <url>http://maven.elmakers.com/repository/</url>
+        </repository>
         <repository>
             <id>remote-repos</id>
             <url>http://107.170.92.11/artifactory/remote-repos</url>
