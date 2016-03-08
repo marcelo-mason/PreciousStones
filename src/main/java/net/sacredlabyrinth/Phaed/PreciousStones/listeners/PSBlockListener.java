@@ -1389,7 +1389,7 @@ public class PSBlockListener implements Listener {
 
         InventoryType type = event.getInventory().getType();
 
-        if (!type.equals(InventoryType.PLAYER) && !type.equals(InventoryType.ENDER_CHEST) && !type.equals(InventoryType.ANVIL)) {
+        if (!type.equals(InventoryType.PLAYER) && !type.equals(InventoryType.ENDER_CHEST)) {
             Location location;
             InventoryHolder holder = event.getInventory().getHolder();
 
