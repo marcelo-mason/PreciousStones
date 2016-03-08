@@ -955,6 +955,11 @@ public class PSEntityListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPrepareItemCraftEvent(PrepareItemCraftEvent event) {
         ItemStack is = event.getInventory().getResult();
+
+        if (is == null) {
+            return;
+        }
+
         BlockTypeEntry type = new BlockTypeEntry(is.getTypeId(), is.getData().getData());
         FieldSettings settings = plugin.getSettingsManager().getFieldSettings(type);
 
