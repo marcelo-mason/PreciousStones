@@ -106,7 +106,6 @@ public class RentingModule {
     }
 
     public void addRent(Player player) {
-        PreciousStones.getInstance().getForceFieldManager().addToRenterCollection(field);
         FieldSign s = field.getAttachedFieldSign();
         if (s != null) {
             int seconds = SignHelper.periodToSeconds(s.getPeriod());
@@ -136,6 +135,7 @@ public class RentingModule {
 
             field.getFlagsModule().dirtyFlags("addRent");
         }
+        PreciousStones.getInstance().getForceFieldManager().addToRenterCollection(field);
     }
 
     public void removeRenter(RentEntry entry) {
@@ -230,11 +230,14 @@ public class RentingModule {
             }
         }
 
-        PreciousStones plugin = PreciousStones.getInstance();
-        FieldSettings fs = plugin.getSettingsManager().getFieldSettings(s.getField());
-        if (plugin.getLimitManager().reachedLimit(player, fs)) {
-            PreciousStones.debug("field limit reached");
-            return false;
+        RentEntry renter = getRenter(player);
+        if (renter == null) {
+            PreciousStones plugin = PreciousStones.getInstance();
+            FieldSettings fs = plugin.getSettingsManager().getFieldSettings(s.getField());
+            if (plugin.getLimitManager().reachedLimit(player, fs)) {
+                PreciousStones.debug("field limit reached");
+                return false;
+            }
         }
 
         if (s.getItem() != null) {
