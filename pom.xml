@@ -187,7 +187,7 @@
     <repositories>
         <repository>
             <id>remote-repos</id>
-            <url>hhttp://104.236.246.108:8081/artifactory/remote-repos</url>
+            <url>http://104.236.246.108:8081/artifactory/remote-repos</url>
         </repository>
     </repositories>
 
