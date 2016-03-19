@@ -76,10 +76,6 @@
                             <minimizeJar>true</minimizeJar>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.mcstats</pattern>
-                                    <shadedPattern>ps.org.mcstats</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.joda.time</pattern>
                                     <shadedPattern>ps.org.joda.time</shadedPattern>
                                 </relocation>
@@ -191,7 +187,7 @@
     <repositories>
         <repository>
             <id>remote-repos</id>
-            <url>http://107.170.92.11/artifactory/remote-repos</url>
+            <url>hhttp://104.236.246.108:8081/artifactory/remote-repos</url>
         </repository>
     </repositories>
 
@@ -199,7 +195,7 @@
 
     <ciManagement>
         <system>jenkins</system>
-        <url>http://107.170.92.11:8080</url>
+        <url>http://104.236.246.108/:8080</url>
     </ciManagement>
 
     <scm>
@@ -220,12 +216,12 @@
         <repository>
             <id>SacredCoding</id>
             <name>SacredCoding-releases</name>
-            <url>http://107.170.92.11/artifactory/releases</url>
+            <url>http://104.236.246.108:8081/artifactory/plugins-release-local</url>
         </repository>
         <snapshotRepository>
             <id>SacredCoding</id>
             <name>SacredCoding-snapshots</name>
-            <url>http://107.170.92.11/artifactory/snapshots</url>
+            <url>http://104.236.246.108:8081/artifactory/plugins-release-local</url>
         </snapshotRepository>
     </distributionManagement>
 
