@@ -293,13 +293,13 @@ force-field-blocks:
   cuboid: true
   mask-on-disabled: 17
 - title: GodStone
-  block: brown_mushroom_block
+  block: sea_lantern
   radius: 5
   meta-name: '&eGodStone'
   meta-autoset: true
   meta-lore:
   - '&fHeal, feed, repair, neutralize portions'
-  - '&6It covers an area of 5 radius'
+  - '&fIt covers an area of 5 radius'
   - '&fWorks for only players allowed'
   heal: 4
   feed: 2
