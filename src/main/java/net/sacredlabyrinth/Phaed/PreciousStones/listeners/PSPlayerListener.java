@@ -12,6 +12,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.modules.BuyingModule;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -543,6 +544,24 @@ public class PSPlayerListener implements Listener {
                             event.setCancelled(true);
                             return;
                         }
+                    }
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------------------- trying to put out a fire
+
+
+        if (block != null) {
+            Block fireBlock = block.getRelative(BlockFace.UP);
+            if (fireBlock.getType().equals(Material.FIRE)) {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PREVENT_FIRE);
+
+                if (field != null) {
+                    if (FieldFlag.PREVENT_FIRE.applies(field, player)) {
+                        event.setCancelled(true);
+                        fireBlock.setType(Material.FIRE);
+                        return;
                     }
                 }
             }
