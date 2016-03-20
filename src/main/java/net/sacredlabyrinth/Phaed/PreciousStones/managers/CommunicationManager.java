@@ -2907,7 +2907,7 @@ public class CommunicationManager {
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.migrate")) {
-            cb.addRow("menu68");
+            cb.addRow("menu69");
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.debug")) {
