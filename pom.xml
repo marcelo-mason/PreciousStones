@@ -50,7 +50,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <outputDirectory>/users/mason/Minecraft/server/plugins/</outputDirectory>
+                    <outputDirectory>../../Minecraft/server/plugins/</outputDirectory>
                 </configuration>
             </plugin>
 
