@@ -36,6 +36,8 @@ public final class SettingsManager {
     private boolean showDefaultWelcomeFarewellMessages;
     private boolean sneakNormalBlock;
     private boolean disableGroundInfo;
+    private boolean disablePlaceWhileCreative;
+    private boolean disableBreakWhileCreative;
     private boolean preventRemovalIfPlayerInField;
     private boolean autoAddClan;
     private boolean autoAddTeam;
@@ -281,6 +283,8 @@ public final class SettingsManager {
         fenceMaxDepth = loadInt("settings.fence-max-depth");
         maxTargetDistance = loadInt("settings.max-target-distance");
         defaulItemCurrency = loadTypeEntry("settings.default-item-currency");
+        disablePlaceWhileCreative = loadBoolean("settings.disable-field-place-while-creative");
+        disableBreakWhileCreative = loadBoolean("settings.disable-field-break-while-creative");
 
         // ********************************** Cuboid
 
@@ -1493,4 +1497,11 @@ public final class SettingsManager {
         return purgeBannedPlayers;
     }
 
+    public boolean isDisablePlaceWhileCreative() {
+        return disablePlaceWhileCreative;
+    }
+
+    public boolean isDisableBreakWhileCreative() {
+        return disableBreakWhileCreative;
+    }
 }

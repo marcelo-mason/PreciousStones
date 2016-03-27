@@ -11,10 +11,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -496,6 +493,14 @@ public class PSBlockListener implements Listener {
             ChatHelper.send(player, "fieldSignCannotDestroy");
             event.setCancelled(true);
             return true;
+        }
+
+        // prevent breaking while creative (if feature enabled)
+
+        if (plugin.getSettingsManager().isDisableBreakWhileCreative()) {
+            if (player.getGameMode().equals(GameMode.CREATIVE)) {
+                return false;
+            }
         }
 
         field.getHidingModule().unHide();
@@ -983,6 +988,14 @@ public class PSBlockListener implements Listener {
 
         if (fs == null) {
             return false;
+        }
+
+        // prevent field creation while creative (if feature enabled)
+
+        if (plugin.getSettingsManager().isDisablePlaceWhileCreative()) {
+            if (player.getGameMode().equals(GameMode.CREATIVE)) {
+                return false;
+            }
         }
 
         // if the field has a meta name, only items with that name can be placed
