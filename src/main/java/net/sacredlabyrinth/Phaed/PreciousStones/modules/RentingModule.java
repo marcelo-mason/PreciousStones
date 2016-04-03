@@ -316,15 +316,13 @@ public class RentingModule {
                     if (s.isRentable() || s.isShareable()) {
                         boolean foundSomeone = false;
 
-                        if (PreciousStones.getInstance().getEntryManager().hasInhabitants(field)) {
-                            Player closest = Helper.getClosestPlayer(field.getLocation(), 64);
-                            if (closest != null) {
-                                RentEntry entry = renterEntries.get(closest.getName().toLowerCase());
-                                if (entry != null) {
-                                    s.updateRemainingTime(entry.remainingRent());
-                                    foundSomeone = true;
-                                    signIsClean = false;
-                                }
+                        Player closest = Helper.getClosestPlayer(field.getLocation(), 64, renterEntries.keySet());
+                        if (closest != null) {
+                            RentEntry entry = renterEntries.get(closest.getName().toLowerCase());
+                            if (entry != null) {
+                                s.updateRemainingTime(entry.remainingRent());
+                                foundSomeone = true;
+                                signIsClean = false;
                             }
                         }
 

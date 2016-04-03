@@ -717,7 +717,7 @@ public class Helper {
     /**
      * Gets the player that was responsible for the damage. If no player was
      * responsible, <code>null</code> is returned.
-     * <p/>
+     * <p>
      * <ul>
      * <li>If the entity was damaged by a player, that player
      * is returned.</li>
@@ -777,6 +777,42 @@ public class Helper {
         return closestPlayer;
     }
 
+    /**
+     * Returns the closest player to the target within a radius
+     *
+     * @param names
+     * @return closest player
+     */
+    public static Player getClosestPlayer(Location target, int radius, Set<String> names) {
+        ArrayList<Player> players = new ArrayList<>();
+
+        for (String name : names) {
+            Player player = Bukkit.getServer().getPlayer(name);
+            if (player != null) {
+                players.add(player);
+            }
+        }
+
+        double closestDistance = radius;
+        Player closestPlayer = null;
+
+        for (Player player : players) {
+            Location loc = player.getLocation();
+
+            if (!loc.getWorld().getName().equals(target.getWorld().getName())) {
+                continue;
+            }
+
+            double distance = loc.distance(target);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestPlayer = player;
+            }
+        }
+
+        return closestPlayer;
+    }
 
     public static Collection<Player> getOnlinePlayers() {
         try {
