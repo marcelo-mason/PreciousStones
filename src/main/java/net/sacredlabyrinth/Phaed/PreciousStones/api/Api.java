@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.api;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -142,6 +143,25 @@ public class Api implements IApi {
      */
     public List<Field> getPlayerFields(Player player, FieldFlag flag) {
         List<Field> fields = plugin.getForceFieldManager().getPlayerFields(player.getName().toLowerCase(), flag);
+
+        if (fields == null) {
+            return new ArrayList<Field>();
+        }
+
+        return fields;
+    }
+
+
+
+    /**
+     * Returns all of the fields that are touching a specific chunk
+     *
+     * @param chunk the chunk in question
+     * @param flag  the flag that will identify the field.  Use FieldFlag.ALL to count all of his fields
+     * @return a list of fields that at any part touch this chunk, it is never null.
+     */
+    public List<Field> getChunkFields(Chunk chunk, FieldFlag flag) {
+        List<Field> fields = plugin.getForceFieldManager().getSourceFieldsInChunk(chunk, flag);
 
         if (fields == null) {
             return new ArrayList<Field>();

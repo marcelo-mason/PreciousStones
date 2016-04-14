@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.api;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -90,4 +91,13 @@ public interface IApi {
      * @return a list of fields the player placed, it is never null.  If the player has not placed any fields it will be empty
      */
     List<Field> getPlayerFields(Player player, FieldFlag flag);
+
+    /**
+     * Returns all of the fields that are touching a specific chunk
+     *
+     * @param chunk the chunk in question
+     * @param flag  the flag that will identify the field.  Use FieldFlag.ALL to count all of his fields
+     * @return a list of fields that at any part touch this chunk, it is never null.
+     */
+    List<Field> getChunkFields(Chunk chunk, FieldFlag flag);
 }
