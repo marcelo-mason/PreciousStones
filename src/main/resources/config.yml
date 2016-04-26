@@ -527,6 +527,7 @@ settings:
   max-target-distance: 100
   version: 14
   default-item-currency: '266'
+  max-rental-periods: 5
 log:
   bypass-pvp: true
   pvp: true

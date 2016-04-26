@@ -105,37 +105,45 @@ public class RentingModule {
         return renterEntries.get(player.getName().toLowerCase());
     }
 
-    public void addRent(Player player) {
+    public boolean addRent(Player player) {
         FieldSign s = field.getAttachedFieldSign();
-        if (s != null) {
-            int seconds = SignHelper.periodToSeconds(s.getPeriod());
-
-            if (seconds == 0) {
-                ChatHelper.send(player, "fieldSignRentError");
-                return;
-            }
-
-            RentEntry renter = getRenter(player);
-
-            if (renter != null) {
-                renter.addSeconds(seconds);
-
-                ChatHelper.send(player, "fieldSignRentRented", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
-            } else {
-                renterEntries.put(player.getName().toLowerCase(), new RentEntry(player.getName(), seconds));
-
-                if (renterEntries.size() == 1) {
-                    scheduleNextRentUpdate();
-                }
-                ChatHelper.send(player, "fieldSignRentRented", s.getPeriod());
-
-                PreciousStones.getInstance().getEntryManager().leaveField(player, field);
-                PreciousStones.getInstance().getEntryManager().enterField(player, field);
-            }
-
-            field.getFlagsModule().dirtyFlags("addRent");
+        if (s == null) {
+            return false;
         }
+        int seconds = SignHelper.periodToSeconds(s.getPeriod());
+
+        if (seconds == 0) {
+            ChatHelper.send(player, "fieldSignRentError");
+            return false;
+        }
+
+        RentEntry renter = getRenter(player);
+
+        if (renter != null) {
+            int maxPeriods = PreciousStones.getInstance().getSettingsManager().getMaxRentalPeriods();
+            int periodSeconds = renter.getPeriodSeconds();
+            if (periodSeconds / seconds >= maxPeriods) {
+                ChatHelper.send(player, "fieldSignRentMaxPeriod");
+                return false;
+            }
+            renter.addSeconds(seconds);
+
+            ChatHelper.send(player, "fieldSignRentRented", SignHelper.secondsToPeriods(renter.getPeriodSeconds()));
+        } else {
+            renterEntries.put(player.getName().toLowerCase(), new RentEntry(player.getName(), seconds));
+
+            if (renterEntries.size() == 1) {
+                scheduleNextRentUpdate();
+            }
+            ChatHelper.send(player, "fieldSignRentRented", s.getPeriod());
+
+            PreciousStones.getInstance().getEntryManager().leaveField(player, field);
+            PreciousStones.getInstance().getEntryManager().enterField(player, field);
+        }
+
+        field.getFlagsModule().dirtyFlags("addRent");
         PreciousStones.getInstance().getForceFieldManager().addToRenterCollection(field);
+        return true;
     }
 
     public void removeRenter(RentEntry entry) {
@@ -246,10 +254,11 @@ public class RentingModule {
             if (StackHelper.hasItems(player, s.getItem(), s.getPrice())) {
                 StackHelper.remove(player, s.getItem(), s.getPrice());
 
-                addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
-                addRent(player);
 
-                PreciousStones.getInstance().getCommunicationManager().logPayment(field.getOwner(), player.getName(), s);
+                if (addRent(player)) {
+                    addPayment(player.getName(), s.getField().getName(), s.getItem(), s.getPrice());
+                    PreciousStones.getInstance().getCommunicationManager().logPayment(field.getOwner(), player.getName(), s);
+                }
             } else {
                 ChatHelper.send(player, "economyNotEnoughItems");
                 return false;
@@ -259,10 +268,11 @@ public class RentingModule {
                 if (PermissionsManager.hasMoney(player, s.getPrice())) {
                     PreciousStones.getInstance().getPermissionsManager().playerCharge(player, s.getPrice());
 
-                    addPayment(player.getName(), s.getField().getName(), null, s.getPrice());
-                    addRent(player);
+                    if (addRent(player)) {
+                        addPayment(player.getName(), s.getField().getName(), null, s.getPrice());
 
-                    PreciousStones.getInstance().getCommunicationManager().logPayment(field.getOwner(), player.getName(), s);
+                        PreciousStones.getInstance().getCommunicationManager().logPayment(field.getOwner(), player.getName(), s);
+                    }
                 } else {
                     ChatHelper.send(player, "economyNotEnoughMoney");
                     return false;
