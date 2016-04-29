@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import com.sk89q.worldguard.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -43,7 +44,7 @@ public class WorldGuardManager {
 
             ApplicableRegionSet regions = manager.getApplicableRegions(block.getLocation());
 
-            return regions != null && regions.size() > 0;
+            return regions.size() > 0;
         } catch (Exception ex) {
             return false;
         }
