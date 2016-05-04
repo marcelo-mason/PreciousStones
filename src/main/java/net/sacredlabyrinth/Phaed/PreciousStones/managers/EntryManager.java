@@ -146,17 +146,19 @@ public final class EntryManager {
                             if (FieldFlag.REPAIR.applies(field, player)) {
                                 ItemStack[] armors = player.getInventory().getArmorContents();
                                 for (ItemStack armor : armors) {
-                                    if (plugin.getSettingsManager().isRepairableItemType(new BlockTypeEntry(armor.getType()))) {
-                                        short dur = armor.getDurability();
-                                        if (dur > 0) {
-                                            dur -= field.getSettings().getRepair();
-                                            if (dur < 0) {
-                                                dur = 0;
+                                    if(armor != null) {
+                                        if (plugin.getSettingsManager().isRepairableItemType(new BlockTypeEntry(armor.getType()))) {
+                                            short dur = armor.getDurability();
+                                            if (dur > 0) {
+                                                dur -= field.getSettings().getRepair();
+                                                if (dur < 0) {
+                                                    dur = 0;
+                                                }
+                                                armor.setDurability(dur);
+                                                plugin.getCommunicationManager().showRepair(player);
+                                                hasRepair = true;
+                                                break;
                                             }
-                                            armor.setDurability(dur);
-                                            plugin.getCommunicationManager().showRepair(player);
-                                            hasRepair = true;
-                                            break;
                                         }
                                     }
                                 }
