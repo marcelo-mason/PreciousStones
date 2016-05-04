@@ -469,6 +469,7 @@ public class FlagsModule {
         for (FieldFlag flag : flags) {
             insertFieldFlag(Helper.toFlagStr(flag));
         }
+        field.addDirty(DirtyFieldReason.FLAGS);
     }
 
     public void setBreakable() {
