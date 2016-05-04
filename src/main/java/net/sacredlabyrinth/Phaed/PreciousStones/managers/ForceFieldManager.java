@@ -156,6 +156,7 @@ public final class ForceFieldManager {
                 ce.getField().getFlagsModule().importFlags(fs.getDefaultFlags());
                 ChatHelper.send(player, "flagsImported", fs.getTitle());
                 isImport = true;
+                plugin.getStorageManager().offerField(ce.getField());
             }
 
         } else {
