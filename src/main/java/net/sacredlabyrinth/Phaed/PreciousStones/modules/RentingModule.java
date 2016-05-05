@@ -120,7 +120,7 @@ public class RentingModule {
         RentEntry renter = getRenter(player);
 
         if (renter != null) {
-            int maxPeriods = PreciousStones.getInstance().getSettingsManager().getMaxRentalPeriods();
+            int maxPeriods = field.getSettings().getRentsLimit();
             int periodSeconds = renter.getPeriodSeconds();
             if (periodSeconds / seconds >= maxPeriods) {
                 ChatHelper.send(player, "fieldSignRentMaxPeriod");

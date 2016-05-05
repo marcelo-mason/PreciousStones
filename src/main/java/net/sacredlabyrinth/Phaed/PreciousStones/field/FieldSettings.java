@@ -70,6 +70,7 @@ public class FieldSettings {
     protected int teleportMaxDistance = 0;
     protected int griefRevertInterval = 0;
     protected int payToEnable = 0;
+    protected int rentsLimit = 0;
     protected List<String> commandOnEnter = new ArrayList<String>();
     protected List<String> commandOnExit = new ArrayList<String>();
     protected List<String> playerCommandOnEnter = new ArrayList<String>();
@@ -394,6 +395,7 @@ public class FieldSettings {
         payToEnable = loadInt("pay-to-enable");
         fenceItem = loadInt("fence-on-place");
         fenceItemPrice = loadInt("price-per-fence");
+        rentsLimit = loadInt("rents-limit");
     }
 
     protected boolean loadBoolean(String flagStr) {
@@ -1407,5 +1409,9 @@ public class FieldSettings {
 
     public boolean isMetaAutoSet() {
         return metaAutoSet;
+    }
+
+    public int getRentsLimit() {
+        return rentsLimit;
     }
 }

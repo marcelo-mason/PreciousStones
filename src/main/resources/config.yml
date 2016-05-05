@@ -36,6 +36,7 @@ force-field-blocks:
   enable-on-src: true
   mixing-group: 1
   rentable: true
+  rents-limit: 5
   buyable: true
   cuboid: true
   mask-on-disabled: 80
@@ -77,6 +78,7 @@ force-field-blocks:
   enable-on-src: true
   mixing-group: 1
   rentable: true
+  rents-limit: 5
   buyable: true
   cuboid: true
   mask-on-disabled: 80
@@ -529,7 +531,6 @@ settings:
   max-target-distance: 100
   version: 14
   default-item-currency: '266'
-  max-rental-periods: 5
 log:
   bypass-pvp: true
   pvp: true

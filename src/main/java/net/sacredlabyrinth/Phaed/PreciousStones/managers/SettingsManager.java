@@ -124,7 +124,6 @@ public final class SettingsManager {
     private boolean disableSimpleClanHook;
     private boolean offByDefault;
     private boolean useIdInSnitches;
-    private int maxRentalPeriods;
     private int fenceMaxDepth;
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 78, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
     private int[] naturalThroughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 51, 59, 78, 83, 104, 105, 106, 141, 142};
@@ -286,7 +285,6 @@ public final class SettingsManager {
         defaulItemCurrency = loadTypeEntry("settings.default-item-currency");
         disablePlaceWhileCreative = loadBoolean("settings.disable-field-place-while-creative");
         disableBreakWhileCreative = loadBoolean("settings.disable-field-break-while-creative");
-        maxRentalPeriods = loadInt("settings.max-rental-periods");
 
         // ********************************** Cuboid
 
@@ -1497,10 +1495,6 @@ public final class SettingsManager {
 
     public boolean isPurgeBannedPlayers() {
         return purgeBannedPlayers;
-    }
-    
-    public int getMaxRentalPeriods() {
-        return maxRentalPeriods;
     }
 
     public boolean isDisablePlaceWhileCreative() {
