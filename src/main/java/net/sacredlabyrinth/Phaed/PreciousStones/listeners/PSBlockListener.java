@@ -1000,9 +1000,11 @@ public class PSBlockListener implements Listener {
 
         // if the field has a meta name, only items with that name can be placed
 
-        if (fs.hasMetaName()) {
-            if (!fs.matchesMetaName(player.getItemInHand())) {
-                return false;
+        if (!fs.isMetaAutoSet()) {
+            if (fs.hasMetaName()) {
+                if (!fs.matchesMetaName(player.getItemInHand())) {
+                    return false;
+                }
             }
         }
 

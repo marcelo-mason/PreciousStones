@@ -734,8 +734,10 @@ public final class SettingsManager {
                 return false;
             }
 
-            if (!settings.getMetaName().isEmpty()) {
-                return false;
+            if (!settings.isMetaAutoSet()) {
+                if (!settings.getMetaName().isEmpty()) {
+                    return false;
+                }
             }
 
             return true;
