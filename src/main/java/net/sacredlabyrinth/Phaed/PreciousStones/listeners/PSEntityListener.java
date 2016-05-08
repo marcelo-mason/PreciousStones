@@ -688,6 +688,9 @@ public class PSEntityListener implements Listener {
         }
     }
 
+    /**
+     * @param event
+     */
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteractAtEntityEvent(PlayerInteractAtEntityEvent event) {
 
@@ -796,6 +799,9 @@ public class PSEntityListener implements Listener {
         }
     }
 
+    /**
+     * @param event
+     */
     @EventHandler
     public void onHangingBreakByEntityEvent(HangingBreakByEntityEvent event) {
         if (event.isCancelled()) {
@@ -831,6 +837,9 @@ public class PSEntityListener implements Listener {
         }
     }
 
+    /**
+     * @param event
+     */
     @EventHandler
     public void onHangingPlaceEvent(HangingPlaceEvent event) {
         if (event.isCancelled()) {
@@ -856,6 +865,9 @@ public class PSEntityListener implements Listener {
         }
     }
 
+    /**
+     * @param event
+     */
     @EventHandler
     public void onHangingBreakEvent(HangingBreakEvent event) {
         if (event.isCancelled()) {

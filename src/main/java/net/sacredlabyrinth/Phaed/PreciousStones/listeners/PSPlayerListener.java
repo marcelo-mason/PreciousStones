@@ -22,6 +22,7 @@ import org.bukkit.event.entity.EntityPortalExitEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -46,6 +47,9 @@ public class PSPlayerListener implements Listener {
         plugin = PreciousStones.getInstance();
     }
 
+    /**
+     * @param event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
@@ -510,7 +514,14 @@ public class PSPlayerListener implements Listener {
 
         final Player player = event.getPlayer();
         Block block = event.getClickedBlock();
+        EquipmentSlot hand = event.getHand();
         ItemStack is = player.getItemInHand();
+
+        // added for 1.9 change where the PlayerInteractEvent fires twice one for each hand
+
+        if (!hand.equals(EquipmentSlot.HAND)){
+            return;
+        }
 
         // -------------------------------------------------------------------------------- trying to place an armor stand entity
 
@@ -1448,6 +1459,9 @@ public class PSPlayerListener implements Listener {
         }
     }
 
+    /**
+     * @param event
+     */
     @EventHandler
     public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
         if (event == null) {
@@ -1498,6 +1512,9 @@ public class PSPlayerListener implements Listener {
         }
     }
 
+    /**
+     * @param event
+     */
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
         if (event.getPlayer() instanceof Player) {
