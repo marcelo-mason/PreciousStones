@@ -519,7 +519,7 @@ public class PSPlayerListener implements Listener {
 
         // added for 1.9 change where the PlayerInteractEvent fires twice one for each hand
 
-        if (!hand.equals(EquipmentSlot.HAND)){
+        if (hand == null || !hand.equals(EquipmentSlot.HAND)){
             return;
         }
 
