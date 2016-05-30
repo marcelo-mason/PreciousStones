@@ -2316,6 +2316,21 @@ public final class ForceFieldManager {
     }
 
     /**
+     * Delete fields in deletion queue
+     */
+    public void flushNoDrop() {
+        while (!deletionQueue.isEmpty()) {
+            Field pending = deletionQueue.poll();
+
+            Block block = pending.getBlock();
+            if(block != null){
+                block.setType(Material.AIR);
+            }
+            deleteField(pending);
+        }
+    }
+
+    /**
      * Drops a field
      *
      * @param field
@@ -2699,7 +2714,7 @@ public final class ForceFieldManager {
     }
 
     public List<Field> getFieldsOwnedBy(String playerName, FieldFlag flag) {
-        Map<FieldFlag, List<Field>> flags = fieldsByOwnerAndFlag.get(playerName);
+        Map<FieldFlag, List<Field>> flags = fieldsByOwnerAndFlag.get(playerName.toLowerCase());
 
         if (flags != null) {
             return flags.get(flag);
@@ -2710,12 +2725,12 @@ public final class ForceFieldManager {
 
     public void removeFieldsIfNoPermission(String playerName) {
         Player player = Bukkit.getServer().getPlayer(playerName);
+        Map<String, Integer> deleted = Maps.newHashMap();
 
         if (player != null) {
             List<Field> fields = getFieldsOwnedBy(playerName, FieldFlag.DELETE_IF_NO_PERMISSION);
 
             if (fields != null) {
-                int deletedCount = 0;
 
                 for (Field field : fields) {
                     String permission = field.getSettings().getDeleteIfNoPermission();
@@ -2723,14 +2738,24 @@ public final class ForceFieldManager {
                     if (!permission.isEmpty()) {
                         if (!plugin.getPermissionsManager().has(player, permission)) {
                             queueRelease(field);
-                            deletedCount++;
+
+                            int count = 0;
+                            if (deleted.containsKey(permission)) {
+                                count = deleted.get(permission);
+                            }
+                            deleted.put(permission, ++count);
                         }
                     }
                 }
 
-                if (deletedCount > 0) {
-                    flush();
-                    PreciousStones.log("logDeletedNoPermission", deletedCount, playerName);
+                if (!deleted.isEmpty()) {
+                    flushNoDrop();
+
+                    for (String perm : deleted.keySet()) {
+                        int count = deleted.get(perm);
+                        ChatHelper.send(player, "notifyDeletedNoPermission", perm, count);
+                        PreciousStones.log("logDeletedNoPermission", count, playerName);
+                    }
                 }
             }
         }
@@ -2744,7 +2769,7 @@ public final class ForceFieldManager {
      * @return
      */
     public List<Field> getPlayerFields(String playerName, FieldFlag flag) {
-        Map<FieldFlag, List<Field>> fields = fieldsByOwnerAndFlag.get(playerName);
+        Map<FieldFlag, List<Field>> fields = fieldsByOwnerAndFlag.get(playerName.toLowerCase());
 
         if (fields == null) {
             return null;

@@ -2141,6 +2141,10 @@ public class CommunicationManager {
             }
         }
 
+        if (!field.getSettings().getDeleteIfNoPermission().isEmpty()) {
+            cb.addRow("  " + color + ChatHelper.format("_for") + ": ", ChatColor.AQUA + "" + field.getSettings().getDeleteIfNoPermission());
+        }
+
         cb.addRow("  " + color + ChatHelper.format("_owner") + ": ", ChatColor.AQUA + field.getOwner(), "");
 
         List<String> allowed = field.getAllowed();

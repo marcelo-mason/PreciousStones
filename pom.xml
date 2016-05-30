@@ -5,7 +5,7 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>10.3.0</version>
+    <version>10.3.1</version>
     <name>PreciousStones</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
@@ -76,7 +76,7 @@
                                          classpathref="maven.dependency.classpath" />
                                 <trycatch>
                                     <try>
-                                        <copy todir="/users/mason/minecraft/server/plugins/">
+                                        <copy todir="C:\Minecraft\server\plugins/">
                                             <fileset dir="${project.build.directory}">
                                                 <include name="*${project.name}.jar"/>
                                             </fileset>
