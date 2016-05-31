@@ -523,7 +523,7 @@ public class PSPlayerListener implements Listener {
             return;
         }
 
-        // -------------------------------------------------------------------------------- trying to place an armor stand entity
+        // ------------------------------------------------------------------------------- trying to place an armor stand entity
 
 
         if (block != null) {
