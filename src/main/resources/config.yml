@@ -397,7 +397,16 @@ force-field-blocks:
   - 2
   - 2
   - 2
+  - 2
+  - 2
+  - 2
+  - 2
+  - 2
+  - 2
   - 3
+  - 3
+  - 3
+  - 14
   shrub-types:
   - 1
   shrub-density: 64
@@ -434,6 +443,9 @@ force-field-blocks:
   - 8
   - 8
   - 8
+  - 9
+  - 9
+  - 9
   shrub-types:
   - 2
   shrub-density: 30
@@ -465,6 +477,8 @@ force-field-blocks:
   - 4
   - 4
   - 4
+  - 15
+  - 15
   - 1
   - 7
   shrub-types:

@@ -218,6 +218,22 @@ public final class ForesterManager {
                 return TreeType.JUNGLE;
             case 8:
                 return TreeType.JUNGLE_BUSH;
+            case 9:
+                return TreeType.SMALL_JUNGLE;
+            case 10:
+                return TreeType.COCOA_TREE;
+            case 11:
+                return TreeType.SWAMP;
+            case 12:
+                return TreeType.ACACIA;
+            case 13:
+                return TreeType.DARK_OAK;
+            case 14:
+                return TreeType.MEGA_REDWOOD;
+            case 15:
+                return TreeType.TALL_BIRCH;
+            case 16:
+                return TreeType.CHORUS_PLANT;
         }
 
         return TreeType.TREE;
