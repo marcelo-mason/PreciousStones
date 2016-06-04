@@ -2336,16 +2336,6 @@ public final class ForceFieldManager {
      * @param field
      */
     public void dropField(Field field) {
-        dropFieldBlock(field.getBlock());
-    }
-
-    /**
-     * Drops a block
-     *
-     * @param block
-     */
-    public void dropFieldBlock(Block block) {
-        Field field = getField(block);
 
         // unhide it
 
@@ -2353,7 +2343,7 @@ public final class ForceFieldManager {
 
         // drop it
 
-        dropBlock(block, field.getTypeEntry(), field.getSettings());
+        dropBlock(field.getBlock(), field.getTypeEntry(), field.getSettings());
     }
 
     /**

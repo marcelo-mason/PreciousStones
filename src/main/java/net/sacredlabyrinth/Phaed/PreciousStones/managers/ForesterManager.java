@@ -255,25 +255,25 @@ public final class ForesterManager {
 
         switch (treeTypes.get(rand)) {
             case 0:
-                block.setTypeIdAndData(31, (byte) 0, false);
+                block.setTypeIdAndData(31, (byte) 0, false); // tall grass
                 return;
             case 1:
-                block.setTypeIdAndData(31, (byte) 1, false);
+                block.setTypeIdAndData(31, (byte) 1, false); // tall grass
                 return;
             case 2:
-                block.setTypeIdAndData(31, (byte) 2, false);
+                block.setTypeIdAndData(31, (byte) 2, false); // tall grass
                 return;
             case 3:
-                block.setTypeId(37, false);
+                block.setTypeId(37, false); // yellow flower
                 return;
             case 4:
-                block.setTypeId(38, false);
+                block.setTypeId(38, false); // red flower
                 return;
             case 5:
-                block.setTypeId(40, false);
+                block.setTypeId(40, false); // brown shroom
                 return;
             case 6:
-                block.setTypeId(39, false);
+                block.setTypeId(39, false); // red shroom
                 return;
         }
     }
