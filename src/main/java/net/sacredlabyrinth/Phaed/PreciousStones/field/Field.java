@@ -1333,6 +1333,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
             return false;
         }
 
+        PreciousStones.getInstance().getForceFieldManager().refundField(player, this);
         PreciousStones.getInstance().getForceFieldManager().deleteField(this);
         block.setType(Material.AIR);
 

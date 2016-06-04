@@ -570,34 +570,7 @@ public class PSBlockListener implements Listener {
             plugin.getForceFieldManager().release(block);
         }
 
-        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase")) {
-            if (!plugin.getSettingsManager().isNoRefunds()) {
-                int refund = field.getSettings().getRefund();
-
-                if (refund > -1) {
-                    // refund the block, accounts for parent/child relationships
-
-                    if (field.isChild() || field.isParent()) {
-                        Field parent = field;
-
-                        if (field.isChild()) {
-                            parent = field.getParent();
-                        }
-
-                        plugin.getForceFieldManager().refund(player, refund);
-
-                        for (Field child : parent.getChildren()) {
-                            refund = child.getSettings().getRefund();
-
-                            plugin.getForceFieldManager().refund(player, refund);
-                        }
-                    } else {
-                        plugin.getForceFieldManager().refund(player, refund);
-                    }
-                }
-            }
-        }
-
+        plugin.getForceFieldManager().refundField(player, field);
         plugin.getVisualizationManager().revert(player);
     }
 

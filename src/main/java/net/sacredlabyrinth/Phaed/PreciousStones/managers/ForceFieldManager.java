@@ -2488,6 +2488,40 @@ public final class ForceFieldManager {
     }
 
     /**
+     * Refunds a field to a player, accounts for parent/child relationships
+     *
+     * @param player
+     */
+    public void refundField(Player player, Field field){
+        if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase")) {
+            if (!plugin.getSettingsManager().isNoRefunds()) {
+                int refund = field.getSettings().getRefund();
+
+                if (refund > -1) {
+
+                    if (field.isChild() || field.isParent()) {
+                        Field parent = field;
+
+                        if (field.isChild()) {
+                            parent = field.getParent();
+                        }
+
+                        refund(player, refund);
+
+                        for (Field child : parent.getChildren()) {
+                            refund = child.getSettings().getRefund();
+
+                            refund(player, refund);
+                        }
+                    } else {
+                        refund(player, refund);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * check if the area a field may cover has players in it
      *
      * @param block
