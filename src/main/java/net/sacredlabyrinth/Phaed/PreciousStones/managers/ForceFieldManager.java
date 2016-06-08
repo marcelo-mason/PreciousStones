@@ -2426,6 +2426,7 @@ public final class ForceFieldManager {
     /**
      * Delete fields of a certain type from a player
      *
+     * @param playerName
      * @param type
      * @return count of fields deleted
      */
