@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.MaterialName;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.lang.reflect.Method;
@@ -844,5 +846,18 @@ public class Helper {
         //System. out.println(ste[ste.length-depth].getClassName()+"#"+ste[ste.length-depth].getMethodName());
         // return ste[ste.length - depth].getMethodName();  //Wrong, fails for depth = 0
         return ste[ste.length - 1 - depth].getMethodName(); //Thank you Tom Tresansky
+    }
+
+    /**
+     * Sets meta data to an item stack
+     *
+     * @param is
+     * @param settings
+     */
+    public static void setItemMeta(ItemStack is, FieldSettings settings){
+        ItemMeta meta = is.getItemMeta();
+        meta.setDisplayName(settings.getMetaName());
+        meta.setLore(settings.getMetaLore());
+        is.setItemMeta(meta);
     }
 }

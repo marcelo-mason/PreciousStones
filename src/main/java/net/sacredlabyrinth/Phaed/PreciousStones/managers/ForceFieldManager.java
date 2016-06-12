@@ -11,11 +11,13 @@ import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
@@ -2323,7 +2325,7 @@ public final class ForceFieldManager {
             Field pending = deletionQueue.poll();
 
             Block block = pending.getBlock();
-            if(block != null){
+            if (block != null) {
                 block.setType(Material.AIR);
             }
             deleteField(pending);
@@ -2362,10 +2364,7 @@ public final class ForceFieldManager {
         // apply meta name and lore
 
         if (settings.hasMetaName()) {
-            ItemMeta meta = is.getItemMeta();
-            meta.setDisplayName(settings.getMetaName());
-            meta.setLore(settings.getMetaLore());
-            is.setItemMeta(meta);
+            Helper.setItemMeta(is, settings);
         }
 
         // wipe previous block
@@ -2493,7 +2492,7 @@ public final class ForceFieldManager {
      *
      * @param player
      */
-    public void refundField(Player player, Field field){
+    public void refundField(Player player, Field field) {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase")) {
             if (!plugin.getSettingsManager().isNoRefunds()) {
                 int refund = field.getSettings().getRefund();
@@ -2872,12 +2871,149 @@ public final class ForceFieldManager {
         // apply meta name and lore
 
         if (settings.hasMetaName()) {
-            ItemMeta meta = is.getItemMeta();
-            meta.setDisplayName(settings.getMetaName());
-            meta.setLore(settings.getMetaLore());
-            is.setItemMeta(meta);
+            Helper.setItemMeta(is, settings);
         }
 
         player.getInventory().addItem(is);
+    }
+
+    public void placeField(CommandSender sender, String ownerName, FieldSettings fs, int x, int y, int z, String worldName, int radius, int height) {
+        World world = plugin.getServer().getWorld(worldName);
+
+        if (world == null) {
+            ChatHelper.send(sender, "worldNotFound");
+            return;
+        }
+
+        Block fieldBlock = world.getBlockAt(x, y, z);
+        BlockTypeEntry type = fs.getTypeEntry();
+
+        // deny if world is blacklisted
+
+        if (plugin.getSettingsManager().isBlacklistedWorld(fieldBlock.getWorld())) {
+            return;
+        }
+
+        // check if a field exists there
+
+        if (getField(fieldBlock) != null) {
+            ChatHelper.send(sender, "fieldExists");
+            return;
+        }
+
+        // verify owner name
+
+        OfflinePlayer owner = plugin.getServer().getOfflinePlayer(ownerName);
+
+        if (fs.hasDefaultFlag(FieldFlag.NO_OWNER)) {
+            ownerName = "Server";
+        } else {
+            if (owner == null) {
+                ChatHelper.send(sender, "playerNotFound", ownerName);
+                return;
+            }
+        }
+
+        // set block
+
+        fieldBlock.setType(type.getMaterial());
+        fieldBlock.setData(type.getData());
+
+        // create field
+
+        Field field = new Field(fieldBlock, radius, height, ownerName);
+        field.setSettings(fs);
+
+        // add to database (skip foresters and activate them)
+
+        if (field.hasFlag(FieldFlag.FORESTER)) {
+            if (!field.hasFlag(FieldFlag.PLACE_DISABLED)) {
+                ForesterEntry fe = new ForesterEntry(field, sender);
+            }
+        } else {
+
+            // insert the field into database
+            plugin.getStorageManager().insertField(field);
+        }
+
+        // add to collection
+
+        addToCollection(field);
+
+        // disable flags
+
+        for (FieldFlag flag : field.getSettings().getDisabledFlags()) {
+            field.getFlagsModule().disableFlag(flag.toString(), true);
+        }
+
+        // places the field in a disabled state
+
+        if (field.hasFlag(FieldFlag.PLACE_DISABLED)) {
+            field.setDisabled(true);
+        }
+
+        // sets the initial revert seconds for grief reverts
+
+        if (field.hasFlag(FieldFlag.GRIEF_REVERT)) {
+            if (field.getSettings().getGriefRevertInterval() > 0) {
+                field.getRevertingModule().setRevertSecs(field.getSettings().getGriefRevertInterval());
+                plugin.getGriefUndoManager().register(field);
+            }
+        }
+
+        // start renter scheduler
+
+        if (field.hasFlag(FieldFlag.RENTABLE) || field.hasFlag(FieldFlag.SHAREABLE)) {
+            field.getRentingModule().scheduleNextRentUpdate();
+        }
+
+        // add allowed clan
+
+        if (plugin.getSettingsManager().isAutoAddClan()) {
+            String clan = plugin.getSimpleClansManager().getClan(owner.getName());
+
+            if (clan != null) {
+                field.addAllowed("c:" + clan);
+            }
+        }
+
+        // add allowed team
+
+        if (plugin.getSettingsManager().isAutoAddTeam()) {
+            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(owner.getName());
+
+            if (offlinePlayer != null) {
+                ScoreboardManager manager = Bukkit.getScoreboardManager();
+                Scoreboard board = manager.getMainScoreboard();
+
+                Team team = board.getPlayerTeam(offlinePlayer);
+
+                if (team != null) {
+                    field.addAllowed("t:" + team.getName());
+                }
+            }
+        }
+
+        // generate fence
+
+        if (field.getSettings().getFenceItem() > 0) {
+            field.getFencingModule().generateFence(field.getSettings().getFenceItem());
+        }
+
+        // add metadata
+
+        field.getBlock().setMetadata("Pstone", new FixedMetadataValue(plugin, true));
+
+        // allow all owners of intersecting fields into the field
+
+        plugin.getForceFieldManager().addAllowOverlappingOwners(field);
+
+        // start disabling process for auto-disable fields
+
+        field.startDisabler();
+
+        // saves the field on the database
+
+        plugin.getStorageManager().offerField(field);
     }
 }

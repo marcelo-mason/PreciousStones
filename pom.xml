@@ -5,7 +5,7 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>10.3.3</version>
+    <version>10.3.4</version>
     <name>PreciousStones-1.9</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
@@ -78,7 +78,7 @@
                                     <try>
                                         <copy todir="C:\Minecraft\server\plugins/">
                                             <fileset dir="${project.build.directory}">
-                                                <include name="*${project.name}.jar"/>
+                                                <include name="${project.name}.jar"/>
                                             </fileset>
                                         </copy>
                                     </try>

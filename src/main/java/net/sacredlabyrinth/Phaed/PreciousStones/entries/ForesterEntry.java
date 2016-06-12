@@ -7,6 +7,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -24,7 +25,7 @@ public class ForesterEntry {
      * @param field
      * @param player
      */
-    public ForesterEntry(Field field, Player player) {
+    public ForesterEntry(Field field, CommandSender player) {
         this.field = field;
         this.playerName = player.getName();
         this.count = 0;

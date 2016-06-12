@@ -14,6 +14,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -1902,12 +1903,23 @@ public final class CommandManager implements CommandExecutor {
                         return true;
                     } else if (cmd.equals(ChatHelper.format("commandGive")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.give")) {
                         if (args.length >= 2) {
-                            String playerName = args[0];
-                            String fieldName = args[1];
-                            int count = 1;
+                            // [player] [field name] <amount>
 
-                            if (args.length > 2) {
-                                count = Integer.parseInt(args[2]);
+                            String[] remaining = args.clone();
+
+                            String playerName = remaining[0];
+                            remaining = Helper.removeFirst(remaining);
+
+                            String fieldName = "";
+                            while (remaining.length > 0 && !Helper.isInteger(remaining[0])) {
+                                fieldName += remaining[0] + " ";
+                                remaining = Helper.removeFirst(remaining);
+                            }
+                            fieldName = fieldName.trim();
+
+                            int count = 1;
+                            if (remaining.length > 0) {
+                                count = Integer.parseInt(remaining[0]);
                             }
 
                             Player recipient = plugin.getServer().getPlayer(playerName);
@@ -1926,7 +1938,61 @@ public final class CommandManager implements CommandExecutor {
                                 ChatHelper.send(sender, "playerNotFound", playerName);
                             }
                         }
+                        return true;
+                    } else if (cmd.equals(ChatHelper.format("commandPlace")) && plugin.getPermissionsManager().has(player, "preciousstones.admin.place")) {
+                        if (args.length >= 6) {
+                            // [owner] [field name] [x] [y] [z] <radius> <height>
 
+                            String[] remaining = args.clone();
+
+                            String ownerName = remaining[0];
+                            remaining = Helper.removeFirst(remaining);
+
+                            String fieldName = "";
+                            while (!Helper.isInteger(remaining[0])) {
+                                fieldName += remaining[0] + " ";
+                                remaining = Helper.removeFirst(remaining);
+                            }
+                            fieldName = fieldName.trim();
+
+                            int x = Integer.parseInt(remaining[0]);
+                            remaining = Helper.removeFirst(remaining);
+                            int y = Integer.parseInt(remaining[0]);
+                            remaining = Helper.removeFirst(remaining);
+                            int z = Integer.parseInt(remaining[0]);
+                            remaining = Helper.removeFirst(remaining);
+
+                            String worldName = remaining[0];
+                            remaining = Helper.removeFirst(remaining);
+
+                            int radius = -1;
+                            if (remaining.length > 0) {
+                                radius = Integer.parseInt(remaining[0]);
+                                remaining = Helper.removeFirst(remaining);
+                            }
+
+                            int height = -1;
+                            if (remaining.length > 0) {
+                                height = Integer.parseInt(remaining[0]);
+                            }
+
+                            FieldSettings settings = plugin.getSettingsManager().getFieldSettings(fieldName);
+
+                            if (settings != null) {
+                                if(radius == -1){
+                                    radius = settings.getRadius();
+                                }
+
+                                if(height == -1){
+                                    height = settings.getCustomHeight();
+                                }
+
+                                plugin.getForceFieldManager().placeField(sender, ownerName, settings, x, y, z, worldName, radius, height);
+                                ChatHelper.send(sender, "fieldPlaced", ownerName, settings.getTitle(), x, y, z, worldName, radius, height);
+                            } else {
+                                ChatHelper.send(sender, "fieldNotFound", fieldName);
+                            }
+                        }
                         return true;
                     }
 

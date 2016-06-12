@@ -234,6 +234,8 @@ permissions:
     description: Lets admins use rent admin powers for renting
   preciousstones.admin.give:
     description: Lets admins give fields with meta-names to players
+  preciousstones.admin.place:
+    description: Lets admins place fields in the world
   preciousstones.override.notify:
     description: Can users will not be shown any notifications
   preciousstones.override.warn:
@@ -420,6 +422,7 @@ permissions:
       preciousstones.admin.rent: true
       preciousstones.admin.migrate: true
       preciousstones.admin.give: true
+      preciousstones.admin.place: true
   preciousstones.override.*:
     description: These players will receive no warnings or notifications
     default: false
