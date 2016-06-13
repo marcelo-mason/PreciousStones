@@ -596,6 +596,43 @@ public class CommunicationManager {
 
     /**
      * @param player
+     * @param loc
+     * @param field
+     */
+    public void notifyVehicleBypassCreate(Player player, Location loc, Field field) {
+        if (field == null) {
+            return;
+        }
+
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isNotifyBypassPlace() && canNotify(player)) {
+            ChatHelper.send(player, "notifyBypassCreateVehicle", field.getOwner(), fs.getTitle());
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogBypassPlace()) {
+
+            PreciousStones.log("logBypassCreateVehicle", player.getName(), field.getOwner(), fs.getTitle(), field.getDetails());
+
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers()) {
+            if (pl.equals(player)) {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.notify.bypass-place") && canBypassAlert(pl)) {
+                ChatHelper.sendPs(pl, "logBypassCreateVehicle", player.getName(), field.getOwner(), fs.getTitle(), field.getDetails());
+            }
+        }
+    }
+
+    /**
+     * @param player
      * @param block
      * @param field
      */
@@ -957,6 +994,42 @@ public class CommunicationManager {
 
             if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.place") && canAlert(pl)) {
                 ChatHelper.sendPs(pl, "logPlace", player.getName(), (new Vec(loc)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+            }
+        }
+    }
+
+    /**
+     * @param player
+     * @param item
+     * @param loc
+     * @param field
+     */
+    public void warnCreateVehicle(Player player, Location loc, Field field) {
+        if (field == null) {
+            return;
+        }
+
+        FieldSettings fs = field.getSettings();
+
+        if (plugin.getSettingsManager().isWarnPlace() && canWarn(player)) {
+            ChatHelper.send(player, "warnCreateVehicle");
+        }
+
+        if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
+            return;
+        }
+
+        if (plugin.getSettingsManager().isLogPlaceArea()) {
+            PreciousStones.log("logCreateVehicle", player.getName(), (new Vec(loc)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
+        }
+
+        for (Player pl : plugin.getServer().getOnlinePlayers()) {
+            if (pl.equals(player)) {
+                continue;
+            }
+
+            if (plugin.getPermissionsManager().has(pl, "preciousstones.alert.warn.place") && canAlert(pl)) {
+                ChatHelper.sendPs(pl, "logCreateVehicle", player.getName(), (new Vec(loc)).toString(), field.getOwner(), fs.getTitle(), field.getDetails());
             }
         }
     }

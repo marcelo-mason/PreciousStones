@@ -217,6 +217,7 @@ public class FieldSettings {
         loadBoolean("prevent-place");
         loadBoolean("prevent-destroy");
         loadBoolean("prevent-vehicle-destroy");
+        loadBoolean("prevent-vehicle-create");
         loadBoolean("prevent-enderman-destroy");
         loadBoolean("prevent-explosions");
         loadBoolean("prevent-creeper-explosions");
