@@ -860,4 +860,18 @@ public class Helper {
         meta.setLore(settings.getMetaLore());
         is.setItemMeta(meta);
     }
+
+    public static boolean isBoat(Material mat) {
+        if (mat == Material.BOAT || 
+            mat == Material.BOAT_ACACIA || 
+            mat == Material.BOAT_BIRCH || 
+            mat == Material.BOAT_DARK_OAK || 
+            mat == Material.BOAT_JUNGLE || 
+            mat == Material.BOAT_SPRUCE) {
+            return true;
+        } else {
+            return false;
+        }
+    
+    }
 }
