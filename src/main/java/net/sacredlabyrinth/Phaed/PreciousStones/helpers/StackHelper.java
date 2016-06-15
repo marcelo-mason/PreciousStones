@@ -1,10 +1,12 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.helpers;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,5 +121,18 @@ public class StackHelper {
         }
 
         return false;
+    }
+
+    /**
+     * Sets meta data to an item stack
+     *
+     * @param is
+     * @param settings
+     */
+    public static void setItemMeta(ItemStack is, FieldSettings settings){
+        ItemMeta meta = is.getItemMeta();
+        meta.setDisplayName(settings.getMetaName());
+        meta.setLore(settings.getMetaLore());
+        is.setItemMeta(meta);
     }
 }

@@ -1340,7 +1340,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
         ItemStack is = new ItemStack(type.getTypeId(), 1, (short) 0, type.getData());
 
         if (settings.hasMetaName()) {
-            Helper.setItemMeta(is, settings);
+            StackHelper.setItemMeta(is, settings);
         }
 
         StackHelper.give(player, is);

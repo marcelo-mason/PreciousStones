@@ -564,14 +564,14 @@ public class PSBlockListener implements Listener {
         PreciousStones.debug("releasing field");
         event.setCancelled(true);
 
+        plugin.getForceFieldManager().refundField(player, field);
+        plugin.getVisualizationManager().revert(player);
+
         if (field.hasFlag(FieldFlag.SINGLE_USE)) {
             plugin.getForceFieldManager().releaseWipe(block);
         } else {
             plugin.getForceFieldManager().release(block);
         }
-
-        plugin.getForceFieldManager().refundField(player, field);
-        plugin.getVisualizationManager().revert(player);
     }
 
     /**

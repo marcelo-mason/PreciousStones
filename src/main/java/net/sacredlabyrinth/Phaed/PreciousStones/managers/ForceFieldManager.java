@@ -12,6 +12,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.*;
@@ -2364,7 +2365,7 @@ public final class ForceFieldManager {
         // apply meta name and lore
 
         if (settings.hasMetaName()) {
-            Helper.setItemMeta(is, settings);
+            StackHelper.setItemMeta(is, settings);
         }
 
         // wipe previous block
@@ -2871,7 +2872,7 @@ public final class ForceFieldManager {
         // apply meta name and lore
 
         if (settings.hasMetaName()) {
-            Helper.setItemMeta(is, settings);
+            StackHelper.setItemMeta(is, settings);
         }
 
         player.getInventory().addItem(is);
