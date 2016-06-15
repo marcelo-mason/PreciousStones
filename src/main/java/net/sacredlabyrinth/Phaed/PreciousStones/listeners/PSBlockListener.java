@@ -568,9 +568,9 @@ public class PSBlockListener implements Listener {
         plugin.getVisualizationManager().revert(player);
 
         if (field.hasFlag(FieldFlag.SINGLE_USE)) {
-            plugin.getForceFieldManager().releaseWipe(block);
+            plugin.getForceFieldManager().releaseWipe(field);
         } else {
-            plugin.getForceFieldManager().release(block);
+            plugin.getForceFieldManager().release(field);
         }
     }
 

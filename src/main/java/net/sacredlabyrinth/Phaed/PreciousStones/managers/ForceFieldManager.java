@@ -2279,11 +2279,20 @@ public final class ForceFieldManager {
     /**
      * Deletes a field and wipe it out (set to air)
      *
+     * @param field
+     */
+    public void releaseWipe(Field field) {
+        deleteField(field);
+        field.getBlock().setType(Material.AIR);
+    }
+
+    /**
+     * Deletes a field and wipe it out (set to air)
+     *
      * @param block
      */
     public void releaseWipe(Block block) {
-        deleteField(getField(block));
-        block.setType(Material.AIR);
+        releaseWipe(getField(block));
     }
 
     /**
