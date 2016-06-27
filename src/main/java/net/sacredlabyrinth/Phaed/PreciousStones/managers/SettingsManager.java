@@ -62,6 +62,7 @@ public final class SettingsManager {
     private int visualizeMaxFields;
     private boolean visualizeOnExpand;
     private boolean visualizeEndOnMove;
+    private boolean preventBreakingHidden;
     private int purgeAfterDays;
     private boolean purgeBannedPlayers;
     private boolean debug;
@@ -285,6 +286,7 @@ public final class SettingsManager {
         defaulItemCurrency = loadTypeEntry("settings.default-item-currency");
         disablePlaceWhileCreative = loadBoolean("settings.disable-field-place-while-creative");
         disableBreakWhileCreative = loadBoolean("settings.disable-field-break-while-creative");
+        preventBreakingHidden = loadBoolean("settings.prevent-breaking-hidden");
 
         // ********************************** Cuboid
 
@@ -1505,5 +1507,9 @@ public final class SettingsManager {
 
     public boolean isDisableBreakWhileCreative() {
         return disableBreakWhileCreative;
+    }
+
+    public boolean isPreventBreakingHidden() {
+        return preventBreakingHidden;
     }
 }

@@ -544,7 +544,8 @@ settings:
   use-commands-to-rent: false
   max-target-distance: 100
   version: 14
-  default-item-currency: '266'
+  default-item-currency: '266',
+  prevent-breaking-hidden: false
 log:
   bypass-pvp: true
   pvp: true
