@@ -824,7 +824,7 @@ public class Helper {
             if (players instanceof Player[]) {
                 return new ArrayList<>(Arrays.asList((Player[]) players));
             } else {
-                return ((Collection<Player>) players);
+                return (Collection<Player>) players;
             }
         } catch (Exception e) {
             e.printStackTrace();

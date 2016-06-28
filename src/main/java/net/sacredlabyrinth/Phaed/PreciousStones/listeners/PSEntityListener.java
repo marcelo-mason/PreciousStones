@@ -627,7 +627,7 @@ public class PSEntityListener implements Listener {
                             plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
                         } else {
                             //If both the attacker and the victim are in combat, don't cancel it
-                            if (((plugin.getCombatTagManager().isInCombat(attacker)) && (plugin.getCombatTagManager().isInCombat(victim)))) {
+                            if ((plugin.getCombatTagManager().isInCombat(attacker)) && (plugin.getCombatTagManager().isInCombat(victim))) {
                                 //warn both players
                                 plugin.getCommunicationManager().warnBypassPvPDueToCombat(attacker, victim);
                                 return;

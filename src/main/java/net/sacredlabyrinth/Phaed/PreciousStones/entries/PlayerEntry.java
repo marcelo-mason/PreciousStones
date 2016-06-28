@@ -269,7 +269,7 @@ public class PlayerEntry {
                         }
 
                         if (flag.equals("confiscated")) {
-                            confiscatedInventory = ((JSONArray) flags.get(flag));
+                            confiscatedInventory = (JSONArray) flags.get(flag);
                         }
 
                         if (flag.equals("helmet")) {

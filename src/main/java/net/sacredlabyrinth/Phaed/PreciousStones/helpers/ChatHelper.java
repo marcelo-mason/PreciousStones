@@ -747,7 +747,7 @@ public class ChatHelper {
      * @return
      */
     public static String colorize(String message) {
-        return colorizeBase((new String[]{message}), 167)[0];
+        return colorizeBase(new String[]{message}, 167)[0];
     }
 
     /**

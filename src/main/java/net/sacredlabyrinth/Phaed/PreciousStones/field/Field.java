@@ -226,7 +226,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
         int widthX = Helper.getWidthFromCoords(maxx, minx);
         int widthZ = Helper.getWidthFromCoords(maxz, minz);
         int height = Helper.getWidthFromCoords(maxy, miny);
-        return (height * widthX * widthZ);
+        return height * widthX * widthZ;
     }
 
     /**
@@ -238,7 +238,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
     public int getFlatVolume() {
         int widthX = Helper.getWidthFromCoords(maxx, minx);
         int widthZ = Helper.getWidthFromCoords(maxz, minz);
-        return (widthX * widthZ);
+        return widthX * widthZ;
     }
 
     /**

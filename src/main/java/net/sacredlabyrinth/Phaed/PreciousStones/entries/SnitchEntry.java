@@ -32,7 +32,7 @@ public class SnitchEntry {
         this.reason = reason;
         this.details = details;
         this.eventCount = 1;
-        this.age = (new DateTime());
+        this.age = new DateTime();
     }
 
     /**
@@ -48,7 +48,7 @@ public class SnitchEntry {
         this.reason = reason;
         this.details = details;
         this.eventCount = eventCount;
-        this.age = (new DateTime());
+        this.age = new DateTime();
     }
 
     /**
