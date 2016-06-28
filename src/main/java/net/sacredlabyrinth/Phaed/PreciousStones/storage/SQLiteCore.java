@@ -54,7 +54,8 @@ public class SQLiteCore implements DBCore {
     /**
      * @return connection
      */
-    public Connection getConnection() {
+    @Override
+	public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
                 initialize();
@@ -69,14 +70,16 @@ public class SQLiteCore implements DBCore {
     /**
      * @return whether connection can be established
      */
-    public Boolean checkConnection() {
+    @Override
+	public Boolean checkConnection() {
         return getConnection() != null;
     }
 
     /**
      * Close connection
      */
-    public void close() {
+    @Override
+	public void close() {
         try {
             if (connection != null) {
                 connection.close();
@@ -92,7 +95,8 @@ public class SQLiteCore implements DBCore {
      * @param query
      * @return
      */
-    public ResultSet select(String query) {
+    @Override
+	public ResultSet select(String query) {
         try {
             Statement statement = getConnection().createStatement();
             return statement.executeQuery(query);
@@ -108,7 +112,8 @@ public class SQLiteCore implements DBCore {
      *
      * @param query
      */
-    public long insert(String query) {
+    @Override
+	public long insert(String query) {
         PreciousStones.debug(query);
 
         try {
@@ -144,7 +149,8 @@ public class SQLiteCore implements DBCore {
      *
      * @param query
      */
-    public void update(String query) {
+    @Override
+	public void update(String query) {
         PreciousStones.debug(query);
 
         try {
@@ -167,7 +173,8 @@ public class SQLiteCore implements DBCore {
      *
      * @param query
      */
-    public void delete(String query) {
+    @Override
+	public void delete(String query) {
         PreciousStones.debug(query);
 
         try {
@@ -191,7 +198,8 @@ public class SQLiteCore implements DBCore {
      * @param query
      * @return
      */
-    public Boolean execute(String query) {
+    @Override
+	public Boolean execute(String query) {
         PreciousStones.debug(query);
 
         try {
@@ -214,7 +222,8 @@ public class SQLiteCore implements DBCore {
      * @param table
      * @return
      */
-    public Boolean existsTable(String table) {
+    @Override
+	public Boolean existsTable(String table) {
         try {
             ResultSet tables = getConnection().getMetaData().getTables(null, null, table, null);
             return tables.next();
@@ -231,7 +240,8 @@ public class SQLiteCore implements DBCore {
      * @param column
      * @return
      */
-    public Boolean existsColumn(String table, String column) {
+    @Override
+	public Boolean existsColumn(String table, String column) {
         try {
             ResultSet col = getConnection().getMetaData().getColumns(null, null, table, column);
             return col.next();
@@ -248,7 +258,8 @@ public class SQLiteCore implements DBCore {
      * @param column
      * @return
      */
-    public String getDataType(String table, String column) {
+    @Override
+	public String getDataType(String table, String column) {
         // not supported
         return "";
     }

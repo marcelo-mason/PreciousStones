@@ -186,7 +186,8 @@ public class CuboidManager {
         plugin.getVisualizationManager().revert(player);
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 ce.addSelected(field.getBlock());
 
                 for (Field child : field.getChildren()) {
@@ -212,7 +213,8 @@ public class CuboidManager {
 
         if (ce != null) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     ce.addSelected(field.getBlock());
                     PreciousStones.getInstance().getForceFieldManager().addSourceField(field);
                     ChatHelper.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());

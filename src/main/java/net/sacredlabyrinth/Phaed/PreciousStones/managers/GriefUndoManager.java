@@ -267,7 +267,8 @@ public final class GriefUndoManager {
 
     private int startInterval(final Field field) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 undoGrief(field);
             }
         }, field.getRevertingModule().getRevertSecs() * 20L, field.getRevertingModule().getRevertSecs() * 20L);

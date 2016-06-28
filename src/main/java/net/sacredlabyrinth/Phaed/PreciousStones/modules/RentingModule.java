@@ -364,7 +364,8 @@ public class RentingModule {
             }
         }
 
-        public void run() {
+        @Override
+		public void run() {
             try {
                 updateRent();
             } catch (Exception ex) {

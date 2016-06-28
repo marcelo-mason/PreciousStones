@@ -47,7 +47,8 @@ public class TranslocationImporter implements Runnable {
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 2, 1);
     }
 
-    public void run() {
+    @Override
+	public void run() {
         int i = 0;
 
         while (i < 500 && !dependentQueue.isEmpty()) {

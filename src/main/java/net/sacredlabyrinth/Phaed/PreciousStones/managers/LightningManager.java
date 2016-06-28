@@ -37,7 +37,8 @@ public class LightningManager {
             plugin.getCommunicationManager().showLightning(player);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     Block block = plugin.getForceFieldManager().getBlock(field);
 
                     player.getWorld().strikeLightning(player.getLocation());

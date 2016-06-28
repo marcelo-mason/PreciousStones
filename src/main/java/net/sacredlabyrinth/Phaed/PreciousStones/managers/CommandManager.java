@@ -44,7 +44,8 @@ public final class CommandManager implements CommandExecutor {
      * @param args
      * @return
      */
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    @Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         try {
             if (command.getName().equals("ps")) {
                 Player player = null;

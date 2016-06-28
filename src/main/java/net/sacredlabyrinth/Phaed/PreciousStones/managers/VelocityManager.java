@@ -41,7 +41,8 @@ public class VelocityManager {
                     velocity.multiply(speed / velocity.length());
                     velocity.setY(height > 0 ? height : (((player.getLocation().getPitch() * -1) + 90) / 35));
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                        public void run() {
+                        @Override
+						public void run() {
                             plugin.getPermissionsManager().allowFly(player);
                             player.setVelocity(velocity);
 
@@ -66,7 +67,8 @@ public class VelocityManager {
                     final float bounceHeight = field.getVelocity() > 0 ? field.getVelocity() : field.getSettings().getCannonHeight();
                     final float height = bounceHeight > 0 ? bounceHeight : (((player.getLocation().getPitch() * -1) + 90) / 35);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                        public void run() {
+                        @Override
+						public void run() {
                             plugin.getPermissionsManager().allowFly(player);
                             player.setVelocity(new Vector(0, height, 0));
 
@@ -109,7 +111,8 @@ public class VelocityManager {
         final String name = player.getName();
 
         return Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fallDamageImmune.remove(name);
                 plugin.getPermissionsManager().resetFly(player);
             }

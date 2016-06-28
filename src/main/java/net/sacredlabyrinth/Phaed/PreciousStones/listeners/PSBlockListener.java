@@ -934,7 +934,8 @@ public class PSBlockListener implements Listener {
 
                         final Field finalField = field;
                         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                            public void run() {
+                            @Override
+							public void run() {
                                 plugin.getTranslocationManager().addBlock(finalField, block);
                                 plugin.getTranslocationManager().flashFieldBlock(finalField, player);
                             }

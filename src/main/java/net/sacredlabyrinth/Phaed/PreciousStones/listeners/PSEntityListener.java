@@ -359,7 +359,8 @@ public class PSEntityListener implements Listener {
 
         if (!tnts.isEmpty()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     for (BlockEntry db : tnts) {
                         Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
@@ -381,7 +382,8 @@ public class PSEntityListener implements Listener {
             field.setProgress(true);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     plugin.getGriefUndoManager().undoDirtyGrief(field);
                     field.setProgress(false);
                 }
@@ -392,7 +394,8 @@ public class PSEntityListener implements Listener {
 
         if (!revert.isEmpty()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     for (BlockEntry db : revert) {
                         Block block = db.getLocation().getBlock();
                         block.setTypeIdAndData(db.getTypeId(), db.getData(), true);
@@ -408,7 +411,8 @@ public class PSEntityListener implements Listener {
             event.setCancelled(true);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     // remove all blocks and simulate drops for the blocks not in the field
 
                     for (BlockEntry db : unprotected) {
