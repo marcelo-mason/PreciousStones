@@ -784,9 +784,9 @@ public final class EntryManager {
                 for (String cmd : field.getSettings().getCommandsOnEnter()) {
                     cmd = cmd.replace("{player}", player.getName());
                     cmd = cmd.replace("{owner}", field.getOwner());
-                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                    cmd = cmd.replace("{x}", Integer.toString(player.getLocation().getBlockX()));
+                    cmd = cmd.replace("{y}", Integer.toString(player.getLocation().getBlockY()));
+                    cmd = cmd.replace("{z}", Integer.toString(player.getLocation().getBlockZ()));
                     cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
@@ -799,9 +799,9 @@ public final class EntryManager {
                 for (String cmd : field.getSettings().getPlayerCommandsOnEnter()) {
                     cmd = cmd.replace("{player}", player.getName());
                     cmd = cmd.replace("{owner}", field.getOwner());
-                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                    cmd = cmd.replace("{x}", Integer.toString(player.getLocation().getBlockX()));
+                    cmd = cmd.replace("{y}", Integer.toString(player.getLocation().getBlockY()));
+                    cmd = cmd.replace("{z}", Integer.toString(player.getLocation().getBlockZ()));
                     cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
                     player.performCommand(cmd);
@@ -816,9 +816,9 @@ public final class EntryManager {
                 for (String cmd : field.getSettings().getCommandsOnExit()) {
                     cmd = cmd.replace("{player}", player.getName());
                     cmd = cmd.replace("{owner}", field.getOwner());
-                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                    cmd = cmd.replace("{x}", Integer.toString(player.getLocation().getBlockX()));
+                    cmd = cmd.replace("{y}", Integer.toString(player.getLocation().getBlockY()));
+                    cmd = cmd.replace("{z}", Integer.toString(player.getLocation().getBlockZ()));
                     cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
@@ -831,9 +831,9 @@ public final class EntryManager {
                 for (String cmd : field.getSettings().getPlayerCommandsOnExit()) {
                     cmd = cmd.replace("{player}", player.getName());
                     cmd = cmd.replace("{owner}", field.getOwner());
-                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
+                    cmd = cmd.replace("{x}", Integer.toString(player.getLocation().getBlockX()));
+                    cmd = cmd.replace("{y}", Integer.toString(player.getLocation().getBlockY()));
+                    cmd = cmd.replace("{z}", Integer.toString(player.getLocation().getBlockZ()));
                     cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
 
                     player.performCommand(cmd);

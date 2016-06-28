@@ -239,7 +239,7 @@ public class Helper {
      */
     public static String friendlyBlockType(int typeId) {
         if (Material.getMaterial(typeId) == null) {
-            return typeId + "";
+            return Integer.toString(typeId);
         }
 
         return MaterialName.getIDName(Material.getMaterial(typeId));
@@ -705,7 +705,7 @@ public class Helper {
      */
     public static String getMaterialString(int typeId) {
         if (Material.getMaterial(typeId) == null) {
-            return typeId + "";
+            return Integer.toString(typeId);
         }
 
         return Material.getMaterial(typeId).toString();

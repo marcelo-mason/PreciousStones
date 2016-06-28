@@ -142,7 +142,7 @@ public class ItemStackEntry {
     @Override
     public String toString() {
         if (getData() == 0) {
-            return getTypeId() + "";
+            return Integer.toString(getTypeId());
         }
 
         if (getDurability() == 0) {
