@@ -25,14 +25,14 @@ public class PlayerEntry {
     private boolean bypassDisabled;
     private Location outsideLocation;
     private JSONArray confiscatedInventory = new JSONArray();
-    private ItemStackEntry confiscatedHelmet = null;
-    private ItemStackEntry confiscatedChestplate = null;
-    private ItemStackEntry confiscatedLeggings = null;
-    private ItemStackEntry confiscatedBoots = null;
-    private boolean teleporting = false;
-    private int teleportSecondsRemaining = 0;
-    private Vec teleportVec = null;
-    private boolean teleportPending = false;
+    private ItemStackEntry confiscatedHelmet;
+    private ItemStackEntry confiscatedChestplate;
+    private ItemStackEntry confiscatedLeggings;
+    private ItemStackEntry confiscatedBoots;
+    private boolean teleporting;
+    private int teleportSecondsRemaining;
+    private Vec teleportVec;
+    private boolean teleportPending;
     private int task;
 
     /**

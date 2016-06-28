@@ -25,7 +25,7 @@ import java.util.List;
 public class TranslocationBlock extends AbstractVec {
     private BlockTypeEntry type;
     private String signText = "";
-    private boolean empty = false;
+    private boolean empty;
     private int rx;
     private int ry;
     private int rz;

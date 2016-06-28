@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class BlockTypeEntry {
     private final Material material;
-    private byte data = 0;
+    private byte data;
 
     /**
      * @param block

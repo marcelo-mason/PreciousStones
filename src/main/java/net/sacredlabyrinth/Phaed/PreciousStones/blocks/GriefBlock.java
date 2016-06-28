@@ -13,7 +13,7 @@ import org.bukkit.block.BlockState;
 public class GriefBlock extends AbstractVec {
     private BlockTypeEntry type;
     private String signText = "";
-    private boolean empty = false;
+    private boolean empty;
 
     /**
      * @param x
