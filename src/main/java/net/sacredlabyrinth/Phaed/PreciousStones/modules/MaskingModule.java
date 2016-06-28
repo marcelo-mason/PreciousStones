@@ -25,7 +25,7 @@ public class MaskingModule {
     }
 
     public void mask(Player actor) {
-        Set<Player> fieldInhabitants = new HashSet<Player>();
+        Set<Player> fieldInhabitants = new HashSet<>();
 
         if (actor != null) {
             fieldInhabitants.add(actor);
@@ -51,7 +51,7 @@ public class MaskingModule {
     }
 
     public void unmask(Player actor) {
-        Set<Player> fieldInhabitants = new HashSet<Player>();
+        Set<Player> fieldInhabitants = new HashSet<>();
 
         if (actor != null) {
             fieldInhabitants.add(actor);

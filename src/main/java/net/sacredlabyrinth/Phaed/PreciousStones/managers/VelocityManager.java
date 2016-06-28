@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class VelocityManager {
     private PreciousStones plugin;
-    private HashMap<String, Integer> fallDamageImmune = new HashMap<String, Integer>();
+    private HashMap<String, Integer> fallDamageImmune = new HashMap<>();
 
     /**
      *

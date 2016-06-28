@@ -230,7 +230,7 @@ public final class CommandManager implements CommandExecutor {
                             List<String> allowed = field.getAllAllowed();
 
                             if (!allowed.isEmpty()) {
-                                ChatHelper.send(sender, "allowedList", Helper.toMessage(new ArrayList<String>(allowed), ", "));
+                                ChatHelper.send(sender, "allowedList", Helper.toMessage(new ArrayList<>(allowed), ", "));
                             } else {
                                 ChatHelper.send(sender, "noPlayersAllowedOnField");
                             }
@@ -272,7 +272,7 @@ public final class CommandManager implements CommandExecutor {
                             HashSet<String> inhabitants = plugin.getForceFieldManager().getWho(player, field);
 
                             if (!inhabitants.isEmpty()) {
-                                ChatHelper.send(sender, "inhabitantsList", Helper.toMessage(new ArrayList<String>(inhabitants), ", "));
+                                ChatHelper.send(sender, "inhabitantsList", Helper.toMessage(new ArrayList<>(inhabitants), ", "));
                             } else {
                                 ChatHelper.send(sender, "noPlayersFoundOnField");
                             }
@@ -1113,7 +1113,7 @@ public final class CommandManager implements CommandExecutor {
                                 }
 
                                 if (args.length > 0) {
-                                    List<BlockTypeEntry> entries = new ArrayList<BlockTypeEntry>();
+                                    List<BlockTypeEntry> entries = new ArrayList<>();
 
                                     for (String arg : args) {
                                         BlockTypeEntry entry = new BlockTypeEntry(arg);
@@ -1201,7 +1201,7 @@ public final class CommandManager implements CommandExecutor {
                                 if (args.length == 0) {
                                     plugin.getTranslocationManager().importBlocks(field, player, null);
                                 } else {
-                                    List<BlockTypeEntry> entries = new ArrayList<BlockTypeEntry>();
+                                    List<BlockTypeEntry> entries = new ArrayList<>();
 
                                     for (String arg : args) {
                                         BlockTypeEntry entry = new BlockTypeEntry(arg);

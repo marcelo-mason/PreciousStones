@@ -89,7 +89,7 @@ public class HidingModule {
     }
 
     private BlockTypeEntry findMaskType() {
-        List<Vec> vecs = new ArrayList<Vec>();
+        List<Vec> vecs = new ArrayList<>();
 
         Vec center = new Vec(field.getBlock());
         vecs.add(center.add(1, 0, 0));

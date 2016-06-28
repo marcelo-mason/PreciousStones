@@ -138,7 +138,7 @@ public class SignHelper {
         int counter = 0;
         int seconds = 0;
 
-        ArrayList<String> strings = new ArrayList<String>();
+        ArrayList<String> strings = new ArrayList<>();
         String[] chars = period.replaceAll(" ", "").toLowerCase().split("");
         String word = "";
 

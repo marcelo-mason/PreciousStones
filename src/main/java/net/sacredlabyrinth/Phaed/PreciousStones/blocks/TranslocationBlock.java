@@ -29,7 +29,7 @@ public class TranslocationBlock extends AbstractVec {
     private int rx;
     private int ry;
     private int rz;
-    private List<ItemStackEntry> contents = new ArrayList<ItemStackEntry>();
+    private List<ItemStackEntry> contents = new ArrayList<>();
 
 
     /**
@@ -181,7 +181,7 @@ public class TranslocationBlock extends AbstractVec {
     }
 
     public ItemStack[] getItemStacks() {
-        List<ItemStack> out = new ArrayList<ItemStack>();
+        List<ItemStack> out = new ArrayList<>();
 
         for (ItemStackEntry entry : contents) {
             out.add(entry.toItemStack());

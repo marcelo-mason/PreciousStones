@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class PreciousStones extends JavaPlugin {
     private static PreciousStones instance;
-    private ArrayList<String> messages = new ArrayList<String>();
+    private ArrayList<String> messages = new ArrayList<>();
     private static Logger logger = Logger.getLogger("Minecraft");
     private LanguageManager languageManager;
     private SettingsManager settingsManager;

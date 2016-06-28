@@ -17,7 +17,7 @@ import java.util.UUID;
  */
 public class PlayerManager {
     private PreciousStones plugin;
-    private TreeMap<String, PlayerEntry> players = new TreeMap<String, PlayerEntry>();
+    private TreeMap<String, PlayerEntry> players = new TreeMap<>();
 
     /**
      *

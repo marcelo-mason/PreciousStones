@@ -20,7 +20,7 @@ import java.util.Queue;
  */
 public final class GriefUndoManager {
     private PreciousStones plugin;
-    private HashMap<Field, Integer> intervalFields = new HashMap<Field, Integer>();
+    private HashMap<Field, Integer> intervalFields = new HashMap<>();
 
     /**
      *

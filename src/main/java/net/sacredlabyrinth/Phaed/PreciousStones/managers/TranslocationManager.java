@@ -492,9 +492,9 @@ public final class TranslocationManager {
         int maxCount = plugin.getSettingsManager().getMaxSizeTranslocation();
         int notImported = 0;
 
-        Queue<TranslocationBlock> tbs = new LinkedList<TranslocationBlock>();
+        Queue<TranslocationBlock> tbs = new LinkedList<>();
 
-        Map<Integer, BlockTypeEntry> map = new HashMap<Integer, BlockTypeEntry>();
+        Map<Integer, BlockTypeEntry> map = new HashMap<>();
 
         if (entries != null) {
             for (BlockTypeEntry e : entries) {

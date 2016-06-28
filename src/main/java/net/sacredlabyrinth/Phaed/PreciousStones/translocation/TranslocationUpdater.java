@@ -14,9 +14,9 @@ import java.util.Queue;
  */
 public class TranslocationUpdater implements Runnable {
     private PreciousStones plugin;
-    private Queue<TranslocationBlock> translocationQueue = new LinkedList<TranslocationBlock>();
-    private Queue<TranslocationBlock> dependentQueue = new LinkedList<TranslocationBlock>();
-    private Queue<TranslocationBlock> clearDependentQueue = new LinkedList<TranslocationBlock>();
+    private Queue<TranslocationBlock> translocationQueue = new LinkedList<>();
+    private Queue<TranslocationBlock> dependentQueue = new LinkedList<>();
+    private Queue<TranslocationBlock> clearDependentQueue = new LinkedList<>();
     private final int timerID;
     private final World world;
     private final Field field;

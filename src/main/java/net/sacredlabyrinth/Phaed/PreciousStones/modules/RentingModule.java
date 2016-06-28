@@ -23,8 +23,8 @@ import java.util.Map;
 
 public class RentingModule {
     private Field field;
-    private Map<String, RentEntry> renterEntries = new HashMap<String, RentEntry>();
-    private List<PaymentEntry> payment = new ArrayList<PaymentEntry>();
+    private Map<String, RentEntry> renterEntries = new HashMap<>();
+    private List<PaymentEntry> payment = new ArrayList<>();
     private boolean signIsClean;
     private int limitSeconds;
 
@@ -33,7 +33,7 @@ public class RentingModule {
     }
 
     public List<String> getRenters() {
-        return new ArrayList<String>(renterEntries.keySet());
+        return new ArrayList<>(renterEntries.keySet());
     }
 
     public void addRenter(RentEntry entry) {
@@ -86,7 +86,7 @@ public class RentingModule {
     }
 
     public ArrayList<String> getRentersString() {
-        ArrayList<String> ll = new ArrayList<String>();
+        ArrayList<String> ll = new ArrayList<>();
         for (RentEntry entry : renterEntries.values()) {
             ll.add(entry.serialize());
         }
@@ -94,7 +94,7 @@ public class RentingModule {
     }
 
     public ArrayList<String> getPaymentString() {
-        ArrayList<String> ll = new ArrayList<String>();
+        ArrayList<String> ll = new ArrayList<>();
         for (PaymentEntry entry : payment) {
             ll.add(entry.toString());
         }
@@ -182,7 +182,7 @@ public class RentingModule {
     }
 
     public List<RentEntry> getRenterEntries() {
-        return new ArrayList<RentEntry>(renterEntries.values());
+        return new ArrayList<>(renterEntries.values());
     }
 
     public void abandonRent(Player player) {

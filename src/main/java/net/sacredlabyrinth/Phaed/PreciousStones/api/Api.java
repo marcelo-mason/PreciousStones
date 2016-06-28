@@ -145,7 +145,7 @@ public class Api implements IApi {
         List<Field> fields = plugin.getForceFieldManager().getPlayerFields(player.getName().toLowerCase(), flag);
 
         if (fields == null) {
-            return new ArrayList<Field>();
+            return new ArrayList<>();
         }
 
         return fields;
@@ -164,7 +164,7 @@ public class Api implements IApi {
         List<Field> fields = plugin.getForceFieldManager().getSourceFieldsInChunk(chunk, flag);
 
         if (fields == null) {
-            return new ArrayList<Field>();
+            return new ArrayList<>();
         }
 
         return fields;
