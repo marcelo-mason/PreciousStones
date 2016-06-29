@@ -513,7 +513,6 @@ warn:
   slow-repair: true
   place: true
 settings:
-  disable-field-place-while-creative: false
   disable-field-break-while-creative: false
   disable-messages: false
   prevent-removal-if-player-in-field: true
@@ -544,7 +543,7 @@ settings:
   use-commands-to-rent: false
   max-target-distance: 100
   version: 14
-  default-item-currency: '266',
+  default-item-currency: '266'
   prevent-breaking-hidden: false
 log:
   bypass-pvp: true
