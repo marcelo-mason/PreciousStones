@@ -76,7 +76,7 @@
                                          classpathref="maven.dependency.classpath" />
                                 <trycatch>
                                     <try>
-                                        <copy todir="C:\Minecraft\server\plugins/">
+                                        <copy todir="d:\Minecraft\server\plugins/">
                                             <fileset dir="${project.build.directory}">
                                                 <include name="${project.name}.jar"/>
                                             </fileset>
