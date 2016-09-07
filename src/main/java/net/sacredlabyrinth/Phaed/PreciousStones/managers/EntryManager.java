@@ -8,6 +8,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.StackHelper;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
@@ -144,26 +145,10 @@ public final class EntryManager {
                     if (plugin.getPermissionsManager().has(player, "preciousstones.benefit.repair")) {
                         if (!hasRepair) {
                             if (FieldFlag.REPAIR.applies(field, player)) {
+                                ItemStack[] contents = player.getInventory().getContents();
                                 ItemStack[] armors = player.getInventory().getArmorContents();
-                                for (ItemStack armor : armors) {
-                                    if(armor != null) {
-                                        if (plugin.getSettingsManager().isRepairableItemType(new BlockTypeEntry(armor.getType()))) {
-                                            short dur = armor.getDurability();
-                                            if (dur > 0) {
-                                                dur -= field.getSettings().getRepair();
-                                                if (dur < 0) {
-                                                    dur = 0;
-                                                }
-                                                armor.setDurability(dur);
-                                                plugin.getCommunicationManager().showRepair(player);
-                                                hasRepair = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
+                                ItemStack[] items = (ItemStack[])ArrayUtils.addAll(contents, armors);
 
-                                ItemStack[] items = player.getInventory().getContents();
                                 for (ItemStack item : items) {
                                     if (item != null) {
                                         if (plugin.getSettingsManager().isRepairableItemType(new BlockTypeEntry(item.getType()))) {
