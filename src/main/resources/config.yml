@@ -540,7 +540,7 @@ settings:
   check-once-per-block-on-move: false
   use-blockids-in-snitches: false
   fence-max-depth: 50
-  use-commands-to-rent: false
+  use-commands-to-rent: true
   max-target-distance: 100
   version: 14
   default-item-currency: '266'
