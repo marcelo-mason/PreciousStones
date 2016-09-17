@@ -184,12 +184,13 @@ public final class CommandManager implements CommandExecutor {
                                         }
                                     }
 
+                                    /*
                                     int conflicted = plugin.getForceFieldManager().removeConflictingFields(field, playerName);
 
                                     if (conflicted > 0) {
                                         ChatHelper.send(sender, "removedConflictingFields", conflicted, playerName);
                                         return true;
-                                    }
+                                    }*/
 
                                     boolean done = plugin.getForceFieldManager().removeAllowed(field, playerName);
 

@@ -1434,7 +1434,7 @@ public final class ForceFieldManager {
     }
 
     /**
-     * Remove allowed player to all your force fields
+     * Remove allowed player from all your force fields
      *
      * @param player
      * @param target
@@ -1461,12 +1461,14 @@ public final class ForceFieldManager {
                 }
             }
 
+            /*
             int conflicted = plugin.getForceFieldManager().removeConflictingFields(field, target);
 
             if (conflicted > 0) {
                 ChatHelper.send(player, "removedConflictingFields", conflicted, target);
                 continue;
             }
+            */
 
             if (isAllowed(field, target)) {
                 if (removeAllowed(field, target)) {
