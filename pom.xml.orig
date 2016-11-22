@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,6 +7,283 @@
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
     <version>10.5.3</version>
+    <name>PreciousStones-1.11</name>
+    <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
+
+    <build>
+        <finalName>${project.name}</finalName>
+
+        <!-- Resources -->
+
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources</directory>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>config.yml</include>
+                    <include>language.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <!-- Plugins -->
+
+        <plugins>
+            <!-- Compilation plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+
+            <!-- JAR creation plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+
+            <!-- Release plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.4.2</version>
+            </plugin>
+
+            <!-- Ant plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-jar-to-server</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <taskdef resource="net/sf/antcontrib/antlib.xml"
+                                         classpathref="maven.dependency.classpath" />
+                                <trycatch>
+                                    <try>
+                                        <copy todir="d:\Minecraft\server\plugins/">
+                                            <fileset dir="${project.build.directory}">
+                                                <include name="${project.name}.jar"/>
+                                            </fileset>
+                                        </copy>
+                                    </try>
+                                    <catch>
+                                        <echo>Could not copy jar to server</echo>
+                                    </catch>
+                                </trycatch>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Shade plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>true</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.joda.time</pattern>
+                                    <shadedPattern>ps.org.joda.time</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.bukkit:bukkit</exclude>
+                                    <exclude>org.yaml:snakeyaml</exclude>
+                                </excludes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Dependencies -->
+
+    <dependencies>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.11.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <version>1.5.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nijikokun.bukkit</groupId>
+            <artifactId>Permissions</artifactId>
+            <version>2.7.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldedit</artifactId>
+            <version>6.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldguard</artifactId>
+            <version>6.1.2-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.tehkode</groupId>
+            <artifactId>PermissionsEx</artifactId>
+            <version>1.22.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.trc202.CombatTag</groupId>
+            <artifactId>CombatTag</artifactId>
+            <version>6.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.griefcraft</groupId>
+            <artifactId>LWC</artifactId>
+            <version>4.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yi.acru.bukkit</groupId>
+            <artifactId>Lockette</artifactId>
+            <version>1.7.12</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
+            <artifactId>SimpleClans</artifactId>
+            <version>2.5.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.platymuus</groupId>
+            <artifactId>bukkit-permissions</artifactId>
+            <version>2.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.gmail.nossr50.mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>1.5.00</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.gravitydevelopment.anticheat</groupId>
+            <artifactId>AntiCheat</artifactId>
+            <version>2.0.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect</artifactId>
+            <version>7.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>1.0b3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>ant</artifactId>
+                    <groupId>ant</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <!-- Repository -->
+
+    <repositories>
+        <repository>
+            <id>remote-repos</id>
+            <url>http://104.236.246.108:8081/artifactory/remote-repos</url>
+        </repository>
+    </repositories>
+
+    <!-- GitHub/Jenkins -->
+
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://104.236.246.108/:8080</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:git:git:@github.com:marcelo-mason/PreciousStones.git</connection>
+        <developerConnection>scm:git:git:@github.com:marcelo-mason/PreciousStones.git</developerConnection>
+        <url>http://github.com/marcelo-mason/PreciousStones.git/tree/master/</url>
+        <tag>PreciousStones</tag>
+
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!-- Upstream Distribution -->
+
+    <distributionManagement>
+        <repository>
+            <id>SacredCoding</id>
+            <name>SacredCoding-releases</name>
+            <url>http://104.236.246.108:8081/artifactory/plugins-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>SacredCoding</id>
+            <name>SacredCoding-snapshots</name>
+            <url>http://104.236.246.108:8081/artifactory/plugins-release-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.sacredlabyrinth.Phaed</groupId>
+    <artifactId>PreciousStones</artifactId>
+    <version>10.4.3</version>
     <name>PreciousStones-1.8</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
@@ -214,7 +492,7 @@
         <dependency>
             <groupId>br.net.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect</artifactId>
-            <version>7.1.1</version>
+            <version>7.0.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -274,3 +552,4 @@
     </distributionManagement>
 
 </project>
+>>>>>>> 1.8 specific changes

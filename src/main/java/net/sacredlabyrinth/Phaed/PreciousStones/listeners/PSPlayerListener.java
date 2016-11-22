@@ -514,16 +514,9 @@ public class PSPlayerListener implements Listener {
 
         final Player player = event.getPlayer();
         Block block = event.getClickedBlock();
-        EquipmentSlot hand = event.getHand();
         ItemStack is = player.getItemInHand();
 
-        // added for 1.9 change where the PlayerInteractEvent fires twice one for each hand
-
-        if (hand != null && !hand.equals(EquipmentSlot.HAND)){
-            return;
-        }
-
-        // ------------------------------------------------------------------------------- trying to place an armor stand entity
+        // -------------------------------------------------------------------------------- trying to place an armor stand entity
 
 
         if (block != null) {
