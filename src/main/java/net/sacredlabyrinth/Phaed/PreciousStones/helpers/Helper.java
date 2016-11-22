@@ -848,17 +848,16 @@ public class Helper {
         return ste[ste.length - 1 - depth].getMethodName(); //Thank you Tom Tresansky
     }
 
-    public static boolean isBoat(Material mat) {
-        if (mat == Material.BOAT || 
-            mat == Material.BOAT_ACACIA || 
-            mat == Material.BOAT_BIRCH || 
-            mat == Material.BOAT_DARK_OAK || 
-            mat == Material.BOAT_JUNGLE || 
-            mat == Material.BOAT_SPRUCE) {
-            return true;
-        } else {
-            return false;
-        }
-    
+    /**
+     * Sets meta data to an item stack
+     *
+     * @param is
+     * @param settings
+     */
+    public static void setItemMeta(ItemStack is, FieldSettings settings){
+        ItemMeta meta = is.getItemMeta();
+        meta.setDisplayName(settings.getMetaName());
+        meta.setLore(settings.getMetaLore());
+        is.setItemMeta(meta);
     }
 }

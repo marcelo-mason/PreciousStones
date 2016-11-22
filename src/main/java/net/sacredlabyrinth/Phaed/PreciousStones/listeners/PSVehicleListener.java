@@ -3,8 +3,6 @@ package net.sacredlabyrinth.Phaed.PreciousStones.listeners;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -45,7 +43,7 @@ public class PSVehicleListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onVehicleCreate(PlayerInteractEvent event) {
         ItemStack item = event.getItem();
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && item != null && Helper.isBoat(item.getType())) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && item != null && item.getType() == Material.BOAT) {
                 
             Location loc = event.getClickedBlock().getLocation();
             Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_VEHICLE_CREATE);

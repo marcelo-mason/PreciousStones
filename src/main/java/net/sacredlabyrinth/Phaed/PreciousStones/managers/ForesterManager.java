@@ -232,8 +232,6 @@ public final class ForesterManager {
                 return TreeType.MEGA_REDWOOD;
             case 15:
                 return TreeType.TALL_BIRCH;
-            case 16:
-                return TreeType.CHORUS_PLANT;
         }
 
         return TreeType.TREE;
