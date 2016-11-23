@@ -119,7 +119,7 @@ public class CuboidManager {
 
         if (!plugin.getVisualizationManager().isOutlineBlock(player, block)) {
             if (openCuboid.testOverflow(block.getLocation()) || plugin.getPermissionsManager().has(player, "preciousstones.bypass.cuboid")) {
-                if (plugin.getWorldGuardManager().canBuild(player, block.getLocation())) {
+                if (plugin.getPermissionsManager().canBuild(player, block.getLocation())) {
                     if (openCuboids.containsKey(player.getName())) {
                         CuboidEntry ce = openCuboids.get(player.getName());
 
@@ -253,7 +253,7 @@ public class CuboidManager {
             for (Vector corner : corners) {
                 Location location = corner.toLocation(player.getWorld());
 
-                if (!plugin.getWorldGuardManager().canBuild(player, location)) {
+                if (!plugin.getPermissionsManager().canBuild(player, location)) {
                     ChatHelper.send(player, "cuboidConflictsWG");
                     cancelOpenCuboid(player);
                     return false;

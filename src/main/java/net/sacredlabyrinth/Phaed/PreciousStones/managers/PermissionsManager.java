@@ -14,7 +14,9 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -135,6 +137,32 @@ public final class PermissionsManager {
         }
 
         return (economy != null);
+    }
+
+    public boolean canBuild(Player player, Location loc) {
+        WorldGuardManager wm = PreciousStones.getInstance().getWorldGuardManager();
+        RedProtectManager rm = PreciousStones.getInstance().getRedProtectManager();
+
+        if (!wm.canBuild(player, loc)) {
+            return false;
+        }
+        if (!rm.canBuild(player, loc)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canBuildField(Player player, Block block, FieldSettings fs) {
+        WorldGuardManager wm = PreciousStones.getInstance().getWorldGuardManager();
+        RedProtectManager rm = PreciousStones.getInstance().getRedProtectManager();
+
+        if (!wm.canBuildField(player, block, fs)) {
+            return false;
+        }
+        if (!rm.canBuildField(player, block, fs)) {
+            return false;
+        }
+        return true;
     }
 
     /**

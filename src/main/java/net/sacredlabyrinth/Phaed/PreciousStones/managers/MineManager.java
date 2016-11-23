@@ -33,7 +33,7 @@ public class MineManager {
             final int delay = field.getSettings().getMineDelaySeconds();
             final Block block = plugin.getForceFieldManager().getBlock(field);
 
-            if (!plugin.getWorldGuardManager().canBuild(player, block.getLocation())) {
+            if (!plugin.getPermissionsManager().canBuild(player, block.getLocation())) {
                 return;
             }
 

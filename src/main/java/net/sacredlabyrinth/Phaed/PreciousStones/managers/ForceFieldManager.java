@@ -99,7 +99,7 @@ public final class ForceFieldManager {
 
         // check if in worldguard region
 
-        if (!plugin.getWorldGuardManager().canBuildField(player, fieldBlock, fs)) {
+        if (!plugin.getPermissionsManager().canBuildField(player, fieldBlock, fs)) {
             ChatHelper.send(player, "fieldIntersectsWG");
             event.setCancelled(true);
             return;

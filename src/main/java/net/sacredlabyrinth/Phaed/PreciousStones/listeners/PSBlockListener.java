@@ -1102,7 +1102,7 @@ public class PSBlockListener implements Listener {
         // cannot place a field that contains players inside of worldguard regions
 
         if (fs.hasDefaultFlag(FieldFlag.WORLDGUARD_REPELLENT)) {
-            if (plugin.getWorldGuardManager().isWGRegion(block)) {
+            if (plugin.getWorldGuardManager().isRegion(block)) {
                 ChatHelper.send(player, "noPlaceInWG");
                 event.setCancelled(true);
                 return false;

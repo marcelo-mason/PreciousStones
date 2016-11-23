@@ -1,50 +1,49 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.sk89q.worldguard.bukkit.BukkitUtil;
+import br.net.fabiozumbi12.RedProtect.API.RedProtectAPI;
+import br.net.fabiozumbi12.RedProtect.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Region;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public class WorldGuardManager {
+public class RedProtectManager {
     private PreciousStones plugin;
-    private WorldGuardPlugin wg;
+    private static boolean hasRedProtect;
 
     /**
      *
      */
-    public WorldGuardManager() {
+    public RedProtectManager() {
         plugin = PreciousStones.getInstance();
-        getWorldGuard();
+        hasRedProtect = checkRedProtect();
     }
 
-    private void getWorldGuard() {
-        if (wg == null) {
-            Plugin test = plugin.getServer().getPluginManager().getPlugin("WorldGuard");
-
-            if (test != null) {
-                this.wg = (WorldGuardPlugin) test;
-            }
+    private boolean checkRedProtect() {
+        Plugin pRP = Bukkit.getPluginManager().getPlugin("RedProtect");
+        if (pRP != null && pRP.isEnabled()){
+            return true;
         }
+        return false;
     }
 
     public boolean isRegion(Block block) {
         try {
-            if (wg == null) {
+            if (!hasRedProtect) {
                 return false;
             }
 
-            RegionManager manager = wg.getRegionManager(block.getWorld());
+            Region region = RedProtectAPI.getRegion(block.getLocation());
 
-            ApplicableRegionSet regions = manager.getApplicableRegions(block.getLocation());
-
-            return regions.size() > 0;
+            return region != null;
         } catch (Exception ex) {
             return false;
         }
@@ -52,7 +51,7 @@ public class WorldGuardManager {
 
     public boolean canBuild(Player player, Location loc) {
         try {
-            if (wg == null) {
+            if (!hasRedProtect) {
                 return true;
             }
 
@@ -66,14 +65,20 @@ public class WorldGuardManager {
                 return false;
             }
 
-            return wg.canBuild(player, loc);
+            Region region = RedProtectAPI.getRegion(loc);
+
+            if (region == null) {
+                return false;
+            }
+
+            return region.canBuild(player);
         } catch (Exception ex) {
             return true;
         }
     }
 
     public boolean canBuildField(Player player, Block block, FieldSettings fs) {
-        if (wg == null) {
+        if (!hasRedProtect) {
             return true;
         }
 
@@ -85,15 +90,15 @@ public class WorldGuardManager {
         int z = loc.getBlockZ();
         int radius = fs.getRadius();
 
-        if (wg.canBuild(player, new Location(w, x + radius, y + radius, z + radius))) {
-            if (wg.canBuild(player, new Location(w, x + radius, y + radius, z - radius))) {
-                if (wg.canBuild(player, new Location(w, x + radius, y - radius, z + radius))) {
-                    if (wg.canBuild(player, new Location(w, x + radius, y - radius, z - radius))) {
-                        if (wg.canBuild(player, new Location(w, x - radius, y + radius, z + radius))) {
-                            if (wg.canBuild(player, new Location(w, x - radius, y + radius, z - radius))) {
-                                if (wg.canBuild(player, new Location(w, x - radius, y - radius, z + radius))) {
-                                    if (wg.canBuild(player, new Location(w, x - radius, y - radius, z - radius))) {
-                                        if (wg.canBuild(player, new Location(w, x, y, z))) {
+        if (canBuild(player, new Location(w, x + radius, y + radius, z + radius))) {
+            if (canBuild(player, new Location(w, x + radius, y + radius, z - radius))) {
+                if (canBuild(player, new Location(w, x + radius, y - radius, z + radius))) {
+                    if (canBuild(player, new Location(w, x + radius, y - radius, z - radius))) {
+                        if (canBuild(player, new Location(w, x - radius, y + radius, z + radius))) {
+                            if (canBuild(player, new Location(w, x - radius, y + radius, z - radius))) {
+                                if (canBuild(player, new Location(w, x - radius, y - radius, z + radius))) {
+                                    if (canBuild(player, new Location(w, x - radius, y - radius, z - radius))) {
+                                        if (canBuild(player, new Location(w, x, y, z))) {
                                             return true;
                                         }
                                     }

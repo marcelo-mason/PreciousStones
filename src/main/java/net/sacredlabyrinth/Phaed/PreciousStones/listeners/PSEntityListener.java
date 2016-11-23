@@ -414,7 +414,7 @@ public class PSEntityListener implements Listener {
                     for (BlockEntry db : unprotected) {
                         Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
-                        if (!plugin.getWorldGuardManager().canBuild(null, block.getLocation())) {
+                        if (!plugin.getPermissionsManager().canBuild(null, block.getLocation())) {
                             continue;
                         }
 

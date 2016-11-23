@@ -49,6 +49,7 @@ public class PreciousStones extends JavaPlugin {
     private VisualizationManager visualizationManager;
     private ForesterManager foresterManager;
     private WorldGuardManager worldGuardManager;
+    private RedProtectManager redProtectManager;
     private CombatTagManager combatTagManager;
     private ConfiscationManager confiscationManager;
     private TranslocationManager translocationManager;
@@ -148,6 +149,7 @@ public class PreciousStones extends JavaPlugin {
         griefUndoManager = new GriefUndoManager();
         storageManager = new StorageManager();
         worldGuardManager = new WorldGuardManager();
+        redProtectManager = new RedProtectManager();
         combatTagManager = new CombatTagManager();
         confiscationManager = new ConfiscationManager();
         potionManager = new PotionManager();
@@ -431,5 +433,9 @@ public class PreciousStones extends JavaPlugin {
 
     public ArrayList<String> getMessages() {
         return messages;
+    }
+
+    public RedProtectManager getRedProtectManager() {
+        return redProtectManager;
     }
 }
