@@ -35,7 +35,7 @@ public class MySQLCore implements DBCore {
     private void initialize() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password);
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?useUnicode=true&characterEncoding=utf-8&autoReconnect=true", username, password);
         } catch (ClassNotFoundException e) {
             log.severe("ClassNotFoundException! " + e.getMessage());
         } catch (SQLException e) {
