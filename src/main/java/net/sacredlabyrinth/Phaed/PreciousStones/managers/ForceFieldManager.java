@@ -275,7 +275,7 @@ public final class ForceFieldManager {
 
         // allow all owners of intersecting fields into the field
 
-        plugin.getForceFieldManager().addAllowOverlappingOwners(field);
+        addAllowOverlappingOwners(field);
 
         // start disabling process for auto-disable fields
 
@@ -1124,7 +1124,7 @@ public final class ForceFieldManager {
 
                     Block surroundingBlock = block.getWorld().getBlockAt(block.getX() + x, block.getY() + y, block.getZ() + z);
 
-                    if (plugin.getForceFieldManager().isField(surroundingBlock)) {
+                    if (isField(surroundingBlock)) {
                         return surroundingBlock;
                     }
                 }
@@ -1462,7 +1462,7 @@ public final class ForceFieldManager {
             }
 
             /*
-            int conflicted = plugin.getForceFieldManager().removeConflictingFields(field, target);
+            int conflicted = removeConflictingFields(field, target);
 
             if (conflicted > 0) {
                 ChatHelper.send(player, "removedConflictingFields", conflicted, target);
@@ -3022,7 +3022,7 @@ public final class ForceFieldManager {
 
         // allow all owners of intersecting fields into the field
 
-        plugin.getForceFieldManager().addAllowOverlappingOwners(field);
+        addAllowOverlappingOwners(field);
 
         // start disabling process for auto-disable fields
 
