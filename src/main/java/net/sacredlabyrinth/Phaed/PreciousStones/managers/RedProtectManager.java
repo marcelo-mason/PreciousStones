@@ -68,7 +68,7 @@ public class RedProtectManager {
             Region region = RedProtectAPI.getRegion(loc);
 
             if (region == null) {
-                return false;
+                return true;
             }
 
             return region.canBuild(player);
