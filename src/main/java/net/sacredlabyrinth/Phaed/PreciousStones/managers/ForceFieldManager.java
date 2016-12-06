@@ -1302,9 +1302,9 @@ public final class ForceFieldManager {
      * @param target
      * @return whether he got allowed
      */
-    public boolean addAllowed(Field field, String target) {
+    public boolean addAllowed(Field field, String target, boolean isGuest) {
         if (!field.isInAllowedList(target)) {
-            field.addAllowed(target);
+            field.addAllowed(target, isGuest);
             plugin.getStorageManager().offerField(field);
             List<Field> allowed = fieldsByAllowed.get(target);
             if (allowed == null) {
@@ -1349,7 +1349,7 @@ public final class ForceFieldManager {
      * @param allowedName
      * @return count of fields allowed
      */
-    public int allowAll(Player player, String allowedName) {
+    public int allowAll(Player player, String allowedName, boolean isGuest) {
         List<Field> fields = getOwnersFields(player, FieldFlag.ALL);
 
         int allowedCount = 0;
@@ -1372,7 +1372,7 @@ public final class ForceFieldManager {
             }
 
             if (!isAllowed(field, allowedName)) {
-                if (addAllowed(field, allowedName)) {
+                if (addAllowed(field, allowedName, isGuest)) {
                     allowedCount++;
                 }
             }

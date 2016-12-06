@@ -117,7 +117,18 @@ public final class CommandManager implements CommandExecutor {
                                     }
                                 }
 
+                                if (field.isGuest(player.getName())) {
+                                    ChatHelper.send(sender, "cannotAllowAsGuest");
+                                    return true;
+                                }
+
+                                boolean isGuest = false;
                                 for (String playerName : args) {
+                                    if (playerName.contains("-g")) {
+                                        isGuest = true;
+                                        continue;
+                                    }
+
                                     Player allowed = Bukkit.getServer().getPlayerExact(playerName);
 
                                     // only those with permission can be allowed
@@ -131,7 +142,7 @@ public final class CommandManager implements CommandExecutor {
                                         }
                                     }
 
-                                    boolean done = plugin.getForceFieldManager().addAllowed(field, playerName);
+                                    boolean done = plugin.getForceFieldManager().addAllowed(field, playerName, isGuest);
 
                                     if (done) {
                                         plugin.getEntryManager().reevaluateEnteredFields(allowed);
@@ -149,8 +160,13 @@ public final class CommandManager implements CommandExecutor {
                         }
                     } else if (cmd.equals(ChatHelper.format("commandAllowall")) && plugin.getPermissionsManager().has(player, "preciousstones.whitelist.allowall") && hasplayer) {
                         if (args.length >= 1) {
+                            boolean isGuest = false;
                             for (String playerName : args) {
-                                int count = plugin.getForceFieldManager().allowAll(player, playerName);
+                                if (playerName.contains("-g")) {
+                                    isGuest = true;
+                                    continue;
+                                }
+                                int count = plugin.getForceFieldManager().allowAll(player, playerName, isGuest);
 
                                 if (count > 0) {
                                     plugin.getEntryManager().reevaluateEnteredFields(Bukkit.getServer().getPlayerExact(playerName));
@@ -1980,11 +1996,11 @@ public final class CommandManager implements CommandExecutor {
                             FieldSettings settings = plugin.getSettingsManager().getFieldSettings(fieldName);
 
                             if (settings != null) {
-                                if(radius == -1){
+                                if (radius == -1) {
                                     radius = settings.getRadius();
                                 }
 
-                                if(height == -1){
+                                if (height == -1) {
                                     height = settings.getCustomHeight();
                                 }
 

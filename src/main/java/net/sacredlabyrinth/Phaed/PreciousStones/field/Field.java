@@ -518,7 +518,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      * @return
      */
     public boolean isInAllowedList(String target) {
-        return allowed.contains(target.toLowerCase());
+        return allowed.contains(target.toLowerCase()) || allowed.contains("-" + target.toLowerCase());
     }
 
     /**
@@ -537,6 +537,10 @@ public class Field extends AbstractVec implements Comparable<Field> {
         }
 
         if (allowed.contains(target.toLowerCase())) {
+            return true;
+        }
+
+        if (allowed.contains("-" + target.toLowerCase())) {
             return true;
         }
 
@@ -578,6 +582,17 @@ public class Field extends AbstractVec implements Comparable<Field> {
         return false;
     }
 
+
+    /**
+     * Check whether a player is a guest in the field
+     *
+     * @param target
+     * @return
+     */
+    public boolean isGuest(String target) {
+        return allowed.contains("-" + target.toLowerCase());
+    }
+
     /**
      * Allow a target (name, g:group, c:clan) into this field
      *
@@ -585,11 +600,23 @@ public class Field extends AbstractVec implements Comparable<Field> {
      * @return confirmation
      */
     public boolean addAllowed(String target) {
+        return addAllowed(target, false);
+    }
+
+    /**
+     * Allow a target (name, g:group, c:clan) into this field
+     *
+     * @param target
+     * @return confirmation
+     */
+    public boolean addAllowed(String target, boolean isGuest) {
         if (isAllowed(target)) {
             return false;
         }
 
-        allowed.add(target.toLowerCase());
+        String prefix = isGuest ? "-" : "";
+
+        allowed.add(prefix + target.toLowerCase());
         dirty.add(DirtyFieldReason.ALLOWED);
         return true;
     }
@@ -601,6 +628,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      */
     public void removeAllowed(String target) {
         allowed.remove(target.toLowerCase());
+        allowed.remove("-" + target.toLowerCase());
         dirty.add(DirtyFieldReason.ALLOWED);
     }
 
@@ -613,13 +641,22 @@ public class Field extends AbstractVec implements Comparable<Field> {
      */
     public boolean migrateAllowed(String oldPlayerName, String newPlayerName) {
         oldPlayerName = oldPlayerName.toLowerCase();
-        if (!allowed.remove(oldPlayerName)) {
-            return false;
+
+        boolean isDirty = false;
+
+        if (allowed.remove(oldPlayerName)) {
+            allowed.add(newPlayerName);
+            dirty.add(DirtyFieldReason.ALLOWED);
+            isDirty = true;
         }
 
-        allowed.add(newPlayerName);
-        dirty.add(DirtyFieldReason.ALLOWED);
-        return true;
+        if (allowed.remove("-" + oldPlayerName)) {
+            allowed.add("-" + newPlayerName);
+            dirty.add(DirtyFieldReason.ALLOWED);
+            isDirty = true;
+        }
+
+        return isDirty;
     }
 
     /**
