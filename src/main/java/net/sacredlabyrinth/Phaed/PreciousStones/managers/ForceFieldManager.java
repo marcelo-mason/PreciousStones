@@ -116,6 +116,7 @@ public final class ForceFieldManager {
 
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase")) {
             if (fs.getPrice() > 0 && !purchase(player, fs.getPrice())) {
+                event.setCancelled(true);
                 return;
             }
         }
