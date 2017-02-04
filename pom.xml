@@ -5,7 +5,7 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>10.5.2</version>
+    <version>10.5.3</version>
     <name>PreciousStones-1.11</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
@@ -214,7 +214,7 @@
         <dependency>
             <groupId>br.net.fabiozumbi12.RedProtect</groupId>
             <artifactId>RedProtect</artifactId>
-            <version>7.0.3</version>
+            <version>7.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
