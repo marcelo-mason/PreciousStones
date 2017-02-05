@@ -33,7 +33,8 @@ public class Visualize implements Runnable {
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, PreciousStones.getInstance().getSettingsManager().getVisualizeTicksBetweenSends());
     }
 
-    public void run() {
+    @Override
+	public void run() {
         int i = 0;
 
         while (i < PreciousStones.getInstance().getSettingsManager().getVisualizeSendSize() && !visualizationQueue.isEmpty()) {
@@ -57,7 +58,8 @@ public class Visualize implements Runnable {
             if (!reverting) {
                 if (!skipRevert) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                        public void run() {
+                        @Override
+						public void run() {
                             plugin.getVisualizationManager().revert(player);
                         }
                     }, 20L * seconds);

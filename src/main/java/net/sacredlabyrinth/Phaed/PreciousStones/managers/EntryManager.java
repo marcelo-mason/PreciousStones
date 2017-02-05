@@ -56,7 +56,8 @@ public final class EntryManager {
     }
 
     private class Update implements Runnable {
-        public void run() {
+        @Override
+		public void run() {
             synchronized (dynamicEntries) {
                 doEffects();
             }
@@ -833,7 +834,8 @@ public final class EntryManager {
         for (final Player player : inhabitants) {
             if (player != null) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if (field.isDisabled()) {
                             if (FieldFlag.POTIONS.applies(field, player)) {
                                 plugin.getPotionManager().removePotions(player, field);

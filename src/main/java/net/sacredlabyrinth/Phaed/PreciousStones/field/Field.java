@@ -968,7 +968,8 @@ public class Field extends AbstractVec implements Comparable<Field> {
         return Math.sqrt(Math.pow(loc.getBlockX() - getX(), 2.0D) + Math.pow(loc.getBlockY() - getY(), 2.0D) + Math.pow(loc.getBlockZ() - getZ(), 2.0D));
     }
 
-    public int compareTo(Field field) throws ClassCastException {
+    @Override
+	public int compareTo(Field field) throws ClassCastException {
         int c = this.getX() - field.getX();
 
         if (c == 0) {
@@ -1258,7 +1259,8 @@ public class Field extends AbstractVec implements Comparable<Field> {
             }
 
             disablerId = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (!thisField.isDisabled()) {
                         Player player = Bukkit.getServer().getPlayerExact(theOwner);
 

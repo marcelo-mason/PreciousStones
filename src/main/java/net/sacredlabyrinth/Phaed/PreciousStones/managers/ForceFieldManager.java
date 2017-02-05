@@ -1628,7 +1628,8 @@ public final class ForceFieldManager {
         // sort fields by volume
 
         Collections.sort(fields, new Comparator<Field>() {
-            public int compare(Field f1, Field f2) {
+            @Override
+			public int compare(Field f1, Field f2) {
                 Integer o1 = f1.getFlatVolume();
                 Integer o2 = f2.getFlatVolume();
 
@@ -1663,7 +1664,8 @@ public final class ForceFieldManager {
      */
     public List<Field> getSourceFields(final Location loc, final FieldFlag flag) {
         ResultsFilter envelopsFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return field.envelops(loc);
             }
         };
@@ -1680,25 +1682,29 @@ public final class ForceFieldManager {
      */
     public List<Field> getEnabledSourceFields(final Location loc, final FieldFlag flag) {
         ResultsFilter envelopsFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return field.envelops(loc);
             }
         };
 
         ResultsFilter disabledFlagFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return !field.getFlagsModule().hasDisabledFlag(flag);
             }
         };
 
         ResultsFilter notDisabledFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return !field.isDisabled();
             }
         };
 
         ResultsFilter disableIfOnlineFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return !field.hasFlag(FieldFlag.DISABLE_WHEN_ONLINE) || !field.hasOnlineAllowed();
 
             }
@@ -1727,25 +1733,29 @@ public final class ForceFieldManager {
      */
     public Field getEnabledSourceField(final Location loc, final FieldFlag flag) {
         ResultsFilter envelopsFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return field.envelops(loc);
             }
         };
 
         ResultsFilter disabledFlagFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return !field.getFlagsModule().hasDisabledFlag(flag);
             }
         };
 
         ResultsFilter notDisabledFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return !field.isDisabled();
             }
         };
 
         ResultsFilter disableIfOnlineFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 if (field.hasFlag(FieldFlag.DISABLE_WHEN_ONLINE)) {
                     return !field.hasOnlineAllowed();
                 }
@@ -1766,19 +1776,22 @@ public final class ForceFieldManager {
      */
     public Field getConflictSourceField(final Location loc, final String playerName, FieldFlag flag) {
         ResultsFilter envelopsFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return field.envelops(loc);
             }
         };
 
         ResultsFilter noConflictFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return !field.hasFlag(FieldFlag.NO_CONFLICT);
             }
         };
 
         ResultsFilter allowedFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return !isAllowed(field, playerName);
             }
         };
@@ -1815,7 +1828,8 @@ public final class ForceFieldManager {
         for (int x = xlow; x <= xhigh; x++) {
             for (int z = zlow; z <= zhigh; z++) {
                 ResultsFilter envelopsFilter = new ResultsFilter() {
-                    public boolean Filter(Field field) {
+                    @Override
+					public boolean Filter(Field field) {
                         return field.envelops(loc);
                     }
                 };
@@ -1849,7 +1863,8 @@ public final class ForceFieldManager {
         for (int x = xlow; x <= xhigh; x++) {
             for (int z = zlow; z <= zhigh; z++) {
                 ResultsFilter envelopsFilter = new ResultsFilter() {
-                    public boolean Filter(Field field) {
+                    @Override
+					public boolean Filter(Field field) {
                         return field.envelops(loc);
                     }
                 };
@@ -1915,13 +1930,15 @@ public final class ForceFieldManager {
         }
 
         ResultsFilter envelopsFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return field.envelops(blockInArea.getLocation());
             }
         };
 
         ResultsFilter allowedFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return isAllowed(field, player.getName());
             }
         };
@@ -1945,13 +1962,15 @@ public final class ForceFieldManager {
         }
 
         ResultsFilter envelopsFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return field.envelops(blockInArea.getLocation());
             }
         };
 
         ResultsFilter allowedFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return isOwned(field, player);
             }
         };
@@ -1974,13 +1993,15 @@ public final class ForceFieldManager {
         }
 
         ResultsFilter envelopsFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return field.envelops(blockInArea.getLocation());
             }
         };
 
         ResultsFilter allowedFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return !isOwned(field, player);
             }
         };
@@ -2003,7 +2024,8 @@ public final class ForceFieldManager {
         }
 
         ResultsFilter envelopsFilter = new ResultsFilter() {
-            public boolean Filter(Field field) {
+            @Override
+			public boolean Filter(Field field) {
                 return field.envelops(blockInArea.getLocation());
             }
         };

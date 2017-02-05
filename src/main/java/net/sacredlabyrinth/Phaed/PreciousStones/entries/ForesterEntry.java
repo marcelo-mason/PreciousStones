@@ -72,7 +72,8 @@ public class ForesterEntry {
     }
 
     private class Update implements Runnable {
-        public void run() {
+        @Override
+		public void run() {
             if (doPlantingAttempt()) {
                 scheduleNextUpdate();
             }

@@ -2677,7 +2677,8 @@ public class CommunicationManager {
 
     public void sortByDistance(List<Field> fields, final Location playerLocation) {
         Collections.sort(fields, new Comparator<Field>() {
-            public int compare(Field f1, Field f2) {
+            @Override
+			public int compare(Field f1, Field f2) {
                 Float o1 = (float) f1.distance(playerLocation);
                 Float o2 = (float) f2.distance(playerLocation);
 

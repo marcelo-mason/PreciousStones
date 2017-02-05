@@ -117,7 +117,8 @@ public class PreciousStones extends JavaPlugin {
     /**
      * Runs on plugin enable
      */
-    public void onEnable() {
+    @Override
+	public void onEnable() {
         if (!UUIDMigration.canReturnUUID()) {
             log("This version of PreciousStones only works with Bukkit 1.7.5+");
             return;
@@ -205,7 +206,8 @@ public class PreciousStones extends JavaPlugin {
      * Runs on plugin disable
      */
 
-    public void onDisable() {
+    @Override
+	public void onDisable() {
         PreciousStones.log("Shutting Down: Cancelling all tasks...");
         getServer().getScheduler().cancelTasks(this);
 

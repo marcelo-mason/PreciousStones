@@ -2214,7 +2214,8 @@ public class StorageManager {
      */
     public BukkitTask saverScheduler() {
         return Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 processQueue();
             }
         }, 0, 20L * plugin.getSettingsManager().getSaveFrequency());

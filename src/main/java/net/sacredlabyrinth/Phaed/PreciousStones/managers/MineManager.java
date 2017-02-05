@@ -40,7 +40,8 @@ public class MineManager {
             plugin.getCommunicationManager().showMine(player);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     plugin.getForceFieldManager().releaseNoDrop(field);
 
                     block.getWorld().createExplosion(block.getLocation(), field.getSettings().getMineStrength(), field.getSettings().isMineHasFire());

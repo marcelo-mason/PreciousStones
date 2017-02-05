@@ -69,7 +69,8 @@ public final class TranslocationManager {
         // record wood doors in correct order
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 if (Helper.isDoor(block)) {
                     Block bottom = block.getRelative(BlockFace.DOWN);
                     Block top = block.getRelative(BlockFace.UP);
@@ -399,7 +400,8 @@ public final class TranslocationManager {
         }
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 for (Player p : inhabitants) {
                     p.sendBlockChange(field.getLocation(), field.getTypeId(), (byte) field.getData());
                 }
