@@ -170,7 +170,7 @@ public class VisualizationManager {
             vis.addBlock(loc, frameType, (byte) 0);
         }
 
-        int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
+        int spacing = (Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity() + 1;
 
         for (int y = miny; y <= maxy; y++) {
             boolean yTurn = turnCounter(player.getName() + 1, spacing);

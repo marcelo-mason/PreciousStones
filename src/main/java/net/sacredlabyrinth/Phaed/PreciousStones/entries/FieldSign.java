@@ -31,7 +31,7 @@ public class FieldSign {
             return;
         }
 
-        sign = ((Sign) signBlock.getState());
+        sign = (Sign) signBlock.getState();
 
         String[] lines = sign.getLines();
 

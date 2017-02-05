@@ -251,6 +251,6 @@ public class TeleportationManager {
     private boolean blockIsSafe(World world, int x, int y, int z) {
         int head = world.getBlockTypeIdAt(x, y + 1, z);
         int feet = world.getBlockTypeIdAt(x, y, z);
-        return (plugin.getSettingsManager().isThroughType(head)) && (plugin.getSettingsManager().isThroughType((feet)));
+        return plugin.getSettingsManager().isThroughType(head) && plugin.getSettingsManager().isThroughType(feet);
     }
 }

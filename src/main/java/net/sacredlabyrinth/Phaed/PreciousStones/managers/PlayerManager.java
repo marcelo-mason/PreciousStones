@@ -123,7 +123,7 @@ public class PlayerManager {
         Location loc = data.getOutsideLocation();
 
         if (loc != null) {
-            loc = new Location(loc.getWorld(), ((double) loc.getBlockX()) + .5, ((double) loc.getBlockY()), ((double) loc.getBlockZ()) + .5, loc.getYaw(), loc.getPitch());
+            loc = new Location(loc.getWorld(), ((double) loc.getBlockX()) + .5, (double) loc.getBlockY(), ((double) loc.getBlockZ()) + .5, loc.getYaw(), loc.getPitch());
         }
 
         return loc;

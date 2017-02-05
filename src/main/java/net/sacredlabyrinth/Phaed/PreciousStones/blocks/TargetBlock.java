@@ -161,10 +161,10 @@ public class TargetBlock {
         xRotation = (loc.getYaw() + 90) % 360;
         yRotation = loc.getPitch() * -1;
 
-        double h = (checkDistance * Math.cos(Math.toRadians(yRotation)));
-        offset.setY((checkDistance * Math.sin(Math.toRadians(yRotation))));
-        offset.setX((h * Math.cos(Math.toRadians(xRotation))));
-        offset.setZ((h * Math.sin(Math.toRadians(xRotation))));
+        double h = checkDistance * Math.cos(Math.toRadians(yRotation));
+        offset.setY(checkDistance * Math.sin(Math.toRadians(yRotation)));
+        offset.setX(h * Math.cos(Math.toRadians(xRotation)));
+        offset.setZ(h * Math.sin(Math.toRadians(xRotation)));
 
         targetPosDouble = new Vector(loc.getX(), loc.getY() + viewHeight, loc.getZ());
         targetPos = new Vector(targetPosDouble.getBlockX(), targetPosDouble.getBlockY(), targetPosDouble.getBlockZ());
@@ -194,7 +194,7 @@ public class TargetBlock {
         double y = blk.getY() - blockUnderPlayer.getBlockY();
         double z = blk.getZ() - blockUnderPlayer.getBlockZ();
 
-        return Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)));
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
     }
 
     /**
@@ -210,7 +210,7 @@ public class TargetBlock {
         double y = blk.getY() - blockUnderPlayer.getBlockY();
         double z = blk.getZ() - blockUnderPlayer.getBlockZ();
 
-        return (int) Math.round((Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))));
+        return (int) Math.round(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)));
     }
 
     /**

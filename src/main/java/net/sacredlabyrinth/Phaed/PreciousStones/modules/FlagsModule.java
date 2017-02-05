@@ -248,7 +248,7 @@ public class FlagsModule {
                         } else if (flag.equals("limitSeconds")) {
                             field.getRentingModule().setLimitSeconds(((Long) flags.get(flag)).intValue());
                         } else if (flag.equals("disabled")) {
-                            field.setDisabledNoMask(((Boolean) flags.get(flag)));
+                            field.setDisabledNoMask((Boolean) flags.get(flag));
                         } else if (flag.equals("hidden")) {
                             field.getHidingModule().setHidden((Boolean) flags.get(flag));
                         } else if (flag.equals("payments")) {

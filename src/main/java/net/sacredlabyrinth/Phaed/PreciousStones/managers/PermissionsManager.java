@@ -71,7 +71,7 @@ public final class PermissionsManager {
         Plugin plug = plugin.getServer().getPluginManager().getPlugin("mcMMO");
 
         if (plug != null) {
-            mcmmo = ((mcMMO) plug);
+            mcmmo = (mcMMO) plug;
         }
     }
 
@@ -87,7 +87,7 @@ public final class PermissionsManager {
         Plugin plug = plugin.getServer().getPluginManager().getPlugin("Lockette");
 
         if (plug != null) {
-            lockette = ((Lockette) plug);
+            lockette = (Lockette) plug;
         }
     }
 
@@ -116,7 +116,7 @@ public final class PermissionsManager {
             Plugin test = plugin.getServer().getPluginManager().getPlugin("PermissionsBukkit");
 
             if (test != null) {
-                pbukkit = ((PermissionsPlugin) test);
+                pbukkit = (PermissionsPlugin) test;
             }
         }
     }
@@ -126,7 +126,7 @@ public final class PermissionsManager {
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
-        return (permission != null);
+        return permission != null;
     }
 
     private Boolean setupEconomy() {
@@ -136,7 +136,7 @@ public final class PermissionsManager {
             economy = economyProvider.getProvider();
         }
 
-        return (economy != null);
+        return economy != null;
     }
 
     public boolean canBuild(Player player, Location loc) {

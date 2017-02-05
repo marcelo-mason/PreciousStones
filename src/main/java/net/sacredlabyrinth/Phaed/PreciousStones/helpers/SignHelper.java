@@ -210,10 +210,10 @@ public class SignHelper {
 
         String out = "";
 
-        int w = (60 * 60 * 24 * 7);
-        int d = (60 * 60 * 24);
-        int h = (60 * 60);
-        int m = (60);
+        int w = 60 * 60 * 24 * 7;
+        int d = 60 * 60 * 24;
+        int h = 60 * 60;
+        int m = 60;
 
         int wd = seconds / w;
 
