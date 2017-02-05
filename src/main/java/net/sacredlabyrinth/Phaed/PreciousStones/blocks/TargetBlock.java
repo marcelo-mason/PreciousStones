@@ -190,9 +190,9 @@ public class TargetBlock {
         Vector blockUnderPlayer = new Vector((int) Math.floor(loc.getX() + 0.5), (int) Math.floor(loc.getY() - 0.5), (int) Math.floor(loc.getZ() + 0.5));
 
         Block blk = getTargetBlock();
-        double x = blk.getX() - blockUnderPlayer.getBlockX();
-        double y = blk.getY() - blockUnderPlayer.getBlockY();
-        double z = blk.getZ() - blockUnderPlayer.getBlockZ();
+        double x = (double)blk.getX() - blockUnderPlayer.getBlockX();
+        double y = (double)blk.getY() - blockUnderPlayer.getBlockY();
+        double z = (double)blk.getZ() - blockUnderPlayer.getBlockZ();
 
         return Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)));
     }
@@ -206,9 +206,9 @@ public class TargetBlock {
         Vector blockUnderPlayer = new Vector((int) Math.floor(loc.getX() + 0.5), (int) Math.floor(loc.getY() - 0.5), (int) Math.floor(loc.getZ() + 0.5));
 
         Block blk = getTargetBlock();
-        double x = blk.getX() - blockUnderPlayer.getBlockX();
-        double y = blk.getY() - blockUnderPlayer.getBlockY();
-        double z = blk.getZ() - blockUnderPlayer.getBlockZ();
+        double x = (double)blk.getX() - blockUnderPlayer.getBlockX();
+        double y = (double)blk.getY() - blockUnderPlayer.getBlockY();
+        double z = (double)blk.getZ() - blockUnderPlayer.getBlockZ();
 
         return (int) Math.round((Math.sqrt((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))));
     }
