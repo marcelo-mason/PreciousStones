@@ -2535,7 +2535,7 @@ public class CommunicationManager {
 
             ChatColor color = (count < limit) || limit == -1 ? ChatColor.WHITE : ChatColor.DARK_RED;
 
-            String strLimit = limit == -1 ? "-" : limit + "";
+            String strLimit = limit == -1 ? "-" : Integer.toString(limit);
 
             if (plugin.getSettingsManager().haveLimits()) {
                 cb.addRow("  " + ChatColor.AQUA + fs.getTitle(), "{yellow} " + count, color + " " + strLimit);
