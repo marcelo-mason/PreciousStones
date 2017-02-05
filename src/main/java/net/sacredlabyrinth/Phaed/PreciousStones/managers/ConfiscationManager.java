@@ -44,7 +44,7 @@ public class ConfiscationManager {
         ItemStackEntry leggings = null;
         ItemStackEntry boots = null;
 
-        List<ItemStackEntry> confiscated = new ArrayList<ItemStackEntry>();
+        List<ItemStackEntry> confiscated = new ArrayList<>();
 
         for (ItemStack stack : contents) {
             if (stack != null && stack.getTypeId() > 0) {

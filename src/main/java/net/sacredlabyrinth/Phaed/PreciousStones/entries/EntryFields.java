@@ -9,7 +9,7 @@ import java.util.List;
  * @author phaed
  */
 public class EntryFields {
-    private ArrayList<Field> fields = new ArrayList<Field>();
+    private ArrayList<Field> fields = new ArrayList<>();
 
     /**
      * @param field

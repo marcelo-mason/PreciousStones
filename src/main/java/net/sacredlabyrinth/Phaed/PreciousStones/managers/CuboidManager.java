@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CuboidManager {
     private PreciousStones plugin;
-    private HashMap<String, CuboidEntry> openCuboids = new HashMap<String, CuboidEntry>();
+    private HashMap<String, CuboidEntry> openCuboids = new HashMap<>();
 
     /**
      *

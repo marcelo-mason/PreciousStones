@@ -30,7 +30,7 @@ import java.util.Map.Entry;
  */
 public class CommunicationManager {
     private PreciousStones plugin;
-    private HashMap<String, ChatHelper> chatBlocks = new HashMap<String, ChatHelper>();
+    private HashMap<String, ChatHelper> chatBlocks = new HashMap<>();
 
     /**
      *
@@ -2256,7 +2256,7 @@ public class CommunicationManager {
 
         cb.addRow("  " + color + ChatHelper.format("_location") + ": ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 
-        List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlagsModule().getFlags());
+        List<FieldFlag> flags = new ArrayList<>(field.getFlagsModule().getFlags());
         List<FieldFlag> insertedFlags = field.getFlagsModule().getInsertedFlags();
         List<FieldFlag> disabledFlags = field.getFlagsModule().getDisabledFlags();
 
@@ -2600,7 +2600,7 @@ public class CommunicationManager {
             cb.addRow("  " + ChatColor.GRAY + ChatHelper.format("_field"), ChatHelper.format("_distance"), ChatHelper.format("_coords"));
         }
 
-        List<Field> fields = new ArrayList<Field>();
+        List<Field> fields = new ArrayList<>();
 
         if (player != null) {
             fields = plugin.getForceFieldManager().getFields(target, player.getWorld());

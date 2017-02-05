@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SnitchingModule {
     private Field field;
-    private List<SnitchEntry> snitches = new ArrayList<SnitchEntry>();
+    private List<SnitchEntry> snitches = new ArrayList<>();
 
     public SnitchingModule(Field field) {
         this.field = field;

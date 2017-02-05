@@ -26,8 +26,8 @@ import java.util.Map.Entry;
  */
 public class VisualizationManager {
     private PreciousStones plugin;
-    private HashMap<String, Integer> counts = new HashMap<String, Integer>();
-    private HashMap<String, Visualization> visualizations = new HashMap<String, Visualization>();
+    private HashMap<String, Integer> counts = new HashMap<>();
+    private HashMap<String, Visualization> visualizations = new HashMap<>();
 
     /**
      *
@@ -310,7 +310,7 @@ public class VisualizationManager {
 
         // save current outline and clear out the visualization
 
-        List<BlockEntry> newBlocks = new ArrayList<BlockEntry>();
+        List<BlockEntry> newBlocks = new ArrayList<>();
 
         int frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getTypeId();
 
@@ -401,8 +401,8 @@ public class VisualizationManager {
 
         // save current outline and clear out the visualization
 
-        List<BlockEntry> oldBlocks = new ArrayList<BlockEntry>(vis.getOutlineBlocks());
-        List<BlockEntry> newBlocks = new ArrayList<BlockEntry>();
+        List<BlockEntry> oldBlocks = new ArrayList<>(vis.getOutlineBlocks());
+        List<BlockEntry> newBlocks = new ArrayList<>();
 
         int frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getTypeId();
 
@@ -467,14 +467,14 @@ public class VisualizationManager {
 
         // revert the blocks that are no longer in the new set and should be reverted
 
-        List<BlockEntry> revertible = new ArrayList<BlockEntry>(oldBlocks);
+        List<BlockEntry> revertible = new ArrayList<>(oldBlocks);
         revertible.removeAll(newBlocks);
 
         Visualize revert = new Visualize(revertible, player, true, false, plugin.getSettingsManager().getVisualizeSeconds());
 
         // visualize all the new blocks that are left to visualize
 
-        List<BlockEntry> missing = new ArrayList<BlockEntry>(newBlocks);
+        List<BlockEntry> missing = new ArrayList<>(newBlocks);
         missing.removeAll(oldBlocks);
 
         Visualize visualize = new Visualize(missing, player, false, true, plugin.getSettingsManager().getVisualizeSeconds());

@@ -253,7 +253,7 @@ public final class PermissionsManager {
      * @return
      */
     public List<String> getGroups(String worldName, String playerName) {
-        List<String> groups = new ArrayList<String>();
+        List<String> groups = new ArrayList<>();
 
         try {
             if (pex != null) {

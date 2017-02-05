@@ -27,9 +27,9 @@ import java.util.Map.Entry;
  */
 public final class EntryManager {
     private PreciousStones plugin;
-    private final List<Field> enteredFields = new ArrayList<Field>();
-    private final HashMap<String, EntryFields> entriesByPlayer = new HashMap<String, EntryFields>();
-    private final HashMap<String, EntryFields> dynamicEntries = new HashMap<String, EntryFields>();
+    private final List<Field> enteredFields = new ArrayList<>();
+    private final HashMap<String, EntryFields> entriesByPlayer = new HashMap<>();
+    private final HashMap<String, EntryFields> dynamicEntries = new HashMap<>();
     private int updateCount = 0;
 
     /**
@@ -218,7 +218,7 @@ public final class EntryManager {
             EntryFields ef = entriesByPlayer.get(player.getName());
 
             if (ef != null) {
-                List<Field> e = new ArrayList<Field>();
+                List<Field> e = new ArrayList<>();
                 e.addAll(ef.getFields());
                 return e;
             }
@@ -745,7 +745,7 @@ public final class EntryManager {
      * @return
      */
     public HashSet<String> getInhabitants(Field field) {
-        HashSet<String> inhabitants = new HashSet<String>();
+        HashSet<String> inhabitants = new HashSet<>();
 
         synchronized (entriesByPlayer) {
             for (Entry<String, EntryFields> playerEntry : entriesByPlayer.entrySet()) {

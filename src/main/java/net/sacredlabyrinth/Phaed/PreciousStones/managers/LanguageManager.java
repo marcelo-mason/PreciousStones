@@ -11,7 +11,7 @@ import java.util.TreeMap;
 @SuppressWarnings("unchecked")
 public class LanguageManager {
     private File file;
-    private TreeMap<String, Object> language = new TreeMap<String, Object>();
+    private TreeMap<String, Object> language = new TreeMap<>();
     private String[] comments = new String[]{
             "# Guidelines",
             "\n#",

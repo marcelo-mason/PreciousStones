@@ -66,14 +66,14 @@ public final class SettingsManager {
     private int purgeAfterDays;
     private boolean purgeBannedPlayers;
     private boolean debug;
-    private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
-    private List<BlockTypeEntry> unbreakableBlocks = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> bypassBlocks = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> unprotectableBlocks = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> hidingMaskBlocs = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> toolItems = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> repairableItems = new ArrayList<BlockTypeEntry>();
-    private List<String> allEntryGroups = new ArrayList<String>();
+    private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<>();
+    private List<BlockTypeEntry> unbreakableBlocks = new ArrayList<>();
+    private List<BlockTypeEntry> bypassBlocks = new ArrayList<>();
+    private List<BlockTypeEntry> unprotectableBlocks = new ArrayList<>();
+    private List<BlockTypeEntry> hidingMaskBlocs = new ArrayList<>();
+    private List<BlockTypeEntry> toolItems = new ArrayList<>();
+    private List<BlockTypeEntry> repairableItems = new ArrayList<>();
+    private List<String> allEntryGroups = new ArrayList<>();
     private boolean logRollback;
     private boolean logTranslocation;
     private boolean logFire;
@@ -128,9 +128,9 @@ public final class SettingsManager {
     private int fenceMaxDepth;
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 78, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
     private int[] naturalThroughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 51, 59, 78, 83, 104, 105, 106, 141, 142};
-    private HashSet<Byte> throughFieldsByteSet = new HashSet<Byte>();
-    private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
-    private HashSet<Integer> naturalThroughFieldSet = new HashSet<Integer>();
+    private HashSet<Byte> throughFieldsByteSet = new HashSet<>();
+    private HashSet<Integer> throughFieldsSet = new HashSet<>();
+    private HashSet<Integer> naturalThroughFieldSet = new HashSet<>();
     private int linesPerPage;
     private boolean useMysql;
     private String host;
@@ -138,7 +138,7 @@ public final class SettingsManager {
     private String username;
     private String password;
     private int port;
-    private final HashMap<BlockTypeEntry, FieldSettings> fieldDefinitions = new HashMap<BlockTypeEntry, FieldSettings>();
+    private final HashMap<BlockTypeEntry, FieldSettings> fieldDefinitions = new HashMap<>();
     private PreciousStones plugin;
     private File main;
     private FileConfiguration config;
@@ -388,7 +388,7 @@ public final class SettingsManager {
             return value;
         }
 
-        return new ArrayList<Integer>();
+        return new ArrayList<>();
     }
 
     private List<String> loadStringList(String path) {
@@ -398,7 +398,7 @@ public final class SettingsManager {
             return value;
         }
 
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     private Object loadObject(String path) {
@@ -810,7 +810,7 @@ public final class SettingsManager {
      * @return
      */
     public HashMap<BlockTypeEntry, FieldSettings> getFieldSettings() {
-        HashMap<BlockTypeEntry, FieldSettings> fs = new HashMap<BlockTypeEntry, FieldSettings>();
+        HashMap<BlockTypeEntry, FieldSettings> fs = new HashMap<>();
         fs.putAll(fieldDefinitions);
         return fs;
     }
@@ -1281,7 +1281,7 @@ public final class SettingsManager {
      * @return the throughFieldsSet
      */
     public List<Integer> getThroughFieldsSet() {
-        return new ArrayList<Integer>(throughFieldsSet);
+        return new ArrayList<>(throughFieldsSet);
     }
 
     /**

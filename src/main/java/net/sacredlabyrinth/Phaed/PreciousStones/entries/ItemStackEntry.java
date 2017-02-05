@@ -16,7 +16,7 @@ public class ItemStackEntry {
     private final byte data;
     private final short durability;
     private final int amount;
-    private Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
+    private Map<Enchantment, Integer> enchantments = new HashMap<>();
 
     /**
      * @param item

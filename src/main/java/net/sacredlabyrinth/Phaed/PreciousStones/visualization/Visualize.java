@@ -16,7 +16,7 @@ import java.util.Queue;
  */
 public class Visualize implements Runnable {
     private PreciousStones plugin;
-    private Queue<BlockEntry> visualizationQueue = new LinkedList<BlockEntry>();
+    private Queue<BlockEntry> visualizationQueue = new LinkedList<>();
     private final int timerID;
     private final Player player;
     private final boolean reverting;

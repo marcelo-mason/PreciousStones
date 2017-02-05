@@ -221,10 +221,10 @@ public class PSEntityListener implements Listener {
             return;
         }
 
-        final List<BlockEntry> saved = new ArrayList<BlockEntry>();
-        final List<BlockEntry> unprotected = new ArrayList<BlockEntry>();
-        final List<BlockEntry> revert = new ArrayList<BlockEntry>();
-        final List<BlockEntry> tnts = new ArrayList<BlockEntry>();
+        final List<BlockEntry> saved = new ArrayList<>();
+        final List<BlockEntry> unprotected = new ArrayList<>();
+        final List<BlockEntry> revert = new ArrayList<>();
+        final List<BlockEntry> tnts = new ArrayList<>();
         Field rollbackField = null;
 
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getLocation().getWorld())) {

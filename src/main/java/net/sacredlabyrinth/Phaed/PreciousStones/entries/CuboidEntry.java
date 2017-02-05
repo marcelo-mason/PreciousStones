@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CuboidEntry {
     private Field field;
-    private List<BlockEntry> selected = new ArrayList<BlockEntry>();
+    private List<BlockEntry> selected = new ArrayList<>();
     private int minx;
     private int miny;
     private int minz;
@@ -60,7 +60,7 @@ public class CuboidEntry {
         this.miny = miny;
         this.maxz = maxz;
         this.minz = minz;
-        this.selected = new ArrayList<BlockEntry>(selected);
+        this.selected = new ArrayList<>(selected);
         this.expanded = expanded;
     }
 

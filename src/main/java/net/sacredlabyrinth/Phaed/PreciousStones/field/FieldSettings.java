@@ -24,7 +24,7 @@ import java.util.logging.Level;
 public class FieldSettings {
     protected String metaName = "";
     protected boolean metaAutoSet = false;
-    protected List<String> metaLore = new ArrayList<String>();
+    protected List<String> metaLore = new ArrayList<>();
     protected int foresterUses = 1;
     protected BlockTypeEntry groundBlock;
     protected int treeCount = 64;
@@ -71,41 +71,41 @@ public class FieldSettings {
     protected int griefRevertInterval = 0;
     protected int payToEnable = 0;
     protected int rentsLimit = 0;
-    protected List<String> commandOnEnter = new ArrayList<String>();
-    protected List<String> commandOnExit = new ArrayList<String>();
-    protected List<String> playerCommandOnEnter = new ArrayList<String>();
-    protected List<String> playerCommandOnExit = new ArrayList<String>();
-    protected List<BlockTypeEntry> teleportIfHoldingItems = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> teleportIfNotHoldingItems = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> teleportIfHasItems = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> teleportIfNotHasItems = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> unusableItems = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> teleportIfWalkingOn = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> teleportIfNotWalkingOn = new ArrayList<BlockTypeEntry>();
-    protected List<Integer> treeTypes = new ArrayList<Integer>();
-    protected List<Integer> shrubTypes = new ArrayList<Integer>();
-    protected List<String> creatureTypes = new ArrayList<String>();
-    protected List<BlockTypeEntry> fertileBlocks = new ArrayList<BlockTypeEntry>();
-    protected List<Integer> limits = new ArrayList<Integer>();
-    protected List<BlockTypeEntry> surfaces = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> translocationBlacklist = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> preventPlaceBlacklist = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> preventDestroyBlacklist = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> preventUse = new ArrayList<BlockTypeEntry>();
-    protected List<BlockTypeEntry> confiscatedItems = new ArrayList<BlockTypeEntry>();
-    protected List<String> allowedWorlds = new ArrayList<String>();
-    protected List<String> allowedOnlyInside = new ArrayList<String>();
-    protected List<String> allowedOnlyOutside = new ArrayList<String>();
-    protected List<String> commandBlackList = new ArrayList<String>();
-    protected List<FieldFlag> defaultFlags = new ArrayList<FieldFlag>();
-    protected List<FieldFlag> reversedFlags = new ArrayList<FieldFlag>();
-    protected List<FieldFlag> alledflags = new ArrayList<FieldFlag>();
-    protected List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
-    protected List<BlockTypeEntry> allowGrief = new ArrayList<BlockTypeEntry>();
-    protected HashMap<PotionEffectType, Integer> potions = new HashMap<PotionEffectType, Integer>();
-    protected List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();
-    protected List<String> allowedPlayers = new ArrayList<String>();
-    protected List<String> deniedPlayers = new ArrayList<String>();
+    protected List<String> commandOnEnter = new ArrayList<>();
+    protected List<String> commandOnExit = new ArrayList<>();
+    protected List<String> playerCommandOnEnter = new ArrayList<>();
+    protected List<String> playerCommandOnExit = new ArrayList<>();
+    protected List<BlockTypeEntry> teleportIfHoldingItems = new ArrayList<>();
+    protected List<BlockTypeEntry> teleportIfNotHoldingItems = new ArrayList<>();
+    protected List<BlockTypeEntry> teleportIfHasItems = new ArrayList<>();
+    protected List<BlockTypeEntry> teleportIfNotHasItems = new ArrayList<>();
+    protected List<BlockTypeEntry> unusableItems = new ArrayList<>();
+    protected List<BlockTypeEntry> teleportIfWalkingOn = new ArrayList<>();
+    protected List<BlockTypeEntry> teleportIfNotWalkingOn = new ArrayList<>();
+    protected List<Integer> treeTypes = new ArrayList<>();
+    protected List<Integer> shrubTypes = new ArrayList<>();
+    protected List<String> creatureTypes = new ArrayList<>();
+    protected List<BlockTypeEntry> fertileBlocks = new ArrayList<>();
+    protected List<Integer> limits = new ArrayList<>();
+    protected List<BlockTypeEntry> surfaces = new ArrayList<>();
+    protected List<BlockTypeEntry> translocationBlacklist = new ArrayList<>();
+    protected List<BlockTypeEntry> preventPlaceBlacklist = new ArrayList<>();
+    protected List<BlockTypeEntry> preventDestroyBlacklist = new ArrayList<>();
+    protected List<BlockTypeEntry> preventUse = new ArrayList<>();
+    protected List<BlockTypeEntry> confiscatedItems = new ArrayList<>();
+    protected List<String> allowedWorlds = new ArrayList<>();
+    protected List<String> allowedOnlyInside = new ArrayList<>();
+    protected List<String> allowedOnlyOutside = new ArrayList<>();
+    protected List<String> commandBlackList = new ArrayList<>();
+    protected List<FieldFlag> defaultFlags = new ArrayList<>();
+    protected List<FieldFlag> reversedFlags = new ArrayList<>();
+    protected List<FieldFlag> alledflags = new ArrayList<>();
+    protected List<FieldFlag> disabledFlags = new ArrayList<>();
+    protected List<BlockTypeEntry> allowGrief = new ArrayList<>();
+    protected HashMap<PotionEffectType, Integer> potions = new HashMap<>();
+    protected List<PotionEffectType> neutralizePotions = new ArrayList<>();
+    protected List<String> allowedPlayers = new ArrayList<>();
+    protected List<String> deniedPlayers = new ArrayList<>();
     protected LinkedHashMap<String, Object> map;
 
     /**
@@ -507,7 +507,7 @@ public class FieldSettings {
 
                     PreciousStones.debug("   %s: %s", flagStr, value);
 
-                    List<String> colored = new ArrayList<String>();
+                    List<String> colored = new ArrayList<>();
 
                     for (String s : value) {
                         if (s == null || s.isEmpty()) {
@@ -523,7 +523,7 @@ public class FieldSettings {
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     protected List<BlockTypeEntry> loadTypeEntries(String flagStr) {
@@ -540,7 +540,7 @@ public class FieldSettings {
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
-        return new ArrayList<BlockTypeEntry>();
+        return new ArrayList<>();
     }
 
     protected List<Integer> loadIntList(String flagStr) {
@@ -561,7 +561,7 @@ public class FieldSettings {
             }
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
-        return new ArrayList<Integer>();
+        return new ArrayList<>();
     }
 
     protected boolean containsKey(String flagStr) {
@@ -1215,11 +1215,11 @@ public class FieldSettings {
     }
 
     public List<Integer> getTreeTypes() {
-        return new ArrayList<Integer>(treeTypes);
+        return new ArrayList<>(treeTypes);
     }
 
     public List<Integer> getShrubTypes() {
-        return new ArrayList<Integer>(shrubTypes);
+        return new ArrayList<>(shrubTypes);
     }
 
     public int getShrubDensity() {

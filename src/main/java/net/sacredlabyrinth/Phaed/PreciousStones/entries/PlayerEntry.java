@@ -79,7 +79,7 @@ public class PlayerEntry {
      * @return
      */
     public List<ItemStackEntry> returnInventory() {
-        List<ItemStackEntry> out = new ArrayList<ItemStackEntry>();
+        List<ItemStackEntry> out = new ArrayList<>();
 
         for (Object stackEntry : confiscatedInventory) {
             out.add(new ItemStackEntry((JSONObject) stackEntry));
