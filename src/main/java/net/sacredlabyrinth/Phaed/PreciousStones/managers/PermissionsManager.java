@@ -34,15 +34,15 @@ import java.util.List;
  * @author phaed
  */
 public final class PermissionsManager {
-    public static Permission permission = null;
-    private static Economy economy = null;
-    private PermissionHandler handler = null;
-    private PermissionsPlugin pbukkit = null;
-    private PermissionsEx pex = null;
-    private LWC lwc = null;
-    private Lockette lockette = null;
+    public static Permission permission;
+    private static Economy economy;
+    private PermissionHandler handler;
+    private PermissionsPlugin pbukkit;
+    private PermissionsEx pex;
+    private LWC lwc;
+    private Lockette lockette;
     private PreciousStones plugin;
-    private mcMMO mcmmo = null;
+    private mcMMO mcmmo;
 
     /**
      *

@@ -24,7 +24,7 @@ public class ChatHelper {
     private List<Integer> columnSpaces = new ArrayList<Integer>();
     private List<String> columnAlignments = new ArrayList<String>();
     private LinkedList<String[]> rows = new LinkedList<String[]>();
-    private boolean prefix_used = false;
+    private boolean prefix_used;
     private String color = "";
     /**
      *

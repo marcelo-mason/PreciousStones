@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class Field extends AbstractVec implements Comparable<Field> {
     private FieldSettings settings;
-    private long id = 0;
+    private long id;
     private int radius;
     private int height;
     private int maxx;

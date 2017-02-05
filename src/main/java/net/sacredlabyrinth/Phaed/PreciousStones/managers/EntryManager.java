@@ -30,7 +30,7 @@ public final class EntryManager {
     private final List<Field> enteredFields = new ArrayList<Field>();
     private final HashMap<String, EntryFields> entriesByPlayer = new HashMap<String, EntryFields>();
     private final HashMap<String, EntryFields> dynamicEntries = new HashMap<String, EntryFields>();
-    private int updateCount = 0;
+    private int updateCount;
 
     /**
      *
