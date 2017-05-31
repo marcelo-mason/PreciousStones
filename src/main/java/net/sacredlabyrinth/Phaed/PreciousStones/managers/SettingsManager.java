@@ -130,6 +130,7 @@ public final class SettingsManager {
     private int[] naturalThroughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 51, 59, 78, 83, 104, 105, 106, 141, 142};
     private HashSet<Byte> throughFieldsByteSet = new HashSet<Byte>();
     private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
+    private HashSet<Material> throughFieldsMaterialSet = new HashSet<Material>();
     private HashSet<Integer> naturalThroughFieldSet = new HashSet<Integer>();
     private int linesPerPage;
     private boolean useMysql;
@@ -162,6 +163,10 @@ public final class SettingsManager {
     public void load() {
         for (int item : throughFields) {
             throughFieldsSet.add(item);
+        }
+
+        for (int item : throughFields) {
+            throughFieldsMaterialSet.add(Material.getMaterial(item));
         }
 
         for (int item : throughFields) {
@@ -1289,6 +1294,12 @@ public final class SettingsManager {
      */
     public HashSet<Byte> getThroughFieldsByteSet() {
         return throughFieldsByteSet;
+    }
+    /**
+     * @return the throughFieldsSet
+     */
+    public HashSet<Material> getThroughFieldsMaterialSet() {
+        return throughFieldsMaterialSet;
     }
 
     public BlockTypeEntry getCuboidDefiningType() {
