@@ -123,16 +123,20 @@ public class ChatHelper {
 
             int col_count = rows.get(0).length;
 
-            for (int i = 0; i < col_count; i++) {
-                // add custom column spacing if specified
+            if (col_count > 1) {
+                for (int i = 0; i < col_count; i++) {
+                    // add custom column spacing if specified
 
-                int spacing = colspacing;
+                    int spacing = colspacing;
 
-                if (columnSpaces.size() >= (i + 1)) {
-                    spacing = columnSpaces.get(i);
+                    if (columnSpaces.size() >= (i + 1)) {
+                        spacing = columnSpaces.get(i);
+                    }
+
+                    columnSizes.add(getMaxWidth(i) + spacing);
                 }
-
-                columnSizes.add(getMaxWidth(i) + spacing);
+            } else {
+                columnSizes.add((double) lineLength);
             }
         }
 
@@ -215,16 +219,20 @@ public class ChatHelper {
 
             int col_count = rows.get(0).length;
 
-            for (int i = 0; i < col_count; i++) {
-                // add custom column spacing if specified
+            if (col_count > 1) {
+                for (int i = 0; i < col_count; i++) {
+                    // add custom column spacing if specified
 
-                int spacing = colspacing;
+                    int spacing = colspacing;
 
-                if (columnSpaces.size() >= (i + 1)) {
-                    spacing = columnSpaces.get(i);
+                    if (columnSpaces.size() >= (i + 1)) {
+                        spacing = columnSpaces.get(i);
+                    }
+
+                    columnSizes.add(getMaxWidth(i) + spacing);
                 }
-
-                columnSizes.add(getMaxWidth(i) + spacing);
+            } else {
+                columnSizes.add((double) lineLength);
             }
         }
 
