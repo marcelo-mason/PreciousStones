@@ -674,6 +674,137 @@ public class PSEntityListener implements Listener {
      * @param event
      */
     @EventHandler(priority = EventPriority.HIGH)
+    public void onEntityCombustByEntityEvent(EntityCombustByEntityEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (event.getEntity() instanceof Ageable) {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_ANIMALS);
+
+            if (field != null) {
+                if (event.getCombuster() instanceof Player) {
+                    Player player = (Player) event.getCombuster();
+                    if (FieldFlag.PROTECT_ANIMALS.applies(field, player)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                } else {
+                    if (field.hasFlag(FieldFlag.PROTECT_ANIMALS)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+
+
+        if (event.getEntity() instanceof Villager) {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_VILLAGERS);
+
+            if (field != null) {
+                if (event.getCombuster() instanceof Player) {
+                    Player player = (Player) event.getCombuster();
+                    if (FieldFlag.PROTECT_VILLAGERS.applies(field, player)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                } else {
+                    if (field.hasFlag(FieldFlag.PROTECT_VILLAGERS)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+
+        if (event.getEntity() instanceof Monster || event.getEntity() instanceof Golem || event.getEntity() instanceof WaterMob) {
+            Field field = plugin.getForceFieldManager().getEnabledSourceField(event.getEntity().getLocation(), FieldFlag.PROTECT_MOBS);
+
+            if (field != null) {
+                if (event.getCombuster() instanceof Player) {
+                    Player player = (Player) event.getCombuster();
+                    if (FieldFlag.PROTECT_MOBS.applies(field, player)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                } else {
+                    if (field.hasFlag(FieldFlag.PROTECT_MOBS)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+            return;
+        }
+
+        // pvp protect against player/mobs
+
+        if (event.getEntity() instanceof Player) {
+            Player victim = (Player) event.getEntity();
+            Player attacker = null;
+
+            if (event.getCombuster() instanceof Player) {
+                attacker = (Player) event.getCombuster();
+            } else if (event.getCombuster() instanceof Arrow) {
+                Arrow arrow = (Arrow) event.getCombuster();
+
+                if (arrow.getShooter() instanceof Player) {
+                    attacker = (Player) arrow.getShooter();
+                }
+            }
+
+            if (attacker != null) {
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(victim.getLocation(), FieldFlag.PREVENT_PVP);
+
+                if (field != null) {
+                    if (plugin.getPermissionsManager().has(attacker, "preciousstones.bypass.pvp")) {
+                        plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
+                    } else {
+                        //If both the attacker and the victim are in combat, don't cancel it
+                        if (((plugin.getCombatTagManager().isInCombat(attacker)) && (plugin.getCombatTagManager().isInCombat(victim)))) {
+                            //warn both players
+                            plugin.getCommunicationManager().warnBypassPvPDueToCombat(attacker, victim);
+                            return;
+                        } else {
+                            event.setCancelled(true);
+                            plugin.getCommunicationManager().warnPvP(attacker, victim, field);
+                            return;
+                        }
+                    }
+                } else {
+                    field = plugin.getForceFieldManager().getEnabledSourceField(attacker.getLocation(), FieldFlag.PREVENT_PVP);
+
+                    if (field != null) {
+                        if (plugin.getPermissionsManager().has(attacker, "preciousstones.bypass.pvp")) {
+                            plugin.getCommunicationManager().warnBypassPvP(attacker, victim, field);
+                        } else {
+                            event.setCancelled(true);
+                            plugin.getCommunicationManager().warnPvP(attacker, victim, field);
+                            return;
+                        }
+                    }
+                }
+
+                // -------------------------------------------------------------------------------- pvp inside a teleport field
+
+                field = plugin.getForceFieldManager().getEnabledSourceField(victim.getLocation(), FieldFlag.TELEPORT_ON_PVP);
+
+                if (field != null) {
+                    if (FieldFlag.TELEPORT_ON_PVP.applies(field, attacker.getName())) {
+                        event.setCancelled(true);
+                        plugin.getTeleportationManager().teleport(attacker, field, "teleportAnnouncePvp");
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDoorBreak(EntityBreakDoorEvent event) {
         if (event.isCancelled()) {
             return;
@@ -794,7 +925,7 @@ public class PSEntityListener implements Listener {
                     }
                 }
             }
-        } else if(!(entity instanceof Villager)){
+        } else if (!(entity instanceof Villager)) {
             if (plugin.getSettingsManager().isCrop(block)) {
                 Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PROTECT_CROPS);
 
