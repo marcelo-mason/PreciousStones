@@ -794,7 +794,7 @@ public class PSEntityListener implements Listener {
                     }
                 }
             }
-        } else {
+        } else if(!(entity instanceof Villager)){
             if (plugin.getSettingsManager().isCrop(block)) {
                 Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.PROTECT_CROPS);
 
