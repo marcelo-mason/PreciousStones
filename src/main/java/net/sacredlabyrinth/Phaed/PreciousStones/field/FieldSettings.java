@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -17,6 +18,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * @author phaed
@@ -108,6 +110,7 @@ public class FieldSettings {
     protected List<String> deniedPlayers = new ArrayList<>();
     protected List<String> potionTargets = new ArrayList<>();
     protected LinkedHashMap<String, Object> map;
+    private Set<FieldSettings> mergedFields = new HashSet<>();
 
     /**
      * @param map
@@ -982,6 +985,174 @@ public class FieldSettings {
 
         return Helper.stripTrailing(out, ", ");
     }
+
+    public Set<FieldSettings> getMergedFields() {
+        return mergedFields;
+    }
+
+    public List<BlockTypeEntry> getMergedFieldsTypeEntries() {
+        return mergedFields.stream().map(FieldSettings::getTypeEntry).collect(Collectors.toList());
+    }
+
+    public void addMergedField(BlockTypeEntry entry) {
+        SettingsManager sm = PreciousStones.getInstance().getSettingsManager();
+        FieldSettings fs = sm.getFieldSettings(entry);
+        this.mergedFields.add(fs);
+
+        for (FieldFlag flag : fs.getDefaultFlags()) {
+            if (flag.equals(FieldFlag.GROUP_ON_ENTRY)) {
+                this.groupOnEntry = fs.groupOnEntry;
+            }
+            if (flag.equals(FieldFlag.LAUNCH)) {
+                this.launchHeight = (int) ((this.launchHeight + fs.launchHeight) / 1.5);
+            }
+            if (flag.equals(FieldFlag.CANNON)) {
+                this.cannonHeight = (int) ((this.cannonHeight + fs.cannonHeight) / 1.5);
+            }
+            if (flag.equals(FieldFlag.MINE)) {
+                this.mineDelaySeconds = fs.mineDelaySeconds;
+                this.mineHasFire = fs.mineHasFire;
+                if (this.mine > 0) {
+                    this.mine = (this.mine + fs.mine) / 2;
+                } else {
+                    this.mine = fs.mine;
+                }
+            }
+            if (flag.equals(FieldFlag.LIGHTNING)) {
+                this.lightningReplaceBlock = fs.lightningReplaceBlock;
+                this.lightningDelaySeconds = fs.lightningDelaySeconds;
+            }
+            if (flag.equals(FieldFlag.FORESTER)) {
+                if (this.treeCount > 0) {
+                    this.treeCount = (this.treeCount + fs.treeCount) / 2;
+                } else {
+                    this.treeCount = fs.treeCount;
+                }
+                if (this.shrubDensity > 0) {
+                    this.shrubDensity = (this.shrubDensity + fs.shrubDensity) / 2;
+                } else {
+                    this.shrubDensity = fs.shrubDensity;
+                }
+                if (this.creatureCount > 0) {
+                    this.creatureCount = (this.creatureCount + fs.creatureCount) / 2;
+                } else {
+                    this.creatureCount = fs.creatureCount;
+                }
+                if (this.growTime > 0) {
+                    this.growTime = (this.growTime + fs.growTime) / 2;
+                } else {
+                    this.growTime = fs.growTime;
+                }
+                this.groundBlock = fs.groundBlock;
+                Helper.addUnique(this.treeTypes, fs.treeTypes);
+                Helper.addUnique(this.shrubTypes, fs.shrubTypes);
+                Helper.addUnique(this.creatureTypes, fs.creatureTypes);
+                Helper.addUnique(this.fertileBlocks, fs.fertileBlocks);
+            }
+
+            Helper.addUnique(this.preventUse, fs.preventUse);
+            Helper.addUnique(this.confiscatedItems, fs.confiscatedItems);
+            Helper.addUnique(this.allowedPlayers, fs.allowedPlayers);
+            Helper.addUnique(this.deniedPlayers, fs.deniedPlayers);
+            Helper.addUnique(this.allowGrief, fs.allowGrief);
+            Helper.addUnique(this.allowedWorlds, fs.allowedWorlds);
+            Helper.addUnique(this.limits, fs.limits);
+            Helper.addUnique(this.unusableItems, fs.unusableItems);
+            Helper.addUnique(this.translocationBlacklist, fs.translocationBlacklist);
+            Helper.addUnique(this.preventPlaceBlacklist, fs.preventPlaceBlacklist);
+            Helper.addUnique(this.preventDestroyBlacklist, fs.preventDestroyBlacklist);
+            Helper.addUnique(this.allowedOnlyInside, fs.allowedOnlyInside);
+            Helper.addUnique(this.allowedOnlyOutside, fs.allowedOnlyOutside);
+            if (this.heal > 0) {
+                this.heal = (this.heal + fs.heal) / 2;
+            } else {
+                this.heal = fs.heal;
+            }
+            if (this.feed > 0) {
+                this.feed = (this.feed + fs.feed) / 2;
+            } else {
+                this.feed = fs.feed;
+            }
+            if (this.repair > 0) {
+                this.repair = (this.repair + fs.repair) / 2;
+            } else {
+                this.repair = fs.repair;
+            }
+            if (this.damage > 0) {
+                this.damage = (this.damage + fs.damage) / 2;
+            } else {
+                this.damage = fs.damage;
+            }
+            if (this.damage > 0) {
+                this.damage = (this.damage + fs.damage) / 2;
+            } else {
+                this.damage = fs.damage;
+            }
+            this.maskOnEnabled = this.maskOnEnabled | fs.maskOnEnabled;
+            this.maskOnDisabled = this.maskOnDisabled | fs.maskOnDisabled;
+            if (this.griefRevertInterval > 0) {
+                this.griefRevertInterval = (this.griefRevertInterval + fs.griefRevertInterval) / 2;
+            } else {
+                this.griefRevertInterval = fs.griefRevertInterval;
+            }
+            Helper.addUnique(this.playerCommandOnEnter, fs.playerCommandOnEnter);
+            Helper.addUnique(this.playerCommandOnExit, fs.playerCommandOnExit);
+            Helper.addUnique(this.commandOnEnter, fs.commandOnEnter);
+            Helper.addUnique(this.commandOnExit, fs.commandOnExit);
+            Helper.addUnique(this.commandBlackList, fs.commandBlackList);
+            if (this.teleportCost > 0) {
+                this.teleportCost = (this.teleportCost + fs.teleportCost) / 2;
+            } else {
+                this.teleportCost = fs.teleportCost;
+            }
+            if (this.teleportBackAfterSeconds > 0) {
+                this.teleportBackAfterSeconds = (this.teleportBackAfterSeconds + fs.teleportBackAfterSeconds) / 2;
+            } else {
+                this.teleportBackAfterSeconds = fs.teleportBackAfterSeconds;
+            }
+            if (this.teleportMaxDistance > 0) {
+                this.teleportMaxDistance = (this.teleportMaxDistance + fs.teleportMaxDistance) / 2;
+            } else {
+                this.teleportMaxDistance = fs.teleportMaxDistance;
+            }
+            Helper.addUnique(this.teleportIfWalkingOn, fs.teleportIfWalkingOn);
+            Helper.addUnique(this.teleportIfNotWalkingOn, fs.teleportIfNotWalkingOn);
+            Helper.addUnique(this.teleportIfHoldingItems, fs.teleportIfHoldingItems);
+            Helper.addUnique(this.teleportIfNotHoldingItems, fs.teleportIfNotHoldingItems);
+            Helper.addUnique(this.teleportIfHasItems, fs.teleportIfHasItems);
+            Helper.addUnique(this.teleportIfNotHasItems, fs.teleportIfNotHasItems);
+            if (this.mustBeAbove > 0) {
+                this.mustBeAbove = (this.mustBeAbove + fs.mustBeAbove) / 2;
+            } else {
+                this.mustBeAbove = fs.mustBeAbove;
+            }
+            if (this.mustBeBelow > 0) {
+                this.mustBeBelow = (this.mustBeBelow + fs.mustBeBelow) / 2;
+            } else {
+                this.mustBeBelow = fs.mustBeBelow;
+            }
+            if (this.payToEnable > 0) {
+                this.payToEnable = (this.payToEnable + fs.payToEnable) / 2;
+            } else {
+                this.payToEnable = fs.payToEnable;
+            }
+            if (this.fenceItem > 0) {
+                this.fenceItem = fs.fenceItem;
+            }
+            if (this.fenceItemPrice > 0) {
+                this.fenceItemPrice = (this.fenceItemPrice + fs.fenceItemPrice) / 2;
+            } else {
+                this.fenceItemPrice = fs.fenceItemPrice;
+            }
+            if (this.rentsLimit > 0) {
+                this.rentsLimit = (this.rentsLimit + fs.rentsLimit) / 2;
+            } else {
+                this.rentsLimit = fs.rentsLimit;
+            }
+            Helper.addUnique(this.potionTargets, fs.potionTargets);
+        }
+    }
+
 
     /**
      * Whether the player is in the allowed list

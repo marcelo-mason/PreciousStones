@@ -7,15 +7,15 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PaymentEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.RentEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+import net.sacredlabyrinth.Phaed.PreciousStones.managers.SettingsManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FlagsModule {
     private Field field;
@@ -93,6 +93,10 @@ public class FlagsModule {
         JSONArray whitelistedBlocksList = new JSONArray();
         whitelistedBlocksList.addAll(field.getListingModule().getWhitelistedBlocks());
 
+        JSONArray mergedFields = new JSONArray();
+        mergedFields.addAll(field.getSettings().getMergedFieldsTypeEntries());
+
+
         if (!paymentList.isEmpty()) {
             json.put("payments", paymentList);
         }
@@ -135,6 +139,10 @@ public class FlagsModule {
 
         if (field.getForestingModule().getForesterUsed() > 0) {
             json.put("foresterUsed", field.getForestingModule().getForesterUsed());
+        }
+
+        if (!field.getSettings().getMergedFields().isEmpty()) {
+            json.put("mergedFields", field.getSettings().getMergedFields());
         }
 
         return json.toString();
@@ -240,6 +248,12 @@ public class FlagsModule {
 
                             for (Object flagStr : whitelistedBlocksList) {
                                 field.getListingModule().getWhitelistedBlocks().add(new BlockTypeEntry(flagStr.toString()));
+                            }
+                        } else if (flag.equals("mergedFields")) {
+                            JSONArray mergedFields = (JSONArray) flags.get(flag);
+
+                            for (Object flagStr : mergedFields) {
+                                field.getSettings().addMergedField(new BlockTypeEntry(flagStr.toString()));
                             }
                         } else if (flag.equals("foresterUsed")) {
                             field.getForestingModule().setForesterUsed(((Long) flags.get(flag)).intValue());
@@ -442,21 +456,6 @@ public class FlagsModule {
             return true;
         }
 
-        return false;
-    }
-
-    /**
-     * Force insert a flag if it doesn't exist.
-     * This can suck
-     *
-     * @param flagStr
-     */
-    public boolean insertFlag(String flagStr) {
-        if (!flags.contains(Helper.toFieldFlag(flagStr))) {
-            flags.add(Helper.toFieldFlag(flagStr));
-            dirtyFlags("insertFlag");
-            return true;
-        }
         return false;
     }
 

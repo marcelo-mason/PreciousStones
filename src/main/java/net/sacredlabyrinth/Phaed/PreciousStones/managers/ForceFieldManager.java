@@ -158,6 +158,7 @@ public final class ForceFieldManager {
 
             if (!ce.getField().getTypeEntry().equals(fs.getTypeEntry())) {
                 ce.getField().getFlagsModule().importFlags(fs.getDefaultFlags());
+                ce.getField().getSettings().addMergedField(fs.getTypeEntry());
                 ChatHelper.send(player, "flagsImported", fs.getTitle());
                 isImport = true;
                 plugin.getStorageManager().offerField(ce.getField());

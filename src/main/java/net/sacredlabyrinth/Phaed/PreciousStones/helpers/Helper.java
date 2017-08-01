@@ -17,6 +17,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -850,5 +852,17 @@ public class Helper {
                 mat == Material.BOAT_JUNGLE ||
                 mat == Material.BOAT_SPRUCE;
     
+    }
+
+    public static long getMillis() {
+        return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    public static <T> void addUnique(List<T> one, List<T> two) {
+        for (T x : two) {
+            if (!one.contains(x)) {
+                one.add(x);
+            }
+        }
     }
 }
