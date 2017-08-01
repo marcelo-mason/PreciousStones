@@ -301,13 +301,13 @@ public class FlagsModule {
                 //remove from the disableFlags list
                 iter.remove();
                 canEnable = true;
+                field.addDirty(DirtyFieldReason.FLAGS);
+                PreciousStones.debug("DirtyFlags: enableFlag");
             }
         }
 
         if (canEnable && !flags.contains(Helper.toFieldFlag(flagStr))) {
             flags.add(Helper.toFieldFlag(flagStr));
-            field.addDirty(DirtyFieldReason.FLAGS);
-            PreciousStones.debug("DirtyFlags: enableFlag");
         }
     }
 
@@ -324,16 +324,15 @@ public class FlagsModule {
             if (Helper.toFlagStr(flag).equals(flagStr)) {
                 iter.remove();
                 hasFlag = true;
+                if (!skipSave) {
+                    field.addDirty(DirtyFieldReason.FLAGS);
+                    PreciousStones.debug("DirtyFlags: disableFlag");
+                }
             }
         }
 
         if (hasFlag && !disabledFlags.contains(Helper.toFieldFlag(flagStr))) {
             disabledFlags.add(Helper.toFieldFlag(flagStr));
-
-            if (!skipSave) {
-                field.addDirty(DirtyFieldReason.FLAGS);
-                PreciousStones.debug("DirtyFlags: disableFlag");
-            }
         }
     }
 
