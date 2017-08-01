@@ -762,14 +762,7 @@ public final class EntryManager {
         if (FieldFlag.COMMAND_ON_ENTER.applies(field, player)) {
             if (!field.getSettings().getCommandsOnEnter().isEmpty()) {
                 for (String cmd : field.getSettings().getCommandsOnEnter()) {
-                    cmd = cmd.replace("{player}", player.getName());
-                    cmd = cmd.replace("{owner}", field.getOwner());
-                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                    cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
-
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), fillCommmand(field, player, cmd));
                 }
             }
         }
@@ -777,14 +770,7 @@ public final class EntryManager {
         if (FieldFlag.PLAYER_COMMAND_ON_ENTER.applies(field, player)) {
             if (!field.getSettings().getPlayerCommandsOnEnter().isEmpty()) {
                 for (String cmd : field.getSettings().getPlayerCommandsOnEnter()) {
-                    cmd = cmd.replace("{player}", player.getName());
-                    cmd = cmd.replace("{owner}", field.getOwner());
-                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                    cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
-
-                    player.performCommand(cmd);
+                    player.performCommand(fillCommmand(field, player, cmd));
                 }
             }
         }
@@ -794,14 +780,7 @@ public final class EntryManager {
         if (FieldFlag.COMMAND_ON_EXIT.applies(field, player)) {
             if (!field.getSettings().getCommandsOnExit().isEmpty()) {
                 for (String cmd : field.getSettings().getCommandsOnExit()) {
-                    cmd = cmd.replace("{player}", player.getName());
-                    cmd = cmd.replace("{owner}", field.getOwner());
-                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                    cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
-
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), fillCommmand(field, player, cmd));
                 }
             }
         }
@@ -809,17 +788,20 @@ public final class EntryManager {
         if (FieldFlag.PLAYER_COMMAND_ON_EXIT.applies(field, player)) {
             if (!field.getSettings().getPlayerCommandsOnExit().isEmpty()) {
                 for (String cmd : field.getSettings().getPlayerCommandsOnExit()) {
-                    cmd = cmd.replace("{player}", player.getName());
-                    cmd = cmd.replace("{owner}", field.getOwner());
-                    cmd = cmd.replace("{x}", player.getLocation().getBlockX() + "");
-                    cmd = cmd.replace("{y}", player.getLocation().getBlockY() + "");
-                    cmd = cmd.replace("{z}", player.getLocation().getBlockZ() + "");
-                    cmd = cmd.replace("{world}", player.getLocation().getWorld().getName());
-
-                    player.performCommand(cmd);
+                    player.performCommand(fillCommmand(field, player, cmd));
                 }
             }
         }
+    }
+
+    private String fillCommmand(Field field, Player player, String cmd){
+        String rep = cmd.replace("{player}", player.getName());
+        rep = rep.replace("{owner}", field.getOwner());
+        rep = rep.replace("{x}", player.getLocation().getBlockX() + "");
+        rep = rep.replace("{y}", player.getLocation().getBlockY() + "");
+        rep = rep.replace("{z}", player.getLocation().getBlockZ() + "");
+        rep = rep.replace("{world}", player.getLocation().getWorld().getName());
+        return rep;
     }
 
     public void actOnInhabitantsOnDisableToggle(final Field field) {
