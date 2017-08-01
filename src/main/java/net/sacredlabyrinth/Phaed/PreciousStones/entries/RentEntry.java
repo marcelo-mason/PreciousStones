@@ -1,17 +1,20 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
-import org.joda.time.DateTime;
-import org.joda.time.Seconds;
+import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+
+import java.time.*;
+
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 public class RentEntry {
     private String playerName;
-    private DateTime endDate;
+    private ZonedDateTime endDate;
     private int periodSeconds;
 
     public RentEntry(String playerName, int periodSeconds) {
         this.playerName = playerName;
         this.periodSeconds = periodSeconds;
-        this.endDate = (new DateTime()).plusSeconds(periodSeconds);
+        this.endDate = LocalDateTime.now().plusSeconds(periodSeconds).atZone(ZoneId.systemDefault());
     }
 
     public RentEntry(String packed) {
@@ -19,7 +22,7 @@ public class RentEntry {
 
         this.playerName = unpacked[0];
         this.periodSeconds = Integer.parseInt(unpacked[1]);
-        this.endDate = new DateTime(Long.parseLong(unpacked[2]));
+        this.endDate = Instant.ofEpochMilli(Long.parseLong(unpacked[2])).atZone(ZoneId.systemDefault());
     }
 
     public void addSeconds(int seconds) {
@@ -36,11 +39,13 @@ public class RentEntry {
     }
 
     public boolean isDone() {
-        return Seconds.secondsBetween(new DateTime(), endDate).getSeconds() <= 0;
+        ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.systemDefault());
+        return SECONDS.between(now, endDate) <= 0;
     }
 
     public int remainingRent() {
-        return Seconds.secondsBetween(new DateTime(), endDate).getSeconds();
+        ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.systemDefault());
+        return (int)SECONDS.between(now, endDate);
     }
 
     @Override
@@ -63,6 +68,7 @@ public class RentEntry {
     }
 
     public String serialize() {
-        return playerName + "|" + periodSeconds + "|" + endDate.getMillis();
+        long millis = Helper.getMillis();
+        return playerName + "|" + periodSeconds + "|" + millis;
     }
 }

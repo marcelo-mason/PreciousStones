@@ -2,8 +2,12 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import org.bukkit.ChatColor;
-import org.joda.time.DateTime;
-import org.joda.time.Seconds;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 /**
  * @author phaed
@@ -14,7 +18,7 @@ public class SnitchEntry {
     private String details;
     private int eventCount;
     private Field field;
-    private DateTime age;
+    private ZonedDateTime age;
 
     /**
      *
@@ -32,7 +36,7 @@ public class SnitchEntry {
         this.reason = reason;
         this.details = details;
         this.eventCount = 1;
-        this.age = (new DateTime());
+        this.age = LocalDateTime.now().atZone(ZoneId.systemDefault());
     }
 
     /**
@@ -48,7 +52,7 @@ public class SnitchEntry {
         this.reason = reason;
         this.details = details;
         this.eventCount = eventCount;
-        this.age = (new DateTime());
+        this.age = LocalDateTime.now().atZone(ZoneId.systemDefault());
     }
 
     /**
@@ -166,6 +170,7 @@ public class SnitchEntry {
      * @return
      */
     public int getAgeInSeconds() {
-        return Seconds.secondsBetween(new DateTime(), new DateTime(age)).getSeconds();
+        ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.systemDefault());
+        return (int)SECONDS.between(now, age);
     }
 }

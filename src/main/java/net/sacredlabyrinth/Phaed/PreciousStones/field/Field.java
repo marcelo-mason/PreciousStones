@@ -18,15 +18,15 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 
+import java.time.*;
 import java.util.*;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
  * disabledFlags
@@ -901,7 +901,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      *
      */
     public void updateLastUsed() {
-        lastUsed = (new DateTime()).getMillis();
+        lastUsed = Helper.getMillis();
         dirty.add(DirtyFieldReason.LASTUSED);
     }
 
@@ -915,7 +915,9 @@ public class Field extends AbstractVec implements Comparable<Field> {
             return 0;
         }
 
-        return Days.daysBetween(new DateTime(lastUsed), new DateTime()).getDays();
+        ZonedDateTime lastUsedDate = Instant.ofEpochMilli(lastUsed).atZone(ZoneId.systemDefault());
+        ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.systemDefault());
+        return (int)DAYS.between(lastUsedDate, now);
     }
 
     /**
