@@ -70,7 +70,7 @@ public class TeleportationManager {
     }
 
     public boolean teleport(TeleportEntry entry) {
-        List<TeleportEntry> entries = new ArrayList<TeleportEntry>();
+        List<TeleportEntry> entries = new ArrayList<>();
         entries.add(entry);
         return teleport(entries);
     }

@@ -80,7 +80,7 @@ public class StackHelper {
     }
 
     public static List<ItemStack> makeStacks(BlockTypeEntry item, int amount) {
-        List<ItemStack> out = new ArrayList<ItemStack>();
+        List<ItemStack> out = new ArrayList<>();
 
         Material material = Material.getMaterial(item.getTypeId());
 
@@ -116,11 +116,8 @@ public class StackHelper {
             }
         }
 
-        if (amount <= 0) {
-            return true;
-        }
+        return amount <= 0;
 
-        return false;
     }
 
     /**

@@ -321,7 +321,7 @@ public class Helper {
      * @return
      */
     public static List<String> fromArray(String... values) {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         Collections.addAll(results, values);
         results.remove("");
 
@@ -335,7 +335,7 @@ public class Helper {
      * @return
      */
     public static HashSet<String> fromArray2(String... values) {
-        HashSet<String> results = new HashSet<String>();
+        HashSet<String> results = new HashSet<>();
         Collections.addAll(results, values);
         results.remove("");
         return results;
@@ -348,7 +348,7 @@ public class Helper {
      * @return
      */
     public static List<Player> fromPlayerArray(Player... values) {
-        List<Player> results = new ArrayList<Player>();
+        List<Player> results = new ArrayList<>();
         Collections.addAll(results, values);
         return results;
     }
@@ -468,10 +468,7 @@ public class Helper {
             return false;
         }
 
-        if (loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ()) {
-            return true;
-        }
-        return false;
+        return loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ();
     }
 
     /**
@@ -490,10 +487,7 @@ public class Helper {
             return false;
         }
 
-        if (loc.getX() == loc2.getX() && loc.getY() == loc2.getY() && loc.getZ() == loc2.getZ()) {
-            return true;
-        }
-        return false;
+        return loc.getX() == loc2.getX() && loc.getY() == loc2.getY() && loc.getZ() == loc2.getZ();
     }
 
     /**
@@ -558,7 +552,7 @@ public class Helper {
      * @return
      */
     public static List<BlockTypeEntry> toTypeEntriesBlind(List<Object> rawList) {
-        List<BlockTypeEntry> types = new ArrayList<BlockTypeEntry>();
+        List<BlockTypeEntry> types = new ArrayList<>();
 
         for (Object rawItem : rawList) {
             BlockTypeEntry entry = new BlockTypeEntry(rawItem.toString());
@@ -578,7 +572,7 @@ public class Helper {
      * @return
      */
     public static List<BlockTypeEntry> toTypeEntries(List<String> rawList) {
-        List<BlockTypeEntry> types = new ArrayList<BlockTypeEntry>();
+        List<BlockTypeEntry> types = new ArrayList<>();
 
         for (String rawItem : rawList) {
             BlockTypeEntry entry = new BlockTypeEntry(rawItem);
@@ -849,16 +843,12 @@ public class Helper {
     }
 
     public static boolean isBoat(Material mat) {
-        if (mat == Material.BOAT || 
-            mat == Material.BOAT_ACACIA || 
-            mat == Material.BOAT_BIRCH || 
-            mat == Material.BOAT_DARK_OAK || 
-            mat == Material.BOAT_JUNGLE || 
-            mat == Material.BOAT_SPRUCE) {
-            return true;
-        } else {
-            return false;
-        }
+        return mat == Material.BOAT ||
+                mat == Material.BOAT_ACACIA ||
+                mat == Material.BOAT_BIRCH ||
+                mat == Material.BOAT_DARK_OAK ||
+                mat == Material.BOAT_JUNGLE ||
+                mat == Material.BOAT_SPRUCE;
     
     }
 }

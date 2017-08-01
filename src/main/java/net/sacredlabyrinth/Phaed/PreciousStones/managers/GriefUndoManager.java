@@ -20,7 +20,7 @@ import java.util.Queue;
  */
 public final class GriefUndoManager {
     private PreciousStones plugin;
-    private HashMap<Field, Integer> intervalFields = new HashMap<Field, Integer>();
+    private HashMap<Field, Integer> intervalFields = new HashMap<>();
 
     /**
      *
@@ -266,10 +266,6 @@ public final class GriefUndoManager {
     }
 
     private int startInterval(final Field field) {
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            public void run() {
-                undoGrief(field);
-            }
-        }, field.getRevertingModule().getRevertSecs() * 20L, field.getRevertingModule().getRevertSecs() * 20L);
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> undoGrief(field), field.getRevertingModule().getRevertSecs() * 20L, field.getRevertingModule().getRevertSecs() * 20L);
     }
 }

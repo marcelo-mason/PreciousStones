@@ -11,8 +11,8 @@ import java.util.List;
 
 public class ListingModule {
     private Field field;
-    private List<String> blacklistedCommands = new ArrayList<String>();
-    private List<BlockTypeEntry> whitelistedBlocks = new ArrayList<BlockTypeEntry>();
+    private List<String> blacklistedCommands = new ArrayList<>();
+    private List<BlockTypeEntry> whitelistedBlocks = new ArrayList<>();
 
     public ListingModule(Field field) {
         this.field = field;

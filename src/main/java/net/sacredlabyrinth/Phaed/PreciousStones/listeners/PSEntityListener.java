@@ -228,10 +228,10 @@ public class PSEntityListener implements Listener {
             return;
         }
 
-        final List<BlockEntry> saved = new ArrayList<BlockEntry>();
-        final List<BlockEntry> unprotected = new ArrayList<BlockEntry>();
-        final List<BlockEntry> revert = new ArrayList<BlockEntry>();
-        final List<BlockEntry> tnts = new ArrayList<BlockEntry>();
+        final List<BlockEntry> saved = new ArrayList<>();
+        final List<BlockEntry> unprotected = new ArrayList<>();
+        final List<BlockEntry> revert = new ArrayList<>();
+        final List<BlockEntry> tnts = new ArrayList<>();
         Field rollbackField = null;
 
         if (plugin.getSettingsManager().isBlacklistedWorld(event.getLocation().getWorld())) {
@@ -365,19 +365,17 @@ public class PSEntityListener implements Listener {
         // trigger any tnts in the field
 
         if (!tnts.isEmpty()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    for (BlockEntry db : tnts) {
-                        Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                for (BlockEntry db : tnts) {
+                    Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
-                        if (block != null) {
-                            Location midloc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
-                            block.getWorld().spawn(midloc, TNTPrimed.class);
-                            block.setTypeId(0);
-                        }
+                    if (block != null) {
+                        Location midloc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
+                        block.getWorld().spawn(midloc, TNTPrimed.class);
+                        block.setTypeId(0);
                     }
-                    tnts.clear();
                 }
+                tnts.clear();
             }, 10);
         }
 
@@ -387,25 +385,21 @@ public class PSEntityListener implements Listener {
             final Field field = rollbackField;
             field.setProgress(true);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    plugin.getGriefUndoManager().undoDirtyGrief(field);
-                    field.setProgress(false);
-                }
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                plugin.getGriefUndoManager().undoDirtyGrief(field);
+                field.setProgress(false);
             }, 2);
         }
 
         // revert any blocks that need reversion
 
         if (!revert.isEmpty()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    for (BlockEntry db : revert) {
-                        Block block = db.getLocation().getBlock();
-                        block.setTypeIdAndData(db.getTypeId(), db.getData(), true);
-                    }
-                    revert.clear();
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                for (BlockEntry db : revert) {
+                    Block block = db.getLocation().getBlock();
+                    block.setTypeIdAndData(db.getTypeId(), db.getData(), true);
                 }
+                revert.clear();
             }, 3);
         }
 
@@ -414,19 +408,17 @@ public class PSEntityListener implements Listener {
         if (!saved.isEmpty() && !unprotected.isEmpty()) {
             event.setCancelled(true);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    // remove all blocks and simulate drops for the blocks not in the field
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                // remove all blocks and simulate drops for the blocks not in the field
 
-                    for (BlockEntry db : unprotected) {
-                        Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
+                for (BlockEntry db : unprotected) {
+                    Block block = db.getLocation().getWorld().getBlockAt(db.getLocation());
 
-                        if (!plugin.getPermissionsManager().canBuild(null, block.getLocation())) {
-                            continue;
-                        }
-
-                        block.setTypeId(0);
+                    if (!plugin.getPermissionsManager().canBuild(null, block.getLocation())) {
+                        continue;
                     }
+
+                    block.setTypeId(0);
                 }
             }, 1);
         }

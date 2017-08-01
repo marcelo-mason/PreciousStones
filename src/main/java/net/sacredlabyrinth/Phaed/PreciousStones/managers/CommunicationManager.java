@@ -30,7 +30,7 @@ import java.util.Map.Entry;
  */
 public class CommunicationManager {
     private PreciousStones plugin;
-    private HashMap<String, ChatHelper> chatBlocks = new HashMap<String, ChatHelper>();
+    private HashMap<String, ChatHelper> chatBlocks = new HashMap<>();
 
     /**
      *
@@ -1000,7 +1000,6 @@ public class CommunicationManager {
 
     /**
      * @param player
-     * @param item
      * @param loc
      * @param field
      */
@@ -2190,18 +2189,18 @@ public class CommunicationManager {
 
             boolean firstAdded = false;
 
-            for (int i = 0; i < lore.size(); i++) {
-                if (lore.get(i) == null || lore.get(i).isEmpty()) {
+            for (String aLore : lore) {
+                if (aLore == null || aLore.isEmpty()) {
                     continue;
                 }
 
                 if (!firstAdded) {
-                    cb.addRow("  " + color + ChatHelper.format("_lore") + ": ", lore.get(i), "");
+                    cb.addRow("  " + color + ChatHelper.format("_lore") + ": ", aLore, "");
                     firstAdded = true;
                 } else
 
                 {
-                    cb.addRow("  ", ChatColor.AQUA + lore.get(i), "");
+                    cb.addRow("  ", ChatColor.AQUA + aLore, "");
                 }
             }
         }
@@ -2256,7 +2255,7 @@ public class CommunicationManager {
 
         cb.addRow("  " + color + ChatHelper.format("_location") + ": ", ChatColor.AQUA + "" + field.getX() + " " + field.getY() + " " + field.getZ(), "");
 
-        List<FieldFlag> flags = new ArrayList<FieldFlag>(field.getFlagsModule().getFlags());
+        List<FieldFlag> flags = new ArrayList<>(field.getFlagsModule().getFlags());
         List<FieldFlag> insertedFlags = field.getFlagsModule().getInsertedFlags();
         List<FieldFlag> disabledFlags = field.getFlagsModule().getDisabledFlags();
 
@@ -2600,7 +2599,7 @@ public class CommunicationManager {
             cb.addRow("  " + ChatColor.GRAY + ChatHelper.format("_field"), ChatHelper.format("_distance"), ChatHelper.format("_coords"));
         }
 
-        List<Field> fields = new ArrayList<Field>();
+        List<Field> fields = new ArrayList<>();
 
         if (player != null) {
             fields = plugin.getForceFieldManager().getFields(target, player.getWorld());
@@ -2676,13 +2675,11 @@ public class CommunicationManager {
      */
 
     public void sortByDistance(List<Field> fields, final Location playerLocation) {
-        Collections.sort(fields, new Comparator<Field>() {
-            public int compare(Field f1, Field f2) {
-                Float o1 = (float) f1.distance(playerLocation);
-                Float o2 = (float) f2.distance(playerLocation);
+        Collections.sort(fields, (f1, f2) -> {
+            Float o1 = (float) f1.distance(playerLocation);
+            Float o2 = (float) f2.distance(playerLocation);
 
-                return o1.compareTo(o2);
-            }
+            return o1.compareTo(o2);
         });
     }
 

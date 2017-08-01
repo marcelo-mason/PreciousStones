@@ -51,9 +51,9 @@ public class Field extends AbstractVec implements Comparable<Field> {
     private String newOwner;
     private String name;
     private Field parent;
-    private List<Field> children = new ArrayList<Field>();
-    private Set<String> allowed = new HashSet<String>();
-    private Set<DirtyFieldReason> dirty = new HashSet<DirtyFieldReason>();
+    private List<Field> children = new ArrayList<>();
+    private Set<String> allowed = new HashSet<>();
+    private Set<DirtyFieldReason> dirty = new HashSet<>();
     private long lastUsed;
     private boolean progress;
     private boolean open;
@@ -511,7 +511,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      * @return
      */
     public List<String> getAllAllowed() {
-        List<String> all = new ArrayList<String>();
+        List<String> all = new ArrayList<>();
         all.add(owner.toLowerCase());
         all.addAll(allowed);
         all.addAll(renting.getRenters());
@@ -694,7 +694,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      * @return vectors of the corners
      */
     public List<Vector> getCorners() {
-        List<Vector> corners = new ArrayList<Vector>();
+        List<Vector> corners = new ArrayList<>();
 
         corners.add(new Vector(minx, miny, minz));
         corners.add(new Vector(minx, miny, maxz));
@@ -714,7 +714,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      * @return
      */
     public Set<ChunkVec> getEnvelopingChunks() {
-        HashSet<ChunkVec> envelopingChunks = new HashSet<ChunkVec>();
+        HashSet<ChunkVec> envelopingChunks = new HashSet<>();
 
         for (int x = minx; x <= (maxx + 15); x += 16) {
             for (int z = minz; z <= (maxz + 15); z += 16) {
@@ -733,7 +733,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
     public Set<Field> getIntersectingFields() {
         Set<ChunkVec> envelopingChunks = getEnvelopingChunks();
 
-        Set<Field> sources = new HashSet<Field>();
+        Set<Field> sources = new HashSet<>();
 
         for (ChunkVec ecv : envelopingChunks) {
             List<Field> fields = PreciousStones.getInstance().getForceFieldManager().getSourceFieldsInChunk(ecv, FieldFlag.ALL);
@@ -793,11 +793,8 @@ public class Field extends AbstractVec implements Comparable<Field> {
         int py = vec.getBlockY();
         int pz = vec.getBlockZ();
 
-        if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz) {
-            return true;
-        }
+        return px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz;
 
-        return false;
     }
 
     /**
@@ -811,11 +808,8 @@ public class Field extends AbstractVec implements Comparable<Field> {
         int py = field.getY();
         int pz = field.getZ();
 
-        if (px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz) {
-            return true;
-        }
+        return px >= minx && px <= maxx && py >= miny && py <= maxy && pz >= minz && pz <= maxz;
 
-        return false;
     }
 
     /**
@@ -864,7 +858,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      * @return the allowed
      */
     public List<String> getAllowed() {
-        return new ArrayList<String>(allowed);
+        return new ArrayList<>(allowed);
     }
 
     /**
@@ -1046,7 +1040,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
     }
 
     public Set<Field> getFamily() {
-        Set<Field> out = new HashSet<Field>();
+        Set<Field> out = new HashSet<>();
         out.addAll(children);
         out.add(this);
         return out;
@@ -1268,20 +1262,18 @@ public class Field extends AbstractVec implements Comparable<Field> {
                 Bukkit.getServer().getScheduler().cancelTask(disablerId);
             }
 
-            disablerId = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), new Runnable() {
-                public void run() {
-                    if (!thisField.isDisabled()) {
-                        Player player = Bukkit.getServer().getPlayerExact(theOwner);
+            disablerId = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(PreciousStones.getInstance(), () -> {
+                if (!thisField.isDisabled()) {
+                    Player player1 = Bukkit.getServer().getPlayerExact(theOwner);
 
-                        if (player != null) {
-                            ChatHelper.send(player, "fieldHasDisabled", settings.getTitle());
-                        }
-
-                        thisField.setDisabled(true);
-                        thisField.getFlagsModule().dirtyFlags("startDisabler");
-
-                        PreciousStones.getInstance().getEntryManager().actOnInhabitantsOnDisableToggle(thisField);
+                    if (player1 != null) {
+                        ChatHelper.send(player1, "fieldHasDisabled", settings.getTitle());
                     }
+
+                    thisField.setDisabled(true);
+                    thisField.getFlagsModule().dirtyFlags("startDisabler");
+
+                    PreciousStones.getInstance().getEntryManager().actOnInhabitantsOnDisableToggle(thisField);
                 }
             }, 20L * settings.getAutoDisableTime());
 

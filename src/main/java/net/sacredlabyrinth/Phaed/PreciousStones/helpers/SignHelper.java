@@ -95,11 +95,7 @@ public class SignHelper {
                         return true;
                     }
 
-                    if (s.getField().isOwner(player.getName())) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return !s.getField().isOwner(player.getName());
                 }
             }
         }
@@ -138,7 +134,7 @@ public class SignHelper {
         int counter = 0;
         int seconds = 0;
 
-        ArrayList<String> strings = new ArrayList<String>();
+        ArrayList<String> strings = new ArrayList<>();
         String[] chars = period.replaceAll(" ", "").toLowerCase().split("");
         String word = "";
 

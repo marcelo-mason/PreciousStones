@@ -36,18 +36,16 @@ public class LightningManager {
 
             plugin.getCommunicationManager().showLightning(player);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    Block block = plugin.getForceFieldManager().getBlock(field);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Block block = plugin.getForceFieldManager().getBlock(field);
 
-                    player.getWorld().strikeLightning(player.getLocation());
+                player.getWorld().strikeLightning(player.getLocation());
 
-                    if (leftBehind >= 0) {
-                        plugin.getForceFieldManager().releaseNoDrop(field);
-                        block.setType(Material.getMaterial(leftBehind));
-                    }
-
+                if (leftBehind >= 0) {
+                    plugin.getForceFieldManager().releaseNoDrop(field);
+                    block.setType(Material.getMaterial(leftBehind));
                 }
+
             }, delay * 20L);
         }
 

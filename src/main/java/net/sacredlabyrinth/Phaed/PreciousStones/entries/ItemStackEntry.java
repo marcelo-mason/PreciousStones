@@ -16,7 +16,7 @@ public class ItemStackEntry {
     private final byte data;
     private final short durability;
     private final int amount;
-    private Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
+    private Map<Enchantment, Integer> enchantments = new HashMap<>();
 
     /**
      * @param item
@@ -109,11 +109,8 @@ public class ItemStackEntry {
 
         // adjust for changing blocks
 
-        if (id1 == 8 && id2 == 9 || id1 == 9 && id2 == 8 || id1 == 11 && id2 == 10 || id1 == 10 && id2 == 11 || id1 == 73 && id2 == 74 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61) {
-            return true;
-        }
+        return id1 == 8 && id2 == 9 || id1 == 9 && id2 == 8 || id1 == 11 && id2 == 10 || id1 == 10 && id2 == 11 || id1 == 73 && id2 == 74 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61;
 
-        return false;
     }
 
     @Override

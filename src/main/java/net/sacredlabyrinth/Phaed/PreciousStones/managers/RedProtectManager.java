@@ -29,10 +29,7 @@ public class RedProtectManager {
 
     private boolean checkRedProtect() {
         Plugin pRP = Bukkit.getPluginManager().getPlugin("RedProtect");
-        if (pRP != null && pRP.isEnabled()){
-            return true;
-        }
-        return false;
+        return pRP != null && pRP.isEnabled();
     }
 
     public boolean isRegion(Block block) {

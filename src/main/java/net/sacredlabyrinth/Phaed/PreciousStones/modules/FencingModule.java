@@ -13,7 +13,7 @@ import java.util.List;
 
 public class FencingModule {
     private Field field;
-    private List<BlockEntry> fenceBlocks = new ArrayList<BlockEntry>();
+    private List<BlockEntry> fenceBlocks = new ArrayList<>();
 
     public FencingModule(Field field) {
         this.field = field;

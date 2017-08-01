@@ -13,7 +13,7 @@ import java.util.Queue;
 public class RevertingModule {
     private Field field;
     private int revertSecs;
-    private List<GriefBlock> grief = new ArrayList<GriefBlock>();
+    private List<GriefBlock> grief = new ArrayList<>();
 
     public RevertingModule(Field field) {
         this.field = field;
@@ -56,7 +56,7 @@ public class RevertingModule {
      * @return the grief
      */
     public Queue<GriefBlock> getGrief() {
-        Queue<GriefBlock> g = new LinkedList<GriefBlock>();
+        Queue<GriefBlock> g = new LinkedList<>();
         g.addAll(grief);
         grief.clear();
         return g;

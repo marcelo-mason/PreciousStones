@@ -66,14 +66,14 @@ public final class SettingsManager {
     private int purgeAfterDays;
     private boolean purgeBannedPlayers;
     private boolean debug;
-    private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<LinkedHashMap<String, Object>>();
-    private List<BlockTypeEntry> unbreakableBlocks = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> bypassBlocks = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> unprotectableBlocks = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> hidingMaskBlocs = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> toolItems = new ArrayList<BlockTypeEntry>();
-    private List<BlockTypeEntry> repairableItems = new ArrayList<BlockTypeEntry>();
-    private List<String> allEntryGroups = new ArrayList<String>();
+    private List<LinkedHashMap<String, Object>> forceFieldBlocks = new ArrayList<>();
+    private List<BlockTypeEntry> unbreakableBlocks = new ArrayList<>();
+    private List<BlockTypeEntry> bypassBlocks = new ArrayList<>();
+    private List<BlockTypeEntry> unprotectableBlocks = new ArrayList<>();
+    private List<BlockTypeEntry> hidingMaskBlocs = new ArrayList<>();
+    private List<BlockTypeEntry> toolItems = new ArrayList<>();
+    private List<BlockTypeEntry> repairableItems = new ArrayList<>();
+    private List<String> allEntryGroups = new ArrayList<>();
     private boolean logRollback;
     private boolean logTranslocation;
     private boolean logFire;
@@ -128,10 +128,10 @@ public final class SettingsManager {
     private int fenceMaxDepth;
     private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 78, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
     private int[] naturalThroughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 51, 59, 78, 83, 104, 105, 106, 141, 142};
-    private HashSet<Byte> throughFieldsByteSet = new HashSet<Byte>();
-    private HashSet<Integer> throughFieldsSet = new HashSet<Integer>();
-    private HashSet<Material> throughFieldsMaterialSet = new HashSet<Material>();
-    private HashSet<Integer> naturalThroughFieldSet = new HashSet<Integer>();
+    private HashSet<Byte> throughFieldsByteSet = new HashSet<>();
+    private HashSet<Integer> throughFieldsSet = new HashSet<>();
+    private HashSet<Material> throughFieldsMaterialSet = new HashSet<>();
+    private HashSet<Integer> naturalThroughFieldSet = new HashSet<>();
     private int linesPerPage;
     private boolean useMysql;
     private String host;
@@ -139,8 +139,7 @@ public final class SettingsManager {
     private String username;
     private String password;
     private int port;
-    private final HashMap<BlockTypeEntry, FieldSettings> fieldDefinitions = new HashMap<BlockTypeEntry, FieldSettings>();
-    private PreciousStones plugin;
+    private final HashMap<BlockTypeEntry, FieldSettings> fieldDefinitions = new HashMap<>();
     private File main;
     private FileConfiguration config;
     private FileConfiguration cleanConfig;
@@ -149,7 +148,7 @@ public final class SettingsManager {
      *
      */
     public SettingsManager() {
-        plugin = PreciousStones.getInstance();
+        PreciousStones plugin = PreciousStones.getInstance();
         config = plugin.getConfig();
         cleanConfig = new YamlConfiguration();
         main = new File(plugin.getDataFolder() + File.separator + "config.yml");
@@ -393,7 +392,7 @@ public final class SettingsManager {
             return value;
         }
 
-        return new ArrayList<Integer>();
+        return new ArrayList<>();
     }
 
     private List<String> loadStringList(String path) {
@@ -403,7 +402,7 @@ public final class SettingsManager {
             return value;
         }
 
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     private Object loadObject(String path) {
@@ -523,7 +522,7 @@ public final class SettingsManager {
     }
 
     public boolean isHarmfulPotion(PotionEffectType pot) {
-        if (pot.equals(PotionEffectType.SLOW) ||
+        return pot.equals(PotionEffectType.SLOW) ||
                 pot.equals(PotionEffectType.SLOW_DIGGING) ||
                 pot.equals(PotionEffectType.WEAKNESS) ||
                 pot.equals(PotionEffectType.BLINDNESS) ||
@@ -531,11 +530,9 @@ public final class SettingsManager {
                 pot.equals(PotionEffectType.HARM) ||
                 pot.equals(PotionEffectType.POISON) ||
                 pot.equals(PotionEffectType.HUNGER) ||
-                pot.equals(PotionEffectType.INCREASE_DAMAGE)) {
-            return true;
-        }
+                pot.equals(PotionEffectType.UNLUCK) ||
+                pot.equals(PotionEffectType.INCREASE_DAMAGE);
 
-        return false;
     }
 
     public boolean isCrop(Block block) {
@@ -557,11 +554,8 @@ public final class SettingsManager {
      * @return
      */
     public boolean isDependentBlock(int type) {
-        if (type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119 || type == 127 || type == 131 || type == 132) {
-            return true;
-        }
+        return type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119 || type == 127 || type == 131 || type == 132;
 
-        return false;
     }
 
     /**
@@ -816,7 +810,7 @@ public final class SettingsManager {
      * @return
      */
     public HashMap<BlockTypeEntry, FieldSettings> getFieldSettings() {
-        HashMap<BlockTypeEntry, FieldSettings> fs = new HashMap<BlockTypeEntry, FieldSettings>();
+        HashMap<BlockTypeEntry, FieldSettings> fs = new HashMap<>();
         fs.putAll(fieldDefinitions);
         return fs;
     }
@@ -1287,7 +1281,7 @@ public final class SettingsManager {
      * @return the throughFieldsSet
      */
     public List<Integer> getThroughFieldsSet() {
-        return new ArrayList<Integer>(throughFieldsSet);
+        return new ArrayList<>(throughFieldsSet);
     }
 
     /**

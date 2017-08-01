@@ -609,7 +609,7 @@ public class PSBlockListener implements Listener {
 
         // -------------------------------------------------------------------------------------- placing a block on top of a field
 
-        BlockPlaceEvent e = (BlockPlaceEvent) event;
+        BlockPlaceEvent e = event;
 
         BlockState state = e.getBlockReplacedState();
 
@@ -933,11 +933,9 @@ public class PSBlockListener implements Listener {
                         }
 
                         final Field finalField = field;
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                            public void run() {
-                                plugin.getTranslocationManager().addBlock(finalField, block);
-                                plugin.getTranslocationManager().flashFieldBlock(finalField, player);
-                            }
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                            plugin.getTranslocationManager().addBlock(finalField, block);
+                            plugin.getTranslocationManager().flashFieldBlock(finalField, player);
                         }, 10);
                     }
                 }

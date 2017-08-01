@@ -82,7 +82,7 @@ public class LimitManager {
             return -1;
         }
 
-        List<Integer> playersLimits = new ArrayList<Integer>();
+        List<Integer> playersLimits = new ArrayList<>();
 
         // get all the counts for all limits the player has
 

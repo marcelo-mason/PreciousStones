@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CuboidEntry {
     private Field field;
-    private List<BlockEntry> selected = new ArrayList<BlockEntry>();
+    private List<BlockEntry> selected = new ArrayList<>();
     private int minx;
     private int miny;
     private int minz;
@@ -60,7 +60,7 @@ public class CuboidEntry {
         this.miny = miny;
         this.maxz = maxz;
         this.minz = minz;
-        this.selected = new ArrayList<BlockEntry>(selected);
+        this.selected = new ArrayList<>(selected);
         this.expanded = expanded;
     }
 
@@ -322,11 +322,8 @@ public class CuboidEntry {
     }
 
     private boolean envelopsPlusOne(Location loc) {
-        if (loc.getX() < maxx + 1 && loc.getX() > minx - 1 && loc.getY() > miny - 1 && loc.getY() < maxy + 1 && loc.getZ() > minz - 1 && loc.getZ() < maxz + 1) {
-            return true;
-        }
+        return loc.getX() < maxx + 1 && loc.getX() > minx - 1 && loc.getY() > miny - 1 && loc.getY() < maxy + 1 && loc.getZ() > minz - 1 && loc.getZ() < maxz + 1;
 
-        return false;
     }
 
     /**

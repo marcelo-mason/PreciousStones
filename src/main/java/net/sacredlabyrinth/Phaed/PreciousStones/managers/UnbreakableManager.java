@@ -18,8 +18,8 @@ import java.util.*;
  * @author Phaed
  */
 public final class UnbreakableManager {
-    private final HashMap<String, HashMap<ChunkVec, HashMap<Vec, Unbreakable>>> chunkLists = new HashMap<String, HashMap<ChunkVec, HashMap<Vec, Unbreakable>>>();
-    private Queue<Unbreakable> deletionQueue = new LinkedList<Unbreakable>();
+    private final HashMap<String, HashMap<ChunkVec, HashMap<Vec, Unbreakable>>> chunkLists = new HashMap<>();
+    private Queue<Unbreakable> deletionQueue = new LinkedList<>();
     private PreciousStones plugin;
 
     /**
@@ -83,13 +83,13 @@ public final class UnbreakableManager {
             if (c != null) {
                 c.put(ub.toVec(), ub);
             } else {
-                HashMap<Vec, Unbreakable> newc = new HashMap<Vec, Unbreakable>();
+                HashMap<Vec, Unbreakable> newc = new HashMap<>();
                 newc.put(ub.toVec(), ub);
                 w.put(chunkvec, newc);
             }
         } else {
-            HashMap<ChunkVec, HashMap<Vec, Unbreakable>> _w = new HashMap<ChunkVec, HashMap<Vec, Unbreakable>>();
-            HashMap<Vec, Unbreakable> _c = new HashMap<Vec, Unbreakable>();
+            HashMap<ChunkVec, HashMap<Vec, Unbreakable>> _w = new HashMap<>();
+            HashMap<Vec, Unbreakable> _c = new HashMap<>();
 
             _c.put(ub.toVec(), ub);
             _w.put(chunkvec, _c);
@@ -321,7 +321,7 @@ public final class UnbreakableManager {
                     if (!plugin.getSettingsManager().isUnbreakableType(block)) {
                         revertedCount++;
                         block.setTypeId(unbreakable.getTypeId());
-                        block.setData((byte) unbreakable.getData());
+                        block.setData(unbreakable.getData());
                     }
                 }
             }
@@ -369,7 +369,7 @@ public final class UnbreakableManager {
      * @return the unbreakables
      */
     public ArrayList<Unbreakable> getUnbreakablesInArea(Vec vec, int chunkradius) {
-        ArrayList<Unbreakable> out = new ArrayList<Unbreakable>();
+        ArrayList<Unbreakable> out = new ArrayList<>();
 
         int xlow = (vec.getX() >> 4) - chunkradius;
         int xhigh = (vec.getX() >> 4) + chunkradius;

@@ -17,7 +17,7 @@ import java.util.Queue;
 public class Rollback implements Runnable {
     private PreciousStones plugin;
     private Queue<GriefBlock> griefQueue;
-    private Queue<GriefBlock> dependentQueue = new LinkedList<GriefBlock>();
+    private Queue<GriefBlock> dependentQueue = new LinkedList<>();
     private final int timerID;
     private final World world;
     private final Field field;

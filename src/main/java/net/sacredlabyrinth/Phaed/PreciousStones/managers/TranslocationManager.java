@@ -68,36 +68,34 @@ public final class TranslocationManager {
 
         // record wood doors in correct order
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            public void run() {
-                if (Helper.isDoor(block)) {
-                    Block bottom = block.getRelative(BlockFace.DOWN);
-                    Block top = block.getRelative(BlockFace.UP);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            if (Helper.isDoor(block)) {
+                Block bottom = block.getRelative(BlockFace.DOWN);
+                Block top = block.getRelative(BlockFace.UP);
+
+                if (Helper.isDoor(bottom)) {
+                    plugin.getStorageManager().insertTranslocationBlock(field, new TranslocationBlock(field, bottom));
+                }
+
+                if (Helper.isDoor(top)) {
+                    plugin.getStorageManager().insertTranslocationBlock(field, new TranslocationBlock(field, top));
+                }
+
+                if (isImport) {
+                    if (Helper.isDoor(block)) {
+                        block.setTypeIdAndData(0, (byte) 0, true);
+                    }
 
                     if (Helper.isDoor(bottom)) {
-                        plugin.getStorageManager().insertTranslocationBlock(field, new TranslocationBlock(field, bottom));
+                        bottom.setTypeIdAndData(0, (byte) 0, true);
                     }
 
                     if (Helper.isDoor(top)) {
-                        plugin.getStorageManager().insertTranslocationBlock(field, new TranslocationBlock(field, top));
+                        top.setTypeIdAndData(0, (byte) 0, true);
                     }
-
-                    if (isImport) {
-                        if (Helper.isDoor(block)) {
-                            block.setTypeIdAndData(0, (byte) 0, true);
-                        }
-
-                        if (Helper.isDoor(bottom)) {
-                            bottom.setTypeIdAndData(0, (byte) 0, true);
-                        }
-
-                        if (Helper.isDoor(top)) {
-                            top.setTypeIdAndData(0, (byte) 0, true);
-                        }
-                    }
-
-                    return;
                 }
+
+                return;
             }
         }, 5);
 
@@ -203,7 +201,7 @@ public final class TranslocationManager {
         // rollback empty blocks straight up
 
         if (tb.isEmpty()) {
-            block.setTypeIdAndData(tb.getTypeId(), (byte) tb.getData(), true);
+            block.setTypeIdAndData(tb.getTypeId(), tb.getData(), true);
             return true;
         }
 
@@ -233,7 +231,7 @@ public final class TranslocationManager {
         }
 
         if (noConflict) {
-            block.setTypeIdAndData(tb.getTypeId(), (byte) tb.getData(), true);
+            block.setTypeIdAndData(tb.getTypeId(), tb.getData(), true);
 
             if (block.getState() instanceof Sign && !tb.getSignText().isEmpty()) {
                 Sign sign = (Sign) block.getState();
@@ -398,11 +396,9 @@ public final class TranslocationManager {
             p.sendBlockChange(field.getLocation(), Material.GLASS, (byte) 0);
         }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            public void run() {
-                for (Player p : inhabitants) {
-                    p.sendBlockChange(field.getLocation(), field.getTypeId(), (byte) field.getData());
-                }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            for (Player p : inhabitants) {
+                p.sendBlockChange(field.getLocation(), field.getTypeId(), (byte) field.getData());
             }
         }, 20);
     }
@@ -492,9 +488,9 @@ public final class TranslocationManager {
         int maxCount = plugin.getSettingsManager().getMaxSizeTranslocation();
         int notImported = 0;
 
-        Queue<TranslocationBlock> tbs = new LinkedList<TranslocationBlock>();
+        Queue<TranslocationBlock> tbs = new LinkedList<>();
 
-        Map<Integer, BlockTypeEntry> map = new HashMap<Integer, BlockTypeEntry>();
+        Map<Integer, BlockTypeEntry> map = new HashMap<>();
 
         if (entries != null) {
             for (BlockTypeEntry e : entries) {

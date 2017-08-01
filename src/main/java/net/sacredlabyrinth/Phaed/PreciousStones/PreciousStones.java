@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class PreciousStones extends JavaPlugin {
     private static PreciousStones instance;
-    private ArrayList<String> messages = new ArrayList<String>();
+    private ArrayList<String> messages = new ArrayList<>();
     private static Logger logger = Logger.getLogger("Minecraft");
     private LanguageManager languageManager;
     private SettingsManager settingsManager;
@@ -63,7 +63,6 @@ public class PreciousStones extends JavaPlugin {
     private PSServerListener serverListener;
     private PSInventoryListener inventoryListener;
     private McMMOListener mcmmoListener;
-    private LWCListener lwcListener;
     private static IApi api;
 
     /**
@@ -169,7 +168,7 @@ public class PreciousStones extends JavaPlugin {
         }
 
         if (permissionsManager.hasLWC()) {
-            lwcListener = new LWCListener();
+            LWCListener lwcListener = new LWCListener();
         }
 
         api = new Api();

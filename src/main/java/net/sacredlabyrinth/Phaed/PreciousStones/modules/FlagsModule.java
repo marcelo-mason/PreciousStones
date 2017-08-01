@@ -19,10 +19,10 @@ import java.util.List;
 
 public class FlagsModule {
     private Field field;
-    private List<FieldFlag> flags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> disabledFlags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> insertedFlags = new ArrayList<FieldFlag>();
-    private List<FieldFlag> clearedFlags = new ArrayList<FieldFlag>();
+    private List<FieldFlag> flags = new ArrayList<>();
+    private List<FieldFlag> disabledFlags = new ArrayList<>();
+    private List<FieldFlag> insertedFlags = new ArrayList<>();
+    private List<FieldFlag> clearedFlags = new ArrayList<>();
 
     public FlagsModule(Field field) {
         this.field = field;
@@ -141,7 +141,7 @@ public class FlagsModule {
     }
 
     public ArrayList<String> getDisabledFlagsStringList() {
-        ArrayList<String> ll = new ArrayList<String>();
+        ArrayList<String> ll = new ArrayList<>();
         for (FieldFlag flag : disabledFlags) {
             ll.add(Helper.toFlagStr(flag));
         }
@@ -149,7 +149,7 @@ public class FlagsModule {
     }
 
     public ArrayList<String> getInsertedFlagsStringList() {
-        ArrayList<String> ll = new ArrayList<String>();
+        ArrayList<String> ll = new ArrayList<>();
         for (FieldFlag flag : insertedFlags) {
             ll.add(Helper.toFlagStr(flag));
         }
@@ -157,7 +157,7 @@ public class FlagsModule {
     }
 
     public ArrayList<String> getClearedFlagsStringList() {
-        ArrayList<String> ll = new ArrayList<String>();
+        ArrayList<String> ll = new ArrayList<>();
         for (FieldFlag flag : clearedFlags) {
             ll.add(Helper.toFlagStr(flag));
         }

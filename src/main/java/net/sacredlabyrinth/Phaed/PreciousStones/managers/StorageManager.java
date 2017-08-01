@@ -353,16 +353,13 @@ public class StorageManager {
 
         final List<World> worlds = plugin.getServer().getWorlds();
 
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
+        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
 
-                PreciousStones.debug("loading fields by world");
+            PreciousStones.debug("loading fields by world");
 
-                for (World world : worlds) {
-                    loadWorldFields(world);
-                    loadWorldUnbreakables(world);
-                }
+            for (World world : worlds) {
+                loadWorldFields(world);
+                loadWorldUnbreakables(world);
             }
         }, 0);
     }
@@ -1426,7 +1423,7 @@ public class StorageManager {
 
         processGrief(workingGrief);
 
-        Queue<GriefBlock> out = new LinkedList<GriefBlock>();
+        Queue<GriefBlock> out = new LinkedList<>();
 
         String query = "SELECT * FROM  `pstone_grief_undo` WHERE field_x = " + field.getX() + " AND field_y = " + field.getY() + " AND field_z = " + field.getZ() + " AND world = '" + Helper.escapeQuotes(field.getWorld()) + "' ORDER BY y ASC;";
 
@@ -2213,11 +2210,7 @@ public class StorageManager {
      * @return
      */
     public BukkitTask saverScheduler() {
-        return Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-            public void run() {
-                processQueue();
-            }
-        }, 0, 20L * plugin.getSettingsManager().getSaveFrequency());
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> processQueue(), 0, 20L * plugin.getSettingsManager().getSaveFrequency());
     }
 
     /**
@@ -2233,7 +2226,7 @@ public class StorageManager {
         Map<Vec, Field> working = new HashMap<>();
         Map<Unbreakable, Boolean> workingUb = new HashMap<>();
         Map<String, Boolean> workingPlayers = new HashMap<>();
-        Set<Field> workingGrief = new HashSet<Field>();
+        Set<Field> workingGrief = new HashSet<>();
         List<SnitchEntry> workingSnitchEntries = new ArrayList<>();
 
         synchronized (pending) {

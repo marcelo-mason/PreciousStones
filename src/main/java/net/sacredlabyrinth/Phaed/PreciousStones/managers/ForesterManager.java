@@ -279,11 +279,8 @@ public final class ForesterManager {
     }
 
     private boolean isSeeThrough(int type) {
-        if (type == 0 || type == 31 || type == 32 || type == 37 || type == 38 || type == 18 || type == 6) {
-            return true;
-        }
+        return type == 0 || type == 31 || type == 32 || type == 37 || type == 38 || type == 18 || type == 6;
 
-        return false;
     }
 
     /**

@@ -17,7 +17,7 @@ import java.util.UUID;
  */
 public class PlayerManager {
     private PreciousStones plugin;
-    private TreeMap<String, PlayerEntry> players = new TreeMap<String, PlayerEntry>();
+    private TreeMap<String, PlayerEntry> players = new TreeMap<>();
 
     /**
      *
@@ -165,11 +165,8 @@ public class PlayerManager {
         int type1 = world.getBlockTypeIdAt(x, y, z);
         int type2 = world.getBlockTypeIdAt(x, y, z);
 
-        if (plugin.getSettingsManager().isThroughType(type1) && plugin.getSettingsManager().isThroughType(type2)) {
-            return true;
-        }
+        return plugin.getSettingsManager().isThroughType(type1) && plugin.getSettingsManager().isThroughType(type2);
 
-        return false;
     }
 
     public void offerOnlinePlayerEntries() {

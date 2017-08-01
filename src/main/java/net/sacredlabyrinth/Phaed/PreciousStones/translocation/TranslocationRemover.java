@@ -16,7 +16,7 @@ import java.util.Queue;
 public class TranslocationRemover implements Runnable {
     private PreciousStones plugin;
     private Queue<TranslocationBlock> translocationQueue;
-    private Queue<TranslocationBlock> dependentQueue = new LinkedList<TranslocationBlock>();
+    private Queue<TranslocationBlock> dependentQueue = new LinkedList<>();
     private final int timerID;
     private final Player player;
     private final Field field;

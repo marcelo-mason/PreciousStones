@@ -39,12 +39,10 @@ public class MineManager {
 
             plugin.getCommunicationManager().showMine(player);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    plugin.getForceFieldManager().releaseNoDrop(field);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                plugin.getForceFieldManager().releaseNoDrop(field);
 
-                    block.getWorld().createExplosion(block.getLocation(), field.getSettings().getMineStrength(), field.getSettings().isMineHasFire());
-                }
+                block.getWorld().createExplosion(block.getLocation(), field.getSettings().getMineStrength(), field.getSettings().isMineHasFire());
             }, delay * 20L);
         }
     }

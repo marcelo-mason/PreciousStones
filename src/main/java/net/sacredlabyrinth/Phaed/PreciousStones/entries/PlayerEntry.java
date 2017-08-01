@@ -79,7 +79,7 @@ public class PlayerEntry {
      * @return
      */
     public List<ItemStackEntry> returnInventory() {
-        List<ItemStackEntry> out = new ArrayList<ItemStackEntry>();
+        List<ItemStackEntry> out = new ArrayList<>();
 
         for (Object stackEntry : confiscatedInventory) {
             out.add(new ItemStackEntry((JSONObject) stackEntry));
@@ -330,16 +330,13 @@ public class PlayerEntry {
     }
 
     public void startTeleportCountDown() {
-        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(PreciousStones.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                teleportSecondsRemaining -= 1;
+        task = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(PreciousStones.getInstance(), () -> {
+            teleportSecondsRemaining -= 1;
 
-                if (teleportSecondsRemaining <= 0) {
-                    tryTeleport();
+            if (teleportSecondsRemaining <= 0) {
+                tryTeleport();
 
-                    Bukkit.getServer().getScheduler().cancelTask(task);
-                }
+                Bukkit.getServer().getScheduler().cancelTask(task);
             }
         }, 20, 20);
     }

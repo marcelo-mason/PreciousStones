@@ -375,12 +375,7 @@ public class PSPlayerListener implements Listener {
 
                             if (!entry.isTeleporting()) {
                                 entry.setTeleporting(true);
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHasItems");
-                                    }
-                                }, 0);
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHasItems"), 0);
                             }
                             return;
                         }
@@ -399,12 +394,7 @@ public class PSPlayerListener implements Listener {
 
                         if (!entry.isTeleporting()) {
                             entry.setTeleporting(true);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHasItems");
-                                }
-                            }, 0);
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHasItems"), 0);
                         }
                         return;
                     }
@@ -420,12 +410,7 @@ public class PSPlayerListener implements Listener {
 
                         if (!entry.isTeleporting()) {
                             entry.setTeleporting(true);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHoldingItems");
-                                }
-                            }, 0);
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceHoldingItems"), 0);
                         }
                         return;
                     }
@@ -441,12 +426,7 @@ public class PSPlayerListener implements Listener {
 
                         if (!entry.isTeleporting()) {
                             entry.setTeleporting(true);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHoldingItems");
-                                }
-                            }, 0);
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> plugin.getTeleportationManager().teleport(player, futureField, "teleportAnnounceNotHoldingItems"), 0);
                             return;
                         }
                     }
@@ -1130,11 +1110,7 @@ public class PSPlayerListener implements Listener {
         Block block = field.getBlock();
 
         if (plugin.getForceFieldManager().isAllowed(block, player.getName()) || plugin.getSettingsManager().isPublicBlockDetails() || plugin.getPermissionsManager().has(player, "preciousstones.admin.details")) {
-            if (plugin.getCommunicationManager().showFieldDetails(player, field)) {
-                return true;
-            } else {
-                return false;
-            }
+            return plugin.getCommunicationManager().showFieldDetails(player, field);
         } else {
             plugin.getCommunicationManager().showFieldOwner(player, block);
             return false;
@@ -1322,11 +1298,9 @@ public class PSPlayerListener implements Listener {
                     }
 
                     final Field finalField = field;
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                        public void run() {
-                            plugin.getTranslocationManager().addBlock(finalField, liquid);
-                            plugin.getTranslocationManager().flashFieldBlock(finalField, player);
-                        }
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                        plugin.getTranslocationManager().addBlock(finalField, liquid);
+                        plugin.getTranslocationManager().flashFieldBlock(finalField, player);
                     }, 5);
                 }
             }
@@ -1417,12 +1391,7 @@ public class PSPlayerListener implements Listener {
         if (event.getEntity() instanceof Player) {
             final Player player = (Player) event.getEntity();
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    plugin.getEntryManager().reevaluateEnteredFields(player);
-                }
-            }, 1);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> plugin.getEntryManager().reevaluateEnteredFields(player), 1);
         }
     }
 
@@ -1433,12 +1402,7 @@ public class PSPlayerListener implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         final Player player = event.getPlayer();
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.getEntryManager().reevaluateEnteredFields(player);
-            }
-        }, 5);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> plugin.getEntryManager().reevaluateEnteredFields(player), 5);
     }
 
     /**

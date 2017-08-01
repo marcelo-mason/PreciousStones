@@ -27,9 +27,9 @@ import java.util.Map.Entry;
  */
 public final class EntryManager {
     private PreciousStones plugin;
-    private final List<Field> enteredFields = new ArrayList<Field>();
-    private final HashMap<String, EntryFields> entriesByPlayer = new HashMap<String, EntryFields>();
-    private final HashMap<String, EntryFields> dynamicEntries = new HashMap<String, EntryFields>();
+    private final List<Field> enteredFields = new ArrayList<>();
+    private final HashMap<String, EntryFields> entriesByPlayer = new HashMap<>();
+    private final HashMap<String, EntryFields> dynamicEntries = new HashMap<>();
     private int updateCount = 0;
 
     /**
@@ -219,7 +219,7 @@ public final class EntryManager {
             EntryFields ef = entriesByPlayer.get(player.getName());
 
             if (ef != null) {
-                List<Field> e = new ArrayList<Field>();
+                List<Field> e = new ArrayList<>();
                 e.addAll(ef.getFields());
                 return e;
             }
@@ -395,21 +395,18 @@ public final class EntryManager {
             final String group = field.getSettings().getGroupOnEntry();
 
             if (!field.getSettings().getGroupOnEntry().isEmpty()) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        Field sourceField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.GROUP_ON_ENTRY);
-                        boolean skip = false;
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    Field sourceField = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.GROUP_ON_ENTRY);
+                    boolean skip = false;
 
-                        if (sourceField != null) {
-                            if (sourceField.getSettings().getGroupOnEntry().equals(group)) {
-                                skip = true;
-                            }
+                    if (sourceField != null) {
+                        if (sourceField.getSettings().getGroupOnEntry().equals(group)) {
+                            skip = true;
                         }
+                    }
 
-                        if (!skip) {
-                            plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
-                        }
+                    if (!skip) {
+                        plugin.getPermissionsManager().removeGroup(player, field.getSettings().getGroupOnEntry());
                     }
                 }, 1);
             }
@@ -430,16 +427,13 @@ public final class EntryManager {
         if (FieldFlag.LEAVING_GAME_MODE.applies(field, player)) {
             final FieldSettings settings = field.getSettings();
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.ENTRY_GAME_MODE);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Field field1 = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.ENTRY_GAME_MODE);
 
-                    if (field != null) {
-                        player.setGameMode(settings.getForceEntryGameMode());
-                    } else {
-                        player.setGameMode(settings.getForceLeavingGameMode());
-                    }
+                if (field1 != null) {
+                    player.setGameMode(settings.getForceEntryGameMode());
+                } else {
+                    player.setGameMode(settings.getForceLeavingGameMode());
                 }
             }, 1);
         }
@@ -746,7 +740,7 @@ public final class EntryManager {
      * @return
      */
     public HashSet<String> getInhabitants(Field field) {
-        HashSet<String> inhabitants = new HashSet<String>();
+        HashSet<String> inhabitants = new HashSet<>();
 
         synchronized (entriesByPlayer) {
             for (Entry<String, EntryFields> playerEntry : entriesByPlayer.entrySet()) {
@@ -833,36 +827,34 @@ public final class EntryManager {
 
         for (final Player player : inhabitants) {
             if (player != null) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                    public void run() {
-                        if (field.isDisabled()) {
-                            if (FieldFlag.POTIONS.applies(field, player)) {
-                                plugin.getPotionManager().removePotions(player, field);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    if (field.isDisabled()) {
+                        if (FieldFlag.POTIONS.applies(field, player)) {
+                            plugin.getPotionManager().removePotions(player, field);
                                 plugin.getPotionManager().removeEffectFromFieldEntities(field);
-                            }
-
-                            if (FieldFlag.CONFISCATE_ITEMS.applies(field, player)) {
-                                plugin.getConfiscationManager().returnItems(player);
-                            }
-                        } else {
-                            if (FieldFlag.LAUNCH.applies(field, player)) {
-                                plugin.getVelocityManager().launchPlayer(player, field);
-                            }
-
-                            if (FieldFlag.CANNON.applies(field, player)) {
-                                plugin.getVelocityManager().shootPlayer(player, field);
-                            }
-
-                            if (FieldFlag.POTIONS.applies(field, player)) {
-                                plugin.getPotionManager().applyPotions(player, field);
-                                plugin.getPotionManager().addEffectToFieldEntities(field);
-                            }
-
-                            if (FieldFlag.CONFISCATE_ITEMS.applies(field, player)) {
-                                plugin.getConfiscationManager().confiscateItems(field, player);
-                            }
-
                         }
+
+                        if (FieldFlag.CONFISCATE_ITEMS.applies(field, player)) {
+                            plugin.getConfiscationManager().returnItems(player);
+                        }
+                    } else {
+                        if (FieldFlag.LAUNCH.applies(field, player)) {
+                            plugin.getVelocityManager().launchPlayer(player, field);
+                        }
+
+                        if (FieldFlag.CANNON.applies(field, player)) {
+                            plugin.getVelocityManager().shootPlayer(player, field);
+                        }
+
+                        if (FieldFlag.POTIONS.applies(field, player)) {
+                            plugin.getPotionManager().applyPotions(player, field);
+                                plugin.getPotionManager().addEffectToFieldEntities(field);
+                        }
+
+                        if (FieldFlag.CONFISCATE_ITEMS.applies(field, player)) {
+                            plugin.getConfiscationManager().confiscateItems(field, player);
+                        }
+
                     }
                 }, 0);
             }

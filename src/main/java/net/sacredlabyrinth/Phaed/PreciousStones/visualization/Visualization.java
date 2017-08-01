@@ -12,9 +12,9 @@ import java.util.List;
  * @author phaed
  */
 public class Visualization {
-    private List<BlockEntry> blocks = new ArrayList<BlockEntry>();
-    private List<BlockEntry> outlineBlocks = new ArrayList<BlockEntry>();
-    private List<Field> fields = new ArrayList<Field>();
+    private List<BlockEntry> blocks = new ArrayList<>();
+    private List<BlockEntry> outlineBlocks = new ArrayList<>();
+    private List<Field> fields = new ArrayList<>();
 
     /**
      * @param block
@@ -60,7 +60,7 @@ public class Visualization {
      * @return the fields
      */
     public List<Field> getFields() {
-        List<Field> f = new ArrayList<Field>();
+        List<Field> f = new ArrayList<>();
         f.addAll(fields);
         return f;
     }

@@ -28,6 +28,7 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -146,10 +147,7 @@ public final class PermissionsManager {
         if (!wm.canBuild(player, loc)) {
             return false;
         }
-        if (!rm.canBuild(player, loc)) {
-            return false;
-        }
-        return true;
+        return rm.canBuild(player, loc);
     }
 
     public boolean canBuildField(Player player, Block block, FieldSettings fs) {
@@ -159,10 +157,7 @@ public final class PermissionsManager {
         if (!wm.canBuildField(player, block, fs)) {
             return false;
         }
-        if (!rm.canBuildField(player, block, fs)) {
-            return false;
-        }
-        return true;
+        return rm.canBuildField(player, block, fs);
     }
 
     /**
@@ -234,10 +229,7 @@ public final class PermissionsManager {
             } else if (permission != null) {
                 return permission.playerInGroup(world, playerName, group);
             } else if (handler != null) {
-                if (handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group)) {
-                    return true;
-                }
-                return false;
+                return handler.getGroup(world.getName(), playerName).equalsIgnoreCase(group);
             }
         } catch (Exception ex) {
             // no group support
@@ -253,7 +245,7 @@ public final class PermissionsManager {
      * @return
      */
     public List<String> getGroups(String worldName, String playerName) {
-        List<String> groups = new ArrayList<String>();
+        List<String> groups = new ArrayList<>();
 
         try {
             if (pex != null) {
@@ -262,9 +254,7 @@ public final class PermissionsManager {
                 if (user != null) {
                     String[] pexGroups = user.getGroupsNames();
 
-                    for (String g : pexGroups) {
-                        groups.add(g);
-                    }
+                    Collections.addAll(groups, pexGroups);
                 }
             } else if (pbukkit != null) {
                 List<Group> gs = pbukkit.getGroups(playerName);
@@ -279,9 +269,7 @@ public final class PermissionsManager {
                 if (world != null) {
                     String[] groupList = permission.getPlayerGroups(world, playerName);
 
-                    for (String g : groupList) {
-                        groups.add(g);
-                    }
+                    Collections.addAll(groups, groupList);
                 }
             } else if (handler != null) {
                 @SuppressWarnings("deprecation") String group = handler.getGroup(worldName, playerName);
@@ -343,10 +331,7 @@ public final class PermissionsManager {
      * @return
      */
     public boolean hasEconomy() {
-        if (economy != null && economy.isEnabled()) {
-            return true;
-        }
-        return false;
+        return economy != null && economy.isEnabled();
     }
 
     /**

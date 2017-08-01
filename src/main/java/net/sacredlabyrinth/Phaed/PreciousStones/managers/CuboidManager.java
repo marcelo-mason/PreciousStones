@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CuboidManager {
     private PreciousStones plugin;
-    private HashMap<String, CuboidEntry> openCuboids = new HashMap<String, CuboidEntry>();
+    private HashMap<String, CuboidEntry> openCuboids = new HashMap<>();
 
     /**
      *
@@ -185,19 +185,17 @@ public class CuboidManager {
         field.setOpen(true);
         plugin.getVisualizationManager().revert(player);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-            public void run() {
-                ce.addSelected(field.getBlock());
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            ce.addSelected(field.getBlock());
 
-                for (Field child : field.getChildren()) {
-                    ce.addSelected(child.getBlock());
-                }
-
-                plugin.getVisualizationManager().displayFieldOutline(player, ce);
-
-                ChatHelper.send(player, "cuboidDrawingMode");
-                ChatHelper.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
+            for (Field child : field.getChildren()) {
+                ce.addSelected(child.getBlock());
             }
+
+            plugin.getVisualizationManager().displayFieldOutline(player, ce);
+
+            ChatHelper.send(player, "cuboidDrawingMode");
+            ChatHelper.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
         }, 1L);
     }
 
@@ -211,12 +209,10 @@ public class CuboidManager {
         final CuboidEntry ce = openCuboids.get(player.getName());
 
         if (ce != null) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    ce.addSelected(field.getBlock());
-                    PreciousStones.getInstance().getForceFieldManager().addSourceField(field);
-                    ChatHelper.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
-                }
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                ce.addSelected(field.getBlock());
+                PreciousStones.getInstance().getForceFieldManager().addSourceField(field);
+                ChatHelper.send(player, "cuboidAvailableProtection", ce.getAvailableVolume());
             }, 1L);
         }
     }

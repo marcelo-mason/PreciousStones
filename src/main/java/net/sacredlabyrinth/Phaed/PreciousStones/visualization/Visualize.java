@@ -16,7 +16,7 @@ import java.util.Queue;
  */
 public class Visualize implements Runnable {
     private PreciousStones plugin;
-    private Queue<BlockEntry> visualizationQueue = new LinkedList<BlockEntry>();
+    private Queue<BlockEntry> visualizationQueue = new LinkedList<>();
     private final int timerID;
     private final Player player;
     private final boolean reverting;
@@ -56,11 +56,7 @@ public class Visualize implements Runnable {
 
             if (!reverting) {
                 if (!skipRevert) {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                        public void run() {
-                            plugin.getVisualizationManager().revert(player);
-                        }
-                    }, 20L * seconds);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> plugin.getVisualizationManager().revert(player), 20L * seconds);
                 }
             }
         }

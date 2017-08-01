@@ -20,11 +20,10 @@ import java.util.regex.Pattern;
 public class ChatHelper {
     private final int colspacing = 12;
     private static final int lineLength = 320;
-    private List<Double> columnSizes = new ArrayList<Double>();
-    private List<Integer> columnSpaces = new ArrayList<Integer>();
-    private List<String> columnAlignments = new ArrayList<String>();
-    private LinkedList<String[]> rows = new LinkedList<String[]>();
-    private boolean prefix_used = false;
+    private List<Double> columnSizes = new ArrayList<>();
+    private List<Integer> columnSpaces = new ArrayList<>();
+    private List<String> columnAlignments = new ArrayList<>();
+    private LinkedList<String[]> rows = new LinkedList<>();
     private String color = "";
     /**
      *
@@ -74,7 +73,7 @@ public class ChatHelper {
      * @param contents
      */
     public void addRow(String... contents) {
-        List<String> out = new ArrayList<String>();
+        List<String> out = new ArrayList<>();
 
         for (String content : contents) {
             out.add(format(content));
@@ -207,7 +206,7 @@ public class ChatHelper {
             return;
         }
 
-        prefix_used = prefix == null;
+        boolean prefix_used = prefix == null;
 
         String empty_prefix = ChatHelper.makeEmpty(prefix);
 
@@ -284,16 +283,6 @@ public class ChatHelper {
      */
     public void sendBlock(CommandSender sender) {
         sendBlock(sender, null);
-    }
-
-    /**
-     * Outputs a message to everybody
-     *
-     * @param sender
-     * @param msg
-     */
-    public static void sendMessageAll(CommandSender sender, String msg) {
-        sendMessageAll(sender, msg);
     }
 
     /**
@@ -514,12 +503,12 @@ public class ChatHelper {
     public static String[] wordWrap(String msg, int prefixLn) {
         // Split each word apart
 
-        ArrayList<String> split = new ArrayList<String>();
+        ArrayList<String> split = new ArrayList<>();
         split.addAll(Arrays.asList(msg.split(" ")));
 
         // Create an array list for the output
 
-        ArrayList<String> out = new ArrayList<String>();
+        ArrayList<String> out = new ArrayList<>();
 
         // While i is less than the length of the array of words
 
@@ -528,7 +517,7 @@ public class ChatHelper {
 
             // Create an array list to hold individual words
 
-            ArrayList<String> words = new ArrayList<String>();
+            ArrayList<String> words = new ArrayList<>();
 
             // Loop through the words finding their length and increasing
             // j, the end point for the sub string
