@@ -91,6 +91,7 @@ public enum FieldFlag {
     CAN_CHANGE_OWNER,
     PLOT,
     POTIONS,
+    POTION_IGNORE_PLAYER,
     NEUTRALIZE_POTIONS,
     SNEAK_TO_PLACE,
     NO_FALL_DAMAGE,

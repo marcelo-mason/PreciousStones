@@ -194,6 +194,7 @@ public final class EntryManager {
                         if (!hasPotion) {
                             if (FieldFlag.POTIONS.applies(field, player)) {
                                 plugin.getPotionManager().applyPotions(player, field);
+                                plugin.getPotionManager().addEffectToFieldEntities(field);
                                 hasPotion = true;
                             }
                         }
@@ -837,6 +838,7 @@ public final class EntryManager {
                         if (field.isDisabled()) {
                             if (FieldFlag.POTIONS.applies(field, player)) {
                                 plugin.getPotionManager().removePotions(player, field);
+                                plugin.getPotionManager().removeEffectFromFieldEntities(field);
                             }
 
                             if (FieldFlag.CONFISCATE_ITEMS.applies(field, player)) {
@@ -853,11 +855,13 @@ public final class EntryManager {
 
                             if (FieldFlag.POTIONS.applies(field, player)) {
                                 plugin.getPotionManager().applyPotions(player, field);
+                                plugin.getPotionManager().addEffectToFieldEntities(field);
                             }
 
                             if (FieldFlag.CONFISCATE_ITEMS.applies(field, player)) {
                                 plugin.getConfiscationManager().confiscateItems(field, player);
                             }
+
                         }
                     }
                 }, 0);

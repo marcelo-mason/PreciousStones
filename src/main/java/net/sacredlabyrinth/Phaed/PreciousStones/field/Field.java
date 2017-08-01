@@ -242,6 +242,17 @@ public class Field extends AbstractVec implements Comparable<Field> {
     }
 
     /**
+     * Returns the longest size of the field
+     *
+     * @return
+     */
+    public int getLongestSide() {
+        int widthX = Helper.getWidthFromCoords(maxx, minx);
+        int widthZ = Helper.getWidthFromCoords(maxz, minz);
+        return Math.max(widthX, widthZ);
+    }
+
+    /**
      * @param radius
      */
     public void setRadius(int radius) {

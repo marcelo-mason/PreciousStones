@@ -34,6 +34,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * PreciousStones entity listener
@@ -177,6 +178,12 @@ public class PSEntityListener implements Listener {
             if (field != null) {
                 event.setCancelled(true);
             }
+        }
+
+        Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.POTIONS);
+        if (field != null) {
+            Stream<String> types = field.getSettings().getPotionTargets().stream();
+            plugin.getPotionManager().addEffectToEntity(field, event.getEntity(), types);
         }
     }
 

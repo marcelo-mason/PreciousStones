@@ -106,6 +106,7 @@ public class FieldSettings {
     protected List<PotionEffectType> neutralizePotions = new ArrayList<PotionEffectType>();
     protected List<String> allowedPlayers = new ArrayList<String>();
     protected List<String> deniedPlayers = new ArrayList<String>();
+    protected List<String> potionTargets = new ArrayList<String>();
     protected LinkedHashMap<String, Object> map;
 
     /**
@@ -323,6 +324,7 @@ public class FieldSettings {
         loadBoolean("rentable");
         loadBoolean("command-blacklisting");
         loadBoolean("anti-plot");
+        loadBoolean("potion-ignore-player");
 
         metaAutoSet = loadBoolean("meta-autoset");
         metaName = loadString("meta-name");
@@ -397,6 +399,7 @@ public class FieldSettings {
         fenceItem = loadInt("fence-on-place");
         fenceItemPrice = loadInt("price-per-fence");
         rentsLimit = loadInt("rents-limit");
+        potionTargets = loadStringList("potion-targets");
     }
 
     protected boolean loadBoolean(String flagStr) {
@@ -1414,5 +1417,9 @@ public class FieldSettings {
 
     public int getRentsLimit() {
         return rentsLimit;
+    }
+
+    public List<String> getPotionTargets() {
+        return potionTargets;
     }
 }
