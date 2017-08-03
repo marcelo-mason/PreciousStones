@@ -257,7 +257,6 @@ public final class SettingsManager {
 
         // ********************************** Settings
 
-        disableMessages = loadBoolean("settings.disable-messages");
         warAllow = loadBoolean("settings.allow-waring-clans-into-protections");
         preventRemovalIfPlayerInField = loadBoolean("settings.prevent-removal-if-player-in-field");
         commandsToRentBuy = loadBoolean("settings.use-commands-to-rent");
@@ -822,19 +821,19 @@ public final class SettingsManager {
      */
     public FieldSettings getFieldSettings(String name) {
         for (FieldSettings fs : fieldDefinitions.values()) {
-            if (fs.getTitle().equals(name)) {
+            if (fs.getTitle().equalsIgnoreCase(name)) {
                 return fs;
             }
         }
 
         for (FieldSettings fs : fieldDefinitions.values()) {
-            if (fs.getTitle().startsWith(name)) {
+            if (fs.getTitle().toLowerCase().startsWith(name.toLowerCase())) {
                 return fs;
             }
         }
 
         for (FieldSettings fs : fieldDefinitions.values()) {
-            if (fs.getTitle().contains(name)) {
+            if (fs.getTitle().toLowerCase().contains(name.toLowerCase())) {
                 return fs;
             }
         }
@@ -1474,10 +1473,6 @@ public final class SettingsManager {
 
     public void setWarAllow(boolean warAllow) {
         this.warAllow = warAllow;
-    }
-
-    public boolean isDisableMessages() {
-        return disableMessages;
     }
 
     public int getMaxTargetDistance() {

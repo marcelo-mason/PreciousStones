@@ -175,7 +175,6 @@ public class PreciousStones extends JavaPlugin {
 
         registerEvents();
         registerCommands();
-        pullMessages();
     }
 
     private void displayStatusInfo() {
@@ -219,26 +218,6 @@ public class PreciousStones extends JavaPlugin {
 
         PreciousStones.log("Shutting Down: Closing db connection...");
         getStorageManager().closeConnection();
-    }
-
-    public void pullMessages() {
-        if (getSettingsManager().isDisableMessages()) {
-            return;
-        }
-
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(new URL("https://minecraftcubed.net/pluginmessage/").openStream(), StandardCharsets.UTF_8));
-
-            String message;
-            while ((message = in.readLine()) != null) {
-                messages.add(message);
-                getServer().getConsoleSender().sendMessage(ChatColor.YELLOW + message);
-            }
-            in.close();
-
-        } catch (IOException e) {
-            // do nothing
-        }
     }
 
     /**

@@ -493,6 +493,67 @@ unprotectable-blocks: []
 hiding-mask-blocks: [1,2,3,4,5,7,12,13,17,18,20,24,35,43,45,47,48,49,53,60,67,80,81,82,87,88,89,99,100,108,109,110,123,124,125,128,134,135,136]
 repairable-items: [256,257,258,259,261,267,268,269,270,271,272,273,274,275,276,277,278,279,283,284,285,286,290,291,292,293,294,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,346,359]
 tool-items: [256,257,258,269,270,271,273,274,275,277,278,279,284,285,286,290,291,292,293,294]
+settings:
+  auto-allow-clan-on-fields: true
+  auto-allow-team-on-fields: false
+  blacklisted-worlds: [creative_world]
+  check-once-per-block-on-move: false
+  default-item-currency: '266'
+  disable-alerts-for-admins: true
+  disable-bypass-alerts-for-admins: false
+  disable-field-break-while-creative: false
+  disable-field-place-while-creative: false
+  disable-ground-info: false
+  disable-simpleclans-hook: false
+  drop-on-delete: true
+  fence-max-depth: 50
+  global-field-limit: 1000000
+  lines-per-page: 100
+  max-size-translocation-for-redstone: 1000
+  max-size-translocation: 100000
+  max-target-distance: 100
+  no-refund-for-fields: false
+  off-by-default: false
+  prevent-breaking-hidden: false
+  prevent-destroy-everywhere: [creative_world]
+  prevent-place-everywhere: [creative_world]
+  prevent-removal-if-player-in-field: true
+  public-block-details: false
+  show-debug-info: false
+  show-default-welcome-farewell-messages: true
+  sneak-to-place-field: false
+  sneak-to-place-normal-block: true
+  use-blockids-in-snitches: false
+  use-commands-to-rent: true
+  version: 14
+log:
+  bypass-pvp: true
+  pvp: true
+  bypass-destroy: true
+  use: true
+  fire: true
+  destroy: true
+  destroy-area: false
+  place-area: false
+  entry: true
+  unprotectable: true
+  bypass-place: true
+  place: true
+  translocation: true
+  rollback: true
+  bypass-delete: true
+  conflict-place: true
+  rents-and-purchases: true
+notify:
+  destroy: true
+  bypass-pvp: true
+  bypass-destroy: true
+  bypass-unprotectable: true
+  bypass-place: true
+  place: true
+  rollback: true
+  translocation: true
+  fly-zones: true
 warn:
   slow-damage: true
   pvp: true
@@ -512,57 +573,6 @@ warn:
   mine: true
   slow-repair: true
   place: true
-settings:
-  disable-field-break-while-creative: false
-  disable-messages: false
-  prevent-removal-if-player-in-field: true
-  max-size-translocation: 100000
-  max-size-translocation-for-redstone: 1000
-  prevent-place-everywhere: [creative_world]
-  prevent-destroy-everywhere: [creative_world]
-  sneak-to-place-normal-block: true
-  sneak-to-place-field: false
-  show-debug-info: false
-  show-default-welcome-farewell-messages: true
-  disable-ground-info: false
-  disable-simpleclans-hook: false
-  global-field-limit: 1000000
-  no-refund-for-fields: false
-  off-by-default: false
-  lines-per-page: 100
-  disable-bypass-alerts-for-admins: false
-  disable-alerts-for-admins: true
-  public-block-details: false
-  blacklisted-worlds: [creative_world]
-  drop-on-delete: true
-  auto-allow-clan-on-fields: true
-  auto-allow-team-on-fields: false
-  check-once-per-block-on-move: false
-  use-blockids-in-snitches: false
-  fence-max-depth: 50
-  use-commands-to-rent: true
-  max-target-distance: 100
-  version: 14
-  default-item-currency: '266'
-  prevent-breaking-hidden: false
-log:
-  bypass-pvp: true
-  pvp: true
-  bypass-destroy: true
-  use: true
-  fire: true
-  destroy: true
-  destroy-area: false
-  place-area: false
-  entry: true
-  unprotectable: true
-  bypass-place: true
-  place: true
-  translocation: true
-  rollback: true
-  bypass-delete: true
-  conflict-place: true
-  rents-and-purchases: true
 cuboid:
   visualization-blocktype: glass
   defining-blocktype: obsidian
@@ -578,16 +588,6 @@ visualization:
   default-density: 8
   max-fields-to-visualize-at-once: 5
   visualize-on-expand: true
-notify:
-  destroy: true
-  bypass-pvp: true
-  bypass-destroy: true
-  bypass-unprotectable: true
-  bypass-place: true
-  place: true
-  rollback: true
-  translocation: true
-  fly-zones: true
 grief-revert:
   min-interval-secs: 30
   black-list:
