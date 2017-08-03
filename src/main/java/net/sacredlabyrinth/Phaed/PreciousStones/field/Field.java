@@ -935,6 +935,9 @@ public class Field extends AbstractVec implements Comparable<Field> {
         for (FieldFlag flag : settings.getDefaultFlags()) {
             flags.addFlag(flag);
         }
+        for (FieldFlag flag : settings.getDisabledFlags()) {
+            flags.addDisabledFlag(flag);
+        }
         this.settings = settings;
     }
 

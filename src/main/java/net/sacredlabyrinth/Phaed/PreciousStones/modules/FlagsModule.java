@@ -31,6 +31,10 @@ public class FlagsModule {
     public void addFlag(FieldFlag flag) {
         flags.add(flag);
     }
+    public void addDisabledFlag(FieldFlag flag) {
+        flags.remove(flag);
+        disabledFlags.add(flag);
+    }
 
     /**
      * Check if the field has certain certain properties
