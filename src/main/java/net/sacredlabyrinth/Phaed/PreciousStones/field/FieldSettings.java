@@ -442,8 +442,8 @@ public class FieldSettings {
 
     protected double loadDouble(String flagStr) {
         if (containsKey(flagStr)) {
-            if (Helper.isDouble(getValue(flagStr))) {
-                double value = (Double) getValue(flagStr);
+            if (Helper.isDouble(getValue(flagStr)) || Helper.isInteger(getValue(flagStr))) {
+                double value = ((Number) getValue(flagStr)).doubleValue();
 
                 loadFlags(getKey(flagStr));
 
@@ -1389,11 +1389,7 @@ public class FieldSettings {
         List<Field> playerFields = PreciousStones.getInstance().getForceFieldManager().getPlayerFields(player.getName(), this.getTypeEntry());
         int count = playerFields.size();
 
-        if (count == 0 || priceMultiplier == 0) {
-            return price;
-        } else {
-            return (int) (price * priceMultiplier * count);
-        }
+        return getMultipliedPrice(count);
     }
 
     /**
@@ -1403,8 +1399,18 @@ public class FieldSettings {
         List<Field> playerFields = PreciousStones.getInstance().getForceFieldManager().getPlayerFields(player.getName(), this.getTypeEntry());
         int count = playerFields.size() - 1;
 
-        if (count <= 0 || priceMultiplier == 0) {
+        return getMultipliedPrice(count);
+    }
+
+    private int getMultipliedPrice(int count){
+        if (count <= 0) {
             return price;
+        }
+
+        if (priceMultiplier == 0) {
+            return price;
+        } else if (priceMultiplier == 1) {
+            return (int) (price * priceMultiplier * (count + 1));
         } else {
             return (int) (price * priceMultiplier * count);
         }
