@@ -1409,6 +1409,8 @@ public class FieldSettings {
 
         if (priceMultiplier == 0) {
             return price;
+        } else if (priceMultiplier < 1) {
+            return (int) (price * priceMultiplier * (count + 2));
         } else if (priceMultiplier == 1) {
             return (int) (price * priceMultiplier * (count + 1));
         } else {
