@@ -111,6 +111,7 @@ public class FieldSettings {
     protected List<String> potionTargets = new ArrayList<>();
     protected LinkedHashMap<String, Object> map;
     private Set<FieldSettings> mergedFields = new HashSet<>();
+    private double priceMultiplier = 0;
 
     /**
      * @param map
@@ -403,6 +404,7 @@ public class FieldSettings {
         fenceItemPrice = loadInt("price-per-fence");
         rentsLimit = loadInt("rents-limit");
         potionTargets = loadStringList("potion-targets");
+        priceMultiplier = loadDouble("price-multiplier");
     }
 
     protected boolean loadBoolean(String flagStr) {
@@ -436,6 +438,21 @@ public class FieldSettings {
             PreciousStones.debug("   %s: *bad*", flagStr);
         }
         return defaultValue;
+    }
+
+    protected double loadDouble(String flagStr) {
+        if (containsKey(flagStr)) {
+            if (Helper.isDouble(getValue(flagStr))) {
+                double value = (Double) getValue(flagStr);
+
+                loadFlags(getKey(flagStr));
+
+                PreciousStones.debug("   %s: %s", flagStr, value);
+                return value;
+            }
+            PreciousStones.debug("   %s: *bad*", flagStr);
+        }
+        return 0;
     }
 
     protected String loadString(String flagStr) {
@@ -1012,10 +1029,12 @@ public class FieldSettings {
             if (flag.equals(FieldFlag.MINE)) {
                 this.mineDelaySeconds = fs.mineDelaySeconds;
                 this.mineHasFire = fs.mineHasFire;
-                if (this.mine > 0) {
-                    this.mine = (this.mine + fs.mine) / 2;
-                } else {
-                    this.mine = fs.mine;
+                if (fs.mine > 0) {
+                    if (this.mine > 0) {
+                        this.mine = (this.mine + fs.mine) / 2;
+                    } else {
+                        this.mine = fs.mine;
+                    }
                 }
             }
             if (flag.equals(FieldFlag.LIGHTNING)) {
@@ -1023,25 +1042,33 @@ public class FieldSettings {
                 this.lightningDelaySeconds = fs.lightningDelaySeconds;
             }
             if (flag.equals(FieldFlag.FORESTER)) {
-                if (this.treeCount > 0) {
-                    this.treeCount = (this.treeCount + fs.treeCount) / 2;
-                } else {
-                    this.treeCount = fs.treeCount;
+                if (fs.treeCount > 0) {
+                    if (this.treeCount > 0) {
+                        this.treeCount = (this.treeCount + fs.treeCount) / 2;
+                    } else {
+                        this.treeCount = fs.treeCount;
+                    }
                 }
-                if (this.shrubDensity > 0) {
-                    this.shrubDensity = (this.shrubDensity + fs.shrubDensity) / 2;
-                } else {
-                    this.shrubDensity = fs.shrubDensity;
+                if (fs.shrubDensity > 0) {
+                    if (this.shrubDensity > 0) {
+                        this.shrubDensity = (this.shrubDensity + fs.shrubDensity) / 2;
+                    } else {
+                        this.shrubDensity = fs.shrubDensity;
+                    }
                 }
-                if (this.creatureCount > 0) {
-                    this.creatureCount = (this.creatureCount + fs.creatureCount) / 2;
-                } else {
-                    this.creatureCount = fs.creatureCount;
+                if (fs.creatureCount > 0) {
+                    if (this.creatureCount > 0) {
+                        this.creatureCount = (this.creatureCount + fs.creatureCount) / 2;
+                    } else {
+                        this.creatureCount = fs.creatureCount;
+                    }
                 }
-                if (this.growTime > 0) {
-                    this.growTime = (this.growTime + fs.growTime) / 2;
-                } else {
-                    this.growTime = fs.growTime;
+                if (fs.growTime > 0) {
+                    if (this.growTime > 0) {
+                        this.growTime = (this.growTime + fs.growTime) / 2;
+                    } else {
+                        this.growTime = fs.growTime;
+                    }
                 }
                 this.groundBlock = fs.groundBlock;
                 Helper.addUnique(this.treeTypes, fs.treeTypes);
@@ -1063,57 +1090,71 @@ public class FieldSettings {
             Helper.addUnique(this.preventDestroyBlacklist, fs.preventDestroyBlacklist);
             Helper.addUnique(this.allowedOnlyInside, fs.allowedOnlyInside);
             Helper.addUnique(this.allowedOnlyOutside, fs.allowedOnlyOutside);
-            if (this.heal > 0) {
-                this.heal = (this.heal + fs.heal) / 2;
-            } else {
-                this.heal = fs.heal;
+            if (fs.heal > 0) {
+                if (this.heal > 0) {
+                    this.heal = (this.heal + fs.heal) / 2;
+                } else {
+                    this.heal = fs.heal;
+                }
             }
-            if (this.feed > 0) {
-                this.feed = (this.feed + fs.feed) / 2;
-            } else {
-                this.feed = fs.feed;
+            if (fs.feed > 0) {
+                if (this.feed > 0) {
+                    this.feed = (this.feed + fs.feed) / 2;
+                } else {
+                    this.feed = fs.feed;
+                }
             }
-            if (this.repair > 0) {
-                this.repair = (this.repair + fs.repair) / 2;
-            } else {
-                this.repair = fs.repair;
+            if (fs.repair > 0) {
+                if (this.repair > 0) {
+                    this.repair = (this.repair + fs.repair) / 2;
+                } else {
+                    this.repair = fs.repair;
+                }
             }
-            if (this.damage > 0) {
-                this.damage = (this.damage + fs.damage) / 2;
-            } else {
-                this.damage = fs.damage;
-            }
-            if (this.damage > 0) {
-                this.damage = (this.damage + fs.damage) / 2;
-            } else {
-                this.damage = fs.damage;
+            if (fs.damage > 0) {
+                if (this.damage > 0) {
+                    this.damage = (this.damage + fs.damage) / 2;
+                } else {
+                    this.damage = fs.damage;
+                }
             }
             this.maskOnEnabled = this.maskOnEnabled | fs.maskOnEnabled;
             this.maskOnDisabled = this.maskOnDisabled | fs.maskOnDisabled;
-            if (this.griefRevertInterval > 0) {
-                this.griefRevertInterval = (this.griefRevertInterval + fs.griefRevertInterval) / 2;
-            } else {
-                this.griefRevertInterval = fs.griefRevertInterval;
+
+            if (fs.griefRevertInterval > 0) {
+                if (this.griefRevertInterval > 0) {
+                    this.griefRevertInterval = (this.griefRevertInterval + fs.griefRevertInterval) / 2;
+                } else {
+                    this.griefRevertInterval = fs.griefRevertInterval;
+                }
             }
+
             Helper.addUnique(this.playerCommandOnEnter, fs.playerCommandOnEnter);
             Helper.addUnique(this.playerCommandOnExit, fs.playerCommandOnExit);
             Helper.addUnique(this.commandOnEnter, fs.commandOnEnter);
             Helper.addUnique(this.commandOnExit, fs.commandOnExit);
             Helper.addUnique(this.commandBlackList, fs.commandBlackList);
-            if (this.teleportCost > 0) {
-                this.teleportCost = (this.teleportCost + fs.teleportCost) / 2;
-            } else {
-                this.teleportCost = fs.teleportCost;
+
+            if (fs.teleportCost > 0) {
+                if (this.teleportCost > 0) {
+                    this.teleportCost = (this.teleportCost + fs.teleportCost) / 2;
+                } else {
+                    this.teleportCost = fs.teleportCost;
+                }
             }
-            if (this.teleportBackAfterSeconds > 0) {
-                this.teleportBackAfterSeconds = (this.teleportBackAfterSeconds + fs.teleportBackAfterSeconds) / 2;
-            } else {
-                this.teleportBackAfterSeconds = fs.teleportBackAfterSeconds;
+            if (fs.teleportBackAfterSeconds > 0) {
+                if (this.teleportBackAfterSeconds > 0) {
+                    this.teleportBackAfterSeconds = (this.teleportBackAfterSeconds + fs.teleportBackAfterSeconds) / 2;
+                } else {
+                    this.teleportBackAfterSeconds = fs.teleportBackAfterSeconds;
+                }
             }
-            if (this.teleportMaxDistance > 0) {
-                this.teleportMaxDistance = (this.teleportMaxDistance + fs.teleportMaxDistance) / 2;
-            } else {
-                this.teleportMaxDistance = fs.teleportMaxDistance;
+            if (fs.teleportMaxDistance > 0) {
+                if (this.teleportMaxDistance > 0) {
+                    this.teleportMaxDistance = (this.teleportMaxDistance + fs.teleportMaxDistance) / 2;
+                } else {
+                    this.teleportMaxDistance = fs.teleportMaxDistance;
+                }
             }
             Helper.addUnique(this.teleportIfWalkingOn, fs.teleportIfWalkingOn);
             Helper.addUnique(this.teleportIfNotWalkingOn, fs.teleportIfNotWalkingOn);
@@ -1121,33 +1162,52 @@ public class FieldSettings {
             Helper.addUnique(this.teleportIfNotHoldingItems, fs.teleportIfNotHoldingItems);
             Helper.addUnique(this.teleportIfHasItems, fs.teleportIfHasItems);
             Helper.addUnique(this.teleportIfNotHasItems, fs.teleportIfNotHasItems);
-            if (this.mustBeAbove > 0) {
-                this.mustBeAbove = (this.mustBeAbove + fs.mustBeAbove) / 2;
-            } else {
-                this.mustBeAbove = fs.mustBeAbove;
+            if (fs.mustBeAbove > 0) {
+                if (this.mustBeAbove > 0) {
+                    this.mustBeAbove = (this.mustBeAbove + fs.mustBeAbove) / 2;
+                } else {
+                    this.mustBeAbove = fs.mustBeAbove;
+                }
             }
-            if (this.mustBeBelow > 0) {
-                this.mustBeBelow = (this.mustBeBelow + fs.mustBeBelow) / 2;
-            } else {
-                this.mustBeBelow = fs.mustBeBelow;
+            if (fs.mustBeBelow > 0) {
+                if (this.mustBeBelow > 0) {
+                    this.mustBeBelow = (this.mustBeBelow + fs.mustBeBelow) / 2;
+                } else {
+                    this.mustBeBelow = fs.mustBeBelow;
+                }
             }
-            if (this.payToEnable > 0) {
-                this.payToEnable = (this.payToEnable + fs.payToEnable) / 2;
-            } else {
-                this.payToEnable = fs.payToEnable;
+            if (fs.payToEnable > 0) {
+                if (this.payToEnable > 0) {
+                    this.payToEnable = (this.payToEnable + fs.payToEnable) / 2;
+                } else {
+                    this.payToEnable = fs.payToEnable;
+                }
             }
-            if (this.fenceItem > 0) {
-                this.fenceItem = fs.fenceItem;
+            if (fs.fenceItem > 0) {
+                if (this.fenceItem > 0) {
+                    this.fenceItem = fs.fenceItem;
+                }
             }
-            if (this.fenceItemPrice > 0) {
-                this.fenceItemPrice = (this.fenceItemPrice + fs.fenceItemPrice) / 2;
-            } else {
-                this.fenceItemPrice = fs.fenceItemPrice;
+            if (fs.fenceItemPrice > 0) {
+                if (this.fenceItemPrice > 0) {
+                    this.fenceItemPrice = (this.fenceItemPrice + fs.fenceItemPrice) / 2;
+                } else {
+                    this.fenceItemPrice = fs.fenceItemPrice;
+                }
             }
-            if (this.rentsLimit > 0) {
-                this.rentsLimit = (this.rentsLimit + fs.rentsLimit) / 2;
-            } else {
-                this.rentsLimit = fs.rentsLimit;
+            if (fs.rentsLimit > 0) {
+                if (this.rentsLimit > 0) {
+                    this.rentsLimit = (this.rentsLimit + fs.rentsLimit) / 2;
+                } else {
+                    this.rentsLimit = fs.rentsLimit;
+                }
+            }
+            if (fs.priceMultiplier > 0) {
+                if (this.priceMultiplier > 0) {
+                    this.priceMultiplier = (this.priceMultiplier + fs.priceMultiplier) / 2;
+                } else {
+                    this.priceMultiplier = fs.priceMultiplier;
+                }
             }
             Helper.addUnique(this.potionTargets, fs.potionTargets);
         }
@@ -1323,6 +1383,34 @@ public class FieldSettings {
     }
 
     /**
+     * @return the price multiplied by price-multiplier
+     */
+    public int getMultipliedPrice(Player player) {
+        List<Field> playerFields = PreciousStones.getInstance().getForceFieldManager().getPlayerFields(player.getName(), this.getTypeEntry());
+        int count = playerFields.size();
+
+        if (count == 0 || priceMultiplier == 0) {
+            return price;
+        } else {
+            return (int) (price * priceMultiplier * count);
+        }
+    }
+
+    /**
+     * @return the refund price multiplied by price-multiplier
+     */
+    public int getMultipliedRefundPrice(Player player) {
+        List<Field> playerFields = PreciousStones.getInstance().getForceFieldManager().getPlayerFields(player.getName(), this.getTypeEntry());
+        int count = playerFields.size() - 1;
+
+        if (count <= 0 || priceMultiplier == 0) {
+            return price;
+        } else {
+            return (int) (price * priceMultiplier * count);
+        }
+    }
+
+    /**
      * @return the validField
      */
     public boolean isValidField() {
@@ -1456,14 +1544,14 @@ public class FieldSettings {
         return requiredPermissionUse;
     }
 
-    public int getRefund() {
+    public int getRefund(Player player) {
         int refunded = -1;
 
         if (refund > -1) {
             refunded = refund;
         } else {
             if (price > 0) {
-                refunded = price;
+                refunded = getMultipliedRefundPrice(player);
             }
         }
 
@@ -1588,5 +1676,9 @@ public class FieldSettings {
 
     public List<String> getPotionTargets() {
         return potionTargets;
+    }
+
+    public double getPriceMultiplier() {
+        return priceMultiplier;
     }
 }

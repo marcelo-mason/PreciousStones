@@ -115,7 +115,7 @@ public final class ForceFieldManager {
         // purchase pstone
 
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase")) {
-            if (fs.getPrice() > 0 && !purchase(player, fs.getPrice())) {
+            if (fs.getPrice() > 0 && !purchase(player, fs.getMultipliedPrice(player))) {
                 event.setCancelled(true);
                 return;
             }
@@ -673,33 +673,18 @@ public final class ForceFieldManager {
         }
     }
 
-
     /**
-     * Get all rented or owned fields for a player in all worlds
+     * Get all owned fields of a specific type for a player in all worlds
      *
      * @param owner
      * @return
      */
-    public List<Field> getAllPlayerFields(String owner) {
-        List<Field> out = new ArrayList<>();
-        owner = owner.toLowerCase();
-        Map<BlockTypeEntry, List<Field>> owned = fieldsByOwnerAndType.get(owner);
-        if (owned != null) {
-            for (List<Field> fields : owned.values()) {
-                out.addAll(fields);
-            }
+    public List<Field> getPlayerFields(String owner, BlockTypeEntry type) {
+        Map<BlockTypeEntry, List<Field>> owned = fieldsByOwnerAndType.get(owner.toLowerCase());
+        if(owned != null){
+            return owned.get(type);
         }
-        Map<BlockTypeEntry, List<Field>> rented = fieldsByRenterAndType.get(owner);
-        if (rented != null) {
-            for (List<Field> fields : rented.values()) {
-                out.addAll(fields);
-            }
-        }
-        List<Field> allowed = fieldsByAllowed.get(owner);
-        if (allowed != null) {
-            out.addAll(allowed);
-        }
-        return out;
+        return new ArrayList<>();
     }
 
     /**
@@ -2396,6 +2381,7 @@ public final class ForceFieldManager {
         if (plugin.getPermissionsManager().hasEconomy()) {
             if (PermissionsManager.hasMoney(player, amount)) {
                 plugin.getPermissionsManager().playerCharge(player, amount);
+                ChatHelper.send(player, "economyCharged", Helper.formatDouble(amount));
             } else {
                 ChatHelper.send(player, "economyNotEnoughMoney");
                 return false;
@@ -2416,7 +2402,7 @@ public final class ForceFieldManager {
     public void refund(Player player, double amount) {
         if (plugin.getPermissionsManager().hasEconomy()) {
             plugin.getPermissionsManager().playerCredit(player, amount);
-            ChatHelper.send(player, "economyAccountCredited");
+            ChatHelper.send(player, "economyCredited", Helper.formatDouble(amount));
         }
     }
 
@@ -2428,7 +2414,7 @@ public final class ForceFieldManager {
     public void refundField(Player player, Field field) {
         if (!plugin.getPermissionsManager().has(player, "preciousstones.bypass.purchase")) {
             if (!plugin.getSettingsManager().isNoRefunds()) {
-                int refund = field.getSettings().getRefund();
+                int refund = field.getSettings().getRefund(player);
 
                 if (refund > -1) {
 
@@ -2442,7 +2428,7 @@ public final class ForceFieldManager {
                         refund(player, refund);
 
                         for (Field child : parent.getChildren()) {
-                            refund = child.getSettings().getRefund();
+                            refund = child.getSettings().getRefund(player);
 
                             refund(player, refund);
                         }

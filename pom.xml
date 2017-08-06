@@ -5,7 +5,7 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>10.6.1</version>
+    <version>10.7.0</version>
     <name>PreciousStones-1.12</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
@@ -100,7 +100,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.12-R0.1-SNAPSHOT</version>
+            <version>1.12.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -47,6 +47,16 @@ public class Helper {
     }
 
     /**
+     * Helper function to check for doubles
+     *
+     * @param o
+     * @return
+     */
+    public static boolean isDouble(Object o) {
+        return o instanceof java.lang.Double;
+    }
+
+    /**
      * Helper function to check for byte
      *
      * @param input
@@ -844,6 +854,12 @@ public class Helper {
         return ste[ste.length - 1 - depth].getMethodName(); //Thank you Tom Tresansky
     }
 
+    /**
+     * Whether the material is a boat type
+     *
+     * @param mat the material
+     * @return whether its a boat
+     */
     public static boolean isBoat(Material mat) {
         return mat == Material.BOAT ||
                 mat == Material.BOAT_ACACIA ||
@@ -851,18 +867,43 @@ public class Helper {
                 mat == Material.BOAT_DARK_OAK ||
                 mat == Material.BOAT_JUNGLE ||
                 mat == Material.BOAT_SPRUCE;
-    
+
     }
 
+    /**
+     * Get milliseconds from epoch
+     *
+     * @return milliseconds
+     */
     public static long getMillis() {
         return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
+    /**
+     * Merges two lists withotu any duplicate items
+     *
+     * @param one first list
+     * @param two second list
+     * @return first list merged with second list with only unique items
+     */
     public static <T> void addUnique(List<T> one, List<T> two) {
         for (T x : two) {
             if (!one.contains(x)) {
                 one.add(x);
             }
+        }
+    }
+
+    /**
+     * Format double to clean string without zero
+     *
+     * @return formatted number
+     */
+    public static String formatDouble(double d) {
+        if (d == (long) d) {
+            return String.format("%d", (long) d);
+        } else {
+            return String.format("%s", d);
         }
     }
 }
