@@ -26,6 +26,8 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
+import java.util.List;
+
 /**
  * @author phaed
  */
@@ -46,27 +48,28 @@ public class PSVehicleListener implements Listener {
     public void onVehicleCreate(PlayerInteractEvent event) {
         ItemStack item = event.getItem();
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && item != null && Helper.isBoat(item.getType())) {
-                
+
             Location loc = event.getClickedBlock().getLocation();
             Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.PREVENT_VEHICLE_CREATE);
 
             if (field != null) {
-               
+
                 Player player = event.getPlayer();
-                
+
                 if (FieldFlag.PREVENT_VEHICLE_CREATE.applies(field, player)) {
-                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.use")) { 
+                    if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.use")) {
                         plugin.getCommunicationManager().notifyVehicleBypassCreate(player, loc, field);
                     } else {
-              
+
                         event.setCancelled(true);
                         plugin.getCommunicationManager().warnCreateVehicle(player, loc, field);
                         return;
-                   }
-               }
-            }  
+                    }
+                }
+            }
         }
     }
+
     /**
      * @param event
      */
@@ -98,18 +101,17 @@ public class PSVehicleListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onVehicleMove(VehicleMoveEvent event) {
-        Vehicle v = event.getVehicle();
-        Entity entity = v.getPassenger();
-
-        if (plugin.getSettingsManager().isBlacklistedWorld(v.getLocation().getWorld())) {
+        Vehicle vehicle = event.getVehicle();
+        if (plugin.getSettingsManager().isBlacklistedWorld(vehicle.getLocation().getWorld())) {
             return;
         }
 
-        if (!(entity instanceof Player)) {
-            return;
+        List<Entity> passengers = vehicle.getPassengers();
+        for (Entity passenger : passengers) {
+            if (passenger instanceof Player) {
+                plugin.getPlayerListener().onPlayerMove(new PlayerMoveEvent((Player) passenger, event.getFrom(), event.getTo()));
+            }
         }
-
-        plugin.getPlayerListener().onPlayerMove(new PlayerMoveEvent((Player) entity, event.getFrom(), event.getTo()));
     }
 
     /**
@@ -118,17 +120,21 @@ public class PSVehicleListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onVehicleEnter(VehicleEnterEvent event) {
         Vehicle vehicle = event.getVehicle();
+        if (plugin.getSettingsManager().isBlacklistedWorld(vehicle.getLocation().getWorld())) {
+            return;
+        }
+        List<Entity> passengers = vehicle.getPassengers();
 
-        Entity passenger = vehicle.getPassenger();
+        for (Entity passenger : passengers) {
+            if (passenger instanceof Player) {
+                Player player = (Player) passenger;
 
-        if (passenger instanceof Player) {
-            Player player = (Player) passenger;
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_VEHICLE_ENTER);
 
-            Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_VEHICLE_ENTER);
-
-            if (field != null) {
-                if (FieldFlag.PREVENT_VEHICLE_ENTER.applies(field, player)) {
-                    event.setCancelled(true);
+                if (field != null) {
+                    if (FieldFlag.PREVENT_VEHICLE_ENTER.applies(field, player)) {
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
@@ -140,17 +146,18 @@ public class PSVehicleListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onVehicleExit(VehicleExitEvent event) {
         Vehicle vehicle = event.getVehicle();
+        List<Entity> passengers = vehicle.getPassengers();
 
-        Entity passenger = vehicle.getPassenger();
+        for (Entity passenger : passengers) {
+            if (passenger instanceof Player) {
+                Player player = (Player) passenger;
 
-        if (passenger instanceof Player) {
-            Player player = (Player) passenger;
+                Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_VEHICLE_EXIT);
 
-            Field field = plugin.getForceFieldManager().getEnabledSourceField(player.getLocation(), FieldFlag.PREVENT_VEHICLE_EXIT);
-
-            if (field != null) {
-                if (FieldFlag.PREVENT_VEHICLE_EXIT.applies(field, player)) {
-                    event.setCancelled(true);
+                if (field != null) {
+                    if (FieldFlag.PREVENT_VEHICLE_EXIT.applies(field, player)) {
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
