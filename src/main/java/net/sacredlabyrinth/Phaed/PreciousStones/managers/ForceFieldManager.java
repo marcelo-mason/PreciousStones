@@ -681,7 +681,7 @@ public final class ForceFieldManager {
      */
     public List<Field> getPlayerFields(String owner, BlockTypeEntry type) {
         Map<BlockTypeEntry, List<Field>> owned = fieldsByOwnerAndType.get(owner.toLowerCase());
-        if(owned != null){
+        if(owned != null && owned.containsKey(type)){
             return owned.get(type);
         }
         return new ArrayList<>();
