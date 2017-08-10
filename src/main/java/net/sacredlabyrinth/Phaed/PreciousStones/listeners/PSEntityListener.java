@@ -182,7 +182,7 @@ public class PSEntityListener implements Listener {
 
         Field field = plugin.getForceFieldManager().getEnabledSourceField(loc, FieldFlag.POTIONS);
         if (field != null) {
-            Stream<String> types = field.getSettings().getPotionTargets().stream();
+            List<String> types = field.getSettings().getPotionTargets();
             plugin.getPotionManager().addEffectToEntity(field, event.getEntity(), types);
         }
     }
