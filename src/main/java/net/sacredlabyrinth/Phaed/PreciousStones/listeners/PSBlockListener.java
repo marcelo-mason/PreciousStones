@@ -720,7 +720,9 @@ public class PSBlockListener implements Listener {
             }
 
             if (settings.hasDefaultFlag(FieldFlag.SNEAK_TO_PLACE_ONLY)) {
-                event.setCancelled(true);
+                if (!player.isSneaking()) {
+                    event.setCancelled(true);
+                }
                 return;
             }
         }
