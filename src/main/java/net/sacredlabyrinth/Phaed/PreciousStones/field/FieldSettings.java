@@ -266,6 +266,7 @@ public class FieldSettings {
         loadBoolean("lightning");
         loadBoolean("no-fall-damage");
         loadBoolean("sneak-to-place");
+        loadBoolean("sneak-to-place-only");
         loadBoolean("plot");
         loadBoolean("prevent-flow");
         loadBoolean("forester");

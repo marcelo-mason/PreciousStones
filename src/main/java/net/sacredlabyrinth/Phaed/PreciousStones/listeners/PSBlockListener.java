@@ -718,6 +718,11 @@ public class PSBlockListener implements Listener {
             if (settings.hasDefaultFlag(FieldFlag.SNEAK_TO_PLACE)) {
                 isDisabled = !player.isSneaking();
             }
+
+            if (settings.hasDefaultFlag(FieldFlag.SNEAK_TO_PLACE_ONLY)) {
+                event.setCancelled(true);
+                return;
+            }
         }
 
         // if the user has it manually off then disable placing
