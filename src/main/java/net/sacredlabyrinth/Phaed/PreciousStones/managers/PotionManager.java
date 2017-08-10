@@ -82,8 +82,8 @@ public class PotionManager {
     }
 
     public void addEffectToFieldEntities(Field field) {
-        Stream<String> types = field.getSettings().getPotionTargets().stream();
-        if (types.count() == 0) {
+        List<String> types = field.getSettings().getPotionTargets();
+        if (types.size() == 0) {
             return;
         }
 
@@ -99,8 +99,8 @@ public class PotionManager {
     }
 
     public void removeEffectFromFieldEntities(Field field) {
-        Stream<String> types = field.getSettings().getPotionTargets().stream();
-        if (types.count() == 0) {
+        List<String> types = field.getSettings().getPotionTargets();
+        if (types.size() == 0) {
             return;
         }
 
@@ -115,7 +115,7 @@ public class PotionManager {
         }
     }
 
-    public void addEffectToEntity(Field field, LivingEntity entity, Stream<String> types) {
+    public void addEffectToEntity(Field field, LivingEntity entity, List<String> types) {
         if (field.envelops(entity.getLocation())) {
             if (isMatchingLivingEntity(entity, types)) {
                 HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
@@ -132,7 +132,7 @@ public class PotionManager {
         }
     }
 
-    public void removeEffectFromEntity(Field field, LivingEntity entity, Stream<String> types) {
+    public void removeEffectFromEntity(Field field, LivingEntity entity, List<String> types) {
         if (field.envelops(entity.getLocation())) {
             if (isMatchingLivingEntity(entity, types)) {
                 HashMap<PotionEffectType, Integer> potions = field.getSettings().getPotions();
@@ -148,334 +148,332 @@ public class PotionManager {
         }
     }
 
-    private boolean isMatchingLivingEntity(Entity entity, Stream<String> types) {
-        boolean affected = false;
-
+    private boolean isMatchingLivingEntity(Entity entity, List<String> types) {
         if (entity instanceof Player) {
             return false;
         }
 
         if (entity instanceof Ambient) {
-            if (types.anyMatch("Ambient"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Ambient"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Ageable) {
-            if (types.anyMatch("Ageable"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Ageable"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Animals) {
-            if (types.anyMatch("Animals"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Animals"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof ArmorStand) {
-            if (types.anyMatch("ArmorStand"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("ArmorStand"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Bat) {
-            if (types.anyMatch("Bat"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Bat"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Blaze) {
-            if (types.anyMatch("Blaze"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Blaze"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof CaveSpider) {
-            if (types.anyMatch("CaveSpider"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("CaveSpider"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof ChestedHorse) {
-            if (types.anyMatch("ChestedHorse"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("ChestedHorse"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Chicken) {
-            if (types.anyMatch("Chicken"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Chicken"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Cow) {
-            if (types.anyMatch("Cow"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Cow"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Creature) {
-            if (types.anyMatch("Creature"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Creature"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Creeper) {
-            if (types.anyMatch("Creeper"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Creeper"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Donkey) {
-            if (types.anyMatch("Donkey"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Donkey"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof ElderGuardian) {
-            if (types.anyMatch("ElderGuardian"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("ElderGuardian"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof EnderDragon) {
-            if (types.anyMatch("EnderDragon"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("EnderDragon"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Enderman) {
-            if (types.anyMatch("Enderman"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Enderman"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Endermite) {
-            if (types.anyMatch("Endermite"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Endermite"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Evoker) {
-            if (types.anyMatch("Evoker"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Evoker"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Flying) {
-            if (types.anyMatch("Flying"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Flying"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Ghast) {
-            if (types.anyMatch("Ghast"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Ghast"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Giant) {
-            if (types.anyMatch("Giant"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Giant"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Golem) {
-            if (types.anyMatch("Golem"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Golem"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Guardian) {
-            if (types.anyMatch("Guardian"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Guardian"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Horse) {
-            if (types.anyMatch("Horse"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Horse"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof HumanEntity) {
-            if (types.anyMatch("HumanEntity"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("HumanEntity"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Husk) {
-            if (types.anyMatch("Husk"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Husk"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Illager) {
-            if (types.anyMatch("Illager"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Illager"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Illusioner) {
-            if (types.anyMatch("Illusioner"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Illusioner"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof IronGolem) {
-            if (types.anyMatch("IronGolem"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("IronGolem"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Llama) {
-            if (types.anyMatch("Llama"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Llama"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof MagmaCube) {
-            if (types.anyMatch("MagmaCube"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("MagmaCube"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Monster) {
-            if (types.anyMatch("Monster"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Monster"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Mule) {
-            if (types.anyMatch("Mule"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Mule"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof MushroomCow) {
-            if (types.anyMatch("MushroomCow"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("MushroomCow"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof NPC) {
-            if (types.anyMatch("NPC"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("NPC"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Ocelot) {
-            if (types.anyMatch("Ocelot"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Ocelot"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Parrot) {
-            if (types.anyMatch("Parrot"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Parrot"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Pig) {
-            if (types.anyMatch("Pig"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Pig"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof PigZombie) {
-            if (types.anyMatch("PigZombie"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("PigZombie"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Player) {
-            if (types.anyMatch("Player"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Player"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof PolarBear) {
-            if (types.anyMatch("PolarBear"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("PolarBear"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Rabbit) {
-            if (types.anyMatch("Rabbit"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Rabbit"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Sheep) {
-            if (types.anyMatch("Sheep"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Sheep"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Shulker) {
-            if (types.anyMatch("Shulker"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Shulker"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Silverfish) {
-            if (types.anyMatch("Silverfish"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Silverfish"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Skeleton) {
-            if (types.anyMatch("Skeleton"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Skeleton"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof SkeletonHorse) {
-            if (types.anyMatch("SkeletonHorse"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("SkeletonHorse"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Slime) {
-            if (types.anyMatch("Slime"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Slime"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Snowman) {
-            if (types.anyMatch("Snowman"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Snowman"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Spellcaster) {
-            if (types.anyMatch("Spellcaster"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Spellcaster"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Spider) {
-            if (types.anyMatch("Spider"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Spider"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Squid) {
-            if (types.anyMatch("Squid"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Squid"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Stray) {
-            if (types.anyMatch("Stray"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Stray"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Vex) {
-            if (types.anyMatch("Vex"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Vex"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Villager) {
-            if (types.anyMatch("Villager"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Villager"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Vindicator) {
-            if (types.anyMatch("Vindicator"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Vindicator"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof WaterMob) {
-            if (types.anyMatch("WaterMob"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("WaterMob"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Witch) {
-            if (types.anyMatch("Witch"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Witch"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Wither) {
-            if (types.anyMatch("Wither"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Wither"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof WitherSkeleton) {
-            if (types.anyMatch("WitherSkeleton"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("WitherSkeleton"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Wolf) {
-            if (types.anyMatch("Wolf"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Wolf"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof Zombie) {
-            if (types.anyMatch("Zombie"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("Zombie"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof ZombieHorse) {
-            if (types.anyMatch("ZombieHorse"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("ZombieHorse"::equalsIgnoreCase)) {
+                return true;
             }
         }
         if (entity instanceof ZombieVillager) {
-            if (types.anyMatch("ZombieVillager"::equalsIgnoreCase)) {
-                affected = true;
+            if (types.stream().anyMatch("ZombieVillager"::equalsIgnoreCase)) {
+                return true;
             }
         }
 
-        return affected;
+        return false;
     }
 }
