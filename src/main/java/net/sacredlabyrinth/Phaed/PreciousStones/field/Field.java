@@ -931,10 +931,16 @@ public class Field extends AbstractVec implements Comparable<Field> {
      * @param settings the settings to set
      */
     public void setSettings(FieldSettings settings) {
-        //Add all the default flags
         for (FieldFlag flag : settings.getDefaultFlags()) {
             flags.addFlag(flag);
         }
+        this.settings = settings;
+    }
+
+    /**
+     * @param settings sets the disabled flags from the settings
+     */
+    public void setDisabledFlags(FieldSettings settings) {
         for (FieldFlag flag : settings.getDisabledFlags()) {
             flags.addDisabledFlag(flag);
         }

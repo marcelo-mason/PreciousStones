@@ -169,6 +169,7 @@ public final class ForceFieldManager {
         }
 
         field.setSettings(fs);
+        field.setDisabledFlags(fs);
 
         // add to database (skip foresters and activate them)
 
@@ -2842,6 +2843,7 @@ public final class ForceFieldManager {
 
         Field field = new Field(fieldBlock, radius, height, ownerName);
         field.setSettings(fs);
+        field.setDisabledFlags(fs);
 
         // add to database (skip foresters and activate them)
 
