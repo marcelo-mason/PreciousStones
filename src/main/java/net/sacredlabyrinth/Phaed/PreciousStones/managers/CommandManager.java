@@ -475,7 +475,7 @@ public final class CommandManager implements CommandExecutor {
                             boolean taken = field.take(player);
 
                             if (taken) {
-                                ChatHelper.send(sender, "taken", field.getType(), field.getCoords());
+                                ChatHelper.send(sender, "taken", field.getSettings().getTitle(), field.getCoords());
                             }
                         } else {
                             plugin.getCommunicationManager().showNotFound(player);
