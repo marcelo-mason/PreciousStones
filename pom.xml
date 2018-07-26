@@ -6,7 +6,7 @@
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
     <version>10.7.2</version>
-    <name>PreciousStones-1.12</name>
+    <name>PreciousStones-1.13</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
     <build>
@@ -116,15 +116,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q</groupId>
+            <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit</artifactId>
-            <version>6.1.7.3</version>
+            <version>7.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>6.2.1</version>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-legacy</artifactId>
+            <version>7.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

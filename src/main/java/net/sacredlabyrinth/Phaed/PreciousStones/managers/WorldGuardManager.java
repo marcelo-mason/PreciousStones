@@ -1,9 +1,13 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.sk89q.worldguard.bukkit.BukkitUtil;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
 import org.bukkit.Location;
@@ -40,10 +44,10 @@ public class WorldGuardManager {
                 return false;
             }
 
-            RegionManager manager = wg.getRegionManager(block.getWorld());
-
-            ApplicableRegionSet regions = manager.getApplicableRegions(block.getLocation());
-
+            RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+            RegionManager manager = container.get(adapt(block.getWorld()));
+            Vector location = asVector(block.getLocation());
+            ApplicableRegionSet regions = manager.getApplicableRegions(location);
             return regions.size() > 0;
         } catch (Exception ex) {
             return false;
@@ -66,10 +70,24 @@ public class WorldGuardManager {
                 return false;
             }
 
-            return wg.canBuild(player, loc);
+            return WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery().testBuild(adapt(loc), wg.wrapPlayer(player));
         } catch (Exception ex) {
             return true;
         }
+    }
+
+    // Copied from BukkitAdapter, which we can't reference while still building against 1.12
+    public static com.sk89q.worldedit.world.World adapt(World world) {
+        return new BukkitWorld(world);
+    }
+
+    public static Vector asVector(org.bukkit.Location location) {
+        return new Vector(location.getX(), location.getY(), location.getZ());
+    }
+
+    public static com.sk89q.worldedit.util.Location adapt(org.bukkit.Location location) {
+        Vector position = asVector(location);
+        return new com.sk89q.worldedit.util.Location(adapt(location.getWorld()), position, location.getYaw(), location.getPitch());
     }
 
     public boolean canBuildField(Player player, Block block, FieldSettings fs) {
@@ -85,15 +103,15 @@ public class WorldGuardManager {
         int z = loc.getBlockZ();
         int radius = fs.getRadius();
 
-        if (wg.canBuild(player, new Location(w, x + radius, y + radius, z + radius))) {
-            if (wg.canBuild(player, new Location(w, x + radius, y + radius, z - radius))) {
-                if (wg.canBuild(player, new Location(w, x + radius, y - radius, z + radius))) {
-                    if (wg.canBuild(player, new Location(w, x + radius, y - radius, z - radius))) {
-                        if (wg.canBuild(player, new Location(w, x - radius, y + radius, z + radius))) {
-                            if (wg.canBuild(player, new Location(w, x - radius, y + radius, z - radius))) {
-                                if (wg.canBuild(player, new Location(w, x - radius, y - radius, z + radius))) {
-                                    if (wg.canBuild(player, new Location(w, x - radius, y - radius, z - radius))) {
-                                        if (wg.canBuild(player, new Location(w, x, y, z))) {
+        if (canBuild(player, new Location(w, x + radius, y + radius, z + radius))) {
+            if (canBuild(player, new Location(w, x + radius, y + radius, z - radius))) {
+                if (canBuild(player, new Location(w, x + radius, y - radius, z + radius))) {
+                    if (canBuild(player, new Location(w, x + radius, y - radius, z - radius))) {
+                        if (canBuild(player, new Location(w, x - radius, y + radius, z + radius))) {
+                            if (canBuild(player, new Location(w, x - radius, y + radius, z - radius))) {
+                                if (canBuild(player, new Location(w, x - radius, y - radius, z + radius))) {
+                                    if (canBuild(player, new Location(w, x - radius, y - radius, z - radius))) {
+                                        if (canBuild(player, new Location(w, x, y, z))) {
                                             return true;
                                         }
                                     }
