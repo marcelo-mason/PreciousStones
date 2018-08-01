@@ -73,6 +73,10 @@ public class UnprotectableManager {
             return null;
         }
 
+        if (!plugin.getSettingsManager().hasUnprotectableBlocks()) {
+            return null;
+        }
+
         int minx = fieldblock.getX() - fs.getRadius();
         int maxx = fieldblock.getX() + fs.getRadius();
         int minz = fieldblock.getZ() - fs.getRadius();
@@ -131,6 +135,10 @@ public class UnprotectableManager {
         FieldSettings fs = plugin.getSettingsManager().getFieldSettings(field.getSettings().getTypeEntry());
 
         if (fs == null) {
+            return null;
+        }
+
+        if (!plugin.getSettingsManager().hasUnprotectableBlocks()) {
             return null;
         }
 

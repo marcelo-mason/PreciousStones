@@ -928,6 +928,10 @@ public final class SettingsManager {
         return Collections.unmodifiableList(unprotectableBlocks);
     }
 
+    public boolean hasUnprotectableBlocks() {
+        return !unprotectableBlocks.isEmpty();
+    }
+
     /**
      * @return the logFire
      */
