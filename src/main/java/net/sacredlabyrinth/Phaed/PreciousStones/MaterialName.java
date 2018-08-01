@@ -18,7 +18,6 @@ public class MaterialName {
             return Material.valueOf(IDName.toUpperCase());
         } catch (Exception ex) {
             PreciousStones.getLog().warning("Invalid material name: " + IDName);
-            Thread.dumpStack();
         }
         return null;
     }
@@ -29,7 +28,6 @@ public class MaterialName {
             return Material.valueOf(IDName.toUpperCase());
         } catch (Exception ex) {
             PreciousStones.getLog().warning("Invalid material name: " + IDName);
-            Thread.dumpStack();
         }
         return null;
     }
