@@ -9,6 +9,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -1318,6 +1319,10 @@ public class FieldSettings {
      */
     public int getTypeId() {
         return type.getTypeId();
+    }
+
+    public Material getMaterial() {
+        return type.getMaterial();
     }
 
     /**

@@ -912,8 +912,7 @@ public final class ForceFieldManager {
                 if (!field.getHidingModule().isHidden()) {
                     if (!field.matchesBlockType()) {
                         Block block = field.getBlock();
-                        block.setTypeId(field.getTypeId());
-                        block.setData((byte) field.getData());
+                        block.setType(field.getMaterial());
                         revertedCount++;
                     }
                 }
@@ -2278,7 +2277,7 @@ public final class ForceFieldManager {
         // build item
 
         World world = block.getWorld();
-        ItemStack is = new ItemStack(type.getTypeId(), 1, (short) 0, type.getData());
+        ItemStack is = new ItemStack(type.getMaterial());
 
         // apply meta name and lore
 
@@ -2786,7 +2785,7 @@ public final class ForceFieldManager {
     public void giveField(Player player, FieldSettings settings, int count) {
         // build item
 
-        ItemStack is = new ItemStack(settings.getTypeId(), count, (short) 0, settings.getData());
+        ItemStack is = new ItemStack(settings.getMaterial(), count);
 
         // apply meta name and lore
 

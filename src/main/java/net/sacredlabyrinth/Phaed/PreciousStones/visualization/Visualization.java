@@ -3,6 +3,7 @@ package net.sacredlabyrinth.Phaed.PreciousStones.visualization;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class Visualization {
         blocks.add(new BlockEntry(block));
     }
 
-    public void addBlock(Location loc, int material, byte data) {
+    public void addBlock(Location loc, Material material, byte data) {
         BlockEntry bd = new BlockEntry(loc, material, data);
 
         if (!blocks.contains(bd)) {

@@ -109,8 +109,8 @@ public class VisualizationManager {
 
         vis.addField(field);
 
-        int visualizationType = field.hasFlag(FieldFlag.CUBOID) ? plugin.getSettingsManager().getCuboidVisualizationType().getTypeId() : plugin.getSettingsManager().getVisualizeBlock().getTypeId();
-        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getTypeId();
+        Material visualizationType = field.hasFlag(FieldFlag.CUBOID) ? plugin.getSettingsManager().getCuboidVisualizationType().getMaterial() : plugin.getSettingsManager().getVisualizeBlock().getMaterial();
+        Material frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getMaterial();
 
         int minx = field.getX() - field.getRadius() - 1;
         int maxx = field.getX() + field.getRadius() + 1;
@@ -302,7 +302,7 @@ public class VisualizationManager {
 
         List<BlockEntry> newBlocks = new ArrayList<>();
 
-        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getTypeId();
+        Material frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getMaterial();
 
         int minx = field.getX() - field.getRadius() - 1;
         int maxx = field.getX() + field.getRadius() + 1;
@@ -323,7 +323,7 @@ public class VisualizationManager {
         // add  the blocks for the new outline
 
         for (int x = minx; x <= maxx; x++) {
-            int frame = (x == minx || x == maxx) ? 89 : frameType;
+            Material frame = (x == minx || x == maxx) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), x, miny, maxz);
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
@@ -339,7 +339,7 @@ public class VisualizationManager {
         }
 
         for (int y = miny; y <= maxy; y++) {
-            int frame = (y == miny || y == maxy) ? 89 : frameType;
+            Material frame = (y == miny || y == maxy) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), minx, y, maxz);
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
@@ -355,7 +355,7 @@ public class VisualizationManager {
         }
 
         for (int z = minz; z <= maxz; z++) {
-            int frame = (z == minz || z == maxz) ? 89 : frameType;
+            Material frame = (z == minz || z == maxz) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), minx, maxy, z);
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
@@ -394,7 +394,7 @@ public class VisualizationManager {
         List<BlockEntry> oldBlocks = new ArrayList<>(vis.getOutlineBlocks());
         List<BlockEntry> newBlocks = new ArrayList<>();
 
-        int frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getTypeId();
+        Material frameType = plugin.getSettingsManager().getVisualizeFrameBlock().getMaterial();
 
         int offset = ce.selectedCount() > 1 ? 1 : 0;
 
@@ -408,7 +408,7 @@ public class VisualizationManager {
         // add  the blocks for the new outline
 
         for (int x = minx; x <= maxx; x++) {
-            int frame = (x == minx || x == maxx) ? 89 : frameType;
+            Material frame = (x == minx || x == maxx) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), x, miny, maxz);
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
@@ -424,7 +424,7 @@ public class VisualizationManager {
         }
 
         for (int y = miny; y <= maxy; y++) {
-            int frame = (y == miny || y == maxy) ? 89 : frameType;
+            Material frame = (y == miny || y == maxy) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), minx, y, maxz);
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
@@ -440,7 +440,7 @@ public class VisualizationManager {
         }
 
         for (int z = minz; z <= maxz; z++) {
-            int frame = (z == minz || z == maxz) ? 89 : frameType;
+            Material frame = (z == minz || z == maxz) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), minx, maxy, z);
             newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
@@ -510,7 +510,7 @@ public class VisualizationManager {
                 int typeId = world.getBlockTypeIdAt(field.getX(), y, field.getZ());
 
                 if (plugin.getSettingsManager().isThroughType(typeId)) {
-                    vis.addBlock(new Location(world, field.getX(), y, field.getZ()), plugin.getSettingsManager().getVisualizeMarkBlock().getTypeId(), (byte) 0);
+                    vis.addBlock(new Location(world, field.getX(), y, field.getZ()), plugin.getSettingsManager().getVisualizeMarkBlock().getMaterial(), (byte) 0);
                 }
             }
         }

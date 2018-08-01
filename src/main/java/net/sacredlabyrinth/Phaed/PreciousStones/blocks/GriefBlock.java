@@ -41,7 +41,7 @@ public class GriefBlock extends AbstractVec {
      */
     public GriefBlock(Block block) {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.type = new BlockTypeEntry(block.getType());
     }
 
     /**
@@ -49,7 +49,7 @@ public class GriefBlock extends AbstractVec {
      */
     public GriefBlock(BlockState state) {
         super(state.getX(), state.getY(), state.getZ(), state.getWorld().getName());
-        this.type = new BlockTypeEntry(state.getTypeId(), state.getRawData());
+        this.type = new BlockTypeEntry(state.getType());
         this.empty = true;
     }
 

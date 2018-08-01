@@ -57,6 +57,10 @@ public class Unbreakable extends AbstractVec {
         return this.type.getTypeId();
     }
 
+    public Material getMaterial() {
+        return this.type.getMaterial();
+    }
+
     /**
      * @return the block data
      */

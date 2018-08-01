@@ -6,6 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.ChunkVec;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -182,7 +183,7 @@ public final class UnbreakableManager {
                 Unbreakable ub = c.get(new Vec(block));
 
                 if (ub != null) {
-                    if (ub.getTypeId() != block.getTypeId()) {
+                    if (ub.getMaterial() != block.getType()) {
                         deleteUnbreakable(ub);
                         return null;
                     }
@@ -262,9 +263,9 @@ public final class UnbreakableManager {
                             currentChunk = cv;
                         }
 */
-                        int type = world.getBlockTypeIdAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ());
+                        Material type = world.getBlockAt(unbreakable.getX(), unbreakable.getY(), unbreakable.getZ()).getType();
 
-                        if (type != unbreakable.getTypeId()) {
+                        if (type != unbreakable.getMaterial()) {
                             cleanedCount++;
                             queueRelease(unbreakable);
                         }
@@ -320,8 +321,7 @@ public final class UnbreakableManager {
 
                     if (!plugin.getSettingsManager().isUnbreakableType(block)) {
                         revertedCount++;
-                        block.setTypeId(unbreakable.getTypeId());
-                        block.setData(unbreakable.getData());
+                        block.setType(unbreakable.getMaterial());
                     }
                 }
             }

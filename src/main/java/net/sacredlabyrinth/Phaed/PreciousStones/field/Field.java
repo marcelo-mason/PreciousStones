@@ -416,6 +416,10 @@ public class Field extends AbstractVec implements Comparable<Field> {
         return type.getTypeId();
     }
 
+    public Material getMaterial() {
+        return type.getMaterial();
+    }
+
     /**
      * @return the block data
      */
@@ -1387,7 +1391,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
         PreciousStones.getInstance().getForceFieldManager().refundField(player, this);
         PreciousStones.getInstance().getForceFieldManager().releaseWipe(this);
 
-        ItemStack is = new ItemStack(type.getTypeId(), 1, (short) 0, type.getData());
+        ItemStack is = new ItemStack(type.getMaterial());
 
         if (settings.hasMetaName()) {
             StackHelper.setItemMeta(is, settings);

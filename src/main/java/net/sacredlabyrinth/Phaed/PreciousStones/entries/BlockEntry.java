@@ -2,13 +2,14 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 /**
  * @author phaed
  */
 public class BlockEntry {
-    private final int typeId;
+    private final Material type;
     private final byte data;
     private final Location location;
 
@@ -16,18 +17,18 @@ public class BlockEntry {
      * @param block
      */
     public BlockEntry(Block block) {
-        this.typeId = block.getTypeId();
+        this.type = block.getType();
         this.data = block.getData();
         this.location = block.getLocation();
     }
 
     /**
      * @param loc
-     * @param typeId
+     * @param type
      * @param data
      */
-    public BlockEntry(Location loc, int typeId, byte data) {
-        this.typeId = typeId;
+    public BlockEntry(Location loc, Material type, byte data) {
+        this.type = type;
         this.data = data;
         this.location = loc;
     }
@@ -36,7 +37,11 @@ public class BlockEntry {
      * @return the typeId
      */
     public int getTypeId() {
-        return typeId;
+        return type.getId();
+    }
+
+    public Material getType() {
+        return type;
     }
 
     /**
