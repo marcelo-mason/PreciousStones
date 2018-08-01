@@ -33,6 +33,7 @@ public class Visualize implements Runnable {
         timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 1, PreciousStones.getInstance().getSettingsManager().getVisualizeTicksBetweenSends());
     }
 
+    @SuppressWarnings("deprecation")
     public void run() {
         int i = 0;
 
@@ -43,9 +44,9 @@ public class Visualize implements Runnable {
             if (!loc.equals(player.getLocation()) && !loc.equals(player.getLocation().add(0, 1, 0))) {
                 if (reverting) {
                     Block block = bd.getBlock();
-                    player.sendBlockChange(loc, block.getType(), block.getData());
+                    player.sendBlockChange(loc, block.getBlockData());
                 } else {
-                    player.sendBlockChange(loc, bd.getTypeId(), bd.getData());
+                    player.sendBlockChange(loc, bd.getType(), (byte)0);
                 }
             }
             i++;

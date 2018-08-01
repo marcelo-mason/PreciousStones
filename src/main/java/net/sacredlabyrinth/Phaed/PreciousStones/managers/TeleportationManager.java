@@ -11,6 +11,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -29,6 +30,7 @@ public class TeleportationManager {
         return teleport(entity, sourceField, "");
     }
 
+    @SuppressWarnings("deprecation")
     public boolean teleport(Entity entity, Field sourceField, String announce) {
         Field destinationField = plugin.getForceFieldManager().getDestinationField(sourceField.getOwner(), sourceField);
 
@@ -249,8 +251,8 @@ public class TeleportationManager {
     }
 
     private boolean blockIsSafe(World world, int x, int y, int z) {
-        int head = world.getBlockTypeIdAt(x, y + 1, z);
-        int feet = world.getBlockTypeIdAt(x, y, z);
+        Material head = world.getBlockAt(x, y + 1, z).getType();
+        Material feet = world.getBlockAt(x, y, z).getType();
         return (plugin.getSettingsManager().isThroughType(head)) && (plugin.getSettingsManager().isThroughType((feet)));
     }
 }

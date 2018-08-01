@@ -6,6 +6,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.blocks.GriefBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -77,7 +78,7 @@ public final class GriefUndoManager {
     public void addBlock(Field field, Block block, boolean clear) {
         // if its not a dependent block, then look around it for dependents and add those first
 
-        if (!plugin.getSettingsManager().isDependentBlock(block.getTypeId())) {
+        if (!plugin.getSettingsManager().isDependentBlock(block.getType())) {
             PreciousStones.debug("not depenedent");
 
             BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
@@ -85,7 +86,7 @@ public final class GriefUndoManager {
             for (BlockFace face : faces) {
                 Block rel = block.getRelative(face);
 
-                if (plugin.getSettingsManager().isDependentBlock(rel.getTypeId())) {
+                if (plugin.getSettingsManager().isDependentBlock(rel.getType())) {
                     addBlock(field, rel, clear);
                     PreciousStones.debug("+found dependent");
                 }
@@ -94,28 +95,28 @@ public final class GriefUndoManager {
 
         // record wood doors in correct order
 
-        if (block.getTypeId() == 64 || block.getTypeId() == 71 || block.getTypeId() == 330) // doors
+        if (block.getType() == Material.OAK_DOOR || block.getType() == Material.IRON_DOOR || block.getType() == Material.IRON_DOOR) // doors
         {
             field.getRevertingModule().addGriefBlock(new GriefBlock(block));
 
             Block bottom = block.getRelative(BlockFace.DOWN);
             Block top = block.getRelative(BlockFace.UP);
 
-            if (bottom.getTypeId() == 64 || bottom.getTypeId() == 71 || bottom.getTypeId() == 330) // doors
+            if (bottom.getType() == Material.OAK_DOOR || bottom.getType() == Material.IRON_DOOR || bottom.getType() == Material.IRON_DOOR) // doors
             {
                 field.getRevertingModule().addGriefBlock(new GriefBlock(bottom));
                 if (clear) {
-                    bottom.setTypeId(0);
-                    block.setTypeId(0);
+                    bottom.setType(Material.AIR);
+                    block.setType(Material.AIR);
                 }
             }
 
-            if (top.getTypeId() == 64 || top.getTypeId() == 71 || top.getTypeId() == 330) // doors
+            if (top.getType() == Material.OAK_DOOR || top.getType() == Material.IRON_DOOR || top.getType() == Material.IRON_DOOR) // doors
             {
                 field.getRevertingModule().addGriefBlock(new GriefBlock(top));
                 if (clear) {
-                    top.setTypeId(0);
-                    block.setTypeId(0);
+                    top.setType(Material.AIR);
+                    block.setType(Material.AIR);
                 }
             }
 
@@ -131,7 +132,7 @@ public final class GriefUndoManager {
             field.getRevertingModule().addGriefBlock(new GriefBlock(block));
         }
         if (clear) {
-            block.setTypeId(0);
+            block.setType(Material.AIR);
         }
     }
 
@@ -220,7 +221,7 @@ public final class GriefUndoManager {
         // rollback empty blocks straight up
 
         if (gb.isEmpty()) {
-            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), true);
+            block.setType(gb.getType(), true);
             return;
         }
 
@@ -229,19 +230,19 @@ public final class GriefUndoManager {
 
         // handle sand
 
-        int[] seeThrough = {0, 6, 8, 31, 32, 37, 38, 39, 40, 9, 10, 11, 12, 51, 59, 83, 81};
+        Material[] seeThrough = {Material.AIR, Material.OAK_SAPLING, Material.WATER, Material.DEAD_BUSH, Material.DEAD_BUSH, Material.DANDELION, Material.POPPY, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.WATER, Material.LAVA, Material.LAVA, Material.SAND, Material.FIRE, Material.WHEAT, Material.SUGAR_CANE, Material.CACTUS};
 
-        for (int st : seeThrough) {
-            if (block.getTypeId() == st) {
+        for (Material st : seeThrough) {
+            if (block.getType() == st) {
                 noConflict = true;
 
-                if (st == 12) {
+                if (st == Material.SAND) {
                     for (int count = 1; count < 256; count++) {
-                        int type = world.getBlockTypeIdAt(gb.getX(), gb.getY() + count, gb.getZ());
+                        Material type = world.getBlockAt(gb.getX(), gb.getY() + count, gb.getZ()).getType();
 
-                        if (type == 0 || type == 8 || type == 9 || type == 10 || type == 11) {
+                        if (type == Material.AIR || type == Material.WATER || type == Material.WATER || type == Material.LAVA || type == Material.LAVA) {
                             Block toSand = world.getBlockAt(gb.getX(), gb.getY() + count, gb.getZ());
-                            toSand.setTypeId(12, false);
+                            toSand.setType(Material.SAND, false);
                             break;
                         }
                     }
@@ -251,7 +252,7 @@ public final class GriefUndoManager {
         }
 
         if (noConflict) {
-            block.setTypeIdAndData(gb.getTypeId(), gb.getData(), true);
+            block.setType(gb.getType(), true);
 
             if (block.getState() instanceof Sign && gb.getSignText().length() > 0) {
                 Sign sign = (Sign) block.getState();

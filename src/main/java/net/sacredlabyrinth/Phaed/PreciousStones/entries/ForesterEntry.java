@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.managers.ForesterManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -79,6 +80,7 @@ public class ForesterEntry {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private boolean doPlantingAttempt() {
         PreciousStones.debug("planting attempt");
         World world = plugin.getServer().getWorld(field.getWorld());
@@ -107,8 +109,8 @@ public class ForesterEntry {
 
             if (!field.getForestingModule().hasForesterUse()) {
                 Block block = world.getBlockAt(field.getX(), field.getY(), field.getZ());
-                block.setTypeId(0, false);
-                block.getLocation().add(0, -1, 0).getBlock().setTypeId(field.getSettings().getGroundBlock().getTypeId(), false);
+                block.setType(Material.AIR, false);
+                block.getLocation().add(0, -1, 0).getBlock().setType(field.getSettings().getGroundBlock().getMaterial(), false);
 
                 if (!field.getSettings().getTreeTypes().isEmpty()) {
                     world.generateTree(block.getLocation(), ForesterManager.getTree(field.getSettings()));

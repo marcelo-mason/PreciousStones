@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
@@ -12,8 +13,7 @@ import java.util.Map.Entry;
  * @author phaed
  */
 public class ItemStackEntry {
-    private final int typeId;
-    private final byte data;
+    private final Material type;
     private final short durability;
     private final int amount;
     private Map<Enchantment, Integer> enchantments = new HashMap<>();
@@ -22,8 +22,7 @@ public class ItemStackEntry {
      * @param item
      */
     public ItemStackEntry(ItemStack item) {
-        this.typeId = item.getTypeId();
-        this.data = item.getData().getData();
+        this.type = item.getType();
         this.durability = item.getDurability();
         this.enchantments = item.getEnchantments();
         this.amount = item.getAmount();
@@ -32,9 +31,9 @@ public class ItemStackEntry {
     /**
      * @param o
      */
+    @SuppressWarnings("deprecation")
     public ItemStackEntry(JSONObject o) {
-        this.typeId = Integer.parseInt(o.get("id").toString());
-        this.data = Byte.parseByte(o.get("d").toString());
+        this.type = Material.valueOf(o.get("type").toString());
         this.durability = Short.parseShort(o.get("dmg").toString());
         this.amount = Integer.parseInt(o.get("a").toString());
 
@@ -42,25 +41,24 @@ public class ItemStackEntry {
 
         if (ench != null) {
             for (Object enchId : ench.keySet()) {
-                Integer id = Integer.parseInt(enchId.toString());
                 Integer level = Integer.parseInt(ench.get(enchId).toString());
-                this.enchantments.put(Enchantment.getById(id), level);
+                this.enchantments.put(Enchantment.getByName(enchId.toString()), level);
             }
         }
     }
 
+    @SuppressWarnings("deprecation")
     public JSONObject serialize() {
         JSONObject ench = new JSONObject();
 
         for (Enchantment e : enchantments.keySet()) {
             Integer integer = enchantments.get(e);
-            ench.put(e.getId(), integer);
+            ench.put(e.getName(), integer);
         }
 
         JSONObject out = new JSONObject();
 
-        out.put("id", getTypeId());
-        out.put("d", getData());
+        out.put("type", getType().name());
         out.put("dmg", getDurability());
         out.put("a", getAmount());
         out.put("e", ench);
@@ -69,17 +67,10 @@ public class ItemStackEntry {
     }
 
     /**
-     * @return the typeId
+     * @return the type
      */
-    public int getTypeId() {
-        return typeId;
-    }
-
-    /**
-     * @return the data
-     */
-    public byte getData() {
-        return data;
+    public Material getType() {
+        return type;
     }
 
     public short getDurability() {
@@ -98,26 +89,16 @@ public class ItemStackEntry {
 
         ItemStackEntry other = (ItemStackEntry) obj;
 
-        int id1 = this.getTypeId();
-        int id2 = other.getTypeId();
-        byte data1 = this.getData();
-        byte data2 = other.getData();
+        Material id1 = this.getType();
+        Material id2 = other.getType();
 
-        if (id1 == id2 && data1 == data2) {
-            return true;
-        }
-
-        // adjust for changing blocks
-
-        return id1 == 8 && id2 == 9 || id1 == 9 && id2 == 8 || id1 == 11 && id2 == 10 || id1 == 10 && id2 == 11 || id1 == 73 && id2 == 74 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61;
-
+        return (id1 == id2);
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 47 * hash + this.getTypeId();
-        hash = 47 * hash + this.getData();
+        hash = 47 * hash + this.getType().ordinal();
         return hash;
     }
 
@@ -127,7 +108,7 @@ public class ItemStackEntry {
      * @return
      */
     public ItemStack toItemStack() {
-        ItemStack is = new ItemStack(getTypeId(), getAmount(), getDurability(), getData());
+        ItemStack is = new ItemStack(getType(), getAmount(), getDurability());
 
         for (Entry<Enchantment, Integer> ench : enchantments.entrySet()) {
             is.addUnsafeEnchantment(ench.getKey(), Math.min(ench.getValue(), ench.getKey().getMaxLevel()));
@@ -138,15 +119,11 @@ public class ItemStackEntry {
 
     @Override
     public String toString() {
-        if (getData() == 0) {
-            return getTypeId() + "";
-        }
-
         if (getDurability() == 0) {
-            return getTypeId() + ":" + getData();
+            return getType().name();
         }
 
-        return getTypeId() + ":" + getData() + ":" + getDurability();
+        return getType().name() + ":" + getDurability();
     }
 }
 

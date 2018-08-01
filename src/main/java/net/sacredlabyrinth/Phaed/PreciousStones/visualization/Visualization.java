@@ -24,8 +24,8 @@ public class Visualization {
         blocks.add(new BlockEntry(block));
     }
 
-    public void addBlock(Location loc, Material material, byte data) {
-        BlockEntry bd = new BlockEntry(loc, material, data);
+    public void addBlock(Location loc, Material material) {
+        BlockEntry bd = new BlockEntry(loc, material);
 
         if (!blocks.contains(bd)) {
             blocks.add(bd);

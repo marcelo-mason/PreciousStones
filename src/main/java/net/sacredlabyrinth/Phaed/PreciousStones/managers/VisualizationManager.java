@@ -71,6 +71,7 @@ public class VisualizationManager {
     /**
      * Reverts all current visualizations
      */
+    @SuppressWarnings("deprecation")
     public void revertAll() {
         for (Entry<String, Visualization> visualization : visualizations.entrySet()) {
             Visualization vis = visualization.getValue();
@@ -130,44 +131,44 @@ public class VisualizationManager {
 
         for (int x = minx; x <= maxx; x++) {
             Location loc = new Location(player.getWorld(), x, miny, maxz);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), x, maxy, minz);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), x, miny, minz);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), x, maxy, maxz);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
         }
 
         for (int y = miny; y <= maxy; y++) {
             Location loc = new Location(player.getWorld(), minx, y, maxz);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), maxx, y, minz);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), minx, y, minz);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), maxx, y, maxz);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
         }
 
         for (int z = minz; z <= maxz; z++) {
             Location loc = new Location(player.getWorld(), minx, maxy, z);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), maxx, miny, z);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), minx, miny, z);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
 
             loc = new Location(player.getWorld(), maxx, maxy, z);
-            vis.addBlock(loc, frameType, (byte) 0);
+            vis.addBlock(loc, frameType);
         }
 
         int spacing = ((Math.max(Math.max((maxx - minx), (maxy - miny)), (maxz - minz)) + 2) / data.getDensity()) + 1;
@@ -191,10 +192,10 @@ public class VisualizationManager {
                     }
 
                     Location loc = new Location(player.getWorld(), minx, y, z);
-                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    vis.addBlock(loc, visualizationType);
 
                     loc = new Location(player.getWorld(), maxx, y, z);
-                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    vis.addBlock(loc, visualizationType);
                     count++;
                 }
             }
@@ -222,10 +223,10 @@ public class VisualizationManager {
                     }
 
                     Location loc = new Location(player.getWorld(), x, miny, z);
-                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    vis.addBlock(loc, visualizationType);
 
                     loc = new Location(player.getWorld(), x, maxy, z);
-                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    vis.addBlock(loc, visualizationType);
                     count++;
                 }
             }
@@ -253,10 +254,10 @@ public class VisualizationManager {
 
                 if (yTurn || turnCounter(player.getName() + 2, spacing)) {
                     Location loc = new Location(player.getWorld(), x, y, minz);
-                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    vis.addBlock(loc, visualizationType);
 
                     loc = new Location(player.getWorld(), x, y, maxz);
-                    vis.addBlock(loc, visualizationType, (byte) 0);
+                    vis.addBlock(loc, visualizationType);
                     count++;
                 }
             }
@@ -326,48 +327,48 @@ public class VisualizationManager {
             Material frame = (x == minx || x == maxx) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), x, miny, maxz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), x, maxy, minz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), x, miny, minz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), x, maxy, maxz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
         }
 
         for (int y = miny; y <= maxy; y++) {
             Material frame = (y == miny || y == maxy) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), minx, y, maxz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), maxx, y, minz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), minx, y, minz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), maxx, y, maxz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
         }
 
         for (int z = minz; z <= maxz; z++) {
             Material frame = (z == minz || z == maxz) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), minx, maxy, z);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), maxx, miny, z);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), minx, miny, z);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), maxx, maxy, z);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
         }
 
         // visualize all the new blocks that are left to visualize
@@ -411,48 +412,48 @@ public class VisualizationManager {
             Material frame = (x == minx || x == maxx) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), x, miny, maxz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), x, maxy, minz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), x, miny, minz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), x, maxy, maxz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
         }
 
         for (int y = miny; y <= maxy; y++) {
             Material frame = (y == miny || y == maxy) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), minx, y, maxz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), maxx, y, minz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), minx, y, minz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), maxx, y, maxz);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
         }
 
         for (int z = minz; z <= maxz; z++) {
             Material frame = (z == minz || z == maxz) ? Material.GLOWSTONE : frameType;
 
             Location loc = new Location(player.getWorld(), minx, maxy, z);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), maxx, miny, z);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), minx, miny, z);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
 
             loc = new Location(player.getWorld(), maxx, maxy, z);
-            newBlocks.add(new BlockEntry(loc, frame, (byte) 0));
+            newBlocks.add(new BlockEntry(loc, frame));
         }
 
         // revert the blocks that are no longer in the new set and should be reverted
@@ -507,10 +508,10 @@ public class VisualizationManager {
 
         if (world != null) {
             for (int y = 0; y < 256; y++) {
-                int typeId = world.getBlockTypeIdAt(field.getX(), y, field.getZ());
+                Material typeId = world.getBlockAt(field.getX(), y, field.getZ()).getType();
 
                 if (plugin.getSettingsManager().isThroughType(typeId)) {
-                    vis.addBlock(new Location(world, field.getX(), y, field.getZ()), plugin.getSettingsManager().getVisualizeMarkBlock().getMaterial(), (byte) 0);
+                    vis.addBlock(new Location(world, field.getX(), y, field.getZ()), plugin.getSettingsManager().getVisualizeMarkBlock().getMaterial());
                 }
             }
         }
@@ -525,6 +526,7 @@ public class VisualizationManager {
      * @param material
      * @param block
      */
+    @SuppressWarnings("deprecation")
     public void displaySingle(Player player, Material material, Block block) {
         Visualization vis = visualizations.get(player.getName());
 
@@ -554,7 +556,7 @@ public class VisualizationManager {
         vis.addBlock(block);
         visualizations.put(player.getName(), vis);
 
-        player.sendBlockChange(block.getLocation(), block.getType(), (byte) 0);
+        player.sendBlockChange(block.getLocation(), block.getBlockData());
     }
 
     /**

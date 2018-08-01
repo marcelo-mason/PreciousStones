@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
  */
 public class BlockEntry {
     private final Material type;
-    private final byte data;
     private final Location location;
 
     /**
@@ -18,37 +17,20 @@ public class BlockEntry {
      */
     public BlockEntry(Block block) {
         this.type = block.getType();
-        this.data = block.getData();
         this.location = block.getLocation();
     }
 
     /**
      * @param loc
      * @param type
-     * @param data
      */
-    public BlockEntry(Location loc, Material type, byte data) {
+    public BlockEntry(Location loc, Material type) {
         this.type = type;
-        this.data = data;
         this.location = loc;
-    }
-
-    /**
-     * @return the typeId
-     */
-    public int getTypeId() {
-        return type.getId();
     }
 
     public Material getType() {
         return type;
-    }
-
-    /**
-     * @return the data
-     */
-    public byte getData() {
-        return data;
     }
 
     /**
@@ -72,20 +54,19 @@ public class BlockEntry {
         }
 
         BlockEntry other = (BlockEntry) obj;
-        return other.getTypeId() == this.getTypeId() && other.getData() == this.getData() && Helper.isSameBlock(this.getLocation(), other.getLocation());
+        return other.getType() == this.getType() && Helper.isSameBlock(this.getLocation(), other.getLocation());
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 47 * hash + this.getTypeId();
-        hash = 47 * hash + this.getData();
+        hash = 47 * hash + this.getType().ordinal();
         hash = 47 * hash + this.getLocation().getBlockX() + this.getLocation().getBlockY() + this.getLocation().getBlockZ();
         return hash;
     }
 
     @Override
     public String toString() {
-        return "[" + getTypeId() + ":" + getData() + " " + Helper.toLocationString(location) + "]";
+        return "[" + getType().name() + " " + Helper.toLocationString(location) + "]";
     }
 }

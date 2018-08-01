@@ -2,6 +2,7 @@ name: PreciousStones
 author: Phaed
 main: net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones
 version: ${project.version}
+api-version: 1.13
 dev-url: http://dev.bukkit.org/server-mods/preciousstones/
 load: 'postworld'
 softdepend: [Permissions, PermissionsBukkit, SimpleClans, Vault, CombatTag, WorldGuard, LWC, Lockette, mcMMO, SCCore]

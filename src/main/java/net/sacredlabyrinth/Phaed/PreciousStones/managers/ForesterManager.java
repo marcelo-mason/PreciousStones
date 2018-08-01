@@ -45,7 +45,7 @@ public final class ForesterManager {
         for (int x = minx; x < maxx; x += 4) {
             for (int z = minz; z <= maxz; z += 4) {
                 for (int y = maxy; y > miny; y--) {
-                    int type = world.getBlockTypeIdAt(x, y, z);
+                    Material type = world.getBlockAt(x, y, z).getType();
 
                     if (!isSeeThrough(type)) {
                         prepareSpot(field, world, x, y, z, 4);
@@ -84,16 +84,16 @@ public final class ForesterManager {
                     }
 
                     if (d <= radius + 0.5D) {
-                        int type = world.getBlockTypeIdAt(vec.getX(), vec.getY(), vec.getZ());
+                        Material type = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ()).getType();
 
                         if (field.getSettings().isFertileType(new BlockTypeEntry(type))) {
                             Block fertile = world.getBlockAt(vec.getX(), vec.getY(), vec.getZ());
-                            fertile.setTypeId(field.getSettings().getGroundBlock().getTypeId());
+                            fertile.setType(field.getSettings().getGroundBlock().getMaterial());
 
                             if (!field.getSettings().getShrubTypes().isEmpty()) {
-                                int typeabove = world.getBlockTypeIdAt(vec.getX(), vec.getY() + 1, vec.getZ());
+                                Material typeabove = world.getBlockAt(vec.getX(), vec.getY() + 1, vec.getZ()).getType();
 
-                                if (typeabove == 0) {
+                                if (typeabove == Material.AIR) {
                                     Random r = new Random();
 
                                     int density = 100 - field.getSettings().getShrubDensity();
@@ -135,10 +135,10 @@ public final class ForesterManager {
 
         for (int y = maxy; y > miny; y--) {
             Block floor = world.getBlockAt(xr, y, zr);
-            int type = floor.getTypeId();
+            Material type = floor.getType();
 
             if (!isSeeThrough(type)) {
-                if (type == field.getSettings().getGroundBlock().getTypeId()) {
+                if (type == field.getSettings().getGroundBlock().getMaterial()) {
                     Block block = world.getBlockAt(xr, y + 1, zr);
 
                     // do not place next to an existing tree
@@ -148,7 +148,7 @@ public final class ForesterManager {
                     for (BlockFace face : faces) {
                         Block rel = block.getRelative(face);
 
-                        if (rel.getType().equals(Material.LOG)) {
+                        if (rel.getType().equals(Material.OAK_LOG)) {
                             return;
                         }
                     }
@@ -255,32 +255,31 @@ public final class ForesterManager {
 
         switch (treeTypes.get(rand)) {
             case 0:
-                block.setTypeIdAndData(31, (byte) 0, false); // tall grass
+                block.setType(Material.TALL_GRASS, false); // tall grass
                 return;
             case 1:
-                block.setTypeIdAndData(31, (byte) 1, false); // tall grass
+                block.setType(Material.POPPY, false); // tall grass
                 return;
             case 2:
-                block.setTypeIdAndData(31, (byte) 2, false); // tall grass
+                block.setType(Material.OXEYE_DAISY, false); // tall grass
                 return;
             case 3:
-                block.setTypeId(37, false); // yellow flower
+                block.setType(Material.DANDELION_YELLOW, false); // yellow flower
                 return;
             case 4:
-                block.setTypeId(38, false); // red flower
+                block.setType(Material.ROSE_RED, false); // red flower
                 return;
             case 5:
-                block.setTypeId(40, false); // brown shroom
+                block.setType(Material.BROWN_MUSHROOM, false); // brown shroom
                 return;
             case 6:
-                block.setTypeId(39, false); // red shroom
+                block.setType(Material.RED_MUSHROOM, false); // red shroom
                 return;
         }
     }
 
-    private boolean isSeeThrough(int type) {
-        return type == 0 || type == 31 || type == 32 || type == 37 || type == 38 || type == 18 || type == 6;
-
+    private boolean isSeeThrough(Material type) {
+        return type == Material.AIR || type == Material.DEAD_BUSH || type == Material.DEAD_BUSH || type == Material.DANDELION || type == Material.POPPY || type == Material.OAK_LEAVES || type == Material.OAK_SAPLING;
     }
 
     /**
@@ -303,10 +302,10 @@ public final class ForesterManager {
             int y = field.getY();
             World world = field.getBlock().getWorld();
 
-            int floorType = world.getBlockTypeIdAt(x, y, z);
+            Material floorType = world.getBlockAt(x, y, z).getType();
 
             while (!plugin.getSettingsManager().isThroughType(floorType) && y < 256) {
-                floorType = world.getBlockTypeIdAt(x, ++y, z);
+                floorType = world.getBlockAt(x, ++y, z).getType();
             }
 
             EntityType entity = getEntity(fs);
@@ -343,6 +342,6 @@ public final class ForesterManager {
             return null;
         }
 
-        return EntityType.fromName(entity);
+        return EntityType.valueOf(entity.toUpperCase());
     }
 }

@@ -45,7 +45,7 @@ public class SnitchManager {
 
             for (Field field : snitchFields) {
                 if (FieldFlag.SNITCH.applies(field, player)) {
-                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_kill"), entity.getType().getName(), 1));
+                    plugin.getStorageManager().offerSnitchEntry(new SnitchEntry(field, player.getName(), ChatHelper.format("_kill"), entity.getType().name(), 1));
                 }
             }
         }

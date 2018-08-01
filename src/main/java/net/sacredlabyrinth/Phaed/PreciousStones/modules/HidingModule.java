@@ -5,6 +5,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
+
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
@@ -37,8 +39,7 @@ public class HidingModule {
 
             BlockTypeEntry maskType = findMaskType();
             Block block = field.getBlock();
-            block.setTypeId(maskType.getTypeId());
-            block.setData(maskType.getData());
+            block.setType(maskType.getMaterial());
         }
 
         if (field.isParent()) {
@@ -69,8 +70,7 @@ public class HidingModule {
             field.getFlagsModule().dirtyFlags("unHide");
 
             Block block = field.getBlock();
-            block.setTypeId(field.getTypeId());
-            block.setData((byte) field.getData());
+            block.setType(field.getMaterial());
         }
 
         if (field.isParent()) {
@@ -103,7 +103,7 @@ public class HidingModule {
         for (Vec vec : vecs) {
             Block relative = vec.getBlock();
 
-            if (relative.getTypeId() != 0) {
+            if (relative.getType() != Material.AIR) {
                 BlockTypeEntry entry = new BlockTypeEntry(relative);
 
                 if (PreciousStones.getInstance().getSettingsManager().isHidingMaskType(entry)) {

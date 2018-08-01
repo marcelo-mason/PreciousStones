@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.field;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.MaterialName;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
@@ -37,12 +38,12 @@ public class FieldSettings {
     protected boolean validField = true;
     protected BlockTypeEntry type;
     protected int radius = 0;
-    protected int fenceItem = 0;
+    protected Material fenceItem = Material.AIR;
     protected int fenceItemPrice = 0;
     protected int heal = 0;
     protected int damage = 0;
-    protected int maskOnDisabled = 49;
-    protected int maskOnEnabled = 49;
+    protected Material maskOnDisabled = Material.OBSIDIAN;
+    protected Material maskOnEnabled = Material.OBSIDIAN;
     protected int feed = 0;
     protected int repair = 0;
     protected int launchHeight = 0;
@@ -51,7 +52,7 @@ public class FieldSettings {
     protected int customVolume = 0;
     protected int mineDelaySeconds = 0;
     protected int lightningDelaySeconds = 0;
-    protected int lightningReplaceBlock = 0;
+    protected Material lightningReplaceBlock = Material.AIR;
     protected int mixingGroup = 0;
     protected int autoDisableTime = 0;
     protected int mustBeAbove = 0;
@@ -350,7 +351,7 @@ public class FieldSettings {
         cannonHeight = loadInt("cannon-velocity");
         mineDelaySeconds = loadInt("mine-delay-seconds");
         mineHasFire = loadBoolean("mine-has-fire");
-        lightningReplaceBlock = loadInt("lightning-replace-block");
+        lightningReplaceBlock = loadMaterial("lightning-replace-block");
         lightningDelaySeconds = loadInt("lightning-delay-seconds");
         treeCount = loadInt("tree-count");
         growTime = loadInt("grow-time");
@@ -380,8 +381,8 @@ public class FieldSettings {
         feed = loadInt("feed");
         repair = loadInt("repair");
         damage = loadInt("damage");
-        maskOnDisabled = loadInt("mask-on-disabled");
-        maskOnEnabled = loadInt("mask-on-enabled");
+        maskOnDisabled = loadMaterial("mask-on-disabled");
+        maskOnEnabled = loadMaterial("mask-on-enabled");
         mine = loadInt("mine");
         heal = loadInt("heal");
         griefRevertInterval = loadInt("grief-revert-interval");
@@ -402,7 +403,7 @@ public class FieldSettings {
         mustBeAbove = loadInt("must-be-above");
         mustBeBelow = loadInt("must-be-below");
         payToEnable = loadInt("pay-to-enable");
-        fenceItem = loadInt("fence-on-place");
+        fenceItem = loadMaterial("fence-on-place");
         fenceItemPrice = loadInt("price-per-fence");
         rentsLimit = loadInt("rents-limit");
         potionTargets = loadStringList("potion-targets");
@@ -421,6 +422,24 @@ public class FieldSettings {
             return value;
         }
         return false;
+    }
+
+    protected Material loadMaterial(String flagStr) {
+        return loadMaterial(flagStr, Material.AIR);
+    }
+
+    protected Material loadMaterial(String flagStr, Material defaultValue) {
+        Material material = null;
+        if (containsKey(flagStr)) {
+            if (Helper.isString(getValue(flagStr))) {
+                String value = (String) getValue(flagStr);
+                material = MaterialName.getBlockMaterial(value);
+            }
+        }
+        if (material == null) {
+            material = defaultValue;
+        }
+        return material;
     }
 
     protected int loadInt(String flagStr) {
@@ -761,7 +780,7 @@ public class FieldSettings {
     public boolean teleportDueToWalking(Location loc, Field field, Player player) {
         Block standingOn = new Vec(loc).subtract(0, 1, 0).getBlock();
 
-        if (standingOn.getTypeId() == 0) {
+        if (standingOn.getType() == Material.AIR) {
             return false;
         }
 
@@ -831,7 +850,7 @@ public class FieldSettings {
             return true;
         }
 
-        if (teleportIfHasItems.contains(new BlockTypeEntry(0)) && entry.getTypeId() != 0) {
+        if (teleportIfHasItems.contains(new BlockTypeEntry(Material.AIR)) && entry.getMaterial() != Material.AIR) {
             return true;
         }
 
@@ -863,7 +882,7 @@ public class FieldSettings {
             return false;
         }
 
-        if (teleportIfHasItems.contains(new BlockTypeEntry(0)) && entry.getTypeId() != 0) {
+        if (teleportIfHasItems.contains(new BlockTypeEntry(Material.AIR)) && entry.getMaterial() != Material.AIR) {
             return true;
         }
 
@@ -924,21 +943,10 @@ public class FieldSettings {
      * @param type
      * @return
      */
-    public boolean isUnusableItem(int type, byte data) {
+    public boolean isUnusableItem(Material type) {
         for (BlockTypeEntry entry : unusableItems) {
-            // if the banned item has no data, then that means
-            // they want to ban all ids for that block
-
-            // otherwise match the type and data exactly
-
-            if (entry.getData() == 0) {
-                if (entry.getTypeId() == type) {
-                    return true;
-                }
-            } else {
-                if (entry.getTypeId() == type && entry.getData() == data) {
-                    return true;
-                }
+            if (entry.getMaterial() == type) {
+                return true;
             }
         }
 
@@ -951,7 +959,7 @@ public class FieldSettings {
      * @param type
      * @return
      */
-    public boolean canCarry(int type, byte data) {
+    public boolean canCarry(Material type) {
         if (confiscatedItems.isEmpty()) {
             return true;
         }
@@ -961,15 +969,8 @@ public class FieldSettings {
             // they want to ban all ids for that block
 
             // otherwise match the type and data exactly
-
-            if (entry.getData() == 0) {
-                if (entry.getTypeId() == type) {
-                    return false;
-                }
-            } else {
-                if (entry.getTypeId() == type && entry.getData() == data) {
-                    return false;
-                }
+            if (entry.getMaterial() == type) {
+                return false;
             }
         }
 
@@ -1120,8 +1121,8 @@ public class FieldSettings {
                     this.damage = fs.damage;
                 }
             }
-            this.maskOnEnabled = this.maskOnEnabled | fs.maskOnEnabled;
-            this.maskOnDisabled = this.maskOnDisabled | fs.maskOnDisabled;
+            this.maskOnEnabled = fs.maskOnEnabled != Material.AIR ? fs.maskOnEnabled : this.maskOnEnabled;
+            this.maskOnDisabled = fs.maskOnDisabled != Material.AIR ? fs.maskOnDisabled : this.maskOnDisabled;
 
             if (fs.griefRevertInterval > 0) {
                 if (this.griefRevertInterval > 0) {
@@ -1185,8 +1186,8 @@ public class FieldSettings {
                     this.payToEnable = fs.payToEnable;
                 }
             }
-            if (fs.fenceItem > 0) {
-                if (this.fenceItem > 0) {
+            if (fs.fenceItem != Material.AIR) {
+                if (this.fenceItem != Material.AIR) {
                     this.fenceItem = fs.fenceItem;
                 }
             }
@@ -1314,22 +1315,8 @@ public class FieldSettings {
         return Helper.toMessage(allowedOnlyOutside, " or ");
     }
 
-    /**
-     * @return the block type id
-     */
-    public int getTypeId() {
-        return type.getTypeId();
-    }
-
     public Material getMaterial() {
         return type.getMaterial();
-    }
-
-    /**
-     * @return the block data
-     */
-    public byte getData() {
-        return type.getData();
     }
 
     /**
@@ -1377,7 +1364,7 @@ public class FieldSettings {
     /**
      * @return the lightningReplaceBlock
      */
-    public int getLightningReplaceBlock() {
+    public Material getLightningReplaceBlock() {
         return lightningReplaceBlock;
     }
 
@@ -1542,11 +1529,11 @@ public class FieldSettings {
         return neutralizePotions;
     }
 
-    public int getMaskOnDisabledBlock() {
+    public Material getMaskOnDisabledBlock() {
         return maskOnDisabled;
     }
 
-    public int getMaskOnEnabledBlock() {
+    public Material getMaskOnEnabledBlock() {
         return maskOnEnabled;
     }
 
@@ -1624,7 +1611,7 @@ public class FieldSettings {
         return deleteIfNoPermission;
     }
 
-    public int getFenceItem() {
+    public Material getFenceItem() {
         return fenceItem;
     }
 

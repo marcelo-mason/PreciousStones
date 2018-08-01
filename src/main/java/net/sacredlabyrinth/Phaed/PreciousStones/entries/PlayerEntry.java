@@ -341,6 +341,7 @@ public class PlayerEntry {
         }, 20, 20);
     }
 
+    @SuppressWarnings("deprecation")
     private void tryTeleport() {
         if (teleportVec == null) {
             teleportSecondsRemaining = 0;

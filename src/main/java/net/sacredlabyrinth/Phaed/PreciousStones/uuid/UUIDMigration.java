@@ -25,6 +25,7 @@ public class UUIDMigration {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static UUID findPlayerUUID(String playerDisplayName) {
         Player OnlinePlayer = PreciousStones.getInstance().getServer().getPlayerExact(playerDisplayName);
 

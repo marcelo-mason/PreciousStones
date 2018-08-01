@@ -44,6 +44,7 @@ public class BuyingModule {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     public void processPurchase(PurchaseEntry purchase, FieldSign s) {
         Field field = s.getField();
         field.setOwner(purchase.getBuyer());

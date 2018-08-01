@@ -45,7 +45,7 @@ public class TranslocationApplier implements Runnable {
             TranslocationBlock tb = translocationQueue.poll();
 
             if (tb != null) {
-                if (plugin.getSettingsManager().isDependentBlock(tb.getTypeId())) {
+                if (plugin.getSettingsManager().isDependentBlock(tb.getType())) {
                     dependentQueue.add(tb);
                     continue;
                 }

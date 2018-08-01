@@ -70,6 +70,7 @@ public final class EntryManager {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void doEffects() {
         try {
             for (Entry<String, EntryFields> playerEntry : dynamicEntries.entrySet()) {
@@ -367,7 +368,7 @@ public final class EntryManager {
             ItemStack item = inv.getItem(slot);
 
             if (item != null) {
-                if (field.getSettings().isUnusableItem(item.getTypeId(), item.getData().getData())) {
+                if (field.getSettings().isUnusableItem(item.getType())) {
                     StackHelper.unHoldItem(player, slot);
                     ChatHelper.send(player, "cannotUseItemMoved");
                 }
@@ -493,6 +494,7 @@ public final class EntryManager {
         enteredSingleField(player, field);
     }
 
+    @SuppressWarnings("deprecation")
     public void enteredSingleField(Player player, Field field) {
         if (!field.isDisabled()) {
             plugin.getSnitchManager().recordSnitchEntry(player, field);
@@ -521,7 +523,7 @@ public final class EntryManager {
         if (field.hasFlag(FieldFlag.HIDABLE)) {
             if (field.getHidingModule().isHidden()) {
                 if (plugin.getPermissionsManager().has(player, "preciousstones.bypass.hiding")) {
-                    player.sendBlockChange(field.getLocation(), field.getTypeId(), (byte) field.getData());
+                    player.sendBlockChange(field.getLocation(), field.getMaterial(), (byte)0);
                 }
             }
         }
@@ -618,6 +620,7 @@ public final class EntryManager {
      *
      * @param field
      */
+    @SuppressWarnings("deprecation")
     public void removeAllPlayers(Field field) {
         synchronized (entriesByPlayer) {
             for (Entry<String, EntryFields> playerEntry : entriesByPlayer.entrySet()) {

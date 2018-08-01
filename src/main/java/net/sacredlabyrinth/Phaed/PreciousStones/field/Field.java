@@ -34,6 +34,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
  *
  * @author phaed
  */
+@SuppressWarnings("deprecation")
 public class Field extends AbstractVec implements Comparable<Field> {
     private FieldSettings settings;
     private long id = 0;
@@ -150,7 +151,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
         this.height = height;
         this.owner = owner;
         this.name = "";
-        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.type = new BlockTypeEntry(block.getType());
 
         calculateDimensions();
     }
@@ -167,7 +168,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
         this.height = height;
         this.name = "";
         this.owner = "";
-        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.type = new BlockTypeEntry(block.getType());
 
         calculateDimensions();
     }
@@ -409,22 +410,8 @@ public class Field extends AbstractVec implements Comparable<Field> {
         return max;
     }
 
-    /**
-     * @return the block type id
-     */
-    public int getTypeId() {
-        return type.getTypeId();
-    }
-
     public Material getMaterial() {
         return type.getMaterial();
-    }
-
-    /**
-     * @return the block data
-     */
-    public short getData() {
-        return type.getData();
     }
 
     /**
@@ -438,7 +425,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      * @return the block type name
      */
     public String getType() {
-        return Material.getMaterial(this.getTypeId()).toString();
+        return getMaterial().name();
     }
 
     /**
@@ -1338,7 +1325,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      */
     public boolean matchesBlockType() {
         Block block = getBlock();
-        return block.getTypeId() == getTypeId();
+        return block.getType() == getMaterial();
     }
 
     /**
@@ -1348,7 +1335,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
      */
     public boolean missingBlock() {
         Block block = getBlock();
-        return block.getTypeId() == 0;
+        return block.getType() == Material.AIR;
     }
 
     /**
@@ -1384,7 +1371,7 @@ public class Field extends AbstractVec implements Comparable<Field> {
     public boolean take(Player player) {
         Block block = getBlock();
 
-        if (block.getTypeId() != type.getTypeId()) {
+        if (block.getType() != type.getMaterial()) {
             return false;
         }
 

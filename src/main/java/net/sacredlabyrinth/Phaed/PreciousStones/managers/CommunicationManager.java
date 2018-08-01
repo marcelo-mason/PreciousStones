@@ -13,6 +13,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.vectors.Vec;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -157,6 +158,7 @@ public class CommunicationManager {
      * @param count
      * @param field
      */
+    @SuppressWarnings("deprecation")
     public void notifyRollBack(Field field, int count) {
         if (field == null) {
             return;
@@ -1548,7 +1550,7 @@ public class CommunicationManager {
         }
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnFieldPlaceUnprotectableTouching", Helper.friendlyBlockType(unprotectableblock.getType().getId()));
+            ChatHelper.send(player, "warnFieldPlaceUnprotectableTouching", Helper.friendlyBlockType(unprotectableblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1579,7 +1581,7 @@ public class CommunicationManager {
      */
     public void warnUnbreakablePlaceUnprotectableTouching(Player player, Block unprotectableblock, Block protectionblock) {
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnUnbreakablePlaceUnprotectableTouching", Helper.friendlyBlockType(unprotectableblock.getType().getId()));
+            ChatHelper.send(player, "warnUnbreakablePlaceUnprotectableTouching", Helper.friendlyBlockType(unprotectableblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1611,7 +1613,7 @@ public class CommunicationManager {
         Block touchingblock = plugin.getUnprotectableManager().getTouchingUnprotectableBlock(placedblock);
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnCannotProtect", Helper.friendlyBlockType(touchingblock.getType().getId()));
+            ChatHelper.send(player, "warnCannotProtect", Helper.friendlyBlockType(touchingblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1649,7 +1651,7 @@ public class CommunicationManager {
         Block touchingblock = plugin.getUnprotectableManager().getTouchingUnprotectableBlock(placedblock);
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnCannotProtect", Helper.friendlyBlockType(touchingblock.getType().getId()));
+            ChatHelper.send(player, "warnCannotProtect", Helper.friendlyBlockType(touchingblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1686,7 +1688,7 @@ public class CommunicationManager {
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnCannotProtectInside", Helper.friendlyBlockType(unprotectableblock.getType().getId()), fs.getTitle());
+            ChatHelper.send(player, "warnCannotProtectInside", Helper.friendlyBlockType(unprotectableblock.getType()), fs.getTitle());
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1723,7 +1725,7 @@ public class CommunicationManager {
         }
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnPlaceFieldInUnprotectable", fs.getTitle(), Helper.friendlyBlockType(unprotectableblock.getType().getId()));
+            ChatHelper.send(player, "warnPlaceFieldInUnprotectable", fs.getTitle(), Helper.friendlyBlockType(unprotectableblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1754,7 +1756,7 @@ public class CommunicationManager {
      */
     public void notifyUnbreakableBypassUnprotectableTouching(Player player, Block unprotectableblock, Block protectionblock) {
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnBypassPlacedUnprotectableInUnbreakable", Helper.friendlyBlockType(unprotectableblock.getType().getId()), Helper.friendlyBlockType(protectionblock.getType().getId()));
+            ChatHelper.send(player, "warnBypassPlacedUnprotectableInUnbreakable", Helper.friendlyBlockType(unprotectableblock.getType()), Helper.friendlyBlockType(protectionblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1791,7 +1793,7 @@ public class CommunicationManager {
         }
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnBypassPlacedUnprotectableInField", Helper.friendlyBlockType(unprotectableblock.getType().getId()), Helper.friendlyBlockType(protectionblock.getType().getId()));
+            ChatHelper.send(player, "warnBypassPlacedUnprotectableInField", Helper.friendlyBlockType(unprotectableblock.getType()), Helper.friendlyBlockType(protectionblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1823,7 +1825,7 @@ public class CommunicationManager {
         Block unprotectableblock = plugin.getUnprotectableManager().getTouchingUnprotectableBlock(placedblock);
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnUnprotectableBypassProtected", Helper.friendlyBlockType(unprotectableblock.getType().getId()));
+            ChatHelper.send(player, "warnUnprotectableBypassProtected", Helper.friendlyBlockType(unprotectableblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1860,7 +1862,7 @@ public class CommunicationManager {
         FieldSettings fs = field.getSettings();
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnUnprotectableBypassPlaced", Helper.friendlyBlockType(unprotectableblock.getType().getId()), fs.getTitle());
+            ChatHelper.send(player, "warnUnprotectableBypassPlaced", Helper.friendlyBlockType(unprotectableblock.getType()), fs.getTitle());
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -1897,7 +1899,7 @@ public class CommunicationManager {
         }
 
         if (plugin.getSettingsManager().isWarnUnprotectable() && canWarn(player)) {
-            ChatHelper.send(player, "warnFieldBypassPlacedUnprotectable", fs.getTitle(), Helper.friendlyBlockType(unprotectableblock.getType().getId()));
+            ChatHelper.send(player, "warnFieldBypassPlacedUnprotectable", fs.getTitle(), Helper.friendlyBlockType(unprotectableblock.getType()));
         }
 
         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.bypass.log")) {
@@ -2409,7 +2411,7 @@ public class CommunicationManager {
             String customHeight = fs.getCustomHeight() > 0 ? " " + ChatHelper.format("headerConfiguredFieldsHeight", fs.getCustomHeight()) : "";
             String customVolume = fs.getCustomVolume() > 0 ? " " + ChatHelper.format("headerConfiguredFieldsVolume", fs.getCustomVolume()) : "";
 
-            BlockTypeEntry entry = new BlockTypeEntry(fs.getTypeId(), fs.getData());
+            BlockTypeEntry entry = new BlockTypeEntry(fs.getMaterial());
 
             if (entry.isValid()) {
                 cb.addRow(ChatHelper.format("headerConfiguredFields", fs.getTitle(), entry, fs.getRadius()) + customHeight + customVolume);
@@ -2575,10 +2577,10 @@ public class CommunicationManager {
      * Show a player's field locations by type to a player
      *
      * @param sender the player to show the list to
-     * @param typeid use -1 to show all types
+     * @param type use null to show all types
      * @param target
      */
-    public void showFieldLocations(CommandSender sender, int typeid, String target) {
+    public void showFieldLocations(CommandSender sender, Material type, String target) {
         Player player = null;
 
         if (sender instanceof Player) {
@@ -2613,11 +2615,11 @@ public class CommunicationManager {
 
         // if type id supplied, then only show fields of that typeid
 
-        if (typeid != -1) {
+        if (type != null) {
             for (Iterator iter = fields.iterator(); iter.hasNext(); ) {
                 Field testfield = (Field) iter.next();
 
-                if (typeid != testfield.getTypeId()) {
+                if (type != testfield.getMaterial()) {
                     iter.remove();
                 }
             }

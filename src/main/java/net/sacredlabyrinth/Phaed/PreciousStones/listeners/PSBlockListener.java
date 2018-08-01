@@ -416,7 +416,7 @@ public class PSBlockListener implements Listener {
                         } else {
                             PreciousStones.debug("is grief");
 
-                            if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId())) {
+                            if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getType())) {
                                 PreciousStones.debug("adding block");
 
                                 boolean clear = !field.hasFlag(FieldFlag.GRIEF_REVERT_DROP);
@@ -616,7 +616,7 @@ public class PSBlockListener implements Listener {
         Field existingField = plugin.getForceFieldManager().getField(state.getLocation());
 
         if (existingField != null) {
-            if (state.getTypeId() > 0) {
+            if (state.getType() != Material.AIR) {
                 if (!breakingFieldChecks(player, block, existingField, event)) {
                     event.setCancelled(true);
                 }
@@ -825,12 +825,12 @@ public class PSBlockListener implements Listener {
 
             // ------------------------------------------------------------------------------------------- placing a chest next to a field
 
-            if (block.getTypeId() == 54) {
+            if (block.getType() == Material.CHEST) {
                 Field field = plugin.getForceFieldManager().getConflictSourceField(block.getLocation(), player.getName(), FieldFlag.ALL);
 
                 boolean conflicted = false;
 
-                if (block.getRelative(BlockFace.EAST).getTypeId() == 54) {
+                if (block.getRelative(BlockFace.EAST).getType() == Material.CHEST) {
                     Field field1 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.EAST).getLocation(), player.getName(), FieldFlag.ALL);
 
                     if (field1 != null) {
@@ -840,7 +840,7 @@ public class PSBlockListener implements Listener {
                     }
                 }
 
-                if (block.getRelative(BlockFace.WEST).getTypeId() == 54) {
+                if (block.getRelative(BlockFace.WEST).getType() == Material.CHEST) {
                     Field field2 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.WEST).getLocation(), player.getName(), FieldFlag.ALL);
 
                     if (field2 != null) {
@@ -850,7 +850,7 @@ public class PSBlockListener implements Listener {
                     }
                 }
 
-                if (block.getRelative(BlockFace.NORTH).getTypeId() == 54) {
+                if (block.getRelative(BlockFace.NORTH).getType() == Material.CHEST) {
                     Field field3 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.NORTH).getLocation(), player.getName(), FieldFlag.ALL);
 
                     if (field3 != null) {
@@ -860,7 +860,7 @@ public class PSBlockListener implements Listener {
                     }
                 }
 
-                if (block.getRelative(BlockFace.SOUTH).getTypeId() == 54) {
+                if (block.getRelative(BlockFace.SOUTH).getType() == Material.CHEST) {
                     Field field4 = plugin.getForceFieldManager().getConflictSourceField(block.getRelative(BlockFace.SOUTH).getLocation(), player.getName(), FieldFlag.ALL);
 
                     if (field4 != null) {
@@ -901,7 +901,7 @@ public class PSBlockListener implements Listener {
             if (field != null) {
                 if (FieldFlag.GRIEF_REVERT.applies(field, player)) {
                     if (field.hasFlag(FieldFlag.PLACE_GRIEF)) {
-                        if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId())) {
+                        if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getType())) {
                             BlockState blockState = event.getBlockReplacedState();
                             plugin.getGriefUndoManager().addBlock(field, blockState);
                             plugin.getStorageManager().offerGrief(field);
@@ -984,7 +984,7 @@ public class PSBlockListener implements Listener {
 
         if (!fs.isMetaAutoSet()) {
             if (fs.hasMetaName()) {
-                if (!fs.matchesMetaName(player.getItemInHand())) {
+                if (!fs.matchesMetaName(player.getInventory().getItemInMainHand())) {
                     return false;
                 }
             }
@@ -1135,7 +1135,7 @@ public class PSBlockListener implements Listener {
         if (fs.hasDefaultFlag(FieldFlag.FORESTER)) {
             Block floor = block.getRelative(BlockFace.DOWN);
 
-            if (!fs.isFertileType(new BlockTypeEntry(floor)) && floor.getTypeId() != fs.getGroundBlock().getTypeId()) {
+            if (!fs.isFertileType(new BlockTypeEntry(floor)) && floor.getType() != fs.getGroundBlock().getMaterial()) {
                 ChatHelper.send(player, "foresterNeedsFertile", fs.getTitle());
                 return false;
             }

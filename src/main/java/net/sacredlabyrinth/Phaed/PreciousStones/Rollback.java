@@ -41,7 +41,7 @@ public class Rollback implements Runnable {
         while (i < 500 && !griefQueue.isEmpty()) {
             GriefBlock gb = griefQueue.poll();
 
-            if (plugin.getSettingsManager().isDependentBlock(gb.getTypeId())) {
+            if (plugin.getSettingsManager().isDependentBlock(gb.getType())) {
                 dependentQueue.add(gb);
                 continue;
             }

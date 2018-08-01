@@ -22,7 +22,6 @@ force-field-blocks:
   prevent-flow: true
   protect-crops: true
   protect-inventories: true
-  prevent-place-blacklist: [153]
   ?welcome-message: true
   ?farewell-message: true
   ?prevent-portal-enter: true
@@ -39,7 +38,6 @@ force-field-blocks:
   rents-limit: 5
   buyable: true
   cuboid: true
-  mask-on-disabled: 80
 - title: City Plot
   block: quartz_ore
   radius: 20
@@ -51,10 +49,10 @@ force-field-blocks:
   - '&eIt covers an area of 20 radius'
   - '&eWith a max height of 15'
   allowed-only-inside: ["City Protection"]
-  plot: true
+  plot: true:
   no-conflict: true
   prevent-use:
-  - wooden_door
+  - oak_door
   - iron_door
   - spruce_door
   - birch_door
@@ -81,7 +79,6 @@ force-field-blocks:
   rents-limit: 5
   buyable: true
   cuboid: true
-  mask-on-disabled: 80
 - title: Entry Bouncer
   block: lapis_block
   radius: 5
@@ -96,7 +93,6 @@ force-field-blocks:
   enable-on-src: true
   can-change-owner: true
   cuboid: true
-  mask-on-disabled: 80
 - title: Grief Revert
   block: gold_block
   radius: 20
@@ -116,7 +112,6 @@ force-field-blocks:
   can-change-owner: true
   mixing-group: 1
   cuboid: true
-  mask-on-disabled: 80
 - title: Peace Keeper
   block: sponge
   radius: 10
@@ -132,7 +127,6 @@ force-field-blocks:
   protect-mobs: true
   protect-villagers: true
   cuboid: true
-  mask-on-disabled: 80
 - title: Creature Repeller
   block: web
   radius: 20
@@ -150,7 +144,6 @@ force-field-blocks:
   no-conflict: true
   mixing-group: 1
   cuboid: true
-  mask-on-disabled: 80
 - title: Air of Atlantis
   block: lapis_ore
   radius: 10
@@ -165,7 +158,6 @@ force-field-blocks:
   no-conflict: true
   mixing-group: 1
   cuboid: true
-  mask-on-disabled: 80
 - title: Proximity Snitch
   block: noteblock
   radius: 5
@@ -180,7 +172,6 @@ force-field-blocks:
   no-conflict: true
   mixing-group: 2
   cuboid: true
-  mask-on-disabled: 80
 - title: Jack-o-Death
   block: lit_pumpkin
   radius: 5
@@ -196,7 +187,6 @@ force-field-blocks:
   sneaking-bypass: true
   no-player-place: true
   mixing-group: 2
-  mask-on-disabled: 80
 - title: The Shocker
   block: monster_egg
   radius: 0
@@ -214,7 +204,6 @@ force-field-blocks:
   breakable: true
   no-conflict: true
   mixing-group: 2
-  mask-on-disabled: 80
 - title: Proximity Mine
   block: redstone_ore
   radius: 1
@@ -232,12 +221,10 @@ force-field-blocks:
   sneaking-bypass: true
   mixing-group: 2
   no-conflict: true
-  mask-on-disabled: 80
 - title: Launch Pad
   block: iron_ore
   radius: 1
   custom-height: 3
-  custom-volume: 20
   meta-name: '&9Launch Pad'
   meta-autoset: true
   meta-lore:
@@ -253,7 +240,6 @@ force-field-blocks:
   custom-volume: 20
   mixing-group: 2
   cuboid: true
-  mask-on-disabled: 80
 - title: Sky Cannon
   block: coal_ore
   radius: 0
@@ -274,7 +260,6 @@ force-field-blocks:
   mixing-group: 2
   cuboid: true
   enable-with-redstone: true
-  mask-on-disabled: 80
 - title: Translocator
   block: 'red_mushroom_block:14'
   radius: 8
@@ -293,7 +278,6 @@ force-field-blocks:
   - diamond_block
   - gold_block
   cuboid: true
-  mask-on-disabled: 17
 - title: GodStone
   block: sea_lantern
   radius: 5
@@ -310,7 +294,6 @@ force-field-blocks:
   no-conflict: true
   mixing-group: 2
   cuboid: true
-  mask-on-disabled: 80
 - title: Miner's Haste
   block: ice
   radius: 10
@@ -333,7 +316,6 @@ force-field-blocks:
   - 5
   enable-with-redstone: true
   no-fall-damage: true
-  mask-on-disabled: 17
 - title: Mild Forester
   block: 'leaves:4'
   radius: 20
@@ -490,15 +472,15 @@ force-field-blocks:
   no-conflict: false
 bypass-blocks: []
 unprotectable-blocks: []
-hiding-mask-blocks: [1,2,3,4,5,7,12,13,17,18,20,24,35,43,45,47,48,49,53,60,67,80,81,82,87,88,89,99,100,108,109,110,123,124,125,128,134,135,136]
-repairable-items: [256,257,258,259,261,267,268,269,270,271,272,273,274,275,276,277,278,279,283,284,285,286,290,291,292,293,294,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,346,359]
-tool-items: [256,257,258,269,270,271,273,274,275,277,278,279,284,285,286,290,291,292,293,294]
+hiding-mask-blocks: [STONE,GRASS_BLOCK,DIRT,COBBLESTONE,OAK_PLANKS,BEDROCK,SAND,GRAVEL,OAK_LOG,OAK_LEAVES,GLASS,SANDSTONE,WHITE_WOOL,STONE_SLAB,BRICKS,BOOKSHELF,MOSSY_COBBLESTONE,OBSIDIAN,OAK_STAIRS,FARMLAND,COBBLESTONE_STAIRS,SNOW_BLOCK,CACTUS,CLAY,NETHERRACK,SOUL_SAND,GLOWSTONE,BROWN_MUSHROOM_BLOCK,RED_MUSHROOM_BLOCK,BRICK_STAIRS,STONE_BRICK_STAIRS,MYCELIUM,REDSTONE_LAMP,REDSTONE_LAMP,OAK_SLAB,SANDSTONE_STAIRS,SPRUCE_STAIRS,BIRCH_STAIRS,JUNGLE_STAIRS]
+repairable-items: [IRON_SHOVEL,IRON_PICKAXE,IRON_AXE,FLINT_AND_STEEL,BOW,IRON_SWORD,WOODEN_SWORD,WOODEN_SHOVEL,WOODEN_PICKAXE,WOODEN_AXE,STONE_SWORD,STONE_SHOVEL,STONE_PICKAXE,STONE_AXE,DIAMOND_SWORD,DIAMOND_SHOVEL,DIAMOND_PICKAXE,DIAMOND_AXE,GOLDEN_SWORD,GOLDEN_SHOVEL,GOLDEN_PICKAXE,GOLDEN_AXE,WOODEN_HOE,STONE_HOE,IRON_HOE,DIAMOND_HOE,GOLDEN_HOE,LEATHER_HELMET,LEATHER_CHESTPLATE,LEATHER_LEGGINGS,LEATHER_BOOTS,CHAINMAIL_HELMET,CHAINMAIL_CHESTPLATE,CHAINMAIL_LEGGINGS,CHAINMAIL_BOOTS,IRON_HELMET,IRON_CHESTPLATE,IRON_LEGGINGS,IRON_BOOTS,DIAMOND_HELMET,DIAMOND_CHESTPLATE,DIAMOND_LEGGINGS,DIAMOND_BOOTS,GOLDEN_HELMET,GOLDEN_CHESTPLATE,GOLDEN_LEGGINGS,GOLDEN_BOOTS,FISHING_ROD,SHEARS]
+tool-items: [IRON_SHOVEL,IRON_PICKAXE,IRON_AXE,WOODEN_SHOVEL,WOODEN_PICKAXE,WOODEN_AXE,STONE_SHOVEL,STONE_PICKAXE,STONE_AXE,DIAMOND_SHOVEL,DIAMOND_PICKAXE,DIAMOND_AXE,GOLDEN_SHOVEL,GOLDEN_PICKAXE,GOLDEN_AXE,WOODEN_HOE,STONE_HOE,IRON_HOE,DIAMOND_HOE,GOLDEN_HOE]
 settings:
   auto-allow-clan-on-fields: true
   auto-allow-team-on-fields: false
   blacklisted-worlds: [creative_world]
   check-once-per-block-on-move: false
-  default-item-currency: '266'
+  default-item-currency: GOLD_INGOT
   disable-alerts-for-admins: true
   disable-bypass-alerts-for-admins: false
   disable-field-break-while-creative: false
@@ -591,7 +573,7 @@ visualization:
 grief-revert:
   min-interval-secs: 30
   black-list:
-  - 92
+  - CAKE
 saving:
   frequency-seconds: 1
   max-records-per-snitch: 50

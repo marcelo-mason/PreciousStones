@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.MaterialName;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.TargetBlock;
 import net.sacredlabyrinth.Phaed.PreciousStones.blocks.Unbreakable;
@@ -14,7 +15,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.SignHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -27,6 +28,7 @@ import java.util.*;
 /**
  * @author phaed
  */
+@SuppressWarnings("deprecation")
 public final class CommandManager implements CommandExecutor {
     private PreciousStones plugin;
 
@@ -1096,7 +1098,7 @@ public final class CommandManager implements CommandExecutor {
                                         int count = plugin.getStorageManager().deleteBlockTypeFromTranslocation(field.getName(), player.getName(), entry);
 
                                         if (count > 0) {
-                                            ChatHelper.send(sender, "translocationDeletedBlocks", count, Helper.friendlyBlockType(entry.getTypeId()), field.getName());
+                                            ChatHelper.send(sender, "translocationDeletedBlocks", count, Helper.friendlyBlockType(entry.getMaterial()), field.getName());
                                         } else {
                                             ChatHelper.send(sender, "noBlocksMatched", arg);
                                         }
@@ -1294,20 +1296,24 @@ public final class CommandManager implements CommandExecutor {
                         return false;
                     } else if (cmd.equals(ChatHelper.format("commandLocations"))) {
                         if (args.length == 0 && plugin.getPermissionsManager().has(player, "preciousstones.benefit.locations") && hasplayer) {
-                            plugin.getCommunicationManager().showFieldLocations(sender, -1, sender.getName());
+                            plugin.getCommunicationManager().showFieldLocations(sender, null, sender.getName());
                             return true;
                         }
 
                         if (plugin.getPermissionsManager().has(player, "preciousstones.admin.locations")) {
                             if (args.length == 1 && Helper.isString(args[0])) {
                                 String targetName = args[0];
-                                plugin.getCommunicationManager().showFieldLocations(sender, -1, targetName);
+                                plugin.getCommunicationManager().showFieldLocations(sender, null, targetName);
                             }
 
-                            if (args.length == 2 && Helper.isString(args[0]) && Helper.isInteger(args[1])) {
+                            if (args.length == 2 && Helper.isString(args[0]) && Helper.isString(args[1])) {
                                 String targetName = args[0];
-                                int type = Integer.parseInt(args[1]);
-                                plugin.getCommunicationManager().showFieldLocations(sender, type, targetName);
+                                try {
+                                    Material type = MaterialName.getBlockMaterial(args[1]);
+                                    plugin.getCommunicationManager().showFieldLocations(sender, type, targetName);
+                                } catch (Exception ex) {
+                                    player.sendMessage("Invalid type: " + args[1]);
+                                }
                             }
                             return true;
                         }
@@ -1378,11 +1384,11 @@ public final class CommandManager implements CommandExecutor {
                                     int ubs = plugin.getUnbreakableManager().deleteUnbreakablesOfType(entry);
 
                                     if (fields > 0) {
-                                        ChatHelper.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getTypeId()));
+                                        ChatHelper.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getMaterial()));
                                     }
 
                                     if (ubs > 0) {
-                                        ChatHelper.send(sender, "deletedUnbreakables", ubs, Helper.getMaterialString(entry.getTypeId()));
+                                        ChatHelper.send(sender, "deletedUnbreakables", ubs, Helper.getMaterialString(entry.getMaterial()));
                                     }
 
                                     if (ubs == 0 && fields == 0) {
@@ -1417,7 +1423,7 @@ public final class CommandManager implements CommandExecutor {
                                     int fields = plugin.getForceFieldManager().deletePlayerFieldsOfType(name, entry);
 
                                     if (fields > 0) {
-                                        ChatHelper.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getTypeId()));
+                                        ChatHelper.send(sender, "deletedFields", fields, Helper.getMaterialString(entry.getMaterial()));
                                     } else {
                                         ChatHelper.send(sender, "noPstonesFound");
                                     }

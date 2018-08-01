@@ -4,10 +4,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.FieldSign;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Attachable;
-import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -40,7 +40,7 @@ public class SignHelper {
      * @return
      */
     public static Block getAttachedBlock(Block signBlock) {
-        MaterialData m = signBlock.getState().getData();
+        Object m = signBlock.getState().getData();
         BlockFace face = BlockFace.DOWN;
 
         if (m instanceof Attachable) {

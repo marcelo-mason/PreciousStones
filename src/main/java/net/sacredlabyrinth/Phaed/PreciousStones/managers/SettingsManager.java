@@ -1,5 +1,6 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
+import net.sacredlabyrinth.Phaed.PreciousStones.MaterialName;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
@@ -49,7 +50,7 @@ public final class SettingsManager {
     private List<String> blacklistedWorlds;
     private int maxSnitchRecords;
     private int saveFrequency;
-    private List<String> griefUndoBlackList;
+    private Set<Material> griefUndoBlackList;
     private int griefRevertMinInterval;
     private boolean visualizationNewStyle;
     private BlockTypeEntry visualizeMarkBlock;
@@ -126,12 +127,10 @@ public final class SettingsManager {
     private boolean offByDefault;
     private boolean useIdInSnitches;
     private int fenceMaxDepth;
-    private int[] throughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 65, 66, 69, 68, 70, 72, 75, 76, 77, 78, 83, 92, 93, 94, 104, 105, 106, 131, 132, 140, 141, 142};
-    private int[] naturalThroughFields = new int[]{0, 6, 8, 9, 10, 11, 31, 32, 37, 38, 39, 40, 51, 59, 78, 83, 104, 105, 106, 141, 142};
-    private HashSet<Byte> throughFieldsByteSet = new HashSet<>();
-    private HashSet<Integer> throughFieldsSet = new HashSet<>();
-    private HashSet<Material> throughFieldsMaterialSet = new HashSet<>();
-    private HashSet<Integer> naturalThroughFieldSet = new HashSet<>();
+    private Material[] throughFields = new Material[]{Material.AIR, Material.OAK_SAPLING, Material.WATER, Material.WATER, Material.LAVA, Material.LAVA, Material.DEAD_BUSH, Material.DEAD_BUSH, Material.DANDELION, Material.POPPY, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.FIRE, Material.REDSTONE_WIRE, Material.WHEAT, Material.SIGN, Material.LADDER, Material.RAIL, Material.LEVER, Material.AIR, Material.STONE_PRESSURE_PLATE, Material.OAK_PRESSURE_PLATE, Material.AIR, Material.REDSTONE_TORCH, Material.STONE_BUTTON, Material.SNOW, Material.SUGAR_CANE, Material.CAKE, Material.REPEATER, Material.REPEATER, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.TRIPWIRE_HOOK, Material.TRIPWIRE, Material.POTTED_CACTUS, Material.CARROTS, Material.POTATOES};
+    private Material[] naturalThroughFields = new Material[]{Material.AIR, Material.OAK_SAPLING, Material.WATER, Material.WATER, Material.LAVA, Material.LAVA, Material.DEAD_BUSH, Material.DEAD_BUSH, Material.DANDELION, Material.POPPY, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE, Material.WHEAT, Material.SNOW, Material.SUGAR_CANE, Material.PUMPKIN_STEM, Material.MELON_STEM, Material.VINE, Material.CARROTS, Material.POTATOES};
+    private HashSet<Material> throughFieldsSet = new HashSet<>();
+    private HashSet<Material> naturalThroughFieldSet = new HashSet<>();
     private int linesPerPage;
     private boolean useMysql;
     private String host;
@@ -160,19 +159,12 @@ public final class SettingsManager {
      */
     @SuppressWarnings("unchecked")
     public void load() {
-        for (int item : throughFields) {
+
+        for (Material item : throughFields) {
             throughFieldsSet.add(item);
         }
 
-        for (int item : throughFields) {
-            throughFieldsMaterialSet.add(Material.getMaterial(item));
-        }
-
-        for (int item : throughFields) {
-            throughFieldsByteSet.add((byte) item);
-        }
-
-        for (int item : naturalThroughFields) {
+        for (Material item : naturalThroughFields) {
             naturalThroughFieldSet.add(item);
         }
 
@@ -323,7 +315,11 @@ public final class SettingsManager {
         // ********************************** Grief Revert
 
         griefRevertMinInterval = loadInt("grief-revert.min-interval-secs");
-        griefUndoBlackList = loadStringList("grief-revert.black-list");
+        List<String> griefUndoNames = loadStringList("grief-revert.black-list");
+        griefUndoBlackList = new HashSet<>();
+        for (String name : griefUndoNames) {
+            griefUndoBlackList.add(MaterialName.getBlockMaterial(name));
+        }
 
         // ********************************** DB Settings
 
@@ -535,7 +531,7 @@ public final class SettingsManager {
     }
 
     public boolean isCrop(Block block) {
-        return block.getType().equals(Material.SOIL) ||
+        return block.getType().equals(Material.FARMLAND) ||
                 block.getType().equals(Material.WHEAT) ||
                 block.getType().equals(Material.SUGAR_CANE) ||
                 block.getType().equals(Material.CARROT) ||
@@ -552,8 +548,8 @@ public final class SettingsManager {
      * @param type
      * @return
      */
-    public boolean isDependentBlock(int type) {
-        return type == 26 || type == 27 || type == 28 || type == 30 || type == 31 || type == 32 || type == 37 || type == 38 || type == 39 || type == 40 || type == 50 || type == 55 || type == 63 || type == 64 || type == 65 || type == 66 || type == 68 || type == 69 || type == 70 || type == 71 || type == 72 || type == 75 || type == 76 || type == 77 || type == 78 || type == 85 || type == 96 || type == 99 || type == 100 || type == 101 || type == 102 || type == 104 || type == 105 || type == 106 || type == 107 || type == 111 || type == 113 || type == 115 || type == 119 || type == 127 || type == 131 || type == 132;
+    public boolean isDependentBlock(Material type) {
+        return type == Material.RED_BED || type == Material.POWERED_RAIL || type == Material.DETECTOR_RAIL || type == Material.COBWEB || type == Material.DEAD_BUSH || type == Material.DEAD_BUSH || type == Material.DANDELION || type == Material.POPPY || type == Material.BROWN_MUSHROOM || type == Material.RED_MUSHROOM || type == Material.TORCH || type == Material.REDSTONE_WIRE || type == Material.SIGN || type == Material.OAK_DOOR || type == Material.LADDER || type == Material.RAIL || type == Material.AIR || type == Material.LEVER || type == Material.STONE_PRESSURE_PLATE || type == Material.IRON_DOOR || type == Material.OAK_PRESSURE_PLATE || type == Material.AIR || type == Material.REDSTONE_TORCH || type == Material.STONE_BUTTON || type == Material.SNOW || type == Material.OAK_FENCE || type == Material.OAK_TRAPDOOR || type == Material.BROWN_MUSHROOM_BLOCK || type == Material.RED_MUSHROOM_BLOCK || type == Material.IRON_BARS || type == Material.GLASS_PANE || type == Material.PUMPKIN_STEM || type == Material.MELON_STEM || type == Material.VINE || type == Material.OAK_FENCE_GATE || type == Material.LILY_PAD || type == Material.NETHER_BRICK_FENCE || type == Material.NETHER_WART || type == Material.END_PORTAL || type == Material.COCOA || type == Material.TRIPWIRE_HOOK || type == Material.TRIPWIRE;
 
     }
 
@@ -609,11 +605,11 @@ public final class SettingsManager {
     /**
      * Check if the id is one of grief undo blacklisted types
      *
-     * @param id
+     * @param type
      * @return
      */
-    public boolean isGriefUndoBlackListType(int id) {
-        return getGriefUndoBlackList().contains(id);
+    public boolean isGriefUndoBlackListType(Material type) {
+        return getGriefUndoBlackList().contains(type);
     }
 
     /**
@@ -622,7 +618,7 @@ public final class SettingsManager {
      * @param type
      * @return
      */
-    public boolean isThroughType(int type) {
+    public boolean isThroughType(Material type) {
         return throughFieldsSet.contains(type);
     }
 
@@ -632,7 +628,7 @@ public final class SettingsManager {
      * @param type
      * @return
      */
-    public boolean isNaturalThroughType(int type) {
+    public boolean isNaturalThroughType(Material type) {
         return naturalThroughFieldSet.contains(type);
     }
 
@@ -865,8 +861,8 @@ public final class SettingsManager {
     /**
      * @return the griefUndoBlackList
      */
-    public List<String> getGriefUndoBlackList() {
-        return Collections.unmodifiableList(griefUndoBlackList);
+    public Set<Material> getGriefUndoBlackList() {
+        return griefUndoBlackList;
     }
 
     /**
@@ -1279,21 +1275,8 @@ public final class SettingsManager {
     /**
      * @return the throughFieldsSet
      */
-    public List<Integer> getThroughFieldsSet() {
-        return new ArrayList<>(throughFieldsSet);
-    }
-
-    /**
-     * @return the throughFieldsSet
-     */
-    public HashSet<Byte> getThroughFieldsByteSet() {
-        return throughFieldsByteSet;
-    }
-    /**
-     * @return the throughFieldsSet
-     */
-    public HashSet<Material> getThroughFieldsMaterialSet() {
-        return throughFieldsMaterialSet;
+    public HashSet<Material> getThroughFieldsSet() {
+        return throughFieldsSet;
     }
 
     public BlockTypeEntry getCuboidDefiningType() {
