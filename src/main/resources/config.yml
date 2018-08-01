@@ -49,7 +49,7 @@ force-field-blocks:
   - '&eIt covers an area of 20 radius'
   - '&eWith a max height of 15'
   allowed-only-inside: ["City Protection"]
-  plot: true:
+  plot: true
   no-conflict: true
   prevent-use:
   - oak_door
