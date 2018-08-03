@@ -286,7 +286,7 @@ public class PSBlockListener implements Listener {
     /**
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) {
             return;
