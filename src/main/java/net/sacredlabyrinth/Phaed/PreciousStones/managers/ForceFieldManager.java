@@ -1364,7 +1364,6 @@ public final class ForceFieldManager {
                     allowedCount++;
                 }
             }
-            plugin.getStorageManager().offerField(field);
         }
 
         if (notAllowed > 0) {
