@@ -54,13 +54,13 @@ public final class TranslocationManager {
     public void addBlock(final Field field, final Block block, final boolean isImport) {
         // if its not a dependent block, then look around it for dependents and add those first
 
-        if (!plugin.getSettingsManager().isDependentBlock(block.getTypeId())) {
+        if (!plugin.getSettingsManager().isDependentBlock(block.getType())) {
             BlockFace[] faces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
 
             for (BlockFace face : faces) {
                 Block rel = block.getRelative(face);
 
-                if (plugin.getSettingsManager().isDependentBlock(rel.getTypeId())) {
+                if (plugin.getSettingsManager().isDependentBlock(rel.getType())) {
                     addBlock(field, rel, isImport);
                 }
             }
@@ -83,15 +83,15 @@ public final class TranslocationManager {
 
                 if (isImport) {
                     if (Helper.isDoor(block)) {
-                        block.setTypeIdAndData(0, (byte) 0, true);
+                        block.setType(Material.AIR, true);
                     }
 
                     if (Helper.isDoor(bottom)) {
-                        bottom.setTypeIdAndData(0, (byte) 0, true);
+                        bottom.setType(Material.AIR, true);
                     }
 
                     if (Helper.isDoor(top)) {
-                        top.setTypeIdAndData(0, (byte) 0, true);
+                        top.setType(Material.AIR, true);
                     }
                 }
 
@@ -122,7 +122,7 @@ public final class TranslocationManager {
             field.getTranslocatingModule().setTranslocationSize(count);
         } else {
             if (!Helper.isDoor(block)) {
-                block.setTypeIdAndData(0, (byte) 0, true);
+                block.setType(Material.AIR, true);
             }
         }
     }
@@ -191,17 +191,15 @@ public final class TranslocationManager {
         // only apply on air or water
 
         if (!block.getType().equals(Material.AIR) &&
-                !block.getType().equals(Material.STATIONARY_WATER) &&
-                block.getType().equals(Material.WATER) &&
-                block.getType().equals(Material.STATIONARY_LAVA) &&
-                block.getType().equals(Material.LAVA)) {
+                !block.getType().equals(Material.WATER) &&
+                !block.getType().equals(Material.LAVA)) {
             return false;
         }
 
         // rollback empty blocks straight up
 
         if (tb.isEmpty()) {
-            block.setTypeIdAndData(tb.getTypeId(), tb.getData(), true);
+            block.setType(tb.getType(), true);
             return true;
         }
 
@@ -209,19 +207,19 @@ public final class TranslocationManager {
 
         // handle sand
 
-        int[] seeThrough = {0, 6, 8, 31, 32, 37, 38, 39, 40, 9, 10, 11, 12, 51, 59, 83, 81};
+        Material[] seeThrough = {Material.AIR, Material.OAK_SAPLING, Material.WATER, Material.DEAD_BUSH, Material.DEAD_BUSH, Material.DANDELION, Material.POPPY, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.WATER, Material.LAVA, Material.LAVA, Material.SAND, Material.FIRE, Material.WHEAT, Material.SUGAR_CANE, Material.CACTUS};
 
-        for (int st : seeThrough) {
-            if (block.getTypeId() == st) {
+        for (Material st : seeThrough) {
+            if (block.getType() == st) {
                 noConflict = true;
 
-                if (st == 12) {
+                if (st == Material.SAND) {
                     for (int count = 1; count < 256; count++) {
-                        int type = world.getBlockTypeIdAt(tb.getX(), tb.getY() + count, tb.getZ());
+                        Material type = world.getBlockAt(tb.getX(), tb.getY() + count, tb.getZ()).getType();
 
-                        if (type == 0 || type == 8 || type == 9 || type == 10 || type == 11) {
+                        if (type == Material.AIR || type == Material.WATER || type == Material.LAVA) {
                             Block toSand = world.getBlockAt(tb.getX(), tb.getY() + count, tb.getZ());
-                            toSand.setTypeId(12, false);
+                            toSand.setType(Material.SAND, false);
                             break;
                         }
                     }
@@ -231,7 +229,7 @@ public final class TranslocationManager {
         }
 
         if (noConflict) {
-            block.setTypeIdAndData(tb.getTypeId(), tb.getData(), true);
+            block.setType(tb.getType(), true);
 
             if (block.getState() instanceof Sign && !tb.getSignText().isEmpty()) {
                 Sign sign = (Sign) block.getState();
@@ -288,7 +286,7 @@ public final class TranslocationManager {
         if (tb != null) {
             // wipe the block
             addBlock(field, block, true);
-            block.setTypeIdAndData(0, (byte) 0, true);
+            block.setType(Material.AIR, true);
             return true;
         }
 
@@ -308,13 +306,6 @@ public final class TranslocationManager {
         tb = processBlock(tb);
 
         if (tb != null) {
-            // if the data no longer matches, update the database
-
-            if (block.getData() != tb.getData()) {
-                tb.setData(block.getData());
-                plugin.getStorageManager().updateTranslocationBlockData(field, tb);
-            }
-
             // save the contents if it has some
 
             if (tb.hasItemStacks()) {
@@ -328,7 +319,7 @@ public final class TranslocationManager {
             }
 
             if (clear) {
-                block.setTypeIdAndData(0, (byte) 0, true);
+                block.setType(Material.AIR, true);
             }
             return true;
         }
@@ -342,17 +333,17 @@ public final class TranslocationManager {
 
         Block block = tb.getBlock();
 
-        int id1 = block.getTypeId();
-        int id2 = tb.getTypeId();
+        Material id1 = block.getType();
+        Material id2 = tb.getType();
 
         boolean equal = id1 == id2;
 
-        if (id1 == 3 && id2 == 2 || id1 == 2 && id2 == 3 || id1 == 9 && id2 == 8 || id1 == 8 && id2 == 9 || id1 == 11 && id2 == 10 || id1 == 10 && id2 == 11 || id1 == 73 && id2 == 74 || id1 == 74 && id2 == 73 || id1 == 61 && id2 == 62 || id1 == 62 && id2 == 61) {
+        if (id1 == Material.DIRT && id2 == Material.GRASS_BLOCK || id1 == Material.GRASS_BLOCK && id2 == Material.DIRT) {
             equal = true;
         }
 
         if (!equal) {
-            PreciousStones.debug("translocation block rejected, it's id changed since it was recorded: " + block.getTypeId() + " " + tb.getTypeId());
+            PreciousStones.debug("translocation block rejected, it's id changed since it was recorded: " + block.getType() + " " + tb.getType());
             return null;
         }
 
@@ -379,7 +370,7 @@ public final class TranslocationManager {
      */
     public void zeroOutBlock(TranslocationBlock tb) {
         final Block block = tb.getBlock().getWorld().getBlockAt(tb.getX(), tb.getY(), tb.getZ());
-        block.setTypeIdAndData(0, (byte) 0, true);
+        block.setType(Material.AIR, true);
     }
 
     /**
@@ -388,6 +379,7 @@ public final class TranslocationManager {
      * @param field
      * @param player
      */
+    @SuppressWarnings("deprecation")
     public void flashFieldBlock(final Field field, final Player player) {
         final Set<Player> inhabitants = plugin.getForceFieldManager().getFieldInhabitants(field);
         inhabitants.add(player);
@@ -398,7 +390,7 @@ public final class TranslocationManager {
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             for (Player p : inhabitants) {
-                p.sendBlockChange(field.getLocation(), field.getTypeId(), (byte) field.getData());
+                p.sendBlockChange(field.getLocation(), field.getMaterial(), (byte)0);
             }
         }, 20);
     }
@@ -490,11 +482,11 @@ public final class TranslocationManager {
 
         Queue<TranslocationBlock> tbs = new LinkedList<>();
 
-        Map<Integer, BlockTypeEntry> map = new HashMap<>();
+        Map<Material, BlockTypeEntry> map = new HashMap<>();
 
         if (entries != null) {
             for (BlockTypeEntry e : entries) {
-                map.put(e.getTypeId(), e);
+                map.put(e.getMaterial(), e);
             }
         }
 
@@ -506,7 +498,7 @@ public final class TranslocationManager {
                     }
 
                     if (count <= maxCount) {
-                        int id = player.getWorld().getBlockTypeIdAt(x, y, z);
+                        Material id = player.getWorld().getBlockAt(x, y, z).getType();
 
                         if (entries != null) {
                             if (map.containsKey(id)) {
@@ -523,7 +515,7 @@ public final class TranslocationManager {
                                 }
                             }
                         } else {
-                            if (id != 0) {
+                            if (id != Material.AIR) {
                                 Block block = player.getWorld().getBlockAt(x, y, z);
 
                                 if (field.getSettings().canTranslocate(new BlockTypeEntry(block))) {

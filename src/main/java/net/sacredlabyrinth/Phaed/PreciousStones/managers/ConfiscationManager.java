@@ -10,6 +10,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
+
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -35,6 +37,7 @@ public class ConfiscationManager {
      *
      * @param player
      */
+    @SuppressWarnings("deprecation")
     public void confiscateItems(Field field, Player player) {
         PlayerInventory inventory = player.getInventory();
         ItemStack[] contents = inventory.getContents();
@@ -47,8 +50,8 @@ public class ConfiscationManager {
         List<ItemStackEntry> confiscated = new ArrayList<>();
 
         for (ItemStack stack : contents) {
-            if (stack != null && stack.getTypeId() > 0) {
-                if (!field.getSettings().canCarry(stack.getTypeId(), stack.getData().getData())) {
+            if (stack != null && stack.getType() != Material.AIR) {
+                if (!field.getSettings().canCarry(stack.getType())) {
                     // remove item from inventory
 
                     inventory.removeItem(stack);
@@ -63,48 +66,48 @@ public class ConfiscationManager {
         ItemStack item = inventory.getHelmet();
 
         if (item != null) {
-            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData())) {
+            if (!field.getSettings().canCarry(item.getType())) {
                 // add item to confiscated list
                 helmet = new ItemStackEntry(item);
 
                 // remove item
-                inventory.setHelmet(new ItemStack(0));
+                inventory.setHelmet(new ItemStack(Material.AIR));
             }
         }
 
         item = inventory.getChestplate();
 
         if (item != null) {
-            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData())) {
+            if (!field.getSettings().canCarry(item.getType())) {
                 // add item to confiscated list
                 chestplate = new ItemStackEntry(item);
 
                 // remove item
-                inventory.setChestplate(new ItemStack(0));
+                inventory.setChestplate(new ItemStack(Material.AIR));
             }
         }
 
         item = inventory.getLeggings();
 
         if (item != null) {
-            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData())) {
+            if (!field.getSettings().canCarry(item.getType())) {
                 // add item to confiscated list
                 leggings = new ItemStackEntry(item);
 
                 // remove item
-                inventory.setLeggings(new ItemStack(0));
+                inventory.setLeggings(new ItemStack(Material.AIR));
             }
         }
 
         item = inventory.getBoots();
 
         if (item != null) {
-            if (!field.getSettings().canCarry(item.getTypeId(), item.getData().getData())) {
+            if (!field.getSettings().canCarry(item.getType())) {
                 // add item to confiscated list
                 boots = new ItemStackEntry(item);
 
                 // remove item
-                inventory.setBoots(new ItemStack(0));
+                inventory.setBoots(new ItemStack(Material.AIR));
             }
         }
 
@@ -117,23 +120,23 @@ public class ConfiscationManager {
             String msg = "";
 
             for (ItemStackEntry e : confiscated) {
-                msg += e.getAmount() + " " + Helper.friendlyBlockType(e.getTypeId()) + ", ";
+                msg += e.getAmount() + " " + Helper.friendlyBlockType(e.getType()) + ", ";
             }
 
             if (helmet != null) {
-                msg += "1 " + Helper.friendlyBlockType(helmet.getTypeId()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(helmet.getType()) + ", ";
             }
 
             if (chestplate != null) {
-                msg += "1 " + Helper.friendlyBlockType(chestplate.getTypeId()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(chestplate.getType()) + ", ";
             }
 
             if (leggings != null) {
-                msg += "1 " + Helper.friendlyBlockType(leggings.getTypeId()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(leggings.getType()) + ", ";
             }
 
             if (boots != null) {
-                msg += "1 " + Helper.friendlyBlockType(boots.getTypeId()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(boots.getType()) + ", ";
             }
 
             msg = Helper.stripTrailing(msg, ", ");
@@ -148,6 +151,7 @@ public class ConfiscationManager {
      *
      * @param player
      */
+    @SuppressWarnings("deprecation")
     public void returnItems(Player player) {
         PlayerInventory inventory = player.getInventory();
 
@@ -195,23 +199,23 @@ public class ConfiscationManager {
             String msg = "";
 
             for (ItemStackEntry e : confiscated) {
-                msg += e.getAmount() + " " + Helper.friendlyBlockType(e.getTypeId()) + ", ";
+                msg += e.getAmount() + " " + Helper.friendlyBlockType(e.getType()) + ", ";
             }
 
             if (helmet != null) {
-                msg += "1 " + Helper.friendlyBlockType(helmet.getTypeId()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(helmet.getType()) + ", ";
             }
 
             if (chestplate != null) {
-                msg += "1 " + Helper.friendlyBlockType(chestplate.getTypeId()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(chestplate.getType()) + ", ";
             }
 
             if (leggings != null) {
-                msg += "1 " + Helper.friendlyBlockType(leggings.getTypeId()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(leggings.getType()) + ", ";
             }
 
             if (boots != null) {
-                msg += "1 " + Helper.friendlyBlockType(boots.getTypeId()) + ", ";
+                msg += "1 " + Helper.friendlyBlockType(boots.getType()) + ", ";
             }
 
             msg = Helper.stripTrailing(msg, ", ");

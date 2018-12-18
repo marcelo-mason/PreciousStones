@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * @author phaed
  */
+@SuppressWarnings("deprecation")
 public final class SimpleClansManager {
     private PreciousStones plugin;
     private SimpleClans simpleClans;

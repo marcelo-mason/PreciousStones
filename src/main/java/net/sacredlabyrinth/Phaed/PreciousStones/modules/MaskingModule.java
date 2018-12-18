@@ -24,6 +24,7 @@ public class MaskingModule {
         unmask(null);
     }
 
+    @SuppressWarnings("deprecation")
     public void mask(Player actor) {
         Set<Player> fieldInhabitants = new HashSet<>();
 
@@ -50,6 +51,7 @@ public class MaskingModule {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void unmask(Player actor) {
         Set<Player> fieldInhabitants = new HashSet<>();
 
@@ -68,7 +70,7 @@ public class MaskingModule {
         }
 
         for (Player player : fieldInhabitants) {
-            player.sendBlockChange(field.getLocation(), field.getTypeId(), (byte) field.getData());
+            player.sendBlockChange(field.getLocation(), field.getMaterial(), (byte)0);
         }
     }
 }

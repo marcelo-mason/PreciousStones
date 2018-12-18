@@ -36,7 +36,7 @@ public class Unbreakable extends AbstractVec {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
         this.owner = owner;
-        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.type = new BlockTypeEntry(block.getType());
         this.dirty = true;
     }
 
@@ -46,22 +46,12 @@ public class Unbreakable extends AbstractVec {
     public Unbreakable(Block block) {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
 
-        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.type = new BlockTypeEntry(block.getType());
         this.dirty = true;
     }
 
-    /**
-     * @return
-     */
-    public int getTypeId() {
-        return this.type.getTypeId();
-    }
-
-    /**
-     * @return the block data
-     */
-    public byte getData() {
-        return type.getData();
+    public Material getMaterial() {
+        return this.type.getMaterial();
     }
 
     /**
@@ -75,7 +65,7 @@ public class Unbreakable extends AbstractVec {
      * @return
      */
     public String getType() {
-        return Material.getMaterial(this.getTypeId()).toString();
+        return this.getMaterial().name();
     }
 
     /**

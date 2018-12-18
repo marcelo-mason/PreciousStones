@@ -245,7 +245,7 @@ public class PSEntityListener implements Listener {
 
             if (plugin.getSettingsManager().isUnbreakableType(block) && plugin.getUnbreakableManager().isUnbreakable(block)) {
                 revert.add(new BlockEntry(block));
-                block.setTypeIdAndData(0, (byte) 0, false);
+                block.setType(Material.AIR, false);
                 continue;
             }
 
@@ -260,7 +260,7 @@ public class PSEntityListener implements Listener {
                 }
 
                 revert.add(new BlockEntry(block));
-                block.setTypeIdAndData(0, (byte) 0, false);
+                block.setType(Material.AIR, false);
                 continue;
             }
 
@@ -308,7 +308,7 @@ public class PSEntityListener implements Listener {
             rollbackField = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.ROLLBACK_EXPLOSIONS);
 
             if (rollbackField != null) {
-                if (block.getTypeId() != 46) {
+                if (block.getType() != Material.TNT) {
                     plugin.getGriefUndoManager().addBlock(rollbackField, block, true);
                 } else {
                     tnts.add(new BlockEntry(block));
@@ -321,7 +321,7 @@ public class PSEntityListener implements Listener {
             Field field = plugin.getForceFieldManager().getEnabledSourceField(block.getLocation(), FieldFlag.GRIEF_REVERT);
 
             if (field != null && !field.getSettings().canGrief(new BlockTypeEntry(block.getType()))) {
-                if (block.getTypeId() == 46) {
+                if (block.getType() == Material.TNT) {
                     // trigger any tnt that exists inside the grief field blast radius
 
                     tnts.add(new BlockEntry(block));
@@ -329,7 +329,7 @@ public class PSEntityListener implements Listener {
                 } else {
                     // record the griefed block
 
-                    if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId())) {
+                    if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getType())) {
                         saved.add(new BlockEntry(block));
                         plugin.getGriefUndoManager().addBlock(field, block, true);
                     }
@@ -372,7 +372,7 @@ public class PSEntityListener implements Listener {
                     if (block != null) {
                         Location midloc = new Location(block.getWorld(), block.getX() + .5, block.getY() + .5, block.getZ() + .5);
                         block.getWorld().spawn(midloc, TNTPrimed.class);
-                        block.setTypeId(0);
+                        block.setType(Material.AIR);
                     }
                 }
                 tnts.clear();
@@ -397,7 +397,7 @@ public class PSEntityListener implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 for (BlockEntry db : revert) {
                     Block block = db.getLocation().getBlock();
-                    block.setTypeIdAndData(db.getTypeId(), db.getData(), true);
+                    block.setType(db.getType(), true);
                 }
                 revert.clear();
             }, 3);
@@ -418,7 +418,7 @@ public class PSEntityListener implements Listener {
                         continue;
                     }
 
-                    block.setTypeId(0);
+                    block.setType(Material.AIR);
                 }
             }, 1);
         }
@@ -1108,7 +1108,7 @@ public class PSEntityListener implements Listener {
             return;
         }
 
-        BlockTypeEntry type = new BlockTypeEntry(is.getTypeId(), is.getData().getData());
+        BlockTypeEntry type = new BlockTypeEntry(is.getType());
         FieldSettings settings = plugin.getSettingsManager().getFieldSettings(type);
 
         if (settings != null && settings.hasMetaName() && settings.isMetaAutoSet()) {

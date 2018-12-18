@@ -30,7 +30,7 @@ public class TranslocationUpdater implements Runnable {
 
         for (TranslocationBlock tb : translocationQueue) {
             if (tb != null) {
-                if (plugin.getSettingsManager().isDependentBlock(tb.getTypeId())) {
+                if (plugin.getSettingsManager().isDependentBlock(tb.getType())) {
                     this.dependentQueue.add(tb);
                 } else {
                     this.translocationQueue.add(tb);

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class StackHelper {
     
     private StackHelper() {
@@ -82,13 +83,12 @@ public class StackHelper {
     public static List<ItemStack> makeStacks(BlockTypeEntry item, int amount) {
         List<ItemStack> out = new ArrayList<>();
 
-        Material material = Material.getMaterial(item.getTypeId());
+        Material material = item.getMaterial();
 
         int blocks = amount / 64;
 
         for (int i = 0; i < blocks; i++) {
             ItemStack is = new ItemStack(material, 64);
-            is.setDurability(item.getData());
             out.add(is);
         }
 
@@ -96,7 +96,6 @@ public class StackHelper {
 
         if (remainder > 0) {
             ItemStack is = new ItemStack(material, remainder);
-            is.setDurability(item.getData());
             out.add(is);
         }
 
@@ -109,10 +108,8 @@ public class StackHelper {
                 continue;
             }
 
-            if (i.getTypeId() == item.getTypeId()) {
-                if (item.getData() == 0 || i.getData().getData() == item.getData()) {
-                    amount -= i.getAmount();
-                }
+            if (i.getType() == item.getMaterial()) {
+                amount -= i.getAmount();
             }
         }
 

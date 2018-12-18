@@ -58,7 +58,7 @@ public class TranslocationBlock extends AbstractVec {
      */
     public TranslocationBlock(Block block) {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.type = new BlockTypeEntry(block.getType());
     }
 
     /**
@@ -66,7 +66,7 @@ public class TranslocationBlock extends AbstractVec {
      */
     public TranslocationBlock(Field field, Block block) {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.type = new BlockTypeEntry(block.getType());
         setRelativeCoords(field);
     }
 
@@ -75,29 +75,15 @@ public class TranslocationBlock extends AbstractVec {
      */
     public TranslocationBlock(BlockState state) {
         super(state.getX(), state.getY(), state.getZ(), state.getWorld().getName());
-        this.type = new BlockTypeEntry(state.getTypeId(), state.getRawData());
+        this.type = new BlockTypeEntry(state.getType());
         this.empty = true;
     }
 
     /**
-     * @return the typeId
+     * @return the type
      */
-    public int getTypeId() {
-        return type.getTypeId();
-    }
-
-    /**
-     * @return the data
-     */
-    public byte getData() {
-        return type.getData();
-    }
-
-    /**
-     * @return the data
-     */
-    public void setData(byte data) {
-        type = new BlockTypeEntry(type.getTypeId(), data);
+    public Material getType() {
+        return type.getMaterial();
     }
 
     /**
@@ -127,11 +113,11 @@ public class TranslocationBlock extends AbstractVec {
 
         String[] unpacked = packed.split("[|]");
 
-        this.type = new BlockTypeEntry(Integer.parseInt(unpacked[0]), Byte.parseByte(unpacked[1]));
+        this.type = new BlockTypeEntry(unpacked[0]);
     }
 
     public String serialize() {
-        return getTypeId() + "|" + getData() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
+        return getType().name() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
     }
 
     public void setRelativeCoords(int x, int y, int z) {

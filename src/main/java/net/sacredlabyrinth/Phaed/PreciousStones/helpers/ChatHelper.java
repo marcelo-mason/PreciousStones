@@ -609,6 +609,7 @@ public class ChatHelper {
      * @param playerName
      * @param msg
      */
+    @SuppressWarnings("deprecation")
     public static void send(String playerName, String msg, Object... args) {
         Player player = Bukkit.getPlayerExact(playerName);
 

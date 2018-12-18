@@ -34,6 +34,7 @@ import java.util.List;
 /**
  * @author phaed
  */
+@SuppressWarnings("deprecation")
 public final class PermissionsManager {
     public static Permission permission = null;
     private static Economy economy = null;

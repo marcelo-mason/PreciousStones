@@ -32,7 +32,7 @@ public class LightningManager {
 
         if (FieldFlag.LIGHTNING.applies(field, player)) {
             final int delay = field.getSettings().getLightningDelaySeconds();
-            final int leftBehind = field.getSettings().getLightningReplaceBlock();
+            final Material leftBehind = field.getSettings().getLightningReplaceBlock();
 
             plugin.getCommunicationManager().showLightning(player);
 
@@ -41,10 +41,8 @@ public class LightningManager {
 
                 player.getWorld().strikeLightning(player.getLocation());
 
-                if (leftBehind >= 0) {
-                    plugin.getForceFieldManager().releaseNoDrop(field);
-                    block.setType(Material.getMaterial(leftBehind));
-                }
+                plugin.getForceFieldManager().releaseNoDrop(field);
+                block.setType(leftBehind);
 
             }, delay * 20L);
         }

@@ -36,6 +36,7 @@ import java.util.Map.Entry;
  *
  * @author Phaed
  */
+@SuppressWarnings("deprecation")
 public final class ForceFieldManager {
     private final Map<FieldFlag, List<Field>> fieldsByFlag = Maps.newHashMap();
     private final Map<String, List<Field>> fieldsByWorld = Maps.newHashMap();
@@ -265,7 +266,7 @@ public final class ForceFieldManager {
 
         // generate fence
 
-        if (field.getSettings().getFenceItem() > 0) {
+        if (field.getSettings().getFenceItem() != Material.AIR) {
             if (field.getFencingModule().getFencePrice() == 0 || purchase(player, field.getFencingModule().getFencePrice())) {
                 field.getFencingModule().generateFence(field.getSettings().getFenceItem());
                 ChatHelper.send(player, "fenceGenerated");
@@ -912,8 +913,7 @@ public final class ForceFieldManager {
                 if (!field.getHidingModule().isHidden()) {
                     if (!field.matchesBlockType()) {
                         Block block = field.getBlock();
-                        block.setTypeId(field.getTypeId());
-                        block.setData((byte) field.getData());
+                        block.setType(field.getMaterial());
                         revertedCount++;
                     }
                 }
@@ -951,9 +951,9 @@ public final class ForceFieldManager {
             return false;
         }
 
-        int topId = block.getRelative(BlockFace.UP).getTypeId();
+        Material topMaterial = block.getRelative(BlockFace.UP).getType();
 
-        if (topId == 70 || topId == 72) // plates
+        if (topMaterial == Material.STONE_PRESSURE_PLATE || topMaterial == Material.OAK_PRESSURE_PLATE) // plates
         {
             return true;
         }
@@ -962,23 +962,23 @@ public final class ForceFieldManager {
 
         for (BlockFace face : faces) {
             Block faceblock = block.getRelative(face);
-            int faceId = faceblock.getTypeId();
+            Material faceType = faceblock.getType();
 
-            if (faceId == 75)  // redstone torch
+            if (faceType == Material.REDSTONE_TORCH || faceType == Material.REDSTONE_WALL_TORCH)  // redstone torch
             {
                 return true;
             }
 
-            if (faceId == 77) // stone button
+            if (faceType == Material.STONE_BUTTON) // stone button
             {
                 return true;
             }
 
-            if (faceId == 69 /* lever */ && faceblock.getBlockPower() == 0) {
+            if (faceType == Material.LEVER /* lever */ && faceblock.getBlockPower() == 0) {
                 return true;
             }
 
-            if (faceId == 55 /* redstone wire */ && faceblock.getBlockPower() == 0) {
+            if (faceType == Material.REDSTONE_WIRE /* redstone wire */ && faceblock.getBlockPower() == 0) {
                 return true;
             }
         }
@@ -989,9 +989,9 @@ public final class ForceFieldManager {
 
         for (BlockFace face : upfaces) {
             Block faceblock = upblock.getRelative(face);
-            int faceId = faceblock.getTypeId();
+            Material faceType = faceblock.getType();
 
-            if (faceId == 55 /* redstone wire */ && faceblock.getBlockPower() == 0) {
+            if (faceType == Material.REDSTONE_WIRE /* redstone wire */ && faceblock.getBlockPower() == 0) {
                 return true;
             }
         }
@@ -1048,7 +1048,7 @@ public final class ForceFieldManager {
         for (BlockFace face : faces) {
             Block source = block.getRelative(face);
 
-            if (source.getTypeId() == 55) // redstone wire
+            if (source.getType() == Material.REDSTONE_WIRE) // redstone wire
             {
                 if (source.getBlockPower() > 0) {
                     return true;
@@ -1063,7 +1063,7 @@ public final class ForceFieldManager {
         for (BlockFace face : upfaces) {
             Block faceblock = upblock.getRelative(face);
 
-            if (faceblock.getTypeId() == 55) // redstone wire
+            if (faceblock.getType() == Material.REDSTONE_WIRE) // redstone wire
             {
                 if (faceblock.getBlockPower() > 0) {
                     return true;
@@ -1364,7 +1364,6 @@ public final class ForceFieldManager {
                     allowedCount++;
                 }
             }
-            plugin.getStorageManager().offerField(field);
         }
 
         if (notAllowed > 0) {
@@ -2278,7 +2277,7 @@ public final class ForceFieldManager {
         // build item
 
         World world = block.getWorld();
-        ItemStack is = new ItemStack(type.getTypeId(), 1, (short) 0, type.getData());
+        ItemStack is = new ItemStack(type.getMaterial());
 
         // apply meta name and lore
 
@@ -2786,7 +2785,7 @@ public final class ForceFieldManager {
     public void giveField(Player player, FieldSettings settings, int count) {
         // build item
 
-        ItemStack is = new ItemStack(settings.getTypeId(), count, (short) 0, settings.getData());
+        ItemStack is = new ItemStack(settings.getMaterial(), count);
 
         // apply meta name and lore
 
@@ -2837,7 +2836,6 @@ public final class ForceFieldManager {
         // set block
 
         fieldBlock.setType(type.getMaterial());
-        fieldBlock.setData(type.getData());
 
         // create field
 
@@ -2917,7 +2915,7 @@ public final class ForceFieldManager {
 
         // generate fence
 
-        if (field.getSettings().getFenceItem() > 0) {
+        if (field.getSettings().getFenceItem() != Material.AIR) {
             field.getFencingModule().generateFence(field.getSettings().getFenceItem());
         }
 

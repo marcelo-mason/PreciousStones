@@ -5,8 +5,8 @@
 
     <groupId>net.sacredlabyrinth.Phaed</groupId>
     <artifactId>PreciousStones</artifactId>
-    <version>10.7.2</version>
-    <name>PreciousStones-1.12</name>
+    <version>11.0</version>
+    <name>PreciousStones-1.13</name>
     <url>http://dev.bukkit.org/server-mods/preciousstones/</url>
 
     <build>
@@ -100,7 +100,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.12.1-R0.1-SNAPSHOT</version>
+            <version>1.13-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -116,15 +116,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldedit</artifactId>
-            <version>6.1.7.3</version>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>7.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>6.2.1</version>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-legacy</artifactId>
+            <version>7.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -198,8 +198,16 @@
 
     <repositories>
         <repository>
+            <id>sk89q</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+        <repository>
             <id>remote-repos</id>
             <url>http://104.236.246.108:8081/artifactory/remote-repos</url>
+        </repository>
+        <repository>
+            <id>elMakers</id>
+            <url>http://maven.elmakers.com/repository/</url>
         </repository>
     </repositories>
 

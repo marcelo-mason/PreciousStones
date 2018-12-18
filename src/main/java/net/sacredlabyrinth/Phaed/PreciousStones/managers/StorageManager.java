@@ -595,7 +595,6 @@ public class StorageManager {
                             int radius = res.getInt("radius");
                             int height = res.getInt("height");
                             int type_id = res.getInt("type_id");
-                            byte data = res.getByte("data");
                             float velocity = res.getFloat("velocity");
                             String world = res.getString("world");
                             String owner = res.getString("owner");
@@ -604,7 +603,7 @@ public class StorageManager {
                             String packed_allowed = res.getString("packed_allowed");
                             long last_used = res.getLong("last_used");
 
-                            BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                            BlockTypeEntry type = new BlockTypeEntry(Helper.getMaterial(type_id));
 
                             Field field = new Field(x, y, z, radius, height, velocity, world, type, owner, name, last_used);
                             field.setPackedAllowed(packed_allowed);
@@ -679,7 +678,6 @@ public class StorageManager {
                             int maxy = res.getInt("maxy");
                             int maxz = res.getInt("maxz");
                             int type_id = res.getInt("type_id");
-                            byte data = res.getByte("data");
                             float velocity = res.getFloat("velocity");
                             String world = res.getString("world");
                             String owner = res.getString("owner");
@@ -688,7 +686,7 @@ public class StorageManager {
                             String packed_allowed = res.getString("packed_allowed");
                             long last_used = res.getLong("last_used");
 
-                            BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                            BlockTypeEntry type = new BlockTypeEntry(Helper.getMaterial(type_id));
 
                             Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
                             field.setPackedAllowed(packed_allowed);
@@ -748,7 +746,6 @@ public class StorageManager {
                             int maxy = res.getInt("maxy");
                             int maxz = res.getInt("maxz");
                             int type_id = res.getInt("type_id");
-                            byte data = res.getByte("data");
                             float velocity = res.getFloat("velocity");
                             String world = res.getString("world");
                             String owner = res.getString("owner");
@@ -757,7 +754,7 @@ public class StorageManager {
                             String packed_allowed = res.getString("packed_allowed");
                             long last_used = res.getLong("last_used");
 
-                            BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                            BlockTypeEntry type = new BlockTypeEntry(Helper.getMaterial(type_id));
 
                             Field field = new Field(x, y, z, minx, miny, minz, maxx, maxy, maxz, velocity, world, type, owner, name, last_used);
                             field.setPackedAllowed(packed_allowed);
@@ -802,6 +799,7 @@ public class StorageManager {
         return out.values();
     }
 
+    @SuppressWarnings("deprecation")
     public void migrate(String oldUsername, String newUsername) {
         plugin.getForceFieldManager().migrateUsername(oldUsername, newUsername);
         plugin.getUnbreakableManager().migrateUsername(oldUsername, newUsername);
@@ -981,7 +979,7 @@ public class StorageManager {
                             String world = res.getString("world");
                             String owner = res.getString("owner");
 
-                            BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                            BlockTypeEntry type = new BlockTypeEntry(Helper.getMaterial(type_id));
 
                             Unbreakable ub = new Unbreakable(x, y, z, world, type, owner);
 
@@ -1077,11 +1075,11 @@ public class StorageManager {
         }
 
         String query = "INSERT INTO `pstone_fields` (  `x`,  `y`, `z`, `world`, `radius`, `height`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.getMillis() + "','" + Helper.escapeQuotes(field.getFlagsModule().getFlagsAsString()) + "');";
+        String values = "VALUES ( " + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getRadius() + "," + field.getHeight() + "," + field.getVelocity() + "," + Helper.getMaterialId(field.getMaterial()) + "," + 0 + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.getMillis() + "','" + Helper.escapeQuotes(field.getFlagsModule().getFlagsAsString()) + "');";
 
         if (field.hasFlag(FieldFlag.CUBOID)) {
             query = "INSERT INTO `pstone_cuboids` ( `parent`, `x`,  `y`, `z`, `world`, `minx`, `miny`, `minz`, `maxx`, `maxy`, `maxz`, `velocity`, `type_id`, `data`, `owner`, `name`, `packed_allowed`, `last_used`, `flags`) ";
-            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + field.getTypeId() + "," + field.getData() + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.getMillis() + "','" + Helper.escapeQuotes(field.getFlagsModule().getFlagsAsString()) + "');";
+            values = "VALUES ( " + (field.getParent() == null ? 0 : field.getParent().getId()) + "," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + field.getMinx() + "," + field.getMiny() + "," + field.getMinz() + "," + field.getMaxx() + "," + field.getMaxy() + "," + field.getMaxz() + "," + field.getVelocity() + "," + Helper.getMaterialId(field.getMaterial()) + "," + 0 + ",'" + field.getOwner() + "','" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getPackedAllowed()) + "','" + Helper.getMillis() + "','" + Helper.escapeQuotes(field.getFlagsModule().getFlagsAsString()) + "');";
         }
 
         synchronized (this) {
@@ -1156,7 +1154,7 @@ public class StorageManager {
      */
     public void insertUnbreakable(Unbreakable ub) {
         String query = "INSERT INTO `pstone_unbreakables` (  `x`,  `y`, `z`, `world`, `owner`, `type_id`, `data`) ";
-        String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + Helper.escapeQuotes(ub.getWorld()) + "','" + ub.getOwner() + "'," + ub.getTypeId() + "," + ub.getData() + ");";
+        String values = "VALUES ( " + ub.getX() + "," + ub.getY() + "," + ub.getZ() + ",'" + Helper.escapeQuotes(ub.getWorld()) + "','" + ub.getOwner() + "'," + Helper.getMaterialId(ub.getMaterial()) + "," + 0 + ");";
 
         synchronized (this) {
             core.insert(query + values);
@@ -1402,7 +1400,7 @@ public class StorageManager {
      */
     public void insertBlockGrief(Field field, GriefBlock gb) {
         String query = "INSERT INTO `pstone_grief_undo` ( `date_griefed`, `field_x`, `field_y` , `field_z`, `world`, `x` , `y`, `z`, `type_id`, `data`, `sign_text`) ";
-        String values = "VALUES ( '" + Helper.getMillis() + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + gb.getTypeId() + "," + gb.getData() + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
+        String values = "VALUES ( '" + Helper.getMillis() + "'," + field.getX() + "," + field.getY() + "," + field.getZ() + ",'" + Helper.escapeQuotes(field.getWorld()) + "'," + gb.getX() + "," + gb.getY() + "," + gb.getZ() + "," + Helper.getMaterialId(gb.getType()) + "," + 0 + ",'" + Helper.escapeQuotes(gb.getSignText()) + "');";
 
         synchronized (this) {
             core.insert(query + values);
@@ -1444,10 +1442,9 @@ public class StorageManager {
                                 int y = res.getInt("y");
                                 int z = res.getInt("z");
                                 int type_id = res.getInt("type_id");
-                                byte data = res.getByte("data");
                                 String signText = res.getString("sign_text");
 
-                                BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                                BlockTypeEntry type = new BlockTypeEntry(Helper.getMaterial(type_id));
 
                                 GriefBlock gb = new GriefBlock(x, y, z, field.getWorld(), type);
 
@@ -1619,7 +1616,7 @@ public class StorageManager {
      */
     public void insertTranslocationBlock(Field field, TranslocationBlock tb, boolean applied) {
         String query = "INSERT INTO `pstone_storedblocks` ( `name`, `player_name`, `world`, `x` , `y`, `z`, `type_id`, `data`, `contents`, `sign_text`, `applied`) ";
-        String values = "VALUES ( '" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getOwner()) + "','" + Helper.escapeQuotes(field.getWorld()) + "'," + tb.getRx() + "," + tb.getRy() + "," + tb.getRz() + "," + tb.getTypeId() + "," + tb.getData() + ",'" + tb.getContents() + "','" + Helper.escapeQuotes(tb.getSignText()) + "', " + (applied ? 1 : 0) + ");";
+        String values = "VALUES ( '" + Helper.escapeQuotes(field.getName()) + "','" + Helper.escapeQuotes(field.getOwner()) + "','" + Helper.escapeQuotes(field.getWorld()) + "'," + tb.getRx() + "," + tb.getRy() + "," + tb.getRz() + "," + Helper.getMaterialId(tb.getType()) + "," + 0 + ",'" + tb.getContents() + "','" + Helper.escapeQuotes(tb.getSignText()) + "', " + (applied ? 1 : 0) + ");";
 
         synchronized (this) {
             core.insert(query + values);
@@ -1767,11 +1764,10 @@ public class StorageManager {
                                 location = location.add(field.getLocation());
 
                                 int type_id = res.getInt("type_id");
-                                byte data = res.getByte("data");
                                 String signText = res.getString("sign_text");
                                 String contents = res.getString("contents");
 
-                                BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                                BlockTypeEntry type = new BlockTypeEntry(Helper.getMaterial(type_id));
 
                                 TranslocationBlock tb = new TranslocationBlock(location, type);
 
@@ -1828,11 +1824,10 @@ public class StorageManager {
                                 location = location.add(field.getLocation());
 
                                 int type_id = res.getInt("type_id");
-                                byte data = res.getByte("data");
                                 String signText = res.getString("sign_text");
                                 String contents = res.getString("contents");
 
-                                BlockTypeEntry type = new BlockTypeEntry(type_id, data);
+                                BlockTypeEntry type = new BlockTypeEntry(Helper.getMaterial(type_id));
 
                                 TranslocationBlock tb = new TranslocationBlock(location, type);
 
@@ -2105,11 +2100,7 @@ public class StorageManager {
     public int deleteBlockTypeFromTranslocation(String name, String playerName, BlockTypeEntry block) {
         int beforeCount = totalTranslocationCount(name, playerName);
 
-        String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "' AND `type_id` = " + block.getTypeId() + ";";
-
-        if (block.getData() > 0) {
-            query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "' AND `type_id` = " + block.getTypeId() + " AND `data` = " + block.getData() + ";";
-        }
+        String query = "DELETE FROM `pstone_storedblocks` WHERE `player_name` = '" + Helper.escapeQuotes(playerName) + "' AND `name` = '" + Helper.escapeQuotes(name) + "' AND `type_id` = " + Helper.getMaterialId(block.getMaterial()) + ";";
 
         synchronized (this) {
             core.delete(query);
@@ -2160,22 +2151,6 @@ public class StorageManager {
      */
     public boolean isTranslocationApplied(String name, String playerName) {
         return appliedTranslocationCount(name, playerName) > 0;
-    }
-
-    /**
-     * Update a block's data on the database
-     *
-     * @param field
-     * @param tb
-     */
-    public void updateTranslocationBlockData(Field field, TranslocationBlock tb) {
-        Location location = tb.getRelativeLocation();
-
-        String query = "UPDATE `pstone_storedblocks` SET `data` = " + tb.getData() + " WHERE `name` ='" + Helper.escapeQuotes(field.getName()) + "' AND `player_name` = '" + Helper.escapeQuotes(field.getOwner()) + "' AND `x` = " + location.getBlockX() + " AND `y` = " + location.getBlockY() + " AND `z` = " + location.getBlockZ() + ";";
-
-        synchronized (this) {
-            core.update(query);
-        }
     }
 
     /**

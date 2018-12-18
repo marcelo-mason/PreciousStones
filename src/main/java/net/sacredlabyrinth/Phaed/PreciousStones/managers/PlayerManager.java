@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.PlayerEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -162,8 +163,8 @@ public class PlayerManager {
     }
 
     private boolean isEmptySpace(World world, int x, int y, int z) {
-        int type1 = world.getBlockTypeIdAt(x, y, z);
-        int type2 = world.getBlockTypeIdAt(x, y, z);
+        Material type1 = world.getBlockAt(x, y, z).getType();
+        Material type2 = world.getBlockAt(x, y, z).getType();
 
         return plugin.getSettingsManager().isThroughType(type1) && plugin.getSettingsManager().isThroughType(type2);
 

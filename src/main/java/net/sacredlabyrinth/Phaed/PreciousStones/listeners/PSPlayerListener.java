@@ -37,6 +37,7 @@ import java.util.List;
  *
  * @author Phaed
  */
+@SuppressWarnings("deprecation")
 public class PSPlayerListener implements Listener {
     private final PreciousStones plugin;
 
@@ -365,7 +366,7 @@ public class PSPlayerListener implements Listener {
                 boolean hasItem = false;
 
                 for (ItemStack stack : contents) {
-                    if (stack == null || stack.getTypeId() == 0) {
+                    if (stack == null || stack.getType() == Material.AIR) {
                         continue;
                     }
 
@@ -401,9 +402,9 @@ public class PSPlayerListener implements Listener {
                 }
             }
 
-            ItemStack itemInHand = player.getItemInHand();
+            ItemStack itemInHand = player.getInventory().getItemInMainHand();
 
-            if (itemInHand != null && itemInHand.getTypeId() != 0) {
+            if (itemInHand != null && itemInHand.getType() != Material.AIR) {
                 if (futureField.getSettings().isTeleportHoldingItem(new BlockTypeEntry(itemInHand.getType()))) {
                     if (FieldFlag.TELEPORT_IF_HOLDING_ITEMS.applies(futureField, player)) {
                         PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player);
@@ -417,9 +418,9 @@ public class PSPlayerListener implements Listener {
                 }
             }
 
-            itemInHand = player.getItemInHand();
+            itemInHand = player.getInventory().getItemInMainHand();
 
-            if (itemInHand != null && itemInHand.getTypeId() != 0) {
+            if (itemInHand != null && itemInHand.getType() != Material.AIR) {
                 if (!futureField.getSettings().isTeleportNotHoldingItem(new BlockTypeEntry(itemInHand.getType()))) {
                     if (FieldFlag.TELEPORT_IF_NOT_HOLDING_ITEMS.applies(futureField, player)) {
                         PlayerEntry entry = plugin.getPlayerManager().getPlayerEntry(player);
@@ -495,7 +496,7 @@ public class PSPlayerListener implements Listener {
         final Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         EquipmentSlot hand = event.getHand();
-        ItemStack is = player.getItemInHand();
+        ItemStack is = player.getInventory().getItemInMainHand();
 
         // added for 1.9 change where the PlayerInteractEvent fires twice one for each hand
 
@@ -714,7 +715,7 @@ public class PSPlayerListener implements Listener {
 
         // -------------------------------------------------------------------------------- actions during an open cuboid
 
-        boolean hasCuboidHand = is == null || is.getTypeId() == 0 || plugin.getSettingsManager().isToolItemType(new BlockTypeEntry(is.getType())) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getTypeId(), is.getData().getData()), is);
+        boolean hasCuboidHand = is == null || is.getType() == Material.AIR || plugin.getSettingsManager().isToolItemType(new BlockTypeEntry(is.getType())) || plugin.getSettingsManager().isFieldType(new BlockTypeEntry(is.getType()), is);
 
         if (hasCuboidHand) {
             if (plugin.getCuboidManager().hasOpenCuboid(player)) {
@@ -868,19 +869,20 @@ public class PSPlayerListener implements Listener {
             }
 
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                if (block.getTypeId() == 68) // wall sign
+                if (block.getType() == Material.WALL_SIGN) // wall sign
                 {
                     plugin.getSnitchManager().recordSnitchShop(player, block);
                 }
 
-                if (block.getTypeId() == 58 || // workbench
-                        block.getTypeId() == 355 || // bed
-                        block.getTypeId() == 64 || //wood door
-                        block.getTypeId() == 69 ||  //lever
-                        block.getTypeId() == 328 ||  // cart
-                        block.getTypeId() == 28 ||  /// note
-                        block.getTypeId() == 84 || // juke
-                        block.getTypeId() == 77) // button
+                if (block.getType() == Material.CRAFTING_TABLE || // workbench
+                        block.getType() == Material.RED_BED || // bed
+                        block.getType() == Material.OAK_DOOR || //wood door
+                        block.getType() == Material.LEVER ||  //lever
+                        block.getType() == Material.MINECART ||  // cart (.. what??)
+                        block.getType() == Material.NOTE_BLOCK ||  /// note
+                        block.getType() == Material.JUKEBOX || // juke
+                        block.getType() == Material.STONE_BUTTON ||
+                        block.getType() == Material.OAK_BUTTON) // button
                 {
                     plugin.getSnitchManager().recordSnitchUsed(player, block);
                 }
@@ -900,7 +902,7 @@ public class PSPlayerListener implements Listener {
                         try {
                             // makes sure water/see-through fields can be right clicked
 
-                            TargetBlock aiming = new TargetBlock(player, plugin.getSettingsManager().getMaxTargetDistance(), 0.2, new int[]{0});
+                            TargetBlock aiming = new TargetBlock(player, plugin.getSettingsManager().getMaxTargetDistance(), 0.2, new Material[]{Material.AIR});
                             Block targetBlock = aiming.getTargetBlock();
 
                             if (targetBlock != null && plugin.getForceFieldManager().isField(targetBlock)) {
@@ -1258,7 +1260,7 @@ public class PSPlayerListener implements Listener {
         if (field != null) {
             if (FieldFlag.GRIEF_REVERT.applies(field, player)) {
                 if (field.hasFlag(FieldFlag.PLACE_GRIEF)) {
-                    if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getTypeId())) {
+                    if (!plugin.getSettingsManager().isGriefUndoBlackListType(block.getType())) {
                         plugin.getGriefUndoManager().addBlock(field, block, true);
                         plugin.getStorageManager().offerGrief(field);
                     }
@@ -1443,7 +1445,7 @@ public class PSPlayerListener implements Listener {
                 ItemStack item = inv.getItem(slot);
 
                 if (item != null) {
-                    if (field.getSettings().isUnusableItem(item.getTypeId(), item.getData().getData())) {
+                    if (field.getSettings().isUnusableItem(item.getType())) {
                         StackHelper.unHoldItem(player, slot);
                         ChatHelper.send(player, "cannotUseItemMoved");
                     }
@@ -1466,8 +1468,8 @@ public class PSPlayerListener implements Listener {
 
         if (field != null) {
             if (FieldFlag.UNUSABLE_ITEMS.applies(field, player)) {
-                if (player.getItemInHand().getTypeId() == event.getItem().getItemStack().getTypeId()) {
-                    if (field.getSettings().isUnusableItem(event.getItem().getItemStack().getTypeId(), event.getItem().getItemStack().getData().getData())) {
+                if (player.getInventory().getItemInMainHand().getType() == event.getItem().getItemStack().getType()) {
+                    if (field.getSettings().isUnusableItem(event.getItem().getItemStack().getType())) {
                         ChatHelper.send(player, "cannotUseItemHere");
                         StackHelper.unHoldItem(player, player.getInventory().getHeldItemSlot());
                     }
@@ -1488,7 +1490,7 @@ public class PSPlayerListener implements Listener {
 
             if (field != null) {
                 if (FieldFlag.UNUSABLE_ITEMS.applies(field, player)) {
-                    if (field.getSettings().isUnusableItem(player.getItemInHand().getTypeId(), player.getItemInHand().getData().getData())) {
+                    if (field.getSettings().isUnusableItem(player.getInventory().getItemInMainHand().getType())) {
                         ChatHelper.send(player, "cannotUseItemHere");
                         StackHelper.unHoldItem(player, player.getInventory().getHeldItemSlot());
                     }

@@ -4,6 +4,8 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldSettings;
+
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -71,6 +73,10 @@ public class UnprotectableManager {
             return null;
         }
 
+        if (!plugin.getSettingsManager().hasUnprotectableBlocks()) {
+            return null;
+        }
+
         int minx = fieldblock.getX() - fs.getRadius();
         int maxx = fieldblock.getX() + fs.getRadius();
         int minz = fieldblock.getZ() - fs.getRadius();
@@ -107,7 +113,7 @@ public class UnprotectableManager {
                         continue;
                     }
 
-                    int type = world.getBlockTypeIdAt(x, y, z);
+                    Material type = world.getBlockAt(x, y, z).getType();
 
                     if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type))) {
                         return fieldblock.getWorld().getBlockAt(x, y, z);
@@ -132,6 +138,10 @@ public class UnprotectableManager {
             return null;
         }
 
+        if (!plugin.getSettingsManager().hasUnprotectableBlocks()) {
+            return null;
+        }
+
         int minx = field.getMinx();
         int maxx = field.getMaxx();
         int minz = field.getMinz();
@@ -149,7 +159,7 @@ public class UnprotectableManager {
                             continue;
                         }
 
-                        int type = world.getBlockTypeIdAt(x, y, z);
+                        Material type = world.getBlockAt(x, y, z).getType();
 
                         if (plugin.getSettingsManager().isUnprotectableType(new BlockTypeEntry(type))) {
                             return field.getBlock().getWorld().getBlockAt(x, y, z);

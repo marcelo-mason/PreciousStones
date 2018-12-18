@@ -4,6 +4,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockTypeEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import net.sacredlabyrinth.Phaed.PreciousStones.vectors.AbstractVec;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
@@ -41,7 +42,7 @@ public class GriefBlock extends AbstractVec {
      */
     public GriefBlock(Block block) {
         super(block.getX(), block.getY(), block.getZ(), block.getWorld().getName());
-        this.type = new BlockTypeEntry(block.getTypeId(), block.getData());
+        this.type = new BlockTypeEntry(block.getType());
     }
 
     /**
@@ -49,22 +50,15 @@ public class GriefBlock extends AbstractVec {
      */
     public GriefBlock(BlockState state) {
         super(state.getX(), state.getY(), state.getZ(), state.getWorld().getName());
-        this.type = new BlockTypeEntry(state.getTypeId(), state.getRawData());
+        this.type = new BlockTypeEntry(state.getType());
         this.empty = true;
     }
 
     /**
      * @return the typeId
      */
-    public int getTypeId() {
-        return type.getTypeId();
-    }
-
-    /**
-     * @return the data
-     */
-    public byte getData() {
-        return type.getData();
+    public Material getType() {
+        return type.getMaterial();
     }
 
     /**
@@ -94,10 +88,10 @@ public class GriefBlock extends AbstractVec {
 
         String[] unpacked = packed.split("[|]");
 
-        this.type = new BlockTypeEntry(Integer.parseInt(unpacked[0]), Byte.parseByte(unpacked[1]));
+        this.type = new BlockTypeEntry(unpacked[0]);
     }
 
     public String serialize() {
-        return getTypeId() + "|" + getData() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
+        return getType().name() + "|" + getLocation().getBlockX() + "|" + getLocation().getBlockY() + "|" + getLocation().getBlockZ() + "|" + getLocation().getWorld();
     }
 }

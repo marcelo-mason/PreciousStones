@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.entries.BlockEntry;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.field.FieldFlag;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -26,7 +27,7 @@ public class FencingModule {
     /**
      * Generate fence around the field
      */
-    public void generateFence(int item) {
+    public void generateFence(Material item) {
         PreciousStones plugin = PreciousStones.getInstance();
 
         World world = Bukkit.getServer().getWorld(field.getWorld());
@@ -58,7 +59,7 @@ public class FencingModule {
         // traveling the z length
 
         for (int z = minz; z <= maxz; z++) {
-            int sideOneMidId = world.getBlockTypeIdAt(minx, mid, z);
+            Material sideOneMidId = world.getBlockAt(minx, mid, z).getType();
 
             if (plugin.getSettingsManager().isNaturalThroughType(sideOneMidId)) {
                 // if the midId is through type then travel downwards
@@ -66,7 +67,7 @@ public class FencingModule {
                 boolean hasFloor = false;
 
                 for (int y = mid; y >= limity; y--) {
-                    int sideOne = world.getBlockTypeIdAt(minx, y, z);
+                    Material sideOne = world.getBlockAt(minx, y, z).getType();
 
                     if (!plugin.getSettingsManager().isNaturalThroughType(sideOne)) {
                         hasFloor = true;
@@ -76,7 +77,7 @@ public class FencingModule {
 
                 if (hasFloor) {
                     for (int y = mid; y >= limity; y--) {
-                        int sideOne = world.getBlockTypeIdAt(minx, y, z);
+                        Material sideOne = world.getBlockAt(minx, y, z).getType();
 
                         if (!plugin.getSettingsManager().isNaturalThroughType(sideOne)) {
                             continue;
@@ -84,12 +85,12 @@ public class FencingModule {
 
                         Block block = world.getBlockAt(minx, y, z);
                         fenceBlocks.add(new BlockEntry(block));
-                        block.setTypeId(item);
+                        block.setType(item);
                     }
                 }
             }
 
-            int sideTwoMidId = world.getBlockTypeIdAt(maxx, mid, z);
+            Material sideTwoMidId = world.getBlockAt(maxx, mid, z).getType();
 
             if (plugin.getSettingsManager().isNaturalThroughType(sideTwoMidId)) {
                 // if the midId is through type then travel downwards
@@ -97,7 +98,7 @@ public class FencingModule {
                 boolean hasFloor = false;
 
                 for (int y = mid; y >= limity; y--) {
-                    int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
+                    Material sideTwo = world.getBlockAt(maxx, y, z).getType();
 
                     if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo)) {
                         hasFloor = true;
@@ -107,7 +108,7 @@ public class FencingModule {
 
                 if (hasFloor) {
                     for (int y = mid; y >= limity; y--) {
-                        int sideTwo = world.getBlockTypeIdAt(maxx, y, z);
+                        Material sideTwo = world.getBlockAt(maxx, y, z).getType();
 
                         if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo)) {
                             continue;
@@ -115,7 +116,7 @@ public class FencingModule {
 
                         Block block = world.getBlockAt(maxx, y, z);
                         fenceBlocks.add(new BlockEntry(block));
-                        block.setTypeId(item);
+                        block.setType(item);
                     }
                 }
             }
@@ -124,7 +125,7 @@ public class FencingModule {
         // traveling the x length
 
         for (int x = minx; x <= maxx; x++) {
-            int sideOneMidId = world.getBlockTypeIdAt(x, mid, minz);
+            Material sideOneMidId = world.getBlockAt(x, mid, minz).getType();
 
             if (plugin.getSettingsManager().isNaturalThroughType(sideOneMidId)) {
                 // if the midId is through type then travel downwards
@@ -132,7 +133,7 @@ public class FencingModule {
                 boolean hasFloor = false;
 
                 for (int y = mid; y >= limity; y--) {
-                    int sideOne = world.getBlockTypeIdAt(x, y, minz);
+                    Material sideOne = world.getBlockAt(x, y, minz).getType();
 
                     if (!plugin.getSettingsManager().isNaturalThroughType(sideOne)) {
                         hasFloor = true;
@@ -142,7 +143,7 @@ public class FencingModule {
 
                 if (hasFloor) {
                     for (int y = mid; y >= limity; y--) {
-                        int sideOne = world.getBlockTypeIdAt(x, y, minz);
+                        Material sideOne = world.getBlockAt(x, y, minz).getType();
 
                         if (!plugin.getSettingsManager().isNaturalThroughType(sideOne)) {
                             continue;
@@ -150,12 +151,12 @@ public class FencingModule {
 
                         Block block = world.getBlockAt(x, y, minz);
                         fenceBlocks.add(new BlockEntry(block));
-                        block.setTypeId(item);
+                        block.setType(item);
                     }
                 }
             }
 
-            int sideTwoMidId = world.getBlockTypeIdAt(x, mid, maxz);
+            Material sideTwoMidId = world.getBlockAt(x, mid, maxz).getType();
 
             if (plugin.getSettingsManager().isNaturalThroughType(sideTwoMidId)) {
                 // if the midId is through type then travel downwards
@@ -163,7 +164,7 @@ public class FencingModule {
                 boolean hasFloor = false;
 
                 for (int y = mid; y >= limity; y--) {
-                    int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
+                    Material sideTwo = world.getBlockAt(x, y, maxz).getType();
 
                     if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo)) {
                         hasFloor = true;
@@ -173,7 +174,7 @@ public class FencingModule {
 
                 if (hasFloor) {
                     for (int y = mid; y >= limity; y--) {
-                        int sideTwo = world.getBlockTypeIdAt(x, y, maxz);
+                        Material sideTwo = world.getBlockAt(x, y, maxz).getType();
 
                         if (!plugin.getSettingsManager().isNaturalThroughType(sideTwo)) {
                             continue;
@@ -181,7 +182,7 @@ public class FencingModule {
 
                         Block block = world.getBlockAt(x, y, maxz);
                         fenceBlocks.add(new BlockEntry(block));
-                        block.setTypeId(item);
+                        block.setType(item);
                     }
                 }
             }

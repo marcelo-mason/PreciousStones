@@ -2,48 +2,35 @@ package net.sacredlabyrinth.Phaed.PreciousStones.entries;
 
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 /**
  * @author phaed
  */
 public class BlockEntry {
-    private final int typeId;
-    private final byte data;
+    private final Material type;
     private final Location location;
 
     /**
      * @param block
      */
     public BlockEntry(Block block) {
-        this.typeId = block.getTypeId();
-        this.data = block.getData();
+        this.type = block.getType();
         this.location = block.getLocation();
     }
 
     /**
      * @param loc
-     * @param typeId
-     * @param data
+     * @param type
      */
-    public BlockEntry(Location loc, int typeId, byte data) {
-        this.typeId = typeId;
-        this.data = data;
+    public BlockEntry(Location loc, Material type) {
+        this.type = type;
         this.location = loc;
     }
 
-    /**
-     * @return the typeId
-     */
-    public int getTypeId() {
-        return typeId;
-    }
-
-    /**
-     * @return the data
-     */
-    public byte getData() {
-        return data;
+    public Material getType() {
+        return type;
     }
 
     /**
@@ -67,20 +54,19 @@ public class BlockEntry {
         }
 
         BlockEntry other = (BlockEntry) obj;
-        return other.getTypeId() == this.getTypeId() && other.getData() == this.getData() && Helper.isSameBlock(this.getLocation(), other.getLocation());
+        return other.getType() == this.getType() && Helper.isSameBlock(this.getLocation(), other.getLocation());
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 47 * hash + this.getTypeId();
-        hash = 47 * hash + this.getData();
+        hash = 47 * hash + this.getType().ordinal();
         hash = 47 * hash + this.getLocation().getBlockX() + this.getLocation().getBlockY() + this.getLocation().getBlockZ();
         return hash;
     }
 
     @Override
     public String toString() {
-        return "[" + getTypeId() + ":" + getData() + " " + Helper.toLocationString(location) + "]";
+        return "[" + getType().name() + " " + Helper.toLocationString(location) + "]";
     }
 }

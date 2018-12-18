@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
  * @author phaed
  */
 public class Helper {
+    private static Map<Integer, Material> materialIdMap;
+
     /**
      * Dumps stacktrace to log
      */
@@ -246,15 +248,11 @@ public class Helper {
     /**
      * Convert block type names to friendly format
      *
-     * @param typeId
+     * @param type
      * @return
      */
-    public static String friendlyBlockType(int typeId) {
-        if (Material.getMaterial(typeId) == null) {
-            return typeId + "";
-        }
-
-        return MaterialName.getIDName(Material.getMaterial(typeId));
+    public static String friendlyBlockType(Material type) {
+        return MaterialName.getIDName(type);
     }
 
     /**
@@ -606,10 +604,10 @@ public class Helper {
     public static Location locationFromPacked(String packed) {
         String[] unpacked = packed.split("[|]");
 
-        int x = Integer.parseInt(unpacked[2]);
-        int y = Integer.parseInt(unpacked[3]);
-        int z = Integer.parseInt(unpacked[4]);
-        String world = unpacked[5];
+        int x = Integer.parseInt(unpacked[1]);
+        int y = Integer.parseInt(unpacked[2]);
+        int z = Integer.parseInt(unpacked[3]);
+        String world = unpacked[4];
 
         World w = Bukkit.getServer().getWorld(world);
 
@@ -617,13 +615,15 @@ public class Helper {
     }
 
     public static boolean isDoor(Block block) {
-        return block.getTypeId() == 64 || block.getTypeId() == 71 || block.getTypeId() == 330; // doors
+        return block.getType() == Material.OAK_DOOR || block.getType() == Material.IRON_DOOR || block.getType() == Material.ACACIA_DOOR
+                 || block.getType() == Material.BIRCH_DOOR || block.getType() == Material.DARK_OAK_DOOR || block.getType() == Material.JUNGLE_DOOR; // doors
     }
 
     public static String getDetails(Block block) {
         return "[" + block.getType() + "|" + block.getLocation().getBlockX() + " " + block.getLocation().getBlockY() + " " + block.getLocation().getBlockZ() + "]";
     }
 
+    @SuppressWarnings("deprecation")
     public static boolean isOnline(String playerName) {
         return Bukkit.getServer().getPlayer(playerName) != null;
     }
@@ -634,10 +634,10 @@ public class Helper {
      * @param block
      */
     public static boolean dropBlock(Block block) {
-        if (block.getTypeId() != 0) {
+        if (block.getType() != Material.AIR) {
             try {
                 World world = block.getWorld();
-                ItemStack is = new ItemStack(block.getTypeId(), 1, (short) 0, block.getData());
+                ItemStack is = new ItemStack(block.getType());
                 world.dropItemNaturally(block.getLocation(), is);
                 return true;
             } catch (Exception ex) {
@@ -654,7 +654,7 @@ public class Helper {
      */
     public static void dropBlockWipe(Block block) {
         if (dropBlock(block)) {
-            block.setTypeId(0);
+            block.setType(Material.AIR);
         }
     }
 
@@ -706,20 +706,16 @@ public class Helper {
     /**
      * Returns the material string if its a vanilla block, the id if not
      *
-     * @param typeId
+     * @param type
      * @return
      */
-    public static String getMaterialString(int typeId) {
-        if (Material.getMaterial(typeId) == null) {
-            return typeId + "";
-        }
-
-        return Material.getMaterial(typeId).toString();
+    public static String getMaterialString(Material type) {
+        return MaterialName.getIDName(type);
     }
 
     public static boolean isAirOrWater(Location loc) {
-        int id = loc.getWorld().getBlockTypeIdAt(loc);
-        return id == 0 || id == 8 || id == 9;
+        Material type = loc.getWorld().getBlockAt(loc).getType();
+        return type == Material.AIR || type == Material.WATER;
     }
 
     /**
@@ -791,6 +787,7 @@ public class Helper {
      * @param names
      * @return closest player
      */
+    @SuppressWarnings("deprecation")
     public static Player getClosestPlayer(Location target, int radius, Set<String> names) {
         ArrayList<Player> players = new ArrayList<>();
 
@@ -861,12 +858,12 @@ public class Helper {
      * @return whether its a boat
      */
     public static boolean isBoat(Material mat) {
-        return mat == Material.BOAT ||
-                mat == Material.BOAT_ACACIA ||
-                mat == Material.BOAT_BIRCH ||
-                mat == Material.BOAT_DARK_OAK ||
-                mat == Material.BOAT_JUNGLE ||
-                mat == Material.BOAT_SPRUCE;
+        return mat == Material.OAK_BOAT ||
+                mat == Material.ACACIA_BOAT ||
+                mat == Material.BIRCH_BOAT ||
+                mat == Material.DARK_OAK_BOAT ||
+                mat == Material.JUNGLE_BOAT ||
+                mat == Material.SPRUCE_BOAT;
 
     }
 
@@ -905,5 +902,31 @@ public class Helper {
         } else {
             return String.format("%s", d);
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Material getMaterial(int id) {
+        if (materialIdMap == null) {
+            materialIdMap = new HashMap<>();
+
+            Object[] allMaterials = Material.AIR.getDeclaringClass().getEnumConstants();
+            for (Object o : allMaterials) {
+                Material material = (Material)o;
+                materialIdMap.put(material.getId(), material);
+            }
+        }
+        Material material = materialIdMap.get(id);
+        if (material.isLegacy()) {
+            Material converted = Bukkit.getUnsafe().fromLegacy(material);
+            if (converted != null && converted != Material.AIR) {
+                material = converted;
+            }
+        }
+        return material;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static int getMaterialId(Material material) {
+        return material.getId();
     }
 }

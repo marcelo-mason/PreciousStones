@@ -5,6 +5,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.field.Field;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.ChatHelper;
 import net.sacredlabyrinth.Phaed.PreciousStones.helpers.Helper;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -294,6 +295,7 @@ public class CuboidEntry {
      *
      * @return
      */
+    @SuppressWarnings("deprecation")
     public Block getExpandedBlock(Player player) {
         calculate();
 
@@ -304,12 +306,12 @@ public class CuboidEntry {
             return null;
         }
 
-        List<Block> lineOfSight = player.getLineOfSight(PreciousStones.getInstance().getSettingsManager().getThroughFieldsMaterialSet(), Math.max(Math.max(Math.max(Helper.getWidthFromCoords(maxx, miny), Helper.getWidthFromCoords(maxz, minz)), Helper.getWidthFromCoords(maxy, miny)), 256));
+        List<Block> lineOfSight = player.getLineOfSight(PreciousStones.getInstance().getSettingsManager().getThroughFieldsSet(), Math.max(Math.max(Math.max(Helper.getWidthFromCoords(maxx, miny), Helper.getWidthFromCoords(maxz, minz)), Helper.getWidthFromCoords(maxy, miny)), 256));
 
         for (Block block : lineOfSight) {
             if (!envelopsPlusOne(block.getLocation())) {
                 if (expanded != null) {
-                    player.sendBlockChange(expanded, 0, (byte) 0);
+                    player.sendBlockChange(expanded, Material.AIR, (byte) 0);
                 }
 
                 expanded = block.getLocation();
