@@ -201,10 +201,18 @@
             <id>remote-repos</id>
             <url>http://104.236.246.108:8081/artifactory/remote-repos</url>
         </repository>
+        <repository>
+            <id>elMakers</id>
+            <url>http://maven.elmakers.com/repository/</url>
+        </repository>
+        <repository>
+            <id>sk89q</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
     </repositories>
 
     <!-- GitHub/Jenkins -->
-
+w
     <ciManagement>
         <system>jenkins</system>
         <url>http://104.236.246.108/:8080</url>
