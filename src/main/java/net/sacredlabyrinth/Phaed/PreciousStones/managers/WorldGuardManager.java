@@ -1,7 +1,7 @@
 package net.sacredlabyrinth.Phaed.PreciousStones.managers;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -46,7 +46,7 @@ public class WorldGuardManager {
 
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionManager manager = container.get(adapt(block.getWorld()));
-            Vector location = asVector(block.getLocation());
+            BlockVector3 location = asVector(block.getLocation());
             ApplicableRegionSet regions = manager.getApplicableRegions(location);
             return regions.size() > 0;
         } catch (Exception ex) {
@@ -76,18 +76,16 @@ public class WorldGuardManager {
         }
     }
 
-    // Copied from BukkitAdapter, which we can't reference while still building against 1.12
     public static com.sk89q.worldedit.world.World adapt(World world) {
-        return new BukkitWorld(world);
+        return BukkitAdapter.adapt(world);
     }
 
-    public static Vector asVector(org.bukkit.Location location) {
-        return new Vector(location.getX(), location.getY(), location.getZ());
+    public static BlockVector3 asVector(org.bukkit.Location location) {
+        return BlockVector3.at(location.getX(), location.getY(), location.getZ());
     }
 
     public static com.sk89q.worldedit.util.Location adapt(org.bukkit.Location location) {
-        Vector position = asVector(location);
-        return new com.sk89q.worldedit.util.Location(adapt(location.getWorld()), position, location.getYaw(), location.getPitch());
+        return BukkitAdapter.adapt(location);
     }
 
     public boolean canBuildField(Player player, Block block, FieldSettings fs) {
