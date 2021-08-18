@@ -17,3 +17,7 @@ matrix:
 #cache:
 #  directories:
 #    - '$HOME/.m2/repository'
+
+cache:
+  directories:
+  - $HOME/.m2
